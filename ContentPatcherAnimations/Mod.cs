@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using ContentPatcherAnimations.Framework;
+using ContentPatcherAnimations.Patches;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -12,149 +15,185 @@ using StardewValley;
 
 namespace ContentPatcherAnimations
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod Instance;
-
+        /*********
+        ** Fields
+        *********/
+        /// <summary>The Content Patcher mod instance.</summary>
         private StardewModdingAPI.Mod ContentPatcher;
-        private readonly PerScreen<ScreenState> ScreenStateImpl = new();
-        internal ScreenState ScreenState => this.ScreenStateImpl.Value;
 
+        /// <summary>The per-screen mod states.</summary>
+        private readonly PerScreen<ScreenState> ScreenStateImpl = new(createNewState: () => new ScreenState());
+
+        /// <summary>Simplifies access to private code.</summary>
         private IReflectionHelper Reflection => this.Helper.Reflection;
 
+        /// <summary>The maximum number of ticks animations should continue running after the texture was last drawn.</summary>
+        private const int MaxTicksSinceDrawn = 5 * 60; // 5 seconds
+
+        /// <summary>The number of ticks between each cleanup of expired tracked asset names.</summary>
+        private const int ExpiryTicks = 5 * 60 * 60; // 5 minutes
+
+
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The current mod state.</summary>
+        internal ScreenState ScreenState => this.ScreenStateImpl.Value;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
-            Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            this.Helper.Events.GameLoop.UpdateTicked += this.UpdateAnimations;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
 
-            void UpdateTargets()
-            {
-                foreach (var screen in this.ScreenStateImpl.GetActiveValues())
-                    screen.Value.FindTargetsCounter = 1;
-            }
-
-            this.Helper.Events.GameLoop.SaveCreated += (s, e) => UpdateTargets();
-            this.Helper.Events.GameLoop.SaveLoaded += (s, e) => UpdateTargets();
-            this.Helper.Events.GameLoop.DayStarted += (s, e) => UpdateTargets();
-
-            helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor());
+            helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor(() => this.ScreenState.AnimatedPatches));
 
             helper.ConsoleCommands.Add("cpa", "...", this.OnCommand);
+
+            HarmonyPatcher.Apply(this,
+                new SpriteBatchPatcher(() => this.ScreenState.AssetDrawTracker)
+            );
         }
 
-        private void OnCommand(string cmd, string[] args)
+
+        /*********
+        ** Private methods
+        *********/
+        /****
+        ** Event handlers
+        ****/
+        /// <summary>Handle a command received through the SMAPI console.</summary>
+        /// <param name="name">The root command name.</param>
+        /// <param name="args">The command arguments.</param>
+        private void OnCommand(string name, string[] args)
         {
-            if (args[0] == "reload")
+            switch (args.FirstOrDefault()?.ToLower())
             {
-                this.CollectPatches();
+                case "reload":
+                    this.CollectPatches();
+                    Log.Info("Reloaded all patches.");
+                    break;
+
+                case "summary":
+                    this.PrintSummary();
+                    break;
+
+                default:
+                    Log.Info("Usage:\n\ncpa reload\nReloads all patches.\n\ncpa summary\nPrints a summary of the registered animations.");
+                    break;
             }
         }
 
-        private void UpdateAnimations(object sender, UpdateTickedEventArgs e)
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            if (this.ContentPatcher == null)
-            {
-                var modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
-                this.ContentPatcher = this.GetPropertyValueManually<StardewModdingAPI.Mod>(modData, "Mod");
-            }
+            IModInfo modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
+            this.ContentPatcher = this.GetPropertyValueManually<StardewModdingAPI.Mod>(modData, "Mod");
+        }
 
-            this.ScreenStateImpl.Value ??= new ScreenState();
+        /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            this.InitializeIfNeeded();
+            this.UpdateAnimations();
+        }
 
-            if (this.ScreenState.CpPatches == null)
+        /****
+        ** Implementation
+        ****/
+        /// <summary>Get the underlying patches from Content Patcher if this is the first update tick for a screen.</summary>
+        private void InitializeIfNeeded()
+        {
+            var state = this.ScreenState;
+
+            if (state.RawPatches == null)
             {
                 object screenManagerPerScreen = this.Reflection.GetField<object>(this.ContentPatcher, "ScreenManager").GetValue();
                 object screenManager = this.GetPropertyValueManually<object>(screenManagerPerScreen, "Value");
                 object patchManager = this.Reflection.GetProperty<object>(screenManager, "PatchManager").GetValue();
-                this.ScreenStateImpl.Value.CpPatches = this.Reflection.GetField<IEnumerable>(patchManager, "Patches").GetValue();
+                state.RawPatches = this.Reflection.GetField<IEnumerable>(patchManager, "Patches").GetValue();
 
                 this.CollectPatches();
             }
+        }
 
+        /// <summary>Update textures and animations if needed.</summary>
+        private void UpdateAnimations()
+        {
+            var state = this.ScreenState;
 
-            if (this.ScreenState.FindTargetsCounter > 0 && --this.ScreenState.FindTargetsCounter == 0)
-                this.UpdateTargetTextures();
-            while (this.ScreenState.FindTargetsQueue.Count > 0)
-            {
-                var patch = this.ScreenState.FindTargetsQueue.Dequeue();
-                this.UpdateTargetTextures(patch);
-            }
+            // clear expired draw tracking
+            if (state.FrameCounter % Mod.ExpiryTicks == 0)
+                state.AssetDrawTracker.ForgetExpired(Mod.MaxTicksSinceDrawn * 5); // buffer to avoid recreating tracking data unnecessarily
 
-            ++this.ScreenState.FrameCounter;
+            // update animation frames
+            ++state.FrameCounter;
             Game1.graphics.GraphicsDevice.Textures[0] = null;
-            foreach (var patch in this.ScreenState.AnimatedPatches)
+            foreach ((Patch config, PatchData patch) in state.AnimatedPatches)
             {
-                if (!patch.Value.IsActive.Invoke() || patch.Value.Source == null || patch.Value.Target == null)
-                    continue;
+                patch.RefreshIfNeeded();
 
-                try
+                if (state.FrameCounter % config.AnimationFrameTime == 0 && this.ShouldAnimate(state, patch))
                 {
-                    if (this.ScreenState.FrameCounter % patch.Key.AnimationFrameTime == 0)
-                    {
-                        if (++patch.Value.CurrentFrame >= patch.Key.AnimationFrameCount)
-                            patch.Value.CurrentFrame = 0;
-
-                        var sourceRect = patch.Value.FromAreaFunc.Invoke();
-                        sourceRect.X += patch.Value.CurrentFrame * sourceRect.Width;
-                        var targetRect = patch.Value.ToAreaFunc.Invoke();
-                        if (targetRect == Rectangle.Empty)
-                            targetRect = new Rectangle(0, 0, sourceRect.Width, sourceRect.Height);
-                        var cols = new Color[sourceRect.Width * sourceRect.Height];
-                        patch.Value.Source.GetData(0, sourceRect, cols, 0, cols.Length);
-                        patch.Value.Target.SetData(0, targetRect, cols, 0, cols.Length);
-                    }
-                }
-                catch
-                {
-                    // No idea why this happens, hack fix
-                    patch.Value.Target = null;
-                    this.ScreenState.FindTargetsQueue.Enqueue(patch.Key);
+                    if (++patch.CurrentFrame >= config.AnimationFrameCount)
+                        patch.CurrentFrame = 0;
+                    Color[] pixels = patch.GetAnimationFrame(patch.CurrentFrame);
+                    patch.Target.SetData(0, patch.ToArea, pixels, 0, pixels.Length);
                 }
             }
         }
 
-        private void UpdateTargetTextures()
+        /// <summary>Get whether a patch should be animated.</summary>
+        /// <param name="state">The screen state to check.</param>
+        /// <param name="patch">The patch to check.</param>
+        private bool ShouldAnimate(ScreenState state, PatchData patch)
         {
-            foreach (var patch in this.ScreenState.AnimatedPatches)
-            {
-                try
-                {
-                    if (!patch.Value.IsActive.Invoke())
-                        continue;
-
-                    patch.Value.Source = patch.Value.SourceFunc();
-                    patch.Value.Target = patch.Value.TargetFunc();
-                }
-                catch (Exception e)
-                {
-                    Log.Trace("Exception loading " + patch.Key.LogName + " textures, delaying to try again next frame: " + e);
-                    this.ScreenState.FindTargetsQueue.Enqueue(patch.Key);
-                }
-            }
+            return
+                patch.IsActive
+                && patch.Source != null
+                && patch.Target != null
+                && state.AssetDrawTracker.WasDrawnWithin(patch.TargetName, patch.ToArea, Mod.MaxTicksSinceDrawn);
         }
 
-        private void UpdateTargetTextures(Patch key)
+        /// <summary>Get a human-readable reason a patch isn't being automated.</summary>
+        /// <param name="state">The screen state to check.</param>
+        /// <param name="patch">The patch to check.</param>
+        private string GetReasonPaused(ScreenState state, PatchData patch)
         {
-            try
-            {
-                var patch = this.ScreenState.AnimatedPatches[key];
-                if (!patch.IsActive())
-                    return;
+            if (!patch.IsReady)
+                return "Content Patcher patch not ready";
 
-                patch.Source = patch.SourceFunc();
-                patch.Target = patch.TargetFunc();
-            }
-            catch (Exception e)
-            {
-                Log.Error("Exception loading " + key.LogName + " textures: " + e);
-            }
+            if (!patch.IsActive)
+                return "Content Patcher patch not applied";
+
+            if (patch.Source == null || patch.Target == null)
+                return "textures couldn't be loaded";
+
+            if (!state.AssetDrawTracker.WasDrawnWithin(patch.TargetName, patch.ToArea, Mod.MaxTicksSinceDrawn))
+                return "patched area isn't visible on screen";
+
+            return "unknown";
         }
 
+        /// <summary>Collect all patches from installed Content Patcher packs.</summary>
         private void CollectPatches()
         {
-            this.ScreenState.AnimatedPatches.Clear();
-            this.ScreenState.FindTargetsQueue.Clear();
+            var state = this.ScreenState;
+
+            state.AnimatedPatches.Clear();
             foreach (var pack in this.ContentPatcher.Helper.ContentPacks.GetOwned())
             {
                 var patches = pack.ReadJsonFile<PatchList>("content.json");
@@ -168,20 +207,18 @@ namespace ContentPatcherAnimations
 
                     if (patch.AnimationFrameTime > 0 && patch.AnimationFrameCount > 0)
                     {
-                        Log.Trace("Loading animated patch from content pack " + pack.Manifest.UniqueID);
+                        Log.Trace($"Loading animated patch from content pack {pack.Manifest.UniqueID}");
                         if (string.IsNullOrEmpty(patch.LogName))
                         {
                             Log.Error("Animated patches must specify a LogName!");
                             continue;
                         }
 
-                        PatchData data = new PatchData();
-
                         object targetPatch = null;
-                        foreach (object cpPatch in this.ScreenState.CpPatches)
+                        foreach (object cpPatch in state.RawPatches)
                         {
                             object path = this.Reflection.GetProperty<object>(cpPatch, "Path").GetValue();
-                            if (path.ToString() == pack.Manifest.Name + " > " + patch.LogName)
+                            if (path.ToString() == $"{pack.Manifest.Name} > {patch.LogName}")
                             {
                                 targetPatch = cpPatch;
                                 break;
@@ -189,54 +226,109 @@ namespace ContentPatcherAnimations
                         }
                         if (targetPatch == null)
                         {
-                            Log.Error("Failed to find patch with name \"" + patch.LogName + "\"!?!?");
+                            Log.Error($"Failed to find patch with name \"{patch.LogName}\"!?!?");
                             continue;
                         }
-                        var appliedProp = this.Reflection.GetProperty<bool>(targetPatch, "IsApplied");
-                        var sourceProp = this.Reflection.GetProperty<string>(targetPatch, "FromAsset");
-                        var targetProp = this.Reflection.GetProperty<string>(targetPatch, "TargetAsset");
 
-                        data.PatchObj = targetPatch;
-                        data.IsActive = () => appliedProp.GetValue();
-                        data.SourceFunc = () => pack.LoadAsset<Texture2D>(sourceProp.GetValue());
-                        data.TargetFunc = () => this.FindTargetTexture(targetProp.GetValue());
-                        data.FromAreaFunc = () => this.GetRectangleFromPatch(targetPatch, "FromArea");
-                        data.ToAreaFunc = () =>
-                        {
-                            var fromArea = data.FromAreaFunc();
-                            return this.GetRectangleFromPatch(targetPatch, "ToArea", new Rectangle(0, 0, fromArea.Width, fromArea.Height));
-                        };
+                        PatchData data = new PatchData(pack, patch.LogName, targetPatch, this.Reflection);
 
-                        this.ScreenState.AnimatedPatches.Add(patch, data);
+                        state.AnimatedPatches.Add(patch, data);
                     }
                 }
             }
         }
 
-        private Texture2D FindTargetTexture(string target)
+        /// <summary>Print a summary of the current animations to the console.</summary>
+        private void PrintSummary()
         {
-            if (this.Helper.Content.NormalizeAssetName(target) == this.Helper.Content.NormalizeAssetName("TileSheets\\tools"))
-                return this.Reflection.GetField<Texture2D>(typeof(Game1), "_toolSpriteSheet").GetValue();
+            var state = this.ScreenState;
 
-            var tex = Game1.content.Load<Texture2D>(target);
-            if (tex.GetType().Name == "ScaledTexture2D")
+            StringBuilder report = new();
+
+            var patches = state.AnimatedPatches;
+            var animating = patches.ToLookup(p => this.ShouldAnimate(state, p.Value));
+
+            // general data
+            report.AppendLine();
+            report.AppendLine("##############################");
+            report.AppendLine($"## General stats{(Context.IsSplitScreen ? $" for screen {Context.ScreenId}" : "")}");
+            report.AppendLine("##############################");
+            report.AppendLine("   Animated patches:");
+            report.AppendLine($"    - {patches.Count} total");
+            report.AppendLine($"    - {patches.Values.Count(p => p.IsReady && p.IsActive)} applied");
+            report.AppendLine($"    - {animating[true].Count()} being animated");
+            report.AppendLine();
+            report.AppendLine();
+
+            // active animations
+            report.AppendLine("##############################");
+            report.AppendLine("## Active animations");
+            report.AppendLine("##############################");
             {
-                Log.Trace("Found ScaledTexture2D from PyTK: " + target);
-                tex = this.Reflection.GetProperty<Texture2D>(tex, "STexture").GetValue();
+                var active = animating[true]
+                    .GroupBy(p => p.Value.ContentPack.Manifest.Name)
+                    .OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+                if (active.Any())
+                {
+                    foreach (var patchGroup in active)
+                    {
+                        report.AppendLine($"{patchGroup.Key}:");
+
+                        int targetWidth = Math.Max(patchGroup.Max(p => p.Value.TargetName.Length), "target asset".Length);
+                        int logNameWidth = Math.Max(patchGroup.Max(p => p.Key.LogName.Length), "patch name".Length);
+                        int frameWidth = Math.Max(patchGroup.Max(p => $"{p.Value.CurrentFrame + 1} of {p.Key.AnimationFrameCount}".Length), "cur frame".Length);
+
+                        report.AppendLine($"   {"target asset".PadRight(targetWidth)} | {"patch name".PadRight(logNameWidth)} | {"cur frame".PadRight(frameWidth)}");
+                        report.AppendLine($"   {"".PadRight(targetWidth, '-')} | {"".PadRight(logNameWidth, '-')} | {"".PadRight(frameWidth, '-')}");
+                        foreach (var patch in patchGroup.OrderBy(p => p.Value.TargetName, StringComparer.OrdinalIgnoreCase))
+                            report.AppendLine($"   {patch.Value.TargetName.PadRight(targetWidth)} | {patch.Key.LogName.PadRight(logNameWidth)} | {patch.Value.CurrentFrame + 1} of {patch.Key.AnimationFrameCount}");
+                        report.AppendLine();
+                    }
+                }
+                else
+                {
+                    report.AppendLine("There are no active animations.");
+                    report.AppendLine();
+                }
             }
-            return tex;
-        }
+            report.AppendLine();
 
-        private Rectangle GetRectangleFromPatch(object targetPatch, string rectName, Rectangle defaultTo = default)
-        {
-            object tokenRect = this.Reflection.GetField<object>(targetPatch, rectName).GetValue();
-            if (tokenRect == null)
-                return defaultTo;
+            // paused animations
+            report.AppendLine("##############################");
+            report.AppendLine("## Paused animations");
+            report.AppendLine("##############################");
+            {
+                var paused = animating[false]
+                    .GroupBy(p => p.Value.ContentPack.Manifest.Name)
+                    .OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
 
-            object[] args = { null, null }; // out Rectangle rectangle, out string error
-            return this.Reflection.GetMethod(tokenRect, "TryGetRectangle").Invoke<bool>(args)
-                ? (Rectangle)args[0]
-                : Rectangle.Empty;
+                if (paused.Any())
+                {
+                    foreach (var patchGroup in paused)
+                    {
+                        report.AppendLine($"{patchGroup.Key}:");
+
+                        int logNameWidth = Math.Max(patchGroup.Max(p => p.Key.LogName.Length), "patch name".Length);
+                        int reasonWidth = "reason paused".Length;
+
+                        report.AppendLine($"   {"patch name".PadRight(logNameWidth)} | reason paused");
+                        report.AppendLine($"   {"".PadRight(logNameWidth, '-')} | {"".PadRight(reasonWidth, '-')}");
+                        foreach (var patch in patchGroup.OrderBy(p => p.Value.TargetName, StringComparer.OrdinalIgnoreCase))
+                            report.AppendLine($"   {patch.Key.LogName.PadRight(logNameWidth)} | {this.GetReasonPaused(state, patch.Value)}");
+                        report.AppendLine();
+                    }
+                }
+                else
+                {
+                    report.AppendLine("There are no paused animations.");
+                    report.AppendLine();
+                }
+            }
+
+            Log.Info(report.ToString());
         }
 
         /// <summary>Manually get the value of a property using reflection.</summary>
