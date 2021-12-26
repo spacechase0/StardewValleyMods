@@ -37,7 +37,8 @@ namespace MoonMisadventures.Game.Projectiles
             position.Value = pos;
 
             isBig.Value = Game1.recentMultiplayerRandom.NextDouble() < 0.2;
-            index.Value = Game1.recentMultiplayerRandom.Next( isBig.Value ? 9 : 15 );
+            //index.Value = Game1.recentMultiplayerRandom.Next( isBig.Value ? 9 : 15 );
+            index.Value = ( isBig.Value ? 3 : 5 ) + Game1.recentMultiplayerRandom.Next( isBig.Value ? 3 : 5 );
             isMagnetic.Value = ( index / ( isBig.Value ? 3 : 5 ) ) == 1;
 
             Vector2 dir = velDir;
@@ -92,12 +93,65 @@ namespace MoonMisadventures.Game.Projectiles
         {
         }
 
+        public override bool update( GameTime time, GameLocation location )
+        {
+            if ( isMagnetic.Value && Game1.IsMasterGame )
+            {
+                Farmer closest = null;
+                foreach ( var player in location.farmers )
+                {
+                    // TODO: Check if they have the amulet that nullifies this
+                    if ( player.GetAppliedMagneticRadius() > 128 ) // 128 is default
+                    {
+                        float dist = Vector2.Distance( position.Value, player.getStandingPosition() );
+                        if ( dist >= player.GetAppliedMagneticRadius() )
+                            continue;
+
+                        if ( closest == null )
+                            closest = player;
+                        else
+                        {
+                            float distC = Vector2.Distance( position.Value, closest.getStandingPosition() );
+                            if ( player.GetAppliedMagneticRadius() - dist < closest.GetAppliedMagneticRadius() - distC )
+                                closest = player;
+                        }
+                    }
+                }
+
+                if ( closest != null &&
+                     new Vector2( xVelocity.Value, yVelocity.Value ).Length() < Vector2.Distance( closest.getStandingPosition(), position.Value ) )
+                {
+                    Vector2 dirVec = new Vector2( xVelocity.Value, yVelocity.Value );
+                    Vector2 dirVecToClosest = closest.getStandingPosition() - position.Value;
+                    dirVec.Normalize();
+                    dirVecToClosest.Normalize();
+
+                    double dir = Math.Atan2( -dirVec.Y, dirVec.X );
+                    double mag = new Vector2( xVelocity.Value, yVelocity.Value ).Length();
+                    double dirToClosest = Math.Atan2( -dirVecToClosest.Y, dirVecToClosest.X );
+
+                    if ( Math.Abs( dir - dirToClosest ) < ( isBig.Value ? 1 : 3 ) * Math.PI / 180 )
+                    {
+                        dir = dirToClosest;
+                        mag += ( isBig.Value ? 0.05 : 0.1 );
+                    }
+                    else
+                    {
+                        dir += ( ( isBig.Value ? 1 : 3 ) * Math.PI / 180 ) * Math.Sign( dirToClosest - dir );
+                    }
+
+                    xVelocity.Value = ( float ) ( Math.Cos( dir ) * mag );
+                    yVelocity.Value = ( float ) ( -Math.Sin( dir ) * mag );
+                }
+            }
+
+            return base.update( time, location );
+        }
+
         public override void updatePosition( GameTime time )
         {
             position.X += xVelocity.Value;
             position.Y += yVelocity.Value;
-
-            // TODO: Magnetic
         }
     }
 }
