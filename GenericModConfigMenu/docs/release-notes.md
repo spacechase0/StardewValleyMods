@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Fixed mouse-wheel-scroll sound playing even after the menu is closed.
 * Improved translations. Thanks to BuslaevLegat (added Russian)!
 
 ## 1.7.0

@@ -348,15 +348,11 @@ namespace GenericModConfigMenu.Framework
                 this.ExitOnNextUpdate = true;
         }
 
-        public void ReceiveScrollWheelActionSmapi(int direction)
+        /// <inheritdoc />
+        public override void receiveScrollWheelAction(int direction)
         {
-            if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
-            {
-                if (Dropdown.ActiveDropdown == null)
-                    this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
-            }
-            else
-                SpecificModConfigMenu.ActiveConfigMenu = null;
+            if (Dropdown.ActiveDropdown == null)
+                this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
         }
 
         /// <inheritdoc />

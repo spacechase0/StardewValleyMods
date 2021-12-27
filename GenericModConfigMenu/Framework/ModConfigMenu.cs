@@ -87,12 +87,10 @@ namespace GenericModConfigMenu.Framework
             }
         }
 
-        public void ReceiveScrollWheelActionSmapi(int direction)
+        /// <inheritdoc />
+        public override void receiveScrollWheelAction(int direction)
         {
-            if (TitleMenu.subMenu == this || this.InGame)
-                this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
-            else
-                ModConfigMenu.ActiveConfigMenu = null;
+            this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
         }
 
         /// <inheritdoc />
