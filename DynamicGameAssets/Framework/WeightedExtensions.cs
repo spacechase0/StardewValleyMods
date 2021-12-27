@@ -9,7 +9,7 @@ namespace DynamicGameAssets.Framework
         public static T Choose<T>(this Weighted<T>[] choices, Random r = null) where T : ICloneable
         {
             if (choices.Length == 0)
-                return default(T);
+                return default;
             if (choices.Length == 1)
                 return choices[0].Value;
 

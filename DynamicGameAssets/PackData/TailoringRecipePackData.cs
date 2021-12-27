@@ -6,7 +6,7 @@ namespace DynamicGameAssets.PackData
 {
     public class TailoringRecipePackData : BasePackData
     {
-        public List<string> FirstItemTags { get; set; } = new List<string>(new string[] { "item_cloth" });
+        public List<string> FirstItemTags { get; set; } = new(new[] { "item_cloth" });
         public List<string> SecondItemTags { get; set; }
 
         [DefaultValue(true)]

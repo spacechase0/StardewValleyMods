@@ -42,7 +42,7 @@ namespace DynamicGameAssets
 
         public Color ObjectColor { get; set; }
 
-        public bool ShouldSerializeObjectColor() { return this.ObjectColor != default(Color); }
+        public bool ShouldSerializeObjectColor() { return this.ObjectColor != default; }
 
         [JsonIgnore]
         public virtual Texture2D Icon
@@ -104,7 +104,7 @@ namespace DynamicGameAssets
                         return found.GetTexture().Rect ?? new Rectangle(0, 0, found.GetTexture().Texture.Width, found.GetTexture().Texture.Height);
                     case ItemType.DGARecipe:
                         Log.Error("Recipes don't have an icon subrect.");
-                        return default(Rectangle);
+                        return default;
                     case ItemType.VanillaObject:
                     case ItemType.VanillaObjectColored:
                         if (valAsInt.HasValue)
@@ -186,11 +186,11 @@ namespace DynamicGameAssets
                         break;
                     case ItemType.ContextTag:
                         Log.Error("Context tag ItemAbstraction instances have no icon rect!");
-                        return default(Rectangle);
+                        return default;
                 }
 
                 Log.Error("Failed getting ItemAbstraction icon rect for " + this.Type + " " + this.Value + "!");
-                return default(Rectangle);
+                return default;
             }
         }
 
