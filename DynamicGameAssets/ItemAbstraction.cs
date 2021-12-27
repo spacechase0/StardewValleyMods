@@ -252,7 +252,20 @@ namespace DynamicGameAssets
                     }
 
                 case ItemType.DGARecipe:
-                    return new CustomCraftingRecipe(Mod.Find(this.Value) as CraftingRecipePackData);
+                    {
+                        CommonPackData data = Mod.Find(this.Value);
+
+                        if (data is not CraftingRecipePackData recipeData)
+                        {
+                            Log.Error($"Failed to create recipe for '{this.Value}': " + (data is null
+                                ? "no such data could be found."
+                                : $"unexpected data type {data.GetType().Name}, expected {nameof(CraftingRecipePackData)}."
+                            ));
+                            return new StardewValley.Object(Mod.BaseFakeObjectId, 1);
+                        }
+
+                        return new CustomCraftingRecipe(recipeData);
+                    }
 
                 case ItemType.VanillaObject:
                     if (valAsInt.HasValue)
