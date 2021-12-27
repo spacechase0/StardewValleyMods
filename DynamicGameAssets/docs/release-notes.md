@@ -2,7 +2,9 @@
 
 # Release notes
 ## Upcoming release
-* Improved error when a content pack adds an invalid recipe entry to shops.
+* Improved errors when a content pack...
+  * adds an invalid recipe entry to shops;
+  * adds a duplicate texture override.
 
 ## 1.3.3
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.

@@ -960,13 +960,14 @@ namespace DynamicGameAssets
                         SpriteBatchPatcher.pantsOverrides.Add(new Rectangle(which % 10 * 192, which / 10 * 688, 192, 688), tex);
                     }
                 }
-                foreach (var other in cp.Value.others)
+                foreach (BasePackData other in cp.Value.others)
                 {
                     if (other is TextureOverridePackData textureOverride)
                     {
-                        if (!SpriteBatchPatcher.packOverrides.ContainsKey(textureOverride.TargetTexture))
-                            SpriteBatchPatcher.packOverrides.Add(textureOverride.TargetTexture, new());
-                        SpriteBatchPatcher.packOverrides[textureOverride.TargetTexture].Add(textureOverride.TargetRect, textureOverride);
+                        if (!SpriteBatchPatcher.packOverrides.TryGetValue(textureOverride.TargetTexture, out var packOverrides))
+                            SpriteBatchPatcher.packOverrides[textureOverride.TargetTexture] = packOverrides = new Dictionary<Rectangle, TextureOverridePackData>();
+
+                        packOverrides[textureOverride.TargetRect] = textureOverride;
                     }
                 }
             }
