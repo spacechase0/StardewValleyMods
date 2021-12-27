@@ -92,7 +92,7 @@ namespace DynamicGameAssets.Framework.ContentPacks
                     }
 
                     var cmeth = val.GetType().GetMethod("ShouldSerialize" + prop.Key);
-                    if (cmeth != null && !(cmeth.Invoke(val, new object[0]) as bool?).Value)
+                    if (cmeth != null && !(cmeth.Invoke(val, Array.Empty<object>()) as bool?).Value)
                     {
                         toRemove.Add(prop.Key);
                         continue;

@@ -270,7 +270,7 @@ namespace DynamicGameAssets
                             Mod.instance.ModManifest,
                             conds,
                             cp.Value.conditionVersion,
-                            cp.Value.smapiPack.Manifest.Dependencies?.Select((d) => d.UniqueID)?.ToArray() ?? new string[0]
+                            cp.Value.smapiPack.Manifest.Dependencies?.Select((d) => d.UniqueID)?.ToArray() ?? Array.Empty<string>()
                         );
                         if (!data.EnableConditionsObject.IsValid)
                             Log.Warn("Invalid enable conditions for " + data + " " + data.pack.smapiPack.Manifest.Name + "! " + data.EnableConditionsObject.ValidationError);

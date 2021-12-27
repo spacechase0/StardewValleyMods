@@ -41,7 +41,7 @@ namespace DynamicGameAssets.PackData
                     Mod.instance.ModManifest,
                     conds,
                     parent.pack.conditionVersion,
-                    parent.pack.smapiPack.Manifest.Dependencies?.Select((d) => d.UniqueID)?.ToArray() ?? new string[0]
+                    parent.pack.smapiPack.Manifest.Dependencies?.Select((d) => d.UniqueID)?.ToArray() ?? Array.Empty<string>()
                 );
             }
             if (!this.ConditionsObject.IsValid)

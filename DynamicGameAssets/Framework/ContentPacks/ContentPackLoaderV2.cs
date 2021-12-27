@@ -52,9 +52,9 @@ namespace DynamicGameAssets.Framework.ContentPacks
 
             try
             {
-                var colorConverter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.ColorConverter")).Invoke(new object[0]);
-                var vec2Converter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.Vector2Converter")).Invoke(new object[0]);
-                var rectConverter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.RectangleConverter")).Invoke(new object[0]);
+                var colorConverter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.ColorConverter")).Invoke(Array.Empty<object>());
+                var vec2Converter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.Vector2Converter")).Invoke(Array.Empty<object>());
+                var rectConverter = (JsonConverter)AccessTools.Constructor(AccessTools.TypeByName("StardewModdingAPI.Framework.Serialization.RectangleConverter")).Invoke(Array.Empty<object>());
                 JsonSerializerSettings settings = new JsonSerializerSettings()
                 {
                     Converters = new[] { new BasePackDataListConverter(), colorConverter, vec2Converter, rectConverter }

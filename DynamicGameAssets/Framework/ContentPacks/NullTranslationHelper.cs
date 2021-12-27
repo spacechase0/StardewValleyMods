@@ -31,7 +31,7 @@ namespace DynamicGameAssets.Framework.ContentPacks
 
         public IEnumerable<Translation> GetTranslations()
         {
-            return new Translation[0];
+            return Array.Empty<Translation>();
         }
     }
 }
