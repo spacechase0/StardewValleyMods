@@ -32,6 +32,25 @@ namespace GenericModConfigMenu
         *********/
         public static Mod Instance;
 
+        /// <summary>The current configuration menu.</summary>
+        public static IClickableMenu ActiveConfigMenu
+        {
+            get
+            {
+                IClickableMenu menu = Game1.activeClickableMenu is TitleMenu ? TitleMenu.subMenu : Game1.activeClickableMenu;
+                return menu is ModConfigMenu or SpecificModConfigMenu
+                    ? menu
+                    : null;
+            }
+            set
+            {
+                if (Game1.activeClickableMenu is TitleMenu)
+                    TitleMenu.subMenu = value;
+                else
+                    Game1.activeClickableMenu = value;
+            }
+        }
+
 
         /*********
         ** Public methods
@@ -64,10 +83,7 @@ namespace GenericModConfigMenu
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
         public void OpenListMenu()
         {
-            if (Game1.activeClickableMenu is TitleMenu)
-                TitleMenu.subMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
-            else
-                Game1.activeClickableMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
+            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
         }
 
         /// <summary>Open the config UI for a specific mod.</summary>
@@ -75,21 +91,15 @@ namespace GenericModConfigMenu
         /// <param name="page">The page to display within the mod's config menu.</param>
         public void OpenModMenu(IManifest mod, string page = null)
         {
-            bool inGame = Game1.activeClickableMenu is not TitleMenu;
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
-            var menu = new SpecificModConfigMenu(
+            Mod.ActiveConfigMenu = new SpecificModConfigMenu(
                 config: config,
                 scrollSpeed: this.Config.ScrollSpeed,
                 page: page,
                 openPage: newPage => this.OpenModMenu(mod, newPage),
                 returnToList: this.OpenListMenu
             );
-
-            if (inGame)
-                Game1.activeClickableMenu = menu;
-            else
-                TitleMenu.subMenu = menu;
         }
 
 
@@ -116,14 +126,14 @@ namespace GenericModConfigMenu
 
         private bool IsTitleMenuInteractable()
         {
-            if (Game1.activeClickableMenu is not TitleMenu tm || TitleMenu.subMenu != null)
+            if (Game1.activeClickableMenu is not TitleMenu titleMenu || TitleMenu.subMenu != null)
                 return false;
 
-            var method = this.Helper.Reflection.GetMethod(tm, "ShouldAllowInteraction", false);
+            var method = this.Helper.Reflection.GetMethod(titleMenu, "ShouldAllowInteraction", false);
             if (method != null)
                 return method.Invoke<bool>();
             else // method isn't available on Android
-                return this.Helper.Reflection.GetField<bool>(tm, "titleInPosition").GetValue();
+                return this.Helper.Reflection.GetField<bool>(titleMenu, "titleInPosition").GetValue();
         }
 
         /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
@@ -207,7 +217,7 @@ namespace GenericModConfigMenu
                 this.OpenListMenu();
 
             // pass input to menu
-            else if (SpecificModConfigMenu.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
+            else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
                 menu.receiveKeyPress(key);
         }
 

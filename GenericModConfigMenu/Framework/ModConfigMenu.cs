@@ -23,12 +23,6 @@ namespace GenericModConfigMenu.Framework
 
 
         /*********
-        ** Accessors
-        *********/
-        public static IClickableMenu ActiveConfigMenu;
-
-
-        /*********
         ** Public methods
         *********/
         public ModConfigMenu(int scrollSpeed, Action<IManifest> openModMenu, ModConfigManager configs)
@@ -71,19 +65,17 @@ namespace GenericModConfigMenu.Framework
                 this.initializeUpperRightCloseButton();
             else
                 this.upperRightCloseButton = null;
-
-            ModConfigMenu.ActiveConfigMenu = this;
         }
 
         /// <inheritdoc />
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
-            if (this.upperRightCloseButton != null && this.readyToClose() && this.upperRightCloseButton.containsPoint(x, y))
+            if (this.upperRightCloseButton?.containsPoint(x, y) == true && this.readyToClose())
             {
                 if (playSound)
                     Game1.playSound("bigDeSelect");
-                if (!this.InGame && TitleMenu.subMenu != null && Game1.activeClickableMenu != null)
-                    TitleMenu.subMenu = null;
+
+                Mod.ActiveConfigMenu = null;
             }
         }
 

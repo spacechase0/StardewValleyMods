@@ -53,7 +53,6 @@ namespace GenericModConfigMenu.Framework
         *********/
         public IManifest Manifest => this.ModConfig.ModManifest;
         public readonly string CurrPage;
-        public static IClickableMenu ActiveConfigMenu;
 
 
         /*********
@@ -337,8 +336,6 @@ namespace GenericModConfigMenu.Framework
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
-
-            SpecificModConfigMenu.ActiveConfigMenu = this;
         }
 
         /// <inheritdoc />

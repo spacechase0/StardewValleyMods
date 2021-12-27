@@ -192,7 +192,7 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public bool TryGetCurrentMenu(out IManifest mod, out string page)
         {
-            if (Game1.activeClickableMenu is not SpecificModConfigMenu menu)
+            if (Mod.ActiveConfigMenu is not SpecificModConfigMenu menu)
                 menu = null;
 
             mod = menu?.Manifest;
