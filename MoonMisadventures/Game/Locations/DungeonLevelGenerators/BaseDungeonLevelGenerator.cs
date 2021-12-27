@@ -71,8 +71,8 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
         protected void PlaceTeleporter( AsteroidsDungeon location, Random rand, int num, bool active, int centerX, int groundY, int targetX, int targetY )
         {
             int offset = num * 27;
-            int ts = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "moon-teleporters" ) );
-            int ts2 = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "paths" ) );
+            int ts = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "z_moon-teleporters" ) );
+            int ts2 = location.Map.TileSheets.IndexOf( location.Map.GetTileSheet( "P" ) );
 
             Log.Debug( "Placing teleporter " + location.teleports.Count + " @ " + centerX + ", " + groundY + " to " + targetX + " " + targetY );
             if ( !active )

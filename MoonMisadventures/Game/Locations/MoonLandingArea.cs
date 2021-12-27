@@ -36,6 +36,8 @@ namespace MoonMisadventures.Game.Locations
             {
                 scale = 4f,
             } );
+
+            Game1.background = null;
         }
         public override bool isActionableTile( int xTile, int yTile, Farmer who )
         {

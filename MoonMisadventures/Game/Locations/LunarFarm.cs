@@ -192,6 +192,7 @@ namespace MoonMisadventures.Game.Locations
         }
         public override void updateEvenIfFarmerIsntHere( GameTime time, bool skipWasUpdatedFlush = false )
         {
+            base.updateEvenIfFarmerIsntHere( time, skipWasUpdatedFlush );
             if ( !Game1.currentLocation.Equals( this ) )
             {
                 NetDictionary<long, FarmAnimal, NetRef<FarmAnimal>, SerializableDictionary<long, FarmAnimal>, NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>>>.PairsCollection pairs = this.animals.Pairs;

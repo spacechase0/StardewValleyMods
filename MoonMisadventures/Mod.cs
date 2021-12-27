@@ -153,6 +153,7 @@ namespace MoonMisadventures
                 Game1.locations.Add( new MoonLandingArea( Helper.Content ) );
                 Game1.locations.Add( new AsteroidsEntrance( Helper.Content ) );
                 Game1.locations.Add( new LunarFarm( Helper.Content ) );
+                Game1.locations.Add( new LunarFarmCave( Helper.Content ) );
             }
         }
 

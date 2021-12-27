@@ -43,7 +43,7 @@ namespace MoonMisadventures.Game.Locations
         };
         public static List<BaseDungeonLevelGenerator> BossDungeonGenerators = new()
         {
-            new BlankDungeonLevelGenerator(),
+            new BossIslandDungeonLevelGenerator(),
         };
         internal static List<AsteroidsDungeon> activeLevels = new();
         public static AsteroidsDungeon GetLevelInstance( string locName )
@@ -233,7 +233,7 @@ namespace MoonMisadventures.Game.Locations
             }
 
             var ts = new xTile.Tiles.TileSheet( Map, Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/moon-teleporters.png" ), new Size( 9, 9 ), new Size( 16, 16 ) );
-            ts.Id = "z_" + ts.Id;
+            ts.Id = "z_moon-teleporters";
             Map.AddTileSheet( ts );
             Map.LoadTileSheets( Game1.mapDisplayDevice );
 
@@ -260,7 +260,7 @@ namespace MoonMisadventures.Game.Locations
             {
                 string prev = AsteroidsDungeon.BaseLocationName + ( level.Value - 1 );
                 if ( level.Value == 1 )
-                    prev = "Custom_MP_MoonAsteroidsEntrance";
+                    prev = "Custom_MM_MoonAsteroidsEntrance";
 
                 performTouchAction( "MagicWarp " + prev + " 0 1", Game1.player.getTileLocation() );
             }
@@ -286,7 +286,7 @@ namespace MoonMisadventures.Game.Locations
                     c = c.Select( x => x + tileBase ).ToArray();
 
                     int pathsTs = Map.TileSheets.IndexOf( Map.GetTileSheet( "paths" ) );
-                    int teleportTs = Map.TileSheets.IndexOf( Map.GetTileSheet( "moon-teleporters" ) );
+                    int teleportTs = Map.TileSheets.IndexOf( Map.GetTileSheet( "z_moon-teleporters" ) );
 
                     setMapTile( tx, ty - 2, 8, "Paths", null, pathsTs );
                     setAnimatedMapTile( tx, ty - 2, a, 300, "Front", null, teleportTs );
@@ -327,7 +327,7 @@ namespace MoonMisadventures.Game.Locations
                 string prop = doesTileHaveProperty( lockX, lockY, "Action", "Buildings" ).Replace( "LunarLock", "LunarDoor" );
                 setMapTile( lockX, lockY - 0, getTileIndexAt( lockX, lockY - 0, "Buildings" ) - 116, "Buildings", prop, map.TileSheets.IndexOf( map.GetTileSheet( getTileSheetIDAt( lockX, lockY - 0, "Buildings" ) ) ) );
 
-                playSoundAt( "switch", tileLocation );
+                //playSoundAt( "switch", tileLocation );
 
                 setMapTile( tx, ty, getTileIndexAt( tx, ty, "Back" ) + 1, "Back", null, map.TileSheets.IndexOf( map.TileSheets.First( t => t.Id == getTileSheetIDAt( tx, ty, "Back" ) ) ) );
             }

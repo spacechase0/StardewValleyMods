@@ -2,7 +2,7 @@
 <map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="50" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="4">
  <properties>
   <property name="Outdoors" value="T"/>
-  <property name="Warp" value="-1 11 Custom_MM_MoonLandingArea 34 27 -1 12 Custom_MM_MoonLandingArea 34 28"/>
+  <property name="Warp" value="-1 11 Custom_MM_MoonLandingArea 34 27 -1 12 Custom_MM_MoonLandingArea 34 28 37 33 Custom_MM_MoonFarmCave 6 10"/>
   <property name="asdf" value="asdf"/>
  </properties>
  <tileset firstgid="1" name="P" tilewidth="16" tileheight="16" tilecount="36" columns="4">

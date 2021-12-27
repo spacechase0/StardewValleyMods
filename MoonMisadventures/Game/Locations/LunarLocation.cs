@@ -28,7 +28,6 @@ namespace MoonMisadventures.Game.Locations
         :   base( content.GetActualAssetKey( "assets/maps/" + mapPath + ".tmx" ), "Custom_MM_" + mapName )
         {
             PlaceSpaceTiles();
-
         }
 
         protected override void initNetFields()
@@ -45,12 +44,18 @@ namespace MoonMisadventures.Game.Locations
 
             Game1.changeMusicTrack( "none" );
 
-            Game1.drawLighting = true;
-            int colValue = ( 14 - Game1.dayOfMonth ) * 7;
-            if ( Game1.dayOfMonth > 14 )
-                colValue = ( Game1.dayOfMonth - 14 ) * 7;
-            colValue = 175 - colValue;
-            Game1.ambientLight = Game1.outdoorLight = new Color( colValue, colValue, colValue );// new Color( 100, 120, 30 );
+            if ( IsOutdoors )
+            {
+                Game1.drawLighting = true;
+                int colValue = ( 14 - Game1.dayOfMonth ) * 7;
+                if ( Game1.dayOfMonth > 14 )
+                    colValue = ( Game1.dayOfMonth - 14 ) * 7;
+                colValue = 175 - colValue;
+                Game1.ambientLight = Game1.outdoorLight = new Color( colValue, colValue, colValue );// new Color( 100, 120, 30 );
+            }
+
+            forceLoadPathLayerLights = true;
+            loadLights();
 
             Game1.background = new SpaceBackground();
         }
@@ -124,7 +129,7 @@ namespace MoonMisadventures.Game.Locations
                     case 266: dir = new Vector2( 0, 1 ); break;
                 }
 
-                SpaceShared.Log.Debug( "meow? " + tile + " " + dir + " " + t.UpgradeLevel );
+                //SpaceShared.Log.Debug( "meow? " + tile + " " + dir + " " + t.UpgradeLevel );
 
                 if ( dir != Vector2.Zero )
                 {
@@ -199,6 +204,7 @@ namespace MoonMisadventures.Game.Locations
 
         public override void drawWater( SpriteBatch b )
         {
+            // TODO: Stencil effects?
         }
 
         public void PlaceSpaceTiles()

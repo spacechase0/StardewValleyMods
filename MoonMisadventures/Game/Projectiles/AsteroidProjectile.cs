@@ -37,8 +37,7 @@ namespace MoonMisadventures.Game.Projectiles
             position.Value = pos;
 
             isBig.Value = Game1.recentMultiplayerRandom.NextDouble() < 0.2;
-            //index.Value = Game1.recentMultiplayerRandom.Next( isBig.Value ? 9 : 15 );
-            index.Value = ( isBig.Value ? 3 : 5 ) + Game1.recentMultiplayerRandom.Next( isBig.Value ? 3 : 5 );
+            index.Value = Game1.recentMultiplayerRandom.Next( isBig.Value ? 9 : 15 );
             isMagnetic.Value = ( index / ( isBig.Value ? 3 : 5 ) ) == 1;
 
             Vector2 dir = velDir;
