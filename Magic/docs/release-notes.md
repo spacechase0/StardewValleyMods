@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed typo in event dialogue.
+
 ## 0.7.1
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
