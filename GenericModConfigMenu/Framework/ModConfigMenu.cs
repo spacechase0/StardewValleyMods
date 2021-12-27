@@ -17,9 +17,9 @@ namespace GenericModConfigMenu.Framework
         *********/
         private RootElement Ui;
         private readonly Table Table;
-        private readonly bool InGame;
         private readonly int ScrollSpeed;
         private readonly Action<IManifest> OpenModMenu;
+        private bool InGame => Context.IsWorldReady;
 
 
         /*********
@@ -31,9 +31,8 @@ namespace GenericModConfigMenu.Framework
         /*********
         ** Public methods
         *********/
-        public ModConfigMenu(bool inGame, int scrollSpeed, Action<IManifest> openModMenu, ModConfigManager configs)
+        public ModConfigMenu(int scrollSpeed, Action<IManifest> openModMenu, ModConfigManager configs)
         {
-            this.InGame = inGame;
             this.ScrollSpeed = scrollSpeed;
             this.OpenModMenu = openModMenu;
 

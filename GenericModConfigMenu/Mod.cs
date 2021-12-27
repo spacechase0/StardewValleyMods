@@ -65,9 +65,9 @@ namespace GenericModConfigMenu
         public void OpenListMenu()
         {
             if (Game1.activeClickableMenu is TitleMenu)
-                TitleMenu.subMenu = new ModConfigMenu(false, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
+                TitleMenu.subMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
             else
-                Game1.activeClickableMenu = new ModConfigMenu(true, this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
+                Game1.activeClickableMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
         }
 
         /// <summary>Open the config UI for a specific mod.</summary>
@@ -80,7 +80,6 @@ namespace GenericModConfigMenu
 
             var menu = new SpecificModConfigMenu(
                 config: config,
-                inGame: inGame,
                 scrollSpeed: this.Config.ScrollSpeed,
                 page: page,
                 openPage: newPage => this.OpenModMenu(mod, newPage),

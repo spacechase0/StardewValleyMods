@@ -24,7 +24,6 @@ namespace GenericModConfigMenu.Framework
         /// <summary>The minimum number of pixels between each main button.</summary>
         private const int MinimumButtonGap = 32;
 
-        private readonly bool InGame;
         private readonly Action<string> OpenPage;
         private readonly Action ReturnToList;
 
@@ -43,6 +42,8 @@ namespace GenericModConfigMenu.Framework
         private SimpleModOption<KeybindList> Keybinding2Opt;
         private Label KeybindingLabel;
 
+        private bool InGame => Context.IsWorldReady;
+
         /// <summary>Whether a keybinding UI is open.</summary>
         private bool IsBindingKey => this.KeybindingOpt != null || this.Keybinding2Opt != null;
 
@@ -58,10 +59,9 @@ namespace GenericModConfigMenu.Framework
         /*********
         ** Public methods
         *********/
-        public SpecificModConfigMenu(ModConfig config, bool inGame, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
+        public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
         {
             this.ModConfig = config;
-            this.InGame = inGame;
             this.ScrollSpeed = scrollSpeed;
             this.OpenPage = openPage;
             this.ReturnToList = returnToList;
