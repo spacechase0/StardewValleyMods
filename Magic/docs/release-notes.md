@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* The _Till_ spell no longer removes placed objects.
 * Fixed typo in event dialogue.
 
 ## 0.7.1
