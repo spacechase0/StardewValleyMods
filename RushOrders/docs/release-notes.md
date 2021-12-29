@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed field mapping in config UI.
+
 ## 1.2.2
 Released 23 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
