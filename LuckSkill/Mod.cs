@@ -354,24 +354,20 @@ namespace LuckSkill
         /// <param name="e">The event arguments.</param>
         private void OnRenderedActiveMenu(object sender, RenderedActiveMenuEventArgs e)
         {
-            if (Game1.activeClickableMenu is GameMenu)
+            if (Game1.activeClickableMenu is GameMenu menu)
             {
-                GameMenu menu = Game1.activeClickableMenu as GameMenu;
                 if (menu.currentTab == GameMenu.skillsTab)
                 {
-                    var tabs = menu.pages;
-                    var skills = tabs[GameMenu.skillsTab] as SkillsPage;
-
-                    if (skills == null)
+                    if (menu.pages[GameMenu.skillsTab] is not SkillsPage page)
                         return;
 
                     if (!this.DidInitSkills)
                     {
-                        this.InitLuckSkill(skills);
+                        this.InitLuckSkill(page);
                         this.DidInitSkills = true;
                     }
 
-                    this.DrawLuckSkill(skills);
+                    this.DrawLuckSkill(page);
                 }
             }
             else
@@ -427,51 +423,60 @@ namespace LuckSkill
         private void DrawLuckSkill(SkillsPage skills)
         {
             SpriteBatch b = Game1.spriteBatch;
-            int j = 5;
+            string hoverText = this.Helper.Reflection.GetField<string>(skills, "hoverText").GetValue();
+            string hoverTitle = this.Helper.Reflection.GetField<string>(skills, "hoverTitle").GetValue();
 
-            int num = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - 8;
-            int num2 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 2;
-
-            int num3 = 0;
-            for (int i = 0; i < 10; i++)
+            // draw skills bar
             {
-                string text = "";
+                int j = 5;
 
-                bool flag = (Game1.player.LuckLevel > i);
-                if (i == 0)
-                    text = I18n.Skill_Name();
-                int num4 = Game1.player.LuckLevel;
-                bool flag2 = (Game1.player.addedLuckLevel.Value > 0);
-                Rectangle empty = new Rectangle(50, 428, 10, 10);
+                int num = skills.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 * Game1.tileSize - 8;
+                int num2 = skills.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.pixelZoom * 2;
 
-                if (!text.Equals(""))
+                int num3 = 0;
+                for (int i = 0; i < 10; i++)
                 {
-                    b.DrawString(Game1.smallFont, text, new Vector2(num - Game1.smallFont.MeasureString(text).X - Game1.pixelZoom * 4 - Game1.tileSize, num2 + Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), Game1.textColor);
-                    b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 16, num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), empty, Color.Black * 0.3f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
-                    b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 15, num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), empty, Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                }
-                if (!flag && (i + 1) % 5 == 0)
-                {
-                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(145, 338, 14, 9), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(145 + (flag ? 14 : 0), 338, 14, 9), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                }
-                else if ((i + 1) % 5 != 0)
-                {
-                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(129, 338, 8, 9), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
-                    b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(129 + (flag ? 8 : 0), 338, 8, 9), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
-                }
-                if (i == 9)
-                {
-                    NumberSprite.draw(num4, b, new Vector2(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 3 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0), num2 + Game1.pixelZoom * 4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), Color.Black * 0.35f, 1f, 0.85f, 1f, 0);
-                    NumberSprite.draw(num4, b, new Vector2(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 4 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0), num2 + Game1.pixelZoom * 3 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), (flag2 ? Color.LightGreen : Color.SandyBrown) * ((num4 == 0) ? 0.75f : 1f), 1f, 0.87f, 1f, 0);
-                }
-                if ((i + 1) % 5 == 0)
-                {
-                    num3 += Game1.pixelZoom * 6;
+                    string text = "";
+
+                    bool flag = (Game1.player.LuckLevel > i);
+                    if (i == 0)
+                        text = I18n.Skill_Name();
+                    int num4 = Game1.player.LuckLevel;
+                    bool flag2 = (Game1.player.addedLuckLevel.Value > 0);
+                    Rectangle empty = new Rectangle(50, 428, 10, 10);
+
+                    if (!text.Equals(""))
+                    {
+                        b.DrawString(Game1.smallFont, text, new Vector2(num - Game1.smallFont.MeasureString(text).X - Game1.pixelZoom * 4 - Game1.tileSize, num2 + Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), Game1.textColor);
+                        b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 16, num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), empty, Color.Black * 0.3f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
+                        b.Draw(Game1.mouseCursors, new Vector2(num - Game1.pixelZoom * 15, num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), empty, Color.White, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    }
+                    if (!flag && (i + 1) % 5 == 0)
+                    {
+                        b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(145, 338, 14, 9), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                        b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(145 + (flag ? 14 : 0), 338, 14, 9), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    }
+                    else if ((i + 1) % 5 != 0)
+                    {
+                        b.Draw(Game1.mouseCursors, new Vector2(num3 + num - Game1.pixelZoom + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(129, 338, 8, 9), Color.Black * 0.35f, 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.85f);
+                        b.Draw(Game1.mouseCursors, new Vector2(num3 + num + i * (Game1.tileSize / 2 + Game1.pixelZoom), num2 - Game1.pixelZoom + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), new Rectangle(129 + (flag ? 8 : 0), 338, 8, 9), Color.White * (flag ? 1f : 0.65f), 0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.87f);
+                    }
+                    if (i == 9)
+                    {
+                        NumberSprite.draw(num4, b, new Vector2(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 3 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0), num2 + Game1.pixelZoom * 4 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), Color.Black * 0.35f, 1f, 0.85f, 1f, 0);
+                        NumberSprite.draw(num4, b, new Vector2(num3 + num + (i + 2) * (Game1.tileSize / 2 + Game1.pixelZoom) + Game1.pixelZoom * 4 + ((num4 >= 10) ? (Game1.pixelZoom * 3) : 0), num2 + Game1.pixelZoom * 3 + j * (Game1.tileSize / 2 + Game1.pixelZoom * 6)), (flag2 ? Color.LightGreen : Color.SandyBrown) * ((num4 == 0) ? 0.75f : 1f), 1f, 0.87f, 1f, 0);
+                    }
+                    if ((i + 1) % 5 == 0)
+                    {
+                        num3 += Game1.pixelZoom * 6;
+                    }
                 }
             }
 
-            skills.drawMouse(b);
+            // redraw cursor + tooltip over new UI
+            skills.drawMouse(Game1.spriteBatch);
+            if (hoverText?.Length > 0)
+                IClickableMenu.drawHoverText(Game1.spriteBatch, hoverText, Game1.smallFont, boldTitleText: hoverTitle);
         }
 
         private void ChangeFarmEvent(object sender, EventArgsChooseNightlyFarmEvent args)
