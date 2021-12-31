@@ -73,6 +73,21 @@ namespace MoonMisadventures.Game.Items
             return ret;
         }
 
+        public override bool canBeTrashed()
+        {
+            return false;
+        }
+
+        public override bool canBeGivenAsGift()
+        {
+            return false;
+        }
+
+        public override bool canBeDropped()
+        {
+            return false;
+        }
+
         public virtual void OnEquip( Farmer player )
         {
             if ( necklaceType.Value == Type.Health )

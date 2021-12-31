@@ -49,7 +49,7 @@ namespace MoonMisadventures.Patches
                     ate = new AlphaTestEffect( Game1.graphics.GraphicsDevice )
                     {
                         Projection = Matrix.CreateOrthographicOffCenter( 0, Game1.viewport.Width, Game1.viewport.Height, 0, 0, 1 ),
-                        VertexColorEnabled = true,
+                        VertexColorEnabled = true
                     };
                 }
                 if ( effect == null )
@@ -61,18 +61,19 @@ namespace MoonMisadventures.Patches
 
             if ( Game1CatchLightingRenderPatch.IsDoingLighting )
             {
+
                 /*
                 var x = new DepthStencilState()
                 {
                     StencilEnable = true,
-                    StencilFunction = CompareFunction.Always,
+                    StencilFunction = CompareFunction.NotEqual,
                     StencilPass = StencilOperation.Replace,
                     ReferenceStencil = 0,
                     DepthBufferEnable = false,
                 };
                 Game1CatchLightingRenderPatch.IsDoingLighting = false;
                 Game1.spriteBatch.Begin( depthStencilState: x );
-                Game1.spriteBatch.Draw( Game1.staminaRect, new Rectangle( 0, 0, 1000, 340 ), Color.Red );
+                Game1.spriteBatch.Draw( Game1.staminaRect, new Rectangle( 0, 0, Game1.viewport.Width, Game1.viewport.Height ), Color.Red );
                 Game1.spriteBatch.End();
                 x.Dispose();
                 Game1CatchLightingRenderPatch.IsDoingLighting = true;*/
@@ -84,6 +85,7 @@ namespace MoonMisadventures.Patches
                 };
                 */
                 effect = null;
+
                 //blendState = BlendState.NonPremultiplied;
                 depthStencilState = new DepthStencilState()
                 {
@@ -142,6 +144,27 @@ namespace MoonMisadventures.Patches
             }
 
             return ret;
+        }
+
+        [HarmonyPatch( typeof( Game1 ), nameof( Game1.SetWindowSize ) )]
+        public static class Game1AddStencilToScreenPatch
+        {
+            public static IEnumerable<CodeInstruction> Transpiler( IEnumerable<CodeInstruction> insns, ILGenerator ilgen )
+            {
+                List< CodeInstruction > ret = new();
+
+                foreach ( var insn in insns )
+                {
+                    if ( insn.opcode == OpCodes.Ldstr && insn.operand is string str && str == "Screen" )
+                    {
+                        ret[ ret.Count - 7 ].opcode = OpCodes.Ldc_I4_3;
+                    }
+
+                    ret.Add( insn );
+                }
+
+                return ret;
+            }
         }
     }
 }

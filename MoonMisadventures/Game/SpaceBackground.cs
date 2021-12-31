@@ -13,15 +13,27 @@ namespace MoonMisadventures.Game
     {
         private Vector2 offset = Vector2.Zero;
         private Rectangle starTexRect = new Rectangle(0, 1453, 639, 195);
+        private TemporaryAnimatedSprite planet;
 
-        public SpaceBackground()
+        public SpaceBackground( bool planet )
         :   base(new Color( 0, 0, 12 ), false)
         {
+            if ( planet )
+            {
+                this.planet = new TemporaryAnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/planet.png" ), new Rectangle( 0, 0, 128, 128 ), new Vector2( 20.5f, 8.5f ) * Game1.tileSize, false, 0, Color.White )
+                {
+                    scale = Game1.pixelZoom,
+                    animationLength = 16 * 16,
+                    interval = 250,
+                    totalNumberOfLoops = 99999,
+                };
+            }
         }
 
         public void Update( xTile.Dimensions.Rectangle viewport )
         {
             //offset += new Vector2( 25, 0 );
+            planet?.update( Game1.currentGameTime );
         }
 
         public void Draw( SpriteBatch b )
@@ -66,6 +78,13 @@ namespace MoonMisadventures.Game
                             b.Draw( Game1.mouseCursors, new Vector2( rx, ry ), starTexRect, tints[ i ], 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.001f * i );
                         }
                     }
+                }
+
+                if ( planet != null )
+                {
+                    planet.Position = new Vector2( Game1.viewport.Width / 2 - planet.Texture.Width / 16 /* * 2 */, 100 );
+                    planet.interval = 200;
+                    planet.draw( b, localPosition: true );
                 }
 
                 Game1.spriteBatch.End();

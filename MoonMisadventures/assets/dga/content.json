@@ -49,6 +49,26 @@
         "SellPrice": 2500
     },
 
+    // Galaxy Egg
+    {
+        "$ItemType": "Object",
+        "ID": "Galaxy Egg",
+        "Category": "Egg",
+        "Texture": "objects.png:6",
+        "SellPrice": 200,
+        "Edibility": 30,
+    },
+
+    // Galaxy Milk
+    {
+        "$ItemType": "Object",
+        "ID": "Galaxy Milk",
+        "Category": "Milk",
+        "Texture": "objects.png:7",
+        "SellPrice": 250,
+        "Edibility": 35
+    },
+
     // Boots of the Cosmos
     {
         "$ItemType": "Boots",

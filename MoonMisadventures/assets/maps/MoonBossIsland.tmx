@@ -5,6 +5,7 @@
   <property name="Outdoors" value="T"/>
   <property name="Warp" value="25 50 Custom_MM_MoonLandingArea 4 10 26 50 Custom_MM_MoonLandingArea 4 10"/>
   <property name="asdf" value="asdf"/>
+  <property name="forceLoadPathLayerLights" value=""/>
  </properties>
  <tileset firstgid="1" name="P" tilewidth="16" tileheight="16" tilecount="36" columns="4">
   <image source="paths" width="64" height="144"/>

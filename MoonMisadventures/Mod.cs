@@ -62,7 +62,7 @@ namespace MoonMisadventures
         internal static DepthStencilState StencilRenderOnDark = new()
         {
             StencilEnable = true,
-            StencilFunction = CompareFunction.Equal,
+            StencilFunction = CompareFunction.NotEqual,
             StencilPass = StencilOperation.Keep,
             ReferenceStencil = 1,
             DepthBufferEnable = false,
@@ -142,6 +142,7 @@ namespace MoonMisadventures
             sc.RegisterSerializerType( typeof( LunarFarmCave ) );
             sc.RegisterSerializerType( typeof( AnimalGauntlets ) );
             sc.RegisterSerializerType( typeof( Necklace ) );
+            sc.RegisterSerializerType( typeof( MoonPlanetOverlook ) );
             sc.RegisterCustomLocationContext( "Moon",
                 getLocationWeatherForTomorrowFunc: ( r ) =>
                 {
@@ -234,6 +235,7 @@ namespace MoonMisadventures
                 Game1.locations.Add( new AsteroidsEntrance( Helper.Content ) );
                 Game1.locations.Add( new LunarFarm( Helper.Content ) );
                 Game1.locations.Add( new LunarFarmCave( Helper.Content ) );
+                Game1.locations.Add( new MoonPlanetOverlook( Helper.Content ) );
             }
         }
 
@@ -281,12 +283,15 @@ namespace MoonMisadventures
         private void OnRenderingWorld( object sender, RenderingWorldEventArgs e )
         {
             if ( Game1.background is SpaceBackground )
-            {/*
+            {
+                // This part doesn't do anything normally (https://github.com/MonoGame/MonoGame/issues/5441),
+                // but SpriteMaster makes it work. So need this for compatibility.
                 if ( Game1.graphics.PreferredDepthStencilFormat != DepthFormat.Depth24Stencil8 )
                 {
                     Game1.graphics.PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8;
                     Game1.graphics.ApplyChanges();
-                }*/
+                }
+
                 DefaultStencilOverride = StencilDarken;
                 Game1.graphics.GraphicsDevice.Clear( ClearOptions.Stencil, Color.Transparent, 0, 0 );
             }

@@ -37,6 +37,9 @@
     "message.dirt-tutorial": "If only you had a tool to break the end off to continue forward...",
     "message.lunar-teleporter-offline": "It looks offline. Perhaps it needs mythicite ore.",
     "message.lunar-temple.locked": "It's locked.",
+    "message.necklace-exchange": "Exchange 1 Lunar Necklace and 1 Soul Sapphire for a random combat necklace?",
+    "message.necklace-exchange.lacking": "You don't have the materials.",
+    "message.planet.jump": "Jump?",
 
     "monster.boom-eye.name": "Boom Eye"
 }

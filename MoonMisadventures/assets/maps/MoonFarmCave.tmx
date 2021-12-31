@@ -4,6 +4,7 @@
   <property name="LocationContext" value="Moon"/>
   <property name="Warp" value="6 11 Custom_MM_MoonFarm 37 34"/>
   <property name="asdf" value="asdf"/>
+  <property name="forceLoadPathLayerLights" value="T"/>
  </properties>
  <tileset firstgid="1" name="P" tilewidth="16" tileheight="16" tilecount="36" columns="4">
   <image source="paths" width="64" height="144"/>

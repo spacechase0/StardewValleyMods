@@ -54,14 +54,12 @@ namespace MoonMisadventures.Game.Locations
                 Game1.ambientLight = Game1.outdoorLight = new Color( colValue, colValue, colValue );// new Color( 100, 120, 30 );
             }
 
-            forceLoadPathLayerLights = true;
-            loadLights();
-
-            Game1.background = new SpaceBackground();
+            Game1.background = new SpaceBackground( this.NameOrUniqueName == "Custom_MM_MoonPlanetOverlook" );
         }
         public override void cleanupBeforePlayerExit()
         {
             base.cleanupBeforePlayerExit();
+            Game1.ambientLight = Game1.outdoorLight = Color.Black;
             Game1.background = null;
         }
 
