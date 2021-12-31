@@ -42,12 +42,13 @@ namespace MoonMisadventures.Game
             switch ( type )
             {
                 case LunarAnimalType.Cow:
-                    displayName = "Lunar Cow";
+                    displayType = "Lunar Cow";
                     break;
                 case LunarAnimalType.Chicken:
-                    displayName = "Lunar Chicken";
+                    displayType = "Lunar Chicken";
                     break;
             }
+            reloadData();
         }
 
         protected override void initNetFields()
@@ -59,8 +60,15 @@ namespace MoonMisadventures.Game
         public override void reloadData()
         {
             base.reloadData();
-            Sprite = new AnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/cow.png" ), 0, 32, 32 );
-            Sprite.Texture.Name = "SC0_MM/Cow";
+            switch ( lunarType.Value )
+            {
+                case LunarAnimalType.Cow:
+                    Sprite = new AnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/cow.png" ), 0, 32, 32 );
+                    break;
+                case LunarAnimalType.Chicken:
+                    Sprite = new AnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/chicken.png" ), 0, 16, 16 );
+                    break;
+            }
             fullnessDrain.Value *= 2;
             happinessDrain.Value *= 2;
         }

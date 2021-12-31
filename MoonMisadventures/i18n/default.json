@@ -9,6 +9,26 @@
     "tool.hoe.mythicite": "Mythicite Hoe",
     "tool.animal-gauntlets.name": "Anti-Gravity Gauntlets",
     "tool.animal-gauntlets.description": "Can pick up animals and move them... if on the moon.",
+    "tool.animal-gauntlets.holding": "Currently holding:",
+    "tool.animal-gauntlets.moon-requirement": "Must be on the moon.",
+
+    "item.lunar-key.name": "Lunar Key",
+    "item.necklace.Looting.name": "Necklace of Looting",
+    "item.necklace.Looting.description": "Gain gold based on the maximum health of mobs you kill.",
+    "item.necklace.Shocking.name": "Necklace of Shocking",
+    "item.necklace.Shocking.description": "After attacking, deal a short damage over time effect.",
+    "item.necklace.Speed.name": "Necklace of Speed",
+    "item.necklace.Speed.description": "Increases your speed.",
+    "item.necklace.Health.name": "Necklace of Health",
+    "item.necklace.Health.description": "Increases your max health by 50%.",
+    "item.necklace.Cooling.name": "Necklace of Cooling",
+    "item.necklace.Cooling.description": "Cools lava tiles around you in the volcano.",
+    "item.necklace.Lunar.name": "Lunar Necklace",
+    "item.necklace.Lunar.description": "Nullifies magnet effects attracting grey asteroids.",
+    "item.necklace.Water.name": "Necklace of Water",
+    "item.necklace.Water.description": "Waters soil as you till it.",
+    "item.necklace.Sea.name": "Necklace of the Sea",
+    "item.necklace.Sea.description": "Greatly increases fishing efficiency.",
 
     "message.ufo.repair": "Repair the UFO for 10 Radioactive Bars and 1 Galaxy Soul?",
     "message.ufo.repair.lacking": "You don't have enough materials.",
@@ -16,6 +36,7 @@
     "message.gargoyle": "Pet the... gargoyle? Who knows what will happen?",
     "message.dirt-tutorial": "If only you had a tool to break the end off to continue forward...",
     "message.lunar-teleporter-offline": "It looks offline. Perhaps it needs mythicite ore.",
+    "message.lunar-temple.locked": "It's locked.",
 
-    "monster.boom-eye.name": "Boom Eye",
+    "monster.boom-eye.name": "Boom Eye"
 }

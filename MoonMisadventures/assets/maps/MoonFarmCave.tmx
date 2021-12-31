@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="4">
  <properties>
+  <property name="LocationContext" value="Moon"/>
   <property name="Warp" value="6 11 Custom_MM_MoonFarm 37 34"/>
   <property name="asdf" value="asdf"/>
  </properties>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="150" height="150" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="7">
  <properties>
+  <property name="LocationContext" value="Moon"/>
   <property name="Outdoors" value="T"/>
   <property name="asdf" value="asdf"/>
  </properties>

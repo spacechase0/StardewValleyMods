@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
+using MoonMisadventures.VirtualProperties;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -56,6 +57,22 @@ namespace MoonMisadventures.Game.Locations
             }
 
             return base.checkAction( tileLocation, viewport, who );
+        }
+
+        public override bool performAction( string action, Farmer who, xTile.Dimensions.Location tileLocation )
+        {
+            if ( action == "LunarTempleDoor" )
+            {
+                if ( Game1.player.team.get_hasLunarKey() )
+                {
+                    // tODO
+                }
+                else
+                {
+                    Game1.drawObjectDialogue( Mod.instance.Helper.Translation.Get( "message.lunar-temple.locked" ) );
+                }
+            }
+            return base.performAction( action, who, tileLocation );
         }
         public override bool answerDialogue( Response answer )
         {

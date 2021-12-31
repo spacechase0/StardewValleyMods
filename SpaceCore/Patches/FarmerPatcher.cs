@@ -8,6 +8,7 @@ using StardewValley;
 
 namespace SpaceCore.Patches
 {
+
     /// <summary>Applies Harmony patches to <see cref="Farmer"/>.</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class FarmerPatcher : BasePatcher

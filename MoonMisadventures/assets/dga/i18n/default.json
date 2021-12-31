@@ -11,5 +11,13 @@
     "object.Persistium Dust.description": "An esoteric pile of dust.",
     "object.Persistium Dust.category": "Dust",
     "object.Stellar Essence.name": "Stellar Essence",
-    "object.Stellar Essence.description": "Comes from deep within a star. What's it doing here?'",
+    "object.Stellar Essence.description": "Comes from deep within a star. What's it doing here?",
+    "boots.Boots of the Cosmos.name": "Boots of the Cosmos",
+    "boots.Boots of the Cosmos.description": "A pair of boots forged from the depths of outer space.",
+    "melee-weapon.Blade of the Cosmos.name": "Blade of the Cosmos",
+    "melee-weapon.Blade of the Cosmos.description": "A blade forged from the depths of outer space.",
+    "melee-weapon.Knife of the Cosmos.name": "Knife of the Cosmos",
+    "melee-weapon.Knife of the Cosmos.description": "A knife forged from the depths of outer space.",
+    "melee-weapon.Hammer of the Cosmos.name": "Hammer of the Cosmos",
+    "melee-weapon.Hammer of the Cosmos.description": "A hammer forged from the depths of outer space."
 }

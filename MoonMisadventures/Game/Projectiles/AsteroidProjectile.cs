@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MoonMisadventures.Game.Items;
+using MoonMisadventures.VirtualProperties;
 using Netcode;
 using StardewValley;
 using StardewValley.Projectiles;
@@ -100,7 +102,7 @@ namespace MoonMisadventures.Game.Projectiles
                 foreach ( var player in location.farmers )
                 {
                     // TODO: Check if they have the amulet that nullifies this
-                    if ( player.GetAppliedMagneticRadius() > 128 ) // 128 is default
+                    if ( player.GetAppliedMagneticRadius() > 128 && !player.HasNecklace( Necklace.Type.Lunar ) ) // 128 is default
                     {
                         float dist = Vector2.Distance( position.Value, player.getStandingPosition() );
                         if ( dist >= player.GetAppliedMagneticRadius() )
