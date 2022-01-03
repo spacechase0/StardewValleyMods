@@ -90,10 +90,12 @@ namespace SpaceShared.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.TopRow * this.RowHeight);
-                    if (element is not Label && // Labels must update anyway to get rid of hovertext on scrollwheel
-                            (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y))
-                        continue;
-                    element.Update();
+                    bool isChildOffScreen =
+                        element.Position.Y < this.Position.Y
+                        || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y;
+
+                    if (!isChildOffScreen || element is Label) // Labels must update anyway to get rid of hovertext on scrollwheel
+                        element.Update(isOffScreen: isChildOffScreen);
                 }
                 ++ir;
             }
