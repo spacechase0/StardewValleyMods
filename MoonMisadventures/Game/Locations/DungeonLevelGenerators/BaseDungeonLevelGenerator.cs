@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
+using MoonMisadventures.Game.Items;
 using MoonMisadventures.Game.Monsters;
 using SpaceShared;
 using StardewValley;
+using StardewValley.Objects;
 
 namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
 {
@@ -159,7 +162,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 int ore = ores[ ore_ ];
                 if ( ore == int.MaxValue )
                 {
-                    var obj = new DynamicGameAssets.Game.CustomObject( ( DynamicGameAssets.PackData.ObjectPackData ) DynamicGameAssets.Mod.Find( ItemIds.MythiciteOreMinableId ) );
+                    var obj = new DynamicGameAssets.Game.CustomObject( ( DynamicGameAssets.PackData.ObjectPackData ) DynamicGameAssets.Mod.Find( ItemIds.MythiciteOreMinable ) );
                     obj.Name = "Stone";
                     obj.MinutesUntilReady = 24;
                     location.netObjects.Add( new Vector2( sx, sy ), obj );
@@ -198,6 +201,89 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
         {
             location.characters.Add( new BoomEye( new Vector2( tx * Game1.tileSize, ty * Game1.tileSize ) ) );
             // TODO: Place random assortment
+        }
+
+        protected void PlaceBreakableAt( AsteroidsDungeon location, Random rand, int tx, int ty )
+        {
+            Vector2 position = new Vector2( tx, ty );
+            if ( location.netObjects.ContainsKey( position ) )
+                return;
+
+            BreakableContainer bcontainer = new BreakableContainer( position, true );
+            bcontainer.setHealth( 6 );
+
+            location.netObjects.Add( position, bcontainer );
+        }
+
+        protected void PlaceChestAt( AsteroidsDungeon location, Random rand, int tx, int ty, bool rare )
+        {
+            Vector2 position = new Vector2( tx, ty);
+            Chest chest = new Chest(playerChest: false, position);
+            chest.dropContents.Value = true;
+            chest.synchronized.Value = true;
+            chest.type.Value = "interactive";
+            if ( rare )
+            {
+                chest.SetBigCraftableSpriteIndex( 227 );
+                switch ( rand.Next( 7 ) )
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                        chest.addItem( new Necklace( Necklace.Type.Lunar ) );
+                        break;
+                    case 3:
+                    case 4:
+                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.SoulSapphire ) as ObjectPackData ) );
+                        break;
+                    case 5:
+                        chest.addItem( new DynamicGameAssets.Game.CustomBoots( DynamicGameAssets.Mod.Find( ItemIds.CosmosBoots ) as BootsPackData ) );
+                        break;
+                    case 6:
+                        var item = new AnimalGauntlets();
+                        var mp = Mod.instance.Helper.Reflection.GetField< Multiplayer >( typeof( Game1 ), "multiplayer" ).GetValue();
+                        switch ( rand.Next( 5 ) )
+                        {
+                            case 0:
+                            case 1:
+                            case 2:
+                                break;
+                            case 3:
+                                item.holding.Value = new LunarAnimal( LunarAnimalType.Cow, Vector2.Zero, mp.getNewID() );
+                                break;
+                            case 4:
+                                item.holding.Value = new LunarAnimal( LunarAnimalType.Chicken, Vector2.Zero, mp.getNewID() );
+                                break;
+                        }
+                        chest.addItem( item );
+                        break;
+                }
+            }
+            else
+            {
+                chest.SetBigCraftableSpriteIndex( 223 );
+                switch ( rand.Next( 6 ) )
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.MythiciteOre ) as ObjectPackData ) { Stack = 3 + rand.Next( 12 ) } );
+                        break;
+                    case 3:
+                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.MythiciteBar ) as ObjectPackData ) { Stack = 1 + rand.Next( 7 ) } );
+                        break;
+                    case 4:
+                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.StellarEssence ) as ObjectPackData ) { Stack = 4 + rand.Next( 9 ) } );
+                        break;
+                    case 5:
+                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.PersistiumDust ) as ObjectPackData ) { Stack = 2 + rand.Next( 6 ) } );
+                        break;
+
+                }
+            }
+            if ( location.netObjects.ContainsKey( position ) )
+                location.netObjects.Remove( position );
+            location.netObjects.Add( position, chest );
         }
     }
 }

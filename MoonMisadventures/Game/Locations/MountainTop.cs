@@ -72,6 +72,7 @@ namespace MoonMisadventures.Game.Locations
             {
                 if ( ufoRepaired.Value )
                 {
+                    //Game1.warpFarmer( "Custom_MM_UfoInterior", 12, 16, Game1.up );
                     createQuestionDialogue( Mod.instance.Helper.Translation.Get( "message.ufo.travel" ), createYesNoResponses(), "TravelUfo" );
                 }
                 else

@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using MoonMisadventures.Game;
 using MoonMisadventures.Game.Items;
@@ -32,11 +34,13 @@ using StardewValley.Tools;
  *  paradigmnomad (most art)
  *  finalbossblues https://finalbossblues.itch.io/dark-dimension-tileset (recolored by paradigmnomad)
  *  ... more ...
+ * Music:
+ *  https://lowenergygirl.itch.io/space-journey (Into the Spaceship)
  */
 
 namespace MoonMisadventures
 {
-    public class Mod : StardewModdingAPI.Mod
+    public class Mod : StardewModdingAPI.Mod, IAssetLoader
     {
         public static Mod instance;
         internal static IDynamicGameAssetsApi dga;
@@ -74,6 +78,8 @@ namespace MoonMisadventures
             instance = this;
 
             Assets.Load( helper.Content );
+            SoundEffect mainMusic = SoundEffect.FromFile( Path.Combine( Helper.DirectoryPath, "assets", "into-the-spaceship.wav" ) );
+            Game1.soundBank.AddCue( new CueDefinition( "into-the-spaceship", mainMusic, 2, loop: true ) );
 
             Helper.ConsoleCommands.Add( "mm_items", "View all items added by this mod.", OnItemsCommand );
             Helper.ConsoleCommands.Add( "mm_key", "Gives you the lunar key.", OnKeyCommand );
@@ -85,13 +91,34 @@ namespace MoonMisadventures
             Helper.Events.Display.MenuChanged += OnMenuChanged;
             Helper.Events.Display.RenderingWorld += OnRenderingWorld;
             Helper.Events.Display.RenderedWorld += OnRenderedWorld;
-            helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+            Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+            Helper.Events.Player.Warped += OnWarped;
 
             SpaceEvents.AddWalletItems += AddWalletItems;
+            SpaceEvents.AfterGiftGiven += AfterGiftGiven;
 
             var harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
             harmony.Patch( AccessTools.Method( "StardewModdingAPI.Framework.SGame:DrawImpl" ), transpiler: new HarmonyMethod( typeof( Patches.Game1CatchLightingRenderPatch ).GetMethod( "Transpiler" ) ) );
+        }
+
+        public bool CanLoad<T>( IAssetInfo asset )
+        {
+            if ( Game1.currentLocation is LunarLocation )
+            {
+                return asset.AssetNameEquals( "TerrainFeatures/hoeDirt" );
+            }
+            return false;
+        }
+
+        public T Load<T>( IAssetInfo asset )
+        {
+            if ( Game1.currentLocation is LunarLocation )
+            {
+                if ( asset.AssetNameEquals( "TerrainFeatures/hoeDirt" ) )
+                    return ( T ) ( object ) Assets.HoeDirt;
+            }
+            return default( T );
         }
 
         private void OnItemsCommand( string cmd, string[] args )
@@ -116,6 +143,8 @@ namespace MoonMisadventures
                 foreach ( var data in dgaPack.GetItems() )
                 {
                     var item = data.ToItem();
+                    if ( item == null )
+                        continue;
                     stock.Add( item, new int[] { 0, int.MaxValue } );
                 }
             }
@@ -140,9 +169,12 @@ namespace MoonMisadventures
             sc.RegisterSerializerType( typeof( AsteroidProjectile ) );
             sc.RegisterSerializerType( typeof( LunarFarm ) );
             sc.RegisterSerializerType( typeof( LunarFarmCave ) );
+            sc.RegisterSerializerType( typeof( LunarAnimal ) );
             sc.RegisterSerializerType( typeof( AnimalGauntlets ) );
             sc.RegisterSerializerType( typeof( Necklace ) );
             sc.RegisterSerializerType( typeof( MoonPlanetOverlook ) );
+            sc.RegisterSerializerType( typeof( UfoInterior ) );
+            sc.RegisterSerializerType( typeof( LunarFarmHouse ) );
             sc.RegisterCustomLocationContext( "Moon",
                 getLocationWeatherForTomorrowFunc: ( r ) =>
                 {
@@ -150,9 +182,10 @@ namespace MoonMisadventures
                     lw.weatherForTomorrow.Value = 0;
                     lw.isRaining.Value = false;
                     return lw;
-                },
+                }/*,
                 passoutWakeupLocationFunc: ( who ) => "Custom_MM_MoonLandingArea",
                 passoutWakeupPointFunc: ( who ) => new Point( 9, 30 ) // TODO: Inside farm house if unlocked
+                */
             );
             sc.RegisterCustomProperty( typeof( FarmerTeam ), "hasLunarKey", typeof( NetBool ), AccessTools.Method( typeof( FarmerTeam_LunarKey ), nameof( FarmerTeam_LunarKey.get_hasLunarKey ) ), AccessTools.Method( typeof( FarmerTeam_LunarKey ), nameof( FarmerTeam_LunarKey.set_hasLunarKey ) ) );
             sc.RegisterCustomProperty( typeof( Farmer ), "necklaceItem", typeof( NetRef< Item > ), AccessTools.Method( typeof( Farmer_Necklace ), nameof( Farmer_Necklace.get_necklaceItem ) ), AccessTools.Method( typeof( Farmer_Necklace ), nameof( Farmer_Necklace.set_necklaceItem ) ) );
@@ -181,7 +214,7 @@ namespace MoonMisadventures
                             var buff = Game1.buffsDisplay.otherBuffs.FirstOrDefault( b => b.source == "necklace" );
                             if ( buff == null )
                             {
-                                buff = new Buff( 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 00, 0, 10, "necklace", "necklace" );
+                                buff = new Buff( 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 00, 0, 10, "necklace", "necklace" );
                                 Game1.buffsDisplay.addOtherBuff( buff );
                             }
                             buff.millisecondsDuration = 1000;
@@ -236,6 +269,8 @@ namespace MoonMisadventures
                 Game1.locations.Add( new LunarFarm( Helper.Content ) );
                 Game1.locations.Add( new LunarFarmCave( Helper.Content ) );
                 Game1.locations.Add( new MoonPlanetOverlook( Helper.Content ) );
+                Game1.locations.Add( new UfoInterior( Helper.Content ) );
+                Game1.locations.Add( new LunarFarmHouse( Helper.Content ) );
             }
         }
 
@@ -278,6 +313,14 @@ namespace MoonMisadventures
                     shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
                 }
             }
+            else if ( e.NewMenu is AnimalQueryMenu aquery )
+            {
+                // We don't want the move animal button at all.
+                // Hide it off screen, make it unreachable with controllers
+                aquery.moveHomeButton.bounds = new Rectangle( 99999, 99999, 1, 1 ); 
+                aquery.textBoxCC.downNeighborID = aquery.sellButton.myID;
+                aquery.sellButton.upNeighborID = aquery.textBoxCC.myID;
+            }
         }
 
         private void OnRenderingWorld( object sender, RenderingWorldEventArgs e )
@@ -307,6 +350,12 @@ namespace MoonMisadventures
             AsteroidsDungeon.ClearAllLevels();
         }
 
+        private void OnWarped( object sender, WarpedEventArgs e )
+        {
+            if ( e.OldLocation is LunarLocation ^ e.NewLocation is LunarLocation )
+                Helper.Content.InvalidateCache( "TerrainFeatures/hoeDirt" );
+        }
+
         private void AddWalletItems( object sender, EventArgs e )
         {
             var page = sender as NewSkillsPage;
@@ -315,6 +364,24 @@ namespace MoonMisadventures
                     name: "", bounds: new Rectangle( -1, -1, 16 * Game1.pixelZoom, 16 * Game1.pixelZoom ),
                     label: null, hoverText: Helper.Translation.Get( "item.lunar-key.name" ),
                     texture: Assets.LunarKey, sourceRect: new Rectangle( 0, 0, 16, 16 ), scale: 4f, drawShadow: true ) );
+        }
+
+        private void AfterGiftGiven( object sender, EventArgsGiftGiven e )
+        {
+            if ( e.Gift is CustomObject cobj && cobj.FullId == ItemIds.SoulSapphire )
+            {
+                // NOTE: DGA doesn't currently support its items showing here anyways (I think).
+                // 
+                var farmer = sender as Farmer;
+                foreach ( int key in Game1.objectInformation.Keys )
+                {
+                    var obj = new StardewValley.Object(key, 1);
+                    if ( !obj.canBeGivenAsGift() || obj.questItem || obj.ParentSheetIndex == 809 )
+                        continue;
+                    if ( !farmer.giftedItems[ e.Npc.Name ].ContainsKey( key ) && ( !( obj.Name == "Stone" ) || key == 390 ) )
+                        farmer.giftedItems[ e.Npc.Name ].Add( key, 0 );
+                }
+            }
         }
     }
 }

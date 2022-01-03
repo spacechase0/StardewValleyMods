@@ -87,14 +87,7 @@ namespace MoonMisadventures.Patches
                 effect = null;
 
                 //blendState = BlendState.NonPremultiplied;
-                depthStencilState = new DepthStencilState()
-                {
-                    StencilEnable = true,
-                    StencilFunction = CompareFunction.NotEqual,
-                    StencilPass = StencilOperation.Keep,
-                    ReferenceStencil = 1,
-                    DepthBufferEnable = false,
-                };
+                depthStencilState = Mod.StencilRenderOnDark;
                 //SpaceShared.Log.Debug( "mask:" + depthStencilState.StencilPass+" "+depthStencilState.StencilFail);
                 //depthStencilState = Mod.StencilRenderOnDark;
             }

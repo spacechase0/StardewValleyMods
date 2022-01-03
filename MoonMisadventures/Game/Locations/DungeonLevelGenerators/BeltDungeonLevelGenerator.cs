@@ -555,9 +555,10 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                         continue;
 
                     // Chance of downsizing even if a larger piece works here
+                    //if(false)
                     while ( size >= 0 && ( size >= pieceSizes.Length || rand.NextDouble() < Math.Min( 0.5, 0.1 + size * 0.05 ) ) )
                         --size;
-
+                    //while ( size >= pieceSizes.Length ) --size;
                     int actualSize = size >= 0 ? pieceSizes[ size ] : 1;
                     if ( actualSize == 1 )
                     {
@@ -571,38 +572,53 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                         int entriesW = pieceMap.Layers[ 0 ].LayerWidth / actualSize;
                         int entries = entriesW * pieceMap.Layers[ 0 ].LayerHeight / actualSize;
                         int entry = rand.Next( entries );
-
+                        entry = 1;
                         int sourceX = entry % entriesW * actualSize;
                         int sourceY = entry / entriesW * actualSize;
 
-                        location.ApplyMapOverride( pieceMap, "feature_" + featureCounter++, new Rectangle( sourceX, sourceY, actualSize, actualSize ), new Rectangle( sx - actualSize / 2, sy - actualSize / 2, actualSize, actualSize ) );
+                        Rectangle sr = new Rectangle( sx - actualSize / 2, sy - actualSize / 2, actualSize, actualSize );
+                        location.ApplyMapOverride( pieceMap, "feature_" + featureCounter++, new Rectangle( sourceX, sourceY, actualSize, actualSize ), sr );
 
-                        for ( int ix = sx; ix <= sx + actualSize; ++ix )
+                        for ( int ix = sr.X; ix <= sr.Right; ++ix )
                         {
-                            for ( int iy = sy; iy <= sy + actualSize; ++iy )
+                            for ( int iy = sr.Y; iy <= sr.Bottom; ++iy )
                             {
                                 int path = location.getTileIndexAt( ix, iy, "Paths" );
                                 if ( path == 7 ) // chest
                                 {
                                     if ( Game1.IsMasterGame )
                                     {
-                                        // TODO
+                                        double chance = 1;
+                                        string chanceProp = location.doesTileHaveProperty( ix, iy, "Chance", "Paths" );
+                                        if ( chanceProp != null && double.TryParse( chanceProp, out double chanceVal ) )
+                                            chance = chanceVal;
+
+                                        if ( chance == 1 || rand.NextDouble() < chance )
+                                            PlaceChestAt( location, rand, ix, iy, location.doesTileHaveProperty( ix, iy, "ChestType", "Paths" ) == "1" );
                                     }
                                 }
                                 else if ( path == 27 ) // barrel
                                 {
                                     if ( Game1.IsMasterGame )
                                     {
-                                        // TODO
+                                        double chance = 1;
+                                        string chanceProp = location.doesTileHaveProperty( ix, iy, "Chance", "Paths" );
+                                        if ( chanceProp != null && double.TryParse( chanceProp, out double chanceVal ) )
+                                            chance = chanceVal;
+
+                                        if ( chance == 1 || rand.NextDouble() < chance )
+                                            PlaceBreakableAt( location, rand, ix, iy );
                                     }
                                 }
 
                                 string prop = location.doesTileHaveProperty( ix, iy, "Action", "Buildings" ) ?? "";
+                                if ( string.IsNullOrEmpty( prop ) )
+                                    prop = location.doesTileHaveProperty( ix, iy, "TouchAction", "Back" ) ?? "";
                                 if ( prop.StartsWith( "LunarLock " ) || prop.StartsWith( "LunarDoor " ) || prop.StartsWith( "LunarCave " ) )
                                 {
                                     prop = prop.Replace( "{l}", location.level.Value.ToString() );
                                     prop = prop.Replace( "{c}", ( featureCounter - 1 ).ToString() );
-                                    location.setTileProperty( ix, iy, "Buildings", "Action", prop );
+                                    location.setTileProperty( ix, iy, prop.StartsWith( "LunarCave " ) ? "Back" : "Buildings", prop.StartsWith( "LunarCave " ) ? "TouchAction" : "Action", prop );
 
                                     location.lunarDoors.Add( featureCounter - 1, new Vector2( ix, iy ) );
 
@@ -616,7 +632,8 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                                             location.map.AddTileSheet( ts_ );
                                             location.map.LoadTileSheets( Game1.mapDisplayDevice );
                                         }
-                                        int next = island.spots.IndexOf( spot ) + 1;
+                                        //int next = island.spots.IndexOf( spot ) + 1; // This makes them always close to the building
+                                        int next = island.spots.IndexOf( spot ) + rand.Next( island.spots.Count - island.spots.IndexOf( spot ) - 1 ) + 1;
                                         Vector2 nextSpot = island.spots[ next ];
                                         Log.Debug( "Placing switch @ " + nextSpot );
                                         var t = new StaticTile( location.map.GetLayer( "Back" ), ts_, BlendMode.Alpha, 496 );

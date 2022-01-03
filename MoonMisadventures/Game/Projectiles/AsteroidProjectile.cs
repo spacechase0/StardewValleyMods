@@ -101,7 +101,6 @@ namespace MoonMisadventures.Game.Projectiles
                 Farmer closest = null;
                 foreach ( var player in location.farmers )
                 {
-                    // TODO: Check if they have the amulet that nullifies this
                     if ( player.GetAppliedMagneticRadius() > 128 && !player.HasNecklace( Necklace.Type.Lunar ) ) // 128 is default
                     {
                         float dist = Vector2.Distance( position.Value, player.getStandingPosition() );

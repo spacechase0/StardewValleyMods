@@ -20,7 +20,7 @@ namespace MoonMisadventures.Game.Items
 
         public AnimalGauntlets()
         {
-            this.Name = "AnimalGauntlets";
+            this.Name = this.BaseName = "AnimalGauntlets";
             this.InstantUse = true;
         }
 
@@ -46,6 +46,11 @@ namespace MoonMisadventures.Game.Items
             if ( holding.Value != null )
                 str += "\n" + Mod.instance.Helper.Translation.Get( "tool.animal-gauntlets.holding" ) + " " + holding.Value.displayType;
             return str;
+        }
+
+        public override bool canBeTrashed()
+        {
+            return true;
         }
 
         public override void DoFunction( GameLocation location, int x, int y, int power, Farmer who )
@@ -100,7 +105,13 @@ namespace MoonMisadventures.Game.Items
             if ( holding.Value is LunarAnimal lanimal )
             {
                 var mp = Mod.instance.Helper.Reflection.GetField< Multiplayer >( typeof( Game1 ), "multiplayer" ).GetValue();
-                ret.holding.Value = new LunarAnimal( lanimal.lunarType.Value, Vector2.Zero, mp.getNewID() );
+                var other = new LunarAnimal( lanimal.lunarType.Value, Vector2.Zero, mp.getNewID() );
+                other.age.Value = lanimal.age.Value;
+                other.currentProduce.Value = lanimal.age.Value;
+                other.happiness.Value = lanimal.happiness;
+                other.fullness.Value = lanimal.fullness;
+                other.wasPet.Value = lanimal.wasPet.Value;
+                ret.holding.Value = other;
             }
             ret._GetOneFrom( this );
             return ret;

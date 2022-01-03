@@ -24,7 +24,7 @@ namespace MoonMisadventures.Patches
         {
             __instance.equipmentIcons.Add(
                 new ClickableComponent(
-                    new Rectangle( __instance.xPositionOnScreen + 48 + 208 - 80 + ( Mod.instance.Helper.ModRegistry.IsLoaded( "bcmpinc.WearMoreRings" ) ? + 80 : -208 ),
+                    new Rectangle( __instance.xPositionOnScreen + 48 + 208 - 80 - 208,
                         __instance.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 4 + 256 - 12,
                         64, 64 ),
                     "Necklace" )

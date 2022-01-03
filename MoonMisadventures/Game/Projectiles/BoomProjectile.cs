@@ -39,7 +39,7 @@ namespace MoonMisadventures.Game.Projectiles
         private void GoBoom( GameLocation loc )
         {
             var dummy = new Farmer();
-            loc.explode( prevTile, 2, dummy, damage_amount: 15 );
+            loc.falseExplode( prevTile, 2, dummy, damage_amount: 15 );
         }
 
         public override void behaviorOnCollisionWithPlayer( GameLocation location, Farmer player )
@@ -60,7 +60,7 @@ namespace MoonMisadventures.Game.Projectiles
                 if ( newTile != prevTile.Value )
                 {
                     var dummy = new Farmer();
-                    location.explode( prevTile.Value, 0, dummy, damage_amount: 3 );
+                    location.falseExplode( prevTile.Value, 0, dummy, damage_amount: 3 );
                     prevTile.Value = newTile;
                 }
             }

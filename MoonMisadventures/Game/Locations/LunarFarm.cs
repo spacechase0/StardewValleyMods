@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
@@ -17,8 +18,10 @@ namespace MoonMisadventures.Game.Locations
     [XmlType( "Mods_spacechase0_MoonMisadventures_LunarFarm" )]
     public class LunarFarm : LunarLocation, IAnimalLocation
     {
-        public NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = new();
+        public readonly NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = new();
         public NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> Animals => animals;
+
+        public readonly NetBool grownCrystal = new();
 
         public LunarFarm()
         {
@@ -32,20 +35,71 @@ namespace MoonMisadventures.Game.Locations
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( Animals );
+            NetFields.AddFields( Animals, grownCrystal );
+
+            grownCrystal.InterpolationEnabled = false;
+            grownCrystal.fieldChangeVisibleEvent += delegate { OpenFarmHouse(); };
+        }
+
+        protected override void resetLocalState()
+        {
+            base.resetLocalState();
+
+            if ( grownCrystal.Value )
+                OpenFarmHouse();
+        }
+
+        private void OpenFarmHouse()
+        {
+            if ( Map == null )
+                return;
+
+            int ts = Map.TileSheets.IndexOf( Map.TileSheets.First( t => t.Id == "tf_darkdimension_sheet" ) );
+            setMapTileIndex( 13, 9, 120, "Front", ts );
+            setMapTile( 13, 10, 149, "Buildings", null, ts );
+
+            setMapTileIndex( 7, 8, 52, "Buildings", ts );
+            setMapTileIndex( 7, 9, 81, "Buildings", ts );
+            setMapTile( 7, 10, 110, "Buildings", "Warp 9 10 Custom_MM_MoonFarmHouse", ts );
         }
 
         public override void TransferDataFromSavedLocation( GameLocation l )
         {
             var other = l as LunarFarm;
             Animals.MoveFrom( other.Animals );
+            foreach ( var animal in Animals.Values )
+            {
+                animal.reload( null );
+            }
+
+            grownCrystal.Value = other.grownCrystal.Value;
+
+            base.TransferDataFromSavedLocation( l );
+        }
+
+        public override bool performAction( string action, Farmer who, xTile.Dimensions.Location tileLocation )
+        {
+            if ( action == "FarmHouseCrystalLock" )
+            {
+                if ( who.ActiveObject is CustomObject cobj && cobj.FullId == ItemIds.MythiciteOre )
+                {
+                    Game1.playSound( "questcomplete" );
+                    who.reduceActiveItemByOne();
+                    grownCrystal.Value = true;
+                }
+                else
+                {
+                    Game1.drawObjectDialogue( Mod.instance.Helper.Translation.Get( "message.farm.crystal-lock" ) );
+                }
+            }
+            return base.performAction( action, who, tileLocation );
         }
 
         public bool CheckInspectAnimal( Vector2 position, Farmer who )
         {
             foreach ( var animal in Animals.Values )
             {
-                if ( !animal.wasPet.Value && animal.GetCursorPetBoundingBox().Contains( ( int ) position.X, ( int ) position.Y ) )
+                if ( animal.wasPet.Value && animal.GetCursorPetBoundingBox().Contains( ( int ) position.X, ( int ) position.Y ) )
                 {
                     animal.pet( who );
                     return true;
@@ -59,7 +113,7 @@ namespace MoonMisadventures.Game.Locations
         {
             foreach ( var animal in Animals.Values )
             {
-                if ( !animal.wasPet.Value && animal.GetBoundingBox().Intersects( rect ) )
+                if ( animal.wasPet.Value && animal.GetBoundingBox().Intersects( rect ) )
                 {
                     animal.pet( who );
                     return true;
@@ -101,7 +155,11 @@ namespace MoonMisadventures.Game.Locations
         {
             for ( int i = this.animals.Count() - 1; i >= 0; i-- )
             {
-                this.animals.Pairs.ElementAt( i ).Value.dayUpdate( this );
+                var animal = this.animals.Pairs.ElementAt( i ).Value;
+                if ( animal is LunarAnimal lanimal )
+                    lanimal.ActualDayUpdate( this );
+                else
+                    animal.dayUpdate( this );
             }
             base.DayUpdate( dayOfMonth );
         }

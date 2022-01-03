@@ -75,7 +75,7 @@ namespace MoonMisadventures.Game.Items
 
         public override bool canBeTrashed()
         {
-            return false;
+            return true;
         }
 
         public override bool canBeGivenAsGift()

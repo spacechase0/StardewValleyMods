@@ -65,13 +65,11 @@ namespace MoonMisadventures.Patches
     {
         public static void Prefix( GiantCrop __instance, Tool t )
         {
-            // TODO: This needs some slight changes to make sure you get the full value of the Shaving enchantment
-            /*
             if ( t is Axe axe && axe.UpgradeLevel == 6 ) // Mythicite
             {
-                __instance.health.Value = 0;
+                // Setting it to 1 lets the real method end up getting it to 0 and taking care of everything
+                __instance.health.Value = 1;
             }
-            */
         }
     }
 

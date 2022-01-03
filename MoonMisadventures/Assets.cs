@@ -25,6 +25,8 @@ namespace MoonMisadventures
         public static Texture2D AsteroidsSmall;
         public static Texture2D AsteroidsBig;
 
+        public static Texture2D HoeDirt;
+
         public static Texture2D NecklaceBg;
 
         internal static void Load( IContentHelper content )
@@ -43,6 +45,8 @@ namespace MoonMisadventures
 
             Assets.AsteroidsSmall = content.Load<Texture2D>( "assets/asteroids-small.png" );
             Assets.AsteroidsBig = content.Load<Texture2D>( "assets/asteroids-large.png" );
+            
+            Assets.HoeDirt = content.Load<Texture2D>( "assets/hoedirt.png" );
 
             Assets.NecklaceBg = content.Load<Texture2D>( "assets/necklace-bg.png" );
         }

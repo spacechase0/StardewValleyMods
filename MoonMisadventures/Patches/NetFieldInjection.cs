@@ -7,9 +7,11 @@ using HarmonyLib;
 using MoonMisadventures.VirtualProperties;
 using StardewValley;
 using StardewValley.Monsters;
+using StardewValley.Network;
 
 namespace MoonMisadventures.Patches
 {
+
     [HarmonyPatch( typeof( Farmer ), "farmerInit" )]
     public static class FarmerInjectNetFieldsPatch
     {

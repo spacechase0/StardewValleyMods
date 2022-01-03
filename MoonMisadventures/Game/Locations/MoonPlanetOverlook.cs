@@ -64,7 +64,7 @@ namespace MoonMisadventures.Game.Locations
                         {
                             if ( necklaceSlot == -1 && Game1.player.Items[ i ] is Necklace necklace && necklace.necklaceType.Value == Necklace.Type.Lunar )
                                 necklaceSlot = i;
-                            else if ( sapphireSlot == -1 && Game1.player.Items[ i ] is CustomObject cobj && cobj.FullId == ItemIds.SoulSapphireId )
+                            else if ( sapphireSlot == -1 && Game1.player.Items[ i ] is CustomObject cobj && cobj.FullId == ItemIds.SoulSapphire )
                                 sapphireSlot = i;
                         }
 
@@ -96,11 +96,16 @@ namespace MoonMisadventures.Game.Locations
 
         private static Necklace.Type PickCombatNecklace()
         {
-            switch ( Game1.random.Next( 3 ) )
+            // Basically everything except another lunar necklace
+            switch ( Game1.random.Next( 7 ) )
             {
                 case 0: return Necklace.Type.Looting;
                 case 1: return Necklace.Type.Shocking;
-                case 2: return Necklace.Type.Health;
+                case 2: return Necklace.Type.Speed;
+                case 3: return Necklace.Type.Health;
+                case 4: return Necklace.Type.Cooling;
+                case 5: return Necklace.Type.Water;
+                case 6: return Necklace.Type.Sea;
             }
             throw new Exception( "This should never happen" );
         }
