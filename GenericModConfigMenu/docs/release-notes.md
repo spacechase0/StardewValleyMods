@@ -2,6 +2,9 @@
 
 # Release notes
 ## Upcoming release
+* Options now render when they are partially visibile at the top of the menu.
+  (This means multi-row options no longer disappear and leave blank rows as
+  as they scroll off the top of the menu.)
 * Fixed mouse-wheel-scroll sound playing even after the menu is closed.
 * Fixed API `TryGetCurrentMenu` method not working when on the title screen.
 * Improved translations. Thanks to BuslaevLegat (added Russian)!
