@@ -322,7 +322,7 @@ namespace GenericModConfigMenu.Framework
                 // add spacer rows for multi-row content
                 {
                     int elementHeight = new[] { label?.Height, optionElement?.Height, rightLabel?.Height }.Max(p => p ?? 0);
-                    float overlapRows = ((elementHeight * 1.0f) / (this.Table.RowHeight + 16)) - 1;
+                    float overlapRows = ((elementHeight * 1.0f) / this.Table.RowHeight) - 1;
 
                     if (overlapRows > 0.05f) // avoid adding an empty row if an element only overlaps slightly
                     {

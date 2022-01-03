@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Fixed calculation of rows occupied by multi-row options.
 * Fixed mouse-wheel-scroll sound playing even after the menu is closed.
 * Fixed API `TryGetCurrentMenu` method not working when on the title screen.
 * Improved translations. Thanks to BuslaevLegat (added Russian)!
