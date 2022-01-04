@@ -82,12 +82,16 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <inheritdoc />
         public override void BeforeMenuOpened()
         {
-            GetLatest();
+            this.GetLatest();
         }
 
         /// <inheritdoc />
         public override void BeforeMenuClosed() { }
 
+
+        /*********
+        ** Private methods
+        *********/
         /// <summary>Update the value from the mod configuration.</summary>
         private void GetLatest()
         {

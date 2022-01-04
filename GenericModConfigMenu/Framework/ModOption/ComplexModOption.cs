@@ -95,12 +95,14 @@ namespace GenericModConfigMenu.Framework.ModOption
         }
 
         /// <inheritdoc />
-        public override void BeforeMenuOpened() {
+        public override void BeforeMenuOpened()
+        {
             this.BeforeMenuOpenedImpl?.Invoke();
         }
 
         /// <inheritdoc />
-        public override void BeforeMenuClosed() {
+        public override void BeforeMenuClosed()
+        {
             this.BeforeMenuClosedImpl?.Invoke();
         }
 

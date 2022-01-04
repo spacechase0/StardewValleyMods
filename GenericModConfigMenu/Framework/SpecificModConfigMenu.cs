@@ -574,6 +574,7 @@ namespace GenericModConfigMenu.Framework
         {
             foreach (var option in this.ModConfig.GetAllOptions())
                 option.BeforeMenuClosed();
+
             if (this.IsSubPage)
                 this.OpenPage(null);
             else
