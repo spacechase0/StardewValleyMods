@@ -80,7 +80,16 @@ namespace GenericModConfigMenu.Framework.ModOption
         public override void AfterSave() { }
 
         /// <inheritdoc />
-        public override void GetLatest()
+        public override void BeforeMenuOpened()
+        {
+            GetLatest();
+        }
+
+        /// <inheritdoc />
+        public override void BeforeMenuClosed() { }
+
+        /// <summary>Update the value from the mod configuration.</summary>
+        private void GetLatest()
         {
             this.CachedValue = this.GetValue();
         }

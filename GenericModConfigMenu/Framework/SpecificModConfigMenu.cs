@@ -80,7 +80,7 @@ namespace GenericModConfigMenu.Framework
                 string name = opt.Name();
                 string tooltip = opt.Tooltip();
 
-                opt.GetLatest();
+                opt.BeforeMenuOpened();
                 if (this.InGame && opt.IsTitleScreenOnly)
                     continue;
 
@@ -572,6 +572,8 @@ namespace GenericModConfigMenu.Framework
 
         private void Close()
         {
+            foreach (var option in this.ModConfig.GetAllOptions())
+                option.BeforeMenuClosed();
             if (this.IsSubPage)
                 this.OpenPage(null);
             else

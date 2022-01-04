@@ -15,6 +15,7 @@ namespace GenericModConfigMenu.Framework
         ** These are only included for backwards compatibility and will be removed in a future version.
         ** Your mod will break if you haven't removed them when that happens.
         *********/
+        [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddComplexOption) + " with beforeMenuOpened and beforeMenuClosed arguments instead.")] void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Func<int> height = null, string fieldId = null);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddComplexOption) + " with beforeSave + afterSave and beforeReset + afterReset arguments instead.")] void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Register) + " instead.")] void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Unregister) + " instead.")] void UnregisterModConfig(IManifest mod);

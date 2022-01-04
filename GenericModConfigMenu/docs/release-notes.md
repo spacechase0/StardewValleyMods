@@ -5,6 +5,7 @@
 * Fixed clicks sometimes handled by elements that are scrolled out of view.
 * Fixed multi-row elements sometimes disappearing before they're fully off-screen (thanks to jltaylor-us!).
 * Fixed multi-row element heights in some cases (thanks to jltaylor-us!).
+* Improved `AddComplexOption` with even more callbacks (thanks to jltaylor-us!).
 * Fixed mouse-wheel-scroll sound playing even after the menu is closed.
 * Fixed API `TryGetCurrentMenu` method not working when on the title screen.
 * Improved translations. Thanks to BuslaevLegat (added Russian)!

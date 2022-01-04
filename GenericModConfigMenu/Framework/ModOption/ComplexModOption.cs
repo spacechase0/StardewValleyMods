@@ -25,6 +25,12 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>A callback raised after the form is reset to its default values.</summary>
         private readonly Action AfterResetImpl;
 
+        /// <summary>A callback raised before the menu is opened.</summary>
+        private readonly Action BeforeMenuOpenedImpl;
+
+        /// <summary>A callback raised before the menu is closed.</summary>
+        private readonly Action BeforeMenuClosedImpl;
+
 
         /*********
         ** Accessors
@@ -43,21 +49,25 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="mod">The mod config UI that contains this option.</param>
         /// <param name="height">The height to allocate for the option in the form. This is called once before the form is drawn and can't be changed dynamically.</param>
         /// <param name="draw">Draw the option in the config UI. This is called with the sprite batch being rendered, the pixel position at which to start drawing, and the current option value. This should return the new value.</param>
+        /// <param name="beforeMenuOpened">A callback raised just before the menu is opened.</param>
         /// <param name="beforeSave">A callback raised before the form's current values are saved to the config.</param>
         /// <param name="afterSave">A callback raised after the form's current values are saved to the config.</param>
         /// <param name="beforeReset">A callback raised before the form is reset to its default values.</param>
         /// <param name="afterReset">A callback raised after the form is reset to its default values.</param>
-        public ComplexModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<int> height, Action<SpriteBatch, Vector2> draw, Action beforeSave, Action afterSave, Action beforeReset, Action afterReset)
+        /// <param name="beforeMenuClosed">A callback raised just before the menu is closed.</param>
+        public ComplexModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<int> height, Action<SpriteBatch, Vector2> draw, Action beforeMenuOpened, Action beforeSave, Action afterSave, Action beforeReset, Action afterReset, Action beforeMenuClosed)
             : base(fieldId, name, tooltip, mod)
         {
             height ??= () => 0; // UI will ignore values below the minimum one row
 
             this.Height = height;
             this.DrawImpl = draw;
+            this.BeforeMenuOpenedImpl = beforeMenuOpened;
             this.BeforeSaveImpl = beforeSave;
             this.AfterSaveImpl = afterSave;
             this.BeforeResetImpl = beforeReset;
             this.AfterResetImpl = afterReset;
+            this.BeforeMenuClosedImpl = beforeMenuClosed;
         }
 
         /// <inheritdoc />
@@ -85,7 +95,14 @@ namespace GenericModConfigMenu.Framework.ModOption
         }
 
         /// <inheritdoc />
-        public override void GetLatest() { }
+        public override void BeforeMenuOpened() {
+            this.BeforeMenuOpenedImpl?.Invoke();
+        }
+
+        /// <inheritdoc />
+        public override void BeforeMenuClosed() {
+            this.BeforeMenuClosedImpl?.Invoke();
+        }
 
         /// <summary>Draw the option to the form.</summary>
         /// <param name="spriteBatch">The sprite batch being rendered.</param>
