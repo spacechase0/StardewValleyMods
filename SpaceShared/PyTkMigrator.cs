@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
+using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
 namespace SpaceShared
@@ -37,6 +38,23 @@ namespace SpaceShared
 
                 foreach (StorageFurniture furniture in location.furniture.OfType<StorageFurniture>())
                     PyTkMigrator.TryMigrate(furniture.heldItems, type, getReplacement);
+            }
+        }
+
+        /// <summary>Migrate all terrain features in the world which match the custom type.</summary>
+        /// <param name="type">The custom type identifier.</param>
+        /// <param name="getReplacement">Get the replacement for the given PyTK fields.</param>
+        public static void MigrateTerrainFeatures(string type, Func<TerrainFeature, IDictionary<string, string>, TerrainFeature> getReplacement)
+        {
+            foreach (GameLocation location in CommonHelper.GetLocations())
+            {
+                foreach ((Vector2 tile, TerrainFeature terrainFeature) in location.terrainFeatures.Pairs.ToArray())
+                {
+                    if (terrainFeature is FruitTree tree && PyTkMigrator.TryParseSerializedString(tree.fruitSeason.Value, out string actualType, out IDictionary<string, string> customData) && actualType == type)
+                    {
+                        location.terrainFeatures[tile] = getReplacement(terrainFeature, customData);
+                    }
+                }
             }
         }
 

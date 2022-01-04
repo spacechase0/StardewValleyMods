@@ -9,7 +9,7 @@
     "UpdateKeys": [ "Nexus:1702" ],
     "Dependencies": [
         {
-            "UniqueID": "Platonymous.Toolkit"
+            "UniqueID": "spacechase0.SpaceCore"
         }
     ]
 }
