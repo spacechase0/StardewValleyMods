@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Improved `AddComplexOption` with new menu opened/closed callbacks (thanks to jltaylor-us!).
 * Fixed clicks sometimes handled by elements that are scrolled out of view.
 * Fixed multi-row elements sometimes disappearing before they're fully off-screen (thanks to jltaylor-us!).
 * Fixed multi-row element heights in some cases (thanks to jltaylor-us!).

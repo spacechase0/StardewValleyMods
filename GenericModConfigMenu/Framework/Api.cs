@@ -147,11 +147,11 @@ namespace GenericModConfigMenu.Framework
         ** Advanced
         ****/
         /// <inheritdoc />
-        public void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Func<int> height = null, string fieldId = null)
+        public void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeMenuOpened = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Action beforeMenuClosed = null, Func<int> height = null, string fieldId = null)
         {
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
 
-            modConfig.AddOption(new ComplexModOption(fieldId: fieldId, name: name, tooltip: tooltip, mod: modConfig, height: height, draw: draw, beforeSave: beforeSave, afterSave: afterSave, beforeReset: beforeReset, afterReset: afterReset));
+            modConfig.AddOption(new ComplexModOption(fieldId: fieldId, name: name, tooltip: tooltip, mod: modConfig, height: height, draw: draw, beforeMenuOpened: beforeMenuOpened, beforeSave: beforeSave, afterSave: afterSave, beforeReset: beforeReset, afterReset: afterReset, beforeMenuClosed: beforeMenuClosed));
         }
 
         /// <inheritdoc />
@@ -204,9 +204,17 @@ namespace GenericModConfigMenu.Framework
         ** Obsolete code
         ****/
         /// <inheritdoc />
+        [Obsolete]
+        public void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Func<int> height = null, string fieldId = null)
+        {
+            this.AddComplexOption(mod: mod, name: name, tooltip: tooltip, draw: draw, beforeMenuOpened: null, beforeSave: beforeSave, afterSave: afterSave, beforeReset: beforeReset, afterReset: afterReset, beforeMenuClosed: null, height: height, fieldId: fieldId);
+        }
+
+        /// <inheritdoc />
+        [Obsolete]
         public void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null)
         {
-            this.AddComplexOption(mod: mod, name: name, tooltip: tooltip, draw: draw, beforeSave: saveChanges, height: height, fieldId: fieldId);
+            this.AddComplexOption(mod: mod, name: name, tooltip: tooltip, draw: draw, beforeMenuOpened: null, beforeSave: saveChanges, height: height, fieldId: fieldId);
         }
 
         /// <inheritdoc />

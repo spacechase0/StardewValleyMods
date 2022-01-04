@@ -39,8 +39,11 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>Perform any logic needed after the form is saved.</summary>
         public abstract void AfterSave();
 
-        /// <summary>Update the value from the mod configuration.</summary>
-        public abstract void GetLatest();
+        /// <summary>Perform any logic needed before the menu is opened.</summary>
+        public abstract void BeforeMenuOpened();
+
+        /// <summary>Perform any logic needed before the menu is closed.</summary>
+        public abstract void BeforeMenuClosed();
 
 
         /*********
