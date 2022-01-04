@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Rewrote migration logic for older saves containing tents saved through PyTK.
+
 ## 1.2.1
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
