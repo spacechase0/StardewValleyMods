@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SleepyEye.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
+using SpaceShared.Migrations;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;

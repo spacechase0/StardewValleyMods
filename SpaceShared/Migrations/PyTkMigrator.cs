@@ -7,7 +7,7 @@ using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
-namespace SpaceShared
+namespace SpaceShared.Migrations
 {
     /// <summary>Provides utility methods to migrate custom items saved through PyTK.</summary>
     internal class PyTkMigrator

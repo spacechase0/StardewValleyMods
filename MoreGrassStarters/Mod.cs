@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using SpaceShared.APIs;
+using SpaceShared.Migrations;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
