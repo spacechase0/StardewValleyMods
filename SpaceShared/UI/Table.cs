@@ -90,7 +90,7 @@ namespace SpaceShared.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.TopRow * this.RowHeight);
-                    bool isChildOffScreen = ElementIsOffscreen(element);
+                    bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
 
                     if (!isChildOffScreen || element is Label) // Labels must update anyway to get rid of hovertext on scrollwheel
                         element.Update(isOffScreen: isChildOffScreen);
@@ -108,7 +108,9 @@ namespace SpaceShared.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.ScrollPercent * this.Rows.Count * this.RowHeight);
-                    element.Update(isOffScreen || ElementIsOffscreen(element));
+                    bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
+
+                    element.Update(isOffScreen: isChildOffScreen);
                 }
                 ++ir;
             }
@@ -138,7 +140,7 @@ namespace SpaceShared.UI
                 {
                     foreach (var element in row)
                     {
-                        if (ElementIsOffscreen(element))
+                        if (this.IsElementOffScreen(element))
                             continue;
                         if (element == this.RenderLast)
                             continue;
@@ -156,7 +158,9 @@ namespace SpaceShared.UI
         /*********
         ** Private methods
         *********/
-        private bool ElementIsOffscreen(Element element)
+        /// <summary>Get whether a child element is outside the table's current display area.</summary>
+        /// <param name="element">The child element to check.</param>
+        private bool IsElementOffScreen(Element element)
         {
             return
                 element.Position.Y + element.Height < this.Position.Y
