@@ -80,9 +80,10 @@ namespace GenericModConfigMenu.Framework
                 string name = opt.Name();
                 string tooltip = opt.Tooltip();
 
-                opt.BeforeMenuOpened();
                 if (this.InGame && opt.IsTitleScreenOnly)
                     continue;
+
+                opt.BeforeMenuOpened();
 
                 Label label = new Label
                 {
@@ -572,7 +573,7 @@ namespace GenericModConfigMenu.Framework
 
         private void Close()
         {
-            foreach (var option in this.ModConfig.GetAllOptions())
+            foreach (var option in this.ModConfig.ActiveDisplayPage.Options)
                 option.BeforeMenuClosed();
 
             if (this.IsSubPage)
