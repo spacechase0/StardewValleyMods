@@ -90,9 +90,7 @@ namespace SpaceShared.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.TopRow * this.RowHeight);
-                    bool isChildOffScreen =
-                        element.Position.Y < this.Position.Y
-                        || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y;
+                    bool isChildOffScreen = ElementIsOffscreen(element);
 
                     if (!isChildOffScreen || element is Label) // Labels must update anyway to get rid of hovertext on scrollwheel
                         element.Update(isOffScreen: isChildOffScreen);
@@ -110,7 +108,7 @@ namespace SpaceShared.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.ScrollPercent * this.Rows.Count * this.RowHeight);
-                    element.Update(isOffScreen || element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y);
+                    element.Update(isOffScreen || ElementIsOffscreen(element));
                 }
                 ++ir;
             }
@@ -140,7 +138,7 @@ namespace SpaceShared.UI
                 {
                     foreach (var element in row)
                     {
-                        if (element.Position.Y < this.Position.Y || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y)
+                        if (ElementIsOffscreen(element))
                             continue;
                         if (element == this.RenderLast)
                             continue;
@@ -158,6 +156,13 @@ namespace SpaceShared.UI
         /*********
         ** Private methods
         *********/
+        private bool ElementIsOffscreen(Element element)
+        {
+            return
+                element.Position.Y + element.Height < this.Position.Y
+                || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y;
+        }
+
         private void UpdateScrollbar()
         {
             this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);

@@ -2,6 +2,9 @@
 
 # Release notes
 ## Upcoming release
+* Options now render when they are partially visibile at the top of the menu.
+  (This means multi-row options no longer disappear and leave blank rows as
+  as they scroll off the top of the menu.)
 * Fixed clicks sometimes handled by elements that are scrolled out of view.
 * Fixed calculation of rows occupied by multi-row options.
 * Fixed mouse-wheel-scroll sound playing even after the menu is closed.
