@@ -3,6 +3,7 @@ using System.Linq;
 using GenericModConfigMenu.Framework.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
@@ -252,8 +253,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(mod, nameof(mod));
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            if (!modConfig.Pages.TryGetValue(pageName, out ModConfigPage page))
-                throw new ArgumentException("Page not registered");
+            ModConfigPage page = modConfig.Pages.GetOrDefault(pageName) ?? throw new ArgumentException("Page not registered");
 
             page.SetPageTitle(() => displayName);
         }

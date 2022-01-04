@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.targets" />
-  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <!--don't import SpaceShared, since it has access through DGA's [assembly: InternalsVisibleTo] attribute-->
 
   <PropertyGroup>
     <Version>1.0.2</Version>
