@@ -1,12 +1,12 @@
-using System.Collections.Generic;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
-using PyTK.CustomElementHandler;
 using StardewValley;
 using StardewValley.Buildings;
 
 namespace MoreBuildings.Buildings.FishingShack
 {
-    public class FishingShackBuilding : Building, ISaveElement
+    [XmlType("Mods_spacechase0_FishingShackBuilding")]
+    public class FishingShackBuilding : Building
     {
         private static readonly BluePrint Blueprint = new("FishShack");
 
@@ -19,34 +19,6 @@ namespace MoreBuildings.Buildings.FishingShack
         protected override GameLocation getIndoors(string nameOfIndoorsWithoutUnique)
         {
             return new FishingShackLocation();
-        }
-
-        public object getReplacement()
-        {
-            Mill building = new Mill(new BluePrint("Mill"), new Vector2(this.tileX.Value, this.tileY.Value));
-            building.indoors.Value = this.indoors.Value;
-            building.daysOfConstructionLeft.Value = this.daysOfConstructionLeft.Value;
-            building.tileX.Value = this.tileX.Value;
-            building.tileY.Value = this.tileY.Value;
-            return building;
-        }
-
-        public Dictionary<string, string> getAdditionalSaveData()
-        {
-            return new();
-        }
-
-        public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
-        {
-            Mill building = (Mill)replacement;
-            this.indoors.Value = building.indoors.Value;
-            this.daysOfConstructionLeft.Value = building.daysOfConstructionLeft.Value;
-            this.tileX.Value = building.tileX.Value;
-            this.tileY.Value = building.tileY.Value;
-
-            this.indoors.Value.map = Game1.content.Load<xTile.Map>("Maps\\FishShack");
-            this.indoors.Value.updateWarps();
-            this.updateInteriorWarps();
         }
     }
 }

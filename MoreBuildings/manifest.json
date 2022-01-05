@@ -10,9 +10,6 @@
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"
-        },
-        {
-            "UniqueID": "Platonymous.Toolkit"
         }
     ]
 }

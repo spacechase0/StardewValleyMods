@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using StardewModdingAPI.Enums;
 using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
@@ -18,6 +21,30 @@ namespace SpaceShared.Migrations
         /****
         ** Migrations
         ****/
+        /// <summary>Migrate all constructed buildings in the parsed save file which match the custom type. This must be called during the <see cref="LoadStage.SaveParsed"/> step.</summary>
+        /// <param name="loaded">The save data to migrate.</param>
+        /// <param name="getReplacements">The migration logic indexed by PyTK type identifier.</param>
+        public static void MigrateBuildings(SaveGame loaded, Dictionary<string, Func<Building, IDictionary<string, string>, Building>> getReplacements)
+        {
+            foreach (BuildableGameLocation location in loaded.locations.OfType<BuildableGameLocation>())
+            {
+                for (int i = 0; i < location.buildings.Count; i++)
+                {
+                    // get PyTK data
+                    if (location.buildings[i] is not Mill building || !PyTkMigrator.TryParseSerializedString(building.input.Value?.Name, out string actualType, out IDictionary<string, string> customData))
+                        continue;
+
+                    // get replacement
+                    if (!getReplacements.TryGetValue(actualType, out var getReplacement))
+                        continue;
+                    Building replacement = getReplacement(building, customData);
+
+                    // swap buildings
+                    location.buildings[i] = replacement;
+                }
+            }
+        }
+
         /// <summary>Migrate all items in the world which match the custom type.</summary>
         /// <param name="type">The custom type identifier.</param>
         /// <param name="getReplacement">Get the replacement for the given PyTK fields.</param>
