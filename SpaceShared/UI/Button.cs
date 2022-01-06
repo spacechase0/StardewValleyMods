@@ -3,9 +3,17 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal class Button : Element
+    internal
+#endif
+
+            class Button : Element
     {
         /*********
         ** Fields

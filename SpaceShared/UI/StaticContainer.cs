@@ -2,9 +2,16 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Menus;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal class StaticContainer : Container
+    internal
+#endif
+         class StaticContainer : Container
     {
         public Vector2 Size { get; set; }
 

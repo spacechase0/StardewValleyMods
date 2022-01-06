@@ -5,9 +5,16 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Menus;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal class Table : Container
+    internal
+#endif
+         class Table : Container
     {
         /*********
         ** Fields

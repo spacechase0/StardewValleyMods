@@ -2,12 +2,20 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal class Slider : Element
+    internal
+#endif
+         class Slider : Element
     {
         /*********
         ** Fields

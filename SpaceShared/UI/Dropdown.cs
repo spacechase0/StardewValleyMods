@@ -6,9 +6,16 @@ using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.Menus;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal class Dropdown : Element
+    internal
+#endif
+        class Dropdown : Element
     {
         /*********
         ** Accessors

@@ -1,8 +1,15 @@
 using System.Linq;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal class Floatbox : Textbox
+    internal
+#endif
+         class Floatbox : Textbox
     {
         /*********
         ** Accessors
