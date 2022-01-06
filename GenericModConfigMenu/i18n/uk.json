@@ -10,7 +10,7 @@
 
     // mod config pages
     "config.buttons.cancel": "Скасувати",
-    "config.buttons.reset-to-default": "За замовчуванням",
+    "config.buttons.reset-to-default": "За замовч.",
     "config.buttons.save": "Зберегти",
     "config.buttons.save-and-close": "Зберегти та вийти",
 
