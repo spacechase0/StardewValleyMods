@@ -8,7 +8,7 @@
 * Fixed multi-row element heights in some cases (thanks to jltaylor-us!).
 * Fixed mouse-wheel-scroll sound playing even after the menu is closed.
 * Fixed API `TryGetCurrentMenu` method not working when on the title screen.
-* Improved translations. Thanks to BuslaevLegat (added Russian) and ChulkyBow (added Ukrainian)!
+* Improved translations. Thanks to BuslaevLegat (added Russian), ChulkyBow (added Ukrainian), and Zangorr (added Polish)!
 
 ## 1.7.0
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
