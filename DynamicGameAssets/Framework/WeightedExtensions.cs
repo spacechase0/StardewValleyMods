@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DynamicGameAssets.Framework
 {
-    internal static class WeightedExtensions
+    public static class WeightedExtensions
     {
         public static T Choose<T>(this Weighted<T>[] choices, Random r = null) where T : ICloneable
         {
@@ -28,6 +28,7 @@ namespace DynamicGameAssets.Framework
 
             throw new Exception("This should never happen");
         }
+
         public static T Choose<T>(this List<Weighted<T>> choices, Random r = null) where T : ICloneable
         {
             return choices.ToArray().Choose(r);

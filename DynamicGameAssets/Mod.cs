@@ -82,7 +82,7 @@ namespace DynamicGameAssets
         // TODO: Should these and SpriteBatchPatcher.packOverrides (and similar overrides) go into State? For splitscreen
         internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new();
         internal static List<DGACustomForgeRecipe> customForgeRecipes = new();
-        internal static Dictionary<string, List<MachineRecipePackData>> customMachineRecipes = new();
+        internal static readonly Dictionary<string, List<MachineRecipePackData>> customMachineRecipes = new();
         internal static List<TailoringRecipePackData> customTailoringRecipes = new();
 
         private static readonly PerScreen<StateData> _state = new(() => new StateData());

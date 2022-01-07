@@ -14,7 +14,7 @@ namespace DGAAutomate
         {
             if (obj is CustomBigCraftable cbig)
             {
-                if (DynamicGameAssets.Mod.customMachineRecipes.ContainsKey(cbig.FullId))
+                if (Mod.CustomMachineRecipes.ContainsKey(cbig.FullId))
                     return new MyMachine(cbig, location, tile);
             }
 
