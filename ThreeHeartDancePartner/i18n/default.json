@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.hearts-needed.name": "Hearts needed",
+    "config.hearts-needed.desc": "The number of hearts you need with an NPC to dance with them at the Flower Dance."
+}

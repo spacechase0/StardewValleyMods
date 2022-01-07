@@ -22,6 +22,27 @@ liked gifts per week (+45 points/gift). That gives you `(23 days × 20 points) +
 × 45 points)` or 820 points. You can use [Lookup Anything](https://www.nexusmods.com/stardewvalley/mods/541)
 to see your exact friendship points with an NPC.
 
+## Configure
+### In-game settings
+If you have [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098) installed,
+you can click the cog button (⚙) on the title screen to configure the mod. Hover the cursor over a
+field for details, or see the next section.
+
+Note that the colors aren't editable through this UI.
+
+![](generic-mod-config-menu.png)
+
+### `config.json` file
+The mod creates a `config.json` file in its mod folder the first time you run it. You can open that
+file in a text editor to configure the mod. If you make a mistake, you can delete the `config.json`
+and it'll recreate a default one.
+
+Here's what you can change:
+
+field | description
+----- | -----------
+`RequiredHearts` | The number of hearts you need with an NPC to dance with them at the Flower Dance.
+
 ## Compatibility
 Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
