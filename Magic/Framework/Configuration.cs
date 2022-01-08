@@ -26,6 +26,6 @@ namespace Magic.Framework
         public int AltarX { get; set; } = 36;
 
         /// <summary>The Y tile position for the top-left corner of the altar.</summary>
-        public int AltarY { get; set; } = 16;
+        public int AltarY { get; set; } = 15;
     }
 }
