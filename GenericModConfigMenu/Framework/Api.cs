@@ -19,15 +19,20 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Manages the registered mod config menus.</summary>
         private readonly ModConfigManager ConfigManager;
 
+        /// <summary>Open the config UI for a specific mod.</summary>
+        private readonly Action<IManifest> OpenModMenuImpl;
+
 
         /*********
         ** Public methods
         *********/
         /// <summary>Construct an instance.</summary>
         /// <param name="configManager">Manages the registered mod config menus.</param>
-        internal Api(ModConfigManager configManager)
+        /// <param name="openModMenu">Open the config UI for a specific mod.</param>
+        internal Api(ModConfigManager configManager, Action<IManifest> openModMenu)
         {
             this.ConfigManager = configManager;
+            this.OpenModMenuImpl = openModMenu;
         }
 
 
@@ -179,7 +184,7 @@ namespace GenericModConfigMenu.Framework
         {
             this.AssertNotNull(mod, nameof(mod));
 
-            Mod.Instance.OpenModMenu(mod);
+            this.OpenModMenuImpl(mod);
         }
 
         /// <inheritdoc />

@@ -30,8 +30,6 @@ namespace GenericModConfigMenu
         /*********
         ** Accessors
         *********/
-        public static Mod Instance;
-
         /// <summary>The current configuration menu.</summary>
         public static IClickableMenu ActiveConfigMenu
         {
@@ -59,7 +57,6 @@ namespace GenericModConfigMenu
         public override void Entry(IModHelper helper)
         {
             I18n.Init(helper.Translation);
-            Mod.Instance = this;
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<OwnModConfig>();
 
@@ -78,11 +75,15 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi()
         {
-            return this.Api ??= new Api(this.ConfigManager);
+            return this.Api ??= new Api(this.ConfigManager, mod => this.OpenModMenu(mod));
         }
 
+
+        /*********
+        ** Private methods
+        *********/
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
-        public void OpenListMenu()
+        private void OpenListMenu()
         {
             Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
         }
@@ -90,7 +91,7 @@ namespace GenericModConfigMenu
         /// <summary>Open the config UI for a specific mod.</summary>
         /// <param name="mod">The mod whose config menu to display.</param>
         /// <param name="page">The page to display within the mod's config menu.</param>
-        public void OpenModMenu(IManifest mod, string page = null)
+        private void OpenModMenu(IManifest mod, string page = null)
         {
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
@@ -103,10 +104,6 @@ namespace GenericModConfigMenu
             );
         }
 
-
-        /*********
-        ** Private methods
-        *********/
         private void SetupTitleMenuButton()
         {
             this.Ui = new RootElement();
