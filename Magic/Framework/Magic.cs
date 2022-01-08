@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Magic.Framework.Game.Interface;
 using Magic.Framework.Integrations;
-using Magic.Framework.Schools;
 using Magic.Framework.Skills;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
@@ -14,12 +12,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Menus;
 using StardewValley.Network;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
-using SObject = StardewValley.Object;
 
 namespace Magic.Framework
 {
@@ -78,11 +71,7 @@ namespace Magic.Framework
             events.Display.RenderingHud += Magic.OnRenderingHud;
             events.Display.RenderedHud += Magic.OnRenderedHud;
 
-            Magic.OnAnalyzeCast += Magic.OnAnalyze;
-            Magic.OnAnalyzeCast += (sender, e) =>
-            {
-                Mod.Instance.Api.InvokeOnAnalyzeCast(sender as Farmer);
-            };
+            Magic.OnAnalyzeCast += (sender, e) => Mod.Instance.Api.InvokeOnAnalyzeCast(sender as Farmer);
 
             SpaceCore.Skills.RegisterSkill(Magic.Skill = new Skill());
 
@@ -142,238 +131,6 @@ namespace Magic.Framework
         /*********
         ** Private methods
         *********/
-        private static void OnAnalyze(object sender, AnalyzeEventArgs e)
-        {
-            var farmer = (Farmer)sender;
-            if (farmer != Game1.player)
-                return;
-
-            SpellBook spellBook = farmer.GetSpellBook();
-            List<string> spellsLearnt = new();
-            // ReSharper disable twice PossibleLossOfFraction
-            Vector2 tilePos = new(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
-
-            // items
-            foreach (var activeItem in new[] { Magic.GetItemFromMenu(Game1.activeClickableMenu) ?? Magic.GetItemFromToolbar(), farmer.CurrentItem })
-            {
-                if (activeItem is not null)
-                {
-                    // by item type
-                    switch (activeItem)
-                    {
-                        case Axe or Pickaxe:
-                            spellsLearnt.Add("toil:cleardebris");
-                            break;
-
-                        case Hoe:
-                            spellsLearnt.Add("toil:till");
-                            break;
-
-                        case WateringCan:
-                            spellsLearnt.Add("toil:water");
-                            break;
-
-                        case Boots:
-                            spellsLearnt.Add("life:evac");
-                            break;
-                    }
-
-                    // by item ID
-                    if (activeItem is SObject activeObj && activeItem.GetType() == typeof(SObject) && !activeObj.bigCraftable.Value)
-                    {
-                        switch (activeItem.ParentSheetIndex)
-                        {
-                            case 395: // coffee
-                                spellsLearnt.Add("life:haste");
-                                break;
-
-                            case 773: // life elixir
-                                spellsLearnt.Add("life:heal");
-                                break;
-
-                            case 86: // earth crystal
-                                spellsLearnt.Add("nature:shockwave");
-                                break;
-
-                            case 82: // fire quartz
-                                spellsLearnt.Add("elemental:fireball");
-                                break;
-
-                            case 161: // ice pip
-                                spellsLearnt.Add("elemental:frostbolt");
-                                break;
-                        }
-                    }
-                }
-            }
-
-            // light sources
-            foreach (var lightSource in farmer.currentLocation.sharedLights.Values)
-            {
-                if (Utility.distance(e.TargetX, lightSource.position.X, e.TargetY, lightSource.position.Y) < lightSource.radius.Value * Game1.tileSize)
-                {
-                    spellsLearnt.Add("nature:lantern");
-                    break;
-                }
-            }
-
-            // terrain features
-            {
-                if (farmer.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && (feature as HoeDirt)?.crop != null)
-                    spellsLearnt.Add("nature:tendrils");
-
-                foreach (ResourceClump clump in farmer.currentLocation.resourceClumps)
-                {
-                    if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
-                    {
-                        spellsLearnt.Add("eldritch:meteor");
-                        break;
-                    }
-                }
-            }
-
-            // map tile
-            {
-                // TODO: Add proper tilesheet check
-                var tile = farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
-                if (tile?.TileIndex == 173)
-                    spellsLearnt.Add("elemental:descend");
-
-                if (farmer.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")
-                    spellsLearnt.Add("eldritch:lucksteal");
-                if (farmer.currentLocation is StardewValley.Locations.MineShaft { mineLevel: 100 } ms && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
-                    spellsLearnt.Add("eldritch:bloodmana");
-            }
-
-            // learn spells
-            bool learnedAny = false;
-            foreach (string spell in spellsLearnt)
-            {
-                if (spellBook.KnowsSpell(spell, 0))
-                    continue;
-
-                if (!learnedAny)
-                {
-                    Game1.playSound("secret1");
-                    learnedAny = true;
-                }
-
-                Log.Debug($"Player learnt spell: {spell}");
-                spellBook.LearnSpell(spell, 0, true);
-                Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn(spellName: SpellManager.Get(spell).GetTranslatedName())));
-            }
-
-            // learn hidden spell if players knows all of the other spells for a school
-            // TODO: add dungeons to get these
-            {
-                bool knowsAll = true;
-                foreach (string schoolId in School.GetSchoolList())
-                {
-                    var school = School.GetSchool(schoolId);
-
-                    bool knowsAllSchool = true;
-                    foreach (var spell in school.GetSpellsTier1())
-                    {
-                        if (!spellBook.KnowsSpell(spell, 0))
-                        {
-                            knowsAll = knowsAllSchool = false;
-                            break;
-                        }
-                    }
-                    foreach (var spell in school.GetSpellsTier2())
-                    {
-                        if (!spellBook.KnowsSpell(spell, 0))
-                        {
-                            knowsAll = knowsAllSchool = false;
-                            break;
-                        }
-                    }
-
-                    // Have to know all other spells for the arcane one
-                    if (schoolId == SchoolId.Arcane)
-                        continue;
-
-                    var ancientSpell = school.GetSpellsTier3()[0];
-                    if (knowsAllSchool && !spellBook.KnowsSpell(ancientSpell, 0))
-                    {
-                        Log.Debug("Player learnt ancient spell: " + ancientSpell);
-                        spellBook.LearnSpell(ancientSpell, 0, true);
-                        Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: ancientSpell.GetTranslatedName())));
-                    }
-                }
-
-                var rewindSpell = School.GetSchool(SchoolId.Arcane).GetSpellsTier3()[0];
-                if (knowsAll && !spellBook.KnowsSpell(rewindSpell, 0))
-                {
-                    Log.Debug("Player learnt ancient spell: " + rewindSpell);
-                    spellBook.LearnSpell(rewindSpell, 0, true);
-                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: rewindSpell.GetTranslatedName())));
-                }
-            }
-        }
-
-        /// <summary>Get the hovered item from an arbitrary menu.</summary>
-        /// <param name="menu">The menu whose hovered item to find.</param>
-        private static Item GetItemFromMenu(IClickableMenu menu)
-        {
-            //
-            // Copied from CJB Show Item Sell Price by CJBok and Pathoschild: https://github.com/CJBok/SDV-Mods
-            // Released under the MIT License.
-            //
-
-            var reflection = Mod.Instance.Helper.Reflection;
-
-            // game menu
-            if (menu is GameMenu gameMenu)
-            {
-                IClickableMenu page = reflection.GetField<List<IClickableMenu>>(gameMenu, "pages").GetValue()[gameMenu.currentTab];
-                if (page is InventoryPage)
-                    return reflection.GetField<Item>(page, "hoveredItem").GetValue();
-                if (page is CraftingPage)
-                    return reflection.GetField<Item>(page, "hoverItem").GetValue();
-            }
-
-            // from inventory UI
-            else if (menu is MenuWithInventory inventoryMenu)
-                return inventoryMenu.hoveredItem;
-
-            return null;
-        }
-
-        /// <summary>Get the hovered item from the on-screen toolbar.</summary>
-        private static Item GetItemFromToolbar()
-        {
-            //
-            // Derived from CJB Show Item Sell Price by CJBok and Pathoschild: https://github.com/CJBok/SDV-Mods
-            // Released under the MIT License.
-            //
-
-            var reflection = Mod.Instance.Helper.Reflection;
-
-            // get toolbar
-            if (Game1.activeClickableMenu is not null)
-                return null;
-            Toolbar toolbar = Game1.onScreenMenus.OfType<Toolbar>().FirstOrDefault();
-            var toolbarSlots = toolbar != null ? reflection.GetField<List<ClickableComponent>>(toolbar, "buttons").GetValue() : null;
-            if (toolbarSlots is null)
-                return null;
-
-            // find hovered slot
-            int x = Game1.getMouseX();
-            int y = Game1.getMouseY();
-            ClickableComponent hoveredSlot = toolbarSlots.FirstOrDefault(slot => slot.containsPoint(x, y));
-            if (hoveredSlot == null)
-                return null;
-
-            // get inventory index
-            int index = toolbarSlots.IndexOf(hoveredSlot);
-            if (index < 0 || index > Game1.player.Items.Count - 1)
-                return null;
-
-            // get hovered item
-            return Game1.player.Items[index];
-        }
-
         private static void OnNetworkCast(IncomingMessage msg)
         {
             Farmer player = Game1.getFarmer(msg.FarmerID);
