@@ -157,7 +157,8 @@ namespace GenericModConfigMenu
                 getValue: () => this.Config.ScrollSpeed,
                 setValue: value => this.Config.ScrollSpeed = value,
                 min: 1,
-                max: 500
+                max: 500,
+                formatValue: null
             );
 
             configMenu.AddKeybindList(

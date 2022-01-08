@@ -17,6 +17,8 @@ namespace GenericModConfigMenu.Framework
         *********/
         // Obsolete since 1.8.0
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddComplexOption) + " with more callback arguments instead.")] void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null);
+        [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddNumberOption) + " with the formatValue callback instead.")] void AddNumberOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name, Func<string> tooltip = null, int? min = null, int? max = null, int? interval = null, string fieldId = null);
+        [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddNumberOption) + " with the formatValue callback instead.")] void AddNumberOption(IManifest mod, Func<float> getValue, Action<float> setValue, Func<string> name, Func<string> tooltip = null, float? min = null, float? max = null, float? interval = null, string fieldId = null);
 
         // Obsolete since 1.7.0
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddComplexOption) + " with more callback arguments instead.")] void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Func<int> height = null, string fieldId = null);

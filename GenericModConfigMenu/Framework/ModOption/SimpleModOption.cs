@@ -1,4 +1,6 @@
 using System;
+using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 
 namespace GenericModConfigMenu.Framework.ModOption
 {
@@ -87,6 +89,20 @@ namespace GenericModConfigMenu.Framework.ModOption
 
         /// <inheritdoc />
         public override void BeforeMenuClosed() { }
+
+        /// <summary>Get the display text to show for a value, or <c>null</c> to show the value as-is.</summary>
+        public virtual string FormatValue()
+        {
+            switch (this.Value)
+            {
+                case SButton button when button == SButton.None:
+                case KeybindList keybind when !keybind.IsBound:
+                    return I18n.Config_RebindKey_NoKey();
+
+                default:
+                    return this.Value?.ToString();
+            }
+        }
 
 
         /*********

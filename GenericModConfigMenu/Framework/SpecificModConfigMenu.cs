@@ -123,7 +123,7 @@ namespace GenericModConfigMenu.Framework
 
                         optionElement = new Label
                         {
-                            String = option.Value != SButton.None ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
+                            String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Callback = (Element e) => this.DoKeybindingFor(option, e as Label)
                         };
@@ -135,7 +135,7 @@ namespace GenericModConfigMenu.Framework
 
                         optionElement = new Label
                         {
-                            String = option.Value.IsBound ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
+                            String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Callback = (Element e) => this.DoKeybinding2For(option, e as Label)
                         };
@@ -144,8 +144,7 @@ namespace GenericModConfigMenu.Framework
                     case NumericModOption<int> option when (option.Minimum.HasValue && option.Maximum.HasValue):
                         rightLabel = new Label
                         {
-                            String = option.Value.ToString(),
-                            LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                            String = option.FormatValue()
                         };
 
                         optionElement = new Slider<int>
@@ -159,16 +158,17 @@ namespace GenericModConfigMenu.Framework
                             Callback = e =>
                             {
                                 option.Value = (e as Slider<int>).Value;
-                                rightLabel.String = option.Value.ToString();
+                                rightLabel.String = option.FormatValue();
                             }
                         };
+
+                        rightLabel.LocalPosition = optionElement.LocalPosition + new Vector2(x: optionElement.Width + 15, y: 0);
                         break;
 
                     case NumericModOption<float> option when (option.Minimum.HasValue && option.Maximum.HasValue):
                         rightLabel = new Label
                         {
-                            String = option.Value.ToString(),
-                            LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                            String = option.FormatValue()
                         };
 
                         optionElement = new Slider<float>
@@ -182,9 +182,11 @@ namespace GenericModConfigMenu.Framework
                             Callback = (Element e) =>
                             {
                                 option.Value = (e as Slider<float>).Value;
-                                rightLabel.String = option.Value.ToString();
+                                rightLabel.String = option.FormatValue();
                             }
                         };
+
+                        rightLabel.LocalPosition = optionElement.LocalPosition + new Vector2(x: optionElement.Width + 15, y: 0);
                         break;
 
                     // The following need to come after the Clamped/ChoiceModOption's since those subclass these
@@ -654,7 +656,7 @@ namespace GenericModConfigMenu.Framework
 
                     Game1.playSound("coin");
                     this.Keybinding2Opt.Value = new KeybindList(new Keybind(all.ToArray()));
-                    this.KeybindingLabel.String = this.Keybinding2Opt.Value.ToString();
+                    this.KeybindingLabel.String = this.Keybinding2Opt.FormatValue();
                 }
 
                 if (stop)

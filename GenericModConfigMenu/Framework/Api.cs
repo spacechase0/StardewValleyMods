@@ -87,15 +87,15 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
-        public void AddNumberOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name = null, Func<string> tooltip = null, int? min = null, int? max = null, int? interval = null, string fieldId = null)
+        public void AddNumberOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name = null, Func<string> tooltip = null, int? min = null, int? max = null, int? interval = null, Func<int, string> formatValue = null, string fieldId = null)
         {
-            this.AddNumericOption(mod, name, tooltip, getValue, setValue, min, max, interval, fieldId);
+            this.AddNumericOption(mod: mod, name: name, tooltip: tooltip, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval, formatValue: formatValue, fieldId: fieldId);
         }
 
         /// <inheritdoc />
-        public void AddNumberOption(IManifest mod, Func<float> getValue, Action<float> setValue, Func<string> name = null, Func<string> tooltip = null, float? min = null, float? max = null, float? interval = null, string fieldId = null)
+        public void AddNumberOption(IManifest mod, Func<float> getValue, Action<float> setValue, Func<string> name = null, Func<string> tooltip = null, float? min = null, float? max = null, float? interval = null, Func<float, string> formatValue = null, string fieldId = null)
         {
-            this.AddNumericOption(mod, name, tooltip, getValue, setValue, min, max, interval, fieldId);
+            this.AddNumericOption(mod: mod, name: name, tooltip: tooltip, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval, formatValue: formatValue, fieldId: fieldId);
         }
 
         /// <inheritdoc />
@@ -221,6 +221,20 @@ namespace GenericModConfigMenu.Framework
             this.AddComplexOption(mod: mod, name: name, tooltip: tooltip, draw: draw, beforeMenuOpened: null, beforeSave: saveChanges, height: height, fieldId: fieldId);
         }
 
+        /// <inheritdoc />
+        [Obsolete]
+        public void AddNumberOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name = null, Func<string> tooltip = null, int? min = null, int? max = null, int? interval = null, string fieldId = null)
+        {
+            this.AddNumericOption(mod: mod, name: name, tooltip: tooltip, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval, fieldId: fieldId, formatValue: null);
+        }
+
+        /// <inheritdoc />
+        [Obsolete]
+        public void AddNumberOption(IManifest mod, Func<float> getValue, Action<float> setValue, Func<string> name = null, Func<string> tooltip = null, float? min = null, float? max = null, float? interval = null, string fieldId = null)
+        {
+            this.AddNumericOption(mod: mod, name: name, tooltip: tooltip, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval, fieldId: fieldId, formatValue: null);
+        }
+
         /****
         ** Obsolete since 1.6.0
         ****/
@@ -313,14 +327,14 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet)
         {
-            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
+            this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: null, max: null, interval: null, formatValue: null);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet)
         {
-            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
+            this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: null, max: null, interval: null, formatValue: null);
         }
 
         /// <inheritdoc />
@@ -348,28 +362,28 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max)
         {
-            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max);
+            this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: null, formatValue: null);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max)
         {
-            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max);
+            this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: null, formatValue: null);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max, int interval)
         {
-            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval);
+            this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval, formatValue: null);
         }
 
         /// <inheritdoc />
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max, float interval)
         {
-            this.AddNumberOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval);
+            this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval, formatValue: null);
         }
 
         /// <inheritdoc />
@@ -470,8 +484,9 @@ namespace GenericModConfigMenu.Framework
         /// <param name="min">The minimum allowed value, or <c>null</c> to allow any.</param>
         /// <param name="max">The maximum allowed value, or <c>null</c> to allow any.</param>
         /// <param name="interval">The interval of values that can be selected.</param>
+        /// <param name="formatValue">Get the display text to show for a value, or <c>null</c> to show the number as-is.</param>
         /// <param name="fieldId">The unique field ID used when raising field-changed events, or <c>null</c> to generate a random one.</param>
-        private void AddNumericOption<T>(IManifest mod, Func<string> name, Func<string> tooltip, Func<T> getValue, Action<T> setValue, T? min, T? max, T? interval, string fieldId)
+        private void AddNumericOption<T>(IManifest mod, Func<string> name, Func<string> tooltip, Func<T> getValue, Action<T> setValue, T? min, T? max, T? interval, Func<T, string> formatValue, string fieldId)
             where T : struct
         {
             this.AssertNotNull(mod, nameof(mod));
@@ -479,15 +494,13 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(getValue, nameof(getValue));
             this.AssertNotNull(setValue, nameof(setValue));
 
-            name ??= () => fieldId;
-
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
 
-            Type[] valid = new[] { typeof(int), typeof(float) };
+            Type[] valid = { typeof(int), typeof(float) };
             if (!valid.Contains(typeof(T)))
                 throw new ArgumentException("Invalid config option type.");
 
-            modConfig.AddOption(new NumericModOption<T>(fieldId, name, tooltip, modConfig, getValue, setValue, min, max, interval));
+            modConfig.AddOption(new NumericModOption<T>(fieldId: fieldId, name: name, tooltip: tooltip, mod: modConfig, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval, formatValue: formatValue));
         }
 
         /// <summary>Add a dropdown option.</summary>
