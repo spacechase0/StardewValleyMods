@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Magic.Framework.Game.Interface;
 using Magic.Framework.Integrations;
 using Magic.Framework.Schools;
@@ -13,6 +14,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
@@ -152,8 +154,8 @@ namespace Magic.Framework
             Vector2 tilePos = new(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
 
             // items
+            foreach (var activeItem in new[] { Magic.GetItemFromMenu(Game1.activeClickableMenu) ?? Magic.GetItemFromToolbar(), farmer.CurrentItem })
             {
-                Item activeItem = farmer.CurrentItem;
                 if (activeItem is not null)
                 {
                     // by item type
@@ -308,6 +310,68 @@ namespace Magic.Framework
                     Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: rewindSpell.GetTranslatedName())));
                 }
             }
+        }
+
+        /// <summary>Get the hovered item from an arbitrary menu.</summary>
+        /// <param name="menu">The menu whose hovered item to find.</param>
+        private static Item GetItemFromMenu(IClickableMenu menu)
+        {
+            //
+            // Copied from CJB Show Item Sell Price by CJBok and Pathoschild: https://github.com/CJBok/SDV-Mods
+            // Released under the MIT License.
+            //
+
+            var reflection = Mod.Instance.Helper.Reflection;
+
+            // game menu
+            if (menu is GameMenu gameMenu)
+            {
+                IClickableMenu page = reflection.GetField<List<IClickableMenu>>(gameMenu, "pages").GetValue()[gameMenu.currentTab];
+                if (page is InventoryPage)
+                    return reflection.GetField<Item>(page, "hoveredItem").GetValue();
+                if (page is CraftingPage)
+                    return reflection.GetField<Item>(page, "hoverItem").GetValue();
+            }
+
+            // from inventory UI
+            else if (menu is MenuWithInventory inventoryMenu)
+                return inventoryMenu.hoveredItem;
+
+            return null;
+        }
+
+        /// <summary>Get the hovered item from the on-screen toolbar.</summary>
+        private static Item GetItemFromToolbar()
+        {
+            //
+            // Derived from CJB Show Item Sell Price by CJBok and Pathoschild: https://github.com/CJBok/SDV-Mods
+            // Released under the MIT License.
+            //
+
+            var reflection = Mod.Instance.Helper.Reflection;
+
+            // get toolbar
+            if (Game1.activeClickableMenu is not null)
+                return null;
+            Toolbar toolbar = Game1.onScreenMenus.OfType<Toolbar>().FirstOrDefault();
+            var toolbarSlots = toolbar != null ? reflection.GetField<List<ClickableComponent>>(toolbar, "buttons").GetValue() : null;
+            if (toolbarSlots is null)
+                return null;
+
+            // find hovered slot
+            int x = Game1.getMouseX();
+            int y = Game1.getMouseY();
+            ClickableComponent hoveredSlot = toolbarSlots.FirstOrDefault(slot => slot.containsPoint(x, y));
+            if (hoveredSlot == null)
+                return null;
+
+            // get inventory index
+            int index = toolbarSlots.IndexOf(hoveredSlot);
+            if (index < 0 || index > Game1.player.Items.Count - 1)
+                return null;
+
+            // get hovered item
+            return Game1.player.Items[index];
         }
 
         private static void OnNetworkCast(IncomingMessage msg)

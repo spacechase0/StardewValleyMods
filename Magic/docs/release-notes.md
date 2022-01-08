@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* You can now analyze toolbar or inventory items by pointing at them (not only by selecting them).
 * The _Till_ spell no longer removes placed objects.
 * Fixed typo in event dialogue.
 

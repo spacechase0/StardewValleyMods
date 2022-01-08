@@ -94,7 +94,7 @@ professions:
 
 <tr>
   <td><strong>Luck Steal</strong></td>
-  <td>Cast analyze on the <a href="https://stardewvalleywiki.com/Witch%27s_Hut">Dark Shrine of Selfishness</a>.</td>
+  <td>Cast analyze on the bowl for the <a href="https://stardewvalleywiki.com/Witch%27s_Hut">Dark Shrine of Selfishness</a>.</td>
   <td>Increase your daily luck to the maximum by sacrificing the happiness of a loved one.</td>
 </tr>
 
