@@ -10,7 +10,10 @@ namespace Magic.Framework.Spells
         ** Public methods
         *********/
         public AnalyzeSpell()
-            : base(SchoolId.Arcane, "analyze") { }
+            : base(SchoolId.Arcane, "analyze")
+        {
+            this.CanCastInMenus = true;
+        }
 
         public override int GetManaCost(Farmer player, int level)
         {

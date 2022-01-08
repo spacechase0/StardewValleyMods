@@ -493,14 +493,12 @@ namespace Magic.Framework
         private static void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.MemoryProfession);
+            bool hasMenuOpen = Game1.activeClickableMenu is not null;
 
             if (e.Button == Mod.Config.Key_Cast)
                 Magic.CastPressed = true;
 
-            if (Game1.activeClickableMenu != null)
-                return;
-
-            if (Magic.CastPressed && e.Button == Mod.Config.Key_SwapSpells)
+            if (Magic.CastPressed && e.Button == Mod.Config.Key_SwapSpells && !hasMenuOpen)
             {
                 Game1.player.GetSpellBook().SwapPreparedSet();
                 Magic.InputHelper.Suppress(e.Button);
@@ -530,7 +528,11 @@ namespace Magic.Framework
                 if (spell == null)
                     return;
 
-                if (spellBook.CanCastSpell(spell, slot.Level))
+                bool canCast =
+                    spellBook.CanCastSpell(spell, slot.Level)
+                    && (!hasMenuOpen || spell.CanCastInMenus);
+
+                if (canCast)
                 {
                     Log.Trace("Casting " + slot.SpellId);
 
