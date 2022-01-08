@@ -7,8 +7,8 @@ using xTile.Tiles;
 
 namespace Magic.Framework
 {
-    /// <summary>An asset editor which adds the altar to Pierre's shop map.</summary>
-    internal class AltarMapEditor : IAssetEditor
+    /// <summary>An asset editor which makes map changes for Magic.</summary>
+    internal class MapEditor : IAssetEditor
     {
         /*********
         ** Fields
@@ -26,7 +26,7 @@ namespace Magic.Framework
         /// <summary>Construct an instance.</summary>
         /// <param name="config">The mod configuration.</param>
         /// <param name="content">The SMAPI API for loading content assets.</param>
-        public AltarMapEditor(Configuration config, IContentHelper content)
+        public MapEditor(Configuration config, IContentHelper content)
         {
             this.Config = config;
             this.Content = content;
@@ -50,7 +50,7 @@ namespace Magic.Framework
                 asset.AsMap().PatchMap(altar, targetArea: new Rectangle(this.Config.AltarX, this.Config.AltarY, 3, 3));
             }
 
-            // add radio
+            // add radio to Wizard's tower
             else if (asset.AssetNameEquals("Maps/WizardHouse"))
             {
                 Map map = asset.AsMap().Data;

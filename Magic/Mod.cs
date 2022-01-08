@@ -72,7 +72,7 @@ namespace Magic
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             // hook asset editor
-            this.Helper.Content.AssetEditors.Add(new AltarMapEditor(Mod.Config, this.Helper.Content));
+            this.Helper.Content.AssetEditors.Add(new MapEditor(Mod.Config, this.Helper.Content));
 
             // hook Generic Mod Config Menu
             {
