@@ -133,12 +133,12 @@
     *********/
     // altar placement
     "config.altar-placement": "Altar placement", // TODO
-    "config.altar-location.name": "Localización del altar",
-    "config.altar-location.tooltip": "El nombre (interno) de la ubicación en la que debe colocarse el altar mágico.",
-    "config.altar-x.name": "Posición X del altar",
-    "config.altar-x.tooltip": "La posición de la baldosa X donde debe colocarse el altar mágico.",
-    "config.altar-y.name": "Posición Y del altar",
-    "config.altar-y.tooltip": "La posición de la baldosa Y donde debe colocarse el altar mágico.",
+    "config.location.name": "Localización",
+    "config.location.tooltip": "El nombre interno de la ubicación en la que debe colocarse, como se muestra en el mod 'Debug Mode'.",
+    "config.x.name": "Posición X",
+    "config.x.tooltip": "La posición de la baldosa X donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
+    "config.y.name": "Posición Y",
+    "config.y.tooltip": "La posición de la baldosa Y donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
 
     // controls
     "config.controls": "Controls", // TODO

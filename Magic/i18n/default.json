@@ -133,12 +133,12 @@
     *********/
     // altar placement
     "config.altar-placement": "Altar placement",
-    "config.altar-location.name": "Altar Location",
-    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
-    "config.altar-x.name": "Altar X",
-    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
-    "config.altar-y.name": "Altar Y",
-    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+    "config.location.name": "Location",
+    "config.location.tooltip": "The internal name of the location where it should be placed, as shown by the Debug Mode mod.",
+    "config.x.name": "X position",
+    "config.x.tooltip": "The X tile position where it should be placed, as shown by the Debug Mode mod.",
+    "config.y.name": "Y position",
+    "config.y.tooltip": "The Y tile position where it should be placed, as shown by the Debug Mode mod.",
 
     // controls
     "config.controls": "Controls",

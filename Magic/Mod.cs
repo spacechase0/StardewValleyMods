@@ -91,22 +91,22 @@ namespace Magic
                     configMenu.AddSectionTitle(this.ModManifest, I18n.Config_AltarPlacement);
                     configMenu.AddTextOption(
                         mod: this.ModManifest,
-                        name: I18n.Config_AltarLocation_Name,
-                        tooltip: I18n.Config_AltarLocation_Tooltip,
+                        name: I18n.Config_Location_Name,
+                        tooltip: I18n.Config_Location_Tooltip,
                         getValue: () => Mod.Config.AltarLocation,
                         setValue: value => Mod.Config.AltarLocation = value
                     );
                     configMenu.AddNumberOption(
                         mod: this.ModManifest,
-                        name: I18n.Config_AltarX_Name,
-                        tooltip: I18n.Config_AltarX_Tooltip,
+                        name: I18n.Config_X_Name,
+                        tooltip: I18n.Config_X_Tooltip,
                         getValue: () => Mod.Config.AltarX,
                         setValue: value => Mod.Config.AltarX = value
                     );
                     configMenu.AddNumberOption(
                         mod: this.ModManifest,
-                        name: I18n.Config_AltarY_Name,
-                        tooltip: I18n.Config_AltarY_Tooltip,
+                        name: I18n.Config_Y_Name,
+                        tooltip: I18n.Config_Y_Tooltip,
                         getValue: () => Mod.Config.AltarY,
                         setValue: value => Mod.Config.AltarY = value
                     );
