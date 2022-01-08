@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Magic.Framework.Game.Interface;
-using Magic.Framework.Integrations;
 using Magic.Framework.Skills;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
@@ -12,6 +13,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Network;
 
 namespace Magic.Framework
@@ -74,9 +76,6 @@ namespace Magic.Framework
             Magic.OnAnalyzeCast += (sender, e) => Mod.Instance.Api.InvokeOnAnalyzeCast(sender as Farmer);
 
             SpaceCore.Skills.RegisterSkill(Magic.Skill = new Skill());
-
-            // add TV channel
-            new PyTkChannelManager(modRegistry).AddTvChannel();
         }
 
         /// <summary>Get a self-updating view of a player's magic metadata.</summary>
@@ -366,18 +365,61 @@ namespace Magic.Framework
 
         private static void ActionTriggered(object sender, EventArgsAction args)
         {
-            if (args.Action == "MagicAltar")
+            switch (args.Action)
             {
-                if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
-                {
-                    Game1.drawObjectDialogue(I18n.Altar_ClickMessage());
-                }
-                else
-                {
-                    Game1.playSound("secret1");
-                    Game1.activeClickableMenu = new MagicMenu();
-                }
+                case "MagicAltar":
+                    Magic.OnAltarClicked();
+                    break;
+
+                case "MagicRadio":
+                    Magic.OnRadioClicked();
+                    break;
             }
+        }
+
+        /// <summary>Handle an interaction with the magic altar.</summary>
+        private static void OnAltarClicked()
+        {
+            if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
+            {
+                Game1.drawObjectDialogue(I18n.Altar_ClickMessage());
+            }
+            else
+            {
+                Game1.playSound("secret1");
+                Game1.activeClickableMenu = new MagicMenu();
+            }
+        }
+
+        /// <summary>Handle an interaction with the magic radio.</summary>
+        private static void OnRadioClicked()
+        {
+            // get channel text
+            string channelText = I18n.Tv_Analyzehints_Notmagical();
+            if (Game1.player.GetMaxMana() > 0)
+            {
+                // get base key
+                string baseKey = Regex.Replace(nameof(I18n.Tv_Analyzehints_1), "_1$", "");
+                if (baseKey == nameof(I18n.Tv_Analyzehints_1))
+                {
+                    Log.Error("Could not get the Magic TV analyze hint base key. This is a bug in the Magic mod."); // key format changed?
+                    return;
+                }
+
+                // get possible analyze hints
+                string[] channelTexts = typeof(I18n)
+                    .GetMethods()
+                    .Where(p => Regex.IsMatch(p.Name, $@"^{baseKey}_\d+$"))
+                    .Select(p => (string)p.Invoke(null, Array.Empty<object>()))
+                    .ToArray();
+
+                // choose hint
+                Random random = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));
+                channelText = channelTexts[random.Next(channelTexts.Length)];
+            }
+
+            // show message
+            Game1.activeClickableMenu = new DialogueBox(channelText);
         }
 
         private static void OnItemEaten(object sender, EventArgs args)

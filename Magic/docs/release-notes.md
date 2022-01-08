@@ -4,6 +4,7 @@
 ## Upcoming release
 * You can now analyze toolbar or inventory items by pointing at them (not only by selecting them).
 * The _Till_ spell no longer removes placed objects.
+* A custom TV channel is no longer added when PyTK is installed. Instead there's a new radio added to the Wizard tower you can click to get hints.
 * Fixed typo in event dialogue.
 
 ## 0.7.1
