@@ -417,7 +417,7 @@ namespace Magic.Framework
                 .Select(p => (string)p.Invoke(null, Array.Empty<object>()))
                 .ToArray();
             Random random = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));
-            return stationTexts[random.Next(stationTexts.Length)];
+            return $"{I18n.Radio_Static()} {stationTexts[random.Next(stationTexts.Length)]}";
         }
 
         private static void OnItemEaten(object sender, EventArgs args)
