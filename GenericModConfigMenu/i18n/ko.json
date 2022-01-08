@@ -6,7 +6,8 @@
     "button.mod-options": "모드 옵션",
 
     // mod list UI
-    "list.heading": "모드 목록",
+    "list.editable-heading": "모드 목록",
+    "list.not-editable-heading": "Editable from the title screen:", // TODO
 
     // mod config pages
     "config.buttons.cancel": "취소",

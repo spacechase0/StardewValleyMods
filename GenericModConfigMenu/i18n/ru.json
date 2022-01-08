@@ -6,7 +6,8 @@
     "button.mod-options": "Параметры мода",
 
     // mod list UI
-    "list.heading": "Настройка модов",
+    "list.editable-heading": "Настройка модов",
+    "list.not-editable-heading": "Editable from the title screen:", // TODO
 
     // mod config pages
     "config.buttons.cancel": "Отмена",
