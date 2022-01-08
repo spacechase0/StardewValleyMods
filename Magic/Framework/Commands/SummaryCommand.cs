@@ -42,7 +42,7 @@ namespace Magic.Framework.Commands
             // general data
             report.AppendLine();
             report.AppendLine($"Magic info for {this.GetPlayerContext(player)}:");
-            report.AppendLine($"   Learned magic: {player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId)}");
+            report.AppendLine($"   Learned magic: {Magic.LearnedMagic}");
             report.AppendLine($"   Current mana:  {player.GetCurrentMana()} / {player.GetMaxMana()}");
             report.AppendLine($"   Unused points: {spellBook.FreePoints}");
             report.AppendLine();

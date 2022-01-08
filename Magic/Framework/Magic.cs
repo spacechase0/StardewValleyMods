@@ -46,6 +46,9 @@ namespace Magic.Framework
         public static EventHandler<AnalyzeEventArgs> OnAnalyzeCast;
         public const string MsgCast = "spacechase0.Magic.Cast";
 
+        /// <summary>Whether the current player learned magic.</summary>
+        public static bool LearnedMagic => Game1.player?.eventsSeen?.Contains(MagicConstants.LearnedMagicEventId) == true;
+
 
         /*********
         ** Public methods
@@ -94,7 +97,7 @@ namespace Magic.Framework
         public static void FixMagicIfNeeded(Farmer player, int? overrideMagicLevel = null)
         {
             // skip if player hasn't learned magic
-            if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId) && overrideMagicLevel is not > 0)
+            if (!Magic.LearnedMagic && overrideMagicLevel is not > 0)
                 return;
 
             // get magic info
@@ -170,7 +173,7 @@ namespace Magic.Framework
         /// <param name="e">The event arguments.</param>
         private static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (Game1.activeClickableMenu != null || Game1.eventUp || !Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
+            if (Game1.activeClickableMenu != null || Game1.eventUp || !Magic.LearnedMagic)
                 return;
 
             SpriteBatch b = e.SpriteBatch;
@@ -335,7 +338,7 @@ namespace Magic.Framework
             EvacSpell.OnLocationChanged();
 
             // check events
-            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId) && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
+            if (e.NewLocation.Name == "WizardHouse" && !Magic.LearnedMagic && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
             {
                 string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
                 eventStr = string.Format(
@@ -380,7 +383,7 @@ namespace Magic.Framework
         /// <summary>Handle an interaction with the magic altar.</summary>
         private static void OnAltarClicked()
         {
-            if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
+            if (!Magic.LearnedMagic)
                 Game1.drawObjectDialogue(I18n.Altar_ClickMessage());
             else
             {
@@ -399,7 +402,7 @@ namespace Magic.Framework
         private static string GetRadioTextToday()
         {
             // player doesn't know magic
-            if (Game1.player.GetMaxMana() <= 0)
+            if (!Magic.LearnedMagic)
                 return I18n.Radio_Static();
 
             // get base key for random hints
