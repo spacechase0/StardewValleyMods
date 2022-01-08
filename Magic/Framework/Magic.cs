@@ -381,9 +381,7 @@ namespace Magic.Framework
         private static void OnAltarClicked()
         {
             if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
-            {
                 Game1.drawObjectDialogue(I18n.Altar_ClickMessage());
-            }
             else
             {
                 Game1.playSound("secret1");
@@ -394,32 +392,32 @@ namespace Magic.Framework
         /// <summary>Handle an interaction with the magic radio.</summary>
         private static void OnRadioClicked()
         {
-            // get station text
-            string stationText = I18n.Radio_Static();
-            if (Game1.player.GetMaxMana() > 0)
+            Game1.activeClickableMenu = new DialogueBox(Magic.GetRadioTextToday());
+        }
+
+        /// <summary>Get the radio station text to play today.</summary>
+        private static string GetRadioTextToday()
+        {
+            // player doesn't know magic
+            if (Game1.player.GetMaxMana() <= 0)
+                return I18n.Radio_Static();
+
+            // get base key for random hints
+            string baseKey = Regex.Replace(nameof(I18n.Radio_Analyzehints_1), "_1$", "");
+            if (baseKey == nameof(I18n.Radio_Analyzehints_1))
             {
-                // get base key
-                string baseKey = Regex.Replace(nameof(I18n.Radio_Analyzehints_1), "_1$", "");
-                if (baseKey == nameof(I18n.Radio_Analyzehints_1))
-                {
-                    Log.Error("Could not get the Magic TV analyze hint base key. This is a bug in the Magic mod."); // key format changed?
-                    return;
-                }
-
-                // get possible analyze hints
-                string[] stationTexts = typeof(I18n)
-                    .GetMethods()
-                    .Where(p => Regex.IsMatch(p.Name, $@"^{baseKey}_\d+$"))
-                    .Select(p => (string)p.Invoke(null, Array.Empty<object>()))
-                    .ToArray();
-
-                // choose hint
-                Random random = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));
-                stationText = stationTexts[random.Next(stationTexts.Length)];
+                Log.Error("Couldn't get the Magic radio station analyze hint base key. This is a bug in the Magic mod."); // key format changed?
+                return I18n.Radio_Static();
             }
 
-            // show message
-            Game1.activeClickableMenu = new DialogueBox(stationText);
+            // choose random hint
+            string[] stationTexts = typeof(I18n)
+                .GetMethods()
+                .Where(p => Regex.IsMatch(p.Name, $@"^{baseKey}_\d+$"))
+                .Select(p => (string)p.Invoke(null, Array.Empty<object>()))
+                .ToArray();
+            Random random = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));
+            return stationTexts[random.Next(stationTexts.Length)];
         }
 
         private static void OnItemEaten(object sender, EventArgs args)
