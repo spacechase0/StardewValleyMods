@@ -38,14 +38,20 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether the user hit escape.</summary>
         private bool ExitOnNextUpdate;
 
-        private SimpleModOption<SButton> KeybindingOpt;
-        private SimpleModOption<KeybindList> Keybinding2Opt;
+        /// <summary>The current <see cref="SButton"/> option currently being bound.</summary>
+        private SimpleModOption<SButton> CurrentButtonOption;
+
+        /// <summary>The current <see cref="KeybindList"/> option currently being bound.</summary>
+        private SimpleModOption<KeybindList> CurrentKeybindListOption;
+
+        /// <summary>The label to update with the bound keys when <see cref="CurrentButtonOption"/> or <see cref="CurrentKeybindListOption"/> are rebound.</summary>
         private Label KeybindingLabel;
 
+        /// <summary>Whether a save is currently loaded.</summary>
         private bool InGame => Context.IsWorldReady;
 
         /// <summary>Whether a keybinding UI is open.</summary>
-        private bool IsBindingKey => this.KeybindingOpt != null || this.Keybinding2Opt != null;
+        private bool IsBindingKey => this.CurrentButtonOption != null || this.CurrentKeybindListOption != null;
 
 
         /*********
@@ -125,7 +131,7 @@ namespace GenericModConfigMenu.Framework
                         {
                             String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.DoKeybindingFor(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
                         };
                         break;
 
@@ -137,7 +143,7 @@ namespace GenericModConfigMenu.Framework
                         {
                             String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.DoKeybinding2For(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
                         };
                         break;
 
@@ -389,37 +395,10 @@ namespace GenericModConfigMenu.Framework
             this.Ui.Draw(b);
 
             // keybind UI
-            if (this.KeybindingOpt != null)
-            {
-                b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
-
-                int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
-                IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
-
-                string s = I18n.Config_RebindKey_Title(this.KeybindingOpt.Name());
-                int sw = (int)Game1.dialogueFont.MeasureString(s).X;
-                b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
-
-                s = I18n.Config_RebindKey_SimpleInstructions();
-                sw = (int)Game1.dialogueFont.MeasureString(s).X;
-                b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 100), Game1.textColor);
-            }
-
-            if (this.Keybinding2Opt != null)
-            {
-                b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
-
-                int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
-                IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
-
-                string s = I18n.Config_RebindKey_Title(this.Keybinding2Opt.Name());
-                int sw = (int)Game1.dialogueFont.MeasureString(s).X;
-                b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
-
-                s = I18n.Config_RebindKey_ComboInstructions();
-                sw = (int)Game1.dialogueFont.MeasureString(s).X;
-                b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 100), Game1.textColor);
-            }
+            if (this.CurrentButtonOption != null)
+                this.DrawKeybindOverlay(b, this.CurrentButtonOption);
+            else if (this.CurrentKeybindListOption != null)
+                this.DrawKeybindOverlay(b, this.CurrentKeybindListOption);
 
             // mouse
             this.drawMouse(b);
@@ -463,10 +442,55 @@ namespace GenericModConfigMenu.Framework
             this.AddDefaultLabels(this.Manifest);
         }
 
+        /// <summary>Raised when any buttons are pressed or released.</summary>
+        /// <param name="e">The event arguments.</param>
+        public void OnButtonsChanged(ButtonsChangedEventArgs e)
+        {
+            if (!this.IsBindingKey)
+                return;
+
+            // get keys
+            SButton[] released = e.Released.Where(button => button.TryGetKeyboard(out _) || button.TryGetController(out _)).ToArray();
+            SButton[] held = e.Held.Where(button => button.TryGetKeyboard(out _) || button.TryGetController(out _)).ToArray();
+
+            // apply keybind
+            if (released.Any())
+                this.AssignKeybinding(released.Concat(held).ToArray());
+        }
+
 
         /*********
         ** Private methods
         *********/
+        /// <summary>Draw an key binding overlay.</summary>
+        /// <typeparam name="TKeybind">The keybind type.</typeparam>
+        /// <param name="spriteBatch">The sprite batch being drawn.</param>
+        /// <param name="option">The option being bound.</param>
+        private void DrawKeybindOverlay<TKeybind>(SpriteBatch spriteBatch, SimpleModOption<TKeybind> option)
+        {
+            int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
+
+            // background
+            spriteBatch.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
+            IClickableMenu.drawTextureBox(spriteBatch, boxX, boxY, 650, 200, Color.White);
+
+            // "Rebinding key:" text
+            {
+                string str = I18n.Config_RebindKey_Title(option.Name());
+                int strWidth = (int)Game1.dialogueFont.MeasureString(str).X;
+                spriteBatch.DrawString(Game1.dialogueFont, str, new Vector2((Game1.uiViewport.Width - strWidth) / 2, boxY + 20), Game1.textColor);
+            }
+
+            // instruction text
+            {
+                string str = typeof(TKeybind) == typeof(KeybindList)
+                    ? I18n.Config_RebindKey_ComboInstructions()
+                    : I18n.Config_RebindKey_SimpleInstructions();
+                int strWidth = (int)Game1.dialogueFont.MeasureString(str).X;
+                spriteBatch.DrawString(Game1.dialogueFont, str, new Vector2((Game1.uiViewport.Width - strWidth) / 2, boxY + 100), Game1.textColor);
+            }
+        }
+
         private void AddDefaultLabels(IManifest modManifest)
         {
             // add page title
@@ -590,85 +614,63 @@ namespace GenericModConfigMenu.Framework
             this.Close();
         }
 
-        private void DoKeybindingFor(SimpleModOption<SButton> opt, Label label)
+        /// <summary>Show the keybind overlay for an option.</summary>
+        /// <typeparam name="TKeybind">The keybind type.</typeparam>
+        /// <param name="option">The option being bound.</param>
+        /// <param name="label">The label to update when the key is reassigned.</param>
+        private void ShowKeybindOverlay<TKeybind>(SimpleModOption<TKeybind> option, Label label)
         {
+            switch (option)
+            {
+                case SimpleModOption<SButton> opt:
+                    this.CurrentButtonOption = opt;
+                    break;
+
+                case SimpleModOption<KeybindList> opt:
+                    this.CurrentKeybindListOption = opt;
+                    break;
+
+                default:
+                    throw new InvalidOperationException($"Unsupported keybind type '{typeof(TKeybind).FullName}'.");
+            }
+
             Game1.playSound("breathin");
-            this.KeybindingOpt = opt;
             this.KeybindingLabel = label;
             this.Ui.Obscured = true;
-            Mod.Instance.Helper.Events.Input.ButtonPressed += this.AssignKeybinding;
         }
 
-        private void DoKeybinding2For(SimpleModOption<KeybindList> opt, Label label)
+        /// <summary>Assign the held or released keys to the current option.</summary>
+        /// <param name="buttons">The held or released keys.</param>
+        private void AssignKeybinding(SButton[] buttons)
         {
-            Game1.playSound("breathin");
-            this.Keybinding2Opt = opt;
-            this.KeybindingLabel = label;
-            this.Ui.Obscured = true;
-            Mod.Instance.Helper.Events.Input.ButtonsChanged += this.AssignKeybinding2;
-        }
-
-        private void AssignKeybinding(object sender, ButtonPressedEventArgs e)
-        {
-            if (this.KeybindingOpt == null)
-                return;
-            if (!e.Button.TryGetKeyboard(out _) && !e.Button.TryGetController(out _))
-                return;
-
-            if (e.Button == SButton.Escape)
+            // handle escape
+            if (buttons.Any(p => p == SButton.Escape))
                 Game1.playSound("bigDeSelect");
+
+            // apply keybind
             else
             {
                 Game1.playSound("coin");
-                this.KeybindingOpt.Value = e.Button;
-                this.KeybindingLabel.String = e.Button.ToString();
+
+                if (this.CurrentButtonOption != null)
+                {
+                    this.CurrentButtonOption.Value = buttons.First();
+                    this.KeybindingLabel.String = this.CurrentButtonOption.Value.ToString();
+                }
+
+                // keybind list
+                else if (this.CurrentKeybindListOption != null)
+                {
+                    this.CurrentKeybindListOption.Value = new KeybindList(new Keybind(buttons.ToArray()));
+                    this.KeybindingLabel.String = this.CurrentKeybindListOption.FormatValue();
+                }
             }
-            Mod.Instance.Helper.Events.Input.ButtonPressed -= this.AssignKeybinding;
-            this.KeybindingOpt = null;
+
+            // end keybind UI
+            this.CurrentButtonOption = null;
+            this.CurrentKeybindListOption = null;
             this.KeybindingLabel = null;
             this.Ui.Obscured = false;
-        }
-
-        private void AssignKeybinding2(object sender, ButtonsChangedEventArgs e)
-        {
-            if (this.Keybinding2Opt == null)
-                return;
-
-            List<SButton> all = new List<SButton>();
-            foreach (var button in e.Held)
-            {
-                if (button.TryGetKeyboard(out _) || button.TryGetController(out _))
-                    all.Add(button);
-            }
-
-            foreach (var button in e.Released)
-            {
-                bool stop = false;
-                if (button == SButton.Escape)
-                {
-                    stop = true;
-                    Game1.playSound("bigDeSelect");
-                }
-                if (!stop && (button.TryGetKeyboard(out _) || button.TryGetController(out _)))
-                {
-                    stop = true;
-                    all.Add(button);
-
-                    Game1.playSound("coin");
-                    this.Keybinding2Opt.Value = new KeybindList(new Keybind(all.ToArray()));
-                    this.KeybindingLabel.String = this.Keybinding2Opt.FormatValue();
-                }
-
-                if (stop)
-                {
-                    Mod.Instance.Helper.Events.Input.ButtonsChanged -= this.AssignKeybinding2;
-                    this.Keybinding2Opt = null;
-                    this.KeybindingLabel = null;
-                    this.Ui.Obscured = false;
-                }
-
-                return;
-            }
         }
     }
 }

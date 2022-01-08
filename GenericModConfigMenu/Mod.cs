@@ -72,6 +72,7 @@ namespace GenericModConfigMenu
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
             helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            helper.Events.Input.ButtonsChanged += this.OnButtonChanged;
         }
 
         /// <inheritdoc />
@@ -220,6 +221,16 @@ namespace GenericModConfigMenu
             // pass input to menu
             else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
                 menu.receiveKeyPress(key);
+        }
+
+        /// <inheritdoc cref="IInputEvents.ButtonPressed"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnButtonChanged(object sender, ButtonsChangedEventArgs e)
+        {
+            // pass to menu for keybinding
+            if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu)
+                menu.OnButtonsChanged(e);
         }
 
         /// <inheritdoc cref="IInputEvents.MouseWheelScrolled"/>
