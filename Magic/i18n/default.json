@@ -33,22 +33,21 @@
 
 
     /*********
-    ** TV channel
+    ** Radio station
     *********/
-    "tv.analyzehints.name": "Magical Analytics",
-    "tv.analyzehints.notmagical": "*static*",
-    "tv.analyzehints.1": "Looking to use magic to work around the farm? Try analyzing your tools.",
-    "tv.analyzehints.2": "Need a quick escape? I wonder if some boots will give you some inspiration.",
-    "tv.analyzehints.3": "Sunlight is pretty nice, but not always available. I wonder if artificial lights can be recreated?",
-    "tv.analyzehints.4": "Some basic minerals seem to contain some magical energy.",
-    "tv.analyzehints.5": "The other day a meteor fell in my backyard. It seemed really mysterious.",
-    "tv.analyzehints.6": "Coffee is delicious. Why not recreate its effects with a spell?",
-    "tv.analyzehints.7": "The other day I saw someone sprout roots from the ground and keep a monster from moving, almost like a crop.",
-    "tv.analyzehints.8": "I bet you could shoot a blast of ice to slow something down. I wonder where you could study ice...?",
-    "tv.analyzehints.9": "I saw an dark altar in someone's house the other day. Well, I say 'house'. It was more like a hut.",
-    "tv.analyzehints.10": "Health potions sure are inconvenient to carry around. Maybe we can heal ourselves with magic?",
-    "tv.analyzehints.11": "Most people use ladders to descend underground, but I saw one person cast a spell and zip straight through the floor.",
-    "tv.analyzehints.12": "I saw someone cast a spell to regain mana!? It looked like it hurt. Rumor has it they learned this technique while fishing for Lava Eels.",
+    "radio.static": "*static*",
+    "radio.analyzehints.1": "Looking to use magic to work around the farm? Try analyzing your tools.",
+    "radio.analyzehints.2": "Need a quick escape? I wonder if some boots will give you some inspiration.",
+    "radio.analyzehints.3": "Sunlight is pretty nice, but not always available. I wonder if artificial lights can be recreated?",
+    "radio.analyzehints.4": "Some basic minerals seem to contain some magical energy.",
+    "radio.analyzehints.5": "The other day a meteor fell in my backyard. It seemed really mysterious.",
+    "radio.analyzehints.6": "Coffee is delicious. Why not recreate its effects with a spell?",
+    "radio.analyzehints.7": "The other day I saw someone sprout roots from the ground and keep a monster from moving, almost like a crop.",
+    "radio.analyzehints.8": "I bet you could shoot a blast of ice to slow something down. I wonder where you could study ice...?",
+    "radio.analyzehints.9": "I saw an dark altar in someone's house the other day. Well, I say 'house'. It was more like a hut.",
+    "radio.analyzehints.10": "Health potions sure are inconvenient to carry around. Maybe we can heal ourselves with magic?",
+    "radio.analyzehints.11": "Most people use ladders to descend underground, but I saw one person cast a spell and zip straight through the floor.",
+    "radio.analyzehints.12": "I saw someone cast a spell to regain mana!? It looked like it hurt. Rumor has it they learned this technique while fishing for Lava Eels.",
 
 
     /*********

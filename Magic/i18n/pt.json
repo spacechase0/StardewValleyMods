@@ -34,22 +34,21 @@
 
 
     /*********
-    ** TV channel
+    ** Radio station
     *********/
-    "tv.analyzehints.name": "Análize Magica",
-    "tv.analyzehints.notmagical": "*estatica*",
-    "tv.analyzehints.1": "Procurando por magias pra usar na sua fazenda? Tente analizar as suas ferramentas.",
-    "tv.analyzehints.2": "Precisando de uma fuga rápida? Eu acho que umas botas vão te servir bem.",
-    "tv.analyzehints.3": "A luz do sol é ótima, mas nem sempre disponível. Será que luzes artificiais podem ser criadas?",
-    "tv.analyzehints.4": "Alguns minerais básicos parecem ter algum tipo de energia estranha.",
-    "tv.analyzehints.5": "Um meteoro caiu no meu quintal ontem. Senti uma energia muito estranha vinda dele.",
-    "tv.analyzehints.6": "Café é um presente dos deuses. Por que não usar seus efeitos com magia?",
-    "tv.analyzehints.7": "Esses dias eu vi uma pessoa que fez 'vinhas' sairem do chão e elas prendiam os monstros no lugar, parecia uma planta ou algo parecido.",
-    "tv.analyzehints.8": "Eu aposto que você poderia lançar uma bola de gelo para deixar alguém lento. Aonde será que poderiamos estudar gelo...?",
-    "tv.analyzehints.9": "Eu me lembro de ver um altar negro na casa de alguém. Bem, eu disse 'casa'... Parecia mais uma cabana ou um chalé.",
-    "tv.analyzehints.10": "Poções de cura são muito pesadas e ocupam muito espaço na mochila. Por que não nos curarmos com magia?",
-    "tv.analyzehints.11": "A maioria das pessoas usam as escadas pra descer pelas minas, mas eu vi alguém usar uma magia pra descer direto pelo chão.",
-    "tv.analyzehints.12": "Eu não podia acreditar no que via, alguém usando uma magia pra recuperar mana!? Parecia ser doloroso. Pessoas dizem que ele aprendeu essa magia enquanto procurava pelas Enguias de Lava.",
+    "radio.static": "*estatica*",
+    "radio.analyzehints.1": "Procurando por magias pra usar na sua fazenda? Tente analizar as suas ferramentas.",
+    "radio.analyzehints.2": "Precisando de uma fuga rápida? Eu acho que umas botas vão te servir bem.",
+    "radio.analyzehints.3": "A luz do sol é ótima, mas nem sempre disponível. Será que luzes artificiais podem ser criadas?",
+    "radio.analyzehints.4": "Alguns minerais básicos parecem ter algum tipo de energia estranha.",
+    "radio.analyzehints.5": "Um meteoro caiu no meu quintal ontem. Senti uma energia muito estranha vinda dele.",
+    "radio.analyzehints.6": "Café é um presente dos deuses. Por que não usar seus efeitos com magia?",
+    "radio.analyzehints.7": "Esses dias eu vi uma pessoa que fez 'vinhas' sairem do chão e elas prendiam os monstros no lugar, parecia uma planta ou algo parecido.",
+    "radio.analyzehints.8": "Eu aposto que você poderia lançar uma bola de gelo para deixar alguém lento. Aonde será que poderiamos estudar gelo...?",
+    "radio.analyzehints.9": "Eu me lembro de ver um altar negro na casa de alguém. Bem, eu disse 'casa'... Parecia mais uma cabana ou um chalé.",
+    "radio.analyzehints.10": "Poções de cura são muito pesadas e ocupam muito espaço na mochila. Por que não nos curarmos com magia?",
+    "radio.analyzehints.11": "A maioria das pessoas usam as escadas pra descer pelas minas, mas eu vi alguém usar uma magia pra descer direto pelo chão.",
+    "radio.analyzehints.12": "Eu não podia acreditar no que via, alguém usando uma magia pra recuperar mana!? Parecia ser doloroso. Pessoas dizem que ele aprendeu essa magia enquanto procurava pelas Enguias de Lava.",
 
 
     /*********

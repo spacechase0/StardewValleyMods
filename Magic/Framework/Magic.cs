@@ -394,20 +394,20 @@ namespace Magic.Framework
         /// <summary>Handle an interaction with the magic radio.</summary>
         private static void OnRadioClicked()
         {
-            // get channel text
-            string channelText = I18n.Tv_Analyzehints_Notmagical();
+            // get station text
+            string stationText = I18n.Radio_Static();
             if (Game1.player.GetMaxMana() > 0)
             {
                 // get base key
-                string baseKey = Regex.Replace(nameof(I18n.Tv_Analyzehints_1), "_1$", "");
-                if (baseKey == nameof(I18n.Tv_Analyzehints_1))
+                string baseKey = Regex.Replace(nameof(I18n.Radio_Analyzehints_1), "_1$", "");
+                if (baseKey == nameof(I18n.Radio_Analyzehints_1))
                 {
                     Log.Error("Could not get the Magic TV analyze hint base key. This is a bug in the Magic mod."); // key format changed?
                     return;
                 }
 
                 // get possible analyze hints
-                string[] channelTexts = typeof(I18n)
+                string[] stationTexts = typeof(I18n)
                     .GetMethods()
                     .Where(p => Regex.IsMatch(p.Name, $@"^{baseKey}_\d+$"))
                     .Select(p => (string)p.Invoke(null, Array.Empty<object>()))
@@ -415,11 +415,11 @@ namespace Magic.Framework
 
                 // choose hint
                 Random random = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));
-                channelText = channelTexts[random.Next(channelTexts.Length)];
+                stationText = stationTexts[random.Next(stationTexts.Length)];
             }
 
             // show message
-            Game1.activeClickableMenu = new DialogueBox(channelText);
+            Game1.activeClickableMenu = new DialogueBox(stationText);
         }
 
         private static void OnItemEaten(object sender, EventArgs args)
