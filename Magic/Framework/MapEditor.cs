@@ -42,7 +42,7 @@ namespace Magic.Framework
         {
             return
                 asset.AssetNameEquals($"Maps/{this.Config.AltarLocation}")
-                || asset.AssetNameEquals("Maps/WizardHouse");
+                || asset.AssetNameEquals($"Maps/{this.Config.RadioLocation}");
         }
 
         /// <inheritdoc />
@@ -57,7 +57,7 @@ namespace Magic.Framework
             }
 
             // add radio to Wizard's tower
-            else if (asset.AssetNameEquals("Maps/WizardHouse"))
+            else if (asset.AssetNameEquals($"Maps/{this.Config.RadioLocation}"))
             {
                 Map map = asset.AsMap().Data;
 
@@ -113,13 +113,13 @@ namespace Magic.Framework
         /// <summary>Get the tile position on which to place the radio.</summary>
         private (int x, int y) GetRadioPosition()
         {
-            int x = 1;
-            int y = 5;
-            if (this.HasStardewValleyExpanded)
-            {
-                x = 5;
-                y = 23;
-            }
+            int x = this.Config.RadioX;
+            int y = this.Config.RadioY;
+
+            if (x < 0)
+                x = this.HasStardewValleyExpanded ? 5 : 1;
+            if (y < 0)
+                y = this.HasStardewValleyExpanded ? 23 : 5;
 
             return (x, y);
         }

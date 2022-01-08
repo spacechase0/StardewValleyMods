@@ -27,5 +27,14 @@ namespace Magic.Framework
 
         /// <summary>The Y tile position for the top-left corner of the altar, or <c>-1</c> to position it automatically.</summary>
         public int AltarY { get; set; } = -1;
+
+        /// <summary>The name of the map asset in which to add the radio.</summary>
+        public string RadioLocation { get; set; } = "WizardHouse";
+
+        /// <summary>The X tile position for the radio, or <c>-1</c> to position it automatically.</summary>
+        public int RadioX { get; set; } = -1;
+
+        /// <summary>The Y tile position for the radio, or <c>-1</c> to position it automatically.</summary>
+        public int RadioY { get; set; } = -1;
     }
 }

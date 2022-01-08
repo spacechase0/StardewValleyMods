@@ -131,8 +131,9 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    // altar placement
+    // altar and radio placement
     "config.altar-placement": "Altar placement", // TODO
+    "config.radio-placement": "Radio placement", // TODO
     "config.location.name": "Localización",
     "config.location.tooltip": "El nombre interno de la ubicación en la que debe colocarse, como se muestra en el mod 'Debug Mode'.",
     "config.x.name": "Posición X",

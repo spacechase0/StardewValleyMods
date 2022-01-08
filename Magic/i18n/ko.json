@@ -132,8 +132,9 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    // altar placement
+    // altar and radio placement
     "config.altar-placement": "Altar placement", // TODO
+    "config.radio-placement": "Radio placement", // TODO
     "config.location.name": "위치",
     "config.location.tooltip": "그것 배치될 위치의내부 이름, 'Debug Mode' 모드에 표시된 대로.",
     "config.x.name": "X",

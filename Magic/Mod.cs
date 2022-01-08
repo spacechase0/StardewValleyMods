@@ -121,6 +121,40 @@ namespace Magic
                             : value.ToString()
                     );
 
+                    // radio placement
+                    configMenu.AddSectionTitle(this.ModManifest, I18n.Config_RadioPlacement);
+                    configMenu.AddTextOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_Location_Name,
+                        tooltip: I18n.Config_Location_Tooltip,
+                        getValue: () => Mod.Config.RadioLocation,
+                        setValue: value => Mod.Config.RadioLocation = value
+                    );
+                    configMenu.AddNumberOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_X_Name,
+                        tooltip: I18n.Config_X_Tooltip,
+                        getValue: () => Mod.Config.RadioX,
+                        setValue: value => Mod.Config.RadioX = value,
+                        min: -1,
+                        max: 255,
+                        formatValue: value => value < 0
+                            ? I18n.Config_XOrY_AutomaticPosition()
+                            : value.ToString()
+                    );
+                    configMenu.AddNumberOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_Y_Name,
+                        tooltip: I18n.Config_Y_Tooltip,
+                        getValue: () => Mod.Config.RadioY,
+                        setValue: value => Mod.Config.RadioY = value,
+                        min: -1,
+                        max: 255,
+                        formatValue: value => value < 0
+                            ? I18n.Config_XOrY_AutomaticPosition()
+                            : value.ToString()
+                    );
+
                     // controls
                     configMenu.AddSectionTitle(this.ModManifest, I18n.Config_Controls);
                     configMenu.AddKeybind(
