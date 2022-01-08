@@ -16,6 +16,8 @@ using StardewValley;
 using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
+using SObject = StardewValley.Object;
 
 namespace Magic.Framework
 {
@@ -140,46 +142,70 @@ namespace Magic.Framework
         *********/
         private static void OnAnalyze(object sender, AnalyzeEventArgs e)
         {
-            var farmer = sender as Farmer;
+            var farmer = (Farmer)sender;
             if (farmer != Game1.player)
                 return;
 
             SpellBook spellBook = farmer.GetSpellBook();
+            List<string> spellsLearnt = new();
+            // ReSharper disable twice PossibleLossOfFraction
+            Vector2 tilePos = new(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
 
-            List<string> spellsLearnt = new List<string>();
-            if (farmer.CurrentItem != null)
+            // items
             {
-                if (farmer.CurrentTool != null)
+                Item activeItem = farmer.CurrentItem;
+                if (activeItem is not null)
                 {
-                    if (farmer.CurrentTool is StardewValley.Tools.Axe or StardewValley.Tools.Pickaxe)
-                        spellsLearnt.Add("toil:cleardebris");
-                    else if (farmer.CurrentTool is StardewValley.Tools.Hoe)
-                        spellsLearnt.Add("toil:till");
-                    else if (farmer.CurrentTool is StardewValley.Tools.WateringCan)
-                        spellsLearnt.Add("toil:water");
-                }
-                else if (farmer.CurrentItem is Boots)
-                {
-                    spellsLearnt.Add("life:evac");
-                }
-                else if (farmer.ActiveObject != null)
-                {
-                    if (!farmer.ActiveObject.bigCraftable.Value)
+                    // by item type
+                    switch (activeItem)
                     {
-                        int index = farmer.ActiveObject.ParentSheetIndex;
-                        if (index == 395) // Coffee
-                            spellsLearnt.Add("life:haste");
-                        else if (index == 773) // Life elixir
-                            spellsLearnt.Add("life:heal");
-                        else if (index == 86) // Earth crystal
-                            spellsLearnt.Add("nature:shockwave");
-                        else if (index == 82) // Fire quartz
-                            spellsLearnt.Add("elemental:fireball");
-                        else if (index == 161) // Ice Pip
-                            spellsLearnt.Add("elemental:frostbolt");
+                        case Axe or Pickaxe:
+                            spellsLearnt.Add("toil:cleardebris");
+                            break;
+
+                        case Hoe:
+                            spellsLearnt.Add("toil:till");
+                            break;
+
+                        case WateringCan:
+                            spellsLearnt.Add("toil:water");
+                            break;
+
+                        case Boots:
+                            spellsLearnt.Add("life:evac");
+                            break;
+                    }
+
+                    // by item ID
+                    if (activeItem is SObject activeObj && activeItem.GetType() == typeof(SObject) && !activeObj.bigCraftable.Value)
+                    {
+                        switch (activeItem.ParentSheetIndex)
+                        {
+                            case 395: // coffee
+                                spellsLearnt.Add("life:haste");
+                                break;
+
+                            case 773: // life elixir
+                                spellsLearnt.Add("life:heal");
+                                break;
+
+                            case 86: // earth crystal
+                                spellsLearnt.Add("nature:shockwave");
+                                break;
+
+                            case 82: // fire quartz
+                                spellsLearnt.Add("elemental:fireball");
+                                break;
+
+                            case 161: // ice pip
+                                spellsLearnt.Add("elemental:frostbolt");
+                                break;
+                        }
                     }
                 }
             }
+
+            // light sources
             foreach (var lightSource in farmer.currentLocation.sharedLights.Values)
             {
                 if (Utility.distance(e.TargetX, lightSource.position.X, e.TargetY, lightSource.position.Y) < lightSource.radius.Value * Game1.tileSize)
@@ -188,86 +214,99 @@ namespace Magic.Framework
                     break;
                 }
             }
-            var tilePos = new Vector2(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
-            if (farmer.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && (feature as HoeDirt)?.crop != null)
-                spellsLearnt.Add("nature:tendrils");
 
-            // TODO: Add proper tilesheet check
-            var tile = farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
-            if (tile?.TileIndex == 173)
-                spellsLearnt.Add("elemental:descend");
-            foreach (ResourceClump clump in farmer.currentLocation.resourceClumps)
+            // terrain features
             {
-                if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
+                if (farmer.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && (feature as HoeDirt)?.crop != null)
+                    spellsLearnt.Add("nature:tendrils");
+
+                foreach (ResourceClump clump in farmer.currentLocation.resourceClumps)
                 {
-                    spellsLearnt.Add("eldritch:meteor");
-                    break;
-                }
-            }
-
-            if (farmer.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")
-                spellsLearnt.Add("eldritch:lucksteal");
-            if (farmer.currentLocation is StardewValley.Locations.MineShaft { mineLevel: 100 } ms && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
-                spellsLearnt.Add("eldritch:bloodmana");
-
-            for (int i = spellsLearnt.Count - 1; i >= 0; --i)
-                if (spellBook.KnowsSpell(spellsLearnt[i], 0))
-                    spellsLearnt.RemoveAt(i);
-            if (spellsLearnt.Count > 0)
-            {
-                Game1.playSound("secret1");
-                foreach (string spell in spellsLearnt)
-                {
-                    Log.Debug("Player learnt spell: " + spell);
-                    spellBook.LearnSpell(spell, 0, true);
-                    //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
-                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn(spellName: SpellManager.Get(spell).GetTranslatedName())));
-                }
-            }
-
-            // Temporary - 0.3.0 will add dungeons to get these
-            bool knowsAll = true;
-            foreach (string schoolId in School.GetSchoolList())
-            {
-                var school = School.GetSchool(schoolId);
-
-                bool knowsAllSchool = true;
-                foreach (var spell in school.GetSpellsTier1())
-                {
-                    if (!spellBook.KnowsSpell(spell, 0))
+                    if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
                     {
-                        knowsAll = knowsAllSchool = false;
+                        spellsLearnt.Add("eldritch:meteor");
                         break;
                     }
                 }
-                foreach (var spell in school.GetSpellsTier2())
-                {
-                    if (!spellBook.KnowsSpell(spell, 0))
-                    {
-                        knowsAll = knowsAllSchool = false;
-                        break;
-                    }
-                }
+            }
 
-                // Have to know all other spells for the arcane one
-                if (schoolId == SchoolId.Arcane)
+            // map tile
+            {
+                // TODO: Add proper tilesheet check
+                var tile = farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
+                if (tile?.TileIndex == 173)
+                    spellsLearnt.Add("elemental:descend");
+
+                if (farmer.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")
+                    spellsLearnt.Add("eldritch:lucksteal");
+                if (farmer.currentLocation is StardewValley.Locations.MineShaft { mineLevel: 100 } ms && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
+                    spellsLearnt.Add("eldritch:bloodmana");
+            }
+
+            // learn spells
+            bool learnedAny = false;
+            foreach (string spell in spellsLearnt)
+            {
+                if (spellBook.KnowsSpell(spell, 0))
                     continue;
 
-                var ancientSpell = school.GetSpellsTier3()[0];
-                if (knowsAllSchool && !spellBook.KnowsSpell(ancientSpell, 0))
+                if (!learnedAny)
                 {
-                    Log.Debug("Player learnt ancient spell: " + ancientSpell);
-                    spellBook.LearnSpell(ancientSpell, 0, true);
-                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: ancientSpell.GetTranslatedName())));
+                    Game1.playSound("secret1");
+                    learnedAny = true;
                 }
+
+                Log.Debug($"Player learnt spell: {spell}");
+                spellBook.LearnSpell(spell, 0, true);
+                Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn(spellName: SpellManager.Get(spell).GetTranslatedName())));
             }
 
-            var rewindSpell = School.GetSchool(SchoolId.Arcane).GetSpellsTier3()[0];
-            if (knowsAll && !spellBook.KnowsSpell(rewindSpell, 0))
+            // learn hidden spell if players knows all of the other spells for a school
+            // TODO: add dungeons to get these
             {
-                Log.Debug("Player learnt ancient spell: " + rewindSpell);
-                spellBook.LearnSpell(rewindSpell, 0, true);
-                Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: rewindSpell.GetTranslatedName())));
+                bool knowsAll = true;
+                foreach (string schoolId in School.GetSchoolList())
+                {
+                    var school = School.GetSchool(schoolId);
+
+                    bool knowsAllSchool = true;
+                    foreach (var spell in school.GetSpellsTier1())
+                    {
+                        if (!spellBook.KnowsSpell(spell, 0))
+                        {
+                            knowsAll = knowsAllSchool = false;
+                            break;
+                        }
+                    }
+                    foreach (var spell in school.GetSpellsTier2())
+                    {
+                        if (!spellBook.KnowsSpell(spell, 0))
+                        {
+                            knowsAll = knowsAllSchool = false;
+                            break;
+                        }
+                    }
+
+                    // Have to know all other spells for the arcane one
+                    if (schoolId == SchoolId.Arcane)
+                        continue;
+
+                    var ancientSpell = school.GetSpellsTier3()[0];
+                    if (knowsAllSchool && !spellBook.KnowsSpell(ancientSpell, 0))
+                    {
+                        Log.Debug("Player learnt ancient spell: " + ancientSpell);
+                        spellBook.LearnSpell(ancientSpell, 0, true);
+                        Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: ancientSpell.GetTranslatedName())));
+                    }
+                }
+
+                var rewindSpell = School.GetSchool(SchoolId.Arcane).GetSpellsTier3()[0];
+                if (knowsAll && !spellBook.KnowsSpell(rewindSpell, 0))
+                {
+                    Log.Debug("Player learnt ancient spell: " + rewindSpell);
+                    spellBook.LearnSpell(rewindSpell, 0, true);
+                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: rewindSpell.GetTranslatedName())));
+                }
             }
         }
 
