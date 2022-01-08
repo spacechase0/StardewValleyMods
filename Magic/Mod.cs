@@ -86,6 +86,9 @@ namespace Magic
                         save: () => this.Helper.WriteConfig(Mod.Config),
                         titleScreenOnly: true
                     );
+
+                    // altar placement
+                    configMenu.AddSectionTitle(this.ModManifest, I18n.Config_AltarPlacement);
                     configMenu.AddTextOption(
                         mod: this.ModManifest,
                         name: I18n.Config_AltarLocation_Name,
@@ -107,6 +110,9 @@ namespace Magic
                         getValue: () => Mod.Config.AltarY,
                         setValue: value => Mod.Config.AltarY = value
                     );
+
+                    // controls
+                    configMenu.AddSectionTitle(this.ModManifest, I18n.Config_Controls);
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: I18n.Config_CastKey_Name,

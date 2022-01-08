@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Added support for analyzing toolbar or inventory items by pointing at them (not only by selecting them).
+* Added sections to [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098) UI.
 * Fixed default altar position.
 * The _Till_ spell no longer removes placed objects.
 * A custom TV channel is no longer added when PyTK is installed. Instead there's a new radio added to the Wizard tower you can click to get hints.
@@ -40,7 +41,7 @@ Released 15 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 
 * The config UI is now translatable.
 * Moved item translations into the standard `i18n` folder.
-* Updated for Generic Mod Config Menu 1.5.0.
+* Updated for [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098) 1.5.0.
 * Fixed mana regen not starting until level 2, and slightly increase regen at higher levels.
 * Fixed controller not usable in Magic menus.
 

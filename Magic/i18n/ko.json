@@ -132,6 +132,8 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
+    // altar placement
+    "config.altar-placement": "Altar placement", // TODO
     "config.altar-location.name": "제단 위치",
     "config.altar-location.tooltip": "마법 제단이 배치될 위치의(내부) 이름.",
     "config.altar-x.name": "제단 X",
@@ -139,6 +141,8 @@
     "config.altar-y.name": "제단 Y",
     "config.altar-y.tooltip": "마법 제단을 배치할 Y타일 위치.",
 
+    // controls
+    "config.controls": "Controls", // TODO
     "config.cast-key.name": "키: 시전",
     "config.cast-key.tooltip": "주문 시전을 시작하기 위한 키.",
     "config.swap-spells-key.name": "키: 교환 판매",
