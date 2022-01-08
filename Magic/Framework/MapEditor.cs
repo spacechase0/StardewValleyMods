@@ -51,8 +51,9 @@ namespace Magic.Framework
             // add altar
             if (asset.AssetNameEquals($"Maps/{this.Config.AltarLocation}"))
             {
+                (int altarX, int altarY) = this.GetAltarPosition();
                 Map altar = this.Content.Load<Map>("assets/altar.tmx");
-                asset.AsMap().PatchMap(altar, targetArea: new Rectangle(this.Config.AltarX, this.Config.AltarY, 3, 3));
+                asset.AsMap().PatchMap(altar, targetArea: new Rectangle(altarX, altarY, 3, 3));
             }
 
             // add radio to Wizard's tower
@@ -85,16 +86,42 @@ namespace Magic.Framework
                 }
 
                 // add radio
-                int radioX = 1;
-                int radioY = 5;
-                if (this.HasStardewValleyExpanded)
-                {
-                    radioX = 5;
-                    radioY = 23;
-                }
+                (int radioX, int radioY) = this.GetRadioPosition();
                 frontLayer.Tiles[radioX, radioY] = new StaticTile(frontLayer, tilesheet, BlendMode.Alpha, 512);
                 (buildingsLayer.Tiles[radioX, radioY] ?? frontLayer.Tiles[radioX, radioY]).Properties["Action"] = "MagicRadio";
             }
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Get the tile position on which to place the altar.</summary>
+        private (int x, int y) GetAltarPosition()
+        {
+            int x = this.Config.AltarX;
+            int y = this.Config.AltarY;
+
+            if (x < 0)
+                x = 36;
+            if (y < 0)
+                y = 15;
+
+            return (x, y);
+        }
+
+        /// <summary>Get the tile position on which to place the radio.</summary>
+        private (int x, int y) GetRadioPosition()
+        {
+            int x = 1;
+            int y = 5;
+            if (this.HasStardewValleyExpanded)
+            {
+                x = 5;
+                y = 23;
+            }
+
+            return (x, y);
         }
     }
 }

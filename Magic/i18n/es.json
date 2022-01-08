@@ -139,6 +139,7 @@
     "config.x.tooltip": "La posición de la baldosa X donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
     "config.y.name": "Posición Y",
     "config.y.tooltip": "La posición de la baldosa Y donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
+    "config.x-or-y.automatic-position": "automatic", // TODO
 
     // controls
     "config.controls": "Controls", // TODO

@@ -101,14 +101,24 @@ namespace Magic
                         name: I18n.Config_X_Name,
                         tooltip: I18n.Config_X_Tooltip,
                         getValue: () => Mod.Config.AltarX,
-                        setValue: value => Mod.Config.AltarX = value
+                        setValue: value => Mod.Config.AltarX = value,
+                        min: -1,
+                        max: 255,
+                        formatValue: value => value < 0
+                            ? I18n.Config_XOrY_AutomaticPosition()
+                            : value.ToString()
                     );
                     configMenu.AddNumberOption(
                         mod: this.ModManifest,
                         name: I18n.Config_Y_Name,
                         tooltip: I18n.Config_Y_Tooltip,
                         getValue: () => Mod.Config.AltarY,
-                        setValue: value => Mod.Config.AltarY = value
+                        setValue: value => Mod.Config.AltarY = value,
+                        min: -1,
+                        max: 255,
+                        formatValue: value => value < 0
+                            ? I18n.Config_XOrY_AutomaticPosition()
+                            : value.ToString()
                     );
 
                     // controls

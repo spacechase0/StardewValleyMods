@@ -140,6 +140,7 @@
     "config.x.tooltip": "그것 배치할 X타일 위치, 'Debug Mode' 모드에 표시된 대로.",
     "config.y.name": "Y",
     "config.y.tooltip": "그것 배치할 Y타일 위치, 'Debug Mode' 모드에 표시된 대로.",
+    "config.x-or-y.automatic-position": "automatic", // TODO
 
     // controls
     "config.controls": "Controls", // TODO

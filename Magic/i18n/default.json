@@ -139,6 +139,7 @@
     "config.x.tooltip": "The X tile position where it should be placed, as shown by the Debug Mode mod.",
     "config.y.name": "Y position",
     "config.y.tooltip": "The Y tile position where it should be placed, as shown by the Debug Mode mod.",
+    "config.x-or-y.automatic-position": "automatic",
 
     // controls
     "config.controls": "Controls",
