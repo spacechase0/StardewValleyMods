@@ -202,7 +202,7 @@ namespace GenericModConfigMenu.Framework
         }
 
         /****
-        ** Obsolete code
+        ** Obsolete since 1.8.0
         ****/
         /// <inheritdoc />
         [Obsolete]
@@ -211,6 +211,9 @@ namespace GenericModConfigMenu.Framework
             this.AddComplexOption(mod: mod, name: name, tooltip: tooltip, draw: draw, beforeMenuOpened: null, beforeSave: beforeSave, afterSave: afterSave, beforeReset: beforeReset, afterReset: afterReset, beforeMenuClosed: null, height: height, fieldId: fieldId);
         }
 
+        /****
+        ** Obsolete since 1.7.0
+        ****/
         /// <inheritdoc />
         [Obsolete]
         public void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null)
@@ -218,6 +221,19 @@ namespace GenericModConfigMenu.Framework
             this.AddComplexOption(mod: mod, name: name, tooltip: tooltip, draw: draw, beforeMenuOpened: null, beforeSave: saveChanges, height: height, fieldId: fieldId);
         }
 
+        /****
+        ** Obsolete since 1.6.0
+        ****/
+        /// <inheritdoc />
+        [Obsolete]
+        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null)
+        {
+            this.AddTextOption(mod: mod, getValue: getValue, setValue: setValue, name: name, tooltip: tooltip, allowedValues: allowedValues, formatAllowedValue: null, fieldId: fieldId);
+        }
+
+        /****
+        ** Obsolete since 1.5.0
+        ****/
         /// <inheritdoc />
         [Obsolete]
         public void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile)
@@ -414,13 +430,6 @@ namespace GenericModConfigMenu.Framework
         public void SubscribeToChange(IManifest mod, Action<string, string> changeHandler)
         {
             this.SubscribeToChange<string>(mod, changeHandler);
-        }
-
-        /// <inheritdoc />
-        [Obsolete]
-        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null)
-        {
-            this.AddTextOption(mod: mod, getValue: getValue, setValue: setValue, name: name, tooltip: tooltip, allowedValues: allowedValues, formatAllowedValue: null, fieldId: fieldId);
         }
 
 

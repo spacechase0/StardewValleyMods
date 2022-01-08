@@ -15,8 +15,16 @@ namespace GenericModConfigMenu.Framework
         ** These are only included for backwards compatibility and will be removed in a future version.
         ** Your mod will break if you haven't removed them when that happens.
         *********/
+        // Obsolete since 1.8.0
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddComplexOption) + " with more callback arguments instead.")] void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null);
+
+        // Obsolete since 1.7.0
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddComplexOption) + " with more callback arguments instead.")] void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Func<int> height = null, string fieldId = null);
+
+        // obsolete since 1.6.0
+        [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddTextOption) + " with the formatAllowedValue argument instead.")] void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null);
+
+        // obsolete since 1.5.0
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Register) + " instead.")] void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Unregister) + " instead.")] void UnregisterModConfig(IManifest mod);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.Register) + " or " + nameof(IGenericModConfigMenuApi.SetTitleScreenOnlyForNextOptions) + " instead.")] void SetDefaultIngameOptinValue(IManifest mod, bool optedIn);
@@ -42,6 +50,5 @@ namespace GenericModConfigMenu.Framework
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.OnFieldChanged) + " instead.")] void SubscribeToChange(IManifest mod, Action<string, int> changeHandler);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.OnFieldChanged) + " instead.")] void SubscribeToChange(IManifest mod, Action<string, float> changeHandler);
         [Obsolete("Use " + nameof(IGenericModConfigMenuApi.OnFieldChanged) + " instead.")] void SubscribeToChange(IManifest mod, Action<string, string> changeHandler);
-        [Obsolete("Use " + nameof(IGenericModConfigMenuApi.AddTextOption) + " with the formatAllowedValue argument instead.")] void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null);
     }
 }
