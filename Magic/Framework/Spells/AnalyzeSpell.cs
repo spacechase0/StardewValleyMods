@@ -43,7 +43,7 @@ namespace Magic.Framework.Spells
             // ReSharper disable twice PossibleLossOfFraction
             Vector2 tilePos = new(targetX / Game1.tileSize, targetY / Game1.tileSize);
 
-            // items
+            // get spells from item
             foreach (var activeItem in new[] { this.GetItemFromMenu(Game1.activeClickableMenu) ?? this.GetItemFromToolbar(), player.CurrentItem })
             {
                 if (activeItem is not null)
@@ -97,42 +97,46 @@ namespace Magic.Framework.Spells
                 }
             }
 
-            // light sources
-            foreach (var lightSource in player.currentLocation.sharedLights.Values)
+            // get spells from world
+            if (Game1.activeClickableMenu == null)
             {
-                if (Utility.distance(targetX, lightSource.position.X, targetY, lightSource.position.Y) < lightSource.radius.Value * Game1.tileSize)
+                // light sources
+                foreach (var lightSource in player.currentLocation.sharedLights.Values)
                 {
-                    spellsLearnt.Add("nature:lantern");
-                    break;
-                }
-            }
-
-            // terrain features
-            {
-                if (player.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && (feature as HoeDirt)?.crop != null)
-                    spellsLearnt.Add("nature:tendrils");
-
-                foreach (ResourceClump clump in player.currentLocation.resourceClumps)
-                {
-                    if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
+                    if (Utility.distance(targetX, lightSource.position.X, targetY, lightSource.position.Y) < lightSource.radius.Value * Game1.tileSize)
                     {
-                        spellsLearnt.Add("eldritch:meteor");
+                        spellsLearnt.Add("nature:lantern");
                         break;
                     }
                 }
-            }
 
-            // map tile
-            {
-                // TODO: Add proper tilesheet check
-                var tile = player.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
-                if (tile?.TileIndex == 173)
-                    spellsLearnt.Add("elemental:descend");
+                // terrain features
+                {
+                    if (player.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && (feature as HoeDirt)?.crop != null)
+                        spellsLearnt.Add("nature:tendrils");
 
-                if (player.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")
-                    spellsLearnt.Add("eldritch:lucksteal");
-                if (player.currentLocation is StardewValley.Locations.MineShaft { mineLevel: 100 } ms && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
-                    spellsLearnt.Add("eldritch:bloodmana");
+                    foreach (ResourceClump clump in player.currentLocation.resourceClumps)
+                    {
+                        if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
+                        {
+                            spellsLearnt.Add("eldritch:meteor");
+                            break;
+                        }
+                    }
+                }
+
+                // map tile
+                {
+                    // TODO: Add proper tilesheet check
+                    var tile = player.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
+                    if (tile?.TileIndex == 173)
+                        spellsLearnt.Add("elemental:descend");
+
+                    if (player.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")
+                        spellsLearnt.Add("eldritch:lucksteal");
+                    if (player.currentLocation is StardewValley.Locations.MineShaft { mineLevel: 100 } ms && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
+                        spellsLearnt.Add("eldritch:bloodmana");
+                }
             }
 
             // learn spells
