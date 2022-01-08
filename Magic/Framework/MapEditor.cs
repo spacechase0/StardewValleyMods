@@ -19,6 +19,9 @@ namespace Magic.Framework
         /// <summary>The SMAPI API for loading content assets.</summary>
         private readonly IContentHelper Content;
 
+        /// <summary>Whether the player has Stardew Valley Expanded installed.</summary>
+        private readonly bool HasStardewValleyExpanded;
+
 
         /*********
         ** Public methods
@@ -26,10 +29,12 @@ namespace Magic.Framework
         /// <summary>Construct an instance.</summary>
         /// <param name="config">The mod configuration.</param>
         /// <param name="content">The SMAPI API for loading content assets.</param>
-        public MapEditor(Configuration config, IContentHelper content)
+        /// <param name="hasStardewValleyExpanded">Whether the player has Stardew Valley Expanded installed.</param>
+        public MapEditor(Configuration config, IContentHelper content, bool hasStardewValleyExpanded)
         {
             this.Config = config;
             this.Content = content;
+            this.HasStardewValleyExpanded = hasStardewValleyExpanded;
         }
 
         /// <inheritdoc />
@@ -80,8 +85,13 @@ namespace Magic.Framework
                 }
 
                 // add radio
-                const int radioX = 1;
-                const int radioY = 5;
+                int radioX = 1;
+                int radioY = 5;
+                if (this.HasStardewValleyExpanded)
+                {
+                    radioX = 5;
+                    radioY = 23;
+                }
                 frontLayer.Tiles[radioX, radioY] = new StaticTile(frontLayer, tilesheet, BlendMode.Alpha, 512);
                 (buildingsLayer.Tiles[radioX, radioY] ?? frontLayer.Tiles[radioX, radioY]).Properties["Action"] = "MagicRadio";
             }

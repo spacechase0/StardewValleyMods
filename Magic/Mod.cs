@@ -29,6 +29,9 @@ namespace Magic
         public static IJsonAssetsApi Ja;
         public static IManaBarApi Mana;
 
+        /// <summary>Whether Stardew Valley Expanded is installed.</summary>
+        public static bool HasStardewValleyExpanded => Mod.Instance.Helper.ModRegistry.IsLoaded("FlashShifter.SVECode");
+
         public Api Api;
 
 
@@ -51,6 +54,7 @@ namespace Magic
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.Saving += this.OnSaving;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
 
             Framework.Magic.Init(helper.Events, helper.Input, helper.ModRegistry, helper.Multiplayer.GetNewID);
             ConsoleCommandHelper.RegisterCommandsInAssembly(this);
@@ -71,9 +75,6 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            // hook asset editor
-            this.Helper.Content.AssetEditors.Add(new MapEditor(Mod.Config, this.Helper.Content));
-
             // hook Generic Mod Config Menu
             {
                 var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
@@ -179,6 +180,24 @@ namespace Magic
                 }
                 Mod.Ja = api;
                 api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
+            }
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            // hook asset editor later, so the radio is applied over other map edits if needed
+            if (Game1.ticks > 5)
+            {
+                this.Helper.Content.AssetEditors.Add(new MapEditor(
+                    config: Mod.Config,
+                    content: this.Helper.Content,
+                    hasStardewValleyExpanded: Mod.HasStardewValleyExpanded
+                ));
+
+                this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
             }
         }
 
