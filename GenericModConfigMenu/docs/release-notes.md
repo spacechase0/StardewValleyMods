@@ -4,6 +4,7 @@
 ## Upcoming release
 * Added support for formatting number option values.
 * Added list of mods that can only be editable from the title-screen when in-game.
+* Added keybind overlay buttons to clear keybind or keep previous value.
 * Improved `AddComplexOption` with new menu opened/closed callbacks (thanks to jltaylor-us!).
 * Fixed clicks sometimes handled by elements that are scrolled out of view.
 * Fixed multi-row elements sometimes disappearing before they're fully off-screen (thanks to jltaylor-us!).

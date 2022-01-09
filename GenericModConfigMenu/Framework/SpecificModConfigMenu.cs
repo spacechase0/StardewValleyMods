@@ -343,6 +343,17 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
+        public override void receiveLeftClick(int x, int y, bool playSound = true)
+        {
+            if (this.IsBindingKey)
+            {
+                this.ActiveKeybindOverlay.OnLeftClick(x, y);
+                if (this.ActiveKeybindOverlay.IsFinished)
+                    this.CloseKeybindOverlay();
+            }
+        }
+
+        /// <inheritdoc />
         public override void receiveKeyPress(Keys key)
         {
             if (key == Keys.Escape && !this.IsBindingKey)
@@ -432,16 +443,19 @@ namespace GenericModConfigMenu.Framework
             this.Table.Scrollbar.Update();
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
+
+            this.ActiveKeybindOverlay?.OnWindowResized();
         }
 
         /// <summary>Raised when any buttons are pressed or released.</summary>
         /// <param name="e">The event arguments.</param>
         public void OnButtonsChanged(ButtonsChangedEventArgs e)
         {
-            if (this.IsBindingKey && this.ActiveKeybindOverlay.TryHandle(e))
+            if (this.IsBindingKey)
             {
-                this.ActiveKeybindOverlay = null;
-                this.Ui.Obscured = false;
+                this.ActiveKeybindOverlay.OnButtonsChanged(e);
+                if (this.ActiveKeybindOverlay.IsFinished)
+                    this.CloseKeybindOverlay();
             }
         }
 
@@ -581,6 +595,13 @@ namespace GenericModConfigMenu.Framework
             Game1.playSound("breathin");
             this.ActiveKeybindOverlay = new KeybindOverlay<TKeybind>(option, label);
             this.Ui.Obscured = true;
+        }
+
+        /// <summary>Close the current keybind overlay.</summary>
+        private void CloseKeybindOverlay()
+        {
+            this.ActiveKeybindOverlay = null;
+            this.Ui.Obscured = false;
         }
     }
 }
