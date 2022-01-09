@@ -8,11 +8,11 @@
 
     // menu tooltips
     // TODO
-    "tooltip.spell.known": "Click and drag to add {{spell}} to your spellbar on the right.",
-    "tooltip.spell.can-learn": "Click to spend one free point and learn {{spell}}.",
-    "tooltip.spell.need-free-points": "You have no free points to learn {{spell}}.",
-    "tooltip.spell.need-previous-levels": "You must learn the previous spell levels first.",
-    "tooltip.spell.name-and-level": "{{spellName}} level {{level}}",
+    "tooltip.spell.known": "{{spell}}을(를) 오른쪽 맞춤법 표시줄에 추가하려면 클릭하고 드래그하세요.",
+    "tooltip.spell.can-learn": "클릭하여 무료 포인트 1점을 사용하고 {{spell}}을(를) 배우십시오.",
+    "tooltip.spell.need-free-points": "{{spell}} 배울 수 있는 무료 포인트가 없습니다.",
+    "tooltip.spell.need-previous-levels": "먼저 이전 주문 레벨을 배워야 합니다.",
+    "tooltip.spell.name-and-level": "{{spellName}} 레벨 {{level}}",
 
     // altar
     "altar.click-message": "은은히 빛나는 제단이다.",
