@@ -131,18 +131,18 @@
     ** Generic Mod Config Menu UI
     *********/
     // altar and radio placement
-    "config.altar-placement": "Altar placement", // TODO
-    "config.radio-placement": "Radio placement", // TODO
+    "config.altar-placement": "Ubicación del altar",
+    "config.radio-placement": "Ubicación de la radio",
     "config.location.name": "Localización",
     "config.location.tooltip": "El nombre interno de la ubicación en la que debe colocarse, como se muestra en el mod 'Debug Mode'.",
     "config.x.name": "Posición X",
     "config.x.tooltip": "La posición de la baldosa X donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
     "config.y.name": "Posición Y",
     "config.y.tooltip": "La posición de la baldosa Y donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
-    "config.x-or-y.automatic-position": "automatic", // TODO
+    "config.x-or-y.automatic-position": "automático",
 
     // controls
-    "config.controls": "Controls", // TODO
+    "config.controls": "Controles",
     "config.cast-key.name": "Tecla: Lanzar hechizo",
     "config.cast-key.tooltip": "La tecla para iniciar el lanzamiento de un hechizo.",
     "config.swap-spells-key.name": "Tecla: Intercambio de hechizos",
