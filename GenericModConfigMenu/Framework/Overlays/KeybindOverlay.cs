@@ -79,15 +79,15 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <inheritdoc />
         public void OnLeftClick(int x, int y)
         {
-            if (this.OkButton.containsPoint(x, y))
-            {
-                Game1.playSound("bigDeSelect");
-                this.IsFinished = true;
-            }
-            else if (this.ClearButton.containsPoint(x, y))
+            if (this.ClearButton.containsPoint(x, y))
             {
                 Game1.playSound("coin");
                 this.SetValue(Array.Empty<SButton>());
+                this.IsFinished = true;
+            }
+            else if (this.OkButton.containsPoint(x, y) || !this.Bounds.Contains(x, y))
+            {
+                Game1.playSound("bigDeSelect");
                 this.IsFinished = true;
             }
         }
