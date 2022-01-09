@@ -7,7 +7,7 @@
 
     // mod list UI
     "list.editable-heading": "Налаштування модів",
-    "list.not-editable-heading": "Editable from the title screen:", // TODO
+    "list.not-editable-heading": "Можна редагувати в головному меню:",
 
     // mod config pages
     "config.buttons.cancel": "Скасувати",
