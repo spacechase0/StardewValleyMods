@@ -24,7 +24,6 @@
     /*********
     ** Config options for Generic Mod Config Menu itself
     *********/
-    // TODO
     "options.open-menu-key.name": "메뉴 오픈 단축키",
     "options.open-menu-key.desc": "메뉴 실행 단축키 설정.",
     "options.scroll-speed.name": "스크롤 속도",

@@ -1,4 +1,4 @@
-{
+﻿{
     /*********
     ** Generic config UI
     *********/
@@ -6,7 +6,8 @@
     "button.mod-options": "MOD 选项",
 
     // mod list UI
-    "list.heading": "配置 MOD",
+    "list.editable-heading": "配置 MOD",
+    "list.not-editable-heading": "Editable from the title screen:", // TODO
 
     // mod config pages
     "config.buttons.cancel": "取消",
