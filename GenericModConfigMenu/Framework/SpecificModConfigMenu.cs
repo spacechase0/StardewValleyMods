@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GenericModConfigMenu.Framework.ModOption;
+using GenericModConfigMenu.Framework.Overlays;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -38,20 +39,14 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether the user hit escape.</summary>
         private bool ExitOnNextUpdate;
 
-        /// <summary>The current <see cref="SButton"/> option currently being bound.</summary>
-        private SimpleModOption<SButton> CurrentButtonOption;
-
-        /// <summary>The current <see cref="KeybindList"/> option currently being bound.</summary>
-        private SimpleModOption<KeybindList> CurrentKeybindListOption;
-
-        /// <summary>The label to update with the bound keys when <see cref="CurrentButtonOption"/> or <see cref="CurrentKeybindListOption"/> are rebound.</summary>
-        private Label KeybindingLabel;
-
         /// <summary>Whether a save is currently loaded.</summary>
         private bool InGame => Context.IsWorldReady;
 
+        /// <summary>The active keybind overlay, if any.</summary>
+        private IKeybindOverlay ActiveKeybindOverlay;
+
         /// <summary>Whether a keybinding UI is open.</summary>
-        private bool IsBindingKey => this.CurrentButtonOption != null || this.CurrentKeybindListOption != null;
+        private bool IsBindingKey => this.ActiveKeybindOverlay != null;
 
 
         /*********
@@ -395,10 +390,7 @@ namespace GenericModConfigMenu.Framework
             this.Ui.Draw(b);
 
             // keybind UI
-            if (this.CurrentButtonOption != null)
-                this.DrawKeybindOverlay(b, this.CurrentButtonOption);
-            else if (this.CurrentKeybindListOption != null)
-                this.DrawKeybindOverlay(b, this.CurrentKeybindListOption);
+            this.ActiveKeybindOverlay?.Draw(b);
 
             // mouse
             this.drawMouse(b);
@@ -446,51 +438,17 @@ namespace GenericModConfigMenu.Framework
         /// <param name="e">The event arguments.</param>
         public void OnButtonsChanged(ButtonsChangedEventArgs e)
         {
-            if (!this.IsBindingKey)
-                return;
-
-            // get keys
-            SButton[] released = e.Released.Where(button => button.TryGetKeyboard(out _) || button.TryGetController(out _)).ToArray();
-            SButton[] held = e.Held.Where(button => button.TryGetKeyboard(out _) || button.TryGetController(out _)).ToArray();
-
-            // apply keybind
-            if (released.Any())
-                this.AssignKeybinding(released.Concat(held).ToArray());
+            if (this.IsBindingKey && this.ActiveKeybindOverlay.TryHandle(e))
+            {
+                this.ActiveKeybindOverlay = null;
+                this.Ui.Obscured = false;
+            }
         }
 
 
         /*********
         ** Private methods
         *********/
-        /// <summary>Draw an key binding overlay.</summary>
-        /// <typeparam name="TKeybind">The keybind type.</typeparam>
-        /// <param name="spriteBatch">The sprite batch being drawn.</param>
-        /// <param name="option">The option being bound.</param>
-        private void DrawKeybindOverlay<TKeybind>(SpriteBatch spriteBatch, SimpleModOption<TKeybind> option)
-        {
-            int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
-
-            // background
-            spriteBatch.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
-            IClickableMenu.drawTextureBox(spriteBatch, boxX, boxY, 650, 200, Color.White);
-
-            // "Rebinding key:" text
-            {
-                string str = I18n.Config_RebindKey_Title(option.Name());
-                int strWidth = (int)Game1.dialogueFont.MeasureString(str).X;
-                spriteBatch.DrawString(Game1.dialogueFont, str, new Vector2((Game1.uiViewport.Width - strWidth) / 2, boxY + 20), Game1.textColor);
-            }
-
-            // instruction text
-            {
-                string str = typeof(TKeybind) == typeof(KeybindList)
-                    ? I18n.Config_RebindKey_ComboInstructions()
-                    : I18n.Config_RebindKey_SimpleInstructions();
-                int strWidth = (int)Game1.dialogueFont.MeasureString(str).X;
-                spriteBatch.DrawString(Game1.dialogueFont, str, new Vector2((Game1.uiViewport.Width - strWidth) / 2, boxY + 100), Game1.textColor);
-            }
-        }
-
         private void AddDefaultLabels(IManifest modManifest)
         {
             // add page title
@@ -620,57 +578,9 @@ namespace GenericModConfigMenu.Framework
         /// <param name="label">The label to update when the key is reassigned.</param>
         private void ShowKeybindOverlay<TKeybind>(SimpleModOption<TKeybind> option, Label label)
         {
-            switch (option)
-            {
-                case SimpleModOption<SButton> opt:
-                    this.CurrentButtonOption = opt;
-                    break;
-
-                case SimpleModOption<KeybindList> opt:
-                    this.CurrentKeybindListOption = opt;
-                    break;
-
-                default:
-                    throw new InvalidOperationException($"Unsupported keybind type '{typeof(TKeybind).FullName}'.");
-            }
-
             Game1.playSound("breathin");
-            this.KeybindingLabel = label;
+            this.ActiveKeybindOverlay = new KeybindOverlay<TKeybind>(option, label);
             this.Ui.Obscured = true;
-        }
-
-        /// <summary>Assign the held or released keys to the current option.</summary>
-        /// <param name="buttons">The held or released keys.</param>
-        private void AssignKeybinding(SButton[] buttons)
-        {
-            // handle escape
-            if (buttons.Any(p => p == SButton.Escape))
-                Game1.playSound("bigDeSelect");
-
-            // apply keybind
-            else
-            {
-                Game1.playSound("coin");
-
-                if (this.CurrentButtonOption != null)
-                {
-                    this.CurrentButtonOption.Value = buttons.First();
-                    this.KeybindingLabel.String = this.CurrentButtonOption.Value.ToString();
-                }
-
-                // keybind list
-                else if (this.CurrentKeybindListOption != null)
-                {
-                    this.CurrentKeybindListOption.Value = new KeybindList(new Keybind(buttons.ToArray()));
-                    this.KeybindingLabel.String = this.CurrentKeybindListOption.FormatValue();
-                }
-            }
-
-            // end keybind UI
-            this.CurrentButtonOption = null;
-            this.CurrentKeybindListOption = null;
-            this.KeybindingLabel = null;
-            this.Ui.Obscured = false;
         }
     }
 }
