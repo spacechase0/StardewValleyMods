@@ -5,7 +5,7 @@
 * Improved errors when a content pack...
   * adds an invalid recipe entry to shops;
   * adds a duplicate texture override.
-* Improved translations. Thanks to wally232 (added Korean)!
+* Improved translations. Thanks to burunduk (added Ukrainian) and wally232 (added Korean)!
 
 ## 1.3.3
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.

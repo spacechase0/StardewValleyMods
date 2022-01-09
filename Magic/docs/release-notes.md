@@ -8,7 +8,7 @@
 * The _Till_ spell no longer removes placed objects.
 * A custom TV channel is no longer added when PyTK is installed. Instead there's a new radio added to the Wizard tower you can click to get hints.
 * Fixed typo in event dialogue.
-* Improved translations. Thanks to wally232 (updated Korean)!
+* Improved translations. Thanks to Evexyron (updated Spanish) and wally232 (updated Korean)!
 
 ## 0.7.1
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
