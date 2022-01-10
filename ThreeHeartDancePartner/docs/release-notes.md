@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.1.0
+Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
 * The heart requirement is now configurable.
 * Added support for [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098).
 * Improved translations. Thanks to Evexyron (added Spanish)!

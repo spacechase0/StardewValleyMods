@@ -1,13 +1,16 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
-* Added support for analyzing toolbar or inventory items by pointing at them (not only by selecting them).
-* Added sections to [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098) UI.
+## 0.8.0
+Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* You can now analyze inventory items when hovering the cursor over them, not only after selecting them in the toolbar.
+* Replaced magic TV channel with a radio in the Wizard tower. This fixes the vanilla [fishing channel](https://stardewvalleywiki.com/Television#F.I.B.S.) being unavailable if any custom channels were added through PyTK.
+* Added section titles to [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098) UI.
 * Added min-version check for integration with Generic Mod Config Menu.
+* Removed PyTK dependency.
 * Fixed default altar position.
 * The _Till_ spell no longer removes placed objects.
-* A custom TV channel is no longer added when PyTK is installed. Instead there's a new radio added to the Wizard tower you can click to get hints.
 * Fixed typo in event dialogue.
 * Improved translations. Thanks to Evexyron (updated Spanish) and wally232 (updated Korean)!
 
