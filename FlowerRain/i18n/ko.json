@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.vanilla-flowers-only.name": "바닐라 꽃만 사용",
+    "config.vanilla-flowers-only.tooltip": "꽃비에 바닐라 꽃만 사용할지 여부."
+}

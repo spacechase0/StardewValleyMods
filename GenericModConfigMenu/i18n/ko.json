@@ -6,7 +6,8 @@
     "button.mod-options": "모드 옵션",
 
     // mod list UI
-    "list.heading": "모드 목록",
+    "list.editable-heading": "모드 목록",
+    "list.not-editable-heading": "Editable from the title screen:", // TODO
 
     // mod config pages
     "config.buttons.cancel": "취소",
@@ -23,9 +24,8 @@
     /*********
     ** Config options for Generic Mod Config Menu itself
     *********/
-    // TODO
-    "options.open-menu-key.name": "Open menu key",
-    "options.open-menu-key.desc": "A keybind which opens the menu.",
-    "options.scroll-speed.name": "Scroll speed",
-    "options.scroll-speed.desc": "The number of field rows to offset when scrolling a config menu."
+    "options.open-menu-key.name": "메뉴 오픈 단축키",
+    "options.open-menu-key.desc": "메뉴 실행 단축키 설정.",
+    "options.scroll-speed.name": "스크롤 속도",
+    "options.scroll-speed.desc": "구성 메뉴를 스크롤할 때 이동할 열의 수."
 }

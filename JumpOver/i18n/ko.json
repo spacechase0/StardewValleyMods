@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.jump-key.name": "점프 키",
+    "config.jump-key.tooltip": "점프 단축 키."
+}

@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.0.10
+Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Fixed Capstone Profession screen not shown if you increased skills past level 10 (thanks to Schneitizel!).
+
 ## 1.0.9
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

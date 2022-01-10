@@ -5,20 +5,65 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using ThreeHeartDancePartner.Framework;
 
 namespace ThreeHeartDancePartner
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod
     {
-        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
-        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        /*********
+        ** Fields
+        *********/
+        /// <summary>The mod configuration.</summary>
+        private ModConfig Config;
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
+
+            this.Config = helper.ReadConfig<ModConfig>();
+
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
         }
 
-        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
+            if (configMenu != null)
+            {
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.Config = new ModConfig(),
+                    save: () => this.Helper.WriteConfig(this.Config)
+                );
+                configMenu.AddNumberOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_HeartsNeeded_Name,
+                    tooltip: I18n.Config_HeartsNeeded_Desc,
+                    getValue: () => this.Config.RequiredHearts,
+                    setValue: value => this.Config.RequiredHearts = value,
+                    min: 0,
+                    max: 14
+                );
+            }
+        }
+
+        /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
@@ -42,8 +87,8 @@ namespace ThreeHeartDancePartner
                 return;
 
             // replace with accept dialog
-            // The original stuff, only the relationship point check is modified. (1000 -> 750)
-            if (!npc.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(npc.Name) >= 750)
+            // The original stuff, only the relationship point check is modified
+            if (!npc.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(npc.Name) >= this.Config.RequiredHearts * NPC.friendshipPointsPerHeartLevel)
             {
                 string s = npc.Gender switch
                 {

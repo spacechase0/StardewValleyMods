@@ -1,0 +1,13 @@
+﻿{
+    // tent tool
+    "tent.name": "텐트",
+    "tent.description": "여기저기, 어디서나 잘 수 있습니다.",
+
+    // HUD messages
+    "messages.slept-at-lost-location": "이상한 곳에서 야영을 해서 집으로 돌아왔습니다.",
+    "messages.slept-at-festival": "축제장에서 야영을 해서 집으로 돌아왔습니다.",
+
+    // Generic Mod Config Menu UI
+    "config.seconds-until-save.name": "저장까지 남은 시간(초)",
+    "config.seconds-until-save.tooltip": "텐트 도구가 저장을 트리거할 때까지의 시간(초)입니다."
+}

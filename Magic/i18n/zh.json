@@ -22,11 +22,11 @@
     ** Wizard learn-magic event
     *********/
     "event.wizard.1": "现在是你学习魔法的时候了。",
-    "event.wizard.2": "我已经...调整了皮埃尔店里的由巴祭坛供你使用。 ",
+    "event.wizard.2": "我已经...调整了皮埃尔店里的由巴祭坛供你使用。",
     "event.wizard.3": "我会教你基本的奥术魔法，但剩下的你必须自己去发现。",
     "event.wizard.4": "奥术“魔力解析”可以用来发现大多数法术。然而，某些更强大的法术只能以其它方式被发现。",
     "event.wizard.5": "每个魔法学校都有3门普通法术，一门远古法术。甚至我也不知道这些咒语在哪里。",
-    "event.wizard.6": "为了帮助你开始，我会给你一个提示。试着对你的喷壶进行分析。 ",
+    "event.wizard.6": "为了帮助你开始，我会给你一个提示。试着对你的喷壶进行分析。",
     "event.wizard.7": "(要开始施放一个法术，按Q，然后按1-4选择该法术。)",
     "event.wizard.8": "(按TAB键在法术集之间切换。)",
     "event.wizard.9": "(这些热键可以在magic的配置文件中进行调整。)",
@@ -34,22 +34,21 @@
 
 
     /*********
-    ** TV channel
+    ** Radio station
     *********/
-    "tv.analyzehints.name": "魔力解析",
-    "tv.analyzehints.notmagical": "*static*",
-    "tv.analyzehints.1": "想用魔法在农场里干活吗？试着分析你的工具。",
-    "tv.analyzehints.2": "需要快速逃生吗？或许一些靴子能给你一些灵感。 ",
-    "tv.analyzehints.3": "阳光很好，但并不总是有用。我想知道人造光能否被重新制造出来？",
-    "tv.analyzehints.4": "一些基本矿物似乎含有某种神奇的能量。",
-    "tv.analyzehints.5": "有一天，一颗流星坠落在我的后院。它看起来真的很神秘。",
-    "tv.analyzehints.6": "咖啡是美味的。为什么不用法术来重现它的效果呢？",
-    "tv.analyzehints.7": "有一天，我看到有人施法令地里长出树根，挡住了一个怪物的去路，几乎就像一种庄稼一样。",
-    "tv.analyzehints.8": "我打赌你能射出一束冰来减速。我想知道你可以在哪里学习冰魔法...？",
-    "tv.analyzehints.9": "前几天我在别人家里看到一个黑色的祭坛。好吧，我是说“屋子”。它更像是一间小屋。",
-    "tv.analyzehints.10": "健康药水确实不方便随身携带。也许我们可以用魔法治愈自己？",
-    "tv.analyzehints.11": "大多数人用梯子下到地下，但我看到一个人施了一个咒语，直接穿过地层。",
-    "tv.analyzehints.12": "我看到有人念了一个咒法来恢复法力！？这项秘法震撼了我。传说他们是在钓岩浆鳗鱼的时候学会这门秘法的。 ",
+    "radio.static": "*static*",
+    "radio.analyzehints.1": "想用魔法在农场里干活吗？试着分析你的工具。",
+    "radio.analyzehints.2": "需要快速逃生吗？或许一些靴子能给你一些灵感。",
+    "radio.analyzehints.3": "阳光很好，但并不总是有用。我想知道人造光能否被重新制造出来？",
+    "radio.analyzehints.4": "一些基本矿物似乎含有某种神奇的能量。",
+    "radio.analyzehints.5": "有一天，一颗流星坠落在我的后院。它看起来真的很神秘。",
+    "radio.analyzehints.6": "咖啡是美味的。为什么不用法术来重现它的效果呢？",
+    "radio.analyzehints.7": "有一天，我看到有人施法令地里长出树根，挡住了一个怪物的去路，几乎就像一种庄稼一样。",
+    "radio.analyzehints.8": "我打赌你能射出一束冰来减速。我想知道你可以在哪里学习冰魔法...？",
+    "radio.analyzehints.9": "前几天我在别人家里看到一个黑色的祭坛。好吧，我是说“屋子”。它更像是一间小屋。",
+    "radio.analyzehints.10": "健康药水确实不方便随身携带。也许我们可以用魔法治愈自己？",
+    "radio.analyzehints.11": "大多数人用梯子下到地下，但我看到一个人施了一个咒语，直接穿过地层。",
+    "radio.analyzehints.12": "我看到有人念了一个咒法来恢复法力！？这项秘法震撼了我。传说他们是在钓岩浆鳗鱼的时候学会这门秘法的。",
 
 
     /*********
@@ -132,14 +131,21 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
+    // altar and radio placement
     // TODO
-    "config.altar-location.name": "Altar Location",
-    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
-    "config.altar-x.name": "Altar X",
-    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
-    "config.altar-y.name": "Altar Y",
-    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+    "config.altar-placement": "Altar placement",
+    "config.radio-placement": "Radio placement",
+    "config.location.name": "Location",
+    "config.location.tooltip": "The internal name of the location where it should be placed, as shown by the Debug Mode mod.",
+    "config.x.name": "X position",
+    "config.x.tooltip": "The X tile position where it should be placed, as shown by the Debug Mode mod.",
+    "config.y.name": "Y position",
+    "config.y.tooltip": "The Y tile position where it should be placed, as shown by the Debug Mode mod.",
+    "config.x-or-y.automatic-position": "automatic",
 
+    // controls
+    // TODO
+    "config.controls": "Controls",
     "config.cast-key.name": "Key: Cast",
     "config.cast-key.tooltip": "The key to initiate casting a spell.",
     "config.swap-spells-key.name": "Key: Swap Sells",

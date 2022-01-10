@@ -1,0 +1,45 @@
+﻿{
+    // net
+    "bug-net.name": "Kescher",
+    "bug-net.description": "Fängt Insekten und andere Tiere.",
+
+    // critter cage
+    "cage.name": "Käfig: {{critterName}}",
+    "cage.description": "Es ist ein Tier! In einem Käfig!",
+
+    // critter names
+    "critter.GreenFrog": "Grüner Frosch",
+    "critter.OliveFrog": "Olivfarbener Frosch",
+    "critter.Cloud": "Wolke?",
+    "critter.Firefly": "Glühwürmchen",
+    "critter.Seagull": "Möwe",
+    "critter.Crow": "Krähe",
+    "critter.BrownBird": "Brauner Vogel",
+    "critter.BlueBird": "Blauer Vogel",
+    "critter.GrayRabbit": "Grauer Hase",
+    "critter.WhiteRabbit": "Weißer Hase",
+    "critter.Squirrel": "Eichhörnchen",
+    "critter.Owl": "Eule",
+    "critter.WoodPecker": "Specht",
+    "critter.SummerButterflyBlue": "Blauer Sommerschmetterling",
+    "critter.SummerButterflyGreen": "Grüner Sommerschmetterling",
+    "critter.SummerButterflyRed": "Roter Sommerschmetterling",
+    "critter.SummerButterflyPink": "Pinker Sommerschmetterling",
+    "critter.SummerButterflyYellow": "Gelber Sommerschmetterling",
+    "critter.SummerButterflyOrange": "Oranger Sommerschmetterling",
+    "critter.SpringButterflyPalePink": "Rosa Frühlingsschmetterling",
+    "critter.SpringButterflyMagenta": "Magenta Frühlingsschmetterling",
+    "critter.SpringButterflyWhite": "Weißer Frühlingsschmetterling",
+    "critter.SpringButterflyYellow": "Gelber Frühlingsschmetterling",
+    "critter.SpringButterflyPurple": "Lila Frühlingsschmetterling",
+    "critter.SpringButterflyPink": "Pinker Frühlingsschmetterling",
+    "critter.BlueParrot": "Blauer Papagei",
+    "critter.GreenParrot": "Grüner Papagei",
+    "critter.Monkey": "Affe",
+    "critter.OrangeIslandButterfly": "Oranger Inselschmetterling",
+    "critter.PinkIslandButterfly": "Pinker Inselschmetterling",
+    "critter.PurpleBird": "Lila Vogel",
+    "critter.RedBird": "Roter Vogel",
+    "critter.SunsetTropicalButterfly": "Tropischer Sonnenuntergangsschmetterling",
+    "critter.TropicalButterfly": "Tropischer Schmetterling"
+}

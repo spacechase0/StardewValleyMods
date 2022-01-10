@@ -1,14 +1,13 @@
 ﻿**Magic** is a [Stardew Valley](http://stardewvalley.net/) mod which adds a full spell system to
 the game.
 
-![](screenshot-menu.png)
+![](screenshots/menu.png)
 
 ## Install
 1. Install the latest version of...
    * [SMAPI](https://smapi.io);
    * [Json Assets](https://www.nexusmods.com/stardewvalley/mods/1720);
    * [Mana Bar](https://www.nexusmods.com/stardewvalley/mods/7831);
-   * [PyTK](https://www.nexusmods.com/stardewvalley/mods/1726) (optional, enables TV channel);
    * and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
 2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/2007).
 3. Run the game using SMAPI.
@@ -18,13 +17,13 @@ This is an early release. It may be unbalanced and/or buggy.
 
 ### Unlock magic
 To unlock magic, visit the wizard with three hearts or more. The magic UI should appear in the
-bottom-left corner right after the event. Then visit the [altar](screenshot-altar.png) in Pierre's
+bottom-left corner right after the event. Then visit the [altar](screenshots/altar.png) in Pierre's
 shop and equip some spells by dragging a spell onto the hotbar along the right side of the menu.
 
 To get the mana potion recipe, visit the adventurer's guild.
 
-If you have PyTK installed, a new TV channel will give a random hint each day about where you can
-use the Analyze spell to learn new spells.
+The mod [adds a radio in the Wizard tower](screenshots/radio.png), which you can click to get a
+random hint each day about where you can use the Analyze spell to learn new spells.
 
 ### Use magic
 To cast a spell, hold `Q` and press a number key (`1` through `4`) corresponding to the spell's
@@ -94,7 +93,7 @@ professions:
 
 <tr>
   <td><strong>Luck Steal</strong></td>
-  <td>Cast analyze on the <a href="https://stardewvalleywiki.com/Witch%27s_Hut">Dark Shrine of Selfishness</a>.</td>
+  <td>Cast analyze on the bowl for the <a href="https://stardewvalleywiki.com/Witch%27s_Hut">Dark Shrine of Selfishness</a>.</td>
   <td>Increase your daily luck to the maximum by sacrificing the happiness of a loved one.</td>
 </tr>
 

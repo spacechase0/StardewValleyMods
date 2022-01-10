@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.show-on-start.name": "시작 시 표시",
+    "config.show-on-start.tooltip": "남은 시간이 이미 표시된 상태에서 게임을 시작할지 여부입니다.",
+
+    "config.toggle-key.name": "키: 표시 전환",
+    "config.toggle-key.tooltip": "개체의 표시를 전환하는 키입니다.",
+
+    "config.text-scale.name": "텍스트 크기",
+    "config.text-scale.tooltip": "개체에 중첩할 텍스트의 크기입니다."
+}

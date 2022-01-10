@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.damage-scale.name": "피해량",
+    "config.damage-scale.tooltip": "전투 레벨에 따라 증가하는 피해량.(백분율)"
+}

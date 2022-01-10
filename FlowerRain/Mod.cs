@@ -56,7 +56,7 @@ namespace FlowerRain
 
         private void GameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
             if (configMenu != null)
             {
                 configMenu.Register(

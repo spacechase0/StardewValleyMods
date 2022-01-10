@@ -1,0 +1,55 @@
+﻿{
+    /*********
+    ** Items
+    *********/
+    // crafting recipe
+    "recipe.frosty-stardrop.name": "서리가 내린 별방울",
+
+    // items
+    "item.festive-big-key-a.name": "축제 큰 열쇠 (A)",
+    "item.festive-big-key-a.description": "프로스트 던전에서 사용하는 '큰 열쇠'의 반.",
+
+    "item.festive-big-key-b.name": "축제 큰 열쇠 (B)",
+    "item.festive-big-key-b.description": "프로스트 던전에서 사용하는 '큰 열쇠'의 반.",
+
+    "item.festive-key.name": "축제 열쇠",
+    "item.festive-key.description": "프로스트 던전에서 사용하는 열쇠.",
+
+    "item.frosty-stardrop-piece.name": "서리가 내린 별방울 조각",
+    "item.frosty-stardrop-piece.description": "스타드롭 조각. 5개를 합쳐서 하나를 완성할 수 있습니다.",
+
+    "item.tempus-globe.name": "템퍼스 글로브",
+    "item.tempus-globe.description": "주변의 작물이 1년 동안 자랄 수 있게 해주는 신비로운 아이템. 그것은 또한 주변 작물에 물을 주기도 합니다. \n 5x5 영역, 대상 중심.",
+
+    // weapons
+    "weapon.festive-scepter.name": "축제의 홀",
+    "weapon.festive-scepter.description": "서리가 내린 광선을 발사합니다.",
+
+
+    /*********
+    ** Lewis event
+    *********/
+    "event.lewis-speech": "안녕하세요, @.#$b#겨울별 축제를 준비하고 있었는데... 장식을 찾을 수 없습니다!$s#$b#누군가 장식을 훔친 것 같습니다.$4#$b#누가 왜 이러는지 모르겠습니다... 하지만 장식은 저절로 사라지지 않습니다!$s#$b#어쨌든, 당신이 우리를 위해 그것들을 되찾아 줄 수 있습니까?$h#$b#터널을 따라 버스정류장 왼쪽으로 이어지는 부서진 장식의 흔적이 있습니다. 우리를 위해 이렇게 해주시면 감사하겠습니다.$n#$b#아니면 말론을 고용할 수도 있지만 비용이 많이 들 겁니다.$s#$b#행운을 빕니다!$n",
+
+
+    /*********
+    ** Map messages
+    *********/
+    "map-messages.locked-entrance": "이 문은 지금 잠겨 있습니다.",
+    "map-messages.locked-door": "이 문은 잠겨 있습니다. 열쇠가 필요할 것 같습니다.",
+    "map-messages.locked-boss": "이 거대한 문이 잠겨 있습니다. 아마도 근처에 있는 무언가가 그것을 열 수 있을 것입니다.",
+    "map-messages.unlocked": "문이 잠금 해제되었습니다.",
+    "map-messages.item-puzzle": "받침대에 실루엣이 있는 것 같습니다.",
+    "map-messages.target": "대상입니다.",
+    "map-messages.trail-lights": "일부 축제 조명.",
+    "map-messages.trail-candy-cane": "부서진 사탕 지팡이.",
+    "map-messages.trail-ornaments": "일부 축제 장식품.",
+    "map-messages.trail-tree": "부서진 미니어처 나무.",
+
+
+    /*********
+    ** Final boss
+    *********/
+    "final-boss.speech": "감히 그들이 나 없이 즐겁게 노는구나 ! 장식을 되찾지 못할 것입니다!",
+    "final-boss.victory-message": "장식을 되찾았습니다! \n '템퍼스 글로브' 제조법을 배웠습니다! "
+}

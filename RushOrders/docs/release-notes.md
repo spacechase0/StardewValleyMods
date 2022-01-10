@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.3
+Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Added min-version check for integration with Generic Mod Config Menu.
+* Fixed field mapping in config UI.
+
 ## 1.2.2
 Released 23 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

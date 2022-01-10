@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.cost-multiplier.name": "비용 배율",
+    "config.cost-multiplier.tooltip": "청구할 항목의 비용에 대한 승수입니다."
+}

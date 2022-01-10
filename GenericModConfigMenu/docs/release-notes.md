@@ -1,6 +1,23 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.8.0
+Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* For players:
+  * You can now disable a keybind from the keybind overlay.
+  * You can now cancel or click outside the keybind overlay to close it without changes.
+  * When viewing the list of configurable mods in-game, mods that are only editable on the title screen are now listed separately instead of hidden entirely.
+  * Fixed clicks sometimes handled by elements that are scrolled out of view.
+  * Fixed multi-row elements sometimes disappearing before they're fully off-screen (thanks to jltaylor-us!).
+  * Fixed multi-row element heights in some cases (thanks to jltaylor-us!).
+  * Fixed mouse-wheel-scroll sound playing even after the menu is closed.
+  * Improved translations. Thanks to BuslaevLegat (added Russian), ChulkyBow (added Ukrainian), Evexyron (updated Spanish), Lake1059 (added Chinese), wally232 (updated Korean), and Zangorr (added Polish)!
+* For mod authors:
+  * You can now format slider labels.
+  * Improved `AddComplexOption` with new menu opened/closed callbacks (thanks to jltaylor-us!).
+  * Fixed API `TryGetCurrentMenu` method not working when on the title screen.
+
 ## 1.7.0
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

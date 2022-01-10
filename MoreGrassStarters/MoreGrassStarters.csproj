@@ -3,11 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Reference Include="PyTK" HintPath="$(GameModsPath)\PyTK\PyTK.dll" Private="False" />
-  </ItemGroup>
 </Project>

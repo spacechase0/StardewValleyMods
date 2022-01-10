@@ -22,7 +22,7 @@
     *********/
     "event.wizard.1": "Es hora de que aprendas los caminos de la magia.",
     "event.wizard.2": "He... ajustado el altar de Yoba en la tienda de Pierra para que lo uses.",
-    "event.wizard.3": "Te enseñaré lo básico de la magia arcana, pero el resto debes descubrirlo por tu cuenta. ",
+    "event.wizard.3": "Te enseñaré lo básico de la magia arcana, pero el resto debes descubrirlo por tu cuenta.",
     "event.wizard.4": "El hechizo arcano 'Analizar' puede utilizarse para descubrir la mayoria de los hechizos. Sin embargo, algunos hechizos más poderosos deben ser descubiertos de otra manera.",
     "event.wizard.5": "Cada escuela de magia tiene 3 hechizos normales, y un cuarto hechizo antiguo. Ni siquiera yo sé dónde están esos hechizos.",
     "event.wizard.6": "Para ayudarte a empezar, te daré una pista. Intenta usar Analizar en tu regadera.",
@@ -33,22 +33,21 @@
 
 
     /*********
-    ** TV channel
+    ** Radio station
     *********/
-    "tv.analyzehints.name": "Análisis Mágico",
-    "tv.analyzehints.notmagical": "*estático*",
-    "tv.analyzehints.1": "¿Quieres usar tu magia para trabajar en la granja? Intenta analizar tus herramientas.",
-    "tv.analyzehints.2": "¿Necesitas una escapada rápida? Me pregunto si unas botas te darán algo de inspiración.",
-    "tv.analyzehints.3": "La luz del sol es bastante agradable, pero no siempre está disponible. Me pregunto si se pueden recrear luces artificiales.",
-    "tv.analyzehints.4": "Algunos minerales básicos parecen contener alguna energía mágica.",
-    "tv.analyzehints.5": "El otro día cayó un meteorito en mi patio. Parecía realmente misterioso.",
-    "tv.analyzehints.6": "El café es delicioso. ¿Por qué no recrear sus efectos con un hechizo?",
-    "tv.analyzehints.7": "El otro día vi a alguien hacer brotar raíces del suelo y evitar que un monstruo se mueva, casi como un cultivo.",
-    "tv.analyzehints.8": "Apuesto a que podrías disparar una ráfaga de hielo para frenar algo. Me pregunto dónde se podría el hielo...",
-    "tv.analyzehints.9": "El otro día vi un altar oscuro en la casa de alguien. Bueno, digo 'casa'. Era más bien una cabaña.",
-    "tv.analyzehints.10": "Las pociones de salud son incómodas de llevar. ¿Tal vez podamos curarnos con magia?",
-    "tv.analyzehints.11": "La mayoría de la gente usa escaleras para descender bajo tierra, pero vi a una persona lanzar un hechizo y atravesar el suelo.",
-    "tv.analyzehints.12": "Vi a alguien lanzar un hechizo para recuperar maná. Parecía que dolía. Se rumorea que aprendieron esta técnica mientras pescaban anguilas de lava.",
+    "radio.static": "*estático*",
+    "radio.analyzehints.1": "¿Quieres usar tu magia para trabajar en la granja? Intenta analizar tus herramientas.",
+    "radio.analyzehints.2": "¿Necesitas una escapada rápida? Me pregunto si unas botas te darán algo de inspiración.",
+    "radio.analyzehints.3": "La luz del sol es bastante agradable, pero no siempre está disponible. Me pregunto si se pueden recrear luces artificiales.",
+    "radio.analyzehints.4": "Algunos minerales básicos parecen contener alguna energía mágica.",
+    "radio.analyzehints.5": "El otro día cayó un meteorito en mi patio. Parecía realmente misterioso.",
+    "radio.analyzehints.6": "El café es delicioso. ¿Por qué no recrear sus efectos con un hechizo?",
+    "radio.analyzehints.7": "El otro día vi a alguien hacer brotar raíces del suelo y evitar que un monstruo se mueva, casi como un cultivo.",
+    "radio.analyzehints.8": "Apuesto a que podrías disparar una ráfaga de hielo para frenar algo. Me pregunto dónde se podría el hielo...",
+    "radio.analyzehints.9": "El otro día vi un altar oscuro en la casa de alguien. Bueno, digo 'casa'. Era más bien una cabaña.",
+    "radio.analyzehints.10": "Las pociones de salud son incómodas de llevar. ¿Tal vez podamos curarnos con magia?",
+    "radio.analyzehints.11": "La mayoría de la gente usa escaleras para descender bajo tierra, pero vi a una persona lanzar un hechizo y atravesar el suelo.",
+    "radio.analyzehints.12": "Vi a alguien lanzar un hechizo para recuperar maná. Parecía que dolía. Se rumorea que aprendieron esta técnica mientras pescaban anguilas de lava.",
 
 
     /*********
@@ -131,13 +130,19 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    "config.altar-location.name": "Localización del altar",
-    "config.altar-location.tooltip": "El nombre (interno) de la ubicación en la que debe colocarse el altar mágico.",
-    "config.altar-x.name": "Posición X del altar",
-    "config.altar-x.tooltip": "La posición de la baldosa X donde debe colocarse el altar mágico.",
-    "config.altar-y.name": "Posición Y del altar",
-    "config.altar-y.tooltip": "La posición de la baldosa Y donde debe colocarse el altar mágico.",
+    // altar and radio placement
+    "config.altar-placement": "Ubicación del altar",
+    "config.radio-placement": "Ubicación de la radio",
+    "config.location.name": "Localización",
+    "config.location.tooltip": "El nombre interno de la ubicación en la que debe colocarse, como se muestra en el mod 'Debug Mode'.",
+    "config.x.name": "Posición X",
+    "config.x.tooltip": "La posición de la baldosa X donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
+    "config.y.name": "Posición Y",
+    "config.y.tooltip": "La posición de la baldosa Y donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
+    "config.x-or-y.automatic-position": "automático",
 
+    // controls
+    "config.controls": "Controles",
     "config.cast-key.name": "Tecla: Lanzar hechizo",
     "config.cast-key.tooltip": "La tecla para iniciar el lanzamiento de un hechizo.",
     "config.swap-spells-key.name": "Tecla: Intercambio de hechizos",

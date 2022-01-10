@@ -118,7 +118,7 @@ namespace MoreRings
                 Log.Error("Couldn't get the Json Assets API, so the new rings won't be available.");
 
             // register with Generic Mod Config Menu
-            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
             if (configMenu != null)
             {
                 configMenu.Register(

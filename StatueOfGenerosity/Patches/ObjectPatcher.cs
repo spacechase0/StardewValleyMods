@@ -75,7 +75,7 @@ namespace StatueOfGenerosity.Patches
             {
                 rawIds = Game1.NPCGiftTastes.TryGetValue(villager.Name, out string data) && data != null && data.Split('/').TryGetIndex(1, out string field)
                     ? field.Split(' ')
-                    : new string[0];
+                    : Array.Empty<string>();
             }
 
             // get random valid item

@@ -6,7 +6,6 @@ buildings with special effects.
 ## Install
 1. Install the latest version of...
    * [SMAPI](https://smapi.io);
-   * [PyTK](https://www.nexusmods.com/stardewvalley/mods/1726);
    * and [SpaceCore](https://www.nexusmods.com/stardewvalley/mods/1348).
 2. Install [this mod from Nexus Mods](http://www.nexusmods.com/stardewvalley/mods/2757).
 3. Run the game using SMAPI.

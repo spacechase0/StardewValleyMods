@@ -29,6 +29,9 @@ namespace Magic
         public static IJsonAssetsApi Ja;
         public static IManaBarApi Mana;
 
+        /// <summary>Whether Stardew Valley Expanded is installed.</summary>
+        public static bool HasStardewValleyExpanded => Mod.Instance.Helper.ModRegistry.IsLoaded("FlashShifter.SVECode");
+
         public Api Api;
 
 
@@ -51,6 +54,7 @@ namespace Magic
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.Saving += this.OnSaving;
+            helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
 
             Framework.Magic.Init(helper.Events, helper.Input, helper.ModRegistry, helper.Multiplayer.GetNewID);
             ConsoleCommandHelper.RegisterCommandsInAssembly(this);
@@ -71,12 +75,9 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            // hook asset editor
-            this.Helper.Content.AssetEditors.Add(new AltarMapEditor(Mod.Config, this.Helper.Content));
-
             // hook Generic Mod Config Menu
             {
-                var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+                var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
                 if (configMenu != null)
                 {
                     configMenu.Register(
@@ -85,27 +86,77 @@ namespace Magic
                         save: () => this.Helper.WriteConfig(Mod.Config),
                         titleScreenOnly: true
                     );
+
+                    // altar placement
+                    configMenu.AddSectionTitle(this.ModManifest, I18n.Config_AltarPlacement);
                     configMenu.AddTextOption(
                         mod: this.ModManifest,
-                        name: I18n.Config_AltarLocation_Name,
-                        tooltip: I18n.Config_AltarLocation_Tooltip,
+                        name: I18n.Config_Location_Name,
+                        tooltip: I18n.Config_Location_Tooltip,
                         getValue: () => Mod.Config.AltarLocation,
                         setValue: value => Mod.Config.AltarLocation = value
                     );
                     configMenu.AddNumberOption(
                         mod: this.ModManifest,
-                        name: I18n.Config_AltarX_Name,
-                        tooltip: I18n.Config_AltarX_Tooltip,
+                        name: I18n.Config_X_Name,
+                        tooltip: I18n.Config_X_Tooltip,
                         getValue: () => Mod.Config.AltarX,
-                        setValue: value => Mod.Config.AltarX = value
+                        setValue: value => Mod.Config.AltarX = value,
+                        min: -1,
+                        max: 255,
+                        formatValue: value => value < 0
+                            ? I18n.Config_XOrY_AutomaticPosition()
+                            : value.ToString()
                     );
                     configMenu.AddNumberOption(
                         mod: this.ModManifest,
-                        name: I18n.Config_AltarY_Name,
-                        tooltip: I18n.Config_AltarY_Tooltip,
+                        name: I18n.Config_Y_Name,
+                        tooltip: I18n.Config_Y_Tooltip,
                         getValue: () => Mod.Config.AltarY,
-                        setValue: value => Mod.Config.AltarY = value
+                        setValue: value => Mod.Config.AltarY = value,
+                        min: -1,
+                        max: 255,
+                        formatValue: value => value < 0
+                            ? I18n.Config_XOrY_AutomaticPosition()
+                            : value.ToString()
                     );
+
+                    // radio placement
+                    configMenu.AddSectionTitle(this.ModManifest, I18n.Config_RadioPlacement);
+                    configMenu.AddTextOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_Location_Name,
+                        tooltip: I18n.Config_Location_Tooltip,
+                        getValue: () => Mod.Config.RadioLocation,
+                        setValue: value => Mod.Config.RadioLocation = value
+                    );
+                    configMenu.AddNumberOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_X_Name,
+                        tooltip: I18n.Config_X_Tooltip,
+                        getValue: () => Mod.Config.RadioX,
+                        setValue: value => Mod.Config.RadioX = value,
+                        min: -1,
+                        max: 255,
+                        formatValue: value => value < 0
+                            ? I18n.Config_XOrY_AutomaticPosition()
+                            : value.ToString()
+                    );
+                    configMenu.AddNumberOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_Y_Name,
+                        tooltip: I18n.Config_Y_Tooltip,
+                        getValue: () => Mod.Config.RadioY,
+                        setValue: value => Mod.Config.RadioY = value,
+                        min: -1,
+                        max: 255,
+                        formatValue: value => value < 0
+                            ? I18n.Config_XOrY_AutomaticPosition()
+                            : value.ToString()
+                    );
+
+                    // controls
+                    configMenu.AddSectionTitle(this.ModManifest, I18n.Config_Controls);
                     configMenu.AddKeybind(
                         mod: this.ModManifest,
                         name: I18n.Config_CastKey_Name,
@@ -179,6 +230,24 @@ namespace Magic
                 }
                 Mod.Ja = api;
                 api.LoadAssets(Path.Combine(this.Helper.DirectoryPath, "assets", "json-assets"), this.Helper.Translation);
+            }
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            // hook asset editor later, so the radio is applied over other map edits if needed
+            if (Game1.ticks > 5)
+            {
+                this.Helper.Content.AssetEditors.Add(new MapEditor(
+                    config: Mod.Config,
+                    content: this.Helper.Content,
+                    hasStardewValleyExpanded: Mod.HasStardewValleyExpanded
+                ));
+
+                this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
             }
         }
 

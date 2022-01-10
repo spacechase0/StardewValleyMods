@@ -29,9 +29,9 @@ namespace Magic.Framework.Schools
         /*********
         ** Public methods
         *********/
-        public virtual Spell[] GetSpellsTier1() { return new Spell[0]; }
-        public virtual Spell[] GetSpellsTier2() { return new Spell[0]; }
-        public virtual Spell[] GetSpellsTier3() { return new Spell[0]; }
+        public virtual Spell[] GetSpellsTier1() { return Array.Empty<Spell>(); }
+        public virtual Spell[] GetSpellsTier2() { return Array.Empty<Spell>(); }
+        public virtual Spell[] GetSpellsTier3() { return Array.Empty<Spell>(); }
 
         /// <summary>Get all spell tiers.</summary>
         public IEnumerable<Spell[]> GetAllSpellTiers()

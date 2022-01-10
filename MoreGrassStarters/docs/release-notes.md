@@ -1,6 +1,16 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.0
+Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Migrated from PyTK to SpaceCore.
+
+**Update note:**  
+Existing custom grass in your save should be migrated automatically. If you find a broken item with
+a name like `PyTK|Item|MoreGrassStarters.CustomGrass`, you can fix it by moving it into your
+inventory, then saving and reloading the save to migrate it.
+
 ## 1.1.0
 Released 23 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

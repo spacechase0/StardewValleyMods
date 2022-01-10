@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PyTK.CustomElementHandler;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Monsters;
@@ -9,7 +8,8 @@ using SObject = StardewValley.Object;
 
 namespace MoreBuildings.Buildings.SpookyShed
 {
-    public class SpookyShedLocation : GameLocation, ISaveElement//, ICustomItem
+    [XmlType("Mods_spacechase0_SpookyShedLocation")]
+    public class SpookyShedLocation : GameLocation
     {
         public readonly Netcode.NetInt CurrSpawnerItem = new(0);
 
@@ -118,39 +118,6 @@ namespace MoreBuildings.Buildings.SpookyShed
                     }
                     break;
             }
-        }
-
-        public Dictionary<string, string> getAdditionalSaveData()
-        {
-            var data = new Dictionary<string, string>();
-            if (this.uniqueName.Value != null)
-                data.Add("u", this.uniqueName.Value);
-
-            return data;
-        }
-
-        public object getReplacement()
-        {
-            Shed shed = new Shed("Maps\\SpookyShed", "SpookyShed");
-            foreach (Vector2 key in this.objects.Keys)
-                shed.objects.Add(key, this.objects[key]);
-            foreach (Vector2 key in this.terrainFeatures.Keys)
-                shed.terrainFeatures.Add(key, this.terrainFeatures[key]);
-
-            return shed;
-        }
-
-        public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
-        {
-            Shed shed = (Shed)replacement;
-
-            if (additionalSaveData.TryGetValue("u", out string savedName))
-                this.uniqueName.Value = savedName;
-
-            foreach (Vector2 key in shed.objects.Keys)
-                this.objects.Add(key, shed.objects[key]);
-            foreach (Vector2 key in this.terrainFeatures.Keys)
-                this.terrainFeatures.Add(key, shed.terrainFeatures[key]);
         }
     }
 }

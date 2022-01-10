@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Magic.Framework.Game.Interface;
-using Magic.Framework.Integrations;
-using Magic.Framework.Schools;
 using Magic.Framework.Skills;
 using Magic.Framework.Spells;
 using Microsoft.Xna.Framework;
@@ -13,9 +13,8 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Network;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
 
 namespace Magic.Framework
 {
@@ -47,6 +46,9 @@ namespace Magic.Framework
         public static EventHandler<AnalyzeEventArgs> OnAnalyzeCast;
         public const string MsgCast = "spacechase0.Magic.Cast";
 
+        /// <summary>Whether the current player learned magic.</summary>
+        public static bool LearnedMagic => Game1.player?.eventsSeen?.Contains(MagicConstants.LearnedMagicEventId) == true;
+
 
         /*********
         ** Public methods
@@ -74,16 +76,9 @@ namespace Magic.Framework
             events.Display.RenderingHud += Magic.OnRenderingHud;
             events.Display.RenderedHud += Magic.OnRenderedHud;
 
-            Magic.OnAnalyzeCast += Magic.OnAnalyze;
-            Magic.OnAnalyzeCast += (sender, e) =>
-            {
-                Mod.Instance.Api.InvokeOnAnalyzeCast(sender as Farmer);
-            };
+            Magic.OnAnalyzeCast += (sender, e) => Mod.Instance.Api.InvokeOnAnalyzeCast(sender as Farmer);
 
             SpaceCore.Skills.RegisterSkill(Magic.Skill = new Skill());
-
-            // add TV channel
-            new PyTkChannelManager(modRegistry).AddTvChannel();
         }
 
         /// <summary>Get a self-updating view of a player's magic metadata.</summary>
@@ -102,7 +97,7 @@ namespace Magic.Framework
         public static void FixMagicIfNeeded(Farmer player, int? overrideMagicLevel = null)
         {
             // skip if player hasn't learned magic
-            if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId) && overrideMagicLevel is not > 0)
+            if (!Magic.LearnedMagic && overrideMagicLevel is not > 0)
                 return;
 
             // get magic info
@@ -138,139 +133,6 @@ namespace Magic.Framework
         /*********
         ** Private methods
         *********/
-        private static void OnAnalyze(object sender, AnalyzeEventArgs e)
-        {
-            var farmer = sender as Farmer;
-            if (farmer != Game1.player)
-                return;
-
-            SpellBook spellBook = farmer.GetSpellBook();
-
-            List<string> spellsLearnt = new List<string>();
-            if (farmer.CurrentItem != null)
-            {
-                if (farmer.CurrentTool != null)
-                {
-                    if (farmer.CurrentTool is StardewValley.Tools.Axe or StardewValley.Tools.Pickaxe)
-                        spellsLearnt.Add("toil:cleardebris");
-                    else if (farmer.CurrentTool is StardewValley.Tools.Hoe)
-                        spellsLearnt.Add("toil:till");
-                    else if (farmer.CurrentTool is StardewValley.Tools.WateringCan)
-                        spellsLearnt.Add("toil:water");
-                }
-                else if (farmer.CurrentItem is Boots)
-                {
-                    spellsLearnt.Add("life:evac");
-                }
-                else if (farmer.ActiveObject != null)
-                {
-                    if (!farmer.ActiveObject.bigCraftable.Value)
-                    {
-                        int index = farmer.ActiveObject.ParentSheetIndex;
-                        if (index == 395) // Coffee
-                            spellsLearnt.Add("life:haste");
-                        else if (index == 773) // Life elixir
-                            spellsLearnt.Add("life:heal");
-                        else if (index == 86) // Earth crystal
-                            spellsLearnt.Add("nature:shockwave");
-                        else if (index == 82) // Fire quartz
-                            spellsLearnt.Add("elemental:fireball");
-                        else if (index == 161) // Ice Pip
-                            spellsLearnt.Add("elemental:frostbolt");
-                    }
-                }
-            }
-            foreach (var lightSource in farmer.currentLocation.sharedLights.Values)
-            {
-                if (Utility.distance(e.TargetX, lightSource.position.X, e.TargetY, lightSource.position.Y) < lightSource.radius.Value * Game1.tileSize)
-                {
-                    spellsLearnt.Add("nature:lantern");
-                    break;
-                }
-            }
-            var tilePos = new Vector2(e.TargetX / Game1.tileSize, e.TargetY / Game1.tileSize);
-            if (farmer.currentLocation.terrainFeatures.TryGetValue(tilePos, out TerrainFeature feature) && (feature as HoeDirt)?.crop != null)
-                spellsLearnt.Add("nature:tendrils");
-
-            // TODO: Add proper tilesheet check
-            var tile = farmer.currentLocation.map.GetLayer("Buildings").Tiles[(int)tilePos.X, (int)tilePos.Y];
-            if (tile?.TileIndex == 173)
-                spellsLearnt.Add("elemental:descend");
-            foreach (ResourceClump clump in farmer.currentLocation.resourceClumps)
-            {
-                if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
-                {
-                    spellsLearnt.Add("eldritch:meteor");
-                    break;
-                }
-            }
-
-            if (farmer.currentLocation.doesTileHaveProperty((int)tilePos.X, (int)tilePos.Y, "Action", "Buildings") == "EvilShrineLeft")
-                spellsLearnt.Add("eldritch:lucksteal");
-            if (farmer.currentLocation is StardewValley.Locations.MineShaft { mineLevel: 100 } ms && ms.waterTiles[(int)tilePos.X, (int)tilePos.Y])
-                spellsLearnt.Add("eldritch:bloodmana");
-
-            for (int i = spellsLearnt.Count - 1; i >= 0; --i)
-                if (spellBook.KnowsSpell(spellsLearnt[i], 0))
-                    spellsLearnt.RemoveAt(i);
-            if (spellsLearnt.Count > 0)
-            {
-                Game1.playSound("secret1");
-                foreach (string spell in spellsLearnt)
-                {
-                    Log.Debug("Player learnt spell: " + spell);
-                    spellBook.LearnSpell(spell, 0, true);
-                    //Game1.drawObjectDialogue(Mod.instance.Helper.Translation.Get("spell.learn", new { spellName = Mod.instance.Helper.Translation.Get("spell." + spell + ".name") }));
-                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn(spellName: SpellManager.Get(spell).GetTranslatedName())));
-                }
-            }
-
-            // Temporary - 0.3.0 will add dungeons to get these
-            bool knowsAll = true;
-            foreach (string schoolId in School.GetSchoolList())
-            {
-                var school = School.GetSchool(schoolId);
-
-                bool knowsAllSchool = true;
-                foreach (var spell in school.GetSpellsTier1())
-                {
-                    if (!spellBook.KnowsSpell(spell, 0))
-                    {
-                        knowsAll = knowsAllSchool = false;
-                        break;
-                    }
-                }
-                foreach (var spell in school.GetSpellsTier2())
-                {
-                    if (!spellBook.KnowsSpell(spell, 0))
-                    {
-                        knowsAll = knowsAllSchool = false;
-                        break;
-                    }
-                }
-
-                // Have to know all other spells for the arcane one
-                if (schoolId == SchoolId.Arcane)
-                    continue;
-
-                var ancientSpell = school.GetSpellsTier3()[0];
-                if (knowsAllSchool && !spellBook.KnowsSpell(ancientSpell, 0))
-                {
-                    Log.Debug("Player learnt ancient spell: " + ancientSpell);
-                    spellBook.LearnSpell(ancientSpell, 0, true);
-                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: ancientSpell.GetTranslatedName())));
-                }
-            }
-
-            var rewindSpell = School.GetSchool(SchoolId.Arcane).GetSpellsTier3()[0];
-            if (knowsAll && !spellBook.KnowsSpell(rewindSpell, 0))
-            {
-                Log.Debug("Player learnt ancient spell: " + rewindSpell);
-                spellBook.LearnSpell(rewindSpell, 0, true);
-                Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: rewindSpell.GetTranslatedName())));
-            }
-        }
-
         private static void OnNetworkCast(IncomingMessage msg)
         {
             Farmer player = Game1.getFarmer(msg.FarmerID);
@@ -311,7 +173,7 @@ namespace Magic.Framework
         /// <param name="e">The event arguments.</param>
         private static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (Game1.activeClickableMenu != null || Game1.eventUp || !Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
+            if (Game1.activeClickableMenu != null || Game1.eventUp || !Magic.LearnedMagic)
                 return;
 
             SpriteBatch b = e.SpriteBatch;
@@ -390,14 +252,12 @@ namespace Magic.Framework
         private static void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             bool hasFifthSpellSlot = Game1.player.HasCustomProfession(Skill.MemoryProfession);
+            bool hasMenuOpen = Game1.activeClickableMenu is not null;
 
             if (e.Button == Mod.Config.Key_Cast)
                 Magic.CastPressed = true;
 
-            if (Game1.activeClickableMenu != null)
-                return;
-
-            if (Magic.CastPressed && e.Button == Mod.Config.Key_SwapSpells)
+            if (Magic.CastPressed && e.Button == Mod.Config.Key_SwapSpells && !hasMenuOpen)
             {
                 Game1.player.GetSpellBook().SwapPreparedSet();
                 Magic.InputHelper.Suppress(e.Button);
@@ -427,7 +287,11 @@ namespace Magic.Framework
                 if (spell == null)
                     return;
 
-                if (spellBook.CanCastSpell(spell, slot.Level))
+                bool canCast =
+                    spellBook.CanCastSpell(spell, slot.Level)
+                    && (!hasMenuOpen || spell.CanCastInMenus);
+
+                if (canCast)
                 {
                     Log.Trace("Casting " + slot.SpellId);
 
@@ -474,7 +338,7 @@ namespace Magic.Framework
             EvacSpell.OnLocationChanged();
 
             // check events
-            if (e.NewLocation.Name == "WizardHouse" && !Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId) && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
+            if (e.NewLocation.Name == "WizardHouse" && !Magic.LearnedMagic && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
             {
                 string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
                 eventStr = string.Format(
@@ -504,18 +368,59 @@ namespace Magic.Framework
 
         private static void ActionTriggered(object sender, EventArgsAction args)
         {
-            if (args.Action == "MagicAltar")
+            switch (args.Action)
             {
-                if (!Game1.player.eventsSeen.Contains(MagicConstants.LearnedMagicEventId))
-                {
-                    Game1.drawObjectDialogue(I18n.Altar_ClickMessage());
-                }
-                else
-                {
-                    Game1.playSound("secret1");
-                    Game1.activeClickableMenu = new MagicMenu();
-                }
+                case "MagicAltar":
+                    Magic.OnAltarClicked();
+                    break;
+
+                case "MagicRadio":
+                    Magic.OnRadioClicked();
+                    break;
             }
+        }
+
+        /// <summary>Handle an interaction with the magic altar.</summary>
+        private static void OnAltarClicked()
+        {
+            if (!Magic.LearnedMagic)
+                Game1.drawObjectDialogue(I18n.Altar_ClickMessage());
+            else
+            {
+                Game1.playSound("secret1");
+                Game1.activeClickableMenu = new MagicMenu();
+            }
+        }
+
+        /// <summary>Handle an interaction with the magic radio.</summary>
+        private static void OnRadioClicked()
+        {
+            Game1.activeClickableMenu = new DialogueBox(Magic.GetRadioTextToday());
+        }
+
+        /// <summary>Get the radio station text to play today.</summary>
+        private static string GetRadioTextToday()
+        {
+            // player doesn't know magic
+            if (!Magic.LearnedMagic)
+                return I18n.Radio_Static();
+
+            // get base key for random hints
+            string baseKey = Regex.Replace(nameof(I18n.Radio_Analyzehints_1), "_1$", "");
+            if (baseKey == nameof(I18n.Radio_Analyzehints_1))
+            {
+                Log.Error("Couldn't get the Magic radio station analyze hint base key. This is a bug in the Magic mod."); // key format changed?
+                return I18n.Radio_Static();
+            }
+
+            // choose random hint
+            string[] stationTexts = typeof(I18n)
+                .GetMethods()
+                .Where(p => Regex.IsMatch(p.Name, $@"^{baseKey}_\d+$"))
+                .Select(p => (string)p.Invoke(null, Array.Empty<object>()))
+                .ToArray();
+            Random random = new Random((int)Game1.stats.DaysPlayed + (int)(Game1.uniqueIDForThisGame / 2));
+            return $"{I18n.Radio_Static()} {stationTexts[random.Next(stationTexts.Length)]}";
         }
 
         private static void OnItemEaten(object sender, EventArgs args)

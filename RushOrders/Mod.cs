@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using RushOrders.Framework;
 using SpaceShared;
-using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -45,7 +44,7 @@ namespace RushOrders
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
             if (configMenu != null)
             {
                 configMenu.Register(
@@ -64,7 +63,7 @@ namespace RushOrders
                     mod: this.ModManifest,
                     name: I18n.Config_PriceToolInstant_Name,
                     tooltip: I18n.Config_PriceToolInstant_Tooltip,
-                    getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
+                    getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Now,
                     setValue: value => Mod.ModConfig.PriceFactor.Tool.Now = value
                 );
                 configMenu.AddNumberOption(

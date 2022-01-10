@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace DynamicGameAssets.Framework
 {
-    internal static class WeightedExtensions
+    public static class WeightedExtensions
     {
         public static T Choose<T>(this Weighted<T>[] choices, Random r = null) where T : ICloneable
         {
             if (choices.Length == 0)
-                return default(T);
+                return default;
             if (choices.Length == 1)
                 return choices[0].Value;
 
@@ -28,6 +28,7 @@ namespace DynamicGameAssets.Framework
 
             throw new Exception("This should never happen");
         }
+
         public static T Choose<T>(this List<Weighted<T>> choices, Random r = null) where T : ICloneable
         {
             return choices.ToArray().Choose(r);

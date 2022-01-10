@@ -22,12 +22,12 @@ namespace DynamicGameAssets.Framework.ContentPacks
 
         public T LoadAsset<T>(string key)
         {
-            return default(T);
+            return default;
         }
 
         public TModel ReadJsonFile<TModel>(string path) where TModel : class
         {
-            return default(TModel);
+            return default;
         }
 
         public void WriteJsonFile<TModel>(string path, TModel data) where TModel : class

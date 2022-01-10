@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // top section
+    "config.show-by-default.name": "기본값 표시",
+    "config.show-by-default.tooltip": "기본적으로 미니맵을 표시할지 여부. \n 적용 하려면 게임을 다시 시작해야 합니다.",
+    "config.toggle-key.name": "단축키",
+    "config.toggle-key.tooltip": "미니맵을 보이 거나 숨기는 키입니다.",
+    "config.update-interval.name": "업데이트 간격",
+    "config.update-interval.tooltip": "각 미니맵 업데이트 사이의 간격(밀리초)입니다. 0은 모든 프레임이고 -1은 새 위치를 입력할 때만 수행합니다. (마커는 관계없이 모든 프레임을 업데이트합니다.)",
+
+    // Positioning & Size section
+    "config.positioning-and-size.text": "위치 지정 및 크기",
+    "config.positioning-and-size.tooltip": "미니맵 배치와 관련된 옵션입니다.",
+    "config.anchor-x.name": "미니맵 고정 X",
+    "config.anchor-x.tooltip": "미니맵의 왼쪽 상단이 배치될 화면 너비의 백분율입니다.",
+    "config.anchor-y.name": "미니맵 고정 Y",
+    "config.anchor-y.tooltip": "미니맵의 왼쪽 상단이 배치될 화면 높이의 백분율입니다.",
+    "config.offset-x.name": "미니맵 간격 X",
+    "config.offset-x.tooltip": "미니맵이 배치될 고정 값으로부터의 X 간격 값입니다.",
+    "config.offset-y.name": "미니맵 간격 Y",
+    "config.offset-y.tooltip": "미니맵이 배치될 고정 값으로부터의 Y 간격 값입니다.",
+    "config.size.name": "미니맵 크기",
+    "config.size.tooltip": "미니맵의 크기(픽셀 단위)입니다(UI 크기 조정 전).",
+
+    //  Markers section
+    "config.markers.text": "표식",
+    "config.markers.tooltip": "지도에 표시되는 것을 렌더링하는 것과 관련된 옵션입니다.",
+    "config.player-marker-scale.name": "플레이어 머리",
+    "config.player-marker-scale.tooltip": "플레이어 머리의 크기를 렌더링합니다. 0은 비활성화합니다.",
+    "config.npc-marker-scale.name": "NPC 머리",
+    "config.npc-marker-scale.tooltip": "NPC 머리의 크기를 렌더링합니다. 0은 비활성화합니다.",
+    "config.wood-sign-marker-scale.name": "나무 간판",
+    "config.wood-sign-marker-scale.tooltip": "나무 표지판에 있는 항목의 크기를 렌더링합니다. 0은 비활성화합니다.",
+    "config.stone-sign-marker-scale.name": "돌 표지판",
+    "config.stone-sign-marker-scale.tooltip": "돌 표지판에 고정된 항목의 크기를 렌더링합니다. 0은 비활성화합니다.",
+    "config.dark-sign-marker-scale.name": "어두운 징후",
+    "config.dark-sign-marker-scale.tooltip": "어두운 표지판에 보관된 항목의 크기를 렌더링합니다. 0은 비활성화합니다."
+}

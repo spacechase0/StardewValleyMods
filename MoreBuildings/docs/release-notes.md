@@ -1,6 +1,16 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.0
+Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* No longer requires PyTK.
+* Fixed support for furniture in the custom buildings.
+
+**Update note:**  
+This changes how the custom buildings are saved. Existing buildings in your save should be migrated
+automatically.
+
 ## 1.1.3
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

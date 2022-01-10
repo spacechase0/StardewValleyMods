@@ -1,0 +1,8 @@
+﻿{
+    "menu.title": "기존 관계",
+    "menu.text": "당신은 누군가와 한동안 대화를 나누다가 \n마침내 그들과 함께하기 위해 계곡으로 이사했습니다... \n누구세요?",
+    "menu.button.accept": "수락",
+    "menu.button.cancel": "취소",
+    "married": "배우자가 이사를 왔습니다.",
+    "spouse-taken": "이 NPC는 이미 결혼했습니다."
+}

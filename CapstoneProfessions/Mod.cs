@@ -53,20 +53,26 @@ namespace CapstoneProfessions
         [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
         private void OnNightMenus(object sender, EventArgsShowNightEndMenus e)
         {
-            if (Game1.player.farmingLevel.Value == 10 && Game1.player.foragingLevel.Value == 10 &&
-                 Game1.player.fishingLevel.Value == 10 && Game1.player.miningLevel.Value == 10 &&
-                 Game1.player.combatLevel.Value == 10)
-            {
-                if (Game1.player.professions.Contains(Mod.ProfessionTime) || Game1.player.professions.Contains(Mod.ProfessionProfit))
-                    return;
+            if (!this.HasMaxedSkills() || Game1.player.professions.Contains(Mod.ProfessionTime) || Game1.player.professions.Contains(Mod.ProfessionProfit))
+                return;
 
-                Log.Debug("Doing profession menu");
+            Log.Debug("Doing profession menu");
 
-                if (Game1.endOfNightMenus.Count == 0)
-                    Game1.endOfNightMenus.Push(new SaveGameMenu());
+            if (Game1.endOfNightMenus.Count == 0)
+                Game1.endOfNightMenus.Push(new SaveGameMenu());
 
-                Game1.endOfNightMenus.Push(new CapstoneProfessionMenu());
-            }
+            Game1.endOfNightMenus.Push(new CapstoneProfessionMenu());
+        }
+
+        /// <summary>Get whether the player has maxed out all their skills.</summary>
+        private bool HasMaxedSkills()
+        {
+            return
+                Game1.player.farmingLevel.Value >= 10
+                && Game1.player.foragingLevel.Value >= 10
+                && Game1.player.fishingLevel.Value >= 10
+                && Game1.player.miningLevel.Value >= 10
+                && Game1.player.combatLevel.Value >= 10;
         }
     }
 }

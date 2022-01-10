@@ -1,0 +1,31 @@
+﻿{
+    /*********
+    ** Generic config UI
+    *********/
+    // button text at the bottom of the in-game options menu
+    "button.mod-options": "Параметры мода",
+
+    // mod list UI
+    "list.editable-heading": "Настройка модов",
+    "list.not-editable-heading": "Editable from the title screen:", // TODO
+
+    // mod config pages
+    "config.buttons.cancel": "Отмена",
+    "config.buttons.reset-to-default": "По умолчанию",
+    "config.buttons.save": "Сохранить",
+    "config.buttons.save-and-close": "Сохр. и закрыть",
+
+    "config.rebind-key.title": "Привязка клавиш: {{optionName}}",
+    "config.rebind-key.simple-instructions": "Нажмите на клавишу для привязки",
+    "config.rebind-key.combo-instructions": "Нажмите на комбинацию клавиш для привязки",
+    "config.rebind-key.no-key": "(Ничего)",
+
+
+    /*********
+    ** Config options for Generic Mod Config Menu itself
+    *********/
+    "options.open-menu-key.name": "Клавиша открытия меню",
+    "options.open-menu-key.desc": "Комбинация клавиш, открывающая меню.",
+    "options.scroll-speed.name": "Скорость прокрутки",
+    "options.scroll-speed.desc": "Количество строк, перемещаемые при прокрутке меню настроек."
+}

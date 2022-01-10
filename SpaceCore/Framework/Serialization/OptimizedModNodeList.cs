@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace SpaceCore.Framework.Serialization
                 ? JsonConvert.DeserializeObject<KeyValuePair<string, string>[]>(File.ReadAllText(path))
                 : null;
             if (rawNodes == null || rawNodes.Length == 0)
-                return new(new OptimizedModNode[0]);
+                return new(Array.Empty<OptimizedModNode>());
 
             // parse nodes
             OptimizedModNode[] nodes = rawNodes
