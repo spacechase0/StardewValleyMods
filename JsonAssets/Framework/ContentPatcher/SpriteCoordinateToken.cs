@@ -44,14 +44,14 @@ namespace JsonAssets.Framework.ContentPatcher
         public override IEnumerable<string> GetValues(string input)
         {
             if (!this.IsReady())
-                return new string[0];
+                return Array.Empty<string>();
 
             if (input == "")
                 return this.Coordinates.Values.Select(p => p.ToString()).ToArray();
 
             return this.Coordinates.TryGetValue(input, out int value)
                 ? new[] { value.ToString() }
-                : new string[0];
+                : Array.Empty<string>();
         }
 
         public override bool UpdateContext()

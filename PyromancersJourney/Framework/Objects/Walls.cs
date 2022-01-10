@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,7 +30,7 @@ namespace PyromancersJourney.Framework.Objects
                 for (int iy = 0; iy < world.Map.Size.Y; ++iy)
                 {
                     Vector2[][] texCoordMap = {
-                        new Vector2[ 0 ],
+                        Array.Empty<Vector2>(),
                         new[]
                         {
                             new Vector2( 1, 0 ) * t,

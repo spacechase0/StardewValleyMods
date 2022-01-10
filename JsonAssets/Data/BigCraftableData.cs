@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
@@ -72,7 +73,7 @@ namespace JsonAssets.Data
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            this.ExtraTextures ??= new Texture2D[0];
+            this.ExtraTextures ??= Array.Empty<Texture2D>();
             this.PurchaseRequirements ??= new List<string>();
             this.AdditionalPurchaseData ??= new List<PurchaseData>();
             this.NameLocalization ??= new();

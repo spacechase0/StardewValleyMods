@@ -43,14 +43,14 @@ namespace JsonAssets.Framework.ContentPatcher
         public override IEnumerable<string> GetValues(string input)
         {
             if (!this.IsReady())
-                return new string[0];
+                return Array.Empty<string>();
 
             if (input == "")
                 return this.Ids.Values.Select(p => p.ToString()).ToArray();
 
             return this.Ids.TryGetValue(input, out int value)
                 ? new[] { value.ToString() }
-                : new string[0];
+                : Array.Empty<string>();
         }
 
         protected override void UpdateContextImpl()

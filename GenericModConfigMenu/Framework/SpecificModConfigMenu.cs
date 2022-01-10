@@ -331,7 +331,7 @@ namespace GenericModConfigMenu.Framework
                     if (overlapRows > 0.05f) // avoid adding an empty row if an element only overlaps slightly
                     {
                         for (int i = 0; i < overlapRows; i++)
-                            this.Table.AddRow(new Element[0]);
+                            this.Table.AddRow(Array.Empty<Element>());
                     }
                 }
             }

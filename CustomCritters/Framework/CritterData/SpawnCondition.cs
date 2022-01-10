@@ -8,8 +8,8 @@ namespace CustomCritters.Framework.CritterData
     internal class SpawnCondition
     {
         public bool Not { get; set; } = false;
-        public string[] Seasons { get; set; } = new string[0];
-        public string[] Locations { get; set; } = new string[0];
+        public string[] Seasons { get; set; } = Array.Empty<string>();
+        public string[] Locations { get; set; } = Array.Empty<string>();
         public int MinTimeOfDay { get; set; } = -1;
         public int MaxTimeOfDay { get; set; } = -1;
         public double ChancePerTile { get; set; } = 1.0 / 15000;
