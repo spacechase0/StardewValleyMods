@@ -1,0 +1,13 @@
+﻿{
+    // tent tool
+    "tent.name": "เต็นท์",
+    "tent.description": "นอนที่นี่ นอนที่นั่น นอนได้ทุกที่!",
+
+    // HUD messages
+    "messages.slept-at-lost-location": "คุณตั้งแคมป์ที่ไหนสักแห่งที่แปลก คุณได้กลับบ้านแล้ว",
+    "messages.slept-at-festival": "คุณตั้งแคมป์ที่บริเวณเทศกาล คุณได้กลับบ้านแล้ว",
+
+    // Generic Mod Config Menu UI
+    "config.seconds-until-save.name": "วินาทีก่อนเริ่มบันทึก",
+    "config.seconds-until-save.tooltip": "จำนวนวินาทีก่อนที่เต็นท์จะเริ่มบันทึก"
+}

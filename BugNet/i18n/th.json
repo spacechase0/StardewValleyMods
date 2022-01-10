@@ -1,0 +1,45 @@
+﻿{
+    // net
+    "bug-net.name": "ตาข่ายจับแมลง",
+    "bug-net.description": "ใช้จับสัตว์และสิ่งของ",
+
+    // critter cage
+    "cage.name": "กรง: {{critterName}}",
+    "cage.description": "มันเป็นสัตว์! ที่อยู่ในกรง!",
+
+    // critter names
+    "critter.GreenFrog": "กบเขียว",
+    "critter.OliveFrog": "กบมะกอก",
+    "critter.Cloud": "กลุ่มเมฆ?",
+    "critter.Firefly": "หิ่งห้อย",
+    "critter.Seagull": "นกนางนวล",
+    "critter.Crow": "อีกา",
+    "critter.BrownBird": "นกสีน้ำตาล",
+    "critter.BlueBird": "นกสีฟ้า",
+    "critter.GrayRabbit": "กระต่ายสีเทา",
+    "critter.WhiteRabbit": "กระต่ายสีเทา",
+    "critter.Squirrel": "กระรอก",
+    "critter.Owl": "นกฮูก",
+    "critter.WoodPecker": "นกหัวขวาน",
+    "critter.SummerButterflyBlue": "ผีเสื้อฤดูร้อนสีฟ้า",
+    "critter.SummerButterflyGreen": "ผีเสื้อฤดูร้อนสีเขียว",
+    "critter.SummerButterflyRed": "ผีเสื้อฤดูร้อนสีแดง",
+    "critter.SummerButterflyPink": "ผีเสื้อฤดูร้อนสีชมพู",
+    "critter.SummerButterflyYellow": "ผีเสื้อฤดูร้อนสีเหลือง",
+    "critter.SummerButterflyOrange": "ผีเสื้อฤดูร้อนสีส้ม",
+    "critter.SpringButterflyPalePink": "ผีเสื้อฤดูใบไม้ผลิสีชมพูซีด",
+    "critter.SpringButterflyMagenta": "ผีเสื้อฤดูใบไม้ผลิสีม่วง",
+    "critter.SpringButterflyWhite": "ผีเสื้อฤดูใบไม้ผลิสีขาว",
+    "critter.SpringButterflyYellow": "ผีเสื้อฤดูใบไม้ผลิสีเหลือง",
+    "critter.SpringButterflyPurple": "ผีเสื้อฤดูใบไม้ผลิสีม่วง",
+    "critter.SpringButterflyPink": "ผีเสื้อฤดูใบไม้ผลิสีชมพู",
+    "critter.BlueParrot": "นกแก้วสีน้ำเงิน",
+    "critter.GreenParrot": "นกแก้วเขียว",
+    "critter.Monkey": "ลิง",
+    "critter.OrangeIslandButterfly": "ผีเสื้อเกาะสีส้ม",
+    "critter.PinkIslandButterfly": "ผีเสื้อเกาะสีชมพู",
+    "critter.PurpleBird": "นกสีม่วง",
+    "critter.RedBird": "นกสีแดง",
+    "critter.SunsetTropicalButterfly": "ผีเสื้อพระอาทิตย์ตกเขตร้อน",
+    "critter.TropicalButterfly": "ผีเสื้อเขตร้อน"
+}

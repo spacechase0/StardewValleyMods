@@ -1,0 +1,28 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // Clint's shop
+    "clint.rush.description": "La herramienta tardará un día en actualizarse.",
+    "clint.rush.dialogue": "Gracias. Empezaré ahora mismo. Debería estar listo mañana.",
+
+    "clint.instant.description": "La herramienta se actualizará inmediatamente.",
+    "clint.instant.dialogue": "Gracias. Empezaré ahora mismo. Debería estar listo en unos minutos.",
+
+    // Robin's shop
+    "robin.rush-question": "¿Apurar la construcción de edificio? ({{daysLeft}} días restantes.)",
+    "robin.rush-answer-yes": "Si ({{price}}g)",
+    "robin.rush-answer-no": "No",
+    "robin.not-enough-money": "No tienes suficiente dinero.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.price-tool-one-day.name": "Precio: Herramienta - Un día",
+    "config.price-tool-one-day.tooltip": "El multiplicador de precios para una actualización de herramientas de un día.",
+    "config.price-tool-instant.name": "Precio: Herramienta - Instantánea",
+    "config.price-tool-instant.tooltip": "El multiplicador de precios para una mejora instantánea.",
+    "config.price-building.name": "Precio: Construir - Acelerar",
+    "config.price-building.tooltip": "El multiplicador de precios para acelerar la construcción de edificios en un día."
+}

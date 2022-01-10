@@ -15,7 +15,7 @@ Purchase mannequins from Robin. Right-click with the item you want to put on it,
 hand to swap what you currently have equipped.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## FAQs
 ### Why are dyed shirt colors sometimes not shown?

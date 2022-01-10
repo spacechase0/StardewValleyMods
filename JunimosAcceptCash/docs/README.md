@@ -13,7 +13,7 @@ Click the purchase button above the bundle icon in the community center UI to co
 The price changes based on the most expensive items left in the bundle.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

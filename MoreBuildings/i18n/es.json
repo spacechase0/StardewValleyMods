@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Building data
+    *********/
+    "spooky-shed.name": "Cobertizo espeluznante",
+    "spooky-shed.description": "Un edificio vacío. Pero también espeluznante.",
+
+    "fishing-shack.name": "Choza de pesca",
+    "fishing-shack.description": "Una choza para pescar.",
+
+    "mini-spa.name": "Mini Spa",
+    "mini-spa.description": "Un lugar para relajarse y recargarse."
+}

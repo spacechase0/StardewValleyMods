@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Surfing Festival",
     "Author": "spacechase0",
-    "Version": "1.0.14",
-    "MinimumApiVersion": "3.12.5",
+    "Version": "1.0.15",
+    "MinimumApiVersion": "3.13.0",
     "Description": "A festival to race with your friends on the beach.",
     "UniqueID": "spacechase0.SurfingFestival",
     "EntryDll": "SurfingFestival.dll",

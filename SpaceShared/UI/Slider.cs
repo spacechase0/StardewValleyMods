@@ -60,9 +60,9 @@ namespace SpaceShared.UI
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
-            base.Update(hidden);
+            base.Update(isOffScreen);
 
             if (this.Clicked)
                 this.Dragging = true;
@@ -87,6 +87,9 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             float perc = this.Value switch
             {
                 int => ((int)(object)this.Value - (int)(object)this.Minimum) / (float)((int)(object)this.Maximum - (int)(object)this.Minimum),

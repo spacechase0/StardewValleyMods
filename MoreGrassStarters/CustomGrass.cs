@@ -101,8 +101,8 @@ namespace MoreGrassStarters
                         t.getLastFarmerToUse().currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(Game1.objectSpriteSheetName, Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 178, 16, 16), 750f, 1, 0, t.getLastFarmerToUse().position - new Vector2(0.0f, Game1.tileSize * 2), false, false, t.getLastFarmerToUse().position.Y / 10000f, 0.005f, Color.White, Game1.pixelZoom, -0.005f, 0.0f, 0.0f)
                         {
                             motion = {
-                Y = -1f
-              },
+                                Y = -1f
+                            },
                             layerDepth = (float)(1.0 - Game1.random.Next(100) / 10000.0),
                             delayBeforeAnimationStart = Game1.random.Next(350)
                         });

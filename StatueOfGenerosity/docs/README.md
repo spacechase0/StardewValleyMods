@@ -15,7 +15,7 @@ You can buy Statues of Generosity from Krobus for 100,000g. Each day it will pro
 for the villager whose birthday it is today, or for a random villager if there's no birthday.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

@@ -1,0 +1,60 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // filter labels
+    "filter.category": "หมวดหมู่:",
+    "filter.sorting": "เรียงลำดับ:",
+
+    // sort types
+    "sort.none": "ไม่มี",
+    "sort.name": "ชื่อ",
+    "sort.price": "ราคา",
+
+    // category names
+    "categories.everything": "ทั้งหมด",
+    "categories.other": "อื่นๆ",
+    "categories.artisan-goods": "ผลิตภัณฑ์",
+    "categories.bait": "เหยื่อ",
+    "categories.big-craftables": "งานประดิษฐ์ขนาดใหญ่",
+    "categories.boots": "รองเท้าบูท",
+    "categories.building-resources": "วัสดุสร้างอาคาร",
+    "categories.clothing": "เสื้อผ้า",
+    "categories.cooking": "อาหาร",
+    "categories.crafting": "สิ่งประดิษฐ์",
+    "categories.eggs": "ไข่",
+    "categories.equipment": "อุปกรณ์",
+    "categories.fertilizer": "ปุ๋ย",
+    "categories.fish": "ปลา",
+    "categories.flowers": "ดอกไม้",
+    "categories.fruits": "ผลไม้",
+    "categories.furniture": "เฟอร์นิเจอร์",
+    "categories.gems": "อัญมณี",
+    "categories.greens": "ผักใบเขียว",
+    "categories.hats": "หมวก",
+    "categories.ingredients": "วัตถุดิบ",
+    "categories.junk": "ขยะ",
+    "categories.meat": "เนื้อ",
+    "categories.metals": "โลหะ",
+    "categories.milk": "นม",
+    "categories.minerals": "แร่ธาตุ",
+    "categories.monster-loot": "ไอเทมจากมอนสเตอร์",
+    "categories.recipes": "สูตร",
+    "categories.rings": "แหวน",
+    "categories.seeds": "เมล็ดพันธุ์",
+    "categories.sell-to-pierre-or-marnie": "ขายได้ที่ร้านปิแอร์/มานี",
+    "categories.sell-to-pierre": "ขายได้ที่ร้านปิแอร์",
+    "categories.sell-to-willy": "ขายได้ที่ร้านวิลลี่",
+    "categories.syrups": "น้ำเชื่อม",
+    "categories.tackle": "ต่อสู้",
+    "categories.tools": "เครื่องมือ",
+    "categories.vegetables": "ผัก",
+    "categories.weapons": "อาวุธ",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.grid-layout.name": "ตารางกริด (เวอร์ชั่นทดลอง)",
+    "config.grid-layout.tooltip": "จะใช้ตารางกริดแบบทดลองในร้านค้าหรือไม่ ซึ่งอาจทำให้เกิดปัญหาการแสดงผลเล็กน้อย หรือส่งผลกระทบต่อคุณสมบัติของม็อดอื่นๆ ในเมนูร้านค้า"
+}

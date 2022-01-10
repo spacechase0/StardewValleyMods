@@ -1,6 +1,17 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.2.0
+Released 25 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Rewrote to significantly reduce performance impact.
+* Added `cpa summary` console command to see animation info.
+
+## 1.1.14
+Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Updated for Stardew Valley 1.5.5.
+
 ## 1.1.13
 Released 29 October 2021 for SMAPI 3.12.5 or later. Updated by Pathoschild.
 

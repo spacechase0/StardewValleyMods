@@ -23,6 +23,9 @@ namespace SpaceShared.UI
 
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             if (this.OutlineColor.HasValue)
             {
                 IClickableMenu.drawTextureBox(b, (int)this.Position.X - 12, (int)this.Position.Y - 12, this.Width + 24, this.Height + 24, this.OutlineColor.Value);

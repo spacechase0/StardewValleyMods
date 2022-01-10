@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Custom NPC Fixes",
     "Author": "spacechase0",
-    "Version": "1.2.3",
-    "MinimumApiVersion": "3.9.5",
+    "Version": "1.2.4",
+    "MinimumApiVersion": "3.13.0",
     "Description": "Fixes NPC spawning in custom locations, pathing to custom locations, and schedules for new NPCs.",
     "UniqueID": "spacechase0.CustomNPCFixes",
     "EntryDll": "CustomNPCFixes.dll",

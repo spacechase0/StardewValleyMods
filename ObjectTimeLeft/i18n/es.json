@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.show-on-start.name": "Mostrar al inicio",
+    "config.show-on-start.tooltip": "Si se inicia el juego con el tiempo restante ya mostrandose.",
+
+    "config.toggle-key.name": "Tecla: Activar pantalla",
+    "config.toggle-key.tooltip": "La tecla para activar la visualización de los objetos.",
+
+    "config.text-scale.name": "Escala de texto",
+    "config.text-scale.tooltip": "La escala del texto a superponer en los objetos."
+}

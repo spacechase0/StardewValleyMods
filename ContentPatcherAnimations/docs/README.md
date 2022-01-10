@@ -27,6 +27,14 @@ All frames must be next to each other horizontally in the same `FromFile` image.
 
 See [an example content pack](https://spacechase0.com/files/sdvmod/ContentPatcherAnimationTest.zip).
 
+### Console commands
+Content Patcher Animations adds two commands to the SMAPI console window:
+
+command      | effect
+------------ | ------
+`cpa reload` | Immediately reload all animation data from installed Content Patcher packs. Mainly useful to quickly test when editing content packs.
+`cpa summary` | Print a summary of current animation data.
+
 ## Compatibility
 Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 

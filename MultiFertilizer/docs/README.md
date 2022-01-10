@@ -13,7 +13,7 @@ Just apply fertilizer to crop spaces like usual. Now you'll be able to apply a d
 if they're already fertilized.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## For mod authors
 You can detect multi-fertilizer on a dirt tile by checking for these fields in the `HoeDirt.modData`

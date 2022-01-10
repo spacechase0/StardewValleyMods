@@ -1,0 +1,13 @@
+﻿{
+    // tent tool
+    "tent.name": "Tienda de campaña",
+    "tent.description": "Duerme aquí. Duerme allí. ¡Duerme en todas partes!.",
+
+    // HUD messages
+    "messages.slept-at-lost-location": "Has acampado en un lugar extraño, así que has vuelto a casa.",
+    "messages.slept-at-festival": "Has acampado en el recinto del festival, así que has vuelto a casa.",
+
+    // Generic Mod Config Menu UI
+    "config.seconds-until-save.name": "Segundos hasta guardar",
+    "config.seconds-until-save.tooltip": "El número de segundos hasta que la herramienta de tienda de campaña debe desencadenar un guardado."
+}

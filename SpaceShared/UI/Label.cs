@@ -44,9 +44,9 @@ namespace SpaceShared.UI
         ** Public methods
         *********/
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
-            base.Update(hidden);
+            base.Update(isOffScreen);
 
             if (this.Clicked)
                 this.Callback?.Invoke(this);
@@ -61,6 +61,9 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             bool altColor = this.Hover && this.Callback != null;
             if (this.Bold)
                 SpriteText.drawString(b, this.String, (int)this.Position.X, (int)this.Position.Y, layerDepth: 1, color: altColor ? SpriteText.color_Gray : -1);

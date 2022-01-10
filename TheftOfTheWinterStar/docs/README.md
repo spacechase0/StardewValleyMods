@@ -48,7 +48,7 @@ Crafting a Tempus Globe requires an iridum sprinkler, 25 Solar Essence, and 25 V
 10. Beat the boss to get half a heart with the entire town, and a recipe for the Tempus Globe.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

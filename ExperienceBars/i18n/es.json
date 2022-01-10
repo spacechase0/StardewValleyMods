@@ -1,0 +1,11 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.position-x.name": "Posición X",
+    "config.position-x.tooltip": "La posición X de los píxeles en la que se dibujan las barras de experiencia, en relación con la esquina superior izquierda de la pantalla.",
+    "config.position-y.name": "Posición Y",
+    "config.position-y.tooltip": "La posición Y de los píxeles en la que se dibujan las barras de experiencia, en relación con la esquina superior izquierda de la pantalla.",
+    "config.toggle-key.name": "Tecla de activación",
+    "config.toggle-key.tooltip": "El botón que muestra u oculta la visualización de las barras de experiencia. Pulse Shift y este botón para mover la pantalla."
+}

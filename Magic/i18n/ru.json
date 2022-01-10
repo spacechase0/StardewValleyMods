@@ -1,0 +1,149 @@
+﻿{
+    /*********
+    ** General text
+    *********/
+    // HUD messages
+    "spell.learn": "Вы выучили заклинание: {{spellName}}",
+    "spell.learn.ancient": "Вы выучили древнее заклинание: {{spellName}}",
+
+    // menu tooltips
+    // TODO
+    "tooltip.spell.known": "Click and drag to add {{spell}} to your spellbar on the right.",
+    "tooltip.spell.can-learn": "Click to spend one free point and learn {{spell}}.",
+    "tooltip.spell.need-free-points": "You have no free points to learn {{spell}}.",
+    "tooltip.spell.need-previous-levels": "You must learn the previous spell levels first.",
+    "tooltip.spell.name-and-level": "{{spellName}} level {{level}}",
+
+    // altar
+    "altar.click-message": "Сияющий алтарь.",
+
+
+    /*********
+    ** Wizard learn-magic event
+    *********/
+    "event.wizard.1": "Настало время обучить тебя основам магии.",
+    "event.wizard.2": "Я тут... поработал над алтарем Иоба в магазине Пьера так, чтобы вы могли его использовать в нашем ремесле.",
+    "event.wizard.3": "Я обучу тебя основам тайной магии, но остальную, львиную долю тебе придётся узнать самостоятельно.",
+    "event.wizard.4": "Тайное заклинание 'Анализ' может использоваться, чтоб узнать большинство заклинаний. Однако, некоторые более мощные заклятья должны быть открыты иными способами.",
+    "event.wizard.5": "Каждая школа магии имеет 3 обычных заклинания, и четвертое, древнее заклинание. Даже я не знаю где найти их все.",
+    "event.wizard.6": "Чтоб помочь в твоих начинаниях, я дам тебе подсказку. Попробуйте использовать Analyze на лейке.",
+    "event.wizard.7": "(Для начала колдовства удерживайте Q. После нажмите 1-4 для выбора заклинания.)",
+    "event.wizard.8": "(Нажмите TAB, для переключения между запомненными конфигурациями заклинаний.)",
+    "event.wizard.9": "(Данные кнопки могут быть переназначены в файле мода Magic.)",
+    "event.wizard.abovehead": "МАГИЯ",
+
+
+    /*********
+    ** TV channel
+    *********/
+    "tv.analyzehints.name": "Волшебная Аналитика",
+    "tv.analyzehints.notmagical": "*Помехи*",
+    "tv.analyzehints.1": "Ищите применение магии для работы на ферме? Попробуйте анализировать ваши инстументы.",
+    "tv.analyzehints.2": "Нужно отступить по быстрому? Интересно, если бы обувь могла вдохновить вас.",
+    "tv.analyzehints.3": "Солнечный свет очень приятен, но не всегда доступен. Вот если бы свет мог бы быть воссоздан искуственно?",
+    "tv.analyzehints.4": "Некоторые основные минералы похоже содержат некую магическую энергию.",
+    "tv.analyzehints.5": "На днях метеорит упал на мой задний двор. Это мистика какая то.",
+    "tv.analyzehints.6": "Кофе очень вкусен. Почему бы не воссоздать его эффект при помощи заклятий?",
+    "tv.analyzehints.7": "На днях я видел вырастают корни из земли и окутывают монстров, словно плоды в урожайный день.",
+    "tv.analyzehints.8": "Бьюсь об заклад, вы могли бы выстрелить льдом, чтобы что-то замедлить. Интересно, где можно было изучать лед...?",
+    "tv.analyzehints.9": "Я видел темный алтарь в чьем-то доме на днях. Ну, я говорю «дом». Это было больше похоже на хижину.",
+    "tv.analyzehints.10": "Зелья здоровья, конечно, неудобно носить с собой. Может быть, мы сможем исцелять себя магией?",
+    "tv.analyzehints.11": "Большинство людей спускаются под землю по лестницам, но я видел, как один человек наложил заклинание и прыгнул прямо через пол.",
+    "tv.analyzehints.12": "Я видел, как кто-то наложил заклинание, чтобы восстановить ману!? Похоже было больно. Ходят слухи, что они научились этой технике, ловя лавовых угрей.",
+
+
+    /*********
+    ** Magic spells
+    *********/
+    "school.arcane.name": "Таинство",
+    "school.toil.name": "Труд",
+    "school.nature.name": "Природа",
+    "school.life.name": "Жизнь",
+    "school.elemental.name": "Элементы",
+    "school.eldritch.name": "Жуть",
+
+    "spell.arcane:analyze.name": "Анализ",
+    "spell.arcane:analyze.desc": "Изучите предмет для магического вдохновения.",
+    "spell.arcane:magicmissle.name": "Волшебный снаряд",
+    "spell.arcane:magicmissle.desc": "Несколько слабый, но ищущий снаряд.",
+    "spell.arcane:disenchant.name": "Разчаровать",
+    "spell.arcane:disenchant.desc": "Понизьте качество предмета.\nРазница в продажной цене между старым и новым качеством возвращается в кошелек.",
+    "spell.arcane:enchant.name": "Зачаровать",
+    "spell.arcane:enchant.desc": "Catalyst: Деньги\nПовышение качества предмета.\nЦена разница в цене продажи между старым и новым качеством.",
+    "spell.arcane:rewind.name": "Перемотка",
+    "spell.arcane:rewind.desc": "Catalyst: Золотой слиток\nПовернуть время вспять.",
+
+    "spell.toil:cleardebris.name": "Очистить от обломков",
+    "spell.toil:cleardebris.desc": "Убрать все обломки вокруг местости.\nПовышение уровня способно очистить большие участки територии от хлама.",
+    "spell.toil:till.name": "Возделать",
+    "spell.toil:till.desc": "Вспошите землю вокруг выбранной области.\nПовышение уровня увеличивает область применения.",
+    "spell.toil:water.name": "Вода",
+    "spell.toil:water.desc": "Полейте почву вокруг выбранной области.\nПовышение уровня увеличивает область применения.",
+    "spell.toil:blink.name": "Скачек",
+    "spell.toil:blink.desc": "Телепортируйтесь в выбранную область.",
+
+    "spell.nature:lantern.name": "Фонарь",
+    "spell.nature:lantern.desc": "Вызвать свет в небольшой области подле вас.\nВысшие уровни освещают большую область.",
+    "spell.nature:tendrils.name": "Корни",
+    "spell.nature:tendrils.desc": "Призвать корни, чтоб помешать перемещению недругов.",
+    "spell.nature:shockwave.name": "Ударная волна",
+    "spell.nature:shockwave.desc": "Прыгните в воздух и стремительно приземлитесь, посылая ударную волну.\n На высших уровнях шире и жеще.",
+    "spell.nature:photosynthesis.name": "Фотосинтез",
+    "spell.nature:photosynthesis.desc": "Катализатор: Призматический осколок\n\nПродвинуть все растения в ваших сельскохозяйственных угодьях на этап.",
+
+    "spell.life:heal.name": "Исцеление",
+    "spell.life:heal.desc": "Восстановите своё здоровье ценой маны.\nБолее высокие уровни лечат больше при лучшем соотношении затрат.",
+    "spell.life:haste.name": "Спешка",
+    "spell.life:haste.desc": "Двигайтесь быстро, словно ветер.\nНа высоких уровнях заклинание будет работать дольше.",
+    "spell.life:buff.name": "Бафф",
+    "spell.life:buff.desc": "Улучшайте каждую грань своего существа.\nНа высоких уровнях улучшайте себя на более продолжительный срок.",
+    "spell.life:evac.name": "Эвакуация",
+    "spell.life:evac.desc": "Телепортируйтесь туда, откуда вы вошли в область.",
+
+    "spell.elemental:fireball.name": "Огненный шар",
+    "spell.elemental:fireball.desc": "Запускайте во врагов разрушительным огненным шаром.\nВысшие уровни улучшают урон и скорость.",
+    "spell.elemental:frostbolt.name": "Ледяной снаряд",
+    "spell.elemental:frostbolt.desc": "Запускайте пронзающий снаряд льда в ваших врагов.\nВысшие уровни улучшают урон и скорость.",
+    "spell.elemental:descend.name": "Снизойти",
+    "spell.elemental:descend.desc": "Спуститься глубже в шахту.\nВысшие уровни увеличивают количество пройденных этажей, без дополнительных затрат маны.",
+    "spell.elemental:teleport.name": "Телепорт",
+    "spell.elemental:teleport.desc": "Катализатор: Ядро путешествий\n\nКогда снаружи, телепортироваться в любое место на открытом воздухе.",
+
+    "spell.eldritch:meteor.name": "Метеор",
+    "spell.eldritch:meteor.desc": "Катализатор: Иридиевая руда",
+    "spell.eldritch:bloodmana.name": "Кровавая Мана",
+    "spell.eldritch:bloodmana.desc": "Катализатор: Ваша жизнь",
+    "spell.eldritch:lucksteal.name": "Похищение Удачи",
+    "spell.eldritch:lucksteal.desc": "Катализатор: Счастье ваших близких",
+    "spell.eldritch:spirit.name": "Призрак",
+    "spell.eldritch:spirit.desc": "Призвать потерянного духа для сражения на вашей стороне.",
+
+
+    /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "Магический Элексир",
+    "objects.mana-potion.description": "Восстанавливает здоровье и ману.",
+
+    "objects.travel-core.name": "Ядро путешествий",
+    "objects.travel-core.description": "Катализатор.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // TODO
+    "config.altar-location.name": "Altar Location",
+    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
+    "config.altar-x.name": "Altar X",
+    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
+    "config.altar-y.name": "Altar Y",
+    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+
+    "config.cast-key.name": "Key: Cast",
+    "config.cast-key.tooltip": "The key to initiate casting a spell.",
+    "config.swap-spells-key.name": "Key: Swap Sells",
+    "config.swap-spells-key.tooltip": "The key to swap spell sets.",
+    "config.select-spell-key.name": "Key: Spell {{slotNumber}}",
+    "config.select-spell-key.tooltip": "The key to select spell {{slotNumber}}."
+}

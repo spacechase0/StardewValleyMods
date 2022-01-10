@@ -27,11 +27,20 @@ namespace GenericModConfigMenu.Framework.ModOption
         /*********
         ** Public methods
         *********/
-        /// <summary>Update the value from the mod configuration.</summary>
-        public abstract void GetLatest();
+        /// <summary>Perform any logic needed before the form is reset.</summary>
+        public abstract void BeforeReset();
+
+        /// <summary>Perform any logic needed after the form is reset.</summary>
+        public abstract void AfterReset();
 
         /// <summary>Save the value to the mod configuration.</summary>
-        public abstract void Save();
+        public abstract void BeforeSave();
+
+        /// <summary>Perform any logic needed after the form is saved.</summary>
+        public abstract void AfterSave();
+
+        /// <summary>Update the value from the mod configuration.</summary>
+        public abstract void GetLatest();
 
 
         /*********

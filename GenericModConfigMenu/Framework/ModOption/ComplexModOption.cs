@@ -13,8 +13,17 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>Draw the option in the config UI. This is called with the sprite batch being rendered, the pixel position at which to start drawing, and the current option value. This should return the new value.</summary>
         private readonly Action<SpriteBatch, Vector2> DrawImpl;
 
-        /// <summary>Set a new value in the mod config.</summary>
-        private readonly Action SaveImpl;
+        /// <summary>A callback raised before the form's current values are saved to the config.</summary>
+        private readonly Action BeforeSaveImpl;
+
+        /// <summary>A callback raised after the form's current values are saved to the config.</summary>
+        private readonly Action AfterSaveImpl;
+
+        /// <summary>A callback raised before the form is reset to its default values.</summary>
+        private readonly Action BeforeResetImpl;
+
+        /// <summary>A callback raised after the form is reset to its default values.</summary>
+        private readonly Action AfterResetImpl;
 
 
         /*********
@@ -34,25 +43,49 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="mod">The mod config UI that contains this option.</param>
         /// <param name="height">The height to allocate for the option in the form. This is called once before the form is drawn and can't be changed dynamically.</param>
         /// <param name="draw">Draw the option in the config UI. This is called with the sprite batch being rendered, the pixel position at which to start drawing, and the current option value. This should return the new value.</param>
-        /// <param name="save">Set a new value in the mod config.</param>
-        public ComplexModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<int> height, Action<SpriteBatch, Vector2> draw, Action save)
+        /// <param name="beforeSave">A callback raised before the form's current values are saved to the config.</param>
+        /// <param name="afterSave">A callback raised after the form's current values are saved to the config.</param>
+        /// <param name="beforeReset">A callback raised before the form is reset to its default values.</param>
+        /// <param name="afterReset">A callback raised after the form is reset to its default values.</param>
+        public ComplexModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<int> height, Action<SpriteBatch, Vector2> draw, Action beforeSave, Action afterSave, Action beforeReset, Action afterReset)
             : base(fieldId, name, tooltip, mod)
         {
             height ??= () => 0; // UI will ignore values below the minimum one row
 
             this.Height = height;
             this.DrawImpl = draw;
-            this.SaveImpl = save;
+            this.BeforeSaveImpl = beforeSave;
+            this.AfterSaveImpl = afterSave;
+            this.BeforeResetImpl = beforeReset;
+            this.AfterResetImpl = afterReset;
+        }
+
+        /// <inheritdoc />
+        public override void BeforeSave()
+        {
+            this.BeforeSaveImpl();
+        }
+
+        /// <inheritdoc />
+        public override void AfterSave()
+        {
+            this.AfterSaveImpl?.Invoke();
+        }
+
+        /// <inheritdoc />
+        public override void BeforeReset()
+        {
+            this.BeforeResetImpl?.Invoke();
+        }
+
+        /// <inheritdoc />
+        public override void AfterReset()
+        {
+            this.AfterResetImpl?.Invoke();
         }
 
         /// <inheritdoc />
         public override void GetLatest() { }
-
-        /// <inheritdoc />
-        public override void Save()
-        {
-            this.SaveImpl();
-        }
 
         /// <summary>Draw the option to the form.</summary>
         /// <param name="spriteBatch">The sprite batch being rendered.</param>

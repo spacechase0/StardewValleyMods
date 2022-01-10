@@ -1,0 +1,30 @@
+﻿{
+    /*********
+    ** Generic config UI
+    *********/
+    // button text at the bottom of the in-game options menu
+    "button.mod-options": "ตัวเลือก Mod",
+
+    // mod list UI
+    "list.heading": "กำหนดค่า Mods",
+
+    // mod config pages
+    "config.buttons.cancel": "ยกเลิก",
+    "config.buttons.reset-to-default": "ค่าเริ่มต้น",
+    "config.buttons.save": "บันทึก",
+    "config.buttons.save-and-close": "บันทึก & ปิด",
+
+    "config.rebind-key.title": "การตั้งค่าปุ่มลัด: {{optionName}}",
+    "config.rebind-key.simple-instructions": "ป้อนคีย์ใหม่เพื่อตั้งค่าปุ่มลัดอีกครั้ง",
+    "config.rebind-key.combo-instructions": "ป้อนคีย์ใหม่เพื่อตั้งค่าปุ่มลัด",
+    "config.rebind-key.no-key": "(ไม่มี)",
+
+
+    /*********
+    ** Config options for Generic Mod Config Menu itself
+    *********/
+    "options.open-menu-key.name": "ปุ่มเปิดเมนู",
+    "options.open-menu-key.desc": "ปุ่มลัดสำหรับเรียกใช้เมนู",
+    "options.scroll-speed.name": "ความเร็วในการเลื่อน",
+    "options.scroll-speed.desc": "จำนวนแถวฟิลด์ที่จะออฟเซ็ต เมื่อเลื่อนเมนูการกำหนดค่า"
+}

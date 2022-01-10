@@ -10,7 +10,7 @@ your damage by 5% per combat level (configurable).
 The damage you deal will be buffed automatically based on your combat skill level.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

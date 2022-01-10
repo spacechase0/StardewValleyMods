@@ -3,14 +3,22 @@ using System.Collections.Generic;
 
 namespace ContentPatcherAnimations.Framework
 {
+    /// <summary>The animation state for a screen.</summary>
     internal class ScreenState
     {
-        public IEnumerable CpPatches;
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The raw patches loaded by Content Patcher for all installed content packs.</summary>
+        public IEnumerable RawPatches { get; set; }
 
-        public Dictionary<Patch, PatchData> AnimatedPatches = new();
+        /// <summary>The patch and animation data for loaded patches.</summary>
+        public Dictionary<Patch, PatchData> AnimatedPatches { get; } = new();
 
-        public uint FrameCounter;
-        public int FindTargetsCounter;
-        public Queue<Patch> FindTargetsQueue = new();
+        /// <summary>The assets that were recently drawn to the screen.</summary>
+        public AssetDrawTracker AssetDrawTracker { get; } = new();
+
+        /// <summary>The global animation tick counter.</summary>
+        public uint FrameCounter { get; set; }
     }
 }

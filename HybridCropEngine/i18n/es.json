@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.scan-everywhere.name": "Escanear en todas partes",
+    "config.scan-everywhere.tooltip": "Escanear en todas partes para la creación de híbridos.\nFalso significa que sólo escanea la Granja y el Invernadero."
+}

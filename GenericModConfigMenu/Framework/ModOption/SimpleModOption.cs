@@ -58,16 +58,31 @@ namespace GenericModConfigMenu.Framework.ModOption
         }
 
         /// <inheritdoc />
-        public override void GetLatest()
+        public override void BeforeReset()
         {
-            this.CachedValue = this.GetValue();
+            this.GetLatest();
         }
 
         /// <inheritdoc />
-        public override void Save()
+        public override void AfterReset()
+        {
+            this.GetLatest();
+        }
+
+        /// <inheritdoc />
+        public override void BeforeSave()
         {
             SpaceShared.Log.Trace("saving " + this.Name() + " " + this.Tooltip());
             this.SetValue(this.CachedValue);
+        }
+
+        /// <inheritdoc />
+        public override void AfterSave() { }
+
+        /// <inheritdoc />
+        public override void GetLatest()
+        {
+            this.CachedValue = this.GetValue();
         }
     }
 }

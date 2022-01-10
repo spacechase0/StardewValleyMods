@@ -3,9 +3,16 @@ using StardewModdingAPI;
 
 namespace ContentPatcherAnimations.Framework
 {
+    /// <summary>A list of patches for a content pack.</summary>
     internal class PatchList
     {
-        public ISemanticVersion Format;
-        public List<Patch> Changes;
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The Content Patcher format version.</summary>
+        public ISemanticVersion Format { get; set; }
+
+        /// <summary>The loaded Content Patcher patches.</summary>
+        public List<Patch> Changes { get; set; }
     }
 }

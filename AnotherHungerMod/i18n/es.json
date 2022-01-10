@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Buffs and debuffs
+    *********/
+    "buff.full": "Saciedad",
+    "buff.hungry": "Hambre",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.fullness-ui-X.name": "Interfaz de saciedad (X)",
+    "config.fullness-ui-X.tooltip": "La posición X en píxeles de la interfaz de saciedad.",
+    "config.fullness-ui-Y.name": "Interfaz de saciedad (Y)",
+    "config.fullness-ui-Y.tooltip": "La posición X en píxeles de la interfaz de saciedad.",
+
+    "config.fullness-ui-alignment.name": "Interfaz de saciedad (Alineación)",
+    "config.fullness-ui-alignment.tooltip": "La alineación de la interfaz de saciedad en la pantalla del juego.",
+    "config.fullness-ui-alignment.topLeft": "arriba izquierda",
+    "config.fullness-ui-alignment.topRight": "arriba derecha",
+    "config.fullness-ui-alignment.bottomLeft": "abajo izquierda",
+    "config.fullness-ui-alignment.bottomRight": "abajo derecha",
+
+    "config.fullness-max.name": "Saciedad Máxima",
+    "config.fullness-max.tooltip": "La cantidad máxima de saciedad que puedes tener.",
+    "config.fullness-drain.name": "Drenaje de saciedad",
+    "config.fullness-drain.tooltip": "La cantidad de saciedad a drenar por minuto de juego.",
+
+    "config.edibility-multiplier.name": "Multiplicador de comestibilidad",
+    "config.edibility-multiplier.tooltip": "Un multiplicador de la cantidad de saciedad que obtienes, basado en la comestibilidad de los alimentos.",
+
+    "config.positive-buff-threshold.name": "Umbral de buffs positivos",
+    "config.positive-buff-threshold.tooltip": "La plenitud mínima necesaria para que se apliquen los buffs positivos.",
+    "config.negative-buff-threshold.name": "Umbral de buffs negativos",
+    "config.negative-buff-threshold.tooltip": "El máximo de plenitud antes de que se apliquen los buffs negativos.",
+    "config.starvation-damage.name": "Daño por hambre",
+    "config.starvation-damage.tooltip": "La cantidad de daño por hambre que recibes cada minuto en el juego cuando no tienes saciedad.",
+    "config.unfed-spouse-penalty.name": "Penalización de cónyuge no alimentado",
+    "config.unfed-spouse-penalty.tooltip": "La pena de puntos de relación por no alimentar a tu cónyuge."
+}

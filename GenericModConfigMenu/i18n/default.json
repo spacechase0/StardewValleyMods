@@ -1,4 +1,7 @@
 ﻿{
+    /*********
+    ** Generic config UI
+    *********/
     // button text at the bottom of the in-game options menu
     "button.mod-options": "Mod Options",
 
@@ -9,10 +12,19 @@
     "config.buttons.cancel": "Cancel",
     "config.buttons.reset-to-default": "Default",
     "config.buttons.save": "Save",
-    "config.buttons.save-and-close": "Save&Close",
+    "config.buttons.save-and-close": "Save & Close",
 
     "config.rebind-key.title": "Rebinding key: {{optionName}}",
     "config.rebind-key.simple-instructions": "Press a key to rebind",
     "config.rebind-key.combo-instructions": "Press a key combination to rebind",
-    "config.rebind-key.no-key": "(None)"
+    "config.rebind-key.no-key": "(None)",
+
+
+    /*********
+    ** Config options for Generic Mod Config Menu itself
+    *********/
+    "options.open-menu-key.name": "Open menu key",
+    "options.open-menu-key.desc": "A keybind which opens the menu.",
+    "options.scroll-speed.name": "Scroll speed",
+    "options.scroll-speed.desc": "The number of field rows to offset when scrolling a config menu."
 }

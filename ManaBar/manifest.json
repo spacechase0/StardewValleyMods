@@ -1,8 +1,8 @@
 ﻿{
     "Name": "Mana Bar",
     "Author": "spacechase0",
-    "Version": "1.1.1",
-    "MinimumApiVersion": "3.12.5",
+    "Version": "1.1.2",
+    "MinimumApiVersion": "3.13.0",
     "Description": "Adds a mana bar and provides an API for other mods to use it.",
     "UniqueID": "spacechase0.ManaBar",
     "EntryDll": "ManaBar.dll",

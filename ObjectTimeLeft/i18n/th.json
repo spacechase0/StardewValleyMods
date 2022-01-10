@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.show-on-start.name": "แสดงเมื่อเริ่ม",
+    "config.show-on-start.tooltip": "เมื่อเริ่มเกมให้แสดงเวลาที่เหลือ จนกว่าเครื่องจะทำงานเสร็จ",
+
+    "config.toggle-key.name": "ปุ่ม: สลับการแสดงผล",
+    "config.toggle-key.tooltip": "ปุ่มสำหรับสลับการแสดงผลบนวัตถุ",
+
+    "config.text-scale.name": "ขนาดข้อความ",
+    "config.text-scale.tooltip": "ขนาดของข้อความที่จะซ้อนทับบนวัตถุ"
+}

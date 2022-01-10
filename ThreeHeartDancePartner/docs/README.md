@@ -23,7 +23,7 @@ liked gifts per week (+45 points/gift). That gives you `(23 days × 20 points) +
 to see your exact friendship points with an NPC.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

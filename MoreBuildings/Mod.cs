@@ -7,7 +7,6 @@ using MoreBuildings.Buildings.BigShed;
 using MoreBuildings.Buildings.FishingShack;
 using MoreBuildings.Buildings.MiniSpa;
 using MoreBuildings.Buildings.SpookyShed;
-using MoreBuildings.Framework;
 using MoreBuildings.Patches;
 using PyTK.CustomElementHandler;
 using Spacechase.Shared.Patching;

@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.wiggly-arms.name": "Brazos serpenteantes",
+    "config.wiggly-arms.tooltip": "Si se muestran brazos serpenteantes que se extienden hacia el cursor."
+}

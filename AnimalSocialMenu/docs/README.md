@@ -14,7 +14,7 @@ menu for your animals. Check your animals' friendship values and if they need pe
 Click the extra heart tab at the top of the in-game menu.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

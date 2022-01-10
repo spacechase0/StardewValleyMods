@@ -1,0 +1,60 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // filter labels
+    "filter.category": "Categoria:",
+    "filter.sorting": "Clasificando:",
+
+    // sort types
+    "sort.none": "Ninguno",
+    "sort.name": "Nombre",
+    "sort.price": "Precio",
+
+    // category names
+    "categories.everything": "Todo",
+    "categories.other": "Otro",
+    "categories.artisan-goods": "Productos Artesanales",
+    "categories.bait": "Cebo",
+    "categories.big-craftables": "Grandes Artesanías",
+    "categories.boots": "Botas",
+    "categories.building-resources": "Recursos de construcción",
+    "categories.clothing": "Ropa",
+    "categories.cooking": "Cocina",
+    "categories.crafting": "Elaboración",
+    "categories.eggs": "Huevo",
+    "categories.equipment": "Equipamiento",
+    "categories.fertilizer": "Fertilizante",
+    "categories.fish": "Pescado",
+    "categories.flowers": "Flores",
+    "categories.fruits": "Frutas",
+    "categories.furniture": "Muebles",
+    "categories.gems": "Gemas",
+    "categories.greens": "Verdes",
+    "categories.hats": "Sombreros",
+    "categories.ingredients": "Ingredientes",
+    "categories.junk": "Basura",
+    "categories.meat": "Carne",
+    "categories.metals": "Metales",
+    "categories.milk": "Leche",
+    "categories.minerals": "Minerales",
+    "categories.monster-loot": "Botín de monstruos",
+    "categories.recipes": "Recetas",
+    "categories.rings": "Anillos",
+    "categories.seeds": "Semillas",
+    "categories.sell-to-pierre-or-marnie": "Se puede vender a @ Pierre's/Marnie's",
+    "categories.sell-to-pierre": "Se puede vender a @ Pierres",
+    "categories.sell-to-willy": "Se puede vender a @ Willy's",
+    "categories.syrups": "Jarabes",
+    "categories.tackle": "Aparejos",
+    "categories.tools": "Herramientas",
+    "categories.vegetables": "Vegetales",
+    "categories.weapons": "Armas",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.grid-layout.name": "Disposición experimental de cuadrícula",
+    "config.grid-layout.tooltip": "Si se utiliza el diseño experimental de la rejilla en las tiendas. Esto puede causar pequeños problemas de visualización o afectar a las características de otros mods en los menús de las tiendas."
+}

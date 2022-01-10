@@ -28,7 +28,7 @@ Available professions:
   * Level 10: Secret Spices (Provides a few random buffs when eating unbuffed food).
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 Compatible with [Experience Bars](https://www.nexusmods.com/stardewvalley/mods/509) and [All
 Professions](https://www.nexusmods.com/stardewvalley/mods/174).

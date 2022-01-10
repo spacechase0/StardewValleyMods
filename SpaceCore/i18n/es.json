@@ -1,0 +1,7 @@
+﻿{
+    // Generic Mod Config Menu UI
+    "config.custom-skill-page.name": "Página de habilidades personalizadas",
+    "config.custom-skill-page.tooltip": "Si se muestra la página de habilidades personalizadas.\nEsto moverá la cartera para que haya espacio para más habilidades.",
+    "config.support-all-professions-mod.name": "Activar All Professions Mod",
+    "config.support-all-professions-mod.tooltip": "Cuando se instala All Professions Mod, si se aplican automáticamente las profesiones personalizadas registradas a través de SpaceCore cuando se alcanza su nivel."
+}

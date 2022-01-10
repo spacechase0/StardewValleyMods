@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.cost-multiplier.name": "ตัวคูณต้นทุน",
+    "config.cost-multiplier.tooltip": "ตัวคูณสำหรับต้นทุนของรายการที่จะเรียกเก็บเงิน"
+}

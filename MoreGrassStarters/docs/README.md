@@ -14,7 +14,7 @@ grass types for decorative purposes.
 You can buy the new grass starters from Pierre, and plant them just like regular grass starters.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

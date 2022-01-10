@@ -47,9 +47,9 @@ namespace SpaceShared.UI
         }
 
         /// <inheritdoc />
-        public override void Update(bool hidden = false)
+        public override void Update(bool isOffScreen = false)
         {
-            base.Update(hidden);
+            base.Update(isOffScreen);
 
             if (this.Clicked && this.Callback != null)
             {
@@ -61,6 +61,9 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
+            if (this.IsHidden())
+                return;
+
             b.Draw(this.Texture, this.Position, this.Checked ? this.CheckedTextureRect : this.UncheckedTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
             Game1.activeClickableMenu?.drawMouse(b);
         }
