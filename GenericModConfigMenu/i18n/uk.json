@@ -1,0 +1,31 @@
+﻿{
+    /*********
+    ** Generic config UI
+    *********/
+    // button text at the bottom of the in-game options menu
+    "button.mod-options": "Параметри моду",
+
+    // mod list UI
+    "list.editable-heading": "Налаштування модів",
+    "list.not-editable-heading": "Можна редагувати в головному меню:",
+
+    // mod config pages
+    "config.buttons.cancel": "Скасувати",
+    "config.buttons.reset-to-default": "За замовч.",
+    "config.buttons.save": "Зберегти",
+    "config.buttons.save-and-close": "Зберегти та вийти",
+
+    "config.rebind-key.title": "Клавіша прив'язки: {{optionName}}",
+    "config.rebind-key.simple-instructions": "Натисніть клавішу, щоб прив'язати",
+    "config.rebind-key.combo-instructions": "Натисніть комбінацію клавіш, щоб прив'язати",
+    "config.rebind-key.no-key": "(Немає)",
+
+
+    /*********
+    ** Config options for Generic Mod Config Menu itself
+    *********/
+    "options.open-menu-key.name": "Клавіша відкриття меню",
+    "options.open-menu-key.desc": "Прив'язані клавіші, які відкривають меню.",
+    "options.scroll-speed.name": "Швидкість прокручування",
+    "options.scroll-speed.desc": "Кількість рядків поля, що зміщуються під час прокручування меню налаштування."
+}

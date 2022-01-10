@@ -6,7 +6,8 @@
     "button.mod-options": "Opciones del Mod",
 
     // mod list UI
-    "list.heading": "Configurar Mods",
+    "list.editable-heading": "Configurar Mods",
+    "list.not-editable-heading": "Editable desde la pantalla del título:",
 
     // mod config pages
     "config.buttons.cancel": "Cancelar",

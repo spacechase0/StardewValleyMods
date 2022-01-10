@@ -1,6 +1,19 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Added support for formatting number option values.
+* Added list of mods that can only be editable from the title-screen when in-game.
+* You can now disable a keybind from the keybind overlay.
+* You can now cancel or click outside the keybind overlay to close it without changes.
+* Improved `AddComplexOption` with new menu opened/closed callbacks (thanks to jltaylor-us!).
+* Fixed clicks sometimes handled by elements that are scrolled out of view.
+* Fixed multi-row elements sometimes disappearing before they're fully off-screen (thanks to jltaylor-us!).
+* Fixed multi-row element heights in some cases (thanks to jltaylor-us!).
+* Fixed mouse-wheel-scroll sound playing even after the menu is closed.
+* Fixed API `TryGetCurrentMenu` method not working when on the title screen.
+* Improved translations. Thanks to BuslaevLegat (added Russian), ChulkyBow (added Ukrainian), Evexyron (updated Spanish), Lake1059 (added Chinese), wally232 (updated Korean), and Zangorr (added Polish)!
+
 ## 1.7.0
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

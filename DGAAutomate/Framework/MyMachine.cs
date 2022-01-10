@@ -44,10 +44,10 @@ namespace DGAAutomate
 
         public bool SetInput(IStorage input)
         {
-            if (!DynamicGameAssets.Mod.customMachineRecipes.ContainsKey(this.big.FullId))
+            if (!Mod.CustomMachineRecipes.ContainsKey(this.big.FullId))
                 return false;
 
-            foreach (var recipe in DynamicGameAssets.Mod.customMachineRecipes[this.big.FullId])
+            foreach (var recipe in Mod.CustomMachineRecipes[this.big.FullId])
             {
                 if (!input.TryGetIngredient((item) => recipe.Ingredients[0].Matches(item.Sample), recipe.Ingredients[0].Quantity, out IConsumable firstConsume))
                     continue;

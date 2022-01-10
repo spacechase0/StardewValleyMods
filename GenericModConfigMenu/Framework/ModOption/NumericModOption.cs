@@ -8,6 +8,13 @@ namespace GenericModConfigMenu.Framework.ModOption
         where T : struct
     {
         /*********
+        ** Fields
+        *********/
+        /// <summary>Get the display text to show for a value, or <c>null</c> to show the value as-is.</summary>
+        private readonly Func<T, string> FormatValueImpl;
+
+
+        /*********
         ** Accessors
         *********/
         /// <summary>The minimum allowed value, or <c>null</c> to allow any.</summary>
@@ -49,12 +56,22 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="min">The minimum allowed value, or <c>null</c> to allow any.</param>
         /// <param name="max">The maximum allowed value, or <c>null</c> to allow any.</param>
         /// <param name="interval">The interval of values that can be selected.</param>
-        public NumericModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue, T? min, T? max, T? interval)
+        /// <param name="formatValue">Get the display text to show for a value, or <c>null</c> to show the number as-is.</param>
+        public NumericModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue, T? min, T? max, T? interval, Func<T, string> formatValue)
             : base(fieldId, name, tooltip, mod, getValue, setValue)
         {
             this.Minimum = min;
             this.Maximum = max;
             this.Interval = interval;
+            this.FormatValueImpl = formatValue;
+        }
+
+        /// <inheritdoc />
+        public override string FormatValue()
+        {
+            return
+                this.FormatValueImpl?.Invoke(this.Value)
+                ?? this.Value.ToString();
         }
     }
 }

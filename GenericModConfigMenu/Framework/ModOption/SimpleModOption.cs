@@ -1,4 +1,6 @@
 using System;
+using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 
 namespace GenericModConfigMenu.Framework.ModOption
 {
@@ -80,7 +82,34 @@ namespace GenericModConfigMenu.Framework.ModOption
         public override void AfterSave() { }
 
         /// <inheritdoc />
-        public override void GetLatest()
+        public override void BeforeMenuOpened()
+        {
+            this.GetLatest();
+        }
+
+        /// <inheritdoc />
+        public override void BeforeMenuClosed() { }
+
+        /// <summary>Get the display text to show for a value, or <c>null</c> to show the value as-is.</summary>
+        public virtual string FormatValue()
+        {
+            switch (this.Value)
+            {
+                case SButton button when button == SButton.None:
+                case KeybindList keybind when !keybind.IsBound:
+                    return I18n.Config_RebindKey_NoKey();
+
+                default:
+                    return this.Value?.ToString();
+            }
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        /// <summary>Update the value from the mod configuration.</summary>
+        private void GetLatest()
         {
             this.CachedValue = this.GetValue();
         }

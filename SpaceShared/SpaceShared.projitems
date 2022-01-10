@@ -31,6 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DiagnosticMessages.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Holder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Migrations\PyTkMigrator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModDataHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PositionAnchor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpaceUtility.cs" />

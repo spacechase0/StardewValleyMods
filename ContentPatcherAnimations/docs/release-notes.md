@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed some textures not animateable in 1.2.0.
+
 ## 1.2.0
 Released 25 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

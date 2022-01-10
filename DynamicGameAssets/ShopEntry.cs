@@ -21,7 +21,7 @@ namespace DynamicGameAssets
             shop.forSale.Add(this.Item);
             if (this.CurrencyId == null)
             {
-                shop.itemPriceAndStock.Add(this.Item, new int[]
+                shop.itemPriceAndStock.Add(this.Item, new[]
                 {
                     this.CurrencyId == null ? this.Price : 0,
                     qty
@@ -29,7 +29,7 @@ namespace DynamicGameAssets
             }
             else
             {
-                shop.itemPriceAndStock.Add(this.Item, new int[]
+                shop.itemPriceAndStock.Add(this.Item, new[]
                 {
                     0,
                     qty,
@@ -48,7 +48,7 @@ namespace DynamicGameAssets
             this.Item.Stack = qty;
             if (this.CurrencyId == null)
             {
-                stock.Add(this.Item, new int[]
+                stock.Add(this.Item, new[]
                 {
                     this.CurrencyId == null ? this.Price : 0,
                     qty
@@ -56,7 +56,7 @@ namespace DynamicGameAssets
             }
             else
             {
-                stock.Add(this.Item, new int[]
+                stock.Add(this.Item, new[]
                 {
                     0,
                     qty,

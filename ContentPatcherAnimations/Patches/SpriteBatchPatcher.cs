@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection;
 using ContentPatcherAnimations.Framework;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
@@ -34,20 +36,18 @@ namespace ContentPatcherAnimations.Patches
         /// <inheritdoc />
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
-            var methods = new[]
-            {
-                this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color) }),
-                this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(Vector2), typeof(SpriteEffects), typeof(float) }),
-                this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(float), typeof(SpriteEffects), typeof(float) }),
-                this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color) }),
-                this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Rectangle), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(SpriteEffects), typeof(float) })
-            };
+            MethodInfo[] methods = typeof(SpriteBatch)
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(p => p.Name == nameof(SpriteBatch.Draw))
+                .ToArray();
 
             foreach (var method in methods)
             {
                 harmony.Patch(
                     original: method,
-                    postfix: this.GetHarmonyMethod(nameof(After_Draw))
+                    postfix: method.GetParameters().Any(p => p.Name == "sourceRectangle")
+                        ? this.GetHarmonyMethod(nameof(After_Draw))
+                        : this.GetHarmonyMethod(nameof(After_Draw_WithoutSourceRectangle))
                 );
             }
         }
@@ -66,6 +66,14 @@ namespace ContentPatcherAnimations.Patches
                 AssetDrawTracker tracker = SpriteBatchPatcher.GetDrawTracker();
                 tracker.Track(texture.Name, sourceRectangle);
             }
+        }
+
+        /// <summary>The method to call after any of the <see cref="SpriteBatch"/> <c>Draw</c> methods that doesn't have a <c>sourceRectangle</c> parameter.</summary>
+        /// <param name="texture">The texture that was drawn.</param>
+        private static void After_Draw_WithoutSourceRectangle(ref Texture2D texture)
+        {
+            Rectangle? sourceRectangle = null;
+            SpriteBatchPatcher.After_Draw(ref texture, ref sourceRectangle);
         }
     }
 }

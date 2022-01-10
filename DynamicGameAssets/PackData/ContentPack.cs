@@ -33,9 +33,9 @@ namespace DynamicGameAssets.PackData
         /// <summary>The animations parsed from this content pack, indexed by the raw animation descriptor they were parsed from (e.g. <c>items16.png:1..2@333, items16.png:3@334</c>).</summary>
         private readonly IDictionary<string, TextureAnimation> TextureAnimationCache = new Dictionary<string, TextureAnimation>();
 
-        protected internal Dictionary<string, CommonPackData> items = new Dictionary<string, CommonPackData>();
+        protected internal Dictionary<string, CommonPackData> items = new();
 
-        protected internal List<BasePackData> others = new List<BasePackData>();
+        protected internal List<BasePackData> others = new();
 
         internal Dictionary<ContentIndexPackData?, List<BasePackData>> enableIndex = new();
 
@@ -96,7 +96,7 @@ namespace DynamicGameAssets.PackData
             string path = asset.AssetName.Replace('\\', '/');
             string start = "DGA/" + this.smapiPack.Manifest.UniqueID + "/";
             if (!path.StartsWith(start) || !path.EndsWith(".png"))
-                return default(T);
+                return default;
             return (T)(object)this.smapiPack.LoadAsset<Texture2D>(path.Substring(start.Length));
         }
 

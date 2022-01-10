@@ -7,11 +7,13 @@ using MoreBuildings.Buildings.BigShed;
 using MoreBuildings.Buildings.FishingShack;
 using MoreBuildings.Buildings.MiniSpa;
 using MoreBuildings.Buildings.SpookyShed;
+using MoreBuildings.Framework;
 using MoreBuildings.Patches;
-using PyTK.CustomElementHandler;
 using Spacechase.Shared.Patching;
 using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
+using StardewModdingAPI.Enums;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
@@ -19,27 +21,42 @@ using StardewValley.Menus;
 
 namespace MoreBuildings
 {
+    /// <summary>The mod entry point.</summary>
     internal class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
     {
-        public static Mod Instance;
+        /*********
+        ** Fields
+        *********/
         private Texture2D Shed2Exterior;
         private Texture2D SpookyExterior;
         private Texture2D FishingExterior;
         private Texture2D SpaExterior;
+
+
+        /*********
+        ** Accessors
+        *********/
+        public static Mod Instance;
         public Texture2D SpookyGemTex;
 
-        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
-        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+
+
+        /*********
+        ** Public methods
+        *********/
+        /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
             I18n.Init(helper.Translation);
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
             helper.Events.Player.Warped += this.OnWarped;
+            helper.Events.Specialized.LoadStageChanged += this.OnLoadStageChanged;
             helper.Events.Specialized.UnvalidatedUpdateTicked += this.OnUnvalidatedUpdateTicked;
-            SaveHandler.FinishedRebuilding += this.FixWarps;
 
             this.Shed2Exterior = this.Helper.Content.Load<Texture2D>("assets/BigShed/building.png");
             this.SpookyExterior = this.Helper.Content.Load<Texture2D>("assets/SpookyShed/building.png");
@@ -50,7 +67,49 @@ namespace MoreBuildings
             HarmonyPatcher.Apply(this,
                 new ShedPatcher()
             );
+        }
 
+
+        /*********
+        ** Private methods
+        *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var spaceCore = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
+
+            Type[] types = {
+                typeof(BigShedBuilding),
+                typeof(BigShedLocation),
+                typeof(FishingShackBuilding),
+                typeof(FishingShackLocation),
+                typeof(MiniSpaBuilding),
+                typeof(MiniSpaLocation),
+                typeof(SpookyShedBuilding),
+                typeof(SpookyShedLocation)
+            };
+
+            foreach (Type type in types)
+                spaceCore.RegisterSerializerType(type);
+        }
+
+        /// <inheritdoc cref="ISpecializedEvents.LoadStageChanged"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnLoadStageChanged(object sender, LoadStageChangedEventArgs e)
+        {
+            if (e.NewStage == LoadStage.SaveParsed)
+                LegacyDataMigrator.OnSaveParsed(this.Helper.ModRegistry);
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            this.FixWarps();
         }
 
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
@@ -189,10 +248,12 @@ namespace MoreBuildings
             this.TaskWasThere = task != null;
         }
 
-        public void FixWarps(object sender, EventArgs args)
+        public void FixWarps()
         {
             foreach (var loc in Game1.locations)
+            {
                 if (loc is BuildableGameLocation buildable)
+                {
                     foreach (var building in buildable.buildings)
                     {
                         if (building.indoors.Value == null)
@@ -202,6 +263,8 @@ namespace MoreBuildings
                         building.indoors.Value.updateWarps();
                         building.updateInteriorWarps();
                     }
+                }
+            }
         }
 
         public bool CanEdit<T>(IAssetInfo asset)

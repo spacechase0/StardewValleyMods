@@ -7,12 +7,11 @@
     "spell.learn.ancient": "고대 주문을 배웠습니다. : {{spellName}}",
 
     // menu tooltips
-    // TODO
-    "tooltip.spell.known": "Click and drag to add {{spell}} to your spellbar on the right.",
-    "tooltip.spell.can-learn": "Click to spend one free point and learn {{spell}}.",
-    "tooltip.spell.need-free-points": "You have no free points to learn {{spell}}.",
-    "tooltip.spell.need-previous-levels": "You must learn the previous spell levels first.",
-    "tooltip.spell.name-and-level": "{{spellName}} level {{level}}",
+    "tooltip.spell.known": "{{spell}}을(를) 오른쪽 맞춤법 표시줄에 추가하려면 클릭하고 드래그하세요.",
+    "tooltip.spell.can-learn": "클릭하여 무료 포인트 1점을 사용하고 {{spell}}을(를) 배우십시오.",
+    "tooltip.spell.need-free-points": "{{spell}} 배울 수 있는 무료 포인트가 없습니다.",
+    "tooltip.spell.need-previous-levels": "먼저 이전 주문 레벨을 배워야 합니다.",
+    "tooltip.spell.name-and-level": "{{spellName}} 레벨 {{level}}",
 
     // altar
     "altar.click-message": "은은히 빛나는 제단이다.",
@@ -34,22 +33,21 @@
 
 
     /*********
-    ** TV channel
+    ** Radio station
     *********/
-    "tv.analyzehints.name": "마법적 분석",
-    "tv.analyzehints.notmagical": "*지지직*",
-    "tv.analyzehints.1": "마법을 사용하여 농장에서 일하고 싶으세요? 당신의 도구를 분석해보세요.",
-    "tv.analyzehints.2": "긴급탈출을 원하세요? 부츠가 당신에게 영감을 줄지도 모르겠네요.",
-    "tv.analyzehints.3": "햇빛은 정말 좋죠. 하지만 항상 볼 수 있는게 아니에요. 인위적 조명으로도 재현 할 수 있는지 궁금하네요.",
-    "tv.analyzehints.4": "일부 기초적 광물들은 좀 마력을 담고 있는듯 해요 .",
-    "tv.analyzehints.5": "요전에 유성이 제 집 뒷마당에 떨어졌습니다. 정말 수상하네요.",
-    "tv.analyzehints.6": "커피 맛있죠. 주문으로 그 효과를 재현해 보는건 어떤가요?",
-    "tv.analyzehints.7": "어느 날에 누군가가 땅에서 뿌리들을 뽑아 내더니 적들이 움직이지 못하게 하는 것을 보았어요. 마치 작물들 처럼...",
-    "tv.analyzehints.8": "당신, 얼음의 돌풍을 쏴서 무언가의 행동을 늦출 수 있을거 같은데요? 당신이 얼음을 배울 방법은...?",
-    "tv.analyzehints.9": " 최근에 누군가의 집에서 어두운 제단을 보았습니다. 일단, 나는 '집'이라고 말할게요. 마치 오두막처럼 보였어요.",
-    "tv.analyzehints.10": "체력 회복 약들을 들고 다니는 건 당연히 불편하죠. 마법으로 그냥 치유하면 어떨까요?",
-    "tv.analyzehints.11": "대부분의 사람들은 사다리를 사용하여 지하로 내려가지만 어떤 사람이 주문을 걸고 바닥을 곧바로 통과하는 것을 보았어요.",
-    "tv.analyzehints.12": "누군가 마나를 되찾기 위해 주문을 외우는 걸 봤네요! 아파 보였습니다. 용암 장어를 잡는 동안이 기술을 배웠다는 소문이 있더라고요.",
+    "radio.static": "*지지직*",
+    "radio.analyzehints.1": "마법을 사용하여 농장에서 일하고 싶으세요? 당신의 도구를 분석해보세요.",
+    "radio.analyzehints.2": "긴급탈출을 원하세요? 부츠가 당신에게 영감을 줄지도 모르겠네요.",
+    "radio.analyzehints.3": "햇빛은 정말 좋죠. 하지만 항상 볼 수 있는게 아니에요. 인위적 조명으로도 재현 할 수 있는지 궁금하네요.",
+    "radio.analyzehints.4": "일부 기초적 광물들은 좀 마력을 담고 있는듯 해요 .",
+    "radio.analyzehints.5": "요전에 유성이 제 집 뒷마당에 떨어졌습니다. 정말 수상하네요.",
+    "radio.analyzehints.6": "커피 맛있죠. 주문으로 그 효과를 재현해 보는건 어떤가요?",
+    "radio.analyzehints.7": "어느 날에 누군가가 땅에서 뿌리들을 뽑아 내더니 적들이 움직이지 못하게 하는 것을 보았어요. 마치 작물들 처럼...",
+    "radio.analyzehints.8": "당신, 얼음의 돌풍을 쏴서 무언가의 행동을 늦출 수 있을거 같은데요? 당신이 얼음을 배울 방법은...?",
+    "radio.analyzehints.9": " 최근에 누군가의 집에서 어두운 제단을 보았습니다. 일단, 나는 '집'이라고 말할게요. 마치 오두막처럼 보였어요.",
+    "radio.analyzehints.10": "체력 회복 약들을 들고 다니는 건 당연히 불편하죠. 마법으로 그냥 치유하면 어떨까요?",
+    "radio.analyzehints.11": "대부분의 사람들은 사다리를 사용하여 지하로 내려가지만 어떤 사람이 주문을 걸고 바닥을 곧바로 통과하는 것을 보았어요.",
+    "radio.analyzehints.12": "누군가 마나를 되찾기 위해 주문을 외우는 걸 봤네요! 아파 보였습니다. 용암 장어를 잡는 동안이 기술을 배웠다는 소문이 있더라고요.",
 
 
     /*********
@@ -132,13 +130,19 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    "config.altar-location.name": "제단 위치",
-    "config.altar-location.tooltip": "마법 제단이 배치될 위치의(내부) 이름.",
-    "config.altar-x.name": "제단 X",
-    "config.altar-x.tooltip": "마법 제단을 배치할 X타일 위치.",
-    "config.altar-y.name": "제단 Y",
-    "config.altar-y.tooltip": "마법 제단을 배치할 Y타일 위치.",
+    // altar and radio placement
+    "config.altar-placement": "Altar placement", // TODO
+    "config.radio-placement": "Radio placement", // TODO
+    "config.location.name": "위치",
+    "config.location.tooltip": "그것 배치될 위치의내부 이름, 'Debug Mode' 모드에 표시된 대로.",
+    "config.x.name": "X",
+    "config.x.tooltip": "그것 배치할 X타일 위치, 'Debug Mode' 모드에 표시된 대로.",
+    "config.y.name": "Y",
+    "config.y.tooltip": "그것 배치할 Y타일 위치, 'Debug Mode' 모드에 표시된 대로.",
+    "config.x-or-y.automatic-position": "automatic", // TODO
 
+    // controls
+    "config.controls": "Controls", // TODO
     "config.cast-key.name": "키: 시전",
     "config.cast-key.tooltip": "주문 시전을 시작하기 위한 키.",
     "config.swap-spells-key.name": "키: 교환 판매",

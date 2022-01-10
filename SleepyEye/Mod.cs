@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SleepyEye.Framework;
 using SpaceShared;
 using SpaceShared.APIs;
+using SpaceShared.Migrations;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -97,7 +98,8 @@ namespace SleepyEye
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            LegacyDataMigrator.OnSaveLoaded();
+            if (Context.IsMainPlayer)
+                PyTkMigrator.MigrateItems("SleepyEye.TentTool,  SleepyEye", _ => new TentTool());
         }
 
         /// <inheritdoc cref="IGameLoopEvents.DayStarted"/>

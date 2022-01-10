@@ -74,7 +74,7 @@ namespace DynamicGameAssets.Patches
                         FirstItemTags = recipe.FirstItemTags,
                         SecondItemTags = recipe.SecondItemTags,
                         SpendRightItem = recipe.ConsumeSecondItem,
-                        CraftedItemIDs = new List<string>(new string[] { "DGA/TailoringRecipe/" + i })
+                        CraftedItemIDs = new List<string>(new[] { "DGA/TailoringRecipe/" + i })
                     };
                     return false;
                 }

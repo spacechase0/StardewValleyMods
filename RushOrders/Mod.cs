@@ -64,7 +64,7 @@ namespace RushOrders
                     mod: this.ModManifest,
                     name: I18n.Config_PriceToolInstant_Name,
                     tooltip: I18n.Config_PriceToolInstant_Tooltip,
-                    getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Rush,
+                    getValue: () => (float)Mod.ModConfig.PriceFactor.Tool.Now,
                     setValue: value => Mod.ModConfig.PriceFactor.Tool.Now = value
                 );
                 configMenu.AddNumberOption(

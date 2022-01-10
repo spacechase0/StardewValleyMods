@@ -16,6 +16,9 @@ namespace Magic.Framework.Spells
         public string Id { get; }
         public string FullId => this.ParentSchoolId + ":" + this.Id;
 
+        /// <summary>Whether the spell can be cast while a menu is open.</summary>
+        public bool CanCastInMenus { get; protected set; }
+
         public Texture2D[] Icons { get; protected set; }
 
 

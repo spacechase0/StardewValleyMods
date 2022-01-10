@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.hearts-needed.name": "Corazones necesarios",
+    "config.hearts-needed.desc": "El número de corazones que necesitas con un NPC para bailar con ese NPC en la Danza Floral."
+}

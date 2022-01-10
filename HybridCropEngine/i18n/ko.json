@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.scan-everywhere.name": "어디서나 스캔",
+    "config.scan-everywhere.tooltip": "하이브리드 작물 생성을 위해 모든 곳을 스캔합니다.\nFalse는 농장과 온실만 스캔합니다."
+}

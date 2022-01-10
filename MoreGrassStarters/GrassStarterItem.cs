@@ -1,18 +1,19 @@
-using System.Collections.Generic;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PyTK.CustomElementHandler;
 using StardewValley;
 using SObject = StardewValley.Object;
 
 namespace MoreGrassStarters
 {
-    public class GrassStarterItem : SObject, ISaveElement
+    [XmlType("Mods_spacechase0_GrassStarterItem")]
+    public class GrassStarterItem : SObject
     {
         private static readonly Texture2D Tex = Game1.content.Load<Texture2D>("TerrainFeatures\\grass");
         public static Texture2D Tex2;
-        private int WhichGrass = 1;
         public static int ExtraGrassTypes => GrassStarterItem.Tex2 == null ? 0 : GrassStarterItem.Tex2.Height / 20;
+
+        public int WhichGrass { get; set; }
 
         public GrassStarterItem()
         {
@@ -92,28 +93,6 @@ namespace MoreGrassStarters
 
             if ((drawStackNumber == StackDrawType.Draw && this.maximumStackSize() > 1 && this.Stack > 1 || drawStackNumber == StackDrawType.Draw_OneInclusive) && scale > 0.3 && this.Stack != int.MaxValue)
                 Utility.drawTinyDigits(this.Stack, b, pos + new Vector2(Game1.tileSize - Utility.getWidthOfTinyDigitString(this.Stack, 3f * scale) + 3f * scale, (float)(Game1.tileSize - 18.0 * scale + 2.0)), 3f * scale, 1f, Color.White);
-        }
-
-        // Custom Element Handler
-        public object getReplacement()
-        {
-            return new SObject(297, this.Stack);
-        }
-
-        public Dictionary<string, string> getAdditionalSaveData()
-        {
-            return new()
-            {
-                ["whichGrass"] = this.WhichGrass.ToString()
-            };
-        }
-
-        public void rebuild(Dictionary<string, string> additionalSaveData, object replacement)
-        {
-            this.WhichGrass = int.Parse(additionalSaveData["whichGrass"]);
-            this.name = $"Grass ({this.WhichGrass})";
-            this.Price = 100;
-            this.ParentSheetIndex = 297;
         }
     }
 }

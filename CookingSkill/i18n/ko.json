@@ -1,0 +1,19 @@
+﻿{
+    // skill
+    "skill.name": "요리",
+    "skill.level-up-perk": "집에서 만든 요리의 +{{bonus}}% 식용",
+
+    // professions
+    "efficient.name": "효율적",
+    "efficient.desc": "15% 확률로 재료를 소모하지 않습니다",
+    "gourmet.name": "미식가",
+    "gourmet.desc": "+20% 판매 가격",
+    "intense-flavors.name": "강렬한 맛",
+    "intense-flavors.desc": "음식 버프는 한 번 먹으면 \n (최대 에너지 또는 자기력에 대해 +20%) 한 단계 더 강해집니다.",
+    "professional-chef.name": "전문 요리사",
+    "professional-chef.desc": "집에서 만든 음식은 항상 최소한 은색입니다",
+    "satisfying.name": "만족감",
+    "satisfying.desc": "한 번 먹으면 버프 지속 시간 +25%",
+    "secret-spices.name": "비밀 향신료",
+    "secret-spices.desc": "버프가 없는 음식을 먹을 때 몇 가지 무작위 버프를 제공합니다."
+}

@@ -1,6 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Improved dungeon's open-door sprite (thanks to magoozor!).
+* Improved translations. Thanks to wally232 (added Korean)!
+
 ## 1.2.3
 Released 24 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

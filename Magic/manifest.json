@@ -15,10 +15,6 @@
             "UniqueID": "spacechase0.JsonAssets"
         },
         {
-            "UniqueID": "Platonymous.Toolkit",
-            "IsRequired": false
-        },
-        {
             "UniqueID": "spacechase0.ManaBar"
         }
     ]

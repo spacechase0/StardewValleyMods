@@ -69,7 +69,7 @@ namespace DynamicGameAssets.PackData
             [DefaultValue(false)]
             public bool Trellis { get; set; }
 
-            public List<HarvestedDropData> HarvestedDrops { get; set; } = new List<HarvestedDropData>();
+            public List<HarvestedDropData> HarvestedDrops { get; set; } = new();
             public int HarvestedExperience { get; set; } = 0;
 
             [DefaultValue(-1)]
@@ -86,7 +86,7 @@ namespace DynamicGameAssets.PackData
                 return ret;
             }
         }
-        public List<PhaseData> Phases { get; set; } = new List<PhaseData>();
+        public List<PhaseData> Phases { get; set; } = new();
 
         [DefaultValue(0.01f)]
         public float GiantChance { get; set; } = 0.01f;
@@ -94,7 +94,7 @@ namespace DynamicGameAssets.PackData
         [DefaultValue(null)]
         public string[] GiantTextureChoices { get; set; }
 
-        public List<HarvestedDropData> GiantDrops { get; set; } = new List<HarvestedDropData>();
+        public List<HarvestedDropData> GiantDrops { get; set; } = new();
 
         public bool ShouldSerializeGiantDrops() { return this.GiantDrops.Count > 0; }
 

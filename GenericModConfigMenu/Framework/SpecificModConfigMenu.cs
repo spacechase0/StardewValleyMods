@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GenericModConfigMenu.Framework.ModOption;
+using GenericModConfigMenu.Framework.Overlays;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -24,7 +25,6 @@ namespace GenericModConfigMenu.Framework
         /// <summary>The minimum number of pixels between each main button.</summary>
         private const int MinimumButtonGap = 32;
 
-        private readonly bool InGame;
         private readonly Action<string> OpenPage;
         private readonly Action ReturnToList;
 
@@ -39,12 +39,14 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether the user hit escape.</summary>
         private bool ExitOnNextUpdate;
 
-        private SimpleModOption<SButton> KeybindingOpt;
-        private SimpleModOption<KeybindList> Keybinding2Opt;
-        private Label KeybindingLabel;
+        /// <summary>Whether a save is currently loaded.</summary>
+        private bool InGame => Context.IsWorldReady;
+
+        /// <summary>The active keybind overlay, if any.</summary>
+        private IKeybindOverlay ActiveKeybindOverlay;
 
         /// <summary>Whether a keybinding UI is open.</summary>
-        private bool IsBindingKey => this.KeybindingOpt != null || this.Keybinding2Opt != null;
+        private bool IsBindingKey => this.ActiveKeybindOverlay != null;
 
 
         /*********
@@ -52,16 +54,14 @@ namespace GenericModConfigMenu.Framework
         *********/
         public IManifest Manifest => this.ModConfig.ModManifest;
         public readonly string CurrPage;
-        public static IClickableMenu ActiveConfigMenu;
 
 
         /*********
         ** Public methods
         *********/
-        public SpecificModConfigMenu(ModConfig config, bool inGame, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
+        public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
         {
             this.ModConfig = config;
-            this.InGame = inGame;
             this.ScrollSpeed = scrollSpeed;
             this.OpenPage = openPage;
             this.ReturnToList = returnToList;
@@ -81,9 +81,10 @@ namespace GenericModConfigMenu.Framework
                 string name = opt.Name();
                 string tooltip = opt.Tooltip();
 
-                opt.GetLatest();
                 if (this.InGame && opt.IsTitleScreenOnly)
                     continue;
+
+                opt.BeforeMenuOpened();
 
                 Label label = new Label
                 {
@@ -123,9 +124,9 @@ namespace GenericModConfigMenu.Framework
 
                         optionElement = new Label
                         {
-                            String = option.Value != SButton.None ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
+                            String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.DoKeybindingFor(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
                         };
                         break;
 
@@ -135,17 +136,16 @@ namespace GenericModConfigMenu.Framework
 
                         optionElement = new Label
                         {
-                            String = option.Value.IsBound ? option.Value.ToString() : I18n.Config_RebindKey_NoKey(),
+                            String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.DoKeybinding2For(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
                         };
                         break;
 
                     case NumericModOption<int> option when (option.Minimum.HasValue && option.Maximum.HasValue):
                         rightLabel = new Label
                         {
-                            String = option.Value.ToString(),
-                            LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                            String = option.FormatValue()
                         };
 
                         optionElement = new Slider<int>
@@ -159,16 +159,17 @@ namespace GenericModConfigMenu.Framework
                             Callback = e =>
                             {
                                 option.Value = (e as Slider<int>).Value;
-                                rightLabel.String = option.Value.ToString();
+                                rightLabel.String = option.FormatValue();
                             }
                         };
+
+                        rightLabel.LocalPosition = optionElement.LocalPosition + new Vector2(x: optionElement.Width + 15, y: 0);
                         break;
 
                     case NumericModOption<float> option when (option.Minimum.HasValue && option.Maximum.HasValue):
                         rightLabel = new Label
                         {
-                            String = option.Value.ToString(),
-                            LocalPosition = new Vector2(this.Table.Size.X / 2 + this.Table.Size.X / 3 + 50, 0)
+                            String = option.FormatValue()
                         };
 
                         optionElement = new Slider<float>
@@ -182,9 +183,11 @@ namespace GenericModConfigMenu.Framework
                             Callback = (Element e) =>
                             {
                                 option.Value = (e as Slider<float>).Value;
-                                rightLabel.String = option.Value.ToString();
+                                rightLabel.String = option.FormatValue();
                             }
                         };
+
+                        rightLabel.LocalPosition = optionElement.LocalPosition + new Vector2(x: optionElement.Width + 15, y: 0);
                         break;
 
                     // The following need to come after the Clamped/ChoiceModOption's since those subclass these
@@ -323,7 +326,7 @@ namespace GenericModConfigMenu.Framework
                 // add spacer rows for multi-row content
                 {
                     int elementHeight = new[] { label?.Height, optionElement?.Height, rightLabel?.Height }.Max(p => p ?? 0);
-                    float overlapRows = ((elementHeight * 1.0f) / (this.Table.RowHeight + 16)) - 1;
+                    float overlapRows = ((elementHeight * 1.0f) / this.Table.RowHeight) - 1;
 
                     if (overlapRows > 0.05f) // avoid adding an empty row if an element only overlaps slightly
                     {
@@ -337,8 +340,17 @@ namespace GenericModConfigMenu.Framework
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
+        }
 
-            SpecificModConfigMenu.ActiveConfigMenu = this;
+        /// <inheritdoc />
+        public override void receiveLeftClick(int x, int y, bool playSound = true)
+        {
+            if (this.IsBindingKey)
+            {
+                this.ActiveKeybindOverlay.OnLeftClick(x, y);
+                if (this.ActiveKeybindOverlay.IsFinished)
+                    this.CloseKeybindOverlay();
+            }
         }
 
         /// <inheritdoc />
@@ -348,15 +360,11 @@ namespace GenericModConfigMenu.Framework
                 this.ExitOnNextUpdate = true;
         }
 
-        public void ReceiveScrollWheelActionSmapi(int direction)
+        /// <inheritdoc />
+        public override void receiveScrollWheelAction(int direction)
         {
-            if (TitleMenu.subMenu == this || Game1.activeClickableMenu == this)
-            {
-                if (Dropdown.ActiveDropdown == null)
-                    this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
-            }
-            else
-                SpecificModConfigMenu.ActiveConfigMenu = null;
+            if (Dropdown.ActiveDropdown == null)
+                this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
         }
 
         /// <inheritdoc />
@@ -393,37 +401,7 @@ namespace GenericModConfigMenu.Framework
             this.Ui.Draw(b);
 
             // keybind UI
-            if (this.KeybindingOpt != null)
-            {
-                b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
-
-                int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
-                IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
-
-                string s = I18n.Config_RebindKey_Title(this.KeybindingOpt.Name());
-                int sw = (int)Game1.dialogueFont.MeasureString(s).X;
-                b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
-
-                s = I18n.Config_RebindKey_SimpleInstructions();
-                sw = (int)Game1.dialogueFont.MeasureString(s).X;
-                b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 100), Game1.textColor);
-            }
-
-            if (this.Keybinding2Opt != null)
-            {
-                b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
-
-                int boxX = (Game1.uiViewport.Width - 650) / 2, boxY = (Game1.uiViewport.Height - 200) / 2;
-                IClickableMenu.drawTextureBox(b, boxX, boxY, 650, 200, Color.White);
-
-                string s = I18n.Config_RebindKey_Title(this.Keybinding2Opt.Name());
-                int sw = (int)Game1.dialogueFont.MeasureString(s).X;
-                b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 20), Game1.textColor);
-
-                s = I18n.Config_RebindKey_ComboInstructions();
-                sw = (int)Game1.dialogueFont.MeasureString(s).X;
-                b.DrawString(Game1.dialogueFont, s, new Vector2((Game1.uiViewport.Width - sw) / 2, boxY + 100), Game1.textColor);
-            }
+            this.ActiveKeybindOverlay?.Draw(b);
 
             // mouse
             this.drawMouse(b);
@@ -465,6 +443,20 @@ namespace GenericModConfigMenu.Framework
             this.Table.Scrollbar.Update();
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
+
+            this.ActiveKeybindOverlay?.OnWindowResized();
+        }
+
+        /// <summary>Raised when any buttons are pressed or released.</summary>
+        /// <param name="e">The event arguments.</param>
+        public void OnButtonsChanged(ButtonsChangedEventArgs e)
+        {
+            if (this.IsBindingKey)
+            {
+                this.ActiveKeybindOverlay.OnButtonsChanged(e);
+                if (this.ActiveKeybindOverlay.IsFinished)
+                    this.CloseKeybindOverlay();
+            }
         }
 
 
@@ -579,6 +571,9 @@ namespace GenericModConfigMenu.Framework
 
         private void Close()
         {
+            foreach (var option in this.ModConfig.ActiveDisplayPage.Options)
+                option.BeforeMenuClosed();
+
             if (this.IsSubPage)
                 this.OpenPage(null);
             else
@@ -591,85 +586,22 @@ namespace GenericModConfigMenu.Framework
             this.Close();
         }
 
-        private void DoKeybindingFor(SimpleModOption<SButton> opt, Label label)
+        /// <summary>Show the keybind overlay for an option.</summary>
+        /// <typeparam name="TKeybind">The keybind type.</typeparam>
+        /// <param name="option">The option being bound.</param>
+        /// <param name="label">The label to update when the key is reassigned.</param>
+        private void ShowKeybindOverlay<TKeybind>(SimpleModOption<TKeybind> option, Label label)
         {
             Game1.playSound("breathin");
-            this.KeybindingOpt = opt;
-            this.KeybindingLabel = label;
+            this.ActiveKeybindOverlay = new KeybindOverlay<TKeybind>(option, label);
             this.Ui.Obscured = true;
-            Mod.Instance.Helper.Events.Input.ButtonPressed += this.AssignKeybinding;
         }
 
-        private void DoKeybinding2For(SimpleModOption<KeybindList> opt, Label label)
+        /// <summary>Close the current keybind overlay.</summary>
+        private void CloseKeybindOverlay()
         {
-            Game1.playSound("breathin");
-            this.Keybinding2Opt = opt;
-            this.KeybindingLabel = label;
-            this.Ui.Obscured = true;
-            Mod.Instance.Helper.Events.Input.ButtonsChanged += this.AssignKeybinding2;
-        }
-
-        private void AssignKeybinding(object sender, ButtonPressedEventArgs e)
-        {
-            if (this.KeybindingOpt == null)
-                return;
-            if (!e.Button.TryGetKeyboard(out _) && !e.Button.TryGetController(out _))
-                return;
-
-            if (e.Button == SButton.Escape)
-                Game1.playSound("bigDeSelect");
-            else
-            {
-                Game1.playSound("coin");
-                this.KeybindingOpt.Value = e.Button;
-                this.KeybindingLabel.String = e.Button.ToString();
-            }
-            Mod.Instance.Helper.Events.Input.ButtonPressed -= this.AssignKeybinding;
-            this.KeybindingOpt = null;
-            this.KeybindingLabel = null;
+            this.ActiveKeybindOverlay = null;
             this.Ui.Obscured = false;
-        }
-
-        private void AssignKeybinding2(object sender, ButtonsChangedEventArgs e)
-        {
-            if (this.Keybinding2Opt == null)
-                return;
-
-            List<SButton> all = new List<SButton>();
-            foreach (var button in e.Held)
-            {
-                if (button.TryGetKeyboard(out _) || button.TryGetController(out _))
-                    all.Add(button);
-            }
-
-            foreach (var button in e.Released)
-            {
-                bool stop = false;
-                if (button == SButton.Escape)
-                {
-                    stop = true;
-                    Game1.playSound("bigDeSelect");
-                }
-                if (!stop && (button.TryGetKeyboard(out _) || button.TryGetController(out _)))
-                {
-                    stop = true;
-                    all.Add(button);
-
-                    Game1.playSound("coin");
-                    this.Keybinding2Opt.Value = new KeybindList(new Keybind(all.ToArray()));
-                    this.KeybindingLabel.String = this.Keybinding2Opt.Value.ToString();
-                }
-
-                if (stop)
-                {
-                    Mod.Instance.Helper.Events.Input.ButtonsChanged -= this.AssignKeybinding2;
-                    this.Keybinding2Opt = null;
-                    this.KeybindingLabel = null;
-                    this.Ui.Obscured = false;
-                }
-
-                return;
-            }
         }
     }
 }

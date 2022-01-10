@@ -94,7 +94,7 @@ namespace DynamicGameAssets.Game
         public override string[] ModifyItemBuffs(string[] buffs)
         {
             var buffData = this.Data.EdibleBuffs ?? new ObjectPackData.FoodBuffsData();
-            string[] buffStr = new string[]
+            string[] buffStr = new[]
             {
                 buffData.Farming.ToString(),
                 buffData.Fishing.ToString(),

@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using PyTK.CustomElementHandler;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
@@ -10,33 +9,13 @@ using SObject = StardewValley.Object;
 
 namespace MoreGrassStarters
 {
-    public class CustomGrass : Grass, ISaveElement
+    [XmlType("Mods_spacechase0_CustomGrass")]
+    public class CustomGrass : Grass
     {
         public CustomGrass() { }
 
         public CustomGrass(int which, int numberOfWeeds)
             : base(which, numberOfWeeds) { }
-
-        public Dictionary<string, string> getAdditionalSaveData()
-        {
-            return new()
-            {
-                ["Type"] = ((int)this.grassType.Value).ToString(),
-                ["WeedCount"] = this.numberOfWeeds.Value.ToString()
-            };
-        }
-
-        public object getReplacement()
-        {
-            return new FruitTree(); // new Grass(Grass.springGrass, numberOfWeeds);
-        }
-
-        public void rebuild(Dictionary<string, string> data, object replacement)
-        {
-            this.grassType.Value = (byte)int.Parse(data["Type"]);
-            this.numberOfWeeds.Value = int.Parse(data["WeedCount"]);
-            this.loadSprite();
-        }
 
         public override void loadSprite()
         {

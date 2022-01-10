@@ -73,19 +73,19 @@ namespace DynamicGameAssets
         public static readonly int BaseFakeObjectId = 1720;
         public static ContentPack DummyContentPack;
 
-        internal static Dictionary<string, ContentPack> contentPacks = new Dictionary<string, ContentPack>();
+        internal static Dictionary<string, ContentPack> contentPacks = new();
 
-        internal static Dictionary<int, string> itemLookup = new Dictionary<int, string>();
+        internal static Dictionary<int, string> itemLookup = new();
 
         internal static Dictionary<string, Dictionary<string, GiftTastePackData>> giftTastes = new();
 
         // TODO: Should these and SpriteBatchPatcher.packOverrides (and similar overrides) go into State? For splitscreen
-        internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new List<DGACustomCraftingRecipe>();
-        internal static List<DGACustomForgeRecipe> customForgeRecipes = new List<DGACustomForgeRecipe>();
-        internal static Dictionary<string, List<MachineRecipePackData>> customMachineRecipes = new Dictionary<string, List<MachineRecipePackData>>();
-        internal static List<TailoringRecipePackData> customTailoringRecipes = new List<TailoringRecipePackData>();
+        internal static List<DGACustomCraftingRecipe> customCraftingRecipes = new();
+        internal static List<DGACustomForgeRecipe> customForgeRecipes = new();
+        internal static readonly Dictionary<string, List<MachineRecipePackData>> customMachineRecipes = new();
+        internal static List<TailoringRecipePackData> customTailoringRecipes = new();
 
-        private static readonly PerScreen<StateData> _state = new PerScreen<StateData>(() => new StateData());
+        private static readonly PerScreen<StateData> _state = new(() => new StateData());
         internal static StateData State => Mod._state.Value;
 
         public static CommonPackData Find(string fullId)
@@ -183,7 +183,7 @@ namespace DynamicGameAssets
             this.RefreshSpritebatchCache();
         }
 
-        private readonly ConditionalWeakTable<Farmer, Holder<string>> prevBootsFrame = new ConditionalWeakTable<Farmer, Holder<string>>();
+        private readonly ConditionalWeakTable<Farmer, Holder<string>> prevBootsFrame = new();
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
@@ -270,7 +270,7 @@ namespace DynamicGameAssets
                             Mod.instance.ModManifest,
                             conds,
                             cp.Value.conditionVersion,
-                            cp.Value.smapiPack.Manifest.Dependencies?.Select((d) => d.UniqueID)?.ToArray() ?? new string[0]
+                            cp.Value.smapiPack.Manifest.Dependencies?.Select((d) => d.UniqueID)?.ToArray() ?? Array.Empty<string>()
                         );
                         if (!data.EnableConditionsObject.IsValid)
                             Log.Warn("Invalid enable conditions for " + data + " " + data.pack.smapiPack.Manifest.Name + "! " + data.EnableConditionsObject.ValidationError);
@@ -389,22 +389,19 @@ namespace DynamicGameAssets
             {
                 foreach (var recipe in Mod.customCraftingRecipes)
                 {
-                    bool learn = false;
-                    if (recipe.data.KnownByDefault)
-                        learn = true;
+                    bool learn = recipe.data.KnownByDefault;
                     if (recipe.data.SkillUnlockName != null && recipe.data.SkillUnlockLevel > 0)
                     {
-                        int level = 0;
-                        switch (recipe.data.SkillUnlockName)
+                        int level = recipe.data.SkillUnlockName switch
                         {
-                            case "Farming": level = Game1.player.farmingLevel.Value; break;
-                            case "Fishing": level = Game1.player.fishingLevel.Value; break;
-                            case "Foraging": level = Game1.player.foragingLevel.Value; break;
-                            case "Mining": level = Game1.player.miningLevel.Value; break;
-                            case "Combat": level = Game1.player.combatLevel.Value; break;
-                            case "Luck": level = Game1.player.luckLevel.Value; break;
-                            default: level = Game1.player.GetCustomSkillLevel(recipe.data.SkillUnlockName); break;
-                        }
+                            "Farming" => Game1.player.farmingLevel.Value,
+                            "Fishing" => Game1.player.fishingLevel.Value,
+                            "Foraging" => Game1.player.foragingLevel.Value,
+                            "Mining" => Game1.player.miningLevel.Value,
+                            "Combat" => Game1.player.combatLevel.Value,
+                            "Luck" => Game1.player.luckLevel.Value,
+                            _ => Game1.player.GetCustomSkillLevel(recipe.data.SkillUnlockName)
+                        };
 
                         if (level >= recipe.data.SkillUnlockLevel)
                             learn = true;
@@ -608,7 +605,7 @@ namespace DynamicGameAssets
 
                         var item = data.ToItem();
                         if (item != null)
-                            stuff.Add(item, new int[] { 0, item is DynamicGameAssets.Game.CustomCraftingRecipe ? 1 : int.MaxValue });
+                            stuff.Add(item, new[] { 0, item is DynamicGameAssets.Game.CustomCraftingRecipe ? 1 : int.MaxValue });
                     }
                 }
                 Game1.activeClickableMenu = new ShopMenu(stuff);
@@ -630,7 +627,7 @@ namespace DynamicGameAssets
 
                     var item = data.ToItem();
                     if (item != null)
-                        stuff.Add(item, new int[] { 0, item is DynamicGameAssets.Game.CustomCraftingRecipe ? 1 : int.MaxValue });
+                        stuff.Add(item, new[] { 0, item is DynamicGameAssets.Game.CustomCraftingRecipe ? 1 : int.MaxValue });
                 }
                 Game1.activeClickableMenu = new ShopMenu(stuff);
             }
@@ -721,7 +718,7 @@ namespace DynamicGameAssets
                     return pack.Value.Load<T>(asset);
             }
 
-            return default(T);
+            return default;
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
@@ -902,8 +899,7 @@ namespace DynamicGameAssets
                         int which = fullId.GetDeterministicHashCode();
 
                         var tex = cp.Value.GetTexture(shirt.TextureMale, 8, 32);
-                        if (!tex.Rect.HasValue)
-                            tex.Rect = new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
+                        tex.Rect ??= new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
                         var rect = new Rectangle(which * 8 % 128, which * 8 / 128 * 32, 8, 8);
                         SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                         rect.Offset(0, 8);
@@ -916,8 +912,7 @@ namespace DynamicGameAssets
                         if (shirt.TextureMaleColor != null)
                         {
                             tex = cp.Value.GetTexture(shirt.TextureMaleColor, 8, 32);
-                            if (!tex.Rect.HasValue)
-                                tex.Rect = new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
+                            tex.Rect ??= new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
                             rect.Offset(128, -24);
                             SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
@@ -931,8 +926,7 @@ namespace DynamicGameAssets
                         if (shirt.TextureFemale != null)
                         {
                             tex = cp.Value.GetTexture(shirt.TextureFemale, 8, 32);
-                            if (!tex.Rect.HasValue)
-                                tex.Rect = new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
+                            tex.Rect ??= new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
                             which += 1;
                             rect = new Rectangle(which * 8 % 128, which * 8 / 128 * 32, 8, 8);
                             SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
@@ -947,8 +941,7 @@ namespace DynamicGameAssets
                         if (shirt.TextureFemaleColor != null)
                         {
                             tex = cp.Value.GetTexture(shirt.TextureFemaleColor, 8, 32);
-                            if (!tex.Rect.HasValue)
-                                tex.Rect = new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
+                            tex.Rect ??= new Rectangle(0, 0, tex.Texture.Width, tex.Texture.Height);
                             rect.Offset(128, -24);
                             SpriteBatchPatcher.shirtOverrides.Add(rect, new TexturedRect() { Texture = tex.Texture, Rect = new Rectangle(tex.Rect.Value.X, tex.Rect.Value.Y + tex.Rect.Value.Height / 4 * 0, tex.Rect.Value.Width, tex.Rect.Value.Height / 4) });
                             rect.Offset(0, 8);
@@ -967,13 +960,14 @@ namespace DynamicGameAssets
                         SpriteBatchPatcher.pantsOverrides.Add(new Rectangle(which % 10 * 192, which / 10 * 688, 192, 688), tex);
                     }
                 }
-                foreach (var other in cp.Value.others)
+                foreach (BasePackData other in cp.Value.others)
                 {
                     if (other is TextureOverridePackData textureOverride)
                     {
-                        if (!SpriteBatchPatcher.packOverrides.ContainsKey(textureOverride.TargetTexture))
-                            SpriteBatchPatcher.packOverrides.Add(textureOverride.TargetTexture, new());
-                        SpriteBatchPatcher.packOverrides[textureOverride.TargetTexture].Add(textureOverride.TargetRect, textureOverride);
+                        if (!SpriteBatchPatcher.packOverrides.TryGetValue(textureOverride.TargetTexture, out var packOverrides))
+                            SpriteBatchPatcher.packOverrides[textureOverride.TargetTexture] = packOverrides = new Dictionary<Rectangle, TextureOverridePackData>();
+
+                        packOverrides[textureOverride.TargetRect] = textureOverride;
                     }
                 }
             }

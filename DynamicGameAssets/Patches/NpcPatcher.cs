@@ -154,11 +154,12 @@ namespace DynamicGameAssets.Patches
                 emote = giftTasteData.EmoteId;
             else
             {
-                switch (giftTaste)
+                emote = giftTaste switch
                 {
-                    case NPC.gift_taste_love: emote = 20; break;
-                    case NPC.gift_taste_hate: emote = 12; break;
-                }
+                    NPC.gift_taste_love => 20,
+                    NPC.gift_taste_hate => 12,
+                    _ => emote
+                };
             }
 
             // apply changes

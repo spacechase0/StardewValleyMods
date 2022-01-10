@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Buffs and debuffs
+    *********/
+    "buff.full": "포만감",
+    "buff.hungry": "굶주림",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.fullness-ui-X.name": "포만감 UI(X)",
+    "config.fullness-ui-X.tooltip": "포만감 UI의 X 픽셀 위치입니다.",
+    "config.fullness-ui-Y.name": "포만감 UI(Y)",
+    "config.fullness-ui-Y.tooltip": "포만감 UI의 Y 픽셀 위치입니다.",
+
+    "config.fullness-ui-alignment.name": "포만감 UI(정렬)",
+    "config.fullness-ui-alignment.tooltip": "게임 화면의 포만감 UI 정렬.",
+    "config.fullness-ui-alignment.topLeft": "왼쪽 상단",
+    "config.fullness-ui-alignment.topRight": "오른쪽 상단",
+    "config.fullness-ui-alignment.bottomLeft": "왼쪽 하단",
+    "config.fullness-ui-alignment.bottomRight": "오른쪽 하단",
+
+    "config.fullness-max.name": "최대 포만감",
+    "config.fullness-max.tooltip": "최대 포만감.",
+    "config.fullness-drain.name": "포만감 배수",
+    "config.fullness-drain.tooltip": "게임 내 분당 배수할 포만감의 양.",
+
+    "config.edibility-multiplier.name": "식용 승수",
+    "config.edibility-multiplier.tooltip": "음식의 섭취에 따른 포만감의 배율.",
+
+    "config.positive-buff-threshold.name": "좋은 버프 최대값",
+    "config.positive-buff-threshold.tooltip": "좋은 버프가 적용되는 데 필요한 최소 포만감.",
+    "config.negative-buff-threshold.name": "나쁜 버프 최대값",
+    "config.negative-buff-threshold.tooltip": "나쁜 버프가 적용되기 전의 최대 포만감.",
+    "config.starvation-damage.name": "기아 피해",
+    "config.starvation-damage.tooltip": "포만감이 없을 때 게임 내 매분마다 받는 기아 피해량.",
+    "config.unfed-spouse-penalty.name": "비급식 배우자 처벌",
+    "config.unfed-spouse-penalty.tooltip": "배우자에게 음식을 주지 않으면 관계가 패널티를 받습니다."
+}

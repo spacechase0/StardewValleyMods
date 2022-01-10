@@ -266,7 +266,7 @@ namespace DynamicGameAssets.Game
                     return false;
                 }
                 this.shake(tileLocation, doEvenIfStillShaking: true, location);
-                float damage2 = 1f;
+                float damage2;
                 if (explosion > 0)
                 {
                     damage2 = explosion;
@@ -356,7 +356,7 @@ namespace DynamicGameAssets.Game
                     return false;
                 }
                 this.shake(tileLocation, doEvenIfStillShaking: true, location);
-                float damage = 1f;
+                float damage;
                 Random debrisRandom = (!Game1.IsMultiplayer) ? new Random((int)((float)Game1.uniqueIDForThisGame + tileLocation.X * 7f + tileLocation.Y * 11f + (float)Game1.stats.DaysPlayed + (float)this.health)) : Game1.recentMultiplayerRandom;
                 if (explosion > 0)
                 {
@@ -364,24 +364,15 @@ namespace DynamicGameAssets.Game
                 }
                 else
                 {
-                    switch ((int)t.upgradeLevel)
+                    damage = (int)t.upgradeLevel switch
                     {
-                        case 0:
-                            damage = 2f;
-                            break;
-                        case 1:
-                            damage = 2.5f;
-                            break;
-                        case 2:
-                            damage = 3.34f;
-                            break;
-                        case 3:
-                            damage = 5f;
-                            break;
-                        case 4:
-                            damage = 10f;
-                            break;
-                    }
+                        0 => 2f,
+                        1 => 2.5f,
+                        2 => 3.34f,
+                        3 => 5f,
+                        4 => 10f,
+                        _ => 1f
+                    };
                 }
                 int debris = 0;
                 while (t != null && debrisRandom.NextDouble() < (double)damage * 0.08 + (double)((float)t.getLastFarmerToUse().ForagingLevel / 200f))

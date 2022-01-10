@@ -27,19 +27,18 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    // TODO
-    "config.quality-ring-chance.name": "Quality+ Ring: Chance",
-    "config.quality-ring-chance.description": "The percentage chance of a higher crop quality with the Quality+ Ring equipped.",
+    "config.quality-ring-chance.name": "고품질 반지: 기회",
+    "config.quality-ring-chance.description": "고품질 반지를 장착하면 더 높은 품질의 작물을 얻을 확률이 백분율로 나타납니다.",
 
-    "config.ring-of-wide-nets-multiplier.name": "Ring of Wide Nets: Multiplier",
-    "config.ring-of-wide-nets-multiplier.description": "The multiplier applied to the fishing bar size with the Ring of Wide Nets equipped.",
+    "config.ring-of-wide-nets-multiplier.name": "넓은 그물 반지: 승수",
+    "config.ring-of-wide-nets-multiplier.description": "넓은 그물 반지를 장착한 낚싯대 크기에 적용되는 배수입니다.",
 
-    "config.ring-of-regeneration-rate.name": "Ring of Regeneration: Regen",
-    "config.ring-of-regeneration-rate.description": "The health regen rate per second with the Ring of Regeneration equipped.",
+    "config.ring-of-regeneration-rate.name": "재생 반지: 재생",
+    "config.ring-of-regeneration-rate.description": "재생 반지를 장착했을 때 초당 체력 재생 속도입니다.",
 
-    "config.refreshing-ring-rate.name": "Refreshing Ring: Regen",
-    "config.refreshing-ring-rate.description": "The stamina regen rate per second with the Refreshing Ring equipped.",
+    "config.refreshing-ring-rate.name": "리프레싱 반지: 리젠",
+    "config.refreshing-ring-rate.description": "리프레싱 반지를 장착했을 때의 초당 스태미너 재생률입니다.",
 
-    "config.ring-of-far-reaching-distance.name": "Ring of Far Reaching: Distance",
-    "config.ring-of-far-reaching-distance.description": "The distance in tiles at which you can use tools with the Ring of Far Reaching equipped."
+    "config.ring-of-far-reaching-distance.name": "원거리 반지: 거리",
+    "config.ring-of-far-reaching-distance.description": "원거리 반지를 장착한 상태에서 도구를 사용할 수 있는 타일 단위의 거리입니다."
 }

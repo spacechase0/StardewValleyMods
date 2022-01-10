@@ -34,7 +34,7 @@ namespace DynamicGameAssets.PackData
             [DefaultValue(false)]
             public bool Flipped { get; set; }
 
-            public List<Vector2> Seats { get; set; } = new List<Vector2>();
+            public List<Vector2> Seats { get; set; } = new();
 
             [DefaultValue(SeatDirection.Any)]
             [JsonConverter(typeof(StringEnumConverter))]
@@ -42,7 +42,7 @@ namespace DynamicGameAssets.PackData
 
             public bool ShouldSerializeSeats() { return this.Seats.Count > 0; }
 
-            public Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>> TileProperties { get; set; } = new Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>>();
+            public Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>> TileProperties { get; set; } = new();
 
             public bool ShouldSerializeTileProperties() { return this.TileProperties.Count > 0; }
         }
@@ -89,7 +89,7 @@ namespace DynamicGameAssets.PackData
         public bool ShouldSerializeTankGroundCapacity() { return this.Type == FurnitureType.FishTank; }
         public bool ShouldSerializeTankDecorationCapacity() { return this.Type == FurnitureType.FishTank; }
 
-        public List<FurnitureConfiguration> Configurations { get; set; } = new List<FurnitureConfiguration>();
+        public List<FurnitureConfiguration> Configurations { get; set; } = new();
 
         [JsonIgnore]
         public string Name => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.name");
@@ -139,19 +139,14 @@ namespace DynamicGameAssets.PackData
 
         public override Item ToItem()
         {
-            switch (this.Type)
+            return this.Type switch
             {
-                case FurnitureType.Bed:
-                    return new CustomBedFurniture(this);
-                case FurnitureType.TV:
-                    return new CustomTVFurniture(this);
-                case FurnitureType.FishTank:
-                    return new CustomFishTankFurniture(this);
-                case FurnitureType.Dresser:
-                    return new CustomStorageFurniture(this);
-                default:
-                    return new CustomBasicFurniture(this);
-            }
+                FurnitureType.Bed => new CustomBedFurniture(this),
+                FurnitureType.TV => new CustomTVFurniture(this),
+                FurnitureType.FishTank => new CustomFishTankFurniture(this),
+                FurnitureType.Dresser => new CustomStorageFurniture(this),
+                _ => new CustomBasicFurniture(this)
+            };
         }
     }
 }

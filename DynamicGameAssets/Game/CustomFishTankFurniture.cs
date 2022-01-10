@@ -65,17 +65,13 @@ namespace DynamicGameAssets.Game
 
         public int GetCapacityForCategory(FishTankCategories category)
         {
-            switch (category)
+            return category switch
             {
-                case FishTankCategories.Swim:
-                    return this.Data.TankSwimmingCapacity;
-                case FishTankCategories.Ground:
-                    return this.Data.TankGroundCapacity;
-                case FishTankCategories.Decoration:
-                    return this.Data.TankDecorationCapacity;
-                default:
-                    return 0;
-            }
+                FishTankCategories.Swim => this.Data.TankSwimmingCapacity,
+                FishTankCategories.Ground => this.Data.TankGroundCapacity,
+                FishTankCategories.Decoration => this.Data.TankDecorationCapacity,
+                _ => 0
+            };
         }
 
         public override Rectangle GetTankBounds()

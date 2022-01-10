@@ -23,7 +23,7 @@
     *********/
     "event.wizard.1": "Já é a hora do você aprender os caminhos da magia.",
     "event.wizard.2": "Eu... 'ajustei' o altar Yoba na loja do Pierre pra você.",
-    "event.wizard.3": "Vou te ensinar o básico da magia Arcana, mas ro resto tera de descobrir por conta própria. ",
+    "event.wizard.3": "Vou te ensinar o básico da magia Arcana, mas ro resto tera de descobrir por conta própria.",
     "event.wizard.4": "A magia Arcana 'Analizar' pode ser usada pra descobrir a maioria. No entanto, algumas, mais fortes precisam ser descobertas de outras maneiras.",
     "event.wizard.5": "Cada classe de magica tem 3 magias, e uma magia anciã. Até eu não sei aonde essas magias estão no momento.",
     "event.wizard.6": "Pra te ajudar a começar, aqui vai uma dica. Tente usar 'Analizar' no seu regador.",
@@ -34,22 +34,21 @@
 
 
     /*********
-    ** TV channel
+    ** Radio station
     *********/
-    "tv.analyzehints.name": "Análize Magica",
-    "tv.analyzehints.notmagical": "*estatica*",
-    "tv.analyzehints.1": "Procurando por magias pra usar na sua fazenda? Tente analizar as suas ferramentas.",
-    "tv.analyzehints.2": "Precisando de uma fuga rápida? Eu acho que umas botas vão te servir bem.",
-    "tv.analyzehints.3": "A luz do sol é ótima, mas nem sempre disponível. Será que luzes artificiais podem ser criadas?",
-    "tv.analyzehints.4": "Alguns minerais básicos parecem ter algum tipo de energia estranha.",
-    "tv.analyzehints.5": "Um meteoro caiu no meu quintal ontem. Senti uma energia muito estranha vinda dele.",
-    "tv.analyzehints.6": "Café é um presente dos deuses. Por que não usar seus efeitos com magia?",
-    "tv.analyzehints.7": "Esses dias eu vi uma pessoa que fez 'vinhas' sairem do chão e elas prendiam os monstros no lugar, parecia uma planta ou algo parecido.",
-    "tv.analyzehints.8": "Eu aposto que você poderia lançar uma bola de gelo para deixar alguém lento. Aonde será que poderiamos estudar gelo...?",
-    "tv.analyzehints.9": "Eu me lembro de ver um altar negro na casa de alguém. Bem, eu disse 'casa'... Parecia mais uma cabana ou um chalé.",
-    "tv.analyzehints.10": "Poções de cura são muito pesadas e ocupam muito espaço na mochila. Por que não nos curarmos com magia?",
-    "tv.analyzehints.11": "A maioria das pessoas usam as escadas pra descer pelas minas, mas eu vi alguém usar uma magia pra descer direto pelo chão.",
-    "tv.analyzehints.12": "Eu não podia acreditar no que via, alguém usando uma magia pra recuperar mana!? Parecia ser doloroso. Pessoas dizem que ele aprendeu essa magia enquanto procurava pelas Enguias de Lava.",
+    "radio.static": "*estatica*",
+    "radio.analyzehints.1": "Procurando por magias pra usar na sua fazenda? Tente analizar as suas ferramentas.",
+    "radio.analyzehints.2": "Precisando de uma fuga rápida? Eu acho que umas botas vão te servir bem.",
+    "radio.analyzehints.3": "A luz do sol é ótima, mas nem sempre disponível. Será que luzes artificiais podem ser criadas?",
+    "radio.analyzehints.4": "Alguns minerais básicos parecem ter algum tipo de energia estranha.",
+    "radio.analyzehints.5": "Um meteoro caiu no meu quintal ontem. Senti uma energia muito estranha vinda dele.",
+    "radio.analyzehints.6": "Café é um presente dos deuses. Por que não usar seus efeitos com magia?",
+    "radio.analyzehints.7": "Esses dias eu vi uma pessoa que fez 'vinhas' sairem do chão e elas prendiam os monstros no lugar, parecia uma planta ou algo parecido.",
+    "radio.analyzehints.8": "Eu aposto que você poderia lançar uma bola de gelo para deixar alguém lento. Aonde será que poderiamos estudar gelo...?",
+    "radio.analyzehints.9": "Eu me lembro de ver um altar negro na casa de alguém. Bem, eu disse 'casa'... Parecia mais uma cabana ou um chalé.",
+    "radio.analyzehints.10": "Poções de cura são muito pesadas e ocupam muito espaço na mochila. Por que não nos curarmos com magia?",
+    "radio.analyzehints.11": "A maioria das pessoas usam as escadas pra descer pelas minas, mas eu vi alguém usar uma magia pra descer direto pelo chão.",
+    "radio.analyzehints.12": "Eu não podia acreditar no que via, alguém usando uma magia pra recuperar mana!? Parecia ser doloroso. Pessoas dizem que ele aprendeu essa magia enquanto procurava pelas Enguias de Lava.",
 
 
     /*********
@@ -132,14 +131,21 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
+    // altar and radio placement
     // TODO
-    "config.altar-location.name": "Altar Location",
-    "config.altar-location.tooltip": "The (internal) name of the location the magic altar should be placed at.",
-    "config.altar-x.name": "Altar X",
-    "config.altar-x.tooltip": "The X tile position where the magic altar should be placed.",
-    "config.altar-y.name": "Altar Y",
-    "config.altar-y.tooltip": "The Y tile position where the magic altar should be placed.",
+    "config.altar-placement": "Altar placement",
+    "config.radio-placement": "Radio placement",
+    "config.location.name": "Location",
+    "config.location.tooltip": "The internal name of the location where it should be placed, as shown by the Debug Mode mod.",
+    "config.x.name": "X position",
+    "config.x.tooltip": "The X tile position where it should be placed, as shown by the Debug Mode mod.",
+    "config.y.name": "Y position",
+    "config.y.tooltip": "The Y tile position where it should be placed, as shown by the Debug Mode mod.",
+    "config.x-or-y.automatic-position": "automatic",
 
+    // controls
+    // TODO
+    "config.controls": "Controls",
     "config.cast-key.name": "Key: Cast",
     "config.cast-key.tooltip": "The key to initiate casting a spell.",
     "config.swap-spells-key.name": "Key: Swap Sells",

@@ -16,7 +16,7 @@ namespace DynamicGameAssets.Framework.ContentPacks
 
         public Translation Get(string key)
         {
-            return (Translation)AccessTools.Constructor(typeof(Translation), new Type[] { typeof(string), typeof(string), typeof(string) }).Invoke(new object[] { "null", "null", "null" });
+            return (Translation)AccessTools.Constructor(typeof(Translation), new[] { typeof(string), typeof(string), typeof(string) }).Invoke(new object[] { "null", "null", "null" });
         }
 
         public Translation Get(string key, object tokens)
@@ -31,7 +31,7 @@ namespace DynamicGameAssets.Framework.ContentPacks
 
         public IEnumerable<Translation> GetTranslations()
         {
-            return new Translation[0];
+            return Array.Empty<Translation>();
         }
     }
 }

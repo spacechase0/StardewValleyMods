@@ -2,6 +2,8 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using SpaceShared.APIs;
+using SpaceShared.Migrations;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -31,6 +33,8 @@ namespace MoreGrassStarters
         {
             Log.Monitor = this.Monitor;
 
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
@@ -44,6 +48,37 @@ namespace MoreGrassStarters
         /*********
         ** Private methods
         *********/
+        /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var spaceCore = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
+            spaceCore.RegisterSerializerType(typeof(CustomGrass));
+            spaceCore.RegisterSerializerType(typeof(GrassStarterItem));
+        }
+
+        /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            if (Context.IsMainPlayer)
+            {
+                PyTkMigrator.MigrateItems("MoreGrassStarters.GrassStarterItem,  MoreGrassStarters", data =>
+                {
+                    int which = data.GetOrDefault("whichGrass", int.Parse, defaultValue: this.MinGrassType);
+                    return new GrassStarterItem(which);
+                });
+                PyTkMigrator.MigrateTerrainFeatures("MoreGrassStarters.CustomGrass,  MoreGrassStarters", (feature, data) =>
+                {
+                    int type = data.GetOrDefault("Type", int.Parse, defaultValue: this.MinGrassType);
+                    int weedCount = data.GetOrDefault("WeedCount", int.Parse);
+                    return new CustomGrass(type, weedCount);
+                });
+            }
+        }
+
         /// <inheritdoc cref="IGameLoopEvents.DayStarted"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>

@@ -122,23 +122,17 @@ namespace DynamicGameAssets.Game
                 {
                     int numToHarvest = 1;
                     int cropQuality = 0;
-                    int fertilizerQualityLevel = 0;
                     /*if ( ( int ) this.indexOfHarvest == 0 )
                     {
                         return true;
                     }*/
-                    switch ((int)soil.fertilizer)
+                    int fertilizerQualityLevel = (int) soil.fertilizer switch
                     {
-                        case 368:
-                            fertilizerQualityLevel = 1;
-                            break;
-                        case 369:
-                            fertilizerQualityLevel = 2;
-                            break;
-                        case 919:
-                            fertilizerQualityLevel = 3;
-                            break;
-                    }
+                        368 => 1,
+                        369 => 2,
+                        919 => 3,
+                        _ => 0
+                    };
                     double chanceForGoldQuality = 0.2 * ((double)Game1.player.FarmingLevel / 10.0) + 0.2 * (double)fertilizerQualityLevel * (((double)Game1.player.FarmingLevel + 2.0) / 12.0) + 0.01;
                     double chanceForSilverQuality = Math.Min(0.75, chanceForGoldQuality * 2.0);
                     if (fertilizerQualityLevel >= 3 && r.NextDouble() < chanceForGoldQuality / 2.0)
