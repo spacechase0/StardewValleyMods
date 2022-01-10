@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added min-version check for integration with Generic Mod Config Menu.
 * Improved translations. Thanks to wally232 (added Korean)!
 
 ## 1.1.1

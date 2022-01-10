@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added min-version check for integration with Generic Mod Config Menu.
 * Fixed field mapping in config UI.
 
 ## 1.2.2

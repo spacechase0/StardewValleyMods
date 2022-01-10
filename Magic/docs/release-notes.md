@@ -4,6 +4,7 @@
 ## Upcoming release
 * Added support for analyzing toolbar or inventory items by pointing at them (not only by selecting them).
 * Added sections to [Generic Mod Config Menu](https://www.nexusmods.com/stardewvalley/mods/5098) UI.
+* Added min-version check for integration with Generic Mod Config Menu.
 * Fixed default altar position.
 * The _Till_ spell no longer removes placed objects.
 * A custom TV channel is no longer added when PyTK is installed. Instead there's a new radio added to the Wizard tower you can click to get hints.

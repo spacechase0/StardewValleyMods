@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Added min-version check for integration with Generic Mod Config Menu.
 * Rewrote migration logic for older saves containing tents saved through PyTK.
 * Improved translations. Thanks to wally232 (added Korean)!
 
