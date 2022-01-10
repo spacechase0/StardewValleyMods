@@ -130,7 +130,8 @@ namespace SpaceCore.Events
             return Util.InvokeEventCancelable("SpaceEvents.BeforeReceiveObject", SpaceEvents.BeforeGiftGiven.GetInvocationList(), farmer, arg);
         }
 
-        internal static void InvokeAfterGiftGiven(NPC npc, SObject obj, Farmer farmer)
+        // Public for use in DGA
+        public static void InvokeAfterGiftGiven(NPC npc, SObject obj, Farmer farmer)
         {
             Log.Trace("Event: AfterGiftGiven");
             if (SpaceEvents.AfterGiftGiven == null)

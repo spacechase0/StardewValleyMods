@@ -6,6 +6,6 @@
     "Description": "Run C# code in Content Patcher packs.",
     "UniqueID": "spacechase0.ContentCode",
     "EntryDll": "ContentCode.dll",
-    "Dependencies": [ { "UniqueID": "spacechase0.DynamicGameAssets" }, ],
+    "Dependencies": [ { "UniqueID": "spacechase0.SpaceCore" }, ],
     "UpdateKeys": [ "Nexus:" ]
 }

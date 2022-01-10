@@ -61,22 +61,22 @@ namespace SpaceCore.Patches
         }
 
         public static void AlterPassoutWakeupLocation( Farmer farmer, ref string loc )
-        {
+        {/*
             if ( SpaceCore.CustomLocationContexts.TryGetValue( farmer.currentLocation.GetLocationContext(), out CustomLocationContext custom ) )
             {
                 string val = custom.PassoutWakeupLocation?.Invoke( farmer );
                 if ( val != null )
                     loc = val;
-            }
+            }*/
         }
         public static void AlterPassoutWakeupPoint( Farmer farmer, ref Point pos )
-        {
+        {/*
             if ( SpaceCore.CustomLocationContexts.TryGetValue( farmer.currentLocation.GetLocationContext(), out CustomLocationContext custom ) )
             {
                 Point? val = custom.PassoutWakeupPoint?.Invoke( farmer );
                 if ( val.HasValue )
                     pos = val.Value;
-            }
+            }*/
         }
 
         private static IEnumerable< CodeInstruction > Transpiler__receivePassoutRequest( IEnumerable<CodeInstruction> insns, ILGenerator ilgen )

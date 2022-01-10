@@ -187,11 +187,15 @@ Here is the full list of supported `Type` values:
 | `VanillaBoots` | A vanilla boots item, from `Data/Boots`. | Either the boots numeric ID, or the boots name. |
 | `VanillaFurniture` | A vanilla furniture item, from `Data/Furniture`. | Either the furniture numeric ID, or the furniture name. |
 | `ContextTag` | Items matching a context tag. This is only usable in recipe ingredients; Using it as something to be actually created will result in an error. | The context tag. |
-
+| `Custom` | An item of a custom C# class type. See note 3. | The full type namespace and name, followed by a slash, followed a string for the constructor, ie. package.name.ClassName/arg |
 If an object has a color overlay, such as a DGA Object with a `TextureColor` set, or a `VanillaObjectColored`, you can set the `Color` field in the format of `"R, G, B, A"`.Sure
 
 Note 1: While most of the fields say "Vanilla" , they will detect anything from their corresponding data file, such as from Json Assets.
 Note 2: The default value for `Type` is `DGAItem`. So, if you are specifying that for your item type, you can omit it.
+Note 3: For the `Custom` type:
+* When used in a crafting recipe, it must have a `NameOverride` and `IconOverride` (see crafting recipes section).
+* When used as an ingredient, must have a static function with the following signature: `bool IngredientMatches(Item, string)`
+* When used as a product, must have a constructor taking a single string (even if that string is empty).
 
 ### WeightedItem[]
 In some cases (primarily recipe output) you may specify multiple `Item`s, with a weight. The mod will then choose one based on the weight values. Higher weights are more likely to be chosen. Here is an example:

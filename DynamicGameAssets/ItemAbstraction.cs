@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -30,6 +31,12 @@ namespace DynamicGameAssets
             VanillaFurniture,
             ContextTag, // recipes only
             // Missing anything?
+
+            // Must be specified as: package.name.ClassName/constructionArgument
+            // Must have name override and icon override when used in crafting recipe
+            // Must have a constructor taking a single string argument when used as product
+            // Must have static IngredientMatches(Item) function if used as ingredient
+            Custom, 
         }
 
         [DefaultValue(ItemType.DGAItem)]
@@ -78,6 +85,9 @@ namespace DynamicGameAssets
                     case ItemType.VanillaFurniture: return Furniture.furnitureTexture;
                     case ItemType.ContextTag:
                         Log.Error("Context tag ItemAbstraction instances don't have an icon texture");
+                        return null;
+                    case ItemType.Custom:
+                        Log.Error("Custom ItemAbstraction instances don't have an icon texture");
                         return null;
                 }
 
@@ -187,6 +197,9 @@ namespace DynamicGameAssets
                     case ItemType.ContextTag:
                         Log.Error("Context tag ItemAbstraction instances have no icon rect!");
                         return default(Rectangle);
+                    case ItemType.Custom:
+                        Log.Error( "Custom ItemAbstraction instances have no icon rect!" );
+                        return default(Rectangle);
                 }
 
                 Log.Error("Failed getting ItemAbstraction icon rect for " + this.Type + " " + this.Value + "!");
@@ -224,6 +237,16 @@ namespace DynamicGameAssets
                     return (item is Furniture furniture && (furniture.Name == this.Value || (valAsInt.HasValue && valAsInt.Value == furniture.ParentSheetIndex)));
                 case ItemType.ContextTag:
                     return item?.HasContextTag(this.Value) ?? false;
+                case ItemType.Custom:
+                    string type = Value.Substring( 0, Value.IndexOf( '/' ) );
+                    string arg = Value.Substring( Value.IndexOf( '/' ) + 1 );
+                    var meth = AccessTools.Method( AccessTools.TypeByName( type ), "IngredientMatches", new[] { typeof( Item ), typeof( string ) } );
+                    if ( meth == null )
+                    {
+                        Log.Error( "Custom ItemAbstraction instance must have an IngredientMatches method! " + Value );
+                        return false;
+                    }
+                    return ( bool ) meth.Invoke( null, new object[] { item, arg } );
             }
 
             Log.Error("Unknown ItemAbstraction type?");
@@ -327,6 +350,16 @@ namespace DynamicGameAssets
                 case ItemType.ContextTag:
                     Log.Error("Context tag ItemAbstraction instances cannot be created!");
                     return new StardewValley.Object(1720, 1);
+                case ItemType.Custom:
+                    string type = Value.Substring( 0, Value.IndexOf( '/' ) );
+                    string arg = Value.Substring( Value.IndexOf( '/' ) + 1 );
+                    var ctor = AccessTools.Constructor( AccessTools.TypeByName( type ), new[] { typeof( string ) } );
+                    if ( ctor == null )
+                    {
+                        Log.Error( "Custom ItemAbstraction instance was unable be created! " + Value );
+                        return new StardewValley.Object( 1720, 1 );
+                    }
+                    return ( Item ) ctor.Invoke( new object[] { arg } );
             }
 
             Log.Error($"Unknown item {this.Type} {this.Value} x {this.Quantity}");

@@ -24,7 +24,7 @@ namespace SpaceCore
 
         void RegisterCustomProperty( Type declaringType, string name, Type propType, MethodInfo getter, MethodInfo setter );
 
-        void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc, Func<Farmer, string> passoutWakeupLocationFunc, Func<Farmer, Point?> passoutWakeupPointFunc );
+        void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc/*, Func<Farmer, string> passoutWakeupLocationFunc, Func<Farmer, Point?> passoutWakeupPointFunc*/ );
     }
 
     public class Api : IApi
@@ -87,14 +87,14 @@ namespace SpaceCore
             } );
         }
 
-        public void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc, Func<Farmer, string> passoutWakeupLocationFunc, Func<Farmer, Point?> passoutWakeupPointFunc )
+        public void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc/*, Func<Farmer, string> passoutWakeupLocationFunc, Func<Farmer, Point?> passoutWakeupPointFunc*/ )
         {
             SpaceCore.CustomLocationContexts.Add( ( GameLocation.LocationContext ) name.GetDeterministicHashCode(), new CustomLocationContext()
             {
                 Name = name,
                 GetLocationWeatherForTomorrow = getLocationWeatherForTomorrowFunc,
-                PassoutWakeupLocation = passoutWakeupLocationFunc,
-                PassoutWakeupPoint = passoutWakeupPointFunc,
+                //PassoutWakeupLocation = passoutWakeupLocationFunc,
+                //PassoutWakeupPoint = passoutWakeupPointFunc,
             } );
         }
     }

@@ -12,7 +12,7 @@ namespace SpaceCore
     {
         public string Name { get; set; }
         public Func< Random, LocationWeather > GetLocationWeatherForTomorrow { get; set; }
-        public Func< Farmer, string > PassoutWakeupLocation { get; set; }
-        public Func< Farmer, Point? > PassoutWakeupPoint { get; set; }
+        //public Func< Farmer, string > PassoutWakeupLocation { get; set; }
+        //public Func< Farmer, Point? > PassoutWakeupPoint { get; set; }
     }
 }

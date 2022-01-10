@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
@@ -208,6 +209,8 @@ namespace SpaceCore
 
         private void OnSaving( object sender, SavingEventArgs e )
         {
+            // This had to be moved to a harmony patch to fix an issue from saving in a custom location context location
+            /*
             if ( Game1.IsMasterGame )
             {
                 var lws = SaveGame.GetSerializer( typeof( LocationWeather ) );
@@ -216,6 +219,7 @@ namespace SpaceCore
                 {
                     if ( !Enum.IsDefined( ( GameLocation.LocationContext ) context ) )
                     {
+                        SpaceShared.Log.Debug( "doing ctx " + context );
                         using MemoryStream ms = new();
                         lws.Serialize( ms, Game1.netWorldState.Value.LocationWeather[ context ] );
                         customLocWeathers.Add( context, Encoding.ASCII.GetString( ms.ToArray() ) );
@@ -225,6 +229,7 @@ namespace SpaceCore
                     Game1.netWorldState.Value.LocationWeather.Remove( key );
                 Helper.Data.WriteSaveData( "CustomLocationWeathers", customLocWeathers );
             }
+            */
         }
 
         private void OnSaved( object sender, SavedEventArgs e )
@@ -254,6 +259,8 @@ namespace SpaceCore
             {
                 using MemoryStream ms = new( Encoding.Unicode.GetBytes( kvp.Value ) );
                 LocationWeather lw = ( LocationWeather )lws.Deserialize( ms );
+                if ( Game1.netWorldState.Value.LocationWeather.ContainsKey( kvp.Key ) )
+                    Game1.netWorldState.Value.LocationWeather.Remove( kvp.Key );
                 Game1.netWorldState.Value.LocationWeather.Add( kvp.Key, lw );
             }
         }
