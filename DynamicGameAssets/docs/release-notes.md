@@ -1,10 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## 1.8.0
+## 1.4.0
 Release 11 January 2022 for SMAPI 3.13.0 or later.
 
-* Some stuff that Moon Misadventures needed. TODO: Go through commits and figure out what
+* Added `Custom` field for item which use a custom class.
+* Fixed cloning custom hats.
+* Fixed SpaceCore's `AfterGiftGiven` event not raised when gifting custom items.
 
 ## 1.3.4
 Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
