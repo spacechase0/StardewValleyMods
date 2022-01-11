@@ -3,9 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal abstract class Container : Element
+    internal
+#endif
+        abstract class Container : Element
     {
         /*********
         ** Fields

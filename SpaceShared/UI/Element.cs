@@ -4,9 +4,16 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal abstract class Element
+    internal
+#endif
+         abstract class Element
     {
         /*********
         ** Accessors

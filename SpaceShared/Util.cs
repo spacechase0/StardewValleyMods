@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace SpaceShared
@@ -10,6 +11,42 @@ namespace SpaceShared
     internal static class Util
     {
         public static bool UsingMono => Type.GetType("Mono.Runtime") != null;
+
+        public static Texture2D FetchTexture( IModRegistry modRegistry, string modIdAndPath )
+        {
+            if ( modIdAndPath == null || modIdAndPath.IndexOf( '/' ) == -1 )
+                return Game1.staminaRect;
+
+            string packId = modIdAndPath.Substring( 0, modIdAndPath.IndexOf( '/' ) );
+            string path = modIdAndPath.Substring( modIdAndPath.IndexOf( '/' ) + 1 );
+
+            // This is really bad. Pathos don't kill me.
+            var modInfo = modRegistry.Get( packId );
+            if ( modInfo.GetType().GetProperty( "Mod" ).GetValue( modInfo ) is IMod mod )
+                return mod.Helper.Content.Load<Texture2D>( path );
+            else if ( modInfo.GetType().GetProperty( "ContentPack" ).GetValue( modInfo ) is IContentPack pack )
+                return pack.LoadAsset<Texture2D>( path );
+
+            return Game1.staminaRect;
+        }
+
+        public static string FetchTexturePath( IModRegistry modRegistry, string modIdAndPath )
+        {
+            if ( modIdAndPath == null || modIdAndPath.IndexOf( '/' ) == -1 )
+                return null;
+
+            string packId = modIdAndPath.Substring( 0, modIdAndPath.IndexOf( '/' ) );
+            string path = modIdAndPath.Substring( modIdAndPath.IndexOf( '/' ) + 1 );
+
+            // This is really bad. Pathos don't kill me.
+            var modInfo = modRegistry.Get( packId );
+            if ( modInfo.GetType().GetProperty( "Mod" ).GetValue( modInfo ) is IMod mod )
+                return mod.Helper.Content.GetActualAssetKey( path );
+            else if ( modInfo.GetType().GetProperty( "ContentPack" ).GetValue( modInfo ) is IContentPack pack )
+                return pack.GetActualAssetKey( path );
+
+            return null;
+        }
 
         public static Texture2D DoPaletteSwap(Texture2D baseTex, Texture2D from, Texture2D to)
         {

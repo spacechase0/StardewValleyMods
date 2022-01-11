@@ -1,12 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
-using Mono.CSharp;
+using System.Reflection;
+using System.CodeDom.Compiler;
 using SpaceShared;
 using StardewModdingAPI;
+using Microsoft.CSharp;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using System.Text;
+using System.Runtime.Loader;
 
 namespace ConsoleCode
 {
-    internal class Mod : StardewModdingAPI.Mod
+    public class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 
@@ -21,30 +29,33 @@ namespace ConsoleCode
         private void OnCommandReceived(string cmd, string[] args)
         {
             string line = string.Join(" ", args).Replace('`', '"');
+            string[] scriptArgs = null;
             if (args[0] == "--script")
             {
                 line = File.ReadAllText(Path.Combine(this.Helper.DirectoryPath, args[1]));
+                scriptArgs = args.Skip( 2 ).ToArray();
             }
             Log.Trace($"Input: {line}");
             try
             {
                 var func = this.MakeFunc(line);
-                object result = null;
-                func.Invoke(ref result);
-
-                switch (result)
+                if ( func != null )
                 {
-                    case null:
-                        Log.Info("Output: <null>");
-                        break;
+                    object result = func?.Invoke( null, new object[] { Helper, scriptArgs } );
+                    switch ( result )
+                    {
+                        case null:
+                            Log.Info( "Output: <null>" );
+                            break;
 
-                    case string:
-                        Log.Info($"Output: \"{result}\"");
-                        break;
+                        case string:
+                            Log.Info( $"Output: \"{result}\"" );
+                            break;
 
-                    default:
-                        Log.Info($"Output: {result}");
-                        break;
+                        default:
+                            Log.Info( $"Output: {result}" );
+                            break;
+                    }
                 }
             }
             catch (Exception e)
@@ -53,27 +64,24 @@ namespace ConsoleCode
             }
         }
 
-        private CompiledMethod MakeFunc(string userCode)
-        {
-            var settings = new CompilerSettings
-            {
-                Unsafe = true
-            };
+        private static int iter = 0;
 
+        private MethodInfo MakeFunc(string userCode)
+        {
+            List<MetadataReference> refs = new();
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
-                    settings.AssemblyReferences.Add(asm.CodeBase);
+                    refs.Add( MetadataReference.CreateFromFile( asm.Location ) );
                 }
-                catch
+                catch ( Exception e )
                 {
-                    //Log.trace("Couldn't add assembly " + asm + ": " + e);
+                    //Log.Trace("Couldn't add assembly " + asm + ": " + e);
                 }
             }
 
-            var eval = new Evaluator(new CompilerContext(settings, new ConsoleReportPrinter()));
-            eval.Compile(@"
+            string code = $@"
                 using System;
                 using System.Collections.Generic;
                 using System.Linq;
@@ -83,8 +91,49 @@ namespace ConsoleCode
                 using Microsoft.Xna.Framework.Graphics;
                 using StardewValley;
                 using xTile;
-            ");
-            return eval.Compile(userCode);
+
+                namespace ConsoleCode
+                {{
+                    public class UserCode{iter}
+                    {{
+                        public static object Main(IModHelper Helper, string[] args)
+                        {{
+                            {userCode}
+                            return null;
+                        }}
+                    }}
+                }}
+            ";
+
+            CSharpCompilation compilation = CSharpCompilation.Create( Path.GetRandomFileName(), new[] { CSharpSyntaxTree.ParseText( code ) }, refs, new CSharpCompilationOptions( OutputKind.DynamicallyLinkedLibrary ) );
+
+            using MemoryStream ms = new();
+            var result = compilation.Emit( ms );
+
+            if ( !result.Success )
+            {
+                var fails = result.Diagnostics.Where( d => d.IsWarningAsError || d.Severity == DiagnosticSeverity.Error );
+
+                StringBuilder sb = new();
+                sb.AppendLine( "Errors: " );
+                foreach ( var fail in fails )
+                {
+                    sb.AppendLine( $"{fail.Id}: {fail.GetMessage()}" );
+                }
+                Log.Error( sb.ToString() );
+
+                return null;
+            }
+            else
+            {
+                int i = iter++;
+
+                ms.Seek( 0, SeekOrigin.Begin );
+                Assembly asm = AssemblyLoadContext.Default.LoadFromStream( ms );
+                Type type = asm.GetType( $"ConsoleCode.UserCode{i}" );
+                MethodInfo meth = type.GetMethod( "Main" );
+                return meth;
+            }
         }
     }
 }

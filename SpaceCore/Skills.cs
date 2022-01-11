@@ -308,7 +308,7 @@ namespace SpaceCore
         {
             if (e.NewMenu is GameMenu gm)
             {
-                if (SpaceCore.Instance.Config.CustomSkillPage && Skills.SkillsByName.Count > 0)
+                if (SpaceCore.Instance.Config.CustomSkillPage && ( Skills.SkillsByName.Count > 0 || SpaceEvents.HasAddWalletItemEventHandlers() ) )
                 {
                     gm.pages[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
                 }

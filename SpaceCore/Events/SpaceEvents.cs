@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using SpaceCore.Interface;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Events;
@@ -47,6 +48,9 @@ namespace SpaceCore.Events
 
         // When an event finishes. Use Game1.CurrentEvent to check which one.
         public static event EventHandler OnEventFinished;
+
+        // Event for adding wallet items to NewSkillsPage, before the controller-pickable logic needs to run
+        public static event EventHandler AddWalletItems;
 
         internal static void InvokeOnBlankSave()
         {
@@ -126,7 +130,8 @@ namespace SpaceCore.Events
             return Util.InvokeEventCancelable("SpaceEvents.BeforeReceiveObject", SpaceEvents.BeforeGiftGiven.GetInvocationList(), farmer, arg);
         }
 
-        internal static void InvokeAfterGiftGiven(NPC npc, SObject obj, Farmer farmer)
+        // Public for use in DGA
+        public static void InvokeAfterGiftGiven(NPC npc, SObject obj, Farmer farmer)
         {
             Log.Trace("Event: AfterGiftGiven");
             if (SpaceEvents.AfterGiftGiven == null)
@@ -164,6 +169,19 @@ namespace SpaceCore.Events
             if (SpaceEvents.OnEventFinished == null)
                 return;
             Util.InvokeEvent("SpaceEvents.OnEventFinished", SpaceEvents.OnEventFinished.GetInvocationList(), null);
+        }
+
+        internal static void InvokeAddWalletItems( NewSkillsPage page )
+        {
+            Log.Trace( "Event: AddWalletItems" );
+            if ( SpaceEvents.AddWalletItems == null )
+                return;
+            Util.InvokeEvent( "SpaceEvents.AddWalletItems", SpaceEvents.AddWalletItems.GetInvocationList(), page );
+        }
+
+        internal static bool HasAddWalletItemEventHandlers()
+        {
+            return AddWalletItems != null;
         }
     }
 }
