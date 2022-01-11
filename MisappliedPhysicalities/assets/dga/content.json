@@ -1,0 +1,58 @@
+﻿[
+    // Binoculars and X-ray goggles
+    {
+        "$ItemType": "Hat",
+        "ID": "Binoculars",
+        "Texture": "binoculars.png"
+    },
+    {
+        "$ItemType": "Hat",
+        "ID": "X-Ray Goggles",
+        "Texture": "goggles.png"
+    },
+    // workaround for hat animations not working
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "DGA/spacechase0.MisappliedPhysicalities/goggles.png",
+        "TargetRect": {
+            "X": 0,
+            "Y": 0,
+            "Width": 20,
+            "Height": 20
+        },
+        "SourceTexture": "goggles.png:0..3@4"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "DGA/spacechase0.MisappliedPhysicalities/goggles.png",
+        "TargetRect": {
+            "X": 0,
+            "Y": 20,
+            "Width": 20,
+            "Height": 20
+        },
+        "SourceTexture": "goggles.png:4..7@4"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "DGA/spacechase0.MisappliedPhysicalities/goggles.png",
+        "TargetRect": {
+            "X": 0,
+            "Y": 40,
+            "Width": 20,
+            "Height": 20
+        },
+        "SourceTexture": "goggles.png:8..11@4"
+    },
+    {
+        "$ItemType": "TextureOverride",
+        "TargetTexture": "DGA/spacechase0.MisappliedPhysicalities/goggles.png",
+        "TargetRect": {
+            "X": 0,
+            "Y": 60,
+            "Width": 20,
+            "Height": 20
+        },
+        "SourceTexture": "goggles.png:12..15@4"
+    }
+]

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.0.31717.71
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{622B2762-903D-417C-8E20-810F9ED2731F}"
 	ProjectSection(SolutionItems) = preProject
@@ -146,8 +146,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperHopper", "SuperHopper\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGAAutomate", "DGAAutomate\DGAAutomate.csproj", "{B6E809A4-263F-4912-905A-00175CFB8074}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MisappliedPhysicalities", "MisappliedPhysicalities\MisappliedPhysicalities.csproj", "{43EDE3D9-2062-4F79-B581-708FFAF9D195}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonMisadventures", "MoonMisadventures\MoonMisadventures.csproj", "{014B4846-0E6C-4C73-B851-0A560D36AEEE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentCode", "ContentCode\ContentCode.csproj", "{EA954A5C-AB8B-466B-9434-3E7997B3E903}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonstersTheFramework", "MonstersTheFramework\MonstersTheFramework.csproj", "{F7D17474-6ED6-42CF-A79B-2A96319E1875}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{014b4846-0e6c-4c73-b851-0a560d36aeee}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{014b4846-0e6c-4c73-b851-0a560d36aeee}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{023c7f23-485a-4efc-bc0b-37f0c0dea930}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{023c7f23-485a-4efc-bc0b-37f0c0dea930}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{03be86d2-dad8-4f43-aa94-9e27b654f449}*SharedItemsImports = 5
@@ -231,6 +241,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{e05a01c6-1543-4334-98dc-48e4d54afc90}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{e1cbd6a1-f9d8-4faa-9d5d-bb1e49682fe6}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{e3cda243-4e11-493b-96d8-35466abc5ac4}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{ea954a5c-ab8b-466b-9434-3e7997b3e903}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{effd6f85-4075-4a81-b468-c480434989ec}*SharedItemsImports = 5
@@ -488,6 +499,22 @@ Global
 		{B6E809A4-263F-4912-905A-00175CFB8074}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6E809A4-263F-4912-905A-00175CFB8074}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6E809A4-263F-4912-905A-00175CFB8074}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43EDE3D9-2062-4F79-B581-708FFAF9D195}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43EDE3D9-2062-4F79-B581-708FFAF9D195}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43EDE3D9-2062-4F79-B581-708FFAF9D195}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43EDE3D9-2062-4F79-B581-708FFAF9D195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{014B4846-0E6C-4C73-B851-0A560D36AEEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{014B4846-0E6C-4C73-B851-0A560D36AEEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{014B4846-0E6C-4C73-B851-0A560D36AEEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{014B4846-0E6C-4C73-B851-0A560D36AEEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA954A5C-AB8B-466B-9434-3E7997B3E903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA954A5C-AB8B-466B-9434-3E7997B3E903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA954A5C-AB8B-466B-9434-3E7997B3E903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA954A5C-AB8B-466B-9434-3E7997B3E903}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7D17474-6ED6-42CF-A79B-2A96319E1875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7D17474-6ED6-42CF-A79B-2A96319E1875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7D17474-6ED6-42CF-A79B-2A96319E1875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7D17474-6ED6-42CF-A79B-2A96319E1875}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -507,6 +534,8 @@ Global
 		{A87F5D49-6246-4B14-8363-114DC9335C2C} = {DED81BB3-A571-46E2-91C2-6A8B7890C7EA}
 		{E3CDA243-4E11-493B-96D8-35466ABC5AC4} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{39EE1A29-BCBD-4BA5-867F-1439A9359B0E} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{43EDE3D9-2062-4F79-B581-708FFAF9D195} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{F7D17474-6ED6-42CF-A79B-2A96319E1875} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}

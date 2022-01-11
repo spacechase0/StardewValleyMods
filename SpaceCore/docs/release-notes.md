@@ -1,6 +1,16 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.8.0
+Release 11 January 2022 for SMAPI 3.13.0 or later.
+
+* Added support for...
+  * custom location contexts;
+  * custom wallet items;
+  * custom properties (to attach data to existing classes so they're persisted in the save file).
+* Made custom UI framework public.  
+  _This is the UI framework used to build Generic Mod Config Menu._
+
 ## 1.7.3
 Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

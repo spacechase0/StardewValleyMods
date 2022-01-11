@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="4">
+ <properties>
+  <property name="LocationContext" value="Moon"/>
+  <property name="Warp" value="6 11 Custom_MM_MoonFarm 37 34"/>
+  <property name="asdf" value="asdf"/>
+  <property name="forceLoadPathLayerLights" value="T"/>
+ </properties>
+ <tileset firstgid="1" name="P" tilewidth="16" tileheight="16" tilecount="36" columns="4">
+  <image source="paths" width="64" height="144"/>
+ </tileset>
+ <tileset firstgid="37" name="tf_darkdimension_sheet" tilewidth="16" tileheight="16" tilecount="609" columns="29">
+  <image source="tf_darkdimension_sheet.png" width="464" height="336"/>
+  <tile id="31">
+   <properties>
+    <property name="Diggable" value="T"/>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="32">
+   <properties>
+    <property name="Diggable" value="T"/>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="33">
+   <properties>
+    <property name="Diggable" value="T"/>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="34">
+   <properties>
+    <property name="Diggable" value="T"/>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="35">
+   <properties>
+    <property name="Diggable" value="T"/>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="36">
+   <properties>
+    <property name="Diggable" value="T"/>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="37">
+   <properties>
+    <property name="Diggable" value="T"/>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="54">
+   <animation>
+    <frame tileid="54" duration="500"/>
+    <frame tileid="55" duration="500"/>
+    <frame tileid="56" duration="500"/>
+    <frame tileid="55" duration="500"/>
+   </animation>
+  </tile>
+  <tile id="83">
+   <animation>
+    <frame tileid="83" duration="500"/>
+    <frame tileid="84" duration="500"/>
+    <frame tileid="85" duration="500"/>
+    <frame tileid="84" duration="500"/>
+   </animation>
+  </tile>
+  <tile id="112">
+   <animation>
+    <frame tileid="112" duration="500"/>
+    <frame tileid="113" duration="500"/>
+    <frame tileid="114" duration="500"/>
+    <frame tileid="113" duration="500"/>
+   </animation>
+  </tile>
+  <tile id="237">
+   <properties>
+    <property name="Diggable" value="T"/>
+    <property name="Type" value="Dirt"/>
+   </properties>
+  </tile>
+  <tile id="344">
+   <animation>
+    <frame tileid="344" duration="400"/>
+    <frame tileid="345" duration="400"/>
+    <frame tileid="346" duration="400"/>
+    <frame tileid="345" duration="400"/>
+   </animation>
+  </tile>
+  <tile id="373">
+   <animation>
+    <frame tileid="373" duration="400"/>
+    <frame tileid="374" duration="400"/>
+    <frame tileid="375" duration="400"/>
+    <frame tileid="374" duration="400"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="646" source="dd_waterfall_sheet.tsx"/>
+ <tileset firstgid="802" source="moon-caves.tsx"/>
+ <layer id="1" name="Back" width="20" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,850,851,851,851,851,851,851,851,851,851,851,851,851,851,852,0,0,
+0,0,0,866,834,834,834,834,834,834,834,837,834,834,834,840,834,868,0,0,
+0,0,0,866,834,836,834,834,834,834,834,834,834,834,834,834,834,868,0,0,
+0,0,0,866,834,834,835,834,834,839,834,834,834,834,841,834,834,868,0,0,
+0,0,0,866,834,834,834,834,834,834,834,834,834,834,834,834,834,868,0,0,
+0,0,0,882,883,883,883,883,883,883,883,883,883,883,883,883,883,884,0,0,
+0,0,0,803,803,803,803,803,803,803,803,803,803,803,803,803,803,803,0,0,
+0,0,0,0,0,803,803,803,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="2" name="Buildings" width="20" height="12">
+  <data encoding="csv">
+0,0,915,918,982,983,984,985,931,982,983,984,985,982,983,984,985,919,915,0,
+0,0,916,934,998,999,1000,1001,947,998,999,1000,1001,998,999,1000,1001,935,914,0,
+0,0,916,950,1014,1015,1016,1017,963,1014,1015,1016,1017,1014,1015,1016,1017,951,914,0,
+0,0,916,966,0,0,0,0,0,0,0,0,0,0,0,0,0,967,914,0,
+0,0,916,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,914,0,
+0,0,916,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,914,0,
+0,0,916,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,914,0,
+0,0,916,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,914,0,
+0,0,916,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,914,0,
+0,0,915,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,915,0,
+0,0,915,915,915,916,0,914,915,915,915,915,915,915,915,915,915,915,915,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="3" name="Front" width="20" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,899,899,900,0,898,899,899,899,899,899,899,899,899,899,899,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="4" name="AlwaysFront" width="20" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="5" name="Paths" width="20" height="12">
+  <data encoding="csv">
+0,0,0,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,0,0,
+0,0,0,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,0,0,
+0,0,0,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,0,0,
+0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,
+0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,
+0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,
+0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,
+0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,
+0,0,0,9,9,9,0,9,9,9,9,9,9,9,9,9,9,9,0,0,
+0,0,0,0,0,9,9,9,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="6" name="Back"/>
+ <objectgroup id="7" name="Buildings"/>
+ <objectgroup id="8" name="Front"/>
+ <objectgroup id="9" name="AlwaysFront"/>
+ <objectgroup id="10" name="Paths"/>
+</map>

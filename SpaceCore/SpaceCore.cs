@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
@@ -39,6 +42,8 @@ namespace SpaceCore
         internal static SpaceCore Instance;
         internal static IReflectionHelper Reflection;
         internal static List<Type> ModTypes = new();
+        internal static Dictionary<Type, Dictionary<string, CustomPropertyInfo>> CustomProperties = new();
+        internal static Dictionary<GameLocation.LocationContext, CustomLocationContext> CustomLocationContexts = new();
 
 
         /*********
@@ -59,6 +64,8 @@ namespace SpaceCore
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.GameLoop.Saving += this.OnSaving;
+            helper.Events.GameLoop.Saved += this.OnSaved;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
             Commands.Register();
@@ -68,6 +75,7 @@ namespace SpaceCore
             var serializerManager = new SerializerManager(helper.ModRegistry);
 
             this.Harmony = HarmonyPatcher.Apply(this,
+                new EnumPatcher(),
                 new EventPatcher(),
                 new CraftingRecipePatcher(),
                 new FarmerPatcher(),
@@ -81,6 +89,7 @@ namespace SpaceCore
                 new MultiplayerPatcher(),
                 new NpcPatcher(),
                 new SaveGamePatcher(serializerManager),
+                new SerializationPatcher(),
                 new SpriteBatchPatcher(),
                 new UtilityPatcher()
             );
@@ -191,6 +200,44 @@ namespace SpaceCore
             {
                 Log.Warn($"Exception migrating legacy save data: {ex}");
             }
+
+            if ( Game1.IsMasterGame )
+            {
+                DoLoadCustomLocationWeather();
+            }
+        }
+
+        private void OnSaving( object sender, SavingEventArgs e )
+        {
+            // This had to be moved to a harmony patch to fix an issue from saving in a custom location context location
+            /*
+            if ( Game1.IsMasterGame )
+            {
+                var lws = SaveGame.GetSerializer( typeof( LocationWeather ) );
+                Dictionary<int, string> customLocWeathers = new();
+                foreach ( int context in Game1.netWorldState.Value.LocationWeather.Keys )
+                {
+                    if ( !Enum.IsDefined( ( GameLocation.LocationContext ) context ) )
+                    {
+                        SpaceShared.Log.Debug( "doing ctx " + context );
+                        using MemoryStream ms = new();
+                        lws.Serialize( ms, Game1.netWorldState.Value.LocationWeather[ context ] );
+                        customLocWeathers.Add( context, Encoding.ASCII.GetString( ms.ToArray() ) );
+                    }
+                }
+                foreach ( int key in customLocWeathers.Keys )
+                    Game1.netWorldState.Value.LocationWeather.Remove( key );
+                Helper.Data.WriteSaveData( "CustomLocationWeathers", customLocWeathers );
+            }
+            */
+        }
+
+        private void OnSaved( object sender, SavedEventArgs e )
+        {
+            if ( Game1.IsMasterGame )
+            {
+                DoLoadCustomLocationWeather();
+            }
         }
 
         /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
@@ -200,6 +247,22 @@ namespace SpaceCore
         {
             if (e.NewMenu is StardewValley.Menus.ForgeMenu)
                 Game1.activeClickableMenu = new NewForgeMenu();
+        }
+
+        private void DoLoadCustomLocationWeather()
+        {
+            var lws = SaveGame.GetSerializer( typeof( LocationWeather ) );
+            var customLocWeathers = Helper.Data.ReadSaveData< Dictionary<int, string> >( "CustomLocationWeathers" );
+            if ( customLocWeathers == null )
+                return;
+            foreach ( var kvp in customLocWeathers )
+            {
+                using MemoryStream ms = new( Encoding.Unicode.GetBytes( kvp.Value ) );
+                LocationWeather lw = ( LocationWeather )lws.Deserialize( ms );
+                if ( Game1.netWorldState.Value.LocationWeather.ContainsKey( kvp.Key ) )
+                    Game1.netWorldState.Value.LocationWeather.Remove( kvp.Key );
+                Game1.netWorldState.Value.LocationWeather.Add( kvp.Key, lw );
+            }
         }
     }
 }

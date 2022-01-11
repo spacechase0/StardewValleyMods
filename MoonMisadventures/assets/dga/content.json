@@ -1,0 +1,177 @@
+﻿[
+    // Mythicite
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Ore",
+        "Category": "Metal",
+        "Texture": "objects.png:4",
+        "SellPrice": 500
+    },
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Bar",
+        "Category": "Metal",
+        "Texture": "mythicite-bar.png:0@30, mythicite-bar.png:1..5@6",
+        "SellPrice": 5000
+    },
+    {
+        "$ItemType": "Object",
+        "ID": "Mythicite Ore Minable",
+        "Category": "Junk",
+        "Texture": "objects.png:5"
+    },
+    // PFM - recipe for bar in furnace
+
+    // Soul Sapphire
+    {
+        "$ItemType": "Object",
+        "ID": "Soul Sapphire",
+        "Category": "Gem",
+        "Texture": "objects.png:2",
+        "SellPrice": 10000
+    },
+
+    // Persistium Dust
+    {
+        "$ItemType": "Object",
+        "ID": "Persistium Dust",
+        "Category": "Gem",
+        "Texture": "objects.png:3",
+        "SellPrice": 750
+    },
+
+    // Stellar Essence
+    {
+        "$ItemType": "Object",
+        "ID": "Stellar Essence",
+        "Category": "MonsterLoot",
+        "Texture": "objects.png:8..11@10",
+        "SellPrice": 2500
+    },
+
+    // Galaxy Egg
+    {
+        "$ItemType": "Object",
+        "ID": "Galaxy Egg",
+        "Category": "Egg",
+        "Texture": "objects.png:6",
+        "SellPrice": 200,
+        "Edibility": 30
+    },
+
+    // Galaxy Milk
+    {
+        "$ItemType": "Object",
+        "ID": "Galaxy Milk",
+        "Category": "Milk",
+        "Texture": "objects.png:7",
+        "SellPrice": 250,
+        "Edibility": 35
+    },
+
+    // Lunar wheat
+    {
+        "$ItemType": "Object",
+        "ID": "Lunar Wheat Seeds",
+        "Category": "Seeds",
+        "Texture": "objects.png:12",
+        "Plants": "spacechase0.MoonMisadventures/Lunar Wheat Crop",
+        "SellPrice": 15
+    },
+    {
+        "$ItemType": "Crop",
+        "ID": "Lunar Wheat Crop",
+        "CanGrowNow": true,
+        "Phases": [
+            {
+                "TextureChoices": [ "wheat.png:0", "wheat.png:1" ],
+                "Length": 2
+            },
+            {
+                "TextureChoices": [ "wheat.png:2" ],
+                "Length": 2
+            },
+            {
+                "TextureChoices": [ "wheat.png:3" ],
+                "Length": 2
+            },
+            {
+                "TextureChoices": [ "wheat.png:4" ],
+                "Length": 2
+            },
+            {
+                "TextureChoices": [ "wheat.png:5" ],
+                "Scythable": true,
+                "HarvestedDrops": [
+                    {
+                        "MaximumHarvestedQuantity": 3,
+                        "Item": {
+                            "Type": "VanillaObject",
+                            "Value": "Wheat"
+                        }
+                    },
+                    {
+                        "Item": [
+                            {
+                                "Weight": 249,
+                                "Value": null
+                            },
+                            {
+                                "Weight": 1,
+                                "Value": {
+                                    "Value": "spacechase0.MoonMisadventures/Soul Sapphire"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "HarvestedExperience": 5
+            }
+        ]
+    },
+
+    // Boots of the Cosmos
+    {
+        "$ItemType": "Boots",
+        "ID": "Boots of the Cosmos",
+        "Texture": "boots.png",
+        "FarmerColors": "boots-color.png:0..4@10, boots-color.png:3..1@10",
+        "Defense": 10,
+        "Immunity": 8,
+        "SellPrice": 800
+    },
+
+    // Weapons of the Cosmos
+    {
+        "$ItemType": "MeleeWeapon",
+        "ID": "Blade of the Cosmos",
+        "Type": "Sword",
+        "Texture": "weapons.png:1",
+        "MinimumDamage": 130,
+        "MaximumDamage": 170,
+        "Defense": 5
+    },
+    {
+        "$ItemType": "MeleeWeapon",
+        "ID": "Knife of the Cosmos",
+        "Type": "Dagger",
+        "Texture": "weapons.png:2",
+        "MinimumDamage": 80,
+        "MaximumDamage": 110,
+        "Defense": 4,
+        "Speed": 2,
+        "CritChance": 0.1,
+        "Knockback": 0.4
+    },
+    {
+        "$ItemType": "MeleeWeapon",
+        "ID": "Hammer of the Cosmos",
+        "Type": "Club",
+        "Texture": "weapons.png:0",
+        "MinimumDamage": 160,
+        "MaximumDamage": 210,
+        "Defense": 2,
+        "Speed": 3,
+        "Knockback": 0.6
+    }
+]

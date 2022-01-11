@@ -65,6 +65,11 @@ namespace DynamicGameAssets.PackData
         public ContentPack(IContentPack pack)
             : this(pack, pack.Manifest.UniqueID == "null" ? 1 : int.Parse(pack.Manifest.ExtraFields["DGA.FormatVersion"].ToString()), pack.Manifest.UniqueID == "null" ? null : new SemanticVersion(pack.Manifest.ExtraFields["DGA.ConditionsFormatVersion"].ToString())) { }
 
+        public IManifest GetManifest()
+        {
+            return smapiPack.Manifest;
+        }
+
         public List<CommonPackData> GetItems()
         {
             return new List<CommonPackData>(this.items.Values);

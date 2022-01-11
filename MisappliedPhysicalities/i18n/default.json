@@ -1,0 +1,24 @@
+﻿{
+    "config.placement-modifier.name": "Placement Modifier Key",
+    "config.placement-modifier.tooltip": "Used when placing some items.",
+
+    "tool.drill.name": "Drill",
+    "tool.drill.description": "It can clear space underground.\nMake sure you have your x-ray goggles on!",
+    "tool.wire-cutter.name": "Wire Cutter",
+    "tool.wire-cutter.description": "Connects connectors of the same type using metal bars for wires.\nCopper for power, iron for logic.",
+
+    "message.drill.need-goggles": "You need x-ray goggles on to use this!",
+    "message.wire-cutter.need-wire": "You need metal bars for the wire.",
+    "message.wire-cutter.wrong-wire": "The metal bar selected is incorrect for this connector.",
+    "message.wire-cutter.prep": "Preparing connection...",
+    "message.wire-cutter.placed": "Placed connection!",
+
+    "item.conveyor.name": "Conveyor Belt",
+    "item.conveyor.description": "Can move items around.\nCan be placed underground (when wearing x-ray goggles) or on scaffolding.\nLogic connectors below it can reverse the direction.\nlogic connectors on the sides will detect items on the conveyor.",
+    "item.unhopper.name": "Unhopper",
+    "item.unhopper.description": "Removes items from machines and places them onto nearby conveyor belts.\n(Starts with a conveyor beneath it underground, then goes to the west, south, and east, then goes above.",
+    "item.logic-connector.name": "Logic Connector",
+    "item.logic-connector.description": "Use wire cutters with iron to connect logic connectors.\nA connector will connect to the object in the direction you are facing.\nIf holding the run button, it will connect below.\nIf holding the Misapplied Physicalities Placement Modifier button\n(left ctrl by default, changeable in GMCM), it will connect above.",
+    "item.lever-block.name": "Lever Block",
+    "item.lever-block.description": "A block sending a logic signal on all sides.\n0 if lever is facing left, 1 if lever is facing right.",
+}

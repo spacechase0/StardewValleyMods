@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SpaceCore.Events;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
@@ -133,6 +134,8 @@ namespace SpaceCore.Interface
                             label: null, hoverText: Game1.content.LoadString("Strings\\StringsFromCSFiles:KeyToTheTown"),
                             texture: Game1.objectSpriteSheet, sourceRect: Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 912, iconWidth, iconWidth), scale: 4f, drawShadow: true));
                     }
+
+                    SpaceEvents.InvokeAddWalletItems( this );
                 }
 
                 // Wallet navigation arrows

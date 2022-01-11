@@ -6,9 +6,16 @@ using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
 
+#if IS_SPACECORE
+namespace SpaceCore.UI
+{
+    public
+#else
 namespace SpaceShared.UI
 {
-    internal class Scrollbar : Element
+    internal
+#endif
+         class Scrollbar : Element
     {
         /*********
         ** Fields

@@ -30,6 +30,16 @@ namespace DynamicGameAssets.Game
         {
             return Game1.parseText(this.Data.Description, Game1.smallFont, this.getDescriptionWidth());
         }
+
+        public override Item getOne()
+        {
+            var ret = new CustomHat(this.Data);
+            // TODO: All the other fields objects does??
+            ret.Stack = 1;
+            ret._GetOneFrom( this );
+            return ret;
+        }
+
         /*
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
