@@ -53,10 +53,8 @@ namespace DGAAutomate
         /// <summary>Get the custom machine recipes registered with Dynamic Game Assets.</summary>
         private IDictionary<string, List<MachineRecipePackData>> GetCustomMachineRecipes()
         {
-            var instance = DynamicGameAssets.Mod.instance;
-
             return this.Helper.Reflection
-                .GetField<Dictionary<string, List<MachineRecipePackData>>>(instance, "customMachineRecipes")
+                .GetField<Dictionary<string, List<MachineRecipePackData>>>(typeof(DynamicGameAssets.Mod), "customMachineRecipes")
                 .GetValue();
         }
     }
