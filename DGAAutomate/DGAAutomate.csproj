@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" Private="false" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
   </ItemGroup>
 
   <ItemGroup>
