@@ -103,7 +103,7 @@ namespace MoonMisadventures.Game.Locations
                             Game1.playSound( "questcomplete" );
                             ufoRepaired.Value = true;
                             TemporarySprites.Clear();
-                            base.TemporarySprites.Add( new TemporaryAnimatedSprite( ufoTexPath, new Rectangle( 0, 48, 96, 48 ), 100, 4, 99999, new Vector2( 20 * Game1.tileSize, 20 * Game1.tileSize ), false, false )
+                            base.TemporarySprites.Add( new TemporaryAnimatedSprite( ufoTexPath, new Rectangle( 0, 48, 96, 48 ), 100, Mod.instance.Config.FlashingUfo ? 4 : 1, 99999, new Vector2( 20 * Game1.tileSize, 20 * Game1.tileSize ), false, false )
                             {
                                 scale = 4f,
                             } );

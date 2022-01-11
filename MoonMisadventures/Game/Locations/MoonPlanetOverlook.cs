@@ -78,8 +78,10 @@ namespace MoonMisadventures.Game.Locations
                             if ( Game1.player.items[ sapphireSlot ].Stack-- == 1 )
                                 Game1.player.items[ sapphireSlot ] = null;
                             var necklace = new Necklace( PickCombatNecklace() );
-                            var debris = new Debris( necklace, new Vector2( Game1.player.getStandingX(), 128 ) );
-                            Game1.player.currentLocation.debris.Add( debris );
+                            //var debris = new Debris( necklace, new Vector2( Game1.player.getStandingX(), 128 ) );
+                            //Game1.player.currentLocation.debris.Add( debris );
+                            Game1.player.addItemByMenuIfNecessary(necklace);
+                            Game1.player.holdUpItemThenMessage(necklace);
                             Game1.playSound( "stardrop" );
                         }
                         return true;

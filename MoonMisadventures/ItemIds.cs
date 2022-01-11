@@ -23,9 +23,9 @@ namespace MoonMisadventures
         public const string GalaxyEgg = "spacechase0.MoonMisadventures/Galaxy Egg";
         public const string GalaxyMilk = "spacechase0.MoonMisadventures/Galaxy Milk";
 
-        public const string CosmosBoots = "pacechase0.MoonMisadventures/Boots of the Cosmos";
-        public const string CosmosSword = "pacechase0.MoonMisadventures/Blade of the Cosmos";
-        public const string CosmosDagger = "pacechase0.MoonMisadventures/Knife of the Cosmos";
-        public const string CosmosClub = "pacechase0.MoonMisadventures/Hammer of the Cosmos";
+        public const string CosmosBoots = "spacechase0.MoonMisadventures/Boots of the Cosmos";
+        public const string CosmosSword = "spacechase0.MoonMisadventures/Blade of the Cosmos";
+        public const string CosmosDagger = "spacechase0.MoonMisadventures/Knife of the Cosmos";
+        public const string CosmosClub = "spacechase0.MoonMisadventures/Hammer of the Cosmos";
     }
 }

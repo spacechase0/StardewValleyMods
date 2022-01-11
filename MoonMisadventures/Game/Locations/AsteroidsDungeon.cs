@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MoonMisadventures.Game.Locations.DungeonLevelGenerators;
+using MoonMisadventures.VirtualProperties;
 using Netcode;
 using StardewModdingAPI.Utilities;
 using StardewValley;
@@ -259,6 +260,13 @@ namespace MoonMisadventures.Game.Locations
 
             if ( isIndoorLevel )
                 Game1.background = null;
+
+            if ( level.Value == 10 )
+            {
+                Game1.addHUDMessage(new HUDMessage("Boss TO BE IMPLEMENTED, sorry! Enjoy the freebies in the chest!"));
+                Game1.addHUDMessage(new HUDMessage("You also obtained the lunar key!"));
+                Game1.player.team.get_hasLunarKey().Value = true;
+            }
         }
 
         protected override bool breakStone( int indexOfStone, int x, int y, Farmer who, Random r )
@@ -368,8 +376,13 @@ namespace MoonMisadventures.Game.Locations
             }
             else if ( action == "AsteroidsWarpNext" )
             {
-                string next = AsteroidsDungeon.BaseLocationName + ( level.Value + 1 );
-                performTouchAction( "MagicWarp " + next + " 0 0", Game1.player.getTileLocation() );
+                if (warpFromPrev == warpFromNext) // boss level
+                    performTouchAction("MagicWarp Custom_MM_MoonFarm 7 11", Game1.player.getTileLocation());
+                else
+                {
+                    string next = AsteroidsDungeon.BaseLocationName + (level.Value + 1);
+                    performTouchAction("MagicWarp " + next + " 0 0", Game1.player.getTileLocation());
+                }
             }
             else if ( action == "LunarTeleporterOffline" )
             {

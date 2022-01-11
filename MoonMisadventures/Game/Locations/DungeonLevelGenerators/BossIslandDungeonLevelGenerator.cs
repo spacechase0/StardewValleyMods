@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
+using MoonMisadventures.Game.Items;
+using StardewValley.Objects;
 using xTile;
 
 namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
@@ -19,6 +22,22 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             location.ApplyMapOverride( place, "island_boss", new Rectangle( 0, 0, place.Layers[ 0 ].LayerWidth, place.Layers[ 0 ].LayerHeight ), new Rectangle( offsetX, offsetY, place.Layers[ 0 ].LayerWidth, place.Layers[ 0 ].LayerHeight ) );
 
             warpFromPrev = warpFromNext = new Vector2( 24 + offsetX, 43 + offsetY );
+
+            PlaceNextWarp(location, offsetX + 23, offsetY + 17);
+
+            {
+                Vector2 position = new Vector2(offsetX + 24, offsetY + 24);
+                Chest chest = new Chest(playerChest: false, position);
+                chest.dropContents.Value = true;
+                chest.synchronized.Value = true;
+                chest.type.Value = "interactive";
+                chest.SetBigCraftableSpriteIndex(227);
+                chest.addItem(new DynamicGameAssets.Game.CustomObject(DynamicGameAssets.Mod.Find(ItemIds.SoulSapphire) as ObjectPackData));
+                chest.addItem(new Necklace(Necklace.Type.Lunar));
+                if (location.netObjects.ContainsKey(position))
+                    location.netObjects.Remove(position);
+                location.netObjects.Add(position, chest);
+            }
 
             location.PlaceSpaceTiles();
         }

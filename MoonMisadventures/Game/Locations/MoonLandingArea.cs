@@ -29,7 +29,7 @@ namespace MoonMisadventures.Game.Locations
 
             TemporarySprites.Clear();
 
-            base.TemporarySprites.Add( new TemporaryAnimatedSprite( ufoTexPath, new Rectangle( 0, 48, 96, 48 ), 100, 4, 99999, new Vector2( ( int )( 6.5f * Game1.tileSize ), 27 * Game1.tileSize ), false, false )
+            base.TemporarySprites.Add( new TemporaryAnimatedSprite( ufoTexPath, new Rectangle( 0, 48, 96, 48 ), 100, Mod.instance.Config.FlashingUfo ? 4 : 1, 99999, new Vector2( ( int )( 6.5f * Game1.tileSize ), 27 * Game1.tileSize ), false, false )
             {
                 scale = 4f,
             } );
@@ -65,7 +65,7 @@ namespace MoonMisadventures.Game.Locations
             {
                 if ( Game1.player.team.get_hasLunarKey() )
                 {
-                    // tODO
+                    Game1.warpFarmer("Custom_MM_MoonInfuserRoom", 15, 24, Game1.up);
                 }
                 else
                 {

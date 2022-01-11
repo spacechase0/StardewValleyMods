@@ -197,10 +197,18 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             }
         }
 
-        protected void PlaceMonsterAt( AsteroidsDungeon location, Random rand, int tx, int ty )
+        protected void PlaceMonsterAt(AsteroidsDungeon location, Random rand, int tx, int ty)
         {
-            location.characters.Add( new BoomEye( new Vector2( tx * Game1.tileSize, ty * Game1.tileSize ) ) );
-            // TODO: Place random assortment
+            switch (rand.Next(3))
+            {
+                case 0:
+                    location.characters.Add(new BoomEye(new Vector2(tx * Game1.tileSize, ty * Game1.tileSize)));
+                    break;
+                case 1:
+                case 2:
+                    location.characters.Add(new LunarSlime(new Vector2(tx * Game1.tileSize, ty * Game1.tileSize)));
+                    break;
+            }
         }
 
         protected void PlaceBreakableAt( AsteroidsDungeon location, Random rand, int tx, int ty )

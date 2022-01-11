@@ -572,7 +572,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                         int entriesW = pieceMap.Layers[ 0 ].LayerWidth / actualSize;
                         int entries = entriesW * pieceMap.Layers[ 0 ].LayerHeight / actualSize;
                         int entry = rand.Next( entries );
-                        entry = 1;
+                        //entry = 6;
                         int sourceX = entry % entriesW * actualSize;
                         int sourceY = entry / entriesW * actualSize;
 

@@ -15,4 +15,10 @@
     </ProjectReference>
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="asset-credits.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

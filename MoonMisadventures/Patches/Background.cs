@@ -138,26 +138,36 @@ namespace MoonMisadventures.Patches
 
             return ret;
         }
+    }
 
-        [HarmonyPatch( typeof( Game1 ), nameof( Game1.SetWindowSize ) )]
-        public static class Game1AddStencilToScreenPatch
+    [HarmonyPatch(typeof(Game1), nameof(Game1.SetWindowSize))]
+    public static class Game1AddStencilToScreenPatch
+    {
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insns, ILGenerator ilgen)
         {
-            public static IEnumerable<CodeInstruction> Transpiler( IEnumerable<CodeInstruction> insns, ILGenerator ilgen )
+            List<CodeInstruction> ret = new();
+
+            foreach (var insn in insns)
             {
-                List< CodeInstruction > ret = new();
-
-                foreach ( var insn in insns )
+                if (insn.opcode == OpCodes.Ldstr && insn.operand is string str && str == "Screen")
                 {
-                    if ( insn.opcode == OpCodes.Ldstr && insn.operand is string str && str == "Screen" )
-                    {
-                        ret[ ret.Count - 7 ].opcode = OpCodes.Ldc_I4_3;
-                    }
-
-                    ret.Add( insn );
+                    ret[ret.Count - 7].opcode = OpCodes.Ldc_I4_3;
                 }
 
-                return ret;
+                ret.Add(insn);
             }
+
+            return ret;
+        }
+    }
+
+    [HarmonyPatch( typeof( Game1 ), nameof( Game1.ShouldDrawOnBuffer ) )]
+    public static class Game1ForceRenderOnBufferOnMoonPatch
+    {
+        public static void Postfix( ref bool __result )
+        {
+            if (Game1.background is SpaceBackground)
+                __result = true;
         }
     }
 }

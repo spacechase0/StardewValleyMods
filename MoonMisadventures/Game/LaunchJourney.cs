@@ -125,7 +125,7 @@ namespace MoonMisadventures.Game
 
             if ( ufoStage == UfoStage.Finished && moonShake <= 0 && moonFrame == MaxMoonFrame && finishTime <= 0 )
             {
-                Game1.warpFarmer( "Custom_MP_MoonLandingArea", 9, 31, 0 );
+                Game1.warpFarmer( "Custom_MM_MoonLandingArea", 9, 31, 0 );
                 return true;
             }
 

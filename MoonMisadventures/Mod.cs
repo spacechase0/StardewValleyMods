@@ -43,6 +43,7 @@ namespace MoonMisadventures
     public class Mod : StardewModdingAPI.Mod, IAssetLoader
     {
         public static Mod instance;
+        public Configuration Config;
         internal static IDynamicGameAssetsApi dga;
         internal static ContentPack dgaPack;
 
@@ -77,12 +78,15 @@ namespace MoonMisadventures
             Log.Monitor = Monitor;
             instance = this;
 
+            Config = Helper.ReadConfig<Configuration>();
+
             Assets.Load( helper.Content );
             SoundEffect mainMusic = SoundEffect.FromFile( Path.Combine( Helper.DirectoryPath, "assets", "into-the-spaceship.wav" ) );
             Game1.soundBank.AddCue( new CueDefinition( "into-the-spaceship", mainMusic, 2, loop: true ) );
 
             Helper.ConsoleCommands.Add( "mm_items", "View all items added by this mod.", OnItemsCommand );
             Helper.ConsoleCommands.Add( "mm_key", "Gives you the lunar key.", OnKeyCommand );
+            Helper.ConsoleCommands.Add( "mm_infuse", "Opens the celestial infuser menu.", OnInfuseCommand );
 
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             Helper.Events.GameLoop.TimeChanged += OnTimeChanged;
@@ -151,13 +155,25 @@ namespace MoonMisadventures
             Game1.activeClickableMenu = new ShopMenu( stock );
         }
 
-        private void OnKeyCommand( string arg1, string[] arg2 )
+        private void OnKeyCommand( string cmd, string[] args )
         {
             Game1.player.team.get_hasLunarKey().Value = true;
         }
 
+        private void OnInfuseCommand( string cmd, string[] args )
+        {
+            if (!Context.IsPlayerFree)
+                return;
+
+            Game1.activeClickableMenu = new InfuserMenu();
+        }
+
         private void OnGameLaunched( object sender, GameLaunchedEventArgs e )
         {
+            var gmcm = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            gmcm.Register(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config), true );
+            gmcm.AddBoolOption(ModManifest, () => Config.FlashingUfo, (b) => Config.FlashingUfo = b, () => Helper.Translation.Get("config.flashing-ufo.name"), () => Helper.Translation.Get("config.flashing-ufo.description"));
+
             var sc = Helper.ModRegistry.GetApi< ISpaceCoreApi >( "spacechase0.SpaceCore" );
             sc.RegisterSerializerType( typeof( MountainTop ) );
             sc.RegisterSerializerType( typeof( LunarLocation ) );
@@ -175,6 +191,8 @@ namespace MoonMisadventures
             sc.RegisterSerializerType( typeof( MoonPlanetOverlook ) );
             sc.RegisterSerializerType( typeof( UfoInterior ) );
             sc.RegisterSerializerType( typeof( LunarFarmHouse ) );
+            sc.RegisterSerializerType( typeof( MoonInfuserRoom ) );
+            sc.RegisterSerializerType( typeof( LunarSlime ) );
             sc.RegisterCustomLocationContext( "Moon",
                 getLocationWeatherForTomorrowFunc: ( r ) =>
                 {
@@ -193,8 +211,6 @@ namespace MoonMisadventures
             dga = Helper.ModRegistry.GetApi<IDynamicGameAssetsApi>( "spacechase0.DynamicGameAssets" );
             dga.AddEmbeddedPack( this.ModManifest, Path.Combine( Helper.DirectoryPath, "assets", "dga" ) );
             dgaPack = DynamicGameAssets.Mod.GetPacks().First( cp => cp.GetManifest().UniqueID == ModManifest.UniqueID );
-
-            var gmcm = Helper.ModRegistry.GetApi< IGenericModConfigMenuApi >( "spacechase0.GenericModConfigMenu" );
         }
 
         private void OnTimeChanged( object sender, TimeChangedEventArgs e )
@@ -271,6 +287,7 @@ namespace MoonMisadventures
                 Game1.locations.Add( new MoonPlanetOverlook( Helper.Content ) );
                 Game1.locations.Add( new UfoInterior( Helper.Content ) );
                 Game1.locations.Add( new LunarFarmHouse( Helper.Content ) );
+                Game1.locations.Add( new MoonInfuserRoom( Helper.Content ) );
             }
         }
 
@@ -354,6 +371,11 @@ namespace MoonMisadventures
         {
             if ( e.OldLocation is LunarLocation ^ e.NewLocation is LunarLocation )
                 Helper.Content.InvalidateCache( "TerrainFeatures/hoeDirt" );
+
+            if ( e.NewLocation?.NameOrUniqueName == "Mine" )
+            {
+                e.NewLocation.setMapTile(43, 10, 173, "Buildings", "Warp 21 39 Custom_MM_MountainTop", 1);
+            }
         }
 
         private void AddWalletItems( object sender, EventArgs e )
