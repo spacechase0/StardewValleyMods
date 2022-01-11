@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.8.0
+Release 11 January 2022 for SMAPI 3.13.0 or later.
+
+* A bunch of stuff that Moon Misadventures needed. TODO: Go through commits and figure out what
+
 ## 1.7.3
 Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
