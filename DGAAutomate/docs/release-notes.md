@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.0.4
+Released 10 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Fixed error accessing Dynamic Game Assets' custom recipes.
+* Fixed `SpaceCore.dll` bundled into the download.
+
 ## 1.0.3
 Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

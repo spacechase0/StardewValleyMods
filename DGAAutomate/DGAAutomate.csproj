@@ -3,7 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" Private="false" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
   </ItemGroup>
 
   <ItemGroup>
