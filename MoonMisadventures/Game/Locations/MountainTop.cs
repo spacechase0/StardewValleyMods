@@ -127,7 +127,7 @@ namespace MoonMisadventures.Game.Locations
                         }
                         else
                         {
-                            Game1.warpFarmer( "Custom_MP_MoonLandingArea", 9, 31, 0 );
+                            Game1.warpFarmer( "Custom_MM_MoonLandingArea", 9, 31, 0 );
                         }
                         return true;
                 }
