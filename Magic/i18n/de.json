@@ -134,11 +134,11 @@
     "config.altar-placement": "Altar Platzierung",
     "config.radio-placement": "Radio Platzierung",
     "config.location.name": "Position",
-    "config.location.tooltip": "The internal name of the location where it should be placed, as shown by the Debug Mode mod.",
+    "config.location.tooltip": "Die offizielle Bezeichnung des Ortes, an dem er/es platziert werden soll. Die richtige Bezeichnung kann man sich von der Debug Mode Mod angezeigen lassen.",
     "config.x.name": "X Position",
-    "config.x.tooltip": "Die X-Kachelposition, an der es platziert werden soll, wie vom Debug-Modus-Mod gezeigt.",
+    "config.x.tooltip": "Die X-Kachelposition, an der er/es platziert werden soll. Die richtige Position kann man sich von der Debug Mode Mod angezeigen lassen.",
     "config.y.name": "Y Position",
-    "config.y.tooltip": "Die Y-Kachelposition, an der es platziert werden soll, wie vom Debug-Modus-Mod gezeigt.",
+    "config.y.tooltip": "Die Y-Kachelposition, an der er/es platziert werden soll. Die richtige Position kann man sich von der Debug Mode Mod angezeigen lassen.",
     "config.x-or-y.automatic-position": "automatisch",
 
     // controls
