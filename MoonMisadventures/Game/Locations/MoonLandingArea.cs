@@ -82,7 +82,7 @@ namespace MoonMisadventures.Game.Locations
                 switch ( qa )
                 {
                     case "TravelUfo_Yes":
-                        Game1.warpFarmer( "Custom_MP_MountainTop", 22, 23, 0 );
+                        Game1.warpFarmer( "Custom_MM_MountainTop", 22, 23, 0 );
                         return true;
                 }
             }
