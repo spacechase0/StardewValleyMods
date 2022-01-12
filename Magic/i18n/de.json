@@ -35,20 +35,19 @@
     /*********
     ** TV channel
     *********/
-    "tv.analyzehints.name": "Magische Analytik",
-    "tv.analyzehints.notmagical": "*rauschen*",
-    "tv.analyzehints.1": "Möchten Sie Magie verwenden, um auf der Farm zu arbeiten? Versuchen Sie, Ihre Werkzeuge zu analysieren.",
-    "tv.analyzehints.2": "Sie müssen manchmal schnell flüchten? Ich frage mich, ob manche Stiefel Sie etwas dazu inspirieren können.",
-    "tv.analyzehints.3": "Sonnenlicht ist ziemlich schön, aber nicht immer verfügbar. Ich frage mich, ob künstliches Licht nachgebildet werden kann?",
-    "tv.analyzehints.4": "Einige standard Mineralien scheinen magische Energie zu enthalten.",
-    "tv.analyzehints.5": "Neulich ist ein Meteor in meinen Garten gestürtzt. Er erschien wirklich mysteriös.",
-    "tv.analyzehints.6": "Kaffee ist lecker. Warum nicht seine Wirkung mit einem Zauberspruch wiederherstellen?",
-    "tv.analyzehints.7": "Neulich habe ich gesehen, wie jemand Wurzeln aus dem Boden sprießt gelassen hat und ein Monster daran gehindert, sich zu bewegen...",
-    "tv.analyzehints.8": "Ich wette, Sie könnten einen Frostbolzen abfeuern, um etwas zu verlangsamen. Ich frage mich, wo man Eis studieren könnte...?",
-    "tv.analyzehints.9": "Ich habe neulich einen dunklen Altar in einem Haus gesehen. Nun, ich sage 'Haus'. Es war eher eine Hütte.",
-    "tv.analyzehints.10": "Heiltränke sind sicher unpraktisch zum Mitnehmen. Vielleicht können wir uns mit Magie heilen?",
-    "tv.analyzehints.11": "Die meisten Leute benutzen Leitern, um in den Untergrund abzusteigen, aber ich habe gesehen, wie eine Person einen Zauber gewirkt hat und quer durch den Boden gesaust ist.",
-    "tv.analyzehints.12": "Ich habe gesehen, wie jemand einen Zauber gewirkt hat, um Mana zurückzugewinnen!? Es sah aus, als ob es weh tat. Gerüchten zufolge kann man diese Technik beim Fischen nach Lavaaalen erlernen.",
+    "radio.static": "*rauschen*",
+    "radio.analyzehints.1": "Möchten Sie Magie verwenden, um auf der Farm zu arbeiten? Versuchen Sie, Ihre Werkzeuge zu analysieren.",
+    "radio.analyzehints.2": "Sie müssen manchmal schnell flüchten? Ich frage mich, ob manche Stiefel Sie etwas dazu inspirieren können.",
+    "radio.analyzehints.3": "Sonnenlicht ist ziemlich schön, aber nicht immer verfügbar. Ich frage mich, ob künstliches Licht nachgebildet werden kann?",
+    "radio.analyzehints.4": "Einige standard Mineralien scheinen magische Energie zu enthalten.",
+    "radio.analyzehints.5": "Neulich ist ein Meteor in meinen Garten gestürtzt. Er erschien wirklich mysteriös.",
+    "radio.analyzehints.6": "Kaffee ist lecker. Warum nicht seine Wirkung mit einem Zauberspruch wiederherstellen?",
+    "radio.analyzehints.7": "Neulich habe ich gesehen, wie jemand Wurzeln aus dem Boden sprießt gelassen hat und ein Monster daran gehindert, sich zu bewegen...",
+    "radio.analyzehints.8": "Ich wette, Sie könnten einen Frostbolzen abfeuern, um etwas zu verlangsamen. Ich frage mich, wo man Eis studieren könnte...?",
+    "radio.analyzehints.9": "Ich habe neulich einen dunklen Altar in einem Haus gesehen. Nun, ich sage 'Haus'. Es war eher eine Hütte.",
+    "radio.analyzehints.10": "Heiltränke sind sicher unpraktisch zum Mitnehmen. Vielleicht können wir uns mit Magie heilen?",
+    "radio.analyzehints.11": "Die meisten Leute benutzen Leitern, um in den Untergrund abzusteigen, aber ich habe gesehen, wie eine Person einen Zauber gewirkt hat und quer durch den Boden gesaust ist.",
+    "radio.analyzehints.12": "Ich habe gesehen, wie jemand einen Zauber gewirkt hat, um Mana zurückzugewinnen!? Es sah aus, als ob es weh tat. Gerüchten zufolge kann man diese Technik beim Fischen nach Lavaaalen erlernen.",
 
 
     /*********
@@ -131,13 +130,19 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    "config.altar-location.name": "Altar Position",
-    "config.altar-location.tooltip": "Der (interne) Name des Ortes, an dem der Zauberaltar aufgestellt werden soll.",
-    "config.altar-x.name": "Altar X",
-    "config.altar-x.tooltip": "Die X-Kachelposition, an der der magische Altar platziert werden soll.",
-    "config.altar-y.name": "Altar Y",
-    "config.altar-y.tooltip": "Die Y-Kachelposition, an der der magische Altar platziert werden soll.",
+    // altar and radio placement
+    "config.altar-placement": "Altar Platzierung",
+    "config.radio-placement": "Radio Platzierung",
+    "config.location.name": "Position",
+    "config.location.tooltip": "The internal name of the location where it should be placed, as shown by the Debug Mode mod.",
+    "config.x.name": "X Position",
+    "config.x.tooltip": "Die X-Kachelposition, an der es platziert werden soll, wie vom Debug-Modus-Mod gezeigt.",
+    "config.y.name": "Y Position",
+    "config.y.tooltip": "Die Y-Kachelposition, an der es platziert werden soll, wie vom Debug-Modus-Mod gezeigt.",
+    "config.x-or-y.automatic-position": "automatisch",
 
+    // controls
+	"config.controls": "Steuerung",
     "config.cast-key.name": "Taste: Zaubern",
     "config.cast-key.tooltip": "Die Taste zur Nutzung eines Zauberspruchs.",
     "config.swap-spells-key.name": "Taste: Tausche Zauberleiste",
