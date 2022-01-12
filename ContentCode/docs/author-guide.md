@@ -15,7 +15,6 @@ This document helps mod authors create a content pack using C# snippets.
 * [Code events](#code-events)
   * [Save loaded](#save-loaded)
   * [Map action](#map-action)
-  * [Map touch action](#map-touch-action)
 * [Example snippets](#example-snippets)
 * [See also](#see-also)
 
@@ -185,9 +184,10 @@ For example:
 ```
 
 ### Map action
-Edit `spacechase0.ContentCode/Action` to add a custom `Action` [map
-property](https://stardewvalleywiki.com/Modding:Maps) which you can use in your maps. (An `Action`
-property is triggered when the player clicks on the tile using it.)
+Edit `spacechase0.ContentCode/Action` or `spacechase0.ContentCode/TouchAction` to add a custom
+`Action` or `TouchAction` [map property](https://stardewvalleywiki.com/Modding:Maps) which you can
+use in your maps. These are equivalent, except that `Action` is triggered when the player clicks on
+the tile and `TouchAction` is triggered when they step on it.
 
 The key should be your mod ID and an action name, separated with a slash.
 
@@ -206,7 +206,10 @@ For example:
             "Entries": {
                 "Example.YourModID/TestAction": "
                     var cursor = Game1.currentCursorTile;
+                    var tile = Game1.player.getTileLocation();
+
                     Game1.drawObjectDialogue(`Your cursor is at {cursor.X}, {cursor.Y}!`);
+                    Game1.drawObjectDialogue($`You're standing on {tile.X}, {tile.Y}!`);
                 "
             }
         }
@@ -216,36 +219,6 @@ For example:
 
 When adding the action to a map, use the entire key (including your mod ID) like in the [intro
 example](#intro).
-
-### Map touch action
-Edit `spacechase0.ContentCode/TouchAction` to add a custom `TouchAction` [map
-property](https://stardewvalleywiki.com/Modding:Maps) which you can use in your maps. (A
-`TouchAction` property is triggered when the walks onto the tile using it.)
-
-The key should be your mod ID and an action name, separated with a slash.
-
-If your action has any arguments, you can read them using the `actionString` variable. You can also
-split it like `string[] args = actionString.Split(' ')` and read individual arguments like `args[0]`.
-
-For example:
-
-```js
-{
-    "Format": "1.24.0",
-    "Changes": [
-        {
-            "Action": "EditData",
-            "Target": "spacechase0.ContentCode/TouchAction",
-            "Entries": {
-                "Example.YourModID/TestTouchAction": "
-                    var tile = Game1.player.getTileLocation();
-                    Game1.drawObjectDialogue($`You're standing on {tile.X}, {tile.Y}!`);
-                "
-            }
-        }
-    ]
-}
-```
 
 ## Example snippets
 See also _[common tasks](https://stardewvalleywiki.com/Modding:Common_tasks)_ on the wiki.
