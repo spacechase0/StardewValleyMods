@@ -36,12 +36,8 @@ namespace ContentPatcherAnimations
         /// <summary>The number of ticks between each cleanup of expired tracked asset names.</summary>
         private const int ExpiryTicks = 5 * 60 * 60; // 5 minutes
 
-
-        /*********
-        ** Accessors
-        *********/
         /// <summary>The current mod state.</summary>
-        internal ScreenState ScreenState => this.ScreenStateImpl.Value;
+        private ScreenState ScreenState => this.ScreenStateImpl.Value;
 
 
         /*********
@@ -54,6 +50,7 @@ namespace ContentPatcherAnimations
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
+            LocalizedContentManager.OnLanguageChange += this.OnLocaleChanged;
 
             helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor(() => this.ScreenState.AnimatedPatches));
 
@@ -100,6 +97,13 @@ namespace ContentPatcherAnimations
         {
             IModInfo modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
             this.ContentPatcher = this.GetPropertyValueManually<StardewModdingAPI.Mod>(modData, "Mod");
+        }
+
+        /// <summary>Raised after the game's selected language changes.</summary>
+        /// <param name="code">The new language code.</param>
+        private void OnLocaleChanged(LocalizedContentManager.LanguageCode code)
+        {
+            this.ScreenState.OnLocaleChanged(code);
         }
 
         /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>

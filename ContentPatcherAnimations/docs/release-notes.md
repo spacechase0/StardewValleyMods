@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Fixed some animations not applied when not playing in English.
+
 ## 1.2.1
 Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
