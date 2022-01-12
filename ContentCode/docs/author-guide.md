@@ -224,6 +224,8 @@ example](#intro).
 See also _[common tasks](https://stardewvalleywiki.com/Modding:Common_tasks)_ on the wiki.
 
 ### Show a dialogue box
+See [dialogue modding](https://stardewvalleywiki.com/Modding:Dialogue) on the wiki.
+
 <table>
 <tr>
 <th>code</th>
@@ -255,6 +257,8 @@ Game1.drawDialogue(abigail, `The message to display`);
 </table>
 
 ### Show a custom letter
+See [mail modding](https://stardewvalleywiki.com/Modding:Mail_data) on the wiki.
+
 <table>
 <tr>
 <th>code</th>
@@ -276,7 +280,7 @@ Game1.drawLetterMessage(`The letter text to display`);
 
 
 ### Give player an item
-See _[object data](https://stardewvalleywiki.com/Modding:Object_data)_ on the wiki for item IDs.
+See [object data](https://stardewvalleywiki.com/Modding:Object_data) on the wiki for item IDs.
 
 <table>
 <tr>
