@@ -147,20 +147,20 @@ namespace SpaceShared
         /// <param name="monitor">The monitor with which to log errors.</param>
         public static TInterface GetApi<TInterface>(this IModRegistry modRegistry, string uniqueId, string label, string minVersion, IMonitor monitor) where TInterface : class
         {
-            // fetch info
+            // fetch mod info
             IManifest manifest = modRegistry.Get(uniqueId)?.Manifest;
             if (manifest == null)
                 return null;
-            TInterface api = modRegistry.GetApi<TInterface>(uniqueId);
 
-            // check version
+            // check mod version
             if (manifest.Version.IsOlderThan(minVersion))
             {
                 monitor.Log($"Detected {label} {manifest.Version}, but need {minVersion} or later. Disabled integration with this mod.", LogLevel.Warn);
                 return null;
             }
 
-            // check API
+            // fetch API
+            TInterface api = modRegistry.GetApi<TInterface>(uniqueId);
             if (api == null)
             {
                 monitor.Log($"Detected {label}, but couldn't fetch its API. Disabled integration with this mod.", LogLevel.Warn);

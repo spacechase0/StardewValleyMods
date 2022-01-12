@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming version
+* Fixed version check for Generic Mod Config Menu not working with some older versions
+
 ## 1.1.0
 Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
