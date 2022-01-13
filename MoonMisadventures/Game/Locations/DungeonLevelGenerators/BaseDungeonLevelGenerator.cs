@@ -25,7 +25,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
         protected string GetPreviousLocationName( AsteroidsDungeon location )
         {
             if ( location.level.Value == 1 )
-                return "Custom_MP_MoonAsteroidsEntrance";
+                return "Custom_MM_MoonAsteroidsEntrance";
             return AsteroidsDungeon.BaseLocationName + ( location.level.Value - 1 );
         }
 

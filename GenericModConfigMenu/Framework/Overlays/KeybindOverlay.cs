@@ -33,6 +33,10 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <summary>The button which clears the keybind when clicked.</summary>
         private ClickableTextureComponent ClearButton;
 
+        /// <summary>Whether to reset the layout on the next update tick.</summary>
+        /// <remarks>This defers resetting the layout until the menu is drawn, so the positions take into account UI scaling.</remarks>
+        private bool ShouldResetLayout;
+
 
         /*********
         ** Accessors
@@ -52,7 +56,7 @@ namespace GenericModConfigMenu.Framework.Overlays
             this.Option = option;
             this.Label = label;
 
-            this.ResetLayout();
+            this.ShouldResetLayout = true;
         }
 
         /// <inheritdoc />
@@ -73,12 +77,15 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <inheritdoc />
         public void OnWindowResized()
         {
-            this.ResetLayout();
+            this.ShouldResetLayout = true;
         }
 
         /// <inheritdoc />
         public void OnLeftClick(int x, int y)
         {
+            if (this.ShouldResetLayout)
+                return;
+
             if (this.ClearButton.containsPoint(x, y))
             {
                 Game1.playSound("coin");
@@ -95,6 +102,13 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <inheritdoc />
         public void Draw(SpriteBatch spriteBatch)
         {
+            // reset layout if needed
+            if (this.ShouldResetLayout)
+            {
+                this.ResetLayout();
+                this.ShouldResetLayout = false;
+            }
+
             // background
             spriteBatch.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
             IClickableMenu.drawTextureBox(spriteBatch, this.Bounds.X, this.Bounds.Y, this.Bounds.Width, this.Bounds.Height, Color.White);

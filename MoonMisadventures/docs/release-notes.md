@@ -1,6 +1,23 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 0.1.4
+Released 12 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Added min-version check for integration with Generic Mod Config Menu.
+* Fixed error if Generic Mod Config Menu isn't installed.
+* Improved translations. Thanks to Evexyron (added Spanish) and Scartiana (added German)!
+
+## 0.1.3
+Released 12 January 2022 for SMAPI 3.13.0 or later.
+
+* Fixed some more warp issues.
+
+## 0.1.2
+Released 11 January 2022 for SMAPI 3.13.0 or later.
+
+* Fixed some warp issues.
+
 ## 0.1.1
 Released 11 January 2022 for SMAPI 3.13.0 or later.
 

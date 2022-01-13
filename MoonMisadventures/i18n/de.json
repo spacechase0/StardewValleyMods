@@ -1,0 +1,76 @@
+﻿{
+    /*********
+    ** Items
+    *********/
+    // tools
+    "tool.axe.radioactive": "Radioaktive Axt",
+    "tool.axe.mythicite": "Mythische Axt",
+    "tool.wcan.radioactive": "Radioaktive Gießkanne",
+    "tool.wcan.mythicite": "Mythische Gießkanne",
+    "tool.pick.radioactive": "Radioaktive Spitzhacke",
+    "tool.pick.mythicite": "Mythische Spitzhacke",
+    "tool.hoe.radioactive": "Radioaktive Hacke",
+    "tool.hoe.mythicite": "Mythische Hacke",
+    "tool.animal-gauntlets.name": "Anti-Schwerkraft-Stulpen",
+    "tool.animal-gauntlets.description": "Kann Tiere aufheben und bewegen... wenn auf dem Mond.",
+    "tool.animal-gauntlets.holding": "Hält derzeit:",
+    "tool.animal-gauntlets.moon-requirement": "Muss auf dem Mond sein.",
+
+    // items
+    "item.lunar-key.name": "Mondschlüssel",
+    "item.necklace.Looting.name": "Halskette der Plünderung",
+    "item.necklace.Looting.description": "Erhalte Gold basierend auf der maximalen Gesundheit der Gegner, die du tötest.",
+    "item.necklace.Shocking.name": "Schock-Halskette",
+    "item.necklace.Shocking.description": "Verursacht nach dem Angriff einen kurzen Schaden über Zeit-Effekt.",
+    "item.necklace.Speed.name": "Halskette der Geschwindigkeit",
+    "item.necklace.Speed.description": "Erhöht deine Geschwindigkeit.",
+    "item.necklace.Health.name": "Halskette der Gesundheit",
+    "item.necklace.Health.description": "Erhöht deine maximale Gesundheit um 50%.",
+    "item.necklace.Cooling.name": "Halskette der Abkühlung",
+    "item.necklace.Cooling.description": "Kühlt Lavafelder im Vulkan um dich herum ab.",
+    "item.necklace.Lunar.name": "Mondhalskette",
+    "item.necklace.Lunar.description": "Hebt Magneteffekte auf, die graue Asteroiden anziehen.",
+    "item.necklace.Water.name": "Halskette des Wassers",
+    "item.necklace.Water.description": "Bewässert den Boden, während man ihn umgräbt.",
+    "item.necklace.Sea.name": "Halskette des Meeres",
+    "item.necklace.Sea.description": "Erhöht die Angeleffizienz erheblich.",
+
+    // item enchantments
+    "tooltip.persists": "Kann beim Tod nicht verloren werden.",
+
+
+    /*********
+    ** Monsters
+    *********/
+    "monster.boom-eye.name": "Boom Auge",
+    "monster.lunar-slime.name": "Mondschleim",
+
+
+    /*********
+    ** Interactions
+    *********/
+    // UFO
+    "message.ufo.repair": "Repariere das UFO für 10 radioaktive Barren und 1 Galaxieseele?",
+    "message.ufo.repair.lacking": "Du hast nicht genug Materialien.",
+    "message.ufo.travel": "An Bord des UFOs gehen?",
+
+    // moon
+    "message.gargoyle": "Streichle den... Gargoyle? Wer weiß, was passieren wird?",
+    "message.dirt-tutorial": "Wenn man nur ein Werkzeug hätte, um das Ende abzubrechen und weiterzumachen...",
+    "message.lunar-teleporter-offline": "Es sieht offline aus. Vielleicht braucht es mythisches Erz.",
+    "message.lunar-temple.locked": "Es ist verschlossen.",
+    "message.necklace-exchange": "Tausche 1 Mondhalskette und 1 Seelen-Saphir gegen eine beliebige Halskette? (7 Typen insgesamt exklusive Mondhalskette)",
+    "message.necklace-exchange.lacking": "Du hast die Materialien nicht.",
+    "message.planet.jump": "Springen?",
+    "message.farm.crystal-lock": "Es könnte mit etwas mythischem Erz wachsen.",
+    "message.infuser.1": "Der himmlische Infusor, Teil 1.^Er kann Werkzeuge verzaubern und erlaubt dir, bis zu 2 primäre Verzauberungen zu speichern^(Wenn bereits zwei vorhanden sind, wird nur die zweite verändert).",
+    "message.infuser.2": "Der himmlische Infusor, Teil 2.^Er kann eine Waffe mit unendlichem Potenzial mit der Energie eines Seelen-Saphirs in ihre wahre Form verwandeln.",
+    "message.infuser.3": "Der himmlische Infusor, Teil 2.^Er kann jeden Gegenstand mit einem bestimmten Staub verstärken, so dass er auch nach dem Tod bei dir bleibt.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.flashing-ufo.name": "Blinkendes UFO",
+    "config.flashing-ufo.description": "Ob das reparierte UFO blinkende Lichter hat oder nicht."
+}

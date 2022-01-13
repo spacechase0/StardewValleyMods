@@ -390,7 +390,7 @@ namespace DynamicGameAssets.Game
                 this.harvestMethod.Value = this.GetCurrentPhase().Scythable ? Crop.sickleHarvest : Crop.grabHarvest;
                 this.raisedSeeds.Value = this.GetCurrentPhase().Trellis;
 
-                if (this.Data.GiantTextureChoices != null && environment is Farm && (int)this.currentPhase == this.phaseDays.Count - 1 /*&& ( ( int ) this.indexOfHarvest == 276 || ( int ) this.indexOfHarvest == 190 || ( int ) this.indexOfHarvest == 254 )*/ && OneTimeRandom_GetDouble.Invoke<double>(Game1.uniqueIDForThisGame, Game1.stats.DaysPlayed, (ulong)xTile, (ulong)yTile) < this.Data.GiantChance)
+                if (this.Data.GiantTextureChoices != null /*&& environment is Farm*/ && (int)this.currentPhase == this.phaseDays.Count - 1 /*&& ( ( int ) this.indexOfHarvest == 276 || ( int ) this.indexOfHarvest == 190 || ( int ) this.indexOfHarvest == 254 )*/ && OneTimeRandom_GetDouble.Invoke<double>(Game1.uniqueIDForThisGame, Game1.stats.DaysPlayed, (ulong)xTile, (ulong)yTile) < this.Data.GiantChance)
                 {
                     for (int x2 = xTile - 1; x2 <= xTile + 1; x2++)
                     {
@@ -411,7 +411,7 @@ namespace DynamicGameAssets.Game
                             (environment.terrainFeatures[v3] as HoeDirt).crop = null;
                         }
                     }
-                    (environment as Farm).resourceClumps.Add(new CustomGiantCrop(this.Data, new Vector2(xTile - 1, yTile - 1)));
+                    (environment /*as Farm*/).resourceClumps.Add(new CustomGiantCrop(this.Data, new Vector2(xTile - 1, yTile - 1)));
                 }
             }
             /*if ( ( !this.fullyGrown || ( int ) this.dayOfCurrentPhase <= 0 ) && ( int ) this.currentPhase >= this.phaseDays.Count - 1 && ( int ) this.rowInSpriteSheet == 23 )

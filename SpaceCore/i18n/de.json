@@ -1,0 +1,7 @@
+﻿{
+    // Generic Mod Config Menu UI
+    "config.custom-skill-page.name": "Seite für benutzerdefinierte Fähigkeiten",
+    "config.custom-skill-page.tooltip": "Ob die Seite mit benutzerdefinierten Fähigkeiten angezeigt werden soll.\nDadurch wird die Brieftasche verschoben, sodass Platz für weitere Fähigkeiten ist.",
+    "config.support-all-professions-mod.name": "Unterstütze alle Berufe Mods.",
+    "config.support-all-professions-mod.tooltip": "Wenn -All Professions- installiert ist, ob benutzerdefinierte Berufe, die über -SpaceCore- registriert wurden, automatisch angewendet werden sollen, wenn ihre Stufe erreicht ist."
+}

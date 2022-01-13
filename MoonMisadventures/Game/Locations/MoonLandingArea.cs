@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using MoonMisadventures.VirtualProperties;
@@ -52,7 +47,7 @@ namespace MoonMisadventures.Game.Locations
             int xTile = tileLocation.X, yTile = tileLocation.Y;
             if ( xTile >= 7 && xTile <= 11 && yTile >= 28 && yTile <= 29 )
             {
-                createQuestionDialogue( Mod.instance.Helper.Translation.Get( "message.ufo.travel" ), createYesNoResponses(), "TravelUfo" );
+                createQuestionDialogue(I18n.Message_Ufo_Travel(), createYesNoResponses(), "TravelUfo" );
                 return true;
             }
 
@@ -69,7 +64,7 @@ namespace MoonMisadventures.Game.Locations
                 }
                 else
                 {
-                    Game1.drawObjectDialogue( Mod.instance.Helper.Translation.Get( "message.lunar-temple.locked" ) );
+                    Game1.drawObjectDialogue(I18n.Message_LunarTemple_Locked());
                 }
             }
             return base.performAction( action, who, tileLocation );
@@ -82,7 +77,7 @@ namespace MoonMisadventures.Game.Locations
                 switch ( qa )
                 {
                     case "TravelUfo_Yes":
-                        Game1.warpFarmer( "Custom_MP_MountainTop", 22, 23, 0 );
+                        Game1.warpFarmer( "Custom_MM_MountainTop", 22, 23, 0 );
                         return true;
                 }
             }

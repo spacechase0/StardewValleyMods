@@ -1,0 +1,152 @@
+﻿{
+    /*********
+    ** General text
+    *********/
+    // HUD messages
+    "spell.learn": "Du hast einen Zauberspruch erlernt: {{spellName}}",
+    "spell.learn.ancient": "Du hast einen alten Zauberspruch erlernt: {{spellName}}",
+
+    // menu tooltips
+    "tooltip.spell.known": "Klicke und ziehe, um {{spell}} in deine Zauberleiste auf der rechten Seite hinzuzufügen.",
+    "tooltip.spell.can-learn": "Klicke hier, um einen freien Punkt auszugeben und {{spell}} zu erlernen.",
+    "tooltip.spell.need-free-points": "Du besitzt keine freien Punkte um {{spell}} zu erlernen.",
+    "tooltip.spell.need-previous-levels": "Du musst zuerst die vorherigen Zauberstufen erlernen.",
+    "tooltip.spell.name-and-level": "{{spellName}} Level {{level}}",
+
+    // altar
+    "altar.click-message": "Ein leuchtender Altar.",
+
+
+    /*********
+    ** Wizard learn-magic event
+    *********/
+    "event.wizard.1": "Es ist Zeit für dich, die Wege der Magie zu erlernen.",
+    "event.wizard.2": "Ich habe... den Yoba-Altar in Pierres Laden für dich angepasst.",
+    "event.wizard.3": "Ich werde dir die Grundlagen der arkanen Magie beibringen, aber den Rest musst du selbst herraus finden.",
+    "event.wizard.4": "Der arkane Zauber 'Analysieren' kann verwendet werden, um die meisten Zaubersprüche zu entdecken. Bestimmte mächtigere Zauber müssen jedoch auf andere Weise entdeckt werden.",
+    "event.wizard.5": "Jeder Magietyp hat 3 normale Zaubersprüche und einen vierten uralten Zauberspruch. Selbst ich weiß nicht, wo diese Zaubersprüche zu finden sind.",
+    "event.wizard.6": "Um dir den Einstieg zu erleichtern, gebe ich dir einen Hinweis. Versuche, Analyze auf deiner Gießkanne zu verwenden.",
+    "event.wizard.7": "(Um mit dem Wirken eines Zauberspruchs zu beginnen, drücke Q. Drücke dann 1-4, um den jeweiligen Zauberspruch auszuwählen.)",
+    "event.wizard.8": "(Drücke die TAB Taste, um zwischen den Zauberleisten zu wechseln.)",
+    "event.wizard.9": "(Diese Steuerelemente können in der Konfigurationsdatei von Magic angepasst werden.)",
+    "event.wizard.abovehead": "MAGIE",
+
+
+    /*********
+    ** TV channel
+    *********/
+    "radio.static": "*rauschen*",
+    "radio.analyzehints.1": "Möchten Sie Magie verwenden, um auf der Farm zu arbeiten? Versuchen Sie, Ihre Werkzeuge zu analysieren.",
+    "radio.analyzehints.2": "Sie müssen manchmal schnell flüchten? Ich frage mich, ob manche Stiefel Sie etwas dazu inspirieren können.",
+    "radio.analyzehints.3": "Sonnenlicht ist ziemlich schön, aber nicht immer verfügbar. Ich frage mich, ob künstliches Licht nachgebildet werden kann?",
+    "radio.analyzehints.4": "Einige standard Mineralien scheinen magische Energie zu enthalten.",
+    "radio.analyzehints.5": "Neulich ist ein Meteor in meinen Garten gestürtzt. Er erschien wirklich mysteriös.",
+    "radio.analyzehints.6": "Kaffee ist lecker. Warum nicht seine Wirkung mit einem Zauberspruch wiederherstellen?",
+    "radio.analyzehints.7": "Neulich habe ich gesehen, wie jemand Wurzeln aus dem Boden sprießt gelassen hat und ein Monster daran gehindert, sich zu bewegen...",
+    "radio.analyzehints.8": "Ich wette, Sie könnten einen Frostbolzen abfeuern, um etwas zu verlangsamen. Ich frage mich, wo man Eis studieren könnte...?",
+    "radio.analyzehints.9": "Ich habe neulich einen dunklen Altar in einem Haus gesehen. Nun, ich sage 'Haus'. Es war eher eine Hütte.",
+    "radio.analyzehints.10": "Heiltränke sind sicher unpraktisch zum Mitnehmen. Vielleicht können wir uns mit Magie heilen?",
+    "radio.analyzehints.11": "Die meisten Leute benutzen Leitern, um in den Untergrund abzusteigen, aber ich habe gesehen, wie eine Person einen Zauber gewirkt hat und quer durch den Boden gesaust ist.",
+    "radio.analyzehints.12": "Ich habe gesehen, wie jemand einen Zauber gewirkt hat, um Mana zurückzugewinnen!? Es sah aus, als ob es weh tat. Gerüchten zufolge kann man diese Technik beim Fischen nach Lavaaalen erlernen.",
+
+
+    /*********
+    ** Magic spells
+    *********/
+    "school.arcane.name": "Arkan",
+    "school.toil.name": "Seelengut",
+    "school.nature.name": "Natur",
+    "school.life.name": "Leben",
+    "school.elemental.name": "Element",
+    "school.eldritch.name": "Flüche",
+
+    "spell.arcane:analyze.name": "Analyse",
+    "spell.arcane:analyze.desc": "Untersuche einen Gegenstand auf magische Inspiration.",
+    "spell.arcane:magicmissle.name": "Magische Rakete",
+    "spell.arcane:magicmissle.desc": "Ein schwaches, ziehlsuchendes Projektil.",
+    "spell.arcane:disenchant.name": "Verringern",
+    "spell.arcane:disenchant.desc": "Verringert die Qualität eines Gegenstands.\nDie Verkaufspreisdifferenz zwischen alter und neuer Qualität wird in die Brieftasche zurückerstattet.",
+    "spell.arcane:enchant.name": "Erhöhen",
+    "spell.arcane:enchant.desc": "Katalysator: Geld\nErhöht die Qualität eines Gegenstands.\nDer Preis ist die Verkaufspreisdifferenz zwischen alter und neuer Qualität.",
+    "spell.arcane:rewind.name": "Rückspulen",
+    "spell.arcane:rewind.desc": "Katalysator: Gold Barren\nDreht die Zeit zurück.",
+
+    "spell.toil:cleardebris.name": "Frühjahrsputz",
+    "spell.toil:cleardebris.desc": "Bereinigt das Areal um den Zielbereich herrum von allem Schmutz (Holz, Stein, etc.).\nHöhere Level verbessern die Leistung, sodass größere Arten von Schmutz entfernt werden können.",
+    "spell.toil:till.name": "Beackern",
+    "spell.toil:till.desc": "Beackert den Boden um den Zielbereich herum.\nHöhere Level vergrößern den Bereich.",
+    "spell.toil:water.name": "Bewässern",
+    "spell.toil:water.desc": "Bewässert den Boden um den Zielbereich herum.\nHöhere Level vergrößern den Bereich.",
+    "spell.toil:blink.name": "Kurz Teleport",
+    "spell.toil:blink.desc": "Teleportiere dich zum Zielgebiet.",
+
+    "spell.nature:lantern.name": "Laterne",
+    "spell.nature:lantern.desc": "Beschwöre ein Licht, das dir folgt.\nHöhere Stufen erzeugen mehr Licht.",
+    "spell.nature:tendrils.name": "Ranken",
+    "spell.nature:tendrils.desc": "Beschwöre Ranken, um Feinde auf ihrem Weg zu stoppen.",
+    "spell.nature:shockwave.name": "Schockwelle",
+    "spell.nature:shockwave.desc": "Springe in die Luft knalle auf den Boden, um eine Schockwelle auszusenden.\n Höhere Level sind größer und heftiger.",
+    "spell.nature:photosynthesis.name": "Photosynthese",
+    "spell.nature:photosynthesis.desc": "Katalysator: Prismatische Scherbe\n\nBringe alle Pflanzen in deinen Anbaugebieten eine Stufe voran.",
+
+    "spell.life:heal.name": "Heilen",
+    "spell.life:heal.desc": "Stell deine Gesundheit auf Kosten von Mana wieder her.\nHöhere Stufen heilen mehr bei einem besseren Kostenverhältnis.",
+    "spell.life:haste.name": "Eile",
+    "spell.life:haste.desc": "Bewege dich so schnell wie der Wind.\nHöhere Level machen dich noch länger schneller.",
+    "spell.life:buff.name": "Buff",
+    "spell.life:buff.desc": "Verbessere jede Facette deines Seins.\nHöhere Level verbessern dich länger.",
+    "spell.life:evac.name": "Flucht",
+    "spell.life:evac.desc": "Teleportieren dich dorthin zurück, wo du das Gebiet betreten hast.",
+
+    "spell.elemental:fireball.name": "Feuerball",
+    "spell.elemental:fireball.desc": "Schieße einen verheerenden Feuerball auf deine Feinde.\nHöhere Level verbessern Schaden und Geschwindigkeit.",
+    "spell.elemental:frostbolt.name": "Frostbolzen",
+    "spell.elemental:frostbolt.desc": "Schieße einen durchdringenden Frostbolzen auf deine Feinde.\nHöhere Level verbessern Schaden und Geschwindigkeit.",
+    "spell.elemental:descend.name": "Herrabbsteigen",
+    "spell.elemental:descend.desc": "Steige in den Minen herrab.\nHöhere Level erhöhen die Anzahl der herrabgestiegenen Stockwerke, ohne zusätzliche Manakosten",
+    "spell.elemental:teleport.name": "Teleportation",
+    "spell.elemental:teleport.desc": "Katalysator: Reisekern\n\nWenn du draussen bist, teleportiere dich an einen beliebigen Ort im Freien.",
+
+    "spell.eldritch:meteor.name": "Meteor",
+    "spell.eldritch:meteor.desc": "Katalysator: Iridium Erz",
+    "spell.eldritch:bloodmana.name": "Blut Mana",
+    "spell.eldritch:bloodmana.desc": "Katalysator: Dein Leben",
+    "spell.eldritch:lucksteal.name": "Glücksraub",
+    "spell.eldritch:lucksteal.desc": "Katalysator: Das Glück deiner Lieben",
+    "spell.eldritch:spirit.name": "Geist",
+    "spell.eldritch:spirit.desc": "Beschwört einen verlorenen Geist um für dich zu kämpfen.",
+
+
+    /*********
+    ** Items
+    *********/
+    "objects.mana-potion.name": "Magisches Elexier",
+    "objects.mana-potion.description": "Regeneriert Leben und Mana.",
+
+    "objects.travel-core.name": "Reisekern",
+    "objects.travel-core.description": "Katalysator.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // altar and radio placement
+    "config.altar-placement": "Altar Platzierung",
+    "config.radio-placement": "Radio Platzierung",
+    "config.location.name": "Position",
+    "config.location.tooltip": "Die offizielle Bezeichnung des Ortes, an dem er/es platziert werden soll. Die richtige Bezeichnung kann man sich von der Debug Mode Mod angezeigen lassen.",
+    "config.x.name": "X Position",
+    "config.x.tooltip": "Die X-Kachelposition, an der er/es platziert werden soll. Die richtige Position kann man sich von der Debug Mode Mod angezeigen lassen.",
+    "config.y.name": "Y Position",
+    "config.y.tooltip": "Die Y-Kachelposition, an der er/es platziert werden soll. Die richtige Position kann man sich von der Debug Mode Mod angezeigen lassen.",
+    "config.x-or-y.automatic-position": "automatisch",
+
+    // controls
+    "config.controls": "Steuerung",
+    "config.cast-key.name": "Taste: Zaubern",
+    "config.cast-key.tooltip": "Die Taste zur Nutzung eines Zauberspruchs.",
+    "config.swap-spells-key.name": "Taste: Tausche Zauberleiste",
+    "config.swap-spells-key.tooltip": "Die Taste um die Zauberleisten zu tauschen.",
+    "config.select-spell-key.name": "Taste: Zauber {{slotNumber}}",
+    "config.select-spell-key.tooltip": "Die Taste um den Zauber {{slotNumber}} zu nutzen."
+}

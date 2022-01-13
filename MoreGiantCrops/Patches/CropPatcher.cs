@@ -46,8 +46,18 @@ namespace MoreGiantCrops.Patches
                 int hookCountdown = 0;
                 bool justHooked = false;
                 object label = null;
+                int farmCheckCounter = 0;
                 foreach (var instr in instructions)
                 {
+                    // To allow on Ginger island and elsewhere where crops can grow, we need to take out this check
+                    if ( instr.opcode == OpCodes.Isinst && ( Type ) instr.operand == typeof( Farm ) )
+                    {
+                        // First check is in an if, taking out the cast makes it always true (it's load var -> isinst -> brfalse)
+                        // Second check can be removed also - it just casts and then loads a field on the uncasted one
+                        // (This is because in older versions of the game, it was on Farm, but now is on GameLocation)
+                        continue;
+                    }
+
                     // If this is the spot for our hook, inject it
                     if (hookCountdown > 0 && --hookCountdown == 0)
                     {
@@ -70,6 +80,7 @@ namespace MoreGiantCrops.Patches
                         label = instr.operand;
                         justHooked = false;
                     }
+
                     newInstructions.Add(instr);
                 }
 

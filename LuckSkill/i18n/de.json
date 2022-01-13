@@ -1,0 +1,25 @@
+﻿{
+    // skill
+    "skill.name": "Glück",
+    "skill.level-up": "Glück ist erhöht",
+
+    // professions
+    "fortunate.name": "Vom Glück verfolgt",
+    "fortunate.desc": "Besseres tägliches Glück.",
+    "lucky.name": "Glückskind",
+    "lucky.desc": "20% Chance auf maximales tägliches Glück.",
+    "popular-helper.name": "Beliebter Helfer",
+    "popular-helper.desc": "Tägliche Quests finden dreimal so oft statt.",
+    "shooting-star.name": "Sternschnuppe",
+    "shooting-star.desc": "Nächtliche Ereignisse treten doppelt so häufig auf.",
+    "spirit-child.name": "Geisterkind",
+    "spirit-child.desc": "Geschenke machen Junimos glücklich. Sie könnten deiner Farm helfen.\n(15% Chance auf irgendeine Form des Farmfortschritts.)",
+    "un-unlucky.name": "Anti-Pechvogel",
+    "un-unlucky.desc": "Habe nie Pech.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "Durch die Junimos haben dich einige deiner Tiere noch mehr lieb gewonnen!",
+    "junimo-rewards.grow-crops": "Die Junimos haben deine Ernte verbessert!",
+    "junimo-rewards.grow-grass": "Die Junimos haben dein Gras wachsen lassen und deine Zäune repariert!",
+    "junimo-rewards.prismatic-shard": "Die Junimos haben dir eine prismatische Scherbe geschenkt!"
+}

@@ -89,7 +89,7 @@ namespace MoonMisadventures.Game.Locations
                 }
                 else
                 {
-                    Game1.drawObjectDialogue( Mod.instance.Helper.Translation.Get( "message.farm.crystal-lock" ) );
+                    Game1.drawObjectDialogue(I18n.Message_Farm_CrystalLock());
                 }
             }
             return base.performAction( action, who, tileLocation );

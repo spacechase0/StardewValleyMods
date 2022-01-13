@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -137,7 +135,7 @@ namespace MoonMisadventures.Patches
                     case "Hoe": tool = "hoe"; break;
                 }
 
-                __result = Mod.instance.Helper.Translation.Get( $"tool.{tool}.{tier}" );
+                __result = I18n.GetByKey($"tool.{tool}.{tier}");
                 return false;
             }
 

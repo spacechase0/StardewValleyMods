@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI.Utilities;
+using StardewValley;
 
 namespace ContentPatcherAnimations.Framework
 {
@@ -14,6 +15,9 @@ namespace ContentPatcherAnimations.Framework
         *********/
         /// <summary>The textures that were drawn recently, indexed by normalized asset name.</summary>
         private readonly Dictionary<string, AssetDrawData> LastDrawn = new(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>The language suffix for the current language code in asset names, if any.</summary>
+        private string CurrentLanguageSuffix;
 
 
         /*********
@@ -28,6 +32,8 @@ namespace ContentPatcherAnimations.Framework
                 return;
 
             assetName = PathUtilities.NormalizeAssetName(assetName);
+            if (this.CurrentLanguageSuffix != null && assetName.EndsWith(this.CurrentLanguageSuffix, StringComparison.OrdinalIgnoreCase))
+                assetName = assetName[..^this.CurrentLanguageSuffix.Length]; // normalize `assetName.fr-FR` to `assetName`
 
             if (!this.LastDrawn.TryGetValue(assetName, out AssetDrawData data))
                 this.LastDrawn[assetName] = data = new AssetDrawData(assetName);
@@ -57,6 +63,15 @@ namespace ContentPatcherAnimations.Framework
 
             foreach (string key in expiredKeys)
                 this.LastDrawn.Remove(key);
+        }
+
+        /// <summary>Raised after the game's selected language changes.</summary>
+        /// <param name="code">The new language code.</param>
+        public void OnLocaleChanged(LocalizedContentManager.LanguageCode code)
+        {
+            this.CurrentLanguageSuffix = (code == LocalizedContentManager.LanguageCode.en)
+                ? null
+                : $".{Game1.content.LanguageCodeString(Game1.content.GetCurrentLanguage())}";
         }
     }
 }
