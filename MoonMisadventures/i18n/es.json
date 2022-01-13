@@ -1,4 +1,8 @@
 ﻿{
+    /*********
+    ** Items
+    *********/
+    // tools
     "tool.axe.radioactive": "Hacha Radioactiva",
     "tool.axe.mythicite": "Hacha De Mitita",
     "tool.wcan.radioactive": "Regadera Radioactiva",
@@ -12,8 +16,7 @@
     "tool.animal-gauntlets.holding": "Actualmente sosteniendo:",
     "tool.animal-gauntlets.moon-requirement": "Debe estar en la luna.",
 
-    "tooltip.persists": "No se puede perder al morir.",
-
+    // items
     "item.lunar-key.name": "Llave Lunar",
     "item.necklace.Looting.name": "Collar De Saqueo",
     "item.necklace.Looting.description": "Gana oro en función de la salud máxima de los mobs que mates.",
@@ -32,9 +35,26 @@
     "item.necklace.Sea.name": "Collar Del Mar",
     "item.necklace.Sea.description": "Aumenta en gran medida la eficacia de la pesca.",
 
+    // item enchantments
+    "tooltip.persists": "No se puede perder al morir.",
+
+
+    /*********
+    ** Monsters
+    *********/
+    "monster.boom-eye.name": "Ojo Boom",
+    "monster.lunar-slime.name": "Baba Lunar",
+
+
+    /*********
+    ** Interactions
+    *********/
+    // UFO
     "message.ufo.repair": "¿Reparar el OVNI por 10 lingotes radiactivos y 1 alma galáctica?",
     "message.ufo.repair.lacking": "No tienes suficientes materiales.",
     "message.ufo.travel": "¿Subir al OVNI?",
+
+    // moon
     "message.gargoyle": "¿Acariciar a la... gárgola? ¿Quién sabe qué pasará?",
     "message.dirt-tutorial": "Si sólo tuvieras una herramienta para romper el extremo para seguir adelante...",
     "message.lunar-teleporter-offline": "Parece que está desconectado. Tal vez necesite mineral de mitita.",
@@ -47,9 +67,10 @@
     "message.infuser.2": "El Infusor Celestial, parte 2.^Puede transformar un arma de potencial infinito en su verdadera forma con la energía de un Zafiro Del Alma.",
     "message.infuser.3": "El Infusor Celestial, parte 3.^Puede aumentar cualquier objeto con un determinado polvo, permitiendo que permanezca contigo incluso en la muerte.",
 
-    "monster.boom-eye.name": "Ojo Boom",
-    "monster.lunar-slime.name": "Baba Lunar",
 
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
     "config.flashing-ufo.name": "OVNI parpadeante",
     "config.flashing-ufo.description": "Si el OVNI reparado tiene luces intermitentes o no."
 }

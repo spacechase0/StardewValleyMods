@@ -1,4 +1,8 @@
 ﻿{
+    /*********
+    ** Items
+    *********/
+    // tools
     "tool.axe.radioactive": "Radioactive Axe",
     "tool.axe.mythicite": "Mythicite Axe",
     "tool.wcan.radioactive": "Radioactive Watering Can",
@@ -12,8 +16,7 @@
     "tool.animal-gauntlets.holding": "Currently holding:",
     "tool.animal-gauntlets.moon-requirement": "Must be on the moon.",
 
-    "tooltip.persists": "Can't lose upon death.",
-
+    // items
     "item.lunar-key.name": "Lunar Key",
     "item.necklace.Looting.name": "Necklace of Looting",
     "item.necklace.Looting.description": "Gain gold based on the maximum health of mobs you kill.",
@@ -32,9 +35,26 @@
     "item.necklace.Sea.name": "Necklace of the Sea",
     "item.necklace.Sea.description": "Greatly increases fishing efficiency.",
 
+    // item enchantments
+    "tooltip.persists": "Can't lose upon death.",
+
+
+    /*********
+    ** Monsters
+    *********/
+    "monster.boom-eye.name": "Boom Eye",
+    "monster.lunar-slime.name": "Lunar Slime",
+
+
+    /*********
+    ** Interactions
+    *********/
+    // UFO
     "message.ufo.repair": "Repair the UFO for 10 Radioactive Bars and 1 Galaxy Soul?",
     "message.ufo.repair.lacking": "You don't have enough materials.",
     "message.ufo.travel": "Board the UFO?",
+
+    // moon
     "message.gargoyle": "Pet the... gargoyle? Who knows what will happen?",
     "message.dirt-tutorial": "If only you had a tool to break the end off to continue forward...",
     "message.lunar-teleporter-offline": "It looks offline. Perhaps it needs mythicite ore.",
@@ -47,9 +67,10 @@
     "message.infuser.2": "The Celestial Infuser, part 2.^It can transform a weapon of infinite potential into its true form with the energy of a Soul Sapphire.",
     "message.infuser.3": "The Celestial Infuser, part 3.^It can augment any item with a certain dust, allowing it to stay with you even in death.",
 
-    "monster.boom-eye.name": "Boom Eye",
-    "monster.lunar-slime.name": "Lunar Slime",
 
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
     "config.flashing-ufo.name": "Flashing UFO",
-    "config.flashing-ufo.description": "Whether the repaired UFO has flashing lights or not."
+    "config.flashing-ufo.description": "Whether the repaired UFO has flashing lights."
 }

@@ -1,4 +1,8 @@
 ﻿{
+    /*********
+    ** Items
+    *********/
+    // tools
     "tool.axe.radioactive": "Radioaktive Axt",
     "tool.axe.mythicite": "Mythische Axt",
     "tool.wcan.radioactive": "Radioaktive Gießkanne",
@@ -12,8 +16,7 @@
     "tool.animal-gauntlets.holding": "Hält derzeit:",
     "tool.animal-gauntlets.moon-requirement": "Muss auf dem Mond sein.",
 
-    "tooltip.persists": "Kann beim Tod nicht verloren werden.",
-
+    // items
     "item.lunar-key.name": "Mondschlüssel",
     "item.necklace.Looting.name": "Halskette der Plünderung",
     "item.necklace.Looting.description": "Erhalte Gold basierend auf der maximalen Gesundheit der Gegner, die du tötest.",
@@ -32,9 +35,26 @@
     "item.necklace.Sea.name": "Halskette des Meeres",
     "item.necklace.Sea.description": "Erhöht die Angeleffizienz erheblich.",
 
+    // item enchantments
+    "tooltip.persists": "Kann beim Tod nicht verloren werden.",
+
+
+    /*********
+    ** Monsters
+    *********/
+    "monster.boom-eye.name": "Boom Auge",
+    "monster.lunar-slime.name": "Mondschleim",
+
+
+    /*********
+    ** Interactions
+    *********/
+    // UFO
     "message.ufo.repair": "Repariere das UFO für 10 radioaktive Barren und 1 Galaxieseele?",
     "message.ufo.repair.lacking": "Du hast nicht genug Materialien.",
     "message.ufo.travel": "An Bord des UFOs gehen?",
+
+    // moon
     "message.gargoyle": "Streichle den... Gargoyle? Wer weiß, was passieren wird?",
     "message.dirt-tutorial": "Wenn man nur ein Werkzeug hätte, um das Ende abzubrechen und weiterzumachen...",
     "message.lunar-teleporter-offline": "Es sieht offline aus. Vielleicht braucht es mythisches Erz.",
@@ -47,9 +67,10 @@
     "message.infuser.2": "Der himmlische Infusor, Teil 2.^Er kann eine Waffe mit unendlichem Potenzial mit der Energie eines Seelen-Saphirs in ihre wahre Form verwandeln.",
     "message.infuser.3": "Der himmlische Infusor, Teil 2.^Er kann jeden Gegenstand mit einem bestimmten Staub verstärken, so dass er auch nach dem Tod bei dir bleibt.",
 
-    "monster.boom-eye.name": "Boom Auge",
-    "monster.lunar-slime.name": "Mondschleim",
 
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
     "config.flashing-ufo.name": "Blinkendes UFO",
     "config.flashing-ufo.description": "Ob das reparierte UFO blinkende Lichter hat oder nicht."
 }
