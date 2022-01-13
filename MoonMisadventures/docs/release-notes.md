@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Improved translations. Thanks to Evexyron (added Spanish) and Scartiana (added German)!
+
 ## 0.1.3
 Released 12 January 2022 for SMAPI 3.13.0 or later.
 

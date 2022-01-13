@@ -1,4 +1,4 @@
-{
+﻿{
     "tool.axe.radioactive": "Hacha Radioactiva",
     "tool.axe.mythicite": "Hacha De Mitita",
     "tool.wcan.radioactive": "Regadera Radioactiva",
@@ -43,13 +43,13 @@
     "message.necklace-exchange.lacking": "No tienes los materiales.",
     "message.planet.jump": "¿Saltar?",
     "message.farm.crystal-lock": "Podría crecer con algo de mineral de mitita.",
-    "message.infuser.1":  "El Infusor Celestial, parte 1.^Puede encantar herramientas, permitiéndoles almacenar hasta 2 encantamientos primarios.^(Si ya hay dos, sólo se cambia el segundo).",
-    "message.infuser.2":  "El Infusor Celestial, parte 2.^Puede transformar un arma de potencial infinito en su verdadera forma con la energía de un Zafiro Del Alma.",
-    "message.infuser.3":  "El Infusor Celestial, parte 3.^Puede aumentar cualquier objeto con un determinado polvo, permitiendo que permanezca contigo incluso en la muerte.",
+    "message.infuser.1": "El Infusor Celestial, parte 1.^Puede encantar herramientas, permitiéndoles almacenar hasta 2 encantamientos primarios.^(Si ya hay dos, sólo se cambia el segundo).",
+    "message.infuser.2": "El Infusor Celestial, parte 2.^Puede transformar un arma de potencial infinito en su verdadera forma con la energía de un Zafiro Del Alma.",
+    "message.infuser.3": "El Infusor Celestial, parte 3.^Puede aumentar cualquier objeto con un determinado polvo, permitiendo que permanezca contigo incluso en la muerte.",
 
     "monster.boom-eye.name": "Ojo Boom",
     "monster.lunar-slime.name": "Baba Lunar",
 
     "config.flashing-ufo.name": "OVNI parpadeante",
-    "config.flashing-ufo.description": "Si el OVNI reparado tiene luces intermitentes o no.",
+    "config.flashing-ufo.description": "Si el OVNI reparado tiene luces intermitentes o no."
 }

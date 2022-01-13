@@ -1,4 +1,4 @@
-{
+﻿{
     "tool.axe.radioactive": "Radioaktive Axt",
     "tool.axe.mythicite": "Mythische Axt",
     "tool.wcan.radioactive": "Radioaktive Gießkanne",
@@ -43,13 +43,13 @@
     "message.necklace-exchange.lacking": "Du hast die Materialien nicht.",
     "message.planet.jump": "Springen?",
     "message.farm.crystal-lock": "Es könnte mit etwas mythischem Erz wachsen.",
-    "message.infuser.1":  "Der himmlische Infusor, Teil 1.^Er kann Werkzeuge verzaubern und erlaubt dir, bis zu 2 primäre Verzauberungen zu speichern^(Wenn bereits zwei vorhanden sind, wird nur die zweite verändert).",
-    "message.infuser.2":  "Der himmlische Infusor, Teil 2.^Er kann eine Waffe mit unendlichem Potenzial mit der Energie eines Seelen-Saphirs in ihre wahre Form verwandeln.",
-    "message.infuser.3":  "Der himmlische Infusor, Teil 2.^Er kann jeden Gegenstand mit einem bestimmten Staub verstärken, so dass er auch nach dem Tod bei dir bleibt.",
+    "message.infuser.1": "Der himmlische Infusor, Teil 1.^Er kann Werkzeuge verzaubern und erlaubt dir, bis zu 2 primäre Verzauberungen zu speichern^(Wenn bereits zwei vorhanden sind, wird nur die zweite verändert).",
+    "message.infuser.2": "Der himmlische Infusor, Teil 2.^Er kann eine Waffe mit unendlichem Potenzial mit der Energie eines Seelen-Saphirs in ihre wahre Form verwandeln.",
+    "message.infuser.3": "Der himmlische Infusor, Teil 2.^Er kann jeden Gegenstand mit einem bestimmten Staub verstärken, so dass er auch nach dem Tod bei dir bleibt.",
 
     "monster.boom-eye.name": "Boom Auge",
     "monster.lunar-slime.name": "Mondschleim",
 
     "config.flashing-ufo.name": "Blinkendes UFO",
-    "config.flashing-ufo.description": "Ob das reparierte UFO blinkende Lichter hat oder nicht.",
+    "config.flashing-ufo.description": "Ob das reparierte UFO blinkende Lichter hat oder nicht."
 }

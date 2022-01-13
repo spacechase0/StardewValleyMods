@@ -1,4 +1,4 @@
-{
+﻿{
     /*********
     ** Generic config UI
     *********/
@@ -6,7 +6,8 @@
     "button.mod-options": "Mod Optionen",
 
     // mod list UI
-    "list.heading": "Konfiguriere Mods",
+    "list.editable-heading": "Konfiguriere Mods",
+    "list.not-editable-heading": "Editable from the title screen:", // TODO
 
     // mod config pages
     "config.buttons.cancel": "Abbrechen",

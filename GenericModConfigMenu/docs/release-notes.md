@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * Fixed keybind overlay drawn off-screen if UI scale doesn't match zoom level.
+* Improved translations. Thanks to Scartiana (added German)!
 
 ## 1.8.0
 Released 09 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.

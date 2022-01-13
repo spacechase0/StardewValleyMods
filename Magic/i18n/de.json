@@ -1,4 +1,4 @@
-{
+﻿{
     /*********
     ** General text
     *********/
@@ -142,7 +142,7 @@
     "config.x-or-y.automatic-position": "automatisch",
 
     // controls
-	"config.controls": "Steuerung",
+    "config.controls": "Steuerung",
     "config.cast-key.name": "Taste: Zaubern",
     "config.cast-key.tooltip": "Die Taste zur Nutzung eines Zauberspruchs.",
     "config.swap-spells-key.name": "Taste: Tausche Zauberleiste",
