@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 1.1.0
+Released 12 January 2022 for SMAPI 3.13.0 or later.
+
+* Allowed giant crops to grow anywhere crops can grow.
+
 ## 1.0.3
 Released 23 December 2021 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
