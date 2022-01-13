@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,7 +25,7 @@ namespace MoonMisadventures.Game.Items
 
         public readonly NetEnum< Type > necklaceType = new();
 
-        public override string DisplayName { get => Mod.instance.Helper.Translation.Get( "item.necklace." + necklaceType.Value + ".name" ); set { } }
+        public override string DisplayName { get => I18n.GetByKey($"item.necklace.{this.necklaceType.Value}.name"); set { } }
         public override int Stack { get => 1; set { } }
 
         public Necklace() { }
@@ -58,7 +54,7 @@ namespace MoonMisadventures.Game.Items
 
         public override string getDescription()
         {
-            return Mod.instance.Helper.Translation.Get( "item.necklace." + necklaceType.Value + ".description" );
+            return I18n.GetByKey($"item.necklace.{this.necklaceType.Value}.description");
         }
 
         public override bool isPlaceable()

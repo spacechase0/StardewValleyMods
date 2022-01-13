@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Netcode;
 using StardewModdingAPI;
 using StardewValley;
-using xTile;
 
 namespace MoonMisadventures.Game.Locations
 {
@@ -73,11 +67,11 @@ namespace MoonMisadventures.Game.Locations
                 if ( ufoRepaired.Value )
                 {
                     //Game1.warpFarmer( "Custom_MM_UfoInterior", 12, 16, Game1.up );
-                    createQuestionDialogue( Mod.instance.Helper.Translation.Get( "message.ufo.travel" ), createYesNoResponses(), "TravelUfo" );
+                    createQuestionDialogue(I18n.Message_Ufo_Travel(), createYesNoResponses(), "TravelUfo" );
                 }
                 else
                 {
-                    createQuestionDialogue( Mod.instance.Helper.Translation.Get( "message.ufo.repair" ), createYesNoResponses(), "RepairUfo" );
+                    createQuestionDialogue(I18n.Message_Ufo_Repair(), createYesNoResponses(), "RepairUfo" );
                 }
                 return true;
             }
@@ -115,7 +109,7 @@ namespace MoonMisadventures.Game.Locations
                         }
                         else
                         {
-                            Game1.drawObjectDialogue( Mod.instance.Helper.Translation.Get( "message.ufo.repair.lacking" ) );
+                            Game1.drawObjectDialogue(I18n.Message_Ufo_Repair_Lacking());
                         }
                         return true;
                     case "TravelUfo_Yes":

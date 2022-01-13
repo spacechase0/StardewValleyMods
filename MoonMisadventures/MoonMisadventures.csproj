@@ -7,18 +7,20 @@
     <Version>0.1.1</Version>
     <TargetFramework>net5.0</TargetFramework>
     <EnableHarmony>true</EnableHarmony>
+
+    <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj">
-      <Private>false</Private>
-    </ProjectReference>
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" Private="false" />
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="asset-credits.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Update="asset-credits.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

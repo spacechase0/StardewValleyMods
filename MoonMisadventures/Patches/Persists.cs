@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -57,7 +56,7 @@ namespace MoonMisadventures.Patches
             if (item.modData.ContainsKey("persists"))
             {
                 y += 35;
-                b.DrawString(font, Mod.instance.Helper.Translation.Get("tooltip.persists"), new Vector2(x + 15, y - 15), Game1.textColor);
+                b.DrawString(font, I18n.Tooltip_Persists(), new Vector2(x + 15, y - 15), Game1.textColor);
             }
         }
 

@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MoonMisadventures.Game.Locations;
 using Netcode;
-using StardewModdingAPI.Events;
 using StardewValley;
 
 namespace MoonMisadventures.Game.Items
@@ -32,19 +26,19 @@ namespace MoonMisadventures.Game.Items
 
         protected override string loadDisplayName()
         {
-            return Mod.instance.Helper.Translation.Get( "tool.animal-gauntlets.name" );
+            return I18n.Tool_AnimalGauntlets_Name();
         }
 
         protected override string loadDescription()
         {
-            return Mod.instance.Helper.Translation.Get( "tool.animal-gauntlets.description" );
+            return I18n.Tool_AnimalGauntlets_Description();
         }
 
         public override string getDescription()
         {
             string str = base.getDescription();
             if ( holding.Value != null )
-                str += "\n" + Mod.instance.Helper.Translation.Get( "tool.animal-gauntlets.holding" ) + " " + holding.Value.displayType;
+                str += $"\n{I18n.Tool_AnimalGauntlets_Holding()} {this.holding.Value.displayType}";
             return str;
         }
 
@@ -63,7 +57,7 @@ namespace MoonMisadventures.Game.Items
             {
                 if ( location is not LunarLocation )
                 {
-                    Game1.addHUDMessage( new HUDMessage( Mod.instance.Helper.Translation.Get( "tool.animal-gauntlets.moon-requirement" ) ) );
+                    Game1.addHUDMessage( new HUDMessage( I18n.Tool_AnimalGauntlets_MoonRequirement() ) );
                 }
 
                 var spot = Mod.instance.Helper.Input.GetCursorPosition();

@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
@@ -75,6 +73,8 @@ namespace MoonMisadventures
 
         public override void Entry( IModHelper helper )
         {
+            I18n.Init(helper.Translation);
+
             Log.Monitor = Monitor;
             instance = this;
 
@@ -172,7 +172,7 @@ namespace MoonMisadventures
         {
             var gmcm = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             gmcm.Register(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config), true );
-            gmcm.AddBoolOption(ModManifest, () => Config.FlashingUfo, (b) => Config.FlashingUfo = b, () => Helper.Translation.Get("config.flashing-ufo.name"), () => Helper.Translation.Get("config.flashing-ufo.description"));
+            gmcm.AddBoolOption(ModManifest, () => Config.FlashingUfo, (b) => Config.FlashingUfo = b, I18n.Config_FlashingUfo_Name, I18n.Config_FlashingUfo_Description);
 
             var sc = Helper.ModRegistry.GetApi< ISpaceCoreApi >( "spacechase0.SpaceCore" );
             sc.RegisterSerializerType( typeof( MountainTop ) );
@@ -384,7 +384,7 @@ namespace MoonMisadventures
             if ( Game1.player.team.get_hasLunarKey().Value )
                 page.specialItems.Add( new ClickableTextureComponent(
                     name: "", bounds: new Rectangle( -1, -1, 16 * Game1.pixelZoom, 16 * Game1.pixelZoom ),
-                    label: null, hoverText: Helper.Translation.Get( "item.lunar-key.name" ),
+                    label: null, hoverText: I18n.Item_LunarKey_Name(),
                     texture: Assets.LunarKey, sourceRect: new Rectangle( 0, 0, 16, 16 ), scale: 4f, drawShadow: true ) );
         }
 
