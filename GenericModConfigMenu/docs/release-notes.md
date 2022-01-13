@@ -1,7 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+## 1.8.1
+Released 12 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
 * Fixed keybind overlay drawn off-screen if UI scale doesn't match zoom level.
 * Improved translations. Thanks to Scartiana (added German)!
 
