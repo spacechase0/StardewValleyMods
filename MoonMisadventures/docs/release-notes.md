@@ -2,6 +2,8 @@
 
 # Release notes
 ## Upcoming release
+* Added min-version check for integration with Generic Mod Config Menu.
+* Fixed error if Generic Mod Config Menu isn't installed.
 * Improved translations. Thanks to Evexyron (added Spanish) and Scartiana (added German)!
 
 ## 0.1.3

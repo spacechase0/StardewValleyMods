@@ -25,7 +25,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
-using StardewValley.Network;
 using StardewValley.Tools;
 
 /* Art:
@@ -170,9 +169,23 @@ namespace MoonMisadventures
 
         private void OnGameLaunched( object sender, GameLaunchedEventArgs e )
         {
-            var gmcm = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            gmcm.Register(ModManifest, () => Config = new Configuration(), () => Helper.WriteConfig(Config), true );
-            gmcm.AddBoolOption(ModManifest, () => Config.FlashingUfo, (b) => Config.FlashingUfo = b, I18n.Config_FlashingUfo_Name, I18n.Config_FlashingUfo_Description);
+            var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
+            if (configMenu != null)
+            {
+                configMenu.Register(
+                    mod: this.ModManifest,
+                    reset: () => this.Config = new Configuration(),
+                    save: () => this.Helper.WriteConfig(this.Config),
+                    titleScreenOnly: true
+                );
+                configMenu.AddBoolOption(
+                    mod: this.ModManifest,
+                    name: I18n.Config_FlashingUfo_Name,
+                    tooltip: I18n.Config_FlashingUfo_Description,
+                    getValue: () => this.Config.FlashingUfo,
+                    setValue: value => this.Config.FlashingUfo = value
+                );
+            }
 
             var sc = Helper.ModRegistry.GetApi< ISpaceCoreApi >( "spacechase0.SpaceCore" );
             sc.RegisterSerializerType( typeof( MountainTop ) );
