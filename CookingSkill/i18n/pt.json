@@ -1,0 +1,19 @@
+{
+    // skill
+    "skill.name": "Culinária",
+    "skill.level-up-perk": "+{{bonus}}% comestibilidade em comidas caseiras",
+
+    // professions
+    "efficient.name": "Eficiente",
+    "efficient.desc": "15% de chance de não consumir ingredientes",
+    "gourmet.name": "Gourmet",
+    "gourmet.desc": "+20% de preço de venda",
+    "intense-flavors.name": "Sabores Intensos",
+    "intense-flavors.desc": "Bônus de alimentos são um nível maior\n(+20% para energia máxima ou magnetismo)",
+    "professional-chef.name": "Chef Profissional",
+    "professional-chef.desc": "Comidas caseiras são sempre pelo menos de qualidade prata",
+    "satisfying.name": "Satisfatório",
+    "satisfying.desc": "+25% duração de bônus de alimentos",
+    "secret-spices.name": "Temperos Secretos",
+    "secret-spices.desc": "Fornece alguns bônus aleatórios quando consumir alimentos sem bônus"
+}
