@@ -165,10 +165,18 @@ namespace MonstersTheFramework
                 return ret;
             }
         }
+        public class ItemDrop
+        {
+            public string Drop { get; set; }
+            public int Quantity { get; set; } = 1;
+        }
+
 
         public string Name { get; set; }
         public string CorrespondingMonsterGoal { get; set; }
         public int MaxHealth { get; set; }
+
+        public List<List<Weighted<ItemDrop>>> Drops { get; set; } = new();
 
         public string StartingState { get; set; }
         public Dictionary<string, StateData> States { get; set; }

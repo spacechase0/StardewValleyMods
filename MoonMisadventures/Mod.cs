@@ -295,7 +295,8 @@ namespace MoonMisadventures
         {
             if ( e.NewMenu is ShopMenu shop )
             {
-                if ( shop.storeContext != "ClintUpgrade" )
+                string clintUpgradeDialogue = Game1.parseText(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11474"), Game1.dialogueFont, 304);
+                if ( shop.potraitPersonDialogue != clintUpgradeDialogue )
                     return;
 
                 Tool orig = Game1.player.getToolFromName( "Axe" );
@@ -303,7 +304,7 @@ namespace MoonMisadventures
                 {
                     Tool tool = new Axe() { UpgradeLevel = orig.UpgradeLevel + 1 };
                     shop.forSale.Add( tool );
-                    shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
+                    shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000, 1, tool.UpgradeLevel == 5 ? 910 : ItemIds.MythiciteBar.GetDeterministicHashCode() } );
                 }
 
                 orig = Game1.player.getToolFromName( "Watering Can" );
@@ -311,7 +312,7 @@ namespace MoonMisadventures
                 {
                     Tool tool = new WateringCan() { UpgradeLevel = orig.UpgradeLevel + 1 };
                     shop.forSale.Add( tool );
-                    shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
+                    shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000, 1, tool.UpgradeLevel == 5 ? 910 : ItemIds.MythiciteBar.GetDeterministicHashCode() } );
                 }
 
                 orig = Game1.player.getToolFromName( "Pickaxe" );
@@ -319,7 +320,7 @@ namespace MoonMisadventures
                 {
                     Tool tool = new Pickaxe() { UpgradeLevel = orig.UpgradeLevel + 1 };
                     shop.forSale.Add( tool );
-                    shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
+                    shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000, 1, tool.UpgradeLevel == 5 ? 910 : ItemIds.MythiciteBar.GetDeterministicHashCode() } );
                 }
 
                 orig = Game1.player.getToolFromName( "Hoe" );
@@ -327,16 +328,19 @@ namespace MoonMisadventures
                 {
                     Tool tool = new Hoe() { UpgradeLevel = orig.UpgradeLevel + 1 };
                     shop.forSale.Add( tool );
-                    shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000 } );
+                    shop.itemPriceAndStock.Add( tool, new[] { tool.UpgradeLevel == 5 ? 100000 : 250000, 1, tool.UpgradeLevel == 5 ? 910 : ItemIds.MythiciteBar.GetDeterministicHashCode() } );
                 }
             }
             else if ( e.NewMenu is AnimalQueryMenu aquery )
             {
-                // We don't want the move animal button at all.
-                // Hide it off screen, make it unreachable with controllers
-                aquery.moveHomeButton.bounds = new Rectangle( 99999, 99999, 1, 1 ); 
-                aquery.textBoxCC.downNeighborID = aquery.sellButton.myID;
-                aquery.sellButton.upNeighborID = aquery.textBoxCC.myID;
+                if (Game1.currentLocation is LunarLocation)
+                {
+                    // We don't want the move animal button at all.
+                    // Hide it off screen, make it unreachable with controllers
+                    aquery.moveHomeButton.bounds = new Rectangle(99999, 99999, 1, 1);
+                    aquery.textBoxCC.downNeighborID = aquery.sellButton.myID;
+                    aquery.sellButton.upNeighborID = aquery.textBoxCC.myID;
+                }
             }
         }
 

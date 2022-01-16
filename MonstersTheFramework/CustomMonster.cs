@@ -92,6 +92,44 @@ namespace MonstersTheFramework
             return dmg;
         }
 
+        public override List<Item> getExtraDropItems()
+        {
+            List<Item> ret = new();
+
+            foreach ( var drop in Type.Drops )
+            {
+                var chosenDrop = drop.Choose();
+                if ( chosenDrop != null )
+                {
+                    Item actualDrop = null;
+                    if (chosenDrop.Drop.Contains('/'))
+                    {
+                        actualDrop = Mod.dga.SpawnDGAItem(chosenDrop.Drop) as Item;
+                        actualDrop.Stack = chosenDrop.Quantity;
+                    }
+                    else if (int.TryParse(chosenDrop.Drop, out int id))
+                        actualDrop = new StardewValley.Object(id, chosenDrop.Quantity);
+                    else
+                    {
+                        foreach (var info in Game1.objectInformation)
+                        {
+                            if (info.Value.Split('/')[StardewValley.Object.objectInfoNameIndex] == chosenDrop.Drop)
+                            {
+                                actualDrop = new StardewValley.Object(info.Key, chosenDrop.Quantity);
+                                break;
+                            }
+                        }
+                    }
+
+                    ret.Add(actualDrop);
+
+                }
+            }
+
+            ret.AddRange(base.getExtraDropItems());
+            return ret;
+        }
+
         public override void onDealContactDamage( Farmer who )
         {
             TriggerEvent( "OnHitPlayer" );
@@ -106,6 +144,7 @@ namespace MonstersTheFramework
                     Game1.buffsDisplay.addOtherBuff( new Buff( debuffId ) );
             }
         }
+
         public override void shedChunks( int number, float scale )
         {
             var state = CurrentState;
@@ -195,7 +234,7 @@ namespace MonstersTheFramework
         {
             var state = CurrentState;
             this.Sprite.draw( b, Game1.GlobalToLocal( Game1.viewport, Position - state.Animation.Origin * Game1.pixelZoom ), ( float ) this.GetBoundingBox().Center.Y / 10000f );
-            b.Draw( Game1.staminaRect, Game1.GlobalToLocal( Game1.viewport, GetBoundingBox() ), Color.Red );
+            //b.Draw( Game1.staminaRect, Game1.GlobalToLocal( Game1.viewport, GetBoundingBox() ), Color.Red );
         }
 
         private void UpdateState( string newState )
