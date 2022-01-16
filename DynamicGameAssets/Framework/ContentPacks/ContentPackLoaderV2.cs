@@ -67,7 +67,7 @@ namespace DynamicGameAssets.Framework.ContentPacks
                         Log.Error("Duplicate found! " + cd.ID);
                         continue;
                     }
-                    Log.Debug("Loading data< " + d.GetType() + " >...");
+                    Log.Trace("Loading data< " + d.GetType() + " >...");
 
                     if (!this.pack.enableIndex.ContainsKey(parent))
                         this.pack.enableIndex.Add(parent, new());
