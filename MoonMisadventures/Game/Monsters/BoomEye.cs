@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -31,7 +26,7 @@ namespace MoonMisadventures.Game.Monsters
             // todo - loot
             speed = 3;
             ExperienceGained = 20;
-            displayName = Mod.instance.Helper.Translation.Get( "monster.boom-eye.name" );
+            displayName = I18n.Monster_BoomEye_Name();
             Slipperiness = 60 + Game1.random.Next( -10, 11 );
             Halt();
             IsWalkingTowardPlayer = false;

@@ -1,0 +1,31 @@
+﻿{
+    /*********
+    ** Generic config UI
+    *********/
+    // button text at the bottom of the in-game options menu
+    "button.mod-options": "Mod Optionen",
+
+    // mod list UI
+    "list.editable-heading": "Konfiguriere Mods",
+    "list.not-editable-heading": "Editable from the title screen:", // TODO
+
+    // mod config pages
+    "config.buttons.cancel": "Abbrechen",
+    "config.buttons.reset-to-default": "Zurücksetzen",
+    "config.buttons.save": "Speichern",
+    "config.buttons.save-and-close": "Speichern & Schließen",
+
+    "config.rebind-key.title": "Taste zuweisen: {{optionName}}",
+    "config.rebind-key.simple-instructions": "Drücke eine Taste um sie zuzuweisen",
+    "config.rebind-key.combo-instructions": "Drücke eine Tastenkombination um sie zuzuweisen",
+    "config.rebind-key.no-key": "(keine)",
+
+
+    /*********
+    ** Config options for Generic Mod Config Menu itself
+    *********/
+    "options.open-menu-key.name": "Menü öffnen Taste",
+    "options.open-menu-key.desc": "Eine Tastenkombination, die das Menü öffnet.",
+    "options.scroll-speed.name": "Scrollgeschwindigkeit",
+    "options.scroll-speed.desc": "Die Anzahl der Feldzeilen, die beim Scrollen durch ein Konfigurationsmenü verschoben werden sollen."
+}

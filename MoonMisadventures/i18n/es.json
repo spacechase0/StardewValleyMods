@@ -1,0 +1,76 @@
+﻿{
+    /*********
+    ** Items
+    *********/
+    // tools
+    "tool.axe.radioactive": "Hacha Radioactiva",
+    "tool.axe.mythicite": "Hacha De Mitita",
+    "tool.wcan.radioactive": "Regadera Radioactiva",
+    "tool.wcan.mythicite": "Regadera De Mitita",
+    "tool.pick.radioactive": "Pico Radioactivo",
+    "tool.pick.mythicite": "Pico De Mitita",
+    "tool.hoe.radioactive": "Azada Radioactiva",
+    "tool.hoe.mythicite": "Azada De Mitita",
+    "tool.animal-gauntlets.name": "Guantes Anti-Gravitatorios",
+    "tool.animal-gauntlets.description": "Puede recoger animales y moverlos... si están en la Luna.",
+    "tool.animal-gauntlets.holding": "Actualmente sosteniendo:",
+    "tool.animal-gauntlets.moon-requirement": "Debe estar en la luna.",
+
+    // items
+    "item.lunar-key.name": "Llave Lunar",
+    "item.necklace.Looting.name": "Collar De Saqueo",
+    "item.necklace.Looting.description": "Gana oro en función de la salud máxima de los mobs que mates.",
+    "item.necklace.Shocking.name": "Collar De Choque",
+    "item.necklace.Shocking.description": "Después de atacar, inflige un breve efecto de daño por un tiempo.",
+    "item.necklace.Speed.name": "Collar De Velocidad",
+    "item.necklace.Speed.description": "Aumenta tu velocidad.",
+    "item.necklace.Health.name": "Collar De Vida",
+    "item.necklace.Health.description": "Aumenta tu salud máxima en un 50%.",
+    "item.necklace.Cooling.name": "Collar De Enfriamiento",
+    "item.necklace.Cooling.description": "Enfría las baldosas de lava a tu alrededor en el volcán.",
+    "item.necklace.Lunar.name": "Collar Lunar",
+    "item.necklace.Lunar.description": "Anula los efectos de los imanes atrayendo asteroides grises.",
+    "item.necklace.Water.name": "Collar De Agua",
+    "item.necklace.Water.description": "Riega la tierra mientras la labras.",
+    "item.necklace.Sea.name": "Collar Del Mar",
+    "item.necklace.Sea.description": "Aumenta en gran medida la eficacia de la pesca.",
+
+    // item enchantments
+    "tooltip.persists": "No se puede perder al morir.",
+
+
+    /*********
+    ** Monsters
+    *********/
+    "monster.boom-eye.name": "Ojo Boom",
+    "monster.lunar-slime.name": "Baba Lunar",
+
+
+    /*********
+    ** Interactions
+    *********/
+    // UFO
+    "message.ufo.repair": "¿Reparar el OVNI por 10 lingotes radiactivos y 1 alma galáctica?",
+    "message.ufo.repair.lacking": "No tienes suficientes materiales.",
+    "message.ufo.travel": "¿Subir al OVNI?",
+
+    // moon
+    "message.gargoyle": "¿Acariciar a la... gárgola? ¿Quién sabe qué pasará?",
+    "message.dirt-tutorial": "Si sólo tuvieras una herramienta para romper el extremo para seguir adelante...",
+    "message.lunar-teleporter-offline": "Parece que está desconectado. Tal vez necesite mineral de mitita.",
+    "message.lunar-temple.locked": "Está cerrado.",
+    "message.necklace-exchange": "Cambia 1 Collar Lunar y 1 Zafiro Del Alma por un collar al azar... (7 tipos en total excluyendo el Lunar)",
+    "message.necklace-exchange.lacking": "No tienes los materiales.",
+    "message.planet.jump": "¿Saltar?",
+    "message.farm.crystal-lock": "Podría crecer con algo de mineral de mitita.",
+    "message.infuser.1": "El Infusor Celestial, parte 1.^Puede encantar herramientas, permitiéndoles almacenar hasta 2 encantamientos primarios.^(Si ya hay dos, sólo se cambia el segundo).",
+    "message.infuser.2": "El Infusor Celestial, parte 2.^Puede transformar un arma de potencial infinito en su verdadera forma con la energía de un Zafiro Del Alma.",
+    "message.infuser.3": "El Infusor Celestial, parte 3.^Puede aumentar cualquier objeto con un determinado polvo, permitiendo que permanezca contigo incluso en la muerte.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.flashing-ufo.name": "OVNI parpadeante",
+    "config.flashing-ufo.description": "Si el OVNI reparado tiene luces intermitentes o no."
+}

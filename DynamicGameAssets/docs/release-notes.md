@@ -1,8 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming
+## 1.4.1
+Released 12 January 2022 for SMAPI 3.13.0 or later.
 
+* Added support for giant crops outside the farm.
 
 ## 1.4.0
 Release 11 January 2022 for SMAPI 3.13.0 or later.

@@ -1,0 +1,19 @@
+{
+    // skill
+    "skill.name": "Kochen",
+    "skill.level-up-perk": "+{{bonus}}% Genießbarkeit auf hausgemachte Speisen",
+
+    // professions
+    "efficient.name": "Effizient",
+    "efficient.desc": "15% Chance, keine Zutaten zu konsumieren",
+    "gourmet.name": "Feinschmecker",
+    "gourmet.desc": "+20% Verkaufspreis",
+    "intense-flavors.name": "Intensive Aromen",
+    "intense-flavors.desc": "Nahrungsbuffs sind eine Stufe stärker, sobald sie gegessen wurden\n(+20 % für maximale Energie oder Magnetismus)",
+    "professional-chef.name": "Professioneller Koch",
+    "professional-chef.desc": "Hausmannskost ist immer mindestens Silber",
+    "satisfying.name": "Sättigend",
+    "satisfying.desc": "+25% Buff-Dauer nach dem Verzehr",
+    "secret-spices.name": "Geheime Gewürze",
+    "secret-spices.desc": "Bietet ein paar zufällige Buffs beim Essen von ungebufftem Essen"
+}

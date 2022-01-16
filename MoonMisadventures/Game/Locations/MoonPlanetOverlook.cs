@@ -1,15 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using DynamicGameAssets.Game;
-using Microsoft.Xna.Framework;
 using MoonMisadventures.Game.Items;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Tools;
 using xTile.Dimensions;
 
 namespace MoonMisadventures.Game.Locations
@@ -35,7 +29,7 @@ namespace MoonMisadventures.Game.Locations
             int xTile = tileLocation.X, yTile = tileLocation.Y;
             if ( xTile >= 23 && xTile <= 27 && yTile >= 10 && yTile <= 14 )
             {
-                createQuestionDialogue( Mod.instance.Helper.Translation.Get( "message.planet.jump" ), createYesNoResponses(), "PlanetJump" );
+                createQuestionDialogue(I18n.Message_Planet_Jump(), createYesNoResponses(), "PlanetJump" );
                 return true;
             }
 
@@ -46,7 +40,7 @@ namespace MoonMisadventures.Game.Locations
         {
             if ( action == "LunarNecklaceExchange" )
             {
-                createQuestionDialogue( Mod.instance.Helper.Translation.Get( "message.necklace-exchange" ), createYesNoResponses(), "LunarNecklaceExchange" );
+                createQuestionDialogue(I18n.Message_NecklaceExchange(), createYesNoResponses(), "LunarNecklaceExchange" );
             }
             return base.performAction( action, who, tileLocation );
         }
@@ -70,7 +64,7 @@ namespace MoonMisadventures.Game.Locations
 
                         if ( necklaceSlot == -1 || sapphireSlot == -1 )
                         {
-                            Game1.drawObjectDialogue( Mod.instance.Helper.Translation.Get( "message.necklace-exchange.lacking" ) );
+                            Game1.drawObjectDialogue(I18n.Message_NecklaceExchange_Lacking());
                         }
                         else
                         {

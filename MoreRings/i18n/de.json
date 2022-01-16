@@ -1,0 +1,44 @@
+﻿{
+    /*********
+    ** Ring items
+    *********/
+    "quality-ring.name": "Qualität+ Ring",
+    "quality-ring.description": "Eine Chance für qualitativ hochwertigere Ernten.",
+
+    "refreshing-ring.name": "Erfrischender Ring",
+    "refreshing-ring.description": "Ich frage mich, was er wohl bewirkt...",
+
+    "ring-of-regeneration.name": "Ring der Regeneration",
+    "ring-of-regeneration.description": "Verleit Heilung über Zeit.",
+
+    "ring-of-diamond-booze.name": "Ring aus Diamantschnaps",
+    "ring-of-diamond-booze.description": "Hebt die beschwipsende Wirkung von leichterem Alkohol auf.",
+
+    "ring-of-wide-nets.name": "Ring der breiten Netze",
+    "ring-of-wide-nets.description": "Erhöht die Größe der Angelleiste um 50%.",
+
+    "ring-of-far-reaching.name": "Ring der Weite",
+    "ring-of-far-reaching.description": "Verwende Werkzeuge aus der Ferne.",
+
+    "ring-of-true-sight.name": "Ring des wahren Sehens",
+    "ring-of-true-sight.description": "Sehe über das hinaus, was du sehen kannst.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.quality-ring-chance.name": "Qualität+ Ring: Chance",
+    "config.quality-ring-chance.description": "Die prozentuale Chance auf eine höhere Erntequalität mit dem Quality+ Ring ausgestattet.",
+
+    "config.ring-of-wide-nets-multiplier.name": "Ring der breiten Netze: Multiplikator",
+    "config.ring-of-wide-nets-multiplier.description": "Der Multiplikator, der auf die Größe der Angelleiste angewendet wird, wenn der Ring der breiten Netze ausgerüstet ist.",
+
+    "config.ring-of-regeneration-rate.name": "Ring der Regeneration: Lebens-Regeneration",
+    "config.ring-of-regeneration-rate.description": "Die Gesundheitsregenerationsrate pro Sekunde mit dem ausgerüsteten Ring der Regeneration.",
+
+    "config.refreshing-ring-rate.name": "Erfrischender Ring: Ausdauer-Regeneration",
+    "config.refreshing-ring-rate.description": "Die Ausdauer-Regenerationsrate pro Sekunde mit ausgerüstetem Erfrischenden Rring.",
+
+    "config.ring-of-far-reaching-distance.name": "Ring der Weite: Entfernung",
+    "config.ring-of-far-reaching-distance.description": "Die Entfernung in Blöcken, bei der man Werkzeuge verwenden kann, wenn der Ring der Weite ausgerüstet ist."
+}

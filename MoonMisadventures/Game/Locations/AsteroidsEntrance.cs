@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Tools;
 using xTile.Dimensions;
 
 namespace MoonMisadventures.Game.Locations
@@ -35,11 +29,11 @@ namespace MoonMisadventures.Game.Locations
         {
             if ( action == "GargoyleEntrance" )
             {
-                createQuestionDialogue( Mod.instance.Helper.Translation.Get( "message.gargoyle" ), createYesNoResponses(), "GargoyleEntrance" );
+                createQuestionDialogue(I18n.Message_Gargoyle(), createYesNoResponses(), "GargoyleEntrance" );
             }
             else if ( action == "DirtTutorial" )
             {
-                Game1.drawObjectDialogue( Mod.instance.Helper.Translation.Get( "message.dirt-tutorial" ) );
+                Game1.drawObjectDialogue(I18n.Message_DirtTutorial());
             }
             return base.performAction( action, who, tileLocation );
         }

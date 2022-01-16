@@ -1,11 +1,19 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## 0.1.4
+## 0.1.5
 Released 15 January 2022 for SMAPI 3.13.0 or later.
 
 * Fixed tool upgrades not showing.
 * Fixed animal move home button not showing in vanill farm.
+
+## 0.1.4
+Released 12 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
+
+* Added min-version check for integration with Generic Mod Config Menu.
+* Fixed error if Generic Mod Config Menu isn't installed.
+* Improved translations. Thanks to Evexyron (added Spanish) and Scartiana (added German)!
+>>>>>>> origin/develop
 
 ## 0.1.3
 Released 12 January 2022 for SMAPI 3.13.0 or later.

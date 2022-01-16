@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,7 +12,6 @@ using StardewValley;
 using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.Tools;
-//using xTile.Dimensions;
 using xTile.Tiles;
 
 namespace MoonMisadventures.Game.Locations
@@ -395,7 +392,7 @@ namespace MoonMisadventures.Game.Locations
                 }
                 else
                 {
-                    Game1.drawObjectDialogue( Mod.instance.Helper.Translation.Get( "message.lunar-teleporter-offline" ) );
+                    Game1.drawObjectDialogue(I18n.Message_LunarTeleporterOffline());
                 }
             }
             else if ( action == "LunarTeleporter" )
