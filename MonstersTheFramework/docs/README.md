@@ -15,7 +15,7 @@ make custom monsters with custom behavior.
 This mod does nothing on its own; you need to install content packs by unzipping them into your Mods folder. See Requirements > Mods requiring this file above to find content packs.
 
 ### For mod authors
-See the author guide for more info. COMING SOON
+See the [author guide](author-guide.md) for more info.
 
 ## Compatibility
 Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
