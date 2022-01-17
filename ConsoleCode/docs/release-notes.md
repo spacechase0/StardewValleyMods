@@ -2,7 +2,7 @@
 
 # Release notes
 ## 1.0.4
-Released 11 January 2021 for SMAPI 3.13.0 or later.
+Released 11 January 2022 for SMAPI 3.13.0 or later.
 
 * Updated for Stardew Valley 1.5.5.
 
