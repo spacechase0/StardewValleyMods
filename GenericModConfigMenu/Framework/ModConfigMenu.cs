@@ -17,15 +17,35 @@ namespace GenericModConfigMenu.Framework
         *********/
         private RootElement Ui;
         private readonly Table Table;
+
+        /// <summary>The number of field rows to offset when scrolling a config menu.</summary>
         private readonly int ScrollSpeed;
-        private readonly Action<IManifest> OpenModMenu;
+
+        /// <summary>Open the config UI for a specific mod.</summary>
+        private readonly Action<IManifest, int> OpenModMenu;
         private bool InGame => Context.IsWorldReady;
+
+
+        /*********
+        ** Accessors
+        *********/
+        /// <summary>The scroll position, represented by the row index at the top of the visible area.</summary>
+        public int ScrollRow
+        {
+            get => this.Table.Scrollbar.TopRow;
+            set => this.Table.Scrollbar.ScrollTo(value);
+        }
 
 
         /*********
         ** Public methods
         *********/
-        public ModConfigMenu(int scrollSpeed, Action<IManifest> openModMenu, ModConfigManager configs)
+        /// <summary>Construct an instance.</summary>
+        /// <param name="scrollSpeed">The number of field rows to offset when scrolling a config menu.</param>
+        /// <param name="openModMenu">Open the config UI for a specific mod.</param>
+        /// <param name="configs">The mod configurations to display.</param>
+        /// <param name="scrollTo">The initial scroll position, represented by the row index at the top of the visible area.</param>
+        public ModConfigMenu(int scrollSpeed, Action<IManifest, int> openModMenu, ModConfigManager configs, int? scrollTo = null)
         {
             this.ScrollSpeed = scrollSpeed;
             this.OpenModMenu = openModMenu;
@@ -110,6 +130,9 @@ namespace GenericModConfigMenu.Framework
                 this.initializeUpperRightCloseButton();
             else
                 this.upperRightCloseButton = null;
+
+            if (scrollTo != null)
+                this.ScrollRow = scrollTo.Value;
         }
 
         /// <inheritdoc />
@@ -172,7 +195,7 @@ namespace GenericModConfigMenu.Framework
             Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
 
-            this.OpenModMenu(modManifest);
+            this.OpenModMenu(modManifest, this.ScrollRow);
         }
     }
 }
