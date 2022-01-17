@@ -75,7 +75,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi()
         {
-            return this.Api ??= new Api(this.ConfigManager, mod => this.OpenModMenu(mod));
+            return this.Api ??= new Api(this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null));
         }
 
 
@@ -83,15 +83,17 @@ namespace GenericModConfigMenu
         ** Private methods
         *********/
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
-        private void OpenListMenu()
+        /// <param name="scrollRow">The initial scroll position, represented by the row index at the top of the visible area.</param>
+        private void OpenListMenu(int? scrollRow = null)
         {
-            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: mod => this.OpenModMenu(mod), this.ConfigManager);
+            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenu(mod, page: null, listScrollRow: curScrollRow), this.ConfigManager, scrollRow);
         }
 
         /// <summary>Open the config UI for a specific mod.</summary>
         /// <param name="mod">The mod whose config menu to display.</param>
         /// <param name="page">The page to display within the mod's config menu.</param>
-        private void OpenModMenu(IManifest mod, string page = null)
+        /// <param name="listScrollRow">The scroll position to set in the mod list when returning to it, represented by the row index at the top of the visible area.</param>
+        private void OpenModMenu(IManifest mod, string page, int? listScrollRow)
         {
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
@@ -99,8 +101,8 @@ namespace GenericModConfigMenu
                 config: config,
                 scrollSpeed: this.Config.ScrollSpeed,
                 page: page,
-                openPage: newPage => this.OpenModMenu(mod, newPage),
-                returnToList: this.OpenListMenu
+                openPage: newPage => this.OpenModMenu(mod, newPage, listScrollRow),
+                returnToList: () => this.OpenListMenu(listScrollRow)
             );
         }
 
@@ -202,7 +204,7 @@ namespace GenericModConfigMenu
             if (e.NewMenu is GameMenu menu)
             {
                 OptionsPage page = (OptionsPage)menu.pages[GameMenu.optionsTab];
-                page.options.Add(new OptionsButton(I18n.Button_ModOptions(), this.OpenListMenu));
+                page.options.Add(new OptionsButton(I18n.Button_ModOptions(), () => this.OpenListMenu()));
             }
         }
 
