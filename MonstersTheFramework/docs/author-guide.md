@@ -231,7 +231,7 @@ Note that some values can be null that aren't normally indicated as such, like `
     "B": {
         "Defense": 10,
         "HitSound": "skeletonHit",
-        "ContactDamage" 5"
+        "ContactDamage": 5
     },
     "A": {
         "InheritsFrom": "B",
