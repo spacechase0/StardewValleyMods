@@ -248,12 +248,12 @@ The above will result in the following:
     "B": {
         "Defense": 10,
         "HitSound": "skeletonHit",
-        "ContactDamage" 5"
+        "ContactDamage": 5
     },
     "A": {
-        "Defense": 20
+        "Defense": 20,
         "HitSound": "skeletonHit",
-        "ContactDamage" 5"
+        "ContactDamage": 5
     }
 }
 ```
@@ -265,9 +265,9 @@ Most values are overriden with inheritance, but the `Events` field is not. Inste
 #### Variables
 Some fields may ask for an equation.
 
-If the equation must result in a `bool`, it needs to be a comparison, such as: `x < y` or `a = b`.
+If the equation must result in a `bool`, it needs to be a comparison, such as: `x < y` or `a = b`: `"$RANDOM < 0.05"`
 
-If the equation must result in an `int` or `float`, it needs to be a computation, such as `x * y` or `a - b`.
+If the equation must result in an `int` or `float`, it needs to be a computation, such as `x * y` or `a - b`: `"$$healCooldown + 1"`
 
 The following built in variables exist:
 
