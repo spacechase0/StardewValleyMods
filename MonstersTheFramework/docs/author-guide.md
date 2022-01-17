@@ -146,8 +146,7 @@ All fields describe their behavior *during this state*. If the state changes to 
 | `HitSound` | `string` | The ID of the sound to make when taking damage. |
 | `Animation` | `AnimationData` | Controls the animation and display of the monster. See the `AnimationData` section for more information. |
 | `ContactDamage` | `int?` | The damage that should be done to  the player upon contact, if any. |
-<!-- | `DamageElement` | `string` | The elemtent ID for contact damage to be done in. Requires MagickCore. | -->
-| `ApplyDebuff` | `int?` <!-- or `string` --> | The vanilla ID of the debuff that should be applied to players on contact. <!-- If a string, it is a custom debuff from MagickCore and therefore requires MagickCore. --> |
+| `ApplyDebuff` | `int?` | The vanilla ID of the debuff that should be applied to players on contact. |
 | `Events` | `EventData[]` | Events that can trigger state changes, among other things. See the `EventData` section for more information. |
 
 #### MovementData
@@ -286,7 +285,7 @@ See the 'Actions' section for how to set a variable.
 If a variable is used that does not have a value yet, the equation may become invalid. To set your variables on monster spawn, you may want a `start` state that immediately sets the variables and goes to a "real" state, ie.
 ```json
 "start": {
-    "InheritsFrom": "base", // Sets a bunch of other required variables, see 'Inheritance' for more information
+    "InheritsFrom": "base", // Sets a bunch of other fields required for states, see 'Inheritance' for more information
     "Events": [
         {
             "Event": "OnStart", // When this state starts...
