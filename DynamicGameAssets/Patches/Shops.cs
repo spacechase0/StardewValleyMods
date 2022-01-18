@@ -68,7 +68,7 @@ namespace DynamicGameAssets.Patches
 
             // sewer
             harmony.Patch(
-                original: this.RequireMethod<Sewer>("generateKrobusStock"),
+                original: this.RequireMethod<Sewer>(nameof(Sewer.getShadowShopStock)),
                 postfix: this.GetHarmonyMethod(nameof(After_Sewer_GenerateKrobusStock))
             );
 
