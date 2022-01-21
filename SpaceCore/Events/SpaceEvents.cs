@@ -11,45 +11,45 @@ namespace SpaceCore.Events
 {
     public class SpaceEvents
     {
-        // This occurs before loading starts.
-        // Locations should be added here so that SaveData.loadDataToLocations picks them up
+        /// <summary>This occurs before loading starts.</summary>
+        /// Locations should be added here so that SaveData.loadDataToLocations picks them up
         public static event EventHandler OnBlankSave;
 
-        // When the shipping menu pops up, level up menus, ...
+        /// <summary>When the shipping menu pops up, level up menus, ...</summary>
         public static event EventHandler<EventArgsShowNightEndMenus> ShowNightEndMenus;
 
-        // Lets you hook into Utillity.pickFarmEvent
+        /// <summary>Lets you hook into Utillity.pickFarmEvent</summary>
         public static event EventHandler<EventArgsChooseNightlyFarmEvent> ChooseNightlyFarmEvent;
 
-        // When the player is done eating an item.
-        // Check what item using player.itemToEat
+        /// <summary>When the player is done eating an item.</summary>
+        /// Check what item using player.itemToEat
         public static event EventHandler OnItemEaten;
 
-        // When a tile "Action" is activated
+        /// <summary>When a tile "Action" is activated</summary>
         public static event EventHandler<EventArgsAction> ActionActivated;
 
-        // When a tile "TouchAction" is activated
+        /// <summary>When a tile "TouchAction" is activated</summary>
         public static event EventHandler<EventArgsAction> TouchActionActivated;
 
-        // Server side, when a client joins
+        /// <summary>Server side, when a client joins</summary>
         public static event EventHandler<EventArgsServerGotClient> ServerGotClient;
 
-        // Right before a gift is given to someone. Sender is farmer.
+        /// <summary>Right before a gift is given to someone. Sender is farmer.</summary>
         public static event EventHandler<EventArgsBeforeReceiveObject> BeforeGiftGiven;
 
-        // When a gift is given to someone. Sender is farmer.
+        /// <summary>When a gift is given to someone. Sender is farmer.</summary>
         public static event EventHandler<EventArgsGiftGiven> AfterGiftGiven;
 
-        // Before the player is about to warp. Can cancel warping or change the target location.
+        /// B<summary>efore the player is about to warp. Can cancel warping or change the target location.</summary>
         public static event EventHandler<EventArgsBeforeWarp> BeforeWarp;
 
-        // When a bomb explodes
+        /// <summary>When a bomb explodes</summary>
         public static event EventHandler<EventArgsBombExploded> BombExploded;
 
-        // When an event finishes. Use Game1.CurrentEvent to check which one.
+        /// <summary>When an event finishes. Use Game1.CurrentEvent to check which one.</summary>
         public static event EventHandler OnEventFinished;
 
-        // Event for adding wallet items to NewSkillsPage, before the controller-pickable logic needs to run
+        /// <summary>Event for adding wallet items to NewSkillsPage, before the controller-pickable logic needs to run</summary>
         public static event EventHandler AddWalletItems;
 
         internal static void InvokeOnBlankSave()

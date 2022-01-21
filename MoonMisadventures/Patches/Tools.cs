@@ -74,7 +74,7 @@ namespace MoonMisadventures.Patches
     [HarmonyPatch( typeof( Tool ), "tilesAffected" )]
     public static class ToolTilesAffectedPatch
     {
-        public static bool Prefix( Vector2 tileLocation, int power, Farmer who, ref List< Vector2 > __result )
+        public static bool Prefix( Vector2 tileLocation, ref int power, Farmer who, ref List< Vector2 > __result )
         {
             if ( power >= 5 ) // Radioactive or above
             {
@@ -110,6 +110,9 @@ namespace MoonMisadventures.Patches
                         __result.Add( tileLocation + dir * il + perp * ir );
                     }
                 }
+
+                // Goldenrevolver asked for this for their WIP mod
+                ++power;
 
                 return false;
             }

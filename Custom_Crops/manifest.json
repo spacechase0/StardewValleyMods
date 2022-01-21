@@ -1,0 +1,14 @@
+﻿{
+    "Name": "Custom_Crops",
+    "Author": "spacechase0",
+    "Version": "1.0.0",
+    "Description": "...",
+    "UniqueID": "spacechase0.Custom_Crops",
+    "EntryDll": "Custom_Crops.dll",
+    "Dependencies": [
+        {
+            "UniqueID": "spacechase0.SpacECore"
+        }
+    ],
+    "UpdateKeys": [ "Nexus:" ]
+}

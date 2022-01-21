@@ -43,6 +43,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ItemSlot.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ItemWithBorder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\RootElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Scrollbar.cs" />

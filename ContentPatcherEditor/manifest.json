@@ -1,0 +1,17 @@
+﻿{
+    "Name": "Content Patcher Editor",
+    "Author": "spacechase0",
+    "Version": "1.0.0",
+    "Description": "...",
+    "UniqueID": "spacechase0.ContentPatcherEditor",
+    "EntryDll": "ContentPatcherEditor.dll",
+    "Dependencies": [
+        {
+            "UniqueID": "Pathoschild.ContentPatcher"
+        }
+        {
+            "UniqueID": "spacechase0.SpaceCore"
+        }
+    ],
+    "UpdateKeys": [ "Nexus:" ]
+}
