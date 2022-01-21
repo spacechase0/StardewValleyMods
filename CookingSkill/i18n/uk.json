@@ -1,0 +1,19 @@
+{
+    // skill
+    "skill.name": "Куховарство",
+    "skill.level-up-perk": "+{{bonus}}% до їстівності домашньої їжі",
+
+    // professions
+    "efficient.name": "Ефективність",
+    "efficient.desc": "15% шанс не витратити інгредієнти",
+    "gourmet.name": "Гурман",
+    "gourmet.desc": "+20% вартості продажу",
+    "intense-flavors.name": "Насиченість смаку",
+    "intense-flavors.desc": "Бонуси від їжі стають на один рівень кращі після вживання\n(+20% до максимуму енергії чи магнетизму)",
+    "professional-chef.name": "Професійний кухар",
+    "professional-chef.desc": "Домашні страви завжди срібного рівня і вище",
+    "satisfying.name": "Задоволеність",
+    "satisfying.desc": "+25% тривалості бонусу при вживанні",
+    "secret-spices.name": "Секретні спеції",
+    "secret-spices.desc": "Надає трохи випадкових бонусів при вживанні звичайної їжі"
+}
