@@ -66,6 +66,11 @@ namespace BetterShopMenu
         private Dictionary<int, string> CategoryNames;
         private int Sorting;
         private TextBox Search;
+
+        private bool HaveStockList;
+        private Dictionary<int, string> CropData;
+        private const int SeedsOtherCategory = -174; //seeds - 100;
+
         private void InitShop(ShopMenu shopMenu)
         {
             this.Shop = shopMenu;
@@ -78,14 +83,27 @@ namespace BetterShopMenu
             this.InitialItems = this.Shop.forSale;
             this.InitialStock = this.Shop.itemPriceAndStock;
 
+            this.CropData = null;
+            this.HaveStockList = Game1.MasterPlayer.hasOrWillReceiveMail("PierreStocklist");
+            if (this.HaveStockList)
+            {
+                this.CropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
+            }
+
             this.Categories = new List<int>();
             this.HasRecipes = false;
             foreach (var salable in this.InitialItems)
             {
                 var item = salable as Item;
                 var obj = item as SObject;
-                if (!this.Categories.Contains(item?.Category ?? 0) && (obj == null || !obj.IsRecipe))
-                    this.Categories.Add(item?.Category ?? 0);
+                int sCat = item?.Category ?? 0;
+
+                if (!this.Categories.Contains(sCat) && (obj == null || !obj.IsRecipe))
+                    this.Categories.Add(sCat);
+
+                if ((sCat == SObject.SeedsCategory) && this.HaveStockList && !this.Categories.Contains(SeedsOtherCategory))
+                    this.Categories.Add(SeedsOtherCategory);
+
                 if (obj?.IsRecipe == true)
                     this.HasRecipes = true;
             }
@@ -106,6 +124,7 @@ namespace BetterShopMenu
                 [SObject.BigCraftableCategory] = I18n.Categories_BigCraftables(),
                 [SObject.FruitsCategory] = I18n.Categories_Fruits(),
                 [SObject.SeedsCategory] = I18n.Categories_Seeds(),
+                [SeedsOtherCategory] = I18n.Categories_SeedsOther(),
                 [SObject.mineralsCategory] = I18n.Categories_Minerals(),
                 [SObject.flowersCategory] = I18n.Categories_Flowers(),
                 [SObject.meatCategory] = I18n.Categories_Meat(),
@@ -159,22 +178,78 @@ namespace BetterShopMenu
 
             this.SyncStock();
         }
+
+        private bool SeedsFilter(ISalable item, bool inSeason)
+        {
+            if (this.HaveStockList && (item is Item thisItem))
+            {
+                int seedIndex = thisItem.ParentSheetIndex;
+
+                if (this.CropData.ContainsKey(seedIndex))
+                {
+                    string[] split = this.CropData[seedIndex].Split('/');
+                    return split[1].Contains(Game1.currentSeason) == inSeason;
+                }
+                return inSeason; //have this stuff show in the in season list. saplings are like this.
+            }
+            return true;
+        }
+
+        private bool ItemMatchesCategory(ISalable item, int cat)
+        {
+            var obj = item as SObject;
+            if (cat == -1)
+                return true;
+            if (cat == this.Categories.Count)
+                return obj?.IsRecipe == true;
+            if ((this.Categories[cat] == SeedsOtherCategory) && (item is Item seedItem) && (seedItem.Category == SObject.SeedsCategory))
+                return true;
+            if (this.Categories[cat] == ((item as Item)?.Category ?? 0))
+                return (obj == null || !obj.IsRecipe);
+            return false;
+        }
+
         private void SyncStock()
         {
             var items = new List<ISalable>();
             var stock = new Dictionary<ISalable, int[]>();
+
+            int curCat = this.CurrCategory;
+            int sCat = 0;
+            bool inSeason = true;
+            if (curCat >= 0)
+            {
+                sCat = this.Categories[curCat];
+                inSeason = (sCat == SObject.SeedsCategory);
+            }
+            string search = this.Search.Text.ToLower();
+
             foreach (var item in this.InitialItems)
             {
-                if (this.ItemMatchesCategory(item, this.CurrCategory) && (this.Search.Text == null || item.DisplayName.ToLower().Contains(this.Search.Text.ToLower())))
+                if (this.ItemMatchesCategory(item, curCat) && (this.Search.Text == null || item.DisplayName.ToLower().Contains(search)))
                 {
-                    items.Add(item);
+                    if (
+                        (curCat < 0) ||
+                        ((sCat != SObject.SeedsCategory) && (sCat != SeedsOtherCategory)) ||
+                        this.SeedsFilter(item, inSeason)
+                       )
+                    {
+                        items.Add(item);
+                    }
                 }
             }
             foreach (var item in this.InitialStock)
             {
-                if (this.ItemMatchesCategory(item.Key, this.CurrCategory) && (this.Search.Text == null || item.Key.DisplayName.ToLower().Contains(this.Search.Text.ToLower())))
+                if (this.ItemMatchesCategory(item.Key, curCat) && (this.Search.Text == null || item.Key.DisplayName.ToLower().Contains(search)))
                 {
-                    stock.Add(item.Key, item.Value);
+                    if (
+                        (curCat < 0) ||
+                        ((sCat != SObject.SeedsCategory) && (sCat != SeedsOtherCategory)) ||
+                        this.SeedsFilter(item.Key, inSeason)
+                       )
+                    {
+                        stock.Add(item.Key, item.Value);
+                    }
                 }
             }
 
@@ -668,24 +743,14 @@ namespace BetterShopMenu
             else
             {
                 this.Shop = null;
+                this.CropData = null;
+
                 if (this.Search != null)
                 {
                     this.Search.Selected = false;
                     this.Search = null;
                 }
             }
-        }
-
-        private bool ItemMatchesCategory(ISalable item, int cat)
-        {
-            var obj = item as SObject;
-            if (cat == -1)
-                return true;
-            if (cat == this.Categories.Count)
-                return obj?.IsRecipe == true;
-            if (this.Categories[cat] == ((item as Item)?.Category ?? 0))
-                return (obj == null || !obj.IsRecipe);
-            return false;
         }
     }
 }
