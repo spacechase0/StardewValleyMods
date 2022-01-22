@@ -31,9 +31,6 @@ namespace SpaceCore
         /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
         private bool IsFirstTick;
 
-        /// <summary>A queue of textures to dispose, with the <see cref="Game1.ticks"/> value when they were queued.</summary>
-        private readonly Queue<KeyValuePair<Texture2D, int>> TextureDisposalQueue = new();
-
 
         /*********
         ** Accessors
@@ -70,7 +67,6 @@ namespace SpaceCore
 
             Commands.Register();
             Skills.Init(helper.Events);
-            TileSheetExtensions.Init();
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
 
@@ -145,13 +141,6 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            // update tilesheet references
-            foreach (Texture2D oldTexture in TileSheetExtensions.UpdateReferences())
-            {
-                if (this.Config.DisposeOldTextures)
-                    this.TextureDisposalQueue.Enqueue(new(oldTexture, Game1.ticks));
-            }
-
             // disable serializer if not used
             if (this.IsFirstTick && SpaceCore.ModTypes.Count == 0)
             {
@@ -162,26 +151,6 @@ namespace SpaceCore
                     this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
                 foreach (var method in SaveGamePatcher.GetLoadEnumeratorMethods())
                     this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
-            }
-
-            // dispose old textures
-            if (e.IsOneSecond)
-            {
-                while (this.TextureDisposalQueue.Count != 0)
-                {
-                    const int delayTicks = 60; // sixty ticks per second
-
-                    var next = this.TextureDisposalQueue.Peek();
-                    Texture2D asset = next.Key;
-                    int queuedTicks = next.Value;
-
-                    if (Game1.ticks - queuedTicks <= delayTicks)
-                        break;
-
-                    this.TextureDisposalQueue.Dequeue();
-                    if (!asset.IsDisposed)
-                        asset.Dispose();
-                }
             }
         }
 
