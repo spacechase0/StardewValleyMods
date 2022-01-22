@@ -205,7 +205,11 @@ namespace BetterShopMenu
             {
                 if (this.FirstTick)
                     this.InitShop2();
+
+                bool oldMode = Game1.uiMode;
+                Game1.uiMode = true;
                 this.Search.Update();
+                Game1.uiMode = oldMode;
             }
         }
 
@@ -386,8 +390,9 @@ namespace BetterShopMenu
 
             if (e.Button is SButton.MouseLeft or SButton.MouseRight)
             {
-                int x = (int)e.Cursor.ScreenPixels.X;
-                int y = (int)e.Cursor.ScreenPixels.Y;
+                var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Cursor.ScreenPixels);
+                int x = (int)uiCursor.X;
+                int y = (int)uiCursor.Y;
                 int direction = e.Button == SButton.MouseLeft ? 1 : -1;
 
                 if (new Rectangle(this.Shop.xPositionOnScreen + 25, this.Shop.yPositionOnScreen + 525, 200, 72).Contains(x, y))
@@ -428,8 +433,9 @@ namespace BetterShopMenu
             const int unitHeight = 144;
             int unitsWide = (this.Shop.width - 32) / unitWidth;
 
-            int x = (int)e.Cursor.ScreenPixels.X;
-            int y = (int)e.Cursor.ScreenPixels.Y;
+            var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Cursor.ScreenPixels);
+            int x = (int)uiCursor.X;
+            int y = (int)uiCursor.Y;
 
             if (this.Shop.upperRightCloseButton.containsPoint(x, y))
             {
@@ -578,8 +584,9 @@ namespace BetterShopMenu
             const int unitHeight = 144;
             int unitsWide = (this.Shop.width - 32) / unitWidth;
 
-            int x = (int)e.Cursor.ScreenPixels.X;
-            int y = (int)e.Cursor.ScreenPixels.Y;
+            var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Cursor.ScreenPixels);
+            int x = (int)uiCursor.X;
+            int y = (int)uiCursor.Y;
 
             if (this.Shop.upperRightCloseButton.containsPoint(x, y))
             {
