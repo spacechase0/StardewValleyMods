@@ -80,14 +80,15 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
+                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name == __instance.ItemID);
+                if (!__instance.bigCraftable.Value &&  objData != null)
                 {
                     if (__instance.Category == SObject.SeedsCategory)
                     {
                         bool isTree = false;
                         foreach (var tree in Mod.instance.FruitTrees)
                         {
-                            if (tree.Sapling.Id == __instance.ParentSheetIndex)
+                            if (tree.Sapling.Name == __instance.ItemID)
                             {
                                 isTree = true;
                                 break;
@@ -128,7 +129,8 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (__instance.bigCraftable.Value && Mod.instance.BigCraftableIds.Values.Contains(__instance.ParentSheetIndex) && __instance.name.Contains("Chair"))
+                var bigData = Mod.instance.BigCraftables.FirstOrDefault(od => od.Name == __instance.ItemID);
+                if (__instance.bigCraftable.Value && bigData != null && __instance.name.Contains("Chair"))
                     return false;
                 return true;
             }
@@ -147,23 +149,26 @@ namespace JsonAssets.Patches
                 if (!__instance.Name?.Contains("Honey") == true)
                     return true;
 
-                if (Mod.instance.ObjectIds == null)
+                if (( Mod.instance.Objects?.Count ?? 0 ) <= 0)
                     return true;
 
-                if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
+                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name == __instance.ItemID);
+                var bigData = Mod.instance.BigCraftables.FirstOrDefault(od => od.Name == __instance.ItemID);
+
+                if (!__instance.bigCraftable.Value && objData != null)
                 {
-                    Game1.objectInformation.TryGetValue(__instance.ParentSheetIndex, out string str);
+                    Game1.objectInformation.TryGetValue(__instance.ItemID, out string str);
                     if (!string.IsNullOrEmpty(str))
                         __result = str.Split('/')[4];
                     return false;
                 }
-                else if (__instance.bigCraftable.Value && Mod.instance.BigCraftableIds.Values.Contains(__instance.ParentSheetIndex))
+                else if (__instance.bigCraftable.Value && bigData != null)
                 {
-                    Game1.bigCraftablesInformation.TryGetValue(__instance.ParentSheetIndex, out string str);
+                    Game1.bigCraftablesInformation.TryGetValue(__instance.ItemID, out string str);
                     if (!string.IsNullOrEmpty(str))
                     {
                         string[] strArray = str.Split('/');
-                        __result = strArray[strArray.Length - 1];
+                        __result = strArray[10];
                     }
                     return false;
                 }
@@ -185,7 +190,7 @@ namespace JsonAssets.Patches
                 ObjectData objData = null;
                 foreach (var obj in Mod.instance.Objects)
                 {
-                    if (obj.GetObjectId() == __instance.ParentSheetIndex)
+                    if (obj.Name == __instance.ItemID)
                     {
                         objData = obj;
                         break;
@@ -208,10 +213,11 @@ namespace JsonAssets.Patches
         }
 
         /// <summary>The method to call after <see cref="SObject.isIndexOkForBasicShippedCategory"/>.</summary>
-        public static void After_IsIndexOkForBasicShippedCategory(int index, ref bool __result)
+        public static void After_IsIndexOkForBasicShippedCategory(string index, ref bool __result)
         {
             try
             {
+                /*
                 foreach (var ring in Mod.instance.MyRings)
                 {
                     if (ring.GetObjectId() == index)
@@ -220,10 +226,11 @@ namespace JsonAssets.Patches
                         break;
                     }
                 }
-                if (Mod.instance.ObjectIds.Values.Contains(index))
+                */
+                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name == index);
+                if (objData != null)
                 {
-                    var obj = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == index);
-                    if (obj != null && (!obj.CanSell || obj.HideFromShippingCollection))
+                    if (objData != null && (!objData.CanSell || objData.HideFromShippingCollection))
                         __result = false;
                 }
             }
@@ -241,7 +248,7 @@ namespace JsonAssets.Patches
                 ObjectData objData = null;
                 foreach (var obj in Mod.instance.Objects)
                 {
-                    if (obj.GetObjectId() == __instance.ParentSheetIndex)
+                    if (obj.Name == __instance.ItemID)
                     {
                         objData = obj;
                         break;
@@ -268,10 +275,10 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (!__instance.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
+                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name == __instance.ItemID);
+                if (!__instance.bigCraftable.Value && objData != null)
                 {
-                    var obj = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == __instance.ParentSheetIndex);
-                    if (obj?.CanBeGifted == false)
+                    if (objData?.CanBeGifted == false)
                         __result = false;
                 }
             }
@@ -287,9 +294,10 @@ namespace JsonAssets.Patches
             if (__instance.bigCraftable.Value)
                 return true;
 
-            if (__instance.Category == SObject.CraftingCategory && Mod.instance.ObjectIds.Values.Contains(__instance.ParentSheetIndex))
+            var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name == __instance.ItemID);
+            if (__instance.Category == SObject.CraftingCategory && objData != null)
             {
-                if (Mod.instance.Fences.All(f => f.CorrespondingObject.Id != __instance.ParentSheetIndex))
+                if (Mod.instance.Fences.All(f => f.CorrespondingObject.Name != __instance.ItemID))
                 {
                     __result = false;
                     return false;
@@ -302,12 +310,14 @@ namespace JsonAssets.Patches
         /// <summary>The method to call before <see cref="SObject.placementAction"/>.</summary>
         public static bool Before_PlacementAction(SObject __instance, GameLocation location, int x, int y, Farmer who, ref bool __result)
         {
+            // TODO fix when they add custom fences
+            /*
             Vector2 pos = new Vector2(x / 64, y / 64);
             if (!__instance.bigCraftable.Value && __instance is not Furniture)
             {
                 foreach (var fence in Mod.instance.Fences)
                 {
-                    if (__instance.ParentSheetIndex == fence.CorrespondingObject.GetObjectId())
+                    if (__instance.ItemID == fence.CorrespondingObject.Name)
                     {
                         if (location.objects.ContainsKey(pos))
                         {
@@ -321,6 +331,7 @@ namespace JsonAssets.Patches
                     }
                 }
             }
+            */
 
             return true;
         }

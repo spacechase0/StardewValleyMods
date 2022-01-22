@@ -46,11 +46,6 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public int GetClothingId()
-        {
-            return this.Id;
-        }
-
         public int GetMaleIndex()
         {
             return this.TextureIndex;
@@ -65,7 +60,7 @@ namespace JsonAssets.Data
 
         internal string GetClothingInformation()
         {
-            return $"{this.Name}/{this.LocalizedName()}/{this.LocalizedDescription()}/{this.GetMaleIndex()}/{this.GetFemaleIndex()}/{this.Price}/{this.DefaultColor.R} {this.DefaultColor.G} {this.DefaultColor.B}/{this.Dyeable}/Shirt/{this.Metadata}";
+            return $"{this.Name}/{this.LocalizedName()}/{this.LocalizedDescription()}/{this.GetMaleIndex()}/{this.GetFemaleIndex()}/{this.Price}/{this.DefaultColor.R} {this.DefaultColor.G} {this.DefaultColor.B}/{this.Dyeable}/Shirt/{this.Metadata}/{this.Name}";
         }
 
 

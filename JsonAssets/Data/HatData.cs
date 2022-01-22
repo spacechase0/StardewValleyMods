@@ -36,14 +36,9 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public int GetHatId()
-        {
-            return this.Id;
-        }
-
         internal string GetHatInformation()
         {
-            return $"{this.Name}/{this.LocalizedDescription()}/" + (this.ShowHair ? "true" : "false") + "/" + (this.IgnoreHairstyleOffset ? "true" : "false") + $"/{this.Metadata}/{this.LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/" + (this.ShowHair ? "true" : "false") + "/" + (this.IgnoreHairstyleOffset ? "true" : "false") + $"/{this.Metadata}/{this.LocalizedName()}/0/JA\\Hat\\{Name}";
         }
 
 

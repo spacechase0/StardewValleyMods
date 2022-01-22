@@ -10,7 +10,5 @@ namespace JsonAssets.Data
 
         public string EnableWithMod { get; set; }
         public string DisableWithMod { get; set; }
-
-        internal int Id { get; set; } = -1;
     }
 }

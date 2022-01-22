@@ -64,26 +64,14 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public int GetObjectId()
-        {
-            return this.Id;
-        }
-
         internal string GetObjectInformation()
         {
-            if (this.Edibility != SObject.inedible)
-            {
-                int itype = (int)this.Category;
-                string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == ObjectCategory.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
-                str += (this.EdibleIsDrink ? "drink" : "food") + "/";
-                str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
-                return str;
-            }
-            else
-            {
-                int itype = (int)this.Category;
-                return $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == ObjectCategory.Artifact ? "Arch" : $"Basic {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}";
-            }
+            int itype = (int)this.Category;
+            string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == ObjectCategory.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
+            str += (this.EdibleIsDrink ? "drink" : "food") + "/";
+            str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
+            str += $"/0/JA\\Object\\{Name}";
+            return str;
         }
 
 

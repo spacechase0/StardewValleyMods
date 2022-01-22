@@ -36,14 +36,9 @@ namespace JsonAssets.Data
                 CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}"
             };
 
-            if (this.CraftedItems.Count > 1)
-            {
-                recipe.CraftedItemIDs = new List<string>();
-                foreach (object entry in this.CraftedItems)
-                    recipe.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString()); // TODO: always uses first crafted item?
-            }
-            else
-                recipe.CraftedItemID = Mod.instance.ResolveClothingId(this.CraftedItems[0]);
+            recipe.CraftedItemIDs = new List<string>();
+            foreach (object entry in this.CraftedItems)
+                recipe.CraftedItemIDs.Add(this.CraftedItems[0].ToString()); // TODO: always uses first crafted item?
 
             return recipe;
         }

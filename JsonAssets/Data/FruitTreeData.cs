@@ -30,19 +30,14 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public int GetSaplingId()
+        public string GetSaplingId()
         {
-            return this.Sapling.Id;
-        }
-
-        public int GetFruitTreeIndex()
-        {
-            return this.Id;
+            return this.Sapling.Name;
         }
 
         internal string GetFruitTreeInformation()
         {
-            return $"{this.GetFruitTreeIndex()}/{this.Season}/{Mod.instance.ResolveObjectId(this.Product)}/what goes here?";
+            return $"0/{this.Season}/{this.Product}/what goes here?/0/JA\\FruitTree\\{this.Name}";
         }
 
 

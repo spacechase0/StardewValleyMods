@@ -50,15 +50,6 @@ namespace JsonAssets.Data
 
 
         /*********
-        ** Public methods
-        *********/
-        public int GetObjectId()
-        {
-            return this.Id;
-        }
-
-
-        /*********
         ** Private methods
         *********/
         /// <summary>Normalize the model after it's deserialized.</summary>

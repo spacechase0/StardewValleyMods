@@ -44,7 +44,7 @@ namespace JsonAssets.Patches
         {
             try
             {
-                var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == __instance.rowInSpriteSheet.Value);
+                var cropData = Mod.instance.Crops.FirstOrDefault(c => __instance.overrideTexturePath.Value == "JA\\Crop\\" + c.Name);
                 if (cropData == null)
                     return true;
 
@@ -77,11 +77,12 @@ namespace JsonAssets.Patches
                 foreach (var instr in instructions)
                 {
                     // The only reference to 90 is the index of the cactus fruit for checking if it is an indoor only crop
-                    if (instr.opcode == OpCodes.Ldc_I4_S && (sbyte)instr.operand == 90)
+                    if (instr.opcode == OpCodes.Ldstr && (string)instr.operand == "90")
                     {
                         // By default the check is for the crop's product index.
-                        // We want the crop index itself instead since theoretically two crops could have the same product, but be different types.
-                        newInstructions[newInstructions.Count - 2].operand = typeof(Crop).GetField(nameof(Crop.rowInSpriteSheet));
+                        // We want the crop itself instead since theoretically two crops could have the same product, but be different types.
+                        newInstructions[newInstructions.Count - 3].labels.AddRange(newInstructions[newInstructions.Count - 2].labels);
+                        newInstructions.RemoveAt(newInstructions.Count - 2);
 
                         // Call our method
                         newInstructions.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(IsIndoorOnlyCrop))));
@@ -111,13 +112,12 @@ namespace JsonAssets.Patches
                     if (hookCountdown > 0 && --hookCountdown == 0)
                     {
                         newInstructions.Add(new CodeInstruction(OpCodes.Ldarg_0));
-                        newInstructions.Add(new CodeInstruction(OpCodes.Ldfld, typeof(Crop).GetField(nameof(Crop.rowInSpriteSheet)))); // We use the rowInSpriteSheet. See comments on previous pass
                         newInstructions.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(CheckCanBeGiant))));
                         newInstructions.Add(new CodeInstruction(OpCodes.Brtrue_S, label));
                     }
 
                     // The only reference to 276 is the index of the pumpkin for checking for giant crops growing
-                    if (instr.opcode == OpCodes.Ldc_I4 && (int)instr.operand == 276)
+                    if (instr.opcode == OpCodes.Ldstr && (string)instr.operand == "276")
                     {
                         // In two instructions (after this and the next), we want our check
                         hookCountdown = 2;
@@ -141,21 +141,20 @@ namespace JsonAssets.Patches
             }
         }
 
-        private static bool IsIndoorOnlyCrop(int cropRow)
+        private static bool IsIndoorOnlyCrop(Crop crop)
         {
-            if (cropRow == 41) // Vanilla cactus fruit
+            if ( crop.indexOfHarvest == "90" ) // Vanilla cactus fruit
                 return true;
 
-            var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
+            var cropData = Mod.instance.Crops.FirstOrDefault(c => crop.overrideTexturePath.Value == "JA\\Crop\\" + c.Name);
             if (cropData == null)
                 return false;
             return cropData.CropType == CropType.IndoorsOnly;
         }
 
-        private static bool CheckCanBeGiant(NetInt cropRow_)
+        private static bool CheckCanBeGiant(Crop crop)
         {
-            int cropRow = cropRow_.Value;
-            var cropData = Mod.instance.Crops.FirstOrDefault(c => c.GetCropSpriteIndex() == cropRow);
+            var cropData = Mod.instance.Crops.FirstOrDefault(c => crop.overrideTexturePath.Value == "JA\\Crop\\" + c.Name);
             return cropData?.GiantTexture != null;
         }
     }

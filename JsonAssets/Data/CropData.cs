@@ -50,14 +50,9 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public int GetSeedId()
+        public string GetSeedId()
         {
-            return this.Seed.Id;
-        }
-
-        public int GetCropSpriteIndex()
-        {
-            return this.Id;
+            return this.Seed.Name;
         }
 
         internal string GetCropInformation()
@@ -74,7 +69,7 @@ namespace JsonAssets.Data
                 str += season + " ";
             }
             str = str.Substring(0, str.Length - 1) + "/";
-            str += $"{this.GetCropSpriteIndex()}/{Mod.instance.ResolveObjectId(this.Product)}/{this.RegrowthPhase}/";
+            str += $"0/{this.Product}/{this.RegrowthPhase}/";
             str += (this.HarvestWithScythe ? "1" : "0") + "/";
             if (this.Bonus != null)
                 str += $"true {this.Bonus.MinimumPerHarvest} {this.Bonus.MaximumPerHarvest} {this.Bonus.MaxIncreasePerFarmLevel} {this.Bonus.ExtraChance}/";
@@ -88,6 +83,7 @@ namespace JsonAssets.Data
             }
             else
                 str += "false";
+            str += $"/JA\\Crop\\{this.Name}";
             return str;
         }
 

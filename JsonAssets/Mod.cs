@@ -67,32 +67,19 @@ namespace JsonAssets
             Mod.instance = this;
             Log.Monitor = this.Monitor;
 
-            helper.ConsoleCommands.Add("ja_summary", "Summary of JA ids", this.DoCommands);
-            helper.ConsoleCommands.Add("ja_unfix", "Unfix IDs once, in case IDs were double fixed.", this.DoCommands);
-
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
-            helper.Events.GameLoop.Saving += this.OnSaving;
-            helper.Events.Player.InventoryChanged += this.OnInventoryChanged;
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
-            helper.Events.GameLoop.SaveCreated += this.OnCreated;
             helper.Events.GameLoop.UpdateTicked += this.OnTick;
             helper.Events.Specialized.LoadStageChanged += this.OnLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += this.ClientConnected;
 
             helper.Content.AssetEditors.Add(this.Content1 = new ContentInjector1());
             helper.Content.AssetLoaders.Add(this.Content1);
-
-            TileSheetExtensions.RegisterExtendedTileSheet("Maps\\springobjects", 16);
-            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\Craftables", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
-            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\shirts", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\pants", 688);
-            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\hats", 80);
+            Helper.Content.AssetEditors.Add(this.Content2 = new ContentInjector2());
 
             HarmonyPatcher.Apply(this,
                 new CropPatcher(),
-                new FencePatcher(),
+                //new FencePatcher(),
                 new ForgeMenuPatcher(),
                 new Game1Patcher(),
                 new GiantCropPatcher(),
@@ -108,78 +95,6 @@ namespace JsonAssets
         public override object GetApi()
         {
             return this.Api ??= new Api(this.LoadData);
-        }
-
-        private Dictionary<string, KeyValuePair<int, int>> MakeIdMapping(IDictionary<string, int> oldIds, IDictionary<string, int> newIds)
-        {
-            var ret = new Dictionary<string, KeyValuePair<int, int>>();
-            if (oldIds != null)
-            {
-                foreach (var oldId in oldIds)
-                {
-                    ret.Add(oldId.Key, new KeyValuePair<int, int>(oldId.Value, -1));
-                }
-            }
-            foreach (var newId in newIds)
-            {
-                if (ret.TryGetValue(newId.Key, out var pair))
-                    ret[newId.Key] = new KeyValuePair<int, int>(pair.Key, newId.Value);
-                else
-                    ret.Add(newId.Key, new KeyValuePair<int, int>(-1, newId.Value));
-            }
-            return ret;
-        }
-
-        private void PrintIdMapping(string header, Dictionary<string, KeyValuePair<int, int>> mapping)
-        {
-            Log.Info(header);
-            Log.Info("-------------------------");
-
-            int len = 0;
-            foreach (var entry in mapping)
-                len = Math.Max(len, entry.Key.Length);
-
-            foreach (var entry in mapping)
-            {
-                Log.Info(string.Format("{0,-" + len + "} | {1,5} -> {2,-5}",
-                                          entry.Key,
-                                          entry.Value.Key == -1 ? "" : entry.Value.Key.ToString(),
-                                          entry.Value.Value == -1 ? "" : entry.Value.Value.ToString()));
-            }
-            Log.Info("");
-        }
-
-        private void DoCommands(string cmd, string[] args)
-        {
-            if (!this.DidInit)
-            {
-                Log.Info("A save must be loaded first.");
-                return;
-            }
-
-            if (cmd == "ja_summary")
-            {
-                var objs = this.MakeIdMapping(this.OldObjectIds, this.ObjectIds);
-                var crops = this.MakeIdMapping(this.OldCropIds, this.CropIds);
-                var ftrees = this.MakeIdMapping(this.OldFruitTreeIds, this.FruitTreeIds);
-                var bigs = this.MakeIdMapping(this.OldBigCraftableIds, this.BigCraftableIds);
-                var hats = this.MakeIdMapping(this.OldHatIds, this.HatIds);
-                var weapons = this.MakeIdMapping(this.OldWeaponIds, this.WeaponIds);
-                var clothings = this.MakeIdMapping(this.OldClothingIds, this.ClothingIds);
-
-                this.PrintIdMapping("Object IDs", objs);
-                this.PrintIdMapping("Crop IDs", crops);
-                this.PrintIdMapping("Fruit Tree IDs", ftrees);
-                this.PrintIdMapping("Big Craftable IDs", bigs);
-                this.PrintIdMapping("Hat IDs", hats);
-                this.PrintIdMapping("Weapon IDs", weapons);
-                this.PrintIdMapping("Clothing IDs", clothings);
-            }
-            else if (cmd == "ja_unfix")
-            {
-                this.LocationsFixedAlready.Clear();
-                this.FixIdsEverywhere(reverse: true);
-            }
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -221,8 +136,6 @@ namespace JsonAssets
                         }
                 }
                 this.Api.InvokeItemsRegistered();
-
-                this.ResetAtTitle();
             }
 
         }
@@ -291,7 +204,7 @@ namespace JsonAssets
                     PurchaseFrom = obj.Recipe.PurchaseFrom,
                     Price = obj.Recipe.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, obj.Recipe.PurchaseRequirements),
-                    Object = () => new SObject(obj.Id, 1, true, obj.Recipe.PurchasePrice)
+                    Object = () => new SObject(obj.Name, 1, true, obj.Recipe.PurchasePrice)
                 });
 
                 foreach (var entry in obj.Recipe.AdditionalPurchaseData)
@@ -301,7 +214,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(obj.Id, 1, true, entry.PurchasePrice)
+                        Object = () => new SObject(obj.Name, 1, true, entry.PurchasePrice)
                     });
                 }
             }
@@ -314,7 +227,7 @@ namespace JsonAssets
                     PurchaseFrom = obj.PurchaseFrom,
                     Price = obj.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, obj.PurchaseRequirements),
-                    Object = () => new SObject(obj.Id, int.MaxValue, false, obj.Price)
+                    Object = () => new SObject(obj.Name, int.MaxValue, false, obj.Price)
                 });
                 foreach (var entry in obj.AdditionalPurchaseData)
                 {
@@ -323,14 +236,10 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(obj.Id, int.MaxValue, false, obj.Price)
+                        Object = () => new SObject(obj.Name, int.MaxValue, false, obj.Price)
                     });
                 }
             }
-
-            // save ring
-            if (obj.Category == ObjectCategory.Ring)
-                this.MyRings.Add(obj);
 
             // check for duplicates
             if (this.DupObjects.TryGetValue(obj.Name, out IManifest prevManifest))
@@ -429,7 +338,7 @@ namespace JsonAssets
                     PurchaseFrom = crop.Seed.PurchaseFrom,
                     Price = crop.Seed.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, crop.Seed.PurchaseRequirements),
-                    Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.Price),
+                    Object = () => new SObject(crop.Seed.Name, int.MaxValue, false, crop.Seed.Price),
                     ShowWithStocklist = true
                 });
                 foreach (var entry in crop.Seed.AdditionalPurchaseData)
@@ -439,7 +348,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(crop.Seed.Id, int.MaxValue, false, crop.Seed.Price)
+                        Object = () => new SObject(crop.Seed.Name, int.MaxValue, false, crop.Seed.Price)
                     });
                 }
             }
@@ -516,7 +425,7 @@ namespace JsonAssets
                     PurchaseFrom = tree.Sapling.PurchaseFrom,
                     Price = tree.Sapling.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, tree.Sapling.PurchaseRequirements),
-                    Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
+                    Object = () => new SObject(Vector2.Zero, tree.Sapling.Name, int.MaxValue)
                 });
                 foreach (var entry in tree.Sapling.AdditionalPurchaseData)
                 {
@@ -525,7 +434,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(Vector2.Zero, tree.Sapling.Id, int.MaxValue)
+                        Object = () => new SObject(Vector2.Zero, tree.Sapling.Name, int.MaxValue)
                     });
                 }
             }
@@ -574,7 +483,7 @@ namespace JsonAssets
                     PurchaseFrom = craftable.Recipe.PurchaseFrom,
                     Price = craftable.Recipe.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, craftable.Recipe.PurchaseRequirements),
-                    Object = () => new SObject(Vector2.Zero, craftable.Id, true)
+                    Object = () => new SObject(Vector2.Zero, craftable.Name, true)
                 });
                 foreach (var entry in craftable.Recipe.AdditionalPurchaseData)
                 {
@@ -583,7 +492,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(Vector2.Zero, craftable.Id, true)
+                        Object = () => new SObject(Vector2.Zero, craftable.Name, true)
                     });
                 }
             }
@@ -596,7 +505,7 @@ namespace JsonAssets
                     PurchaseFrom = craftable.PurchaseFrom,
                     Price = craftable.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, craftable.PurchaseRequirements),
-                    Object = () => new SObject(Vector2.Zero, craftable.Id)
+                    Object = () => new SObject(Vector2.Zero, craftable.Name)
                 });
                 foreach (var entry in craftable.AdditionalPurchaseData)
                 {
@@ -605,7 +514,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(Vector2.Zero, craftable.Id)
+                        Object = () => new SObject(Vector2.Zero, craftable.Name)
                     });
                 }
             }
@@ -654,7 +563,7 @@ namespace JsonAssets
                     PurchaseFrom = "HatMouse",
                     Price = hat.PurchasePrice,
                     PurchaseRequirements = ParsedConditions.AlwaysTrue,
-                    Object = () => new Hat(hat.Id)
+                    Object = () => new Hat(hat.Name)
                 });
             }
 
@@ -702,7 +611,7 @@ namespace JsonAssets
                     PurchaseFrom = weapon.PurchaseFrom,
                     Price = weapon.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, weapon.PurchaseRequirements),
-                    Object = () => new MeleeWeapon(weapon.Id)
+                    Object = () => new MeleeWeapon(weapon.Name)
                 });
                 foreach (var entry in weapon.AdditionalPurchaseData)
                 {
@@ -711,7 +620,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new MeleeWeapon(weapon.Id)
+                        Object = () => new MeleeWeapon(weapon.Name)
                     });
                 }
             }
@@ -842,7 +751,7 @@ namespace JsonAssets
                     PurchaseFrom = boots.PurchaseFrom,
                     Price = boots.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, boots.PurchaseRequirements),
-                    Object = () => new Boots(boots.Id)
+                    Object = () => new Boots(boots.Name)
                 });
 
                 foreach (var entry in boots.AdditionalPurchaseData)
@@ -852,7 +761,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new Boots(boots.Id)
+                        Object = () => new Boots(boots.Name)
                     });
                 }
             }
@@ -1225,28 +1134,6 @@ namespace JsonAssets
             }
         }
 
-        private void ResetAtTitle()
-        {
-            this.DidInit = false;
-            // When we go back to the title menu we need to reset things so things don't break when
-            // going back to a save.
-            this.ClearIds(out this.ObjectIds, this.Objects.ToList<DataNeedsId>());
-            this.ClearIds(out this.CropIds, this.Crops.ToList<DataNeedsId>());
-            this.ClearIds(out this.FruitTreeIds, this.FruitTrees.ToList<DataNeedsId>());
-            this.ClearIds(out this.BigCraftableIds, this.BigCraftables.ToList<DataNeedsId>());
-            this.ClearIds(out this.HatIds, this.Hats.ToList<DataNeedsId>());
-            this.ClearIds(out this.WeaponIds, this.Weapons.ToList<DataNeedsId>());
-            List<DataNeedsId> clothing = new List<DataNeedsId>();
-            clothing.AddRange(this.Shirts);
-            clothing.AddRange(this.Pants);
-            this.ClearIds(out this.ClothingIds, clothing.ToList<DataNeedsId>());
-
-            this.Content1.InvalidateUsed();
-            this.Helper.Content.AssetEditors.Remove(this.Content2);
-
-            this.LocationsFixedAlready.Clear();
-        }
-
         internal void OnBlankSave()
         {
             Log.Trace("Loading stuff early (really super early)");
@@ -1254,12 +1141,6 @@ namespace JsonAssets
             {
                 this.InitStuff(loadIdFiles: false);
             }
-        }
-
-        private void OnCreated(object sender, SaveCreatedEventArgs e)
-        {
-            Log.Trace("Loading stuff early (creation)");
-            //initStuff(loadIdFiles: false);
         }
 
         private void OnLoadStageChanged(object sender, LoadStageChangedEventArgs e)
@@ -1276,31 +1157,12 @@ namespace JsonAssets
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
             {
-                Log.Trace("Adding default/leveled recipes");
+                Log.Trace("Adding default recipes");
                 foreach (var obj in this.Objects)
                 {
                     if (obj.Recipe != null)
                     {
-                        bool unlockedByLevel = false;
-                        if (obj.Recipe.SkillUnlockName?.Length > 0 && obj.Recipe.SkillUnlockLevel > 0)
-                        {
-                            int level = obj.Recipe.SkillUnlockName switch
-                            {
-                                "Farming" => Game1.player.farmingLevel.Value,
-                                "Fishing" => Game1.player.fishingLevel.Value,
-                                "Foraging" => Game1.player.foragingLevel.Value,
-                                "Mining" => Game1.player.miningLevel.Value,
-                                "Combat" => Game1.player.combatLevel.Value,
-                                "Luck" => Game1.player.luckLevel.Value,
-                                _ => Game1.player.GetCustomSkillLevel(obj.Recipe.SkillUnlockName)
-                            };
-
-                            if (level >= obj.Recipe.SkillUnlockLevel)
-                            {
-                                unlockedByLevel = true;
-                            }
-                        }
-                        if ((obj.Recipe.IsDefault || unlockedByLevel) && !Game1.player.knowsRecipe(obj.Name))
+                        if (obj.Recipe.IsDefault && !Game1.player.knowsRecipe(obj.Name))
                         {
                             if (obj.Category == ObjectCategory.Cooking)
                             {
@@ -1317,26 +1179,7 @@ namespace JsonAssets
                 {
                     if (big.Recipe != null)
                     {
-                        bool unlockedByLevel = false;
-                        if (big.Recipe.SkillUnlockName?.Length > 0 && big.Recipe.SkillUnlockLevel > 0)
-                        {
-                            int level = big.Recipe.SkillUnlockName switch
-                            {
-                                "Farming" => Game1.player.farmingLevel.Value,
-                                "Fishing" => Game1.player.fishingLevel.Value,
-                                "Foraging" => Game1.player.foragingLevel.Value,
-                                "Mining" => Game1.player.miningLevel.Value,
-                                "Combat" => Game1.player.combatLevel.Value,
-                                "Luck" => Game1.player.luckLevel.Value,
-                                _ => Game1.player.GetCustomSkillLevel(big.Recipe.SkillUnlockName)
-                            };
-
-                            if (level >= big.Recipe.SkillUnlockLevel)
-                            {
-                                unlockedByLevel = true;
-                            }
-                        }
-                        if ((big.Recipe.IsDefault || unlockedByLevel) && !Game1.player.knowsRecipe(big.Name))
+                        if (big.Recipe.IsDefault && !Game1.player.knowsRecipe(big.Name))
                             Game1.player.craftingRecipes.Add(big.Name, 0);
                     }
                 }
@@ -1364,13 +1207,6 @@ namespace JsonAssets
         {
             if (e.NewMenu == null)
                 return;
-
-            // handle return to title
-            if (e.NewMenu is TitleMenu)
-            {
-                this.ResetAtTitle();
-                return;
-            }
 
             // handle shop menu
             if (e.NewMenu is ShopMenu { source: not StorageFurniture } menu && !object.ReferenceEquals(e.NewMenu, this.LastShopMenu))
@@ -1417,7 +1253,10 @@ namespace JsonAssets
                     int[] values = isQiGemShop
                         ? new[] { 0, isRecipe ? 1 : int.MaxValue, 858, price }
                         : new[] { price, isRecipe ? 1 : int.MaxValue };
-                    itemPriceAndStock.Add(item, values);
+                    var isi = isQiGemShop
+                        ? new ItemStockInformation(0, isRecipe ? 1 : int.MaxValue, "858", price)
+                        : new ItemStockInformation(price, isRecipe ? 1 : int.MaxValue);
+                    itemPriceAndStock.Add(item, isi);
                 }
 
                 this.Api.InvokeAddedItemsToShop();
@@ -1473,14 +1312,14 @@ namespace JsonAssets
                         : new Dictionary<TKey, TValue>();
                 }
                 Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
-                this.OldObjectIds = LoadDictionary<string, int>("ids-objects.json") ?? new Dictionary<string, int>();
-                this.OldCropIds = LoadDictionary<string, int>("ids-crops.json") ?? new Dictionary<string, int>();
-                this.OldFruitTreeIds = LoadDictionary<string, int>("ids-fruittrees.json") ?? new Dictionary<string, int>();
-                this.OldBigCraftableIds = LoadDictionary<string, int>("ids-big-craftables.json") ?? new Dictionary<string, int>();
-                this.OldHatIds = LoadDictionary<string, int>("ids-hats.json") ?? new Dictionary<string, int>();
-                this.OldWeaponIds = LoadDictionary<string, int>("ids-weapons.json") ?? new Dictionary<string, int>();
-                this.OldClothingIds = LoadDictionary<string, int>("ids-clothing.json") ?? new Dictionary<string, int>();
-                this.OldBootsIds = LoadDictionary<string, int>("ids-boots.json") ?? new Dictionary<string, int>();
+                this.OldObjectIds = (LoadDictionary<string, int>("ids-objects.json") ?? new Dictionary<string, int>()).ToDictionary( x => x.Value.ToString(), x => x.Key );
+                this.OldCropIds = (LoadDictionary<string, int>("ids-crops.json") ?? new Dictionary<string, int>()).ToDictionary(x => x.Value.ToString(), x => x.Key);
+                this.OldFruitTreeIds = (LoadDictionary<string, int>("ids-fruittrees.json") ?? new Dictionary<string, int>()).ToDictionary(x => x.Value.ToString(), x => x.Key);
+                this.OldBigCraftableIds = (LoadDictionary<string, int>("ids-big-craftables.json") ?? new Dictionary<string, int>()).ToDictionary(x => x.Value.ToString(), x => x.Key);
+                this.OldHatIds = (LoadDictionary<string, int>("ids-hats.json") ?? new Dictionary<string, int>()).ToDictionary(x => x.Value.ToString(), x => x.Key);
+                this.OldWeaponIds = (LoadDictionary<string, int>("ids-weapons.json") ?? new Dictionary<string, int>()).ToDictionary(x => x.Value.ToString(), x => x.Key);
+                this.OldClothingIds = (LoadDictionary<string, int>("ids-clothing.json") ?? new Dictionary<string, int>()).ToDictionary(x => x.Value.ToString(), x => x.Key);
+                this.OldBootsIds = (LoadDictionary<string, int>("ids-boots.json") ?? new Dictionary<string, int>()).ToDictionary(x => x.Value.ToString(), x => x.Key);
 
                 Log.Verbose("OLD IDS START");
                 foreach (var id in this.OldObjectIds)
@@ -1501,221 +1340,30 @@ namespace JsonAssets
                     Log.Verbose("\tBoots " + id.Key + " = " + id.Value);
                 Log.Verbose("OLD IDS END");
             }
-
-            // assign IDs
-            var objList = new List<DataNeedsId>();
-            objList.AddRange(this.Objects.ToList<DataNeedsId>());
-            objList.AddRange(this.Boots.ToList<DataNeedsId>());
-            this.ObjectIds = this.AssignIds("objects", Mod.StartingObjectId, objList);
-            this.CropIds = this.AssignIds("crops", Mod.StartingCropId, this.Crops.ToList<DataNeedsId>());
-            this.FruitTreeIds = this.AssignIds("fruittrees", Mod.StartingFruitTreeId, this.FruitTrees.ToList<DataNeedsId>());
-            this.BigCraftableIds = this.AssignIds("big-craftables", Mod.StartingBigCraftableId, this.BigCraftables.ToList<DataNeedsId>());
-            this.HatIds = this.AssignIds("hats", Mod.StartingHatId, this.Hats.ToList<DataNeedsId>());
-            this.WeaponIds = this.AssignIds("weapons", Mod.StartingWeaponId, this.Weapons.ToList<DataNeedsId>());
-            List<DataNeedsId> clothing = new List<DataNeedsId>();
-            clothing.AddRange(this.Shirts);
-            clothing.AddRange(this.Pants);
-            this.ClothingIds = this.AssignIds("clothing", Mod.StartingClothingId, clothing.ToList<DataNeedsId>());
-
-            this.AssignTextureIndices("shirts", Mod.StartingShirtTextureIndex, this.Shirts.ToList<DataSeparateTextureIndex>());
-            this.AssignTextureIndices("pants", Mod.StartingPantsTextureIndex, this.Pants.ToList<DataSeparateTextureIndex>());
-            this.AssignTextureIndices("boots", Mod.StartingBootsId, this.Boots.ToList<DataSeparateTextureIndex>());
-
-            Log.Trace("Resetting max shirt/pants value");
-            this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
-            this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
-
-            this.Api.InvokeIdsAssigned();
-
-            this.Content1.InvalidateUsed();
-            this.Helper.Content.AssetEditors.Add(this.Content2 = new ContentInjector2());
-
-            // This happens here instead of with ID fixing because TMXL apparently
-            // uses the ID fixing API before ID fixing happens everywhere.
-            // Doing this here prevents some NREs (that don't show up unless you're
-            // debugging for some reason????)
-            this.VanillaObjectIds = this.GetVanillaIds(Game1.objectInformation, this.ObjectIds);
-            this.VanillaCropIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\Crops"), this.CropIds);
-            this.VanillaFruitTreeIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\fruitTrees"), this.FruitTreeIds);
-            this.VanillaBigCraftableIds = this.GetVanillaIds(Game1.bigCraftablesInformation, this.BigCraftableIds);
-            this.VanillaHatIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\hats"), this.HatIds);
-            this.VanillaWeaponIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\weapons"), this.WeaponIds);
-            this.VanillaClothingIds = this.GetVanillaIds(Game1.content.Load<Dictionary<int, string>>("Data\\ClothingInformation"), this.ClothingIds);
         }
 
-        /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnSaving(object sender, SavingEventArgs e)
-        {
-            if (!Game1.IsMasterGame)
-                return;
-
-            if (!Directory.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets")))
-                Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
-
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds));
-        }
-
-        internal IList<ObjectData> MyRings = new List<ObjectData>();
-
-        /// <summary>Raised after items are added or removed to a player's inventory. NOTE: this event is currently only raised for the current player.</summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnInventoryChanged(object sender, InventoryChangedEventArgs e)
-        {
-            if (!e.IsLocalPlayer)
-                return;
-
-            IList<int> ringIds = new List<int>();
-            foreach (var ring in this.MyRings)
-                ringIds.Add(ring.Id);
-
-            for (int i = 0; i < Game1.player.Items.Count; ++i)
-            {
-                var item = Game1.player.Items[i];
-                if (item is SObject obj && ringIds.Contains(obj.ParentSheetIndex))
-                {
-                    Log.Trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
-                    Game1.player.Items[i] = new Ring(obj.ParentSheetIndex);
-                }
-            }
-        }
-
-        internal const int StartingObjectId = 3000;
-        internal const int StartingCropId = 100;
-        internal const int StartingFruitTreeId = 10;
-        internal const int StartingBigCraftableId = 300;
-        internal const int StartingHatId = 160;
-        internal const int StartingWeaponId = 128;
-        internal const int StartingClothingId = 3000;
-        internal const int StartingShirtTextureIndex = 750;
-        internal const int StartingPantsTextureIndex = 20;
-        internal const int StartingBootsId = 100;
-
-        internal IList<ObjectData> Objects = new List<ObjectData>();
-        internal IList<CropData> Crops = new List<CropData>();
-        internal IList<FruitTreeData> FruitTrees = new List<FruitTreeData>();
-        internal IList<BigCraftableData> BigCraftables = new List<BigCraftableData>();
-        internal IList<HatData> Hats = new List<HatData>();
-        internal IList<WeaponData> Weapons = new List<WeaponData>();
-        internal IList<ShirtData> Shirts = new List<ShirtData>();
-        internal IList<PantsData> Pants = new List<PantsData>();
-        internal IList<TailoringRecipeData> Tailoring = new List<TailoringRecipeData>();
-        internal IList<BootsData> Boots = new List<BootsData>();
+        internal List<ObjectData> Objects = new List<ObjectData>();
+        internal List<CropData> Crops = new List<CropData>();
+        internal List<FruitTreeData> FruitTrees = new List<FruitTreeData>();
+        internal List<BigCraftableData> BigCraftables = new List<BigCraftableData>();
+        internal List<HatData> Hats = new List<HatData>();
+        internal List<WeaponData> Weapons = new List<WeaponData>();
+        internal List<ShirtData> Shirts = new List<ShirtData>();
+        internal List<PantsData> Pants = new List<PantsData>();
+        internal List<TailoringRecipeData> Tailoring = new List<TailoringRecipeData>();
+        internal List<BootsData> Boots = new List<BootsData>();
         internal List<FenceData> Fences = new();
-        internal IList<ForgeRecipeData> Forge = new List<ForgeRecipeData>();
+        internal List<ForgeRecipeData> Forge = new List<ForgeRecipeData>();
 
-        /// <summary>The custom objects' currently assigned IDs, indexed by item name.</summary>
-        internal IDictionary<string, int> ObjectIds;
-
-        /// <summary>The custom objects' currently assigned IDs, indexed by item name.</summary>
-        internal IDictionary<string, int> CropIds;
-
-        /// <summary>The custom fruit trees' currently assigned IDs, indexed by item name.</summary>
-        internal IDictionary<string, int> FruitTreeIds;
-
-        /// <summary>The custom big craftables' currently assigned IDs, indexed by item name.</summary>
-        internal IDictionary<string, int> BigCraftableIds;
-
-        /// <summary>The custom hats' currently assigned IDs, indexed by item name.</summary>
-        internal IDictionary<string, int> HatIds;
-
-        /// <summary>The custom weapons' currently assigned IDs, indexed by item name.</summary>
-        internal IDictionary<string, int> WeaponIds;
-
-        /// <summary>The custom clothing's currently assigned IDs, indexed by item name.</summary>
-        internal IDictionary<string, int> ClothingIds;
-
-        /// <summary>The custom objects' previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldObjectIds;
-
-        /// <summary>The custom crops' previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldCropIds;
-
-        /// <summary>The custom fruit trees' previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldFruitTreeIds;
-
-        /// <summary>The custom big craftables' previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldBigCraftableIds;
-
-        /// <summary>The custom hats' previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldHatIds;
-
-        /// <summary>The custom weapons' previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldWeaponIds;
-
-        /// <summary>The custom clothing's previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldClothingIds;
-
-        /// <summary>The custom boots' previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldBootsIds;
-
-        /// <summary>The vanilla object IDs.</summary>
-        internal ISet<int> VanillaObjectIds;
-
-        /// <summary>The vanilla crop IDs.</summary>
-        internal ISet<int> VanillaCropIds;
-
-        /// <summary>The vanilla fruit tree IDs.</summary>
-        internal ISet<int> VanillaFruitTreeIds;
-
-        /// <summary>The vanilla big craftable IDs.</summary>
-        internal ISet<int> VanillaBigCraftableIds;
-
-        /// <summary>The vanilla hat IDs.</summary>
-        internal ISet<int> VanillaHatIds;
-
-        /// <summary>The vanilla weapon IDs.</summary>
-        internal ISet<int> VanillaWeaponIds;
-
-        /// <summary>The vanilla clothing IDs.</summary>
-        internal ISet<int> VanillaClothingIds;
-
-        /// <summary>The vanilla boot IDs.</summary>
-        internal ISet<int> VanillaBootIds;
-
-        public int ResolveObjectId(object data)
-        {
-            if (data is long inputId)
-                return (int)inputId;
-
-            if (this.ObjectIds.TryGetValue((string)data, out int id))
-                return id;
-
-            foreach (var obj in Game1.objectInformation)
-            {
-                if (obj.Value.Split('/')[0] == (string)data)
-                    return obj.Key;
-            }
-
-            Log.Warn($"No idea what '{data}' is!");
-            return 0;
-        }
-
-        public int ResolveClothingId(object data)
-        {
-            if (data is long inputId)
-                return (int)inputId;
-
-            if (this.ClothingIds.TryGetValue((string)data, out int id))
-                return id;
-
-            foreach (var obj in Game1.clothingInformation)
-            {
-                if (obj.Value.Split('/')[0] == (string)data)
-                    return obj.Key;
-            }
-
-            Log.Warn($"No idea what '{data}' is!");
-            return 0;
-        }
+        // In this version of JA, these are int-ID-string to name, not name to int ID
+        internal Dictionary<string, string> OldObjectIds;
+        internal Dictionary<string, string> OldCropIds;
+        internal Dictionary<string, string> OldFruitTreeIds;
+        internal Dictionary<string, string> OldBigCraftableIds;
+        internal Dictionary<string, string> OldHatIds;
+        internal Dictionary<string, string> OldWeaponIds;
+        internal Dictionary<string, string> OldClothingIds;
+        internal Dictionary<string, string> OldBootsIds;
 
         /// <summary>Populate an item's localization fields based on the <see cref="ITranslatableItem.TranslationKey"/> property, if defined.</summary>
         /// <param name="item">The item for which to populate translations.</param>
@@ -1770,105 +1418,25 @@ namespace JsonAssets
             return false;
         }
 
-        private Dictionary<string, int> AssignIds(string type, int starting, List<DataNeedsId> data)
-        {
-            data.Sort((dni1, dni2) => dni1.Name.CompareTo(dni2.Name));
 
-            Dictionary<string, int> ids = new Dictionary<string, int>();
-
-            int[] bigSkip = new[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812 };
-
-            int currId = starting;
-            foreach (var d in data)
-            {
-                if (d.Id == -1)
-                {
-                    // handle name conflict
-                    if (ids.TryGetValue(d.Name, out int prevId))
-                    {
-                        Log.Warn($"Found ID conflict: there are two custom '{type}' items with the name '{d.Name}'. This may have unintended consequences.");
-                        d.Id = prevId;
-                    }
-
-                    // else assign new ID
-                    else
-                    {
-                        Log.Verbose($"New ID: {d.Name} = {currId}");
-                        int id = currId++;
-                        if (type == "big-craftables")
-                        {
-                            while (bigSkip.Contains(id))
-                            {
-                                id = currId++;
-                            }
-                        }
-
-                        ids.Add(d.Name, id);
-                        if (type == "objects" && d is ObjectData { IsColored: true })
-                            ++currId;
-                        else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
-                            currId += ((BigCraftableData)d).ReserveExtraIndexCount;
-                        d.Id = ids[d.Name];
-                    }
-                }
-            }
-
-            return ids;
-        }
-
-        private void AssignTextureIndices(string type, int starting, List<DataSeparateTextureIndex> data)
-        {
-            data.Sort((dni1, dni2) => dni1.Name.CompareTo(dni2.Name));
-
-            Dictionary<string, int> idxs = new Dictionary<string, int>();
-
-            int currIdx = starting;
-            foreach (var d in data)
-            {
-                if (d.TextureIndex == -1)
-                {
-                    Log.Verbose($"New texture index: {d.Name} = {currIdx}");
-                    idxs.Add(d.Name, currIdx++);
-                    if (type == "shirts" && ((ClothingData)d).HasFemaleVariant)
-                        ++currIdx;
-                    d.TextureIndex = idxs[d.Name];
-                }
-            }
-        }
-
-        private void ClearIds(out IDictionary<string, int> ids, List<DataNeedsId> objs)
-        {
-            ids = null;
-            foreach (DataNeedsId obj in objs)
-            {
-                obj.Id = -1;
-            }
-        }
-
-        /// <summary>Get the vanilla IDs from the game data.</summary>
-        /// <param name="full">The full list of items, including both vanilla and custom IDs.</param>
-        /// <param name="customIds">The custom IDs.</param>
-        private ISet<int> GetVanillaIds(IDictionary<int, string> full, IDictionary<string, int> customIds)
-        {
-            return new HashSet<int>(
-                full.Keys.Except(customIds.Values)
-            );
-        }
-
-        private bool ReverseFixing;
         private readonly HashSet<string> LocationsFixedAlready = new();
         private void FixIdsEverywhere(bool reverse = false)
         {
-            this.ReverseFixing = reverse;
-            if (this.ReverseFixing)
+            SpaceUtility.iterateAllItems(this.FixItem);
+            SpaceUtility.iterateAllTerrainFeatures(this.FixTerrainFeature);
+            foreach ( var loc in Game1.locations )
             {
-                Log.Info("Reversing!");
+                if ( loc is IAnimalLocation aloc )
+                {
+                    foreach (var animal in aloc.Animals.Values)
+                        FixFarmAnimal(animal);
+                }
+                if ( loc is BuildableGameLocation buildable )
+                {
+                    foreach (var building in buildable.buildings)
+                        FixBuilding(building);
+                }
             }
-
-            this.FixItemList(Game1.player.team.junimoChest);
-            this.FixCharacter(Game1.player);
-            foreach (var loc in Game1.locations)
-                this.FixLocation(loc);
 
             this.FixIdDict(Game1.player.basicShipped, removeUnshippable: true);
             this.FixIdDict(Game1.player.mineralsFound);
@@ -1876,6 +1444,8 @@ namespace JsonAssets
             this.FixIdDict2(Game1.player.archaeologyFound);
             this.FixIdDict2(Game1.player.fishCaught);
 
+            // Fix this if anyone complains it isn't working
+            /*
             var bundleData = Game1.netWorldState.Value.GetUnlocalizedBundleData();
             var bundleDataCopy = new Dictionary<string, string>(Game1.netWorldState.Value.GetUnlocalizedBundleData());
 
@@ -1947,79 +1517,96 @@ namespace JsonAssets
                 toks[2] = string.Join(" ", toks2);
                 bundleData[entry.Key] = string.Join("/", toks);
             }
-            // Fix bad bundle data
 
             Game1.netWorldState.Value.SetBundleData(bundleData);
-
-            if (!this.ReverseFixing)
-                this.Api.InvokeIdsFixed();
-            this.ReverseFixing = false;
+            */
+            // Fix bad bundle data
         }
 
         /// <summary>Fix item IDs contained by an item, including the item itself.</summary>
         /// <param name="item">The item to fix.</param>
         /// <returns>Returns whether the item should be removed.</returns>
         [SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
-        internal bool FixItem(Item item)
+        internal Item FixItem(Item item)
         {
             switch (item)
             {
                 case Hat hat:
-                    return this.FixId(this.OldHatIds, this.HatIds, hat.which, this.VanillaHatIds);
+                    if (this.OldHatIds.ContainsKey(hat.deprecatedWhich.Value.ToString()))
+                        hat.ItemID = this.OldHatIds[hat.deprecatedWhich.Value.ToString()];
+                    break;
 
                 case MeleeWeapon weapon:
-                    return
-                        this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.VanillaWeaponIds)
-                        || this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds)
-                        || this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.indexOfMenuItemView, this.VanillaWeaponIds);
+                    if (this.OldWeaponIds.ContainsKey(weapon.ItemID))
+                        weapon.ItemID = this.OldWeaponIds[weapon.ItemID];
+                    if (this.OldWeaponIds.ContainsKey(weapon.appearance.Value))
+                        weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value];
+                    break;
 
                 case Ring ring:
-                    return this.FixRing(ring);
+                    if (this.OldObjectIds.ContainsKey(ring.ItemID))
+                        ring.ItemID = this.OldObjectIds[ring.ItemID];
+
+                    if (ring is CombinedRing combinedRing)
+                    {
+                        for (int i = combinedRing.combinedRings.Count - 1; i >= 0; i--)
+                        {
+                            combinedRing.combinedRings[i] = FixItem(combinedRing.combinedRings[i]) as Ring;
+                        }
+                    }
+                    break;
 
                 case Clothing clothing:
-                    return this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds);
-
+                    if (this.OldClothingIds.ContainsKey(clothing.ItemID))
+                        clothing.ItemID = this.OldClothingIds[clothing.ItemID];
+                    break;
+                    
                 case Boots boots:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds);
-
+                    if (this.OldBootsIds.ContainsKey(boots.ItemID))
+                        boots.ItemID = this.OldBootsIds[boots.ItemID];
+                    // TODO: what to do about tailored boots...
+                    break;
 
                 case SObject obj:
                     if (obj is Chest chest)
                     {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, chest.parentSheetIndex, this.VanillaBigCraftableIds))
-                            chest.ParentSheetIndex = 130;
+                        if (this.OldBigCraftableIds.ContainsKey(chest.ItemID))
+                            chest.ItemID = this.OldBigCraftableIds[chest.ItemID];
                         else
                             chest.startingLidFrame.Value = chest.ParentSheetIndex + 1;
                         this.FixItemList(chest.items);
                     }
                     else if (obj is IndoorPot pot)
                     {
-                        if (pot.hoeDirt.Value != null && this.FixCrop(pot.hoeDirt.Value.crop))
-                            pot.hoeDirt.Value.crop = null;
+                        if (pot.hoeDirt.Value != null && pot.hoeDirt.Value.crop != null)
+                            this.FixCrop(pot.hoeDirt.Value.crop);
                     }
                     else if (obj is Fence fence)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, fence.whichType, this.VanillaObjectIds))
-                            return true;
-                        fence.ParentSheetIndex = -fence.whichType.Value;
+                        // TODO: Do this once custom fences are in
                     }
                     else if (obj.GetType() == typeof(SObject) || obj.GetType() == typeof(Cask))
                     {
                         if (!obj.bigCraftable.Value)
                         {
+                            /*
                             if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
                                 obj.preservedParentSheetIndex.Value = -1;
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
-                                return true;
+                            */
+                            if (this.OldObjectIds.ContainsKey(obj.ItemID))
+                                obj.ItemID = this.OldObjectIds[obj.ItemID];
                         }
-                        else if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
-                            return true;
+                        else
+                        {
+                            if (this.OldBigCraftableIds.ContainsKey(obj.ItemID))
+                                obj.ItemID = this.OldBigCraftableIds[obj.ItemID];
+                        }
                     }
 
                     if (obj.heldObject.Value != null)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
-                            obj.heldObject.Value = null;
+                        if (this.OldObjectIds.ContainsKey(obj.heldObject.Value.ItemID))
+                            obj.heldObject.Value.ItemID = this.OldObjectIds[obj.heldObject.Value.ItemID];
 
                         if (obj.heldObject.Value is Chest innerChest)
                             this.FixItemList(innerChest.items);
@@ -2027,7 +1614,7 @@ namespace JsonAssets
                     break;
             }
 
-            return false;
+            return item;
         }
 
         /// <summary>Fix item IDs contained by a character.</summary>
@@ -2038,186 +1625,23 @@ namespace JsonAssets
             switch (character)
             {
                 case Horse horse:
-                    if (this.FixId(this.OldHatIds, this.HatIds, horse.hat.Value?.which, this.VanillaHatIds))
-                        horse.hat.Value = null;
+                    horse.hat.Value = FixItem(horse.hat.Value) as Hat;
                     break;
 
                 case Child child:
-                    if (this.FixId(this.OldHatIds, this.HatIds, child.hat.Value?.which, this.VanillaHatIds))
-                        child.hat.Value = null;
+                    child.hat.Value = FixItem(child.hat.Value) as Hat;
                     break;
 
                 case Farmer player:
                     this.FixItemList(player.Items);
-                    if (this.FixRing(player.leftRing.Value))
-                        player.leftRing.Value = null;
-                    if (this.FixRing(player.rightRing.Value))
-                        player.rightRing.Value = null;
-                    if (this.FixId(this.OldHatIds, this.HatIds, player.hat.Value?.which, this.VanillaHatIds))
-                        player.hat.Value = null;
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, player.shirtItem.Value?.parentSheetIndex, this.VanillaClothingIds))
-                        player.shirtItem.Value = null;
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, player.pantsItem.Value?.parentSheetIndex, this.VanillaClothingIds))
-                        player.pantsItem.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, player.boots.Value?.indexInTileSheet, this.VanillaObjectIds))
-                        player.boots.Value = null;
+                    player.leftRing.Value = FixItem(player.leftRing.Value) as Ring;
+                    player.rightRing.Value = FixItem(player.rightRing.Value) as Ring;
+                    player.hat.Value = FixItem(player.hat.Value) as Hat;
+                    player.shirtItem.Value = FixItem(player.shirtItem.Value) as Clothing;
+                    player.pantsItem.Value = FixItem(player.pantsItem.Value) as Clothing;
+                    player.boots.Value = FixItem(player.boots.Value) as Boots;
                     break;
             }
-        }
-
-        /// <summary>Fix item IDs contained by a ring, including the ring itself.</summary>
-        /// <param name="ring">The ring to fix.</param>
-        /// <returns>Returns whether the item should be removed.</returns>
-        private bool FixRing(Ring ring)
-        {
-            if (ring is null)
-                return false;
-
-            // main ring
-            if (this.FixId(this.OldObjectIds, this.ObjectIds, ring.indexInTileSheet, this.VanillaObjectIds))
-                return true;
-
-            // inner rings
-            if (ring is CombinedRing combinedRing)
-            {
-                for (int i = combinedRing.combinedRings.Count - 1; i >= 0; i--)
-                {
-                    Ring innerRing = combinedRing.combinedRings[i];
-                    if (this.FixRing(innerRing))
-                        combinedRing.combinedRings.RemoveAt(i);
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>Fix item IDs contained by a location.</summary>
-        /// <param name="loc">The location to fix.</param>
-        [SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
-        internal void FixLocation(GameLocation loc)
-        {
-            if (loc is null)
-                return;
-
-            // TMXL fixes things before the main ID fixing, then adds them to the main location list
-            // So things would get double fixed without this.
-            if (this.LocationsFixedAlready.Contains(loc.NameOrUniqueName))
-                return;
-            this.LocationsFixedAlready.Add(loc.NameOrUniqueName);
-
-            switch (loc)
-            {
-                case FarmHouse house:
-                    this.FixItemList(house.fridge.Value?.items);
-                    if (house is Cabin cabin)
-                        this.FixCharacter(cabin.farmhand.Value);
-                    break;
-
-                case IslandFarmHouse house:
-                    this.FixItemList(house.fridge.Value?.items);
-                    break;
-            }
-
-            foreach (var npc in loc.characters)
-                this.FixCharacter(npc);
-
-            IList<Vector2> toRemove = new List<Vector2>();
-            foreach (var pair in loc.terrainFeatures.Pairs)
-            {
-                if (this.FixTerrainFeature(pair.Value))
-                    toRemove.Add(pair.Key);
-            }
-            foreach (Vector2 rem in toRemove)
-                loc.terrainFeatures.Remove(rem);
-
-            toRemove.Clear();
-            foreach (var pair in loc.netObjects.Pairs)
-            {
-                SObject obj = pair.Value;
-                if (this.FixItem(obj))
-                    toRemove.Add(pair.Key);
-            }
-            foreach (var rem in toRemove)
-                loc.objects.Remove(rem);
-
-            toRemove.Clear();
-            foreach (var pair in loc.overlayObjects)
-            {
-                SObject obj = pair.Value;
-                if (obj is Chest chest)
-                    this.FixItemList(chest.items);
-                else if (obj is Sign sign)
-                {
-                    if (!this.FixItem(sign.displayItem.Value))
-                        sign.displayItem.Value = null;
-                }
-                else if (obj.GetType() == typeof(SObject))
-                {
-                    if (!obj.bigCraftable.Value)
-                    {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
-                            toRemove.Add(pair.Key);
-                    }
-                    else
-                    {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
-                            toRemove.Add(pair.Key);
-                        else if (obj.ParentSheetIndex == 126 && obj.Quality != 0) // Alien rarecrow stores what ID is it is wearing here
-                        {
-                            obj.Quality--;
-                            if (this.FixId(this.OldHatIds, this.HatIds, obj.quality, this.VanillaHatIds))
-                                obj.Quality = 0;
-                            else obj.Quality++;
-                        }
-                    }
-                }
-
-                if (obj.heldObject.Value != null)
-                {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
-                        obj.heldObject.Value = null;
-
-                    if (obj.heldObject.Value is Chest chest2)
-                        this.FixItemList(chest2.items);
-                }
-            }
-            foreach (var rem in toRemove)
-                loc.overlayObjects.Remove(rem);
-
-            if (loc is BuildableGameLocation buildLoc)
-            {
-                foreach (var building in buildLoc.buildings)
-                    this.FixBuilding(building);
-            }
-
-            //if (loc is DecoratableLocation decoLoc)
-            foreach (var furniture in loc.furniture)
-            {
-                if (furniture.heldObject.Value != null)
-                {
-                    if (!furniture.heldObject.Value.bigCraftable.Value)
-                    {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, furniture.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
-                            furniture.heldObject.Value = null;
-                    }
-                    else
-                    {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, furniture.heldObject.Value.parentSheetIndex, this.VanillaBigCraftableIds))
-                            furniture.heldObject.Value = null;
-                    }
-                }
-                if (furniture is StorageFurniture storage)
-                    this.FixItemList(storage.heldItems);
-            }
-
-            if (loc is Farm farm)
-            {
-                foreach (var animal in farm.Animals.Values)
-                    this.FixFarmAnimal(animal);
-            }
-
-            foreach (var clump in loc.resourceClumps.Where(this.FixResourceClump).ToArray())
-                loc.resourceClumps.Remove(clump);
         }
 
         /// <summary>Fix item IDs contained by a building.</summary>
@@ -2228,8 +1652,6 @@ namespace JsonAssets
             if (building is null)
                 return;
 
-            this.FixLocation(building.indoors.Value);
-
             switch (building)
             {
                 case Mill mill:
@@ -2238,25 +1660,17 @@ namespace JsonAssets
                     break;
 
                 case FishPond pond:
-                    if (pond.fishType.Value == -1)
+                    if (pond.fishType.Value == "-1")
                     {
                         this.Helper.Reflection.GetField<SObject>(pond, "_fishObject").SetValue(null);
                         break;
                     }
 
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.fishType, this.VanillaObjectIds))
-                    {
-                        pond.fishType.Value = -1;
-                        pond.currentOccupants.Value = 0;
-                        pond.maxOccupants.Value = 0;
-                        this.Helper.Reflection.GetField<SObject>(pond, "_fishObject").SetValue(null);
-                    }
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.sign.Value?.parentSheetIndex, this.VanillaObjectIds))
-                        pond.sign.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.output.Value?.parentSheetIndex, this.VanillaObjectIds))
-                        pond.output.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.neededItem.Value?.parentSheetIndex, this.VanillaObjectIds))
-                        pond.neededItem.Value = null;
+                    if (this.OldObjectIds.ContainsKey(pond.fishType.Value))
+                        pond.fishType.Value = this.OldObjectIds[pond.fishType.Value];
+                    pond.sign.Value = FixItem(pond.sign.Value) as SObject;
+                    pond.output.Value = FixItem(pond.output.Value);
+                    pond.neededItem.Value = FixItem(pond.neededItem.Value) as SObject;
                     break;
             }
         }
@@ -2264,81 +1678,69 @@ namespace JsonAssets
         /// <summary>Fix item IDs contained by a crop, including the crop itself.</summary>
         /// <param name="crop">The crop to fix.</param>
         /// <returns>Returns whether the crop should be removed.</returns>
-        private bool FixCrop(Crop crop)
+        private void FixCrop(Crop crop)
         {
             if (crop is null)
-                return false;
+                return;
 
-            // fix crop
-            if (this.FixId(this.OldCropIds, this.CropIds, crop.rowInSpriteSheet, this.VanillaCropIds))
-                return true;
-
-            // fix index of harvest
-            string key = this.CropIds.FirstOrDefault(x => x.Value == crop.rowInSpriteSheet.Value).Key;
-            CropData cropData = this.Crops.FirstOrDefault(x => x.Name == key);
-            if (cropData != null) // Non-JA crop
+            if ( this.OldCropIds.ContainsKey( crop.rowInSpriteSheet.Value.ToString() ) )
             {
-                Log.Verbose($"Fixing crop product: From {crop.indexOfHarvest.Value} to {cropData.Product}={this.ResolveObjectId(cropData.Product)}");
-                crop.indexOfHarvest.Value = this.ResolveObjectId(cropData.Product);
-                this.FixId(this.OldObjectIds, this.ObjectIds, crop.netSeedIndex, this.VanillaObjectIds);
+                crop.rowInSpriteSheet.Value = 0;
+                crop.overrideTexturePath.Value = "JA/Crop/" + this.OldCropIds[crop.rowInSpriteSheet.Value.ToString()];
             }
 
-            return false;
+            if (this.OldObjectIds.ContainsKey(crop.indexOfHarvest.Value))
+                crop.indexOfHarvest.Value = this.OldObjectIds[crop.indexOfHarvest.Value];
+            if (this.OldObjectIds.ContainsKey(crop.netSeedIndex.Value))
+                crop.netSeedIndex.Value = this.OldObjectIds[crop.netSeedIndex.Value];
         }
 
         /// <summary>Fix item IDs contained by a farm animal.</summary>
         /// <param name="animal">The farm animal to fix.</param>
         private void FixFarmAnimal(FarmAnimal animal)
         {
-            foreach (NetInt id in new[] { animal.currentProduce, animal.defaultProduceIndex, animal.deluxeProduceIndex })
+            foreach (NetString id in new[] { animal.currentProduce, animal.defaultProduceIndex, animal.deluxeProduceIndex })
             {
-                if (id.Value != -1)
-                {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, id, this.VanillaObjectIds))
-                        id.Value = -1;
-                }
+                if (this.OldObjectIds.ContainsKey(id.Value))
+                    id.Value = this.OldObjectIds[id.Value];
             }
-        }
-
-        /// <summary>Fix item IDs contained by a terrain feature, including the clump itself.</summary>
-        /// <param name="clump">The resource clump to fix.</param>
-        /// <returns>Returns whether the item should be removed.</returns>
-        private bool FixResourceClump(ResourceClump clump)
-        {
-            return this.FixId(this.OldObjectIds, this.ObjectIds, clump.parentSheetIndex, this.VanillaObjectIds);
         }
 
         /// <summary>Fix item IDs contained by a terrain feature, including the terrain feature itself.</summary>
         /// <param name="feature">The terrain feature to fix.</param>
         /// <returns>Returns whether the item should be removed.</returns>
-        private bool FixTerrainFeature(TerrainFeature feature)
+        private TerrainFeature FixTerrainFeature(TerrainFeature feature)
         {
             switch (feature)
             {
                 case HoeDirt dirt:
-                    if (this.FixCrop(dirt.crop))
-                        dirt.crop = null;
-                    return false;
+                    this.FixCrop(dirt.crop);
+                    break;
 
-                case FruitTree tree:
+                case FruitTree ftree:
                     {
-                        if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, tree.treeType, this.VanillaFruitTreeIds))
-                            return true;
-
-                        string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
-                        FruitTreeData treeData = this.FruitTrees.FirstOrDefault(x => x.Name == key);
-                        if (treeData != null) // Non-JA fruit tree
+                        if (this.OldFruitTreeIds.ContainsKey(ftree.treeType.Value))
                         {
-                            Log.Verbose($"Fixing fruit tree product: From {tree.indexOfFruit.Value} to {treeData.Product}={this.ResolveObjectId(treeData.Product)}");
-                            tree.indexOfFruit.Value = this.ResolveObjectId(treeData.Product);
+                            ftree.spriteRowNumber.Value = -1;
+                            ftree.treeType.Value = this.OldFruitTreeIds[ftree.treeType.Value];
                         }
 
-                        return false;
+                        if (this.OldObjectIds.ContainsKey(ftree.indexOfFruit.Value))
+                            ftree.indexOfFruit.Value = this.OldObjectIds[ftree.indexOfFruit.Value];
+                    }
+                    break;
+
+                case ResourceClump rclump:
+                    if ( this.OldObjectIds.ContainsKey( rclump.parentSheetIndex.Value.ToString() ) )
+                    {
+                        rclump.parentSheetIndex.Value = 1720;
+                        rclump.ItemID = this.OldObjectIds[rclump.parentSheetIndex.Value.ToString()];
                     }
 
-                default:
-                    return false;
+                    break;
             }
+
+            return feature;
         }
 
         [SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
@@ -2349,100 +1751,26 @@ namespace JsonAssets
 
             for (int i = 0; i < items.Count; ++i)
             {
+                items[i] = FixItem(items[i]);
                 var item = items[i];
                 if (item == null)
                     continue;
-                if (item.GetType() == typeof(SObject))
-                {
-                    var obj = item as SObject;
-                    if (!obj.bigCraftable.Value)
-                    {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
-                            items[i] = null;
-                    }
-                    else
-                    {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
-                            items[i] = null;
-                    }
-                }
-                else if (item is Hat hat)
-                {
-                    if (this.FixId(this.OldHatIds, this.HatIds, hat.which, this.VanillaHatIds))
-                        items[i] = null;
-                }
-                else if (item is Tool tool)
-                {
-                    for (int a = 0; a < tool.attachments?.Count; ++a)
-                    {
-                        var attached = tool.attachments[a];
-                        if (attached == null)
-                            continue;
-
-                        if (attached.GetType() != typeof(SObject) || attached.bigCraftable.Value)
-                        {
-                            Log.Warn($"Unsupported attachment types! Let spacechase0 know he needs to support {attached.bigCraftable.Value} {attached}");
-                        }
-                        else
-                        {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, attached.parentSheetIndex, this.VanillaObjectIds))
-                            {
-                                tool.attachments[a] = null;
-                            }
-                        }
-                    }
-                    if (item is MeleeWeapon weapon)
-                    {
-                        if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.VanillaWeaponIds))
-                            items[i] = null;
-                        else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds))
-                            items[i] = null;
-                        else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds))
-                            items[i] = null;
-                    }
-                }
-                else if (item is Ring ring)
-                {
-                    if (this.FixRing(ring))
-                        items[i] = null;
-                }
-                else if (item is Clothing clothing)
-                {
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds))
-                        items[i] = null;
-                }
-                else if (item is Boots boots)
-                {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds))
-                        items[i] = null;
-                    /*else
-                        boots.reloadData();*/
-                }
             }
         }
 
-        private void FixIdDict(NetIntDictionary<int, NetInt> dict, bool removeUnshippable = false)
+        private void FixIdDict(NetStringDictionary<int, NetInt> dict, bool removeUnshippable = false)
         {
-            var toRemove = new List<int>();
-            var toAdd = new Dictionary<int, int>();
-            foreach (int entry in dict.Keys)
+            var toRemove = new List<string>();
+            var toAdd = new Dictionary<string, int>();
+            foreach (string entry in dict.Keys)
             {
-                if (this.VanillaObjectIds.Contains(entry))
-                    continue;
-
-                if (this.OldObjectIds.Values.Contains(entry))
+                if (this.OldObjectIds.ContainsKey(entry))
                 {
-                    string key = this.OldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
-                    bool isRing = this.MyRings.FirstOrDefault(r => r.Id == entry) != null;
-                    bool canShip = this.Objects.FirstOrDefault(o => o.Id == entry)?.CanSell ?? true;
-                    bool hideShippable = this.Objects.FirstOrDefault(o => o.Id == entry)?.HideFromShippingCollection ?? true;
-
                     toRemove.Add(entry);
-                    if (this.ObjectIds.TryGetValue(key, out int id) && (!removeUnshippable || (canShip && !hideShippable && !isRing)))
-                        toAdd.Add(id, dict[entry]);
+                    toAdd.Add(this.OldObjectIds[entry], dict[entry]);
                 }
             }
-            foreach (int entry in toRemove)
+            foreach (string entry in toRemove)
                 dict.Remove(entry);
             foreach (var entry in toAdd)
             {
@@ -2451,7 +1779,7 @@ namespace JsonAssets
                     Log.Error("Dict already has value for " + entry.Key + "!");
                     foreach (var obj in this.Objects)
                     {
-                        if (obj.Id == entry.Key)
+                        if (obj.Name == entry.Key)
                             Log.Error("\tobj = " + obj.Name);
                     }
                 }
@@ -2459,137 +1787,22 @@ namespace JsonAssets
             }
         }
 
-        private void FixIdDict2(NetIntIntArrayDictionary dict)
+        private void FixIdDict2(NetStringIntArrayDictionary dict)
         {
-            var toRemove = new List<int>();
-            var toAdd = new Dictionary<int, int[]>();
-            foreach (int entry in dict.Keys)
+            var toRemove = new List<string>();
+            var toAdd = new Dictionary<string, int[]>();
+            foreach (string entry in dict.Keys)
             {
-                if (this.VanillaObjectIds.Contains(entry))
-                    continue;
-
-                if (this.OldObjectIds.Values.Contains(entry))
+                if (this.OldObjectIds.ContainsKey(entry))
                 {
-                    string key = this.OldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
-
                     toRemove.Add(entry);
-                    if (this.ObjectIds.TryGetValue(key, out int id))
-                        toAdd.Add(id, dict[entry]);
+                    toAdd.Add(this.OldObjectIds[entry], dict[entry]);
                 }
             }
-            foreach (int entry in toRemove)
+            foreach (string entry in toRemove)
                 dict.Remove(entry);
             foreach (var entry in toAdd)
                 dict.Add(entry.Key, entry.Value);
-        }
-
-        /// <summary>Fix item IDs contained by an item, including the item itself.</summary>
-        /// <param name="oldIds">The custom items' previously assigned IDs from the save data, indexed by item name.</param>
-        /// <param name="newIds">The custom items' currently assigned IDs, indexed by item name.</param>
-        /// <param name="id">The current item ID.</param>
-        /// <param name="vanillaIds">The vanilla items' IDs, indexed by item name.</param>
-        /// <returns>Returns whether the item should be removed. Items should only be removed if they no longer exist in the new data.</returns>
-        private bool FixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, NetInt id, ISet<int> vanillaIds)
-        {
-            if (id is null)
-                return false;
-
-            if (vanillaIds.Contains(id.Value))
-                return false;
-
-            if (this.ReverseFixing)
-            {
-                if (newIds.Values.Contains(id.Value))
-                {
-                    int curId = id.Value;
-                    string key = newIds.FirstOrDefault(x => x.Value == curId).Key;
-
-                    if (oldIds.TryGetValue(key, out int oldId))
-                    {
-                        id.Value = oldId;
-                        Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
-                        return false;
-                    }
-                    else
-                    {
-                        Log.Warn("New item " + key + " with ID " + curId + "!");
-                        return false;
-                    }
-                }
-                else return false;
-            }
-            else
-            {
-                if (oldIds.Values.Contains(id.Value))
-                {
-                    int curId = id.Value;
-                    string key = oldIds.FirstOrDefault(x => x.Value == curId).Key;
-
-                    if (newIds.TryGetValue(key, out int newId))
-                    {
-                        id.Value = newId;
-                        Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
-                        return false;
-                    }
-                    else
-                    {
-                        Log.Trace("Deleting missing item " + key + " with old ID " + curId);
-                        return true;
-                    }
-                }
-                else return false;
-            }
-        }
-
-        // Return true if the item should be deleted, false otherwise.
-        // Only remove something if old has it but not new
-        private bool FixId(IDictionary<string, int> oldIds, IDictionary<string, int> newIds, ref int id, ISet<int> vanillaIds)
-        {
-            if (vanillaIds.Contains(id))
-                return false;
-
-            if (this.ReverseFixing)
-            {
-                if (newIds.Values.Contains(id))
-                {
-                    int curId = id;
-                    string key = newIds.FirstOrDefault(xTile => xTile.Value == curId).Key;
-
-                    if (oldIds.TryGetValue(key, out int oldId))
-                    {
-                        id = oldId;
-                        Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id);
-                        return false;
-                    }
-                    else
-                    {
-                        Log.Warn("New item " + key + " with ID " + curId + "!");
-                        return false;
-                    }
-                }
-                else return false;
-            }
-            else
-            {
-                if (oldIds.Values.Contains(id))
-                {
-                    int curId = id;
-                    string key = oldIds.FirstOrDefault(x => x.Value == curId).Key;
-
-                    if (newIds.TryGetValue(key, out int newId))
-                    {
-                        id = newId;
-                        Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id);
-                        return false;
-                    }
-                    else
-                    {
-                        Log.Trace("Deleting missing item " + key + " with old ID " + curId);
-                        return true;
-                    }
-                }
-                else return false;
-            }
         }
     }
 }

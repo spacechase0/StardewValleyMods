@@ -75,7 +75,7 @@ namespace JsonAssets.Framework
         /// <summary>Get whether the conditions match using the vanilla game logic.</summary>
         private bool CurrentlyMatchVanilla()
         {
-            const int eventId = int.MinValue + 1720;
+            string eventId = (int.MinValue + 1720).ToString();
             bool wasSeen = false;
 
             try

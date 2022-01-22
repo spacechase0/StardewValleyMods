@@ -11,6 +11,9 @@ using SObject = StardewValley.Object;
 
 namespace JsonAssets.Patches
 {
+    // TODO when custom fence support is added
+    // Remember to also uncomment patcher instance creation in Mod.cs
+#if false
     /// <summary>Applies Harmony patches to <see cref="Fence"/>.</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.NamedForHarmony)]
     internal class FencePatcher : BasePatcher
@@ -209,4 +212,5 @@ namespace JsonAssets.Patches
             return true;
         }
     }
+#endif
 }

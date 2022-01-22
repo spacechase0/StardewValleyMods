@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using HarmonyLib;
 using JsonAssets.Data;
 using Spacechase.Shared.Patching;
@@ -44,9 +45,9 @@ namespace JsonAssets.Patches
             {
                 if (__instance is SObject obj)
                 {
-                    if (!obj.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(obj.ParentSheetIndex))
+                    var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name == obj.ItemID);
+                    if (!obj.bigCraftable.Value && objData != null)
                     {
-                        var objData = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
                         if (objData?.CanTrash == false)
                             __result = false;
                     }
@@ -65,18 +66,18 @@ namespace JsonAssets.Patches
             {
                 if (__instance is SObject obj)
                 {
-                    if (!obj.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(obj.ParentSheetIndex))
+                    var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name == obj.ItemID);
+                    if (!obj.bigCraftable.Value && objData != null)
                     {
-                        var objData = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
                         if (objData?.CanTrash == false)
                             __result = false;
                     }
                 }
                 else if (__instance is MeleeWeapon weapon)
                 {
-                    if (Mod.instance.WeaponIds.Values.Contains(weapon.ParentSheetIndex))
+                    var weaponData = Mod.instance.Weapons.FirstOrDefault(wd => wd.Name == weapon.ItemID);
+                    if (weaponData != null)
                     {
-                        var weaponData = new List<WeaponData>(Mod.instance.Weapons).Find(wd => wd.GetWeaponId() == weapon.ParentSheetIndex);
                         if (weaponData?.CanTrash == false)
                             __result = false;
                     }

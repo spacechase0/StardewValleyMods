@@ -50,17 +50,9 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public int GetCraftableId()
-        {
-            return this.Id;
-        }
-
         internal string GetCraftableInformation()
         {
-            string str = $"{this.Name}/{this.Price}/-300/Crafting -9/{this.LocalizedDescription()}/true/true/0";
-            if (this.ProvidesLight)
-                str += "/true";
-            str += $"/{this.LocalizedName()}";
+            string str = $"{this.Name}/{this.Price}/-300/Crafting -9/{this.LocalizedDescription()}/true/true/0/{ProvidesLight}/{this.LocalizedName()}/0/JA\\BigCraftable\\{Name}";
             return str;
         }
 

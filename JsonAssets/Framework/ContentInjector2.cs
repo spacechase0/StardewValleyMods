@@ -49,15 +49,15 @@ namespace JsonAssets.Framework
                         foreach (var obj in Mod.instance.Objects)
                         {
                             if (npc.Key == "Universal_Love" && obj.GiftTastes.Love.Contains("Universal"))
-                                newData[npc.Key] = npc.Value + " " + obj.GetObjectId();
+                                newData[npc.Key] = npc.Value + " " + obj.Name;
                             if (npc.Key == "Universal_Like" && obj.GiftTastes.Like.Contains("Universal"))
-                                newData[npc.Key] = npc.Value + " " + obj.GetObjectId();
+                                newData[npc.Key] = npc.Value + " " + obj.Name;
                             if (npc.Key == "Universal_Neutral" && obj.GiftTastes.Neutral.Contains("Universal"))
-                                newData[npc.Key] = npc.Value + " " + obj.GetObjectId();
+                                newData[npc.Key] = npc.Value + " " + obj.Name;
                             if (npc.Key == "Universal_Dislike" && obj.GiftTastes.Dislike.Contains("Universal"))
-                                newData[npc.Key] = npc.Value + " " + obj.GetObjectId();
+                                newData[npc.Key] = npc.Value + " " + obj.Name;
                             if (npc.Key == "Universal_Hate" && obj.GiftTastes.Hate.Contains("Universal"))
-                                newData[npc.Key] = npc.Value + " " + obj.GetObjectId();
+                                newData[npc.Key] = npc.Value + " " + obj.Name;
                         }
                         continue;
                     }
@@ -83,15 +83,15 @@ namespace JsonAssets.Framework
                     foreach (var obj in Mod.instance.Objects)
                     {
                         if (obj.GiftTastes.Love.Contains(npc.Key))
-                            loveIds.Add(obj.GetObjectId().ToString());
+                            loveIds.Add(obj.Name.ToString());
                         if (obj.GiftTastes.Like.Contains(npc.Key))
-                            likeIds.Add(obj.GetObjectId().ToString());
+                            likeIds.Add(obj.Name.ToString());
                         if (obj.GiftTastes.Neutral.Contains(npc.Key))
-                            neutralIds.Add(obj.GetObjectId().ToString());
+                            neutralIds.Add(obj.Name.ToString());
                         if (obj.GiftTastes.Dislike.Contains(npc.Key))
-                            dislikeIds.Add(obj.GetObjectId().ToString());
+                            dislikeIds.Add(obj.Name.ToString());
                         if (obj.GiftTastes.Hate.Contains(npc.Key))
-                            hateIds.Add(obj.GetObjectId().ToString());
+                            hateIds.Add(obj.Name.ToString());
                     }
 
                     string loveIdStr = string.Join(" ", loveIds);
