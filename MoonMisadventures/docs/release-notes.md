@@ -1,6 +1,13 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## 0.1.6
+Released 21 January 2022 for SMAPI 3.13.0 or later.
+
+* Added mythicite ore -> bar recipe.
+* Moved necklace next to hat if Wear More Rings is not installed.
+* Hopefully fixed conflict with Animal Husbandry, preventing their tools form working.
+
 ## 0.1.5
 Released 15 January 2022 for SMAPI 3.13.0 or later.
 
