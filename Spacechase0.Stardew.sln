@@ -156,7 +156,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonstersTheFramework", "Mon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPatcherEditor", "ContentPatcherEditor\ContentPatcherEditor.csproj", "{34AB99B0-096E-4919-933C-A7A04D1E9F91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Custom_Crops", "Custom_Crops\Custom_Crops.csproj", "{695CDA6A-9398-4D71-9432-9763CC510020}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Custom_Crops", "Custom_Crops\Custom_Crops.csproj", "{695CDA6A-9398-4D71-9432-9763CC510020}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -210,6 +210,8 @@ Global
 		SpaceShared\SpaceShared.projitems*{6258e986-4e80-483e-a0b0-07a6a9789226}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{695cda6a-9398-4d71-9432-9763cc510020}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{6e9ba154-07eb-43c8-8e5a-94247ff28556}*SharedItemsImports = 5
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{6fa9a976-c843-405f-b7a1-fc6aa3e6faa7}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{6fa9a976-c843-405f-b7a1-fc6aa3e6faa7}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7014c24c-a7b8-446a-8b13-eca54eea1f88}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{7b0e3c65-34bf-48e0-99f1-7b28869f3f5b}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7b0e3c65-34bf-48e0-99f1-7b28869f3f5b}*SharedItemsImports = 5

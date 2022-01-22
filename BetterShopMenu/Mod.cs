@@ -214,6 +214,8 @@ namespace BetterShopMenu
             var items = new List<ISalable>();
             var stock = new Dictionary<ISalable, int[]>();
 
+            this.Shop.currentItemIndex = 0;
+
             int curCat = this.CurrCategory;
             int sCat = 0;
             bool inSeason = true;
