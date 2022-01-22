@@ -84,7 +84,6 @@ namespace SpaceCore
                 new NpcPatcher(),
                 new SaveGamePatcher(serializerManager),
                 new SerializationPatcher(),
-                new SpriteBatchPatcher(),
                 new UtilityPatcher()
             );
         }

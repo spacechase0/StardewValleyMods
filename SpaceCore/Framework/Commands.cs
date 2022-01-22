@@ -14,7 +14,6 @@ namespace SpaceCore.Framework
         {
             Command.Register("player_giveexp", Commands.ExpCommand);
             Command.Register("asset_invalidate", Commands.InvalidateCommand);
-            Command.Register("exttilesheets_dump", Commands.DumpTilesheetsCommand);
             Command.Register("dump_spacecore_skills", Commands.DumpSkills);
             //Command.register( "test", ( args ) => Game1.player.addItemByMenuIfNecessary( new TestObject() ) );
             //SpaceCore.modTypes.Add( typeof( TestObject ) );
@@ -127,27 +126,6 @@ namespace SpaceCore.Framework
             foreach (string arg in args)
             {
                 SpaceCore.Instance.Helper.Content.InvalidateCache(arg);
-            }
-        }
-
-        private static void DumpTilesheetsCommand(string[] args)
-        {
-            foreach (var asset in TileSheetExtensions.ExtendedTextureAssets)
-            {
-                Log.Info($"Dumping for asset {asset.Key} (has {asset.Value.Extensions.Count} extensions)");
-                Stream stream = File.OpenWrite(Path.GetFileNameWithoutExtension(asset.Key) + "-0.png");
-                var tex = Game1.content.Load<Texture2D>(asset.Key);
-                tex.SaveAsPng(stream, tex.Width, tex.Height);
-                stream.Close();
-
-                for (int i = 0; i < asset.Value.Extensions.Count; ++i)
-                {
-                    Log.Info("\tDumping extended " + (i + 1));
-                    stream = File.OpenWrite(Path.GetFileNameWithoutExtension(asset.Key) + $"-{i + 1}.png");
-                    tex = asset.Value.Extensions[i];
-                    tex.SaveAsPng(stream, tex.Width, tex.Height);
-                    stream.Close();
-                }
             }
         }
     }
