@@ -105,8 +105,8 @@ namespace SpaceCore.Interface
                     new("StringsFromCSFiles:SkillsPage.cs.magnifyingglass", Game1.player.hasMagnifyingGlass),
                     new("Objects:DarkTalisman", Game1.player.hasDarkTalisman),
                     new("Objects:MagicInk", Game1.player.hasMagicInk),
-                    new("Objects:BearPaw", Game1.player.eventsSeen.Contains(2120303)),
-                    new("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979))
+                    new("Objects:BearPaw", Game1.player.eventsSeen.Contains("2120303")),
+                    new("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains("3910979"))
                 };
 
                 const int padTop = 16;
@@ -736,7 +736,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11604");
                             skillLevel = Game1.player.FarmingLevel;
-                            addedSkill = Game1.player.addedFarmingLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.FarmingLevel > 0;
                             iconSource = new Rectangle(10, 428, 10, 10);
                             break;
                         case 1:
@@ -744,7 +744,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11605");
                             skillLevel = Game1.player.MiningLevel;
-                            addedSkill = Game1.player.addedMiningLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.MiningLevel > 0;
                             iconSource = new Rectangle(30, 428, 10, 10);
                             break;
                         case 2:
@@ -752,7 +752,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11606");
                             skillLevel = Game1.player.ForagingLevel;
-                            addedSkill = Game1.player.addedForagingLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.ForagingLevel > 0;
                             iconSource = new Rectangle(60, 428, 10, 10);
                             break;
                         case 3:
@@ -760,7 +760,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11607");
                             skillLevel = Game1.player.FishingLevel;
-                            addedSkill = Game1.player.addedFishingLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.FishingLevel > 0;
                             iconSource = new Rectangle(20, 428, 10, 10);
                             break;
                         case 4:
@@ -768,7 +768,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11608");
                             skillLevel = Game1.player.CombatLevel;
-                            addedSkill = Game1.player.addedCombatLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.CombatLevel > 0;
                             iconSource = new Rectangle(120, 428, 10, 10);
                             break;
                         case 5:
@@ -776,7 +776,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11609");
                             skillLevel = Game1.player.LuckLevel;
-                            addedSkill = Game1.player.addedLuckLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.LuckLevel > 0;
                             iconSource = new Rectangle(50, 428, 10, 10);
                             break;
                     }

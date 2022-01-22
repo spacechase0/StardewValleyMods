@@ -40,7 +40,6 @@ namespace SpaceCore.Interface
             return false;
         }
         //</MINE>
-
         public enum CraftState
         {
             MissingIngredients,
@@ -89,7 +88,7 @@ namespace SpaceCore.Interface
 
         protected Dictionary<string, Item> _lastValidEquippedItems;
 
-        protected List<TemporaryAnimatedSprite> tempSprites = new List<TemporaryAnimatedSprite>();
+        protected TemporaryAnimatedSpriteList tempSprites = new TemporaryAnimatedSpriteList();
 
         private bool unforging;
 
@@ -165,7 +164,7 @@ namespace SpaceCore.Interface
                 upNeighborID = 997,
                 fullyImmutable = true
             };
-            if (this.inventory.inventory?.Count >= 12)
+            if (this.inventory.inventory != null && this.inventory.inventory.Count >= 12)
             {
                 for (int j = 0; j < 12; j++)
                 {
@@ -271,7 +270,7 @@ namespace SpaceCore.Interface
                 {
                     continue;
                 }
-                if (Utility.IsNormalObjectAtParentSheetIndex(item, 848))
+                if (Utility.IsNormalObjectAtParentSheetIndex(item, "848"))
                 {
                     this._highlightDictionary[item] = true;
                 }
@@ -310,7 +309,7 @@ namespace SpaceCore.Interface
         private void _leftIngredientSpotClicked()
         {
             Item old_item = this.leftIngredientSpot.item;
-            if ((this.heldItem == null || this.IsValidCraftIngredient(this.heldItem)) && (this.heldItem is null or Tool or Ring) || this.IsLeftCraftIngredient(this.heldItem))
+            if ((this.heldItem == null || this.IsValidCraftIngredient(this.heldItem)) && (this.heldItem == null || this.heldItem is Tool || this.heldItem is Ring))
             {
                 Game1.playSound("stoneStep");
                 this.leftIngredientSpot.item = this.heldItem;
@@ -322,7 +321,7 @@ namespace SpaceCore.Interface
 
         public bool IsValidCraftIngredient(Item item)
         {
-            if (!item.canBeTrashed() && (item is not Tool || BaseEnchantment.GetAvailableEnchantmentsForItem(item as Tool).Count <= 0))
+            if (!item.canBeTrashed() && (!(item is Tool) || BaseEnchantment.GetAvailableEnchantmentsForItem(item as Tool).Count <= 0))
             {
                 return false;
             }
@@ -332,7 +331,7 @@ namespace SpaceCore.Interface
         private void _rightIngredientSpotClicked()
         {
             Item old_item = this.rightIngredientSpot.item;
-            if ((this.heldItem == null || this.IsValidCraftIngredient(this.heldItem)) && (this.heldItem == null || (int)this.heldItem.parentSheetIndex != 848))
+            if ((this.heldItem == null || this.IsValidCraftIngredient(this.heldItem)) && (this.heldItem == null || !(this.heldItem.QualifiedItemID == "(O)848")))
             {
                 Game1.playSound("stoneStep");
                 this.rightIngredientSpot.item = this.heldItem;
@@ -358,24 +357,10 @@ namespace SpaceCore.Interface
             }
         }
 
-        public bool IsHoldingEquippedItem()
-        {
-            if (this.heldItem == null)
-            {
-                return false;
-            }
-            if (!Game1.player.IsEquippedItem(this.heldItem))
-            {
-                return Game1.player.IsEquippedItem(Utility.PerformSpecialItemGrabReplacement(this.heldItem));
-            }
-            return true;
-        }
-
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             Item old_held_item = this.heldItem;
-            Game1.player.IsEquippedItem(old_held_item);
-            base.receiveLeftClick(x, y);
+            base.receiveLeftClick(x, y, playSound: true);
             foreach (ClickableComponent c in this.equipmentIcons)
             {
                 if (!c.containsPoint(x, y))
@@ -390,18 +375,11 @@ namespace SpaceCore.Interface
                         return;
                     }
                     Item item_to_place2 = this.heldItem;
-                    Item old_item2 = Game1.player.rightRing.Value;
-                    if (old_item2 != this.heldItem && (item_to_place2 is null or Ring))
+                    if (item_to_place2 != Game1.player.rightRing.Value && (item_to_place2 == null || item_to_place2 is Ring))
                     {
+                        this.heldItem = Game1.player.Equip(item_to_place2 as Ring, Game1.player.rightRing);
                         if (Game1.player.rightRing.Value != null)
                         {
-                            Game1.player.rightRing.Value.onUnequip(Game1.player, Game1.currentLocation);
-                        }
-                        Game1.player.rightRing.Value = (item_to_place2 as Ring);
-                        this.heldItem = old_item2;
-                        if (Game1.player.rightRing.Value != null)
-                        {
-                            Game1.player.rightRing.Value.onEquip(Game1.player, Game1.currentLocation);
                             Game1.playSound("crit");
                         }
                         else if (this.heldItem != null)
@@ -419,18 +397,11 @@ namespace SpaceCore.Interface
                         return;
                     }
                     Item item_to_place = this.heldItem;
-                    Item old_item = Game1.player.leftRing.Value;
-                    if (old_item != this.heldItem && (item_to_place is null or Ring))
+                    if (item_to_place != Game1.player.leftRing.Value && (item_to_place == null || item_to_place is Ring))
                     {
+                        this.heldItem = Game1.player.Equip(item_to_place as Ring, Game1.player.leftRing);
                         if (Game1.player.leftRing.Value != null)
                         {
-                            Game1.player.leftRing.Value.onUnequip(Game1.player, Game1.currentLocation);
-                        }
-                        Game1.player.leftRing.Value = (item_to_place as Ring);
-                        this.heldItem = old_item;
-                        if (Game1.player.leftRing.Value != null)
-                        {
-                            Game1.player.leftRing.Value.onEquip(Game1.player, Game1.currentLocation);
                             Game1.playSound("crit");
                         }
                         else if (this.heldItem != null)
@@ -445,7 +416,7 @@ namespace SpaceCore.Interface
             }
             if (Game1.GetKeyboardState().IsKeyDown(Keys.LeftShift) && old_held_item != this.heldItem && this.heldItem != null)
             {
-                //if ( base.heldItem is Tool || ( base.heldItem is Ring && this.leftIngredientSpot.item == null ) )
+                //if (this.heldItem is Tool || (this.heldItem is Ring && this.leftIngredientSpot.item == null))
                 if ((this.heldItem is Tool or Ring || this.IsLeftCraftIngredient(this.heldItem)) && this.leftIngredientSpot.item == null)
                 {
                     this._leftIngredientSpotClicked();
@@ -501,7 +472,7 @@ namespace SpaceCore.Interface
                         this._timeUntilCraft = 0;
                         fail = true;
                     }
-                    if (!fail && this.IsValidCraft(this.leftIngredientSpot.item, this.rightIngredientSpot.item) && Game1.player.hasItemInInventory(848, this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item)))
+                    if (!fail && this.IsValidCraft(this.leftIngredientSpot.item, this.rightIngredientSpot.item) && Game1.player.hasItemInInventory("848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item)))
                     {
                         Game1.playSound("bigSelect");
                         this.startTailoringButton.scale = this.startTailoringButton.baseScale;
@@ -513,7 +484,7 @@ namespace SpaceCore.Interface
                         {
                             this.tempSprites.Add(new TemporaryAnimatedSprite("", new Rectangle(143, 17, 14, 15), new Vector2(this.xPositionOnScreen + 276, this.yPositionOnScreen + 300), flipped: false, 0.1f, Color.White)
                             {
-                                texture = this.forgeTextures,
+                                texture = forgeTextures,
                                 motion = new Vector2(-4f, -4f),
                                 scale = 4f,
                                 layerDepth = 1f,
@@ -521,12 +492,12 @@ namespace SpaceCore.Interface
                                 delayBeforeAnimationStart = 1400 / crystals2 * k
                             });
                         }
-                        if (this.rightIngredientSpot.item != null && (int)this.rightIngredientSpot.item.parentSheetIndex == 74)
+                        if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemID == "(O)74")
                         {
                             this._sparklingTimer = 900;
                             Rectangle r = this.leftIngredientSpot.bounds;
                             r.Offset(-32, -32);
-                            List<TemporaryAnimatedSprite> sparkles = Utility.sparkleWithinArea(r, 6, Color.White, 80, 1600);
+                            TemporaryAnimatedSpriteList sparkles = Utility.sparkleWithinArea(r, 6, Color.White, 80, 1600);
                             sparkles.First().startSound = "discoverMineral";
                             this.tempSprites.AddRange(sparkles);
                             r = this.rightIngredientSpot.bounds;
@@ -568,7 +539,7 @@ namespace SpaceCore.Interface
                 {
                     if (this.IsValidUnforge())
                     {
-                        if (this.leftIngredientSpot.item is MeleeWeapon && !Game1.player.couldInventoryAcceptThisObject(848, (this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() * 5 + ((this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() - 1) * 2))
+                        if (this.leftIngredientSpot.item is MeleeWeapon && !Game1.player.couldInventoryAcceptThisObject("848", (this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() * 5 + ((this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() - 1) * 2))
                         {
                             this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_noroom");
                             Game1.playSound("cancel");
@@ -595,7 +566,7 @@ namespace SpaceCore.Interface
                                     alpha = 0.01f,
                                     alphaFade = -0.1f,
                                     alphaFadeFade = -0.005f,
-                                    texture = this.forgeTextures,
+                                    texture = forgeTextures,
                                     motion = motion,
                                     scale = 4f,
                                     layerDepth = 1f,
@@ -633,15 +604,15 @@ namespace SpaceCore.Interface
             {
                 if (this.heldItem == Game1.player.hat.Value)
                 {
-                    Game1.player.hat.Value = null;
+                    Game1.player.Equip(null, Game1.player.hat);
                 }
                 else if (this.heldItem == Game1.player.shirtItem.Value)
                 {
-                    Game1.player.shirtItem.Value = null;
+                    Game1.player.Equip(null, Game1.player.shirtItem);
                 }
                 else if (this.heldItem == Game1.player.pantsItem.Value)
                 {
-                    Game1.player.pantsItem.Value = null;
+                    Game1.player.Equip(null, Game1.player.pantsItem);
                 }
             }
             Game1.playSound("throwDownITem");
@@ -661,15 +632,15 @@ namespace SpaceCore.Interface
 
         public virtual int GetForgeCost(Item left_item, Item right_item)
         {
-            if (right_item != null && (int)right_item.parentSheetIndex == 896)
+            if (right_item != null && right_item.QualifiedItemID == "(O)896")
             {
                 return 20;
             }
-            if (right_item != null && (int)right_item.parentSheetIndex == 74)
+            if (right_item != null && right_item.QualifiedItemID == "(O)74")
             {
                 return 20;
             }
-            if (right_item != null && (int)right_item.parentSheetIndex == 72)
+            if (right_item != null && right_item.QualifiedItemID == "(O)72")
             {
                 return 10;
             }
@@ -677,15 +648,14 @@ namespace SpaceCore.Interface
             {
                 return 10;
             }
-            if (left_item is Tool)
+            if (left_item != null && left_item is Tool)
             {
                 return this.GetForgeCostAtLevel((left_item as Tool).GetTotalForgeLevels());
             }
-            if (left_item is Ring && right_item is Ring)
+            if (left_item != null && left_item is Ring && right_item != null && right_item is Ring)
             {
                 return 20;
             }
-
             //<MINE>
             foreach (var recipe in CustomForgeRecipe.Recipes)
             {
@@ -695,7 +665,6 @@ namespace SpaceCore.Interface
                 }
             }
             //</MINE>
-
             return 1;
         }
 
@@ -711,17 +680,14 @@ namespace SpaceCore.Interface
             {
                 this._craftState = CraftState.Valid;
                 Item left_item_clone = left_item.getOne();
-                left_item_clone.Stack = left_item.Stack;
-                if (right_item != null && Utility.IsNormalObjectAtParentSheetIndex(right_item, 72))
+                if (right_item != null && Utility.IsNormalObjectAtParentSheetIndex(right_item, "72"))
                 {
                     (left_item_clone as Tool).AddEnchantment(new DiamondEnchantment());
                     this.craftResultDisplay.item = left_item_clone;
                 }
                 else
                 {
-                    Item right_item_clone = right_item.getOne();
-                    right_item_clone.Stack = right_item.Stack;
-                    this.craftResultDisplay.item = this.CraftItem(left_item_clone, right_item_clone);
+                    this.craftResultDisplay.item = this.CraftItem(left_item_clone, right_item.getOne());
                 }
             }
             else
@@ -735,7 +701,7 @@ namespace SpaceCore.Interface
         {
             if (this.IsBusy())
             {
-                if (this.rightIngredientSpot.item != null && (int)this.rightIngredientSpot.item.parentSheetIndex == 74)
+                if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemID == "(O)74")
                 {
                     this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_enchanting");
                 }
@@ -746,11 +712,11 @@ namespace SpaceCore.Interface
             }
             else if (this._craftState == CraftState.MissingIngredients)
             {
-                this.displayedDescription = (this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_description1") + Environment.NewLine + Environment.NewLine + Game1.content.LoadString("Strings\\UI:Forge_description2"));
+                this.displayedDescription = this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_description1") + Environment.NewLine + Environment.NewLine + Game1.content.LoadString("Strings\\UI:Forge_description2");
             }
             else if (this._craftState == CraftState.MissingShards)
             {
-                if (this.heldItem?.ParentSheetIndex == 848)
+                if (this.heldItem != null && this.heldItem.QualifiedItemID == "(O)848")
                 {
                     this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_shards");
                 }
@@ -794,7 +760,6 @@ namespace SpaceCore.Interface
             {
                 return true;
             }
-
             //<MINE>
             foreach (var recipe in CustomForgeRecipe.Recipes)
             {
@@ -804,7 +769,6 @@ namespace SpaceCore.Interface
                 }
             }
             //</MINE>
-
             return false;
         }
 
@@ -822,7 +786,6 @@ namespace SpaceCore.Interface
             {
                 left_item = (left_item as Ring).Combine(right_item as Ring);
             }
-
             //<MINE>
             foreach (var recipe in CustomForgeRecipe.Recipes)
             {
@@ -833,7 +796,6 @@ namespace SpaceCore.Interface
                 }
             }
             //</MINE>
-
             return left_item;
         }
 
@@ -847,7 +809,6 @@ namespace SpaceCore.Interface
                 return;
             }
             //</MINE>
-
             if (this.rightIngredientSpot.item != null)
             {
                 this.rightIngredientSpot.item.Stack--;
@@ -867,7 +828,6 @@ namespace SpaceCore.Interface
                 return;
             }
             //</MINE>
-
             if (this.leftIngredientSpot.item != null)
             {
                 this.leftIngredientSpot.item.Stack--;
@@ -882,7 +842,7 @@ namespace SpaceCore.Interface
         {
             if (!this.IsBusy())
             {
-                base.receiveRightClick(x, y);
+                base.receiveRightClick(x, y, playSound: true);
             }
         }
 
@@ -968,7 +928,7 @@ namespace SpaceCore.Interface
                     this.tempSprites.RemoveAt(l);
                 }
             }
-            if (this.leftIngredientSpot.item != null && this.rightIngredientSpot.item != null && !Game1.player.hasItemInInventory(848, this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item)))
+            if (this.leftIngredientSpot.item != null && this.rightIngredientSpot.item != null && !Game1.player.hasItemInInventory("848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item)))
             {
                 if (this._craftState != CraftState.MissingShards)
                 {
@@ -1007,7 +967,7 @@ namespace SpaceCore.Interface
             else if (this._clankEffectTimer <= 0 && !this.unforging)
             {
                 this._clankEffectTimer = 450;
-                if (this.rightIngredientSpot.item != null && (int)this.rightIngredientSpot.item.parentSheetIndex == 74)
+                if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemID == "(O)74")
                 {
                     Rectangle r2 = this.rightIngredientSpot.bounds;
                     r2.Inflate(-16, -16);
@@ -1118,10 +1078,10 @@ namespace SpaceCore.Interface
                                 weapon.RemoveEnchantment(weapon.enchantments[i]);
                             }
                         }
-                        if (weapon.appearance.Value >= 0)
+                        if (weapon.appearance.Value != "-1")
                         {
-                            weapon.appearance.Value = -1;
-                            weapon.IndexOfMenuItemView = weapon.getDrawnItemIndex();
+                            weapon.appearance.Value = "-1";
+                            weapon.ResetIndexOfMenuItemView();
                             cost += 10;
                         }
                         this.leftIngredientSpot.item = null;
@@ -1151,7 +1111,7 @@ namespace SpaceCore.Interface
                 this._ValidateCraft();
                 return;
             }
-            Game1.player.removeItemsFromInventory(848, this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item));
+            Game1.player.removeItemsFromInventory("848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item));
             Item crafted_item = this.CraftItem(this.leftIngredientSpot.item, this.rightIngredientSpot.item, forReal: true);
             if (crafted_item != null && !Utility.canItemBeAddedToThisInventoryList(crafted_item, this.inventory.actualInventory))
             {
@@ -1181,11 +1141,11 @@ namespace SpaceCore.Interface
             {
                 return false;
             }
-            if (this.leftIngredientSpot.item is MeleeWeapon && ((this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() > 0 || (this.leftIngredientSpot.item as MeleeWeapon).appearance.Value >= 0))
+            if (this.leftIngredientSpot.item != null && this.leftIngredientSpot.item is MeleeWeapon && ((this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() > 0 || (this.leftIngredientSpot.item as MeleeWeapon).appearance.Value != "-1"))
             {
                 return true;
             }
-            if (this.leftIngredientSpot.item is CombinedRing)
+            if (this.leftIngredientSpot.item != null && this.leftIngredientSpot.item is CombinedRing)
             {
                 return true;
             }
@@ -1208,10 +1168,10 @@ namespace SpaceCore.Interface
             if (this.leftIngredientSpot.item != null && this.rightIngredientSpot.item != null && this.IsValidCraft(this.leftIngredientSpot.item, this.rightIngredientSpot.item))
             {
                 /*
-                int source_offset = (this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item) - 10) / 5;
-                if ( source_offset >= 0 && source_offset <= 2 )
+                int source_offset = (GetForgeCost(leftIngredientSpot.item, rightIngredientSpot.item) - 10) / 5;
+                if (source_offset >= 0 && source_offset <= 2)
                 {
-                    b.Draw( this.forgeTextures, new Vector2( base.xPositionOnScreen + 344, base.yPositionOnScreen + 320 ), new Rectangle( 142, 38 + source_offset * 10, 17, 10 ), Color.White * ( ( this._craftState == CraftState.MissingShards ) ? 0.5f : 1f ), 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.1f );
+                    b.Draw(forgeTextures, new Vector2(xPositionOnScreen + 344, yPositionOnScreen + 320), new Rectangle(142, 38 + source_offset * 10, 17, 10), Color.White * ((_craftState == CraftState.MissingShards) ? 0.5f : 1f), 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.1f);
                 }
                 */
                 //<MINE>
@@ -1263,7 +1223,7 @@ namespace SpaceCore.Interface
                 {
                     right_slot_accepts_this_item = true;
                 }
-                if (highlight_item is Ring && highlight_item is not CombinedRing && (this.leftIngredientSpot.item is null or Ring) && (this.rightIngredientSpot.item is null or Ring))
+                if (highlight_item is Ring && !(highlight_item is CombinedRing) && (this.leftIngredientSpot.item == null || this.leftIngredientSpot.item is Ring) && (this.rightIngredientSpot.item == null || this.rightIngredientSpot.item is Ring))
                 {
                     left_slot_accepts_this_item = true;
                     right_slot_accepts_this_item = true;
@@ -1359,7 +1319,7 @@ namespace SpaceCore.Interface
             }
             else if (this.hoveredItem != null)
             {
-                if (this.hoveredItem == this.craftResultDisplay.item && Utility.IsNormalObjectAtParentSheetIndex(this.rightIngredientSpot.item, 74))
+                if (this.hoveredItem == this.craftResultDisplay.item && Utility.IsNormalObjectAtParentSheetIndex(this.rightIngredientSpot.item, "74"))
                 {
                     BaseEnchantment.hideEnchantmentName = true;
                 }

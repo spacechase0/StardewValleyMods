@@ -40,11 +40,13 @@ namespace SpaceCore
 
         public class ObjectIngredientMatcher : IngredientMatcher
         {
-            private readonly int objectIndex;
+            private readonly StardewValley.Object dummyObj;
+            private readonly string objectIndex;
             private readonly int qty;
 
-            public ObjectIngredientMatcher(int index, int quantity )
+            public ObjectIngredientMatcher( string index, int quantity )
             {
+                this.dummyObj = new StardewValley.Object(index, quantity);
                 this.objectIndex = index;
                 this.qty = quantity;
             }
@@ -53,9 +55,9 @@ namespace SpaceCore
             {
                 get
                 {
-                    if (this.objectIndex < 0)
+                    if (int.TryParse( this.objectIndex, out int i ) && i < 0)
                     {
-                        return this.objectIndex switch
+                        return i switch
                         {
                             -1 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.568"),
                             -2 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.569"),
@@ -76,9 +78,9 @@ namespace SpaceCore
                 }
             }
 
-            public override Texture2D IconTexture => Game1.objectSpriteSheet;
+            public override Texture2D IconTexture => Utility.GetItemDataForItemID( dummyObj.QualifiedItemID ).texture;
 
-            public override Rectangle? IconSubrect => Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.objectIndex, 16, 16);
+            public override Rectangle? IconSubrect => Utility.GetItemDataForItemID(dummyObj.QualifiedItemID).GetSourceRect(0, dummyObj.ParentSheetIndex);
 
             public override int Quantity => this.Quantity;
 
@@ -147,7 +149,7 @@ namespace SpaceCore
 
             private bool ItemMatches(Item item)
             {
-                return item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == this.objectIndex || obj.Category == this.objectIndex);
+                return item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.ItemID == this.objectIndex || obj.Category.ToString() == this.objectIndex);
             }
         }
 
