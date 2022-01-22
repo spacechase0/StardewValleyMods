@@ -19,6 +19,9 @@ namespace MoonMisadventures.Patches
     {
         public static bool Prefix( MilkPail __instance, GameLocation location, int x, int y, Farmer who, ref bool __result, ref FarmAnimal ___animal )
         {
+            if (location is not LunarLocation)
+                return true;
+
             x = ( int ) who.GetToolLocation().X;
             y = ( int ) who.GetToolLocation().Y;
             Rectangle r = new Rectangle(x - 32, y - 32, 64, 64);
