@@ -16,22 +16,8 @@ namespace StatueOfGenerosity.Patches
     internal class ObjectPatcher : BasePatcher
     {
         /*********
-        ** Fields
-        *********/
-        /// <summary>Get the bigcraftable id for the Statue of Generosity.</summary>
-        private static Func<int> GetStatueId;
-
-
-        /*********
         ** Public methods
         *********/
-        /// <summary>Construct an instance.</summary>
-        /// <param name="getStatueId">Get the bigcraftable id for the Statue of Generosity.</param>
-        public ObjectPatcher(Func<int> getStatueId)
-        {
-            ObjectPatcher.GetStatueId = getStatueId;
-        }
-
         /// <inheritdoc />
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
@@ -48,7 +34,7 @@ namespace StatueOfGenerosity.Patches
         /// <summary>The method to call after <see cref="SObject.DayUpdate"/>.</summary>
         public static void After_DayUpdate(SObject __instance, GameLocation location)
         {
-            if (!__instance.bigCraftable.Value || __instance.ParentSheetIndex != ObjectPatcher.GetStatueId())
+            if (!__instance.bigCraftable.Value || __instance.ItemID != "Statue_of_Generosity")
                 return;
 
             __instance.MinutesUntilReady = 1;
