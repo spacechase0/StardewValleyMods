@@ -43,7 +43,7 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call after <see cref="Crop.harvest"/>.</summary>
         private static void After_Harvest(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester)
         {
-            soil.fertilizer.Value = 0;
+            soil.fertilizer.Value = "0";
         }
     }
 }

@@ -62,12 +62,12 @@ namespace MultiFertilizer.Patches
         ** Private methods
         *********/
         /// <summary>The method to call before <see cref="HoeDirt.plant"/>.</summary>
-        private static bool Before_Plant(HoeDirt __instance, int index, int tileX, int tileY, Farmer who, bool isFertilizer, GameLocation location)
+        private static bool Before_Plant(HoeDirt __instance, string item_id, int tileX, int tileY, Farmer who, bool isFertilizer, GameLocation location)
         {
-            if (isFertilizer && DirtHelper.TryGetFertilizer(index, out FertilizerData fertilizer))
+            if (isFertilizer && DirtHelper.TryGetFertilizer(item_id, out FertilizerData fertilizer))
             {
                 // vanilla logic: basic/quality fertilizer must be applied before seed sprouts
-                if (index is 368 or 369 && __instance.crop?.currentPhase.Value > 0)
+                if (item_id is "368" or "369" && __instance.crop?.currentPhase.Value > 0)
                     return false;
 
                 // custom logic: allow placing fertilizer unless already present
@@ -132,13 +132,13 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call after <see cref="HoeDirt.applySpeedIncreases"/>.</summary>
         private static void After_ApplySpeedIncreases(HoeDirt __instance, Farmer who)
         {
-            __instance.fertilizer.Value = 0;
+            __instance.fertilizer.Value = "0";
         }
 
         /// <summary>The method to call before <see cref="HoeDirt.canPlantThisSeedHere"/>.</summary>
-        private static bool Before_CanPlantThisSeedHere(HoeDirt __instance, int objectIndex, int tileX, int tileY, bool isFertilizer, ref bool __result)
+        private static bool Before_CanPlantThisSeedHere(HoeDirt __instance, string item_id, int tileX, int tileY, bool isFertilizer, ref bool __result)
         {
-            if (isFertilizer && DirtHelper.TryGetFertilizer(objectIndex, out FertilizerData fertilizer))
+            if (isFertilizer && DirtHelper.TryGetFertilizer(item_id, out FertilizerData fertilizer))
             {
                 __result = !__instance.HasFertilizer(fertilizer);
                 return false;
@@ -156,7 +156,7 @@ namespace MultiFertilizer.Patches
         /// <summary>The method to call after <see cref="HoeDirt.dayUpdate"/>.</summary>
         private static void After_DayUpdate(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
         {
-            __instance.fertilizer.Value = 0;
+            __instance.fertilizer.Value = "0";
         }
 
         /// <summary>The method to call before <see cref="HoeDirt.seasonUpdate"/>.</summary>

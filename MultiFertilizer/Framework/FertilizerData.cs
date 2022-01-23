@@ -10,7 +10,7 @@ namespace MultiFertilizer.Framework
         ** Accessors
         *********/
         /// <summary>The fertilizer's object ID.</summary>
-        public int Id { get; }
+        public string Id { get; }
 
         /// <summary>The <see cref="TerrainFeature.modData"/> key which identifies the fertilizer type.</summary>
         public string Key { get; }
@@ -30,7 +30,7 @@ namespace MultiFertilizer.Framework
         /// <param name="key">The <see cref="TerrainFeature.modData"/> key which identifies the fertilizer type.</param>
         /// <param name="level">The fertilizer upgrade level (e.g. 1 = basic fertilizer, 2 = quality fertilizer, 3 = deluxe fertilizer).</param>
         /// <param name="spriteIndex">The fertilizer's index in the spritesheet.</param>
-        public FertilizerData(int id, string key, int level, int spriteIndex)
+        public FertilizerData(string id, string key, int level, int spriteIndex)
         {
             this.Id = id;
             this.Key = key;

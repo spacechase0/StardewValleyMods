@@ -67,7 +67,10 @@ namespace JsonAssets.Data
         internal string GetObjectInformation()
         {
             int itype = (int)this.Category;
-            string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == ObjectCategory.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
+            string catStr = (this.Category == ObjectCategory.Artifact ? "Arch" : $"{this.Category} {itype}");
+            if (this.Category == ObjectCategory.Ring)
+                catStr = "Ring";
+            string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + catStr + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
             str += (this.EdibleIsDrink ? "drink" : "food") + "/";
             str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
             str += $"/0/JA\\Object\\{Name}";
