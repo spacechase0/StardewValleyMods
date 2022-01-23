@@ -1358,14 +1358,14 @@ namespace JsonAssets
         internal List<ForgeRecipeData> Forge = new List<ForgeRecipeData>();
 
         // In this version of JA, these are int-ID-string to name, not name to int ID
-        internal Dictionary<string, string> OldObjectIds;
-        internal Dictionary<string, string> OldCropIds;
-        internal Dictionary<string, string> OldFruitTreeIds;
-        internal Dictionary<string, string> OldBigCraftableIds;
-        internal Dictionary<string, string> OldHatIds;
-        internal Dictionary<string, string> OldWeaponIds;
-        internal Dictionary<string, string> OldClothingIds;
-        internal Dictionary<string, string> OldBootsIds;
+        internal Dictionary<string, string> OldObjectIds = new();
+        internal Dictionary<string, string> OldCropIds = new();
+        internal Dictionary<string, string> OldFruitTreeIds = new();
+        internal Dictionary<string, string> OldBigCraftableIds = new();
+        internal Dictionary<string, string> OldHatIds = new();
+        internal Dictionary<string, string> OldWeaponIds = new();
+        internal Dictionary<string, string> OldClothingIds = new();
+        internal Dictionary<string, string> OldBootsIds = new();
 
         /// <summary>Populate an item's localization fields based on the <see cref="ITranslatableItem.TranslationKey"/> property, if defined.</summary>
         /// <param name="item">The item for which to populate translations.</param>
@@ -1682,7 +1682,7 @@ namespace JsonAssets
         /// <returns>Returns whether the crop should be removed.</returns>
         private void FixCrop(Crop crop)
         {
-            if (crop is null)
+            if (crop is null || crop.indexOfHarvest.Value == null)
                 return;
 
             if ( this.OldCropIds.ContainsKey( crop.rowInSpriteSheet.Value.ToString() ) )

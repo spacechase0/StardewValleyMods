@@ -1,10 +1,15 @@
 ﻿{
     "Name": "Throwable Axe",
     "Author": "spacechase0",
-    "Version": "1.0.2",
+    "Version": "1.0.3",
     "MinimumApiVersion": "3.13.0",
     "Description": "Throw axes at monsters to damage them.",
     "UniqueID": "spacechase0.ThrowableAxe",
     "EntryDll": "ThrowableAxe.dll",
-    "UpdateKeys": [ "Nexus:5097" ]
+    "UpdateKeys": [ "Nexus:5097" ],
+    "Dependencies": [
+        {
+            "UniqueID": "spacechase0.JsonAssets"
+        }
+    ]
 }
