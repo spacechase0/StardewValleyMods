@@ -52,7 +52,7 @@ namespace JsonAssets.Data
         *********/
         internal string GetCraftableInformation()
         {
-            string str = $"{this.Name}/{this.Price}/-300/Crafting -9/{this.LocalizedDescription()}/true/true/0/{ProvidesLight}/{this.LocalizedName()}/0/JA\\BigCraftable\\{Name}";
+            string str = $"{this.Name}/{this.Price}/-300/Crafting -9/{this.LocalizedDescription()}/true/true/0/{ProvidesLight}/{this.LocalizedName()}/0/JA\\BigCraftable0\\{Name}";
             return str;
         }
 

@@ -31,9 +31,6 @@ namespace JsonAssets.Framework
 
         public void Edit<T>(IAssetData asset)
         {
-            if (!Mod.instance.DidInit)
-                return;
-
             if (asset.AssetNameEquals("Data\\NPCGiftTastes"))
             {
                 var data = asset.AsDictionary<string, string>().Data;

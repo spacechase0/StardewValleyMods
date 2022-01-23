@@ -73,10 +73,6 @@ namespace JsonAssets
             helper.Events.Specialized.LoadStageChanged += this.OnLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += this.ClientConnected;
 
-            helper.Content.AssetEditors.Add(this.Content1 = new ContentInjector1());
-            helper.Content.AssetLoaders.Add(this.Content1);
-            Helper.Content.AssetEditors.Add(this.Content2 = new ContentInjector2());
-
             HarmonyPatcher.Apply(this,
                 new CropPatcher(),
                 //new FencePatcher(),
@@ -135,6 +131,12 @@ namespace JsonAssets
                             Log.Error("Exception loading content pack: " + e2);
                         }
                 }
+
+
+                Helper.Content.AssetEditors.Add(this.Content1 = new ContentInjector1());
+                Helper.Content.AssetLoaders.Add(this.Content1);
+                Helper.Content.AssetEditors.Add(this.Content2 = new ContentInjector2());
+
                 this.Api.InvokeItemsRegistered();
             }
 
@@ -1533,19 +1535,19 @@ namespace JsonAssets
             {
                 case Hat hat:
                     if (this.OldHatIds.ContainsKey(hat.deprecatedWhich.Value.ToString()))
-                        hat.ItemID = this.OldHatIds[hat.deprecatedWhich.Value.ToString()];
+                        hat.ItemID = this.OldHatIds[hat.deprecatedWhich.Value.ToString()].Replace(' ', '_');
                     break;
 
                 case MeleeWeapon weapon:
                     if (this.OldWeaponIds.ContainsKey(weapon.ItemID))
-                        weapon.ItemID = this.OldWeaponIds[weapon.ItemID];
+                        weapon.ItemID = this.OldWeaponIds[weapon.ItemID].Replace(' ', '_');
                     if (this.OldWeaponIds.ContainsKey(weapon.appearance.Value))
-                        weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value];
+                        weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value].Replace(' ', '_');
                     break;
 
                 case Ring ring:
                     if (this.OldObjectIds.ContainsKey(ring.ItemID))
-                        ring.ItemID = this.OldObjectIds[ring.ItemID];
+                        ring.ItemID = this.OldObjectIds[ring.ItemID].Replace(' ', '_');
 
                     if (ring is CombinedRing combinedRing)
                     {
@@ -1558,12 +1560,12 @@ namespace JsonAssets
 
                 case Clothing clothing:
                     if (this.OldClothingIds.ContainsKey(clothing.ItemID))
-                        clothing.ItemID = this.OldClothingIds[clothing.ItemID];
+                        clothing.ItemID = this.OldClothingIds[clothing.ItemID].Replace(' ', '_');
                     break;
                     
                 case Boots boots:
                     if (this.OldBootsIds.ContainsKey(boots.ItemID))
-                        boots.ItemID = this.OldBootsIds[boots.ItemID];
+                        boots.ItemID = this.OldBootsIds[boots.ItemID].Replace(' ', '_');
                     // TODO: what to do about tailored boots...
                     break;
 
@@ -1571,7 +1573,7 @@ namespace JsonAssets
                     if (obj is Chest chest)
                     {
                         if (this.OldBigCraftableIds.ContainsKey(chest.ItemID))
-                            chest.ItemID = this.OldBigCraftableIds[chest.ItemID];
+                            chest.ItemID = this.OldBigCraftableIds[chest.ItemID].Replace(' ', '_');
                         else
                             chest.startingLidFrame.Value = chest.ParentSheetIndex + 1;
                         this.FixItemList(chest.items);
@@ -1594,19 +1596,19 @@ namespace JsonAssets
                                 obj.preservedParentSheetIndex.Value = -1;
                             */
                             if (this.OldObjectIds.ContainsKey(obj.ItemID))
-                                obj.ItemID = this.OldObjectIds[obj.ItemID];
+                                obj.ItemID = this.OldObjectIds[obj.ItemID].Replace(' ', '_');
                         }
                         else
                         {
                             if (this.OldBigCraftableIds.ContainsKey(obj.ItemID))
-                                obj.ItemID = this.OldBigCraftableIds[obj.ItemID];
+                                obj.ItemID = this.OldBigCraftableIds[obj.ItemID].Replace(' ', '_');
                         }
                     }
 
                     if (obj.heldObject.Value != null)
                     {
                         if (this.OldObjectIds.ContainsKey(obj.heldObject.Value.ItemID))
-                            obj.heldObject.Value.ItemID = this.OldObjectIds[obj.heldObject.Value.ItemID];
+                            obj.heldObject.Value.ItemID = this.OldObjectIds[obj.heldObject.Value.ItemID].Replace(' ', '_');
 
                         if (obj.heldObject.Value is Chest innerChest)
                             this.FixItemList(innerChest.items);
@@ -1667,7 +1669,7 @@ namespace JsonAssets
                     }
 
                     if (this.OldObjectIds.ContainsKey(pond.fishType.Value))
-                        pond.fishType.Value = this.OldObjectIds[pond.fishType.Value];
+                        pond.fishType.Value = this.OldObjectIds[pond.fishType.Value].Replace(' ', '_');
                     pond.sign.Value = FixItem(pond.sign.Value) as SObject;
                     pond.output.Value = FixItem(pond.output.Value);
                     pond.neededItem.Value = FixItem(pond.neededItem.Value) as SObject;
@@ -1685,14 +1687,14 @@ namespace JsonAssets
 
             if ( this.OldCropIds.ContainsKey( crop.rowInSpriteSheet.Value.ToString() ) )
             {
+                crop.overrideTexturePath.Value = "JA/Crop/" + this.OldCropIds[crop.rowInSpriteSheet.Value.ToString()].Replace(' ', '_');
                 crop.rowInSpriteSheet.Value = 0;
-                crop.overrideTexturePath.Value = "JA/Crop/" + this.OldCropIds[crop.rowInSpriteSheet.Value.ToString()];
             }
 
             if (this.OldObjectIds.ContainsKey(crop.indexOfHarvest.Value))
-                crop.indexOfHarvest.Value = this.OldObjectIds[crop.indexOfHarvest.Value];
+                crop.indexOfHarvest.Value = this.OldObjectIds[crop.indexOfHarvest.Value].Replace(' ', '_');
             if (this.OldObjectIds.ContainsKey(crop.netSeedIndex.Value))
-                crop.netSeedIndex.Value = this.OldObjectIds[crop.netSeedIndex.Value];
+                crop.netSeedIndex.Value = this.OldObjectIds[crop.netSeedIndex.Value].Replace(' ', '_');
         }
 
         /// <summary>Fix item IDs contained by a farm animal.</summary>
@@ -1702,7 +1704,7 @@ namespace JsonAssets
             foreach (NetString id in new[] { animal.currentProduce, animal.defaultProduceIndex, animal.deluxeProduceIndex })
             {
                 if (this.OldObjectIds.ContainsKey(id.Value))
-                    id.Value = this.OldObjectIds[id.Value];
+                    id.Value = this.OldObjectIds[id.Value].Replace(' ', '_');
             }
         }
 
@@ -1722,19 +1724,19 @@ namespace JsonAssets
                         if (this.OldFruitTreeIds.ContainsKey(ftree.treeType.Value))
                         {
                             ftree.spriteRowNumber.Value = -1;
-                            ftree.treeType.Value = this.OldFruitTreeIds[ftree.treeType.Value];
+                            ftree.treeType.Value = this.OldFruitTreeIds[ftree.treeType.Value].Replace(' ', '_');
                         }
 
                         if (this.OldObjectIds.ContainsKey(ftree.indexOfFruit.Value))
-                            ftree.indexOfFruit.Value = this.OldObjectIds[ftree.indexOfFruit.Value];
+                            ftree.indexOfFruit.Value = this.OldObjectIds[ftree.indexOfFruit.Value].Replace(' ', '_');
                     }
                     break;
 
                 case ResourceClump rclump:
                     if ( this.OldObjectIds.ContainsKey( rclump.parentSheetIndex.Value.ToString() ) )
                     {
+                        rclump.ItemID = this.OldObjectIds[rclump.parentSheetIndex.Value.ToString()].Replace(' ', '_');
                         rclump.parentSheetIndex.Value = 1720;
-                        rclump.ItemID = this.OldObjectIds[rclump.parentSheetIndex.Value.ToString()];
                     }
 
                     break;
@@ -1767,7 +1769,7 @@ namespace JsonAssets
                 if (this.OldObjectIds.ContainsKey(entry))
                 {
                     toRemove.Add(entry);
-                    toAdd.Add(this.OldObjectIds[entry], dict[entry]);
+                    toAdd.Add(this.OldObjectIds[entry].Replace(' ', '_'), dict[entry]);
                 }
             }
             foreach (string entry in toRemove)
@@ -1779,7 +1781,7 @@ namespace JsonAssets
                     Log.Error("Dict already has value for " + entry.Key + "!");
                     foreach (var obj in this.Objects)
                     {
-                        if (obj.Name == entry.Key)
+                        if (obj.Name.Replace(' ', '_') == entry.Key)
                             Log.Error("\tobj = " + obj.Name);
                     }
                 }
@@ -1796,7 +1798,7 @@ namespace JsonAssets
                 if (this.OldObjectIds.ContainsKey(entry))
                 {
                     toRemove.Add(entry);
-                    toAdd.Add(this.OldObjectIds[entry], dict[entry]);
+                    toAdd.Add(this.OldObjectIds[entry].Replace(' ', '_'), dict[entry]);
                 }
             }
             foreach (string entry in toRemove)

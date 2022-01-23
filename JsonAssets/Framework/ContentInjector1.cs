@@ -41,44 +41,44 @@ namespace JsonAssets.Framework
             this.ToLoad = new();
             foreach (var obj in Mod.instance.Objects)
             {
-                ToLoad.Add("JA/Object/" + obj.Name, obj.Texture);
+                ToLoad.Add(normalize("JA/Object/" + obj.Name), obj.Texture);
                 if (obj.TextureColor != null)
-                    ToLoad.Add("JA/ObjectColor/" + obj.Name, obj.TextureColor);
+                    ToLoad.Add(normalize("JA/ObjectColor/" + obj.Name), obj.TextureColor);
             }
             foreach (var crop in Mod.instance.Crops)
             {
-                ToLoad.Add("JA/Crop/" + crop.Name, crop.Texture);
+                ToLoad.Add(normalize("JA/Crop/" + crop.Name), crop.Texture);
                 if (crop.GiantTexture != null)
-                    ToLoad.Add("JA/CropGiant/" + crop.Name, crop.GiantTexture);
+                    ToLoad.Add(normalize("JA/CropGiant/" + crop.Name), crop.GiantTexture);
             }
             foreach (var ftree in Mod.instance.FruitTrees)
-                ToLoad.Add("JA/FruitTree/" + ftree.Name, ftree.Texture);
+                ToLoad.Add(normalize("JA/FruitTree/" + ftree.Name), ftree.Texture);
             foreach (var big in Mod.instance.BigCraftables)
             {
-                ToLoad.Add("JA/BigCraftable0/" + big.Name, big.Texture);
+                ToLoad.Add(normalize("JA/BigCraftable0/" + big.Name), big.Texture);
                 for (int i = 0; i < big.ExtraTextures.Length; ++i)
-                    ToLoad.Add("JA/BigCraftable" + (i + 1) + "/" + big.Name, big.ExtraTextures[i]);
+                    ToLoad.Add(normalize("JA/BigCraftable" + (i + 1) + "/" + big.Name), big.ExtraTextures[i]);
             }
             foreach (var hat in Mod.instance.Hats)
-                ToLoad.Add("JA/Hat/" + hat.Name, hat.Texture);
+                ToLoad.Add(normalize("JA/Hat/" + hat.Name), hat.Texture);
             foreach (var weapon in Mod.instance.Weapons)
-                ToLoad.Add( "JA/Weapon/" + weapon.Name, weapon.Texture);
+                ToLoad.Add(normalize("JA/Weapon/" + weapon.Name), weapon.Texture);
             foreach ( var shirt in Mod.instance.Shirts )
             {
-                ToLoad.Add("JA/ShirtMale/" + shirt.Name, shirt.TextureMale);
+                ToLoad.Add(normalize("JA/ShirtMale/" + shirt.Name), shirt.TextureMale);
                 if (shirt.TextureFemale != null)
-                    ToLoad.Add("JA/ShirtFemale/" + shirt.Name, shirt.TextureFemale);
+                    ToLoad.Add(normalize("JA/ShirtFemale/" + shirt.Name), shirt.TextureFemale);
                 if (shirt.TextureMaleColor != null)
-                    ToLoad.Add("JA/ShirtMaleColor/" + shirt.Name, shirt.TextureMaleColor);
+                    ToLoad.Add(normalize("JA/ShirtMaleColor/" + shirt.Name), shirt.TextureMaleColor);
                 if (shirt.TextureFemaleColor != null)
-                    ToLoad.Add("JA/ShirtFemaleColor/" + shirt.Name, shirt.TextureFemaleColor);
+                    ToLoad.Add(normalize("JA/ShirtFemaleColor/" + shirt.Name), shirt.TextureFemaleColor);
             }
             foreach ( var pants in Mod.instance.Pants )
-                ToLoad.Add( "JA/Pants/" + pants.Name, pants.Texture);
+                ToLoad.Add(normalize("JA/Pants/" + pants.Name), pants.Texture);
             foreach ( var boots in Mod.instance.Boots )
             {
-                ToLoad.Add("JA/Boots/" + boots.Name, boots.Texture);
-                ToLoad.Add("JA/BootsColor/" + boots.Name, boots.TextureColor);
+                ToLoad.Add(normalize("JA/Boots/" + boots.Name), boots.Texture);
+                ToLoad.Add(normalize("JA/BootsColor/" + boots.Name), boots.TextureColor);
             }
             // TODO custom fence when they implement them in vanilla
         }
@@ -95,9 +95,6 @@ namespace JsonAssets.Framework
 
         public void Edit<T>(IAssetData asset)
         {
-            if (!Mod.instance.DidInit)
-                return;
-
             this.Files[asset.AssetName](asset);
         }
 
@@ -109,7 +106,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to objects: {obj.Name}: {obj.GetObjectInformation()}");
-                    data.Add(obj.Name, obj.GetObjectInformation());
+                    data.Add(obj.Name.Replace(' ', '_'), obj.GetObjectInformation());
                 }
                 catch (Exception e)
                 {
@@ -143,7 +140,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to crops: {crop.GetSeedId()}: {crop.GetCropInformation()}");
-                    data.Add(crop.GetSeedId(), crop.GetCropInformation());
+                    data.Add(crop.GetSeedId().Replace(' ', '_'), crop.GetCropInformation());
                 }
                 catch (Exception e)
                 {
@@ -159,7 +156,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to fruit trees: {fruitTree.GetSaplingId()}: {fruitTree.GetFruitTreeInformation()}");
-                    data.Add(fruitTree.GetSaplingId(), fruitTree.GetFruitTreeInformation());
+                    data.Add(fruitTree.GetSaplingId().Replace(' ', '_'), fruitTree.GetFruitTreeInformation());
                 }
                 catch (Exception e)
                 {
@@ -199,7 +196,7 @@ namespace JsonAssets.Framework
                     if (obj.Category == ObjectCategory.Cooking)
                         continue;
                     Log.Verbose($"Injecting to crafting recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
-                    data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
+                    data.Add(obj.Name.Replace(' ', '_'), obj.Recipe.GetRecipeString(obj));
                 }
                 catch (Exception e)
                 {
@@ -213,7 +210,7 @@ namespace JsonAssets.Framework
                     if (big.Recipe == null)
                         continue;
                     Log.Verbose($"Injecting to crafting recipes: {big.Name}: {big.Recipe.GetRecipeString(big)}");
-                    data.Add(big.Name, big.Recipe.GetRecipeString(big));
+                    data.Add(big.Name.Replace(' ', '_'), big.Recipe.GetRecipeString(big));
                 }
                 catch (Exception e)
                 {
@@ -229,7 +226,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to big craftables: {big.Name}: {big.GetCraftableInformation()}");
-                    data.Add(big.Name, big.GetCraftableInformation());
+                    data.Add(big.Name.Replace(' ', '_'), big.GetCraftableInformation());
                 }
                 catch (Exception e)
                 {
@@ -245,7 +242,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to hats: {hat.Name}: {hat.GetHatInformation()}");
-                    data.Add(hat.Name, hat.GetHatInformation());
+                    data.Add(hat.Name.Replace(' ', '_'), hat.GetHatInformation());
                 }
                 catch (Exception e)
                 {
@@ -261,7 +258,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to weapons: {weapon.Name}: {weapon.GetWeaponInformation()}");
-                    data.Add(weapon.Name, weapon.GetWeaponInformation());
+                    data.Add(weapon.Name.Replace(' ', '_'), weapon.GetWeaponInformation());
                 }
                 catch (Exception e)
                 {
@@ -277,7 +274,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to clothing information: {shirt.Name}: {shirt.GetClothingInformation()}");
-                    data.Add(shirt.Name, shirt.GetClothingInformation());
+                    data.Add(shirt.Name.Replace(' ', '_'), shirt.GetClothingInformation());
                 }
                 catch (Exception e)
                 {
@@ -289,7 +286,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to clothing information: {pants.Name}: {pants.GetClothingInformation()}");
-                    data.Add(pants.Name, pants.GetClothingInformation());
+                    data.Add(pants.Name.Replace(' ', '_'), pants.GetClothingInformation());
                 }
                 catch (Exception e)
                 {
@@ -321,7 +318,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to boots: {boots.Name}: {boots.GetBootsInformation()}");
-                    data.Add(boots.Name, boots.GetBootsInformation());
+                    data.Add(boots.Name.Replace(' ', '_'), boots.GetBootsInformation());
                 }
                 catch (Exception e)
                 {

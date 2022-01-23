@@ -31,14 +31,14 @@ namespace JsonAssets.Data
         {
             string str = "";
             foreach (var ingredient in this.Ingredients)
-                str += ingredient.Object + " " + ingredient.Count + " ";
+                str += ingredient.Object.ToString().Replace(' ', '_') + " " + ingredient.Count + " ";
             str = str.Substring(0, str.Length - 1);
-            str += $"/what is this for?/{parent.Name} {this.ResultCount}/true/";
+            str += $"/what is this for?/{parent.Name.Replace(' ', '_')} {this.ResultCount}/true/";
             if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
                 str += this.SkillUnlockName + " " + this.SkillUnlockLevel;
             else
                 str += "null";
-            if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
+            //if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
                 str += "/" + parent.LocalizedName();
             return str;
         }

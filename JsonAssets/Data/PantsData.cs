@@ -49,7 +49,7 @@ namespace JsonAssets.Data
 
         internal string GetClothingInformation()
         {
-            return $"{this.Name}/{this.LocalizedName()}/{this.LocalizedDescription()}/{this.GetTextureIndex()}/-1/{this.Price}/{this.DefaultColor.R} {this.DefaultColor.G} {this.DefaultColor.B}/{this.Dyeable}/Pants/{this.Metadata}/JA\\Pants\\{this.Name}";
+            return $"{this.Name}/{this.LocalizedName()}/{this.LocalizedDescription()}/0/-1/{this.Price}/{this.DefaultColor.R} {this.DefaultColor.G} {this.DefaultColor.B}/{this.Dyeable}/Pants/{this.Metadata}/JA\\Pants\\{this.Name}";
         }
 
 

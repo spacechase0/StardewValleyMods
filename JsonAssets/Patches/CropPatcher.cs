@@ -83,6 +83,7 @@ namespace JsonAssets.Patches
                         // We want the crop itself instead since theoretically two crops could have the same product, but be different types.
                         newInstructions[newInstructions.Count - 3].labels.AddRange(newInstructions[newInstructions.Count - 2].labels);
                         newInstructions.RemoveAt(newInstructions.Count - 2);
+                        newInstructions.RemoveAt(newInstructions.Count - 1);
 
                         // Call our method
                         newInstructions.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(IsIndoorOnlyCrop))));
@@ -91,7 +92,7 @@ namespace JsonAssets.Patches
                     else if (justHooked)
                     {
                         instr.opcode = OpCodes.Brfalse_S;
-                        newInstructions.Add(instr);
+                        //newInstructions.Add(instr);
                         justHooked = false;
                     }
                     else
@@ -115,21 +116,26 @@ namespace JsonAssets.Patches
                         newInstructions.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<CropPatcher>(nameof(CheckCanBeGiant))));
                         newInstructions.Add(new CodeInstruction(OpCodes.Brtrue_S, label));
                     }
+                    else if ( hookCountdown == 1 ) // We want a copy of the label here
+                    {
+                        label = instr.operand;
+                    }
 
                     // The only reference to 276 is the index of the pumpkin for checking for giant crops growing
                     if (instr.opcode == OpCodes.Ldstr && (string)instr.operand == "276")
                     {
-                        // In two instructions (after this and the next), we want our check
-                        hookCountdown = 2;
+                        // In three instructions (after this, the next, and the next), we want our check
+                        hookCountdown = 3;
                         justHooked = true;
                     }
-                    // If this is the instruction after the previous check, we want to borrow the label for our own use
                     else if (justHooked)
                     {
-                        label = instr.operand;
                         justHooked = false;
                     }
-                    newInstructions.Add(instr);
+                    else
+                    {
+                        newInstructions.Add(instr);
+                    }
                 }
 
                 return newInstructions;
