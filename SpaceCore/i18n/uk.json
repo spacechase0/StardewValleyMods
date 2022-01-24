@@ -1,0 +1,7 @@
+{
+    // Generic Mod Config Menu UI
+    "config.custom-skill-page.name": "Сторінка спеціальних навичок",
+    "config.custom-skill-page.tooltip": "Чи показувати сторінку зі спеціальними навичками.\nЦе змістить сторінку з гаманцем, аби з'явилося місце для сторінки з навичками.",
+    "config.support-all-professions-mod.name": "Підтримка модифікації \"All Professions\"",
+    "config.support-all-professions-mod.tooltip": "Чи слід автоматично застосовувати отримані спеціальні професії, що зареєстровані через SpaceCore, при наявності модифікації \"All Professions\"."
+}

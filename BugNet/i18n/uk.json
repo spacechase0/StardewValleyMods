@@ -1,0 +1,45 @@
+{
+    // net
+    "bug-net.name": "Сачок",
+    "bug-net.description": "Ловля комах та інших істот.",
+
+    // critter cage
+    "cage.name": "Істота в пастці: {{critterName}}",
+    "cage.description": "Це істота! В пастці!",
+
+    // critter names
+    "critter.GreenFrog": "Зелена жаба",
+    "critter.OliveFrog": "Оливкова жаба",
+    "critter.Cloud": "Хмарка?",
+    "critter.Firefly": "Світляк",
+    "critter.Seagull": "Чайка",
+    "critter.Crow": "Ворона",
+    "critter.BrownBird": "Коричнева пташка",
+    "critter.BlueBird": "Блакитна пташка",
+    "critter.GrayRabbit": "Сірий кролик",
+    "critter.WhiteRabbit": "Білий кролик",
+    "critter.Squirrel": "Білка",
+    "critter.Owl": "Сова",
+    "critter.WoodPecker": "Дятел",
+    "critter.SummerButterflyBlue": "Блакитний літній метелик",
+    "critter.SummerButterflyGreen": "Зелений літній метелик",
+    "critter.SummerButterflyRed": "Червоний літній метелик",
+    "critter.SummerButterflyPink": "Рожевий літній метелик",
+    "critter.SummerButterflyYellow": "Жовтий літній метелик",
+    "critter.SummerButterflyOrange": "Помаранчевий літній метелик",
+    "critter.SpringButterflyPalePink": "Блідо-рожевий весняний метелик",
+    "critter.SpringButterflyMagenta": "Пурпурний весняний метелик",
+    "critter.SpringButterflyWhite": "Білий весняний метелик",
+    "critter.SpringButterflyYellow": "Жовтий весняний метелик",
+    "critter.SpringButterflyPurple": "Фіолетовий весняний метелик",
+    "critter.SpringButterflyPink": "Рожевий весняний метелик",
+    "critter.BlueParrot": "Синій папуга",
+    "critter.GreenParrot": "Зелений папуга",
+    "critter.Monkey": "Мавпа",
+    "critter.OrangeIslandButterfly": "Помаранчевий острівний метелик",
+    "critter.PinkIslandButterfly": "Рожевий острівний метелик",
+    "critter.PurpleBird": "Фіолетова пташка",
+    "critter.RedBird": "Червона пташка",
+    "critter.SunsetTropicalButterfly": "Вечірній тропічний метелик",
+    "critter.TropicalButterfly": "Тропічний метелик"
+}
