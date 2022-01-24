@@ -411,7 +411,6 @@ namespace BetterShopMenu
                 purchaseSelectedColor = Color.Blue;
             }
 
-            shop.hoveredItem = null;
             //IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f, true);
             IClickableMenu.drawTextureBox(b, purchaseTexture, purchaseWindowBorder, shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f);
             for (int i = currentItemIndex * UnitsWide; i < forSale.Count && i < currentItemIndex * UnitsWide + UnitsWide * 3; ++i)
@@ -540,10 +539,9 @@ namespace BetterShopMenu
 
             this.DrawNewFields(b);// we want hover text to cover our new fields
 
+            shop.hoveredItem = hover;// lookup anything examines the hoveredItem field. maybe others.
             if (hover != null)
             {
-                shop.hoveredItem = hover;
-
                 // get hover price & stock
                 if (itemPriceAndStock == null || !itemPriceAndStock.TryGetValue(hover, out int[] hoverPriceAndStock))
                     hoverPriceAndStock = null;
