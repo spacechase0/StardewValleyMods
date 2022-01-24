@@ -644,11 +644,6 @@ namespace BetterShopMenu
             {
                 if (this.Shop != null)
                 {
-                    this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
-                    this.Helper.Events.Display.RenderedActiveMenu -= this.OnRenderedActiveMenu;
-                    this.Helper.Events.Input.ButtonPressed -= this.OnButtonPressed;
-                    this.Helper.Events.Input.MouseWheelScrolled -= this.OnMouseWheelScrolled;
-
                     this.Shop = null;
                     this.CropData = null;
 
@@ -657,6 +652,20 @@ namespace BetterShopMenu
                         this.Search.Selected = false;
                         this.Search = null;
                     }
+
+                    this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
+                    this.Helper.Events.Display.RenderedActiveMenu -= this.OnRenderedActiveMenu;
+                    this.Helper.Events.Input.ButtonPressed -= this.OnButtonPressed;
+                    this.Helper.Events.Input.MouseWheelScrolled -= this.OnMouseWheelScrolled;
+
+                    Reflect_scrollBarRunner = null;
+                    Reflect_animations = null;
+                    Reflect_poof = null;
+                    Reflect_isStorageShop = null;
+                    Reflect_sellPercentage = null;
+                    Reflect_hoverText = null;
+                    Reflect_hoverPrice = null;
+                    Reflect_tryToPurchaseItem = null;
                 }
             }
         }
