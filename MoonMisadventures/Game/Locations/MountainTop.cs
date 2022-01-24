@@ -40,10 +40,24 @@ namespace MoonMisadventures.Game.Locations
 
             TemporarySprites.Clear();
 
-            base.TemporarySprites.Add( new TemporaryAnimatedSprite( ufoTexPath, new Rectangle( 0, 0, 96, 48 ), 99999, 1, 99999, new Vector2( 20 * Game1.tileSize, 20 * Game1.tileSize ), false, false )
+            if (ufoRepaired.Value)
             {
-                scale = 4f,
-            } );
+                base.TemporarySprites.Add(new TemporaryAnimatedSprite(ufoTexPath, new Rectangle(0, 48, 96, 48), 100, Mod.instance.Config.FlashingUfo ? 4 : 1, 99999, new Vector2(20 * Game1.tileSize, 20 * Game1.tileSize), false, false)
+                {
+                    scale = 4f,
+                });
+                base.TemporarySprites.Add(new TemporaryAnimatedSprite(ufoTexPath, new Rectangle(96, 0, 96, 48), 99999, 1, 99999, new Vector2(20 * Game1.tileSize, 20 * Game1.tileSize), false, false)
+                {
+                    scale = 4f,
+                });
+            }
+            else
+            {
+                base.TemporarySprites.Add(new TemporaryAnimatedSprite(ufoTexPath, new Rectangle(0, 0, 96, 48), 99999, 1, 99999, new Vector2(20 * Game1.tileSize, 20 * Game1.tileSize), false, false)
+                {
+                    scale = 4f,
+                });
+            }
         }
 
         public override void cleanupBeforePlayerExit()

@@ -96,7 +96,7 @@ namespace MoonMisadventures.Game.Locations
                 case 238: dir = new Vector2( 1, 0 ); break;
                 case 266: dir = new Vector2( 0, 1 ); break;
             }
-            Log.Debug( "meow!? " + dir +" "+ tile + " " + args.PickPoint.X+ " " + args.PickPoint.Y + " " + args.ToolTier );
+            //Log.Debug( "meow!? " + dir +" "+ tile + " " + args.PickPoint.X+ " " + args.PickPoint.Y + " " + args.ToolTier );
 
             if ( dir != Vector2.Zero )
             {

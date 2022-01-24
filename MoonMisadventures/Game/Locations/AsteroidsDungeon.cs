@@ -116,6 +116,7 @@ namespace MoonMisadventures.Game.Locations
             {
                 level.mapContent.Dispose();
             }
+            activeLevels.Clear();
         }
 
         public readonly NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = new();

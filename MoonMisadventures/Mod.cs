@@ -90,6 +90,7 @@ namespace MoonMisadventures
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             Helper.Events.GameLoop.TimeChanged += OnTimeChanged;
             Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+            helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.Specialized.LoadStageChanged += OnLoadStageChanged;
             Helper.Events.Display.MenuChanged += OnMenuChanged;
             Helper.Events.Display.RenderingWorld += OnRenderingWorld;
@@ -286,6 +287,11 @@ namespace MoonMisadventures
                         break;
                 }
             }
+        }
+
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        {
+            AsteroidsDungeon.ClearAllLevels();
         }
 
         private void OnLoadStageChanged( object sender, LoadStageChangedEventArgs e )
