@@ -562,7 +562,8 @@ namespace BetterShopMenu
             }
             else
             {
-                // the inventory menu page may have created some hover text. sadly the data is in private fields.
+                // the inventory may have created some hover text (via ShopMenu.performHoverAction). sadly the data is in private fields.
+                // typically this is an item that can be sold to the vendor.
                 if (!Reflect_hoverText.Equals(""))
                 {
                     IClickableMenu.drawToolTip(b, Reflect_hoverText.GetValue(), "", null, moneyAmountToShowAtBottom: Reflect_hoverPrice.GetValue());
