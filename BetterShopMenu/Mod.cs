@@ -47,16 +47,23 @@ namespace BetterShopMenu
                                   prefix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopMenuPatches.ShopMenu_receiveScrollWheelAction_Prefix))
                                  );
 
+            // this patches the ShopMenu performHoverAction code.
+            // we block the ShopMenu code from the grid layout area. otherwise we allow it. e.g. inventory menu.
+            mInfo = harmony.Patch(original: AccessTools.Method(typeof(StardewValley.Menus.ShopMenu), nameof(StardewValley.Menus.ShopMenu.performHoverAction)),
+                                  prefix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopMenuPatches.ShopMenu_performHoverAction_Prefix))
+                                 );
+
             // this patches out the ShopMenu mouse right click code.
             // this allows us to trigger a delay for doing the right click, hold auto purchase.
+            // SMAPI input supression (preferred) gets in the way of detecting a hold.
             mInfo = harmony.Patch(original: AccessTools.Method(typeof(StardewValley.Menus.ShopMenu), nameof(StardewValley.Menus.ShopMenu.receiveRightClick)),
                                   prefix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopMenuPatches.ShopMenu_receiveRightClick_Prefix))
                                  );
 
             // this patches out ShopMenu.draw.
             // excluding the grid layout draw, our draw procedure is really just a copy of the Stardew ShopMenu.draw code.
-            System.Type[] ovlParams = new System.Type[] { typeof(SpriteBatch) };
-            mInfo = harmony.Patch(original: AccessTools.Method(typeof(StardewValley.Menus.ShopMenu), nameof(StardewValley.Menus.ShopMenu.draw), ovlParams),
+            System.Type[] drawParams = new System.Type[] { typeof(SpriteBatch) };
+            mInfo = harmony.Patch(original: AccessTools.Method(typeof(StardewValley.Menus.ShopMenu), nameof(StardewValley.Menus.ShopMenu.draw), drawParams),
                                   prefix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopMenuPatches.ShopMenu_draw_Prefix))
                                  );
         }
@@ -75,13 +82,13 @@ namespace BetterShopMenu
                     mod: this.ModManifest,
                     name: I18n.Config_GridLayout_Name,
                     tooltip: I18n.Config_GridLayout_Tooltip,
-                    getValue: () => Mod.Config.ExperimentalGridLayout,
-                    setValue: value => Mod.Config.ExperimentalGridLayout = value
+                    getValue: () => Mod.Config.GridLayout,
+                    setValue: value => Mod.Config.GridLayout = value
                 );
             }
         }
 
-        private ShopMenu Shop;
+        internal ShopMenu Shop;
         private bool FirstTick;
         private List<ISalable> InitialItems;
         private Dictionary<ISalable, int[]> InitialStock;
@@ -102,7 +109,16 @@ namespace BetterShopMenu
         private const int SeedsOtherCategory = -174; //seeds - 100;
 
         private Point PurchasePoint;
-  
+
+        IReflectedField<Rectangle> Reflect_scrollBarRunner;
+        IReflectedField<List<TemporaryAnimatedSprite>> Reflect_animations;
+        IReflectedField<TemporaryAnimatedSprite> Reflect_poof;
+        IReflectedField<bool> Reflect_isStorageShop;
+        IReflectedField<float> Reflect_sellPercentage;
+        IReflectedField<string> Reflect_hoverText;
+        IReflectedField<int> Reflect_hoverPrice;
+        IReflectedMethod Reflect_tryToPurchaseItem;
+
         private void InitShop(ShopMenu shopMenu)
         {
             this.Shop = shopMenu;
@@ -112,6 +128,15 @@ namespace BetterShopMenu
             this.Helper.Events.Display.RenderedActiveMenu += this.OnRenderedActiveMenu;
             this.Helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             this.Helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
+
+            Reflect_scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(shopMenu, "scrollBarRunner");
+            Reflect_animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shopMenu, "animations");
+            Reflect_poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(shopMenu, "poof");
+            Reflect_isStorageShop = this.Helper.Reflection.GetField<bool>(shopMenu, "_isStorageShop");
+            Reflect_sellPercentage = this.Helper.Reflection.GetField<float>(shopMenu, "sellPercentage");
+            Reflect_hoverText = this.Helper.Reflection.GetField<string>(shopMenu, "hoverText");
+            Reflect_hoverPrice = this.Helper.Reflection.GetField<int>(shopMenu, "hoverPrice");
+            Reflect_tryToPurchaseItem = this.Helper.Reflection.GetMethod(shopMenu, "tryToPurchaseItem");
         }
 
         private void InitShop2()
@@ -319,7 +344,7 @@ namespace BetterShopMenu
             if (this.Shop == null)
                 return;
 
-            if (Mod.Config.ExperimentalGridLayout)
+            if (Mod.Config.GridLayout)
                 this.DrawGridLayout(e.SpriteBatch);
             else
                 this.DrawNewFields(e.SpriteBatch);
@@ -359,12 +384,12 @@ namespace BetterShopMenu
             var forSale = shop.forSale;
             var itemPriceAndStock = shop.itemPriceAndStock;
             int currency = shop.currency;
-            var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shop, "animations").GetValue();
-            var poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(shop, "poof").GetValue();
+            var animations = Reflect_animations.GetValue();
+            var poof = Reflect_poof.GetValue();
             var heldItem = shop.heldItem;
             int currentItemIndex = shop.currentItemIndex;
             var scrollBar = shop.scrollBar;
-            var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(shop, "scrollBarRunner").GetValue();
+            var scrollBarRunner = Reflect_scrollBarRunner.GetValue();
             ISalable hover = null;
 
             if (!Game1.options.showMenuBackground)
@@ -386,6 +411,7 @@ namespace BetterShopMenu
                 purchaseSelectedColor = Color.Blue;
             }
 
+            shop.hoveredItem = null;
             //IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f, true);
             IClickableMenu.drawTextureBox(b, purchaseTexture, purchaseWindowBorder, shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4, Color.White, 4f);
             for (int i = currentItemIndex * UnitsWide; i < forSale.Count && i < currentItemIndex * UnitsWide + UnitsWide * 3; ++i)
@@ -393,9 +419,15 @@ namespace BetterShopMenu
                 bool failedCanPurchaseCheck = shop.canPurchaseCheck != null && !shop.canPurchaseCheck(i);
                 int ix = i % UnitsWide;
                 int iy = i / UnitsWide;
+
                 Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UnitWidth, shop.yPositionOnScreen + 16 + iy * UnitHeight - currentItemIndex * UnitHeight, UnitWidth, UnitHeight);
-                IClickableMenu.drawTextureBox(b, purchaseTexture, purchaseItemRect, rect.X, rect.Y, rect.Width, rect.Height, rect.Contains(Game1.getOldMouseX(true), Game1.getOldMouseY(true)) ? purchaseSelectedColor : Color.White, 4f, false);
+                bool selectedItem = rect.Contains(Game1.getOldMouseX(true), Game1.getOldMouseY(true));
+                IClickableMenu.drawTextureBox(b, purchaseTexture, purchaseItemRect, rect.X, rect.Y, rect.Width, rect.Height, selectedItem ? purchaseSelectedColor : Color.White, 4f, false);
+
                 ISalable item = forSale[i];
+                if (selectedItem)
+                    hover = item;
+
                 StackDrawType stackDrawType;
                 if (shop.storeContext == "QiGemShop")
                     stackDrawType = StackDrawType.HideButShowQuality;
@@ -404,7 +436,7 @@ namespace BetterShopMenu
                 else
                 {
                     stackDrawType = StackDrawType.Draw_OneInclusive;
-                    if (this.Helper.Reflection.GetField<bool>(shop, "_isStorageShop").GetValue())
+                    if (Reflect_isStorageShop.GetValue())
                         stackDrawType = StackDrawType.Draw;
                 }
                 if (forSale[i].ShouldDrawIcon())
@@ -440,8 +472,6 @@ namespace BetterShopMenu
                     Utility.drawWithShadow(b, Game1.objectSpriteSheet, new Vector2(rect.Right - 64 - textWidth, rect.Y + 80 - 4), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, requiredItem, 16, 16), Color.White * (hasEnoughToTrade ? 1f : 0.25f), 0f, Vector2.Zero, 3, flipped: false, -1f, -1, -1, hasEnoughToTrade ? 0.35f : 0f);
                     SpriteText.drawString(b, "x" + requiredItemCount, rect.Right - (int)textWidth - 16, rect.Y + 80, 999999, -1, 999999, hasEnoughToTrade ? 1f : 0.5f, 0.88f, junimoText: false, -1, "", purchaseItemTextColor);
                 }
-                if (rect.Contains(Game1.getOldMouseX(true), Game1.getOldMouseY(true)))
-                    hover = forSale[i];
             }
             if (forSale.Count == 0)
                 SpriteText.drawString(b, Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583"), shop.xPositionOnScreen + shop.width / 2 - SpriteText.getWidthOfString(Game1.content.LoadString("Strings\\StringsFromCSFiles:ShopMenu.cs.11583")) / 2, shop.yPositionOnScreen + shop.height / 2 - 128);
@@ -472,6 +502,7 @@ namespace BetterShopMenu
             }
             poof?.draw(b);
 
+            // grid layout does not create these. draw?
             for (int i = 0; i < shop.tabButtons.Count; i++)
             {
                 shop.tabButtons[i].draw(b);
@@ -511,6 +542,8 @@ namespace BetterShopMenu
 
             if (hover != null)
             {
+                shop.hoveredItem = hover;
+
                 // get hover price & stock
                 if (itemPriceAndStock == null || !itemPriceAndStock.TryGetValue(hover, out int[] hoverPriceAndStock))
                     hoverPriceAndStock = null;
@@ -526,6 +559,14 @@ namespace BetterShopMenu
                 if (hoverPriceAndStock?.Length > 3)
                     getHoveredItemExtraItemAmount = hoverPriceAndStock[3];
                 IClickableMenu.drawToolTip(b, hoverText, boldTitleText, hover as Item, heldItem != null, -1, currency, getHoveredItemExtraItemIndex, getHoveredItemExtraItemAmount, null, hoverPrice);
+            }
+            else
+            {
+                // the inventory menu page may have created some hover text. sadly the data is in private fields.
+                if (!Reflect_hoverText.Equals(""))
+                {
+                    IClickableMenu.drawToolTip(b, Reflect_hoverText.GetValue(), "", null, moneyAmountToShowAtBottom: Reflect_hoverPrice.GetValue());
+                }
             }
 
             heldItem?.drawInMenu(b, new Vector2(Game1.getOldMouseX(true) + 8, Game1.getOldMouseY(true) + 8), 1f, 1f, 0.9f, StackDrawType.Draw, Color.White, true);
@@ -550,12 +591,12 @@ namespace BetterShopMenu
                     this.ChangeCategory(direction);
                 else if (new Rectangle(this.Shop.xPositionOnScreen + 25, this.Shop.yPositionOnScreen + 600, 200, 48).Contains(x, y))
                     this.ChangeSorting(direction);
-                else if (Mod.Config.ExperimentalGridLayout)
+                else if (Mod.Config.GridLayout)
                 {
                     Point pt = new Point(x, y);
                     if (e.Button == SButton.MouseRight)
                     {
-                        //this.Helper.Input.Suppress(e.Button);
+                        //this.Helper.Input.Suppress(e.Button); suppressed via Harmony
                         this.DoGridLayoutRightClick(e, pt);
                     }
                     else
@@ -625,7 +666,7 @@ namespace BetterShopMenu
             var forSale = this.Shop.forSale;
             int currentItemIndex = this.Shop.currentItemIndex;
             var scrollBar = this.Shop.scrollBar;
-            var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(this.Shop, "scrollBarRunner").GetValue();
+            var scrollBarRunner = Reflect_scrollBarRunner.GetValue();
             var downArrow = this.Shop.downArrow;
             var upArrow = this.Shop.upArrow;
             int rows = (forSale.Count / UnitsWide);
@@ -671,7 +712,7 @@ namespace BetterShopMenu
 
         private void OnMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
         {
-            if ((this.Shop == null) || !Mod.Config.ExperimentalGridLayout)
+            if ((this.Shop == null) || !Mod.Config.GridLayout)
                 return;
 
             this.DoScroll(e.Delta);
@@ -684,9 +725,9 @@ namespace BetterShopMenu
             int currency = this.Shop.currency;
             var heldItem = this.Shop.heldItem;
             int currentItemIndex = this.Shop.currentItemIndex;
-            var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.Shop, "animations").GetValue();
-            float sellPercentage = this.Helper.Reflection.GetField<float>(this.Shop, "sellPercentage").GetValue();
-            var scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(this.Shop, "scrollBarRunner").GetValue();
+            var animations = Reflect_animations.GetValue();
+            float sellPercentage = Reflect_sellPercentage.GetValue();
+            var scrollBarRunner = Reflect_scrollBarRunner.GetValue();
             var scrollBar = this.Shop.scrollBar;
             var downArrow = this.Shop.downArrow;
             var upArrow = this.Shop.upArrow;
@@ -798,8 +839,7 @@ namespace BetterShopMenu
                     //if (numberToBuy == -1)
                     //    numberToBuy = 1;
 
-                    var tryToPurchaseItem = this.Helper.Reflection.GetMethod(this.Shop, "tryToPurchaseItem");
-                    if (numberToBuy > 0 && tryToPurchaseItem.Invoke<bool>(forSale[i], heldItem, numberToBuy, x, y, i))
+                    if (numberToBuy > 0 && Reflect_tryToPurchaseItem.Invoke<bool>(forSale[i], heldItem, numberToBuy, x, y, i))
                     {
                         itemPriceAndStock.Remove(forSale[i]);
                         forSale.RemoveAt(i);
@@ -822,8 +862,7 @@ namespace BetterShopMenu
         // the mouse state is always released by this point. even if the mouse is held down.
         // it's the input supression that does this.
         // causes an immediate mouse up when you suppress a mouse down.
-        // if we suppress ShopMenu.receiveRightClick via Harmony then we can get the right clicks
-        // while still suppressing the left clicks.
+        // if we suppress ShopMenu.receiveRightClick via Harmony then we can get the right clicks, detect a hold, while still suppressing the left clicks.
         //if (this.Helper.Input.IsDown(SButton.X))
         //     doing this pressing/holding X while right clicking can get the same hold repeat purchase. no Harmony suppress needed.
         //     in this alternate we can still suppress the right click. right click starts it and X takes over for the repeat.
@@ -845,10 +884,10 @@ namespace BetterShopMenu
             var forSale = this.Shop.forSale;
             var itemPriceAndStock = this.Shop.itemPriceAndStock;
             int currency = this.Shop.currency;
-            var animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(this.Shop, "animations").GetValue();
+            var animations = Reflect_animations.GetValue();
             var heldItem = this.Shop.heldItem;
             int currentItemIndex = this.Shop.currentItemIndex;
-            float sellPercentage = this.Helper.Reflection.GetField<float>(this.Shop, "sellPercentage").GetValue();
+            float sellPercentage = Reflect_sellPercentage.GetValue();
 
             //var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Cursor.ScreenPixels);
             //int x = (int)uiCursor.X;
@@ -911,15 +950,14 @@ namespace BetterShopMenu
                     int numberToBuy = (!leftShiftDown ? 1 : Math.Min(Math.Min(leftCtrlDown ? 25 : 5, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / Math.Max(1, itemPriceAndStock[forSale[i]][0])), Math.Max(1, itemPriceAndStock[forSale[i]][1])));
                     numberToBuy = Math.Min(numberToBuy, forSale[i].maximumStackSize());
 
-                    var tryToPurchaseItem = this.Helper.Reflection.GetMethod(this.Shop, "tryToPurchaseItem");
-                    if (numberToBuy > 0 && tryToPurchaseItem.Invoke<bool>(forSale[i], heldItem, numberToBuy, x, y, i))
+                    if (numberToBuy > 0 && Reflect_tryToPurchaseItem.Invoke<bool>(forSale[i], heldItem, numberToBuy, x, y, i))
                     {
                         itemPriceAndStock.Remove(forSale[i]);
                         forSale.RemoveAt(i);
                     }
                     if (heldItem == null || !Game1.options.SnappyMenus || Game1.activeClickableMenu is not ShopMenu || !Game1.player.addItemToInventoryBool((Item)heldItem))
                     {
-                        StardewValley.DelayedAction.functionAfterDelay(this.MyDelayFunc, 150);
+                        DelayedAction.functionAfterDelay(this.MyDelayFunc, 150);
                         break;
                     }
 
@@ -938,7 +976,7 @@ namespace BetterShopMenu
         {
             try
             {
-                if (Mod.Config.ExperimentalGridLayout)
+                if (Mod.Config.GridLayout)
                     return false; // don't run original logic
 
                 return true;
@@ -950,11 +988,41 @@ namespace BetterShopMenu
             }
         }
 
+        public static bool ShopMenu_performHoverAction_Prefix(StardewValley.Object __instance, int x, int y)
+        {
+            try
+            {
+                if (Mod.Config.GridLayout)
+                {
+                    var shop = Mod.Instance.Shop;
+                    if (shop != null)
+                    {
+                        // just do these
+                        shop.upperRightCloseButton.tryHover(x, y, 0.5f);
+                        //shop.upArrow.tryHover(x, y);
+                        //shop.downArrow.tryHover(x, y);
+                        //shop.scrollBar.tryHover(x, y);
+
+                        // if in the grid layout area, then patch hover out. otherwise allow. e.g. inventory menu
+                        if (new Rectangle(shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4).Contains(x, y))
+                            return false;// don't run original logic
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Mod.Instance.Monitor.Log($"Failed in {nameof(ShopMenu_performHoverAction_Prefix)}:\n{ex}", LogLevel.Error);
+                return true; // run original logic
+            }
+        }
+
         public static bool ShopMenu_receiveRightClick_Prefix(StardewValley.Object __instance, int x, int y, bool playSound = true)
         {
             try
             {
-                if (Mod.Config.ExperimentalGridLayout)
+                if (Mod.Config.GridLayout)
                     return false; // don't run original logic
 
                 return true;
@@ -970,7 +1038,7 @@ namespace BetterShopMenu
         {
             try
             {
-                if (Mod.Config.ExperimentalGridLayout)
+                if (Mod.Config.GridLayout)
                     return false; // don't run original logic
 
                 return true;

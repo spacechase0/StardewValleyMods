@@ -57,5 +57,5 @@
     ** Generic Mod Config Menu UI
     *********/
     "config.grid-layout.name": "Grid Layout",
-    "config.grid-layout.tooltip": "Whether to use the grid layout in shops. This may impact other mods' features in shop menus."
+    "config.grid-layout.tooltip": "Whether to use the grid layout in shops."
 }
