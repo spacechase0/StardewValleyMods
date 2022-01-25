@@ -918,6 +918,7 @@ namespace BetterShopMenu
             var animations = Reflect_animations.GetValue();
             int currentItemIndex = shop.currentItemIndex;
             float sellPercentage = Reflect_sellPercentage.GetValue();
+            int delayTime = 500;
 
             int x = pt.X;
             int y = pt.Y;
@@ -961,6 +962,7 @@ namespace BetterShopMenu
             }
             else
             {
+                delayTime = 150;
                 shop.heldItem = shop.inventory.rightClick(x, y, shop.heldItem as Item);
             }
 
@@ -995,7 +997,7 @@ namespace BetterShopMenu
                     }
                     else
                     {
-                        DelayedAction.functionAfterDelay(this.MyDelayFunc, 150);
+                        DelayedAction.functionAfterDelay(this.MyDelayFunc, delayTime);
                     }
                     break;
                 }
