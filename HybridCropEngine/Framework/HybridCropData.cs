@@ -2,8 +2,8 @@ namespace HybridCropEngine.Framework
 {
     internal class HybridCropData
     {
-        public int BaseCropA;
-        public int BaseCropB;
+        public string BaseCropA;
+        public string BaseCropB;
         public double Chance;
     }
 }

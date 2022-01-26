@@ -116,11 +116,11 @@ namespace RushOrders
 
         private static void AddToolRushOrders(ShopMenu shop)
         {
-            Dictionary<ISalable, int[]> toAddStock = new Dictionary<ISalable, int[]>();
-            Dictionary<ISalable, int[]> stock = shop.itemPriceAndStock;
-            List<ISalable> toAddItems = new List<ISalable>();
-            List<ISalable> items = shop.forSale;
-            foreach (KeyValuePair<ISalable, int[]> entry in stock)
+            Dictionary<ISalable, ItemStockInformation> toAddStock = new();
+            var stock = shop.itemPriceAndStock;
+            List<ISalable> toAddItems = new();
+            var items = shop.forSale;
+            foreach (var entry in stock)
             {
                 if (entry.Key is not (Tool tool and (Axe or Pickaxe or Hoe or WateringCan)))
                     continue;
@@ -153,19 +153,19 @@ namespace RushOrders
                 toolNow.description = I18n.Clint_Instant_Description() + Environment.NewLine + Environment.NewLine + tool.description;
 
                 int price = Mod.GetToolUpgradePrice(tool.UpgradeLevel);
-                if (entry.Value[0] == price)
+                if (entry.Value.price == price)
                 {
-                    int[] entryDataRush = (int[])entry.Value.Clone();
-                    int[] entryDataNow = (int[])entry.Value.Clone();
-                    entryDataRush[0] = (int)(entry.Value[0] * Mod.ModConfig.PriceFactor.Tool.Rush);
-                    entryDataNow[0] = (int)(entry.Value[0] * Mod.ModConfig.PriceFactor.Tool.Now);
+                    var entryDataRush = entry.Value.Clone();
+                    var entryDataNow = entry.Value.Clone();
+                    entryDataRush.price = (int)(entry.Value.price * Mod.ModConfig.PriceFactor.Tool.Rush);
+                    entryDataNow.price = (int)(entry.Value.price * Mod.ModConfig.PriceFactor.Tool.Now);
 
-                    if (entryDataRush[0] != entry.Value[0] && Mod.ModConfig.PriceFactor.Tool.Rush > 0)
+                    if (entryDataRush.price != entry.Value.price && Mod.ModConfig.PriceFactor.Tool.Rush > 0)
                     {
                         toAddStock.Add(toolRush, entryDataRush);
                         toAddItems.Add(toolRush);
                     }
-                    if (entryDataNow[0] != entry.Value[0] && Mod.ModConfig.PriceFactor.Tool.Now > 0)
+                    if (entryDataNow.price != entry.Value.price && Mod.ModConfig.PriceFactor.Tool.Now > 0)
                     {
                         toAddStock.Add(toolNow, entryDataNow);
                         toAddItems.Add(toolNow);
@@ -299,6 +299,19 @@ namespace RushOrders
             }
 
             return (int)(num * Mod.ModConfig.PriceFactor.Building.RushOneDay);
+        }
+    }
+
+    public static class Extensions
+    {
+        internal static ItemStockInformation Clone(this ItemStockInformation isi)
+        {
+            ItemStockInformation ret = new();
+            ret.price = isi.price;
+            ret.stock = isi.stock;
+            ret.tradeItem = isi.tradeItem;
+            ret.tradeItemCount = isi.tradeItemCount;
+            return ret;
         }
     }
 }

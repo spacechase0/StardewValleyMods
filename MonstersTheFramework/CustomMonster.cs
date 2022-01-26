@@ -138,10 +138,10 @@ namespace MonstersTheFramework
             if ( debuff == null )
                 return;
 
-            if ( int.TryParse( debuff, out int debuffId ) )
+            //if ( int.TryParse( debuff, out int debuffId ) )
             {
                 if ( who == Game1.player )
-                    Game1.buffsDisplay.addOtherBuff( new Buff( debuffId ) );
+                    Game1.player.applyBuff( debuff );
             }
         }
 

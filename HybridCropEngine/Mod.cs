@@ -62,7 +62,7 @@ namespace HybridCropEngine
             if (!Game1.IsMasterGame)
                 return;
 
-            var hybrids = Game1.content.Load<Dictionary<int, HybridCropData>>("Data/HybridCrops");
+            var hybrids = Game1.content.Load<Dictionary<string, HybridCropData>>("Data/HybridCrops");
             var hybridIndexByCrop = this.MakeHybridIndex(hybrids);
             var cropsByIndex = this.MakeCropIndex();
 
@@ -109,13 +109,13 @@ namespace HybridCropEngine
             }
         }
 
-        private Dictionary<ulong, int> MakeHybridIndex(Dictionary<int, HybridCropData> data)
+        private Dictionary<ulong, string> MakeHybridIndex(Dictionary<string, HybridCropData> data)
         {
-            var ret = new Dictionary<ulong, int>();
+            var ret = new Dictionary<ulong, string>();
             foreach (var entry in data)
             {
-                ulong la = (ulong)entry.Value.BaseCropA;
-                ulong lb = (ulong)entry.Value.BaseCropB;
+                ulong la = (ulong)entry.Value.BaseCropA.GetDeterministicHashCode();
+                ulong lb = (ulong)entry.Value.BaseCropB.GetDeterministicHashCode();
 
                 ret.Add((la << 32) | lb, entry.Key);
                 if (entry.Value.BaseCropA != entry.Value.BaseCropB)
@@ -124,22 +124,22 @@ namespace HybridCropEngine
             return ret;
         }
 
-        private Dictionary<int, int> MakeCropIndex()
+        private Dictionary<string, string> MakeCropIndex()
         {
-            var ret = new Dictionary<int, int>();
-            var crops = Game1.content.Load<Dictionary<int, string>>("Data/Crops");
+            var ret = new Dictionary<string, string>();
+            var crops = Game1.content.Load<Dictionary<string, string>>("Data/Crops");
             foreach (var crop in crops)
             {
-                if (crop.Key is >= 495 and <= 498)
+                if (int.TryParse( crop.Key, out int iid ) && iid is >= 495 and <= 498)
                     continue;
 
                 string[] fields = crop.Value.Split('/');
-                ret.Add(int.Parse(fields[2]), crop.Key);
+                ret.Add(fields[2], crop.Key);
             }
             return ret;
         }
 
-        private void GrowHybrids(GameLocation loc, Dictionary<int, HybridCropData> hybrids, Dictionary<ulong, int> hybridIndexes, Dictionary<int, int> cropSeedIndex)
+        private void GrowHybrids(GameLocation loc, Dictionary<string, HybridCropData> hybrids, Dictionary<ulong, string> hybridIndexes, Dictionary<string, string> cropSeedIndex)
         {
             int baseSeed = loc.NameOrUniqueName.GetHashCode();
             baseSeed ^= (int)Game1.uniqueIDForThisGame;
@@ -219,7 +219,7 @@ namespace HybridCropEngine
                         ulong cb = (ulong)combo[1].crop.rowInSpriteSheet.Value;
                         ulong code = (ca << 32) | cb;
 
-                        if (!hybridIndexes.TryGetValue(code, out int index))
+                        if (!hybridIndexes.TryGetValue(code, out string index))
                         {
                             //Log.trace( "No hybrid for " + ca + "/" + cb );
                             continue;
