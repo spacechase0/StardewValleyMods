@@ -130,15 +130,15 @@ namespace BetterShopMenu
             this.Helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             this.Helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
 
-            Reflect_scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(shopMenu, "scrollBarRunner");
-            Reflect_animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shopMenu, "animations");
-            Reflect_poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(shopMenu, "poof");
-            Reflect_isStorageShop = this.Helper.Reflection.GetField<bool>(shopMenu, "_isStorageShop");
-            Reflect_sellPercentage = this.Helper.Reflection.GetField<float>(shopMenu, "sellPercentage");
-            Reflect_hoverText = this.Helper.Reflection.GetField<string>(shopMenu, "hoverText");
-            Reflect_boldTitleText = this.Helper.Reflection.GetField<string>(shopMenu, "boldTitleText");
-            Reflect_hoverPrice = this.Helper.Reflection.GetField<int>(shopMenu, "hoverPrice");
-            Reflect_tryToPurchaseItem = this.Helper.Reflection.GetMethod(shopMenu, "tryToPurchaseItem");
+            this.Reflect_scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(shopMenu, "scrollBarRunner");
+            this.Reflect_animations = this.Helper.Reflection.GetField<List<TemporaryAnimatedSprite>>(shopMenu, "animations");
+            this.Reflect_poof = this.Helper.Reflection.GetField<TemporaryAnimatedSprite>(shopMenu, "poof");
+            this.Reflect_isStorageShop = this.Helper.Reflection.GetField<bool>(shopMenu, "_isStorageShop");
+            this.Reflect_sellPercentage = this.Helper.Reflection.GetField<float>(shopMenu, "sellPercentage");
+            this.Reflect_hoverText = this.Helper.Reflection.GetField<string>(shopMenu, "hoverText");
+            this.Reflect_boldTitleText = this.Helper.Reflection.GetField<string>(shopMenu, "boldTitleText");
+            this.Reflect_hoverPrice = this.Helper.Reflection.GetField<int>(shopMenu, "hoverPrice");
+            this.Reflect_tryToPurchaseItem = this.Helper.Reflection.GetMethod(shopMenu, "tryToPurchaseItem");
         }
 
         private void InitShop2()
@@ -386,12 +386,12 @@ namespace BetterShopMenu
             var forSale = shop.forSale;
             var itemPriceAndStock = shop.itemPriceAndStock;
             int currency = shop.currency;
-            var animations = Reflect_animations.GetValue();
-            var poof = Reflect_poof.GetValue();
+            var animations = this.Reflect_animations.GetValue();
+            var poof = this.Reflect_poof.GetValue();
             var heldItem = shop.heldItem;
             int currentItemIndex = shop.currentItemIndex;
             var scrollBar = shop.scrollBar;
-            var scrollBarRunner = Reflect_scrollBarRunner.GetValue();
+            var scrollBarRunner = this.Reflect_scrollBarRunner.GetValue();
             ISalable hover = null;
 
             if (!Game1.options.showMenuBackground)
@@ -435,7 +435,7 @@ namespace BetterShopMenu
                 else
                 {
                     stackDrawType = StackDrawType.Draw_OneInclusive;
-                    if (Reflect_isStorageShop.GetValue())
+                    if (this.Reflect_isStorageShop.GetValue())
                         stackDrawType = StackDrawType.Draw;
                 }
                 if (forSale[i].ShouldDrawIcon())
@@ -574,9 +574,9 @@ namespace BetterShopMenu
             {
                 // the inventory may have created some hover text (via ShopMenu.performHoverAction).
                 // typically this is an item that can be sold to the vendor. other times clothing gets a hover.
-                int price = Reflect_hoverPrice.GetValue();
-                string hoverText = Reflect_hoverText.GetValue();
-                string boldTitleText = Reflect_boldTitleText.GetValue();
+                int price = this.Reflect_hoverPrice.GetValue();
+                string hoverText = this.Reflect_hoverText.GetValue();
+                string boldTitleText = this.Reflect_boldTitleText.GetValue();
                 if (!hoverText.Equals(""))
                     IClickableMenu.drawToolTip(b, hoverText, boldTitleText, null,
                                                currencySymbol: currency,
@@ -672,15 +672,15 @@ namespace BetterShopMenu
                     this.Helper.Events.Input.ButtonPressed -= this.OnButtonPressed;
                     this.Helper.Events.Input.MouseWheelScrolled -= this.OnMouseWheelScrolled;
 
-                    Reflect_scrollBarRunner = null;
-                    Reflect_animations = null;
-                    Reflect_poof = null;
-                    Reflect_isStorageShop = null;
-                    Reflect_sellPercentage = null;
-                    Reflect_hoverText = null;
-                    Reflect_boldTitleText = null;
-                    Reflect_hoverPrice = null;
-                    Reflect_tryToPurchaseItem = null;
+                    this.Reflect_scrollBarRunner = null;
+                    this.Reflect_animations = null;
+                    this.Reflect_poof = null;
+                    this.Reflect_isStorageShop = null;
+                    this.Reflect_sellPercentage = null;
+                    this.Reflect_hoverText = null;
+                    this.Reflect_boldTitleText = null;
+                    this.Reflect_hoverPrice = null;
+                    this.Reflect_tryToPurchaseItem = null;
                 }
             }
         }
@@ -690,7 +690,7 @@ namespace BetterShopMenu
             var forSale = this.Shop.forSale;
             int currentItemIndex = this.Shop.currentItemIndex;
             var scrollBar = this.Shop.scrollBar;
-            var scrollBarRunner = Reflect_scrollBarRunner.GetValue();
+            var scrollBarRunner = this.Reflect_scrollBarRunner.GetValue();
             var downArrow = this.Shop.downArrow;
             var upArrow = this.Shop.upArrow;
             int rows = (forSale.Count / UnitsWide);
@@ -749,9 +749,9 @@ namespace BetterShopMenu
             var itemPriceAndStock = shop.itemPriceAndStock;
             int currency = shop.currency;
             int currentItemIndex = shop.currentItemIndex;
-            var animations = Reflect_animations.GetValue();
-            float sellPercentage = Reflect_sellPercentage.GetValue();
-            var scrollBarRunner = Reflect_scrollBarRunner.GetValue();
+            var animations = this.Reflect_animations.GetValue();
+            float sellPercentage = this.Reflect_sellPercentage.GetValue();
+            var scrollBarRunner = this.Reflect_scrollBarRunner.GetValue();
             var scrollBar = shop.scrollBar;
             var downArrow = shop.downArrow;
             var upArrow = shop.upArrow;
@@ -877,7 +877,7 @@ namespace BetterShopMenu
                     //    numberToBuy = 1;
 
                     //tryToPurchase may change heldItem.
-                    if (numberToBuy > 0 && Reflect_tryToPurchaseItem.Invoke<bool>(forSale[i], shop.heldItem, numberToBuy, x, y, i))
+                    if (numberToBuy > 0 && this.Reflect_tryToPurchaseItem.Invoke<bool>(forSale[i], shop.heldItem, numberToBuy, x, y, i))
                     {
                         itemPriceAndStock.Remove(forSale[i]);
                         forSale.RemoveAt(i);
@@ -890,7 +890,7 @@ namespace BetterShopMenu
 
                     if (
                         (shop.heldItem != null) &&
-                        (Reflect_isStorageShop.GetValue() || Game1.options.SnappyMenus) &&
+                        (this.Reflect_isStorageShop.GetValue() || Game1.options.SnappyMenus) &&
                         (Game1.activeClickableMenu is ShopMenu) &&
                         Game1.player.addItemToInventoryBool(shop.heldItem as Item)
                        )
@@ -929,9 +929,9 @@ namespace BetterShopMenu
             var forSale = shop.forSale;
             var itemPriceAndStock = shop.itemPriceAndStock;
             int currency = shop.currency;
-            var animations = Reflect_animations.GetValue();
+            var animations = this.Reflect_animations.GetValue();
             int currentItemIndex = shop.currentItemIndex;
-            float sellPercentage = Reflect_sellPercentage.GetValue();
+            float sellPercentage = this.Reflect_sellPercentage.GetValue();
             int delayTime = 500;
 
             int x = pt.X;
@@ -993,7 +993,7 @@ namespace BetterShopMenu
                     numberToBuy = Math.Min(numberToBuy, forSale[i].maximumStackSize());
 
                     //tryToPurchase may change heldItem.
-                    if (numberToBuy > 0 && Reflect_tryToPurchaseItem.Invoke<bool>(forSale[i], shop.heldItem, numberToBuy, x, y, i))
+                    if (numberToBuy > 0 && this.Reflect_tryToPurchaseItem.Invoke<bool>(forSale[i], shop.heldItem, numberToBuy, x, y, i))
                     {
                         itemPriceAndStock.Remove(forSale[i]);
                         forSale.RemoveAt(i);
@@ -1001,7 +1001,7 @@ namespace BetterShopMenu
 
                     if (
                         (shop.heldItem != null) &&
-                        (Reflect_isStorageShop.GetValue() || Game1.options.SnappyMenus) &&
+                        (this.Reflect_isStorageShop.GetValue() || Game1.options.SnappyMenus) &&
                         (Game1.activeClickableMenu is ShopMenu) &&
                         Game1.player.addItemToInventoryBool(shop.heldItem as Item)
                        )
