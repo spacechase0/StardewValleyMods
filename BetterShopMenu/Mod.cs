@@ -35,6 +35,7 @@ namespace BetterShopMenu
             //helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             //helper.Events.Display.RenderedActiveMenu += this.OnRenderedActiveMenu;
             //helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            //helper.Events.Input.ButtonReleased += this.OnButtonReleased;
             //helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
 
             var harmony = new Harmony(this.ModManifest.UniqueID);
@@ -109,6 +110,10 @@ namespace BetterShopMenu
         private const int SeedsOtherCategory = -174; //seeds - 100;
 
         private Point PurchasePoint;
+        private bool RightClickDown;
+        private int RC_Countdown;
+        private const int RC_CountdownStart = 60 * 500 / 1000;//500ms
+        private const int RC_CountdownRepeat = 60 * 150 / 1000;//150ms
 
         IReflectedField<Rectangle> Reflect_scrollBarRunner;
         IReflectedField<List<TemporaryAnimatedSprite>> Reflect_animations;
@@ -128,6 +133,7 @@ namespace BetterShopMenu
             this.Helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             this.Helper.Events.Display.RenderedActiveMenu += this.OnRenderedActiveMenu;
             this.Helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            this.Helper.Events.Input.ButtonReleased += this.OnButtonReleased;
             this.Helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
 
             this.Reflect_scrollBarRunner = this.Helper.Reflection.GetField<Rectangle>(shopMenu, "scrollBarRunner");
@@ -154,6 +160,9 @@ namespace BetterShopMenu
             {
                 this.CropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
             }
+
+            this.RightClickDown = false;
+            this.RC_Countdown = -1;
 
             this.Categories = new List<int>();
             this.HasRecipes = false;
@@ -611,6 +620,7 @@ namespace BetterShopMenu
                     if (e.Button == SButton.MouseRight)
                     {
                         //this.Helper.Input.Suppress(e.Button); suppressed via Harmony
+                        this.RightClickDown = true;
                         this.DoGridLayoutRightClick(e, pt);
                     }
                     else
@@ -624,6 +634,18 @@ namespace BetterShopMenu
             {
                 this.Helper.Input.Suppress(e.Button);
                 this.SyncStock();
+            }
+        }
+
+        /// <summary>Raised after the player releases a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnButtonReleased(object sender, ButtonReleasedEventArgs e)
+        {
+            if (e.Button == SButton.MouseRight)
+            {
+                this.RightClickDown = false;
+                this.RC_Countdown = -1;
             }
         }
 
@@ -641,6 +663,25 @@ namespace BetterShopMenu
                 Game1.uiMode = true;
                 this.Search.Update();
                 Game1.uiMode = oldMode;
+
+                // the mouse state is always released if we suppress input via SMAPI.
+                // the supression causes an immediate mouse up when you suppress a mouse down.
+                // if we suppress ShopMenu.receiveRightClick via Harmony then we can detect a click hold, while still suppressing the left clicks.
+                //if (this.Helper.Input.IsDown(SButton.X))
+                //     doing this pressing/holding X while right clicking can get the same hold repeat purchase. no Harmony suppress needed.
+                //     in this alternate we can still suppress the right click. right click starts it and X takes over for the repeat.
+                //     X is the keyboard equiv of right click.
+                if (Mod.Config.GridLayout && this.RightClickDown && (this.RC_Countdown > 0))
+                {
+                    this.RC_Countdown--;
+                    if (this.RC_Countdown == 0)
+                    {
+                        if (Game1.input.GetMouseState().RightButton == ButtonState.Pressed)
+                        {
+                            this.DoGridLayoutRightClick(null, this.PurchasePoint);
+                        }
+                    }
+                }
             }
         }
 
@@ -670,6 +711,7 @@ namespace BetterShopMenu
                     this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
                     this.Helper.Events.Display.RenderedActiveMenu -= this.OnRenderedActiveMenu;
                     this.Helper.Events.Input.ButtonPressed -= this.OnButtonPressed;
+                    this.Helper.Events.Input.ButtonReleased -= this.OnButtonReleased;
                     this.Helper.Events.Input.MouseWheelScrolled -= this.OnMouseWheelScrolled;
 
                     this.Reflect_scrollBarRunner = null;
@@ -903,26 +945,6 @@ namespace BetterShopMenu
             }
         }
 
-        // the mouse state is always released by this point. even if the mouse is held down.
-        // it's the input supression that does this.
-        // causes an immediate mouse up when you suppress a mouse down.
-        // if we suppress ShopMenu.receiveRightClick via Harmony then we can get the right clicks, detect a hold, while still suppressing the left clicks.
-        //if (this.Helper.Input.IsDown(SButton.X))
-        //     doing this pressing/holding X while right clicking can get the same hold repeat purchase. no Harmony suppress needed.
-        //     in this alternate we can still suppress the right click. right click starts it and X takes over for the repeat.
-        //     X is the keyboard equiv of right click.
-        private void MyDelayFunc()
-        {
-            if (this.Shop != null)
-            {
-                //if (this.Helper.Input.IsDown(SButton.X))
-                if (Game1.input.GetMouseState().RightButton == ButtonState.Pressed)
-                {
-                    this.DoGridLayoutRightClick(null, this.PurchasePoint);
-                }
-            }
-        }
-
         private void DoGridLayoutRightClick(ButtonPressedEventArgs e, Point pt)
         {
             var shop = this.Shop;
@@ -932,7 +954,7 @@ namespace BetterShopMenu
             var animations = this.Reflect_animations.GetValue();
             int currentItemIndex = shop.currentItemIndex;
             float sellPercentage = this.Reflect_sellPercentage.GetValue();
-            int delayTime = 500;
+            int delayTime = RC_CountdownStart;
 
             int x = pt.X;
             int y = pt.Y;
@@ -976,7 +998,7 @@ namespace BetterShopMenu
             }
             else
             {
-                delayTime = 150;
+                delayTime = RC_CountdownRepeat;
                 shop.heldItem = shop.inventory.rightClick(x, y, shop.heldItem as Item);
             }
 
@@ -1011,7 +1033,7 @@ namespace BetterShopMenu
                     }
                     else
                     {
-                        DelayedAction.functionAfterDelay(this.MyDelayFunc, delayTime);
+                        this.RC_Countdown = delayTime;
                     }
                     break;
                 }
