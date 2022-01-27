@@ -446,12 +446,26 @@ namespace BetterShopMenu
                 string priceStr = price.ToString();
                 if (price > 0)
                 {
-                    SpriteText.drawString(b,
-                                          priceStr,
-                                          rect.Right - SpriteText.getWidthOfString(priceStr) - 16,
-                                          rect.Y + 80,
-                                          alpha: ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) >= price && !failedCanPurchaseCheck ? 1f : 0.5f,
-                                          color: purchaseItemTextColor);
+                    if (price < 100000)
+                    {
+                        SpriteText.drawString(b,
+                                              priceStr,
+                                              rect.Right - SpriteText.getWidthOfString(priceStr) - 16,
+                                              rect.Y + 80,
+                                              alpha: ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) >= price && !failedCanPurchaseCheck ? 1f : 0.5f,
+                                              color: purchaseItemTextColor);
+                    }
+                    else
+                    {
+                        // SpriteText is tool long. this is about all I can do. we lose the alpha ability.
+                        SpriteFont font = Game1.dialogueFont;
+
+                        Utility.drawBoldText(b,
+                                             priceStr,
+                                             font,
+                                             new Vector2(rect.Right - font.MeasureString(priceStr).X - 16, rect.Y + 80),
+                                             purchaseItemTextColor == -1 ? new Color(86, 22, 12) : Color.White);
+                    }
                     //Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(rect.Right - 16, rect.Y + 80), new Rectangle(193 + currency * 9, 373, 9, 10), Color.White, 0, Vector2.Zero, 1, layerDepth: 1);
                 }
                 else if (itemPriceAndStock[forSale[i]].Length > 2)
