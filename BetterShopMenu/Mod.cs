@@ -111,9 +111,9 @@ namespace BetterShopMenu
 
         private Point PurchasePoint;
         private bool RightClickDown;
-        private int RC_Countdown;
-        private const int RC_CountdownStart = 60 * 500 / 1000;//500ms
-        private const int RC_CountdownRepeat = 60 * 150 / 1000;//150ms
+        private int Purchase_Countdown;
+        private const int Purchase_CountdownStart = 60 * 500 / 1000;//500ms
+        private const int Purchase_CountdownRepeat = 60 * 150 / 1000;//150ms
 
         IReflectedField<Rectangle> Reflect_scrollBarRunner;
         IReflectedField<List<TemporaryAnimatedSprite>> Reflect_animations;
@@ -162,7 +162,7 @@ namespace BetterShopMenu
             }
 
             this.RightClickDown = false;
-            this.RC_Countdown = -1;
+            this.Purchase_Countdown = -1;
 
             this.Categories = new List<int>();
             this.HasRecipes = false;
@@ -645,7 +645,7 @@ namespace BetterShopMenu
             if (e.Button == SButton.MouseRight)
             {
                 this.RightClickDown = false;
-                this.RC_Countdown = -1;
+                this.Purchase_Countdown = -1;
             }
         }
 
@@ -671,10 +671,10 @@ namespace BetterShopMenu
                 //     doing this pressing/holding X while right clicking can get the same hold repeat purchase. no Harmony suppress needed.
                 //     in this alternate we can still suppress the right click. right click starts it and X takes over for the repeat.
                 //     X is the keyboard equiv of right click.
-                if (Mod.Config.GridLayout && this.RightClickDown && (this.RC_Countdown > 0))
+                if (Mod.Config.GridLayout && this.RightClickDown && (this.Purchase_Countdown > 0))
                 {
-                    this.RC_Countdown--;
-                    if (this.RC_Countdown == 0)
+                    this.Purchase_Countdown--;
+                    if (this.Purchase_Countdown == 0)
                     {
                         if (Game1.input.GetMouseState().RightButton == ButtonState.Pressed)
                         {
@@ -954,7 +954,7 @@ namespace BetterShopMenu
             var animations = this.Reflect_animations.GetValue();
             int currentItemIndex = shop.currentItemIndex;
             float sellPercentage = this.Reflect_sellPercentage.GetValue();
-            int delayTime = RC_CountdownStart;
+            int delayTime = Purchase_CountdownStart;
 
             int x = pt.X;
             int y = pt.Y;
@@ -998,7 +998,7 @@ namespace BetterShopMenu
             }
             else
             {
-                delayTime = RC_CountdownRepeat;
+                delayTime = Purchase_CountdownRepeat;
                 shop.heldItem = shop.inventory.rightClick(x, y, shop.heldItem as Item);
             }
 
@@ -1033,7 +1033,7 @@ namespace BetterShopMenu
                     }
                     else
                     {
-                        this.RC_Countdown = delayTime;
+                        this.Purchase_Countdown = delayTime;
                     }
                     break;
                 }
