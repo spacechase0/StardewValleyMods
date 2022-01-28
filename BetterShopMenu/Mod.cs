@@ -496,8 +496,19 @@ namespace BetterShopMenu
                         hasEnoughToTrade = false;
                     }
                     float textWidth = SpriteText.getWidthOfString("x" + requiredItemCount);
-                    Utility.drawWithShadow(b, Game1.objectSpriteSheet, new Vector2(rect.Right - 64 - textWidth, rect.Y + 80 - 4), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, requiredItem, 16, 16), Color.White * (hasEnoughToTrade ? 1f : 0.25f), 0f, Vector2.Zero, 3, flipped: false, -1f, -1, -1, hasEnoughToTrade ? 0.35f : 0f);
-                    SpriteText.drawString(b, "x" + requiredItemCount, rect.Right - (int)textWidth - 16, rect.Y + 80, 999999, -1, 999999, hasEnoughToTrade ? 1f : 0.5f, 0.88f, junimoText: false, -1, "", purchaseItemTextColor);
+                    Utility.drawWithShadow(b,
+                                           Game1.objectSpriteSheet,
+                                           new Vector2(rect.Right - 64 - textWidth, rect.Y + 80 - 4),
+                                           Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, requiredItem, 16, 16), Color.White * (hasEnoughToTrade ? 1f : 0.25f),
+                                           0f,
+                                           Vector2.Zero,
+                                           3, flipped: false,
+                                           -1f, -1, -1,
+                                           hasEnoughToTrade ? 0.35f : 0f);
+                    SpriteText.drawString(b,
+                                          "x" + requiredItemCount,
+                                          rect.Right - (int)textWidth - 16, rect.Y + 80, 999999,
+                                          -1, 999999, hasEnoughToTrade ? 1f : 0.5f, 0.88f, junimoText: false, -1, "", purchaseItemTextColor);
                 }
             }
             if (forSale.Count == 0)
@@ -511,7 +522,7 @@ namespace BetterShopMenu
             // support bigger backpack
             IClickableMenu.drawTextureBox(b,
                                           Game1.mouseCursors,
-                                          purchaseWindowBorder,
+                                          new Rectangle(384, 373, 18, 18),
                                           shop.xPositionOnScreen + shop.width - shop.inventory.width - 32 - 24,
                                           shop.yPositionOnScreen + shop.height - 256 + 40,
                                           shop.inventory.width + 56,
