@@ -112,8 +112,8 @@ namespace BetterShopMenu
         private Point PurchasePoint;
         private bool RightClickDown;
         private int Purchase_Countdown;
-        private const int Purchase_CountdownStart = 60 * 500 / 1000;//500ms
-        private const int Purchase_CountdownRepeat = 60 * 150 / 1000;//150ms
+        private const int Purchase_CountdownStart = 60 * 600 / 1000;//600ms
+        private const int Purchase_CountdownRepeat = 60 * 100 / 1000;//100ms
 
         IReflectedField<Rectangle> Reflect_scrollBarRunner;
         IReflectedField<List<TemporaryAnimatedSprite>> Reflect_animations;
@@ -1019,7 +1019,8 @@ namespace BetterShopMenu
             }
             else
             {
-                delayTime = Purchase_CountdownRepeat;
+                if (Purchase_Countdown == 0)
+                    delayTime = Purchase_CountdownRepeat;
                 shop.heldItem = shop.inventory.rightClick(x, y, shop.heldItem as Item);
             }
 
