@@ -92,6 +92,7 @@ namespace NewGamePlus
                     Game1.addMailForTomorrow("gotMissingStocklist", true, true);
                 if (Config.GingerIsland)
                 {
+                    Game1.addMailForTomorrow("willyBackRoomInvitation", true, true);
                     Game1.addMailForTomorrow("willyBoatTicketMachine", true, true);
                     Game1.addMailForTomorrow("willyBoatHull", true, true);
                     Game1.addMailForTomorrow("willyBoatAnchor", true, true);
