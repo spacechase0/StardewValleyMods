@@ -100,7 +100,7 @@ namespace BetterShopMenu
         private int Sorting;
         private TextBox Search;
 
-        public const int UnitWidth = 160;
+        public const int UnitWidth = 170;
         public const int UnitHeight = 144;
         public const int UnitsHigh = 3;
         public const int UnitsWide = 6;//(Shop.width - 32) / UnitWidth
@@ -428,7 +428,9 @@ namespace BetterShopMenu
                 int ix = i % UnitsWide;
                 int iy = i / UnitsWide;
 
-                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UnitWidth, shop.yPositionOnScreen + 16 + iy * UnitHeight - currentItemIndex * UnitHeight, UnitWidth, UnitHeight);
+                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UnitWidth,
+                                               shop.yPositionOnScreen + 16 + iy * UnitHeight - currentItemIndex * UnitHeight,
+                                               UnitWidth, UnitHeight);
                 bool selectedItem = rect.Contains(Game1.getOldMouseX(true), Game1.getOldMouseY(true));
                 IClickableMenu.drawTextureBox(b, purchaseTexture, purchaseItemRect, rect.X, rect.Y, rect.Width, rect.Height, selectedItem ? purchaseSelectedColor : Color.White, 4f, false);
 
@@ -455,7 +457,7 @@ namespace BetterShopMenu
                 string priceStr = price.ToString();
                 if (price > 0)
                 {
-                    if (price < 100000)
+                    if (price < 1000000)
                     {
                         SpriteText.drawString(b,
                                               priceStr,
@@ -927,7 +929,9 @@ namespace BetterShopMenu
             {
                 int ix = i % UnitsWide;
                 int iy = i / UnitsWide;
-                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UnitWidth, shop.yPositionOnScreen + 16 + iy * UnitHeight - currentItemIndex * UnitHeight, UnitWidth, UnitHeight);
+                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UnitWidth,
+                                               shop.yPositionOnScreen + 16 + iy * UnitHeight - currentItemIndex * UnitHeight,
+                                               UnitWidth, UnitHeight);
                 if (rect.Contains(x, y) && forSale[i] != null)
                 {
                     int numberToBuy = (!e.IsDown(SButton.LeftShift) ? 1 : Math.Min(Math.Min(e.IsDown(SButton.LeftControl) ? 25 : 5, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / Math.Max(1, itemPriceAndStock[forSale[i]][0])), Math.Max(1, itemPriceAndStock[forSale[i]][1])));
@@ -1023,7 +1027,9 @@ namespace BetterShopMenu
             {
                 int ix = i % UnitsWide;
                 int iy = i / UnitsWide;
-                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UnitWidth, shop.yPositionOnScreen + 16 + iy * UnitHeight - currentItemIndex * UnitHeight, UnitWidth, UnitHeight);
+                Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UnitWidth,
+                                               shop.yPositionOnScreen + 16 + iy * UnitHeight - currentItemIndex * UnitHeight,
+                                               UnitWidth, UnitHeight);
                 if (rect.Contains(x, y) && forSale[i] != null)
                 {
                     bool leftShiftDown = e != null ? e.IsDown(SButton.LeftShift) : this.Helper.Input.IsDown(SButton.LeftShift);
