@@ -154,8 +154,6 @@ namespace LuckSkill
         /// <param name="e">The event arguments.</param>
         private void OnDayStarted(object sender, DayStartedEventArgs args)
         {
-            Game1.player.gainExperience(Farmer.luckSkill, (int)(Game1.player.team.sharedDailyLuck.Value * 750));
-
             if (Game1.player.professions.Contains(Mod.FortunateProfessionId))
             {
                 Game1.player.team.sharedDailyLuck.Value += 0.01;
