@@ -30,6 +30,17 @@ namespace BetterShopMenu
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
 
+            this.GridClickableButton = new ClickableTextureComponent(Rectangle.Empty,
+                                                                     helper.Content.Load<Texture2D>("assets/buttonGrid.png"),
+                                                                     new Rectangle(0, 0, 16, 16),
+                                                                     4f);
+            this.LinearClickableButton = new ClickableTextureComponent(Rectangle.Empty,
+                                                                       helper.Content.Load<Texture2D>("assets/buttonStd.png"),
+                                                                       new Rectangle(0, 0, 16, 16),
+                                                                       4f);
+            this.GridLayoutActive = Config.GridLayout;
+            this.ActiveButton = (this.GridLayoutActive ? this.LinearClickableButton : this.GridClickableButton);
+
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
             //helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
@@ -115,6 +126,11 @@ namespace BetterShopMenu
         private const int Purchase_CountdownStart = 60 * 600 / 1000;//600ms
         private const int Purchase_CountdownRepeat = 60 * 100 / 1000;//100ms
 
+        internal ClickableTextureComponent LinearClickableButton;
+        internal ClickableTextureComponent GridClickableButton;
+        internal ClickableTextureComponent ActiveButton;
+        internal bool GridLayoutActive;
+
         IReflectedField<Rectangle> Reflect_scrollBarRunner;
         IReflectedField<List<TemporaryAnimatedSprite>> Reflect_animations;
         IReflectedField<TemporaryAnimatedSprite> Reflect_poof;
@@ -145,6 +161,10 @@ namespace BetterShopMenu
             this.Reflect_boldTitleText = this.Helper.Reflection.GetField<string>(shopMenu, "boldTitleText");
             this.Reflect_hoverPrice = this.Helper.Reflection.GetField<int>(shopMenu, "hoverPrice");
             this.Reflect_tryToPurchaseItem = this.Helper.Reflection.GetMethod(shopMenu, "tryToPurchaseItem");
+
+            Rectangle bounds = new Rectangle(shopMenu.xPositionOnScreen - 48, shopMenu.yPositionOnScreen + 530, 64, 64);
+            this.LinearClickableButton.bounds = bounds;
+            this.GridClickableButton.bounds = bounds;
         }
 
         private void InitShop2()
@@ -262,7 +282,7 @@ namespace BetterShopMenu
                 if (this.CropData.ContainsKey(seedIndex))
                 {
                     string[] split = this.CropData[seedIndex].Split('/');
-                    return split[1].Contains(Game1.currentSeason) == inSeason;
+                    return split[1].Contains(Game1.currentSeason, StringComparison.OrdinalIgnoreCase) == inSeason;
                 }
                 return inSeason; //have this stuff show in the in season list. saplings are like this.
             }
@@ -298,11 +318,12 @@ namespace BetterShopMenu
                 sCat = this.Categories[curCat];
                 inSeason = (sCat == SObject.SeedsCategory);
             }
-            string search = this.Search.Text.ToLower();
+            string search = this.Search.Text.ToUpper();
 
             foreach (var item in this.InitialItems)
             {
-                if (this.ItemMatchesCategory(item, curCat) && (this.Search.Text == null || item.DisplayName.ToLower().Contains(search)))
+                if (this.ItemMatchesCategory(item, curCat) &&
+                    (this.Search.Text == null || item.DisplayName.ToUpper().Contains(search, StringComparison.OrdinalIgnoreCase)))
                 {
                     if (
                         (curCat < 0) ||
@@ -316,7 +337,8 @@ namespace BetterShopMenu
             }
             foreach (var item in this.InitialStock)
             {
-                if (this.ItemMatchesCategory(item.Key, curCat) && (this.Search.Text == null || item.Key.DisplayName.ToLower().Contains(search)))
+                if (this.ItemMatchesCategory(item.Key, curCat) &&
+                    (this.Search.Text == null || item.Key.DisplayName.ToUpper().Contains(search, StringComparison.OrdinalIgnoreCase)))
                 {
                     if (
                         (curCat < 0) ||
@@ -355,7 +377,7 @@ namespace BetterShopMenu
             if (this.Shop == null)
                 return;
 
-            if (Mod.Config.GridLayout)
+            if (this.GridLayoutActive)
                 this.DrawGridLayout(e.SpriteBatch);
             else
                 this.DrawNewFields(e.SpriteBatch);
@@ -387,6 +409,14 @@ namespace BetterShopMenu
             this.Search.X = (int)pos.X;// + Game1.dialogueFont.MeasureString( "Search: " ).X);
             this.Search.Y = (int)pos.Y;
             this.Search.Draw(b);
+
+            this.ActiveButton.draw(b);
+            if (this.ActiveButton.bounds.Contains(Game1.getOldMouseX(true), Game1.getOldMouseY(true)))
+            {
+                IClickableMenu.drawHoverText(b,
+                                             this.GridLayoutActive ? I18n.Button_StdLayout_Tooltip() : I18n.Button_GridLayout_Tooltip(),
+                                             Game1.smallFont);
+            }
         }
 
         private void DrawGridLayout(SpriteBatch b)
@@ -427,7 +457,7 @@ namespace BetterShopMenu
                 bool failedCanPurchaseCheck = shop.canPurchaseCheck != null && !shop.canPurchaseCheck(i);
                 int ix = i % UnitsWide;
                 int iy = i / UnitsWide;
-
+                
                 Rectangle rect = new Rectangle(shop.xPositionOnScreen + 16 + ix * UnitWidth,
                                                shop.yPositionOnScreen + 16 + iy * UnitHeight - currentItemIndex * UnitHeight,
                                                UnitWidth, UnitHeight);
@@ -550,7 +580,7 @@ namespace BetterShopMenu
             shop.upperRightCloseButton.draw(b);
             shop.upArrow.draw(b);
             shop.downArrow.draw(b);
-            if (forSale.Count > (UnitsWide*UnitsHigh))
+            if (forSale.Count > (UnitsWide * UnitsHigh))
             {
                 IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), scrollBarRunner.X, scrollBarRunner.Y, scrollBarRunner.Width, scrollBarRunner.Height, Color.White, 4f);
                 scrollBar.draw(b);
@@ -633,7 +663,13 @@ namespace BetterShopMenu
                     this.ChangeCategory(direction);
                 else if (new Rectangle(this.Shop.xPositionOnScreen + 25, this.Shop.yPositionOnScreen + 600, 200, 48).Contains(x, y))
                     this.ChangeSorting(direction);
-                else if (Mod.Config.GridLayout)
+                else if ((e.Button == SButton.MouseLeft) && this.ActiveButton.bounds.Contains(x, y))
+                {
+                    this.GridLayoutActive = !this.GridLayoutActive;
+                    this.ActiveButton = (this.GridLayoutActive ? this.LinearClickableButton : this.GridClickableButton);
+                    this.Shop.currentItemIndex = 0;
+                }
+                else if (this.GridLayoutActive)
                 {
                     Point pt = new Point(x, y);
                     if (e.Button == SButton.MouseRight)
@@ -690,7 +726,7 @@ namespace BetterShopMenu
                 //     doing this pressing/holding X while right clicking can get the same hold repeat purchase. no Harmony suppress needed.
                 //     in this alternate we can still suppress the right click. right click starts it and X takes over for the repeat.
                 //     X is the keyboard equiv of right click.
-                if (Mod.Config.GridLayout && this.RightClickDown && (this.Purchase_Countdown > 0))
+                if (this.GridLayoutActive && this.RightClickDown && (this.Purchase_Countdown > 0))
                 {
                     this.Purchase_Countdown--;
                     if (this.Purchase_Countdown == 0)
@@ -797,10 +833,8 @@ namespace BetterShopMenu
 
         private void OnMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
         {
-            if ((this.Shop == null) || !Mod.Config.GridLayout)
-                return;
-
-            this.DoScroll(e.Delta);
+            if ((this.Shop != null) && this.GridLayoutActive)
+                this.DoScroll(e.Delta);
         }
 
         private void DoGridLayoutLeftClick(ButtonPressedEventArgs e, Point pt)
@@ -1071,7 +1105,7 @@ namespace BetterShopMenu
         {
             try
             {
-                if (Mod.Config.GridLayout)
+                if (Mod.Instance.GridLayoutActive)
                     return false; // don't run original logic
 
                 return true;
@@ -1087,7 +1121,7 @@ namespace BetterShopMenu
         {
             try
             {
-                if (Mod.Config.GridLayout)
+                if (Mod.Instance.GridLayoutActive)
                 {
                     var shop = Mod.Instance.Shop;
                     if (shop != null)
@@ -1104,6 +1138,8 @@ namespace BetterShopMenu
                     }
                 }
 
+                Mod.Instance.ActiveButton.tryHover(x, y, 0.4f);
+
                 return true;
             }
             catch (Exception ex)
@@ -1117,7 +1153,7 @@ namespace BetterShopMenu
         {
             try
             {
-                if (Mod.Config.GridLayout)
+                if (Mod.Instance.GridLayoutActive)
                     return false; // don't run original logic
 
                 return true;
@@ -1133,7 +1169,7 @@ namespace BetterShopMenu
         {
             try
             {
-                if (Mod.Config.GridLayout)
+                if (Mod.Instance.GridLayoutActive)
                     return false; // don't run original logic
 
                 return true;
