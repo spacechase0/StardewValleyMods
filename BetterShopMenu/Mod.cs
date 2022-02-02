@@ -318,12 +318,11 @@ namespace BetterShopMenu
                 sCat = this.Categories[curCat];
                 inSeason = (sCat == SObject.SeedsCategory);
             }
-            string search = this.Search.Text.ToUpper();
 
             foreach (var item in this.InitialItems)
             {
                 if (this.ItemMatchesCategory(item, curCat) &&
-                    (this.Search.Text == null || item.DisplayName.ToUpper().Contains(search, StringComparison.OrdinalIgnoreCase)))
+                    (this.Search.Text == null || item.DisplayName.Contains(this.Search.Text, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     if (
                         (curCat < 0) ||
@@ -338,7 +337,7 @@ namespace BetterShopMenu
             foreach (var item in this.InitialStock)
             {
                 if (this.ItemMatchesCategory(item.Key, curCat) &&
-                    (this.Search.Text == null || item.Key.DisplayName.ToUpper().Contains(search, StringComparison.OrdinalIgnoreCase)))
+                    (this.Search.Text == null || item.Key.DisplayName.Contains(this.Search.Text, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     if (
                         (curCat < 0) ||
