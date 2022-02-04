@@ -215,13 +215,21 @@ namespace DynamicGameAssets.Game
                 else
                 {
                     if (!probe && StardewValley.Object.autoLoadChest == null)
-                        Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12772")); ;
+                    {
+                        // this means "Not Enough Resources"
+                        Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:BlueprintsMenu.cs.10002"));
+                    }
+
                     return false;
                 }
             }
 
             if (!probe && StardewValley.Object.autoLoadChest == null)
-                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12777"));
+            {
+                // this means "Not Enough Resources"
+                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:BlueprintsMenu.cs.10002"));
+            }
+
             return false;
         }
 
