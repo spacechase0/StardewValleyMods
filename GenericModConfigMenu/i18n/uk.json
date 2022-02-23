@@ -10,10 +10,10 @@
     "list.not-editable-heading": "Можна редагувати в головному меню:",
 
     // mod config pages
-    "config.buttons.cancel": "Скасувати",
-    "config.buttons.reset-to-default": "За замовч.",
-    "config.buttons.save": "Зберегти",
-    "config.buttons.save-and-close": "Зберегти та вийти",
+    "config.buttons.cancel": "Скасув.",
+    "config.buttons.reset-to-default": "За замов.",
+    "config.buttons.save": "Збер.",
+    "config.buttons.save-and-close": "Збер. та вийти",
 
     "config.rebind-key.title": "Клавіша прив'язки: {{optionName}}",
     "config.rebind-key.simple-instructions": "Натисніть клавішу, щоб прив'язати",
