@@ -1,0 +1,7 @@
+{
+    // Generic Mod Config Menu UI
+    "config.custom-skill-page.name": "Egyéni készség oldal",
+    "config.custom-skill-page.tooltip": "Az egyéni készség oldal megjelenítése.\nEz elmozgatja a pénztárcát, hogy több készségnek legyen hely.",
+    "config.support-all-professions-mod.name": "Minden szakma támogatása mod",
+    "config.support-all-professions-mod.tooltip": "Ha az All Professions mod telepítve van, akkor automatikusan alkalmazódnak a SpaceCore modon keresztül a regisztrált egyéni szakmák, amikor eléri a szintjüket."
+}
