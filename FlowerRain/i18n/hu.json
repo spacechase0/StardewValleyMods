@@ -1,0 +1,7 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.vanilla-flowers-only.name": "Vanília virág használata",
+    "config.vanilla-flowers-only.tooltip": "Virág esőben csak az alapjáték virágait használja."
+}
