@@ -969,8 +969,8 @@ namespace BetterShopMenu
                 {
                     int numberToBuy = (!e.IsDown(SButton.LeftShift) ? 1 : Math.Min(Math.Min(e.IsDown(SButton.LeftControl) ? 25 : 5, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / Math.Max(1, itemPriceAndStock[forSale[i]][0])), Math.Max(1, itemPriceAndStock[forSale[i]][1])));
                     numberToBuy = Math.Min(numberToBuy, forSale[i].maximumStackSize());
-                    //if (numberToBuy == -1)
-                    //    numberToBuy = 1;
+                    if (numberToBuy == -1)
+                        numberToBuy = 1;
 
                     //tryToPurchase may change heldItem.
                     if (numberToBuy > 0 && this.Reflect_tryToPurchaseItem.Invoke<bool>(forSale[i], shop.heldItem, numberToBuy, x, y, i))
