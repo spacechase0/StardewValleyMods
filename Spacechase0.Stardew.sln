@@ -158,7 +158,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentPatcherEditor", "Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Custom_Crops", "Custom_Crops\Custom_Crops.csproj", "{695CDA6A-9398-4D71-9432-9763CC510020}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewGamePlus", "NewGamePlus\NewGamePlus.csproj", "{3DA3FB18-AC0C-40F4-B45B-5D13916D032A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewGamePlus", "NewGamePlus\NewGamePlus.csproj", "{3DA3FB18-AC0C-40F4-B45B-5D13916D032A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DyeableHats", "DyeableHats\DyeableHats.csproj", "{AACF284D-8352-4727-9F9E-9916BA2266AF}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -231,6 +233,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{a20de2a2-91a8-41fd-8cb5-75d0b7ff20f9}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{a534ca13-4195-468f-93a6-c579cca46058}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{a87f5d49-6246-4b14-8363-114dc9335c2c}*SharedItemsImports = 13
+		SpaceShared\SpaceShared.projitems*{aacf284d-8352-4727-9f9e-9916ba2266af}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{ac01eb5c-16cb-4541-916a-b77be55df69a}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{b0bb0171-260e-40fe-95dc-4377ce916ff0}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{b0bb0171-260e-40fe-95dc-4377ce916ff0}*SharedItemsImports = 5
@@ -539,6 +542,10 @@ Global
 		{3DA3FB18-AC0C-40F4-B45B-5D13916D032A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DA3FB18-AC0C-40F4-B45B-5D13916D032A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DA3FB18-AC0C-40F4-B45B-5D13916D032A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AACF284D-8352-4727-9F9E-9916BA2266AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AACF284D-8352-4727-9F9E-9916BA2266AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AACF284D-8352-4727-9F9E-9916BA2266AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AACF284D-8352-4727-9F9E-9916BA2266AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
