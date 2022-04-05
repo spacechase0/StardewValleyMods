@@ -27,7 +27,7 @@ namespace Magic.Framework.Spells
 
         public override bool CanCast(Farmer player, int level)
         {
-            return base.CanCast(player, level) && player.hasItemInInventory(SObject.prismaticShardIndex, 1);
+            return base.CanCast(player, level) && player.hasItemInInventory($"(O){SObject.prismaticShardIndex}", 1);
         }
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
@@ -63,8 +63,11 @@ namespace Magic.Framework.Spells
                                 tree.daysUntilMature.Value = Math.Max(0, tree.daysUntilMature.Value - 7);
                                 tree.growthStage.Value = tree.daysUntilMature.Value > 0 ? (tree.daysUntilMature.Value > 7 ? (tree.daysUntilMature.Value > 14 ? (tree.daysUntilMature.Value > 21 ? 0 : 1) : 2) : 3) : 4;
                             }
-                            else if (!tree.stump.Value && tree.growthStage.Value == 4 && (Game1.currentSeason == tree.fruitSeason.Value || loc.Name == "Greenhouse"))
-                                tree.fruitsOnTree.Value = 3;
+                            else if (!tree.stump.Value && tree.growthStage.Value == 4 && (tree.IsInSeasonHere(loc) || loc.SeedsIgnoreSeasonsHere()))
+                                while (tree.fruitObjectsOnTree.Count < 3)
+                                {
+                                    tree.fruitObjectsOnTree.Add(Utility.CreateItemByID(tree.indexOfFruit.Value, 1));
+                                }
                             break;
 
                         case Tree tree:
@@ -75,7 +78,7 @@ namespace Magic.Framework.Spells
                 }
             }
 
-            player.consumeObject(SObject.prismaticShardIndex, 1);
+            player.consumeObject($"(O){SObject.prismaticShardIndex}", 1);
             return null;
         }
     }

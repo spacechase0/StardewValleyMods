@@ -430,7 +430,7 @@ namespace Magic.Framework
                 Log.Warn("No item eaten for the item eat event?!?");
                 return;
             }
-            if (Game1.player.itemToEat.ParentSheetIndex == Mod.Ja.GetObjectId("Magic Elixir"))
+            if (Game1.player.itemToEat.QualifiedItemID == "(O)Magic_Elixir")
                 Game1.player.AddMana(Game1.player.GetMaxMana());
         }
     }

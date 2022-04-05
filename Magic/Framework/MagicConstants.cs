@@ -10,7 +10,7 @@ namespace Magic.Framework
         public static int SpellBarCount { get; } = 2;
 
         /// <summary>The ID of the event in which the player learns magic from the Wizard.</summary>
-        public static int LearnedMagicEventId { get; } = 90001;
+        public static string LearnedMagicEventId { get; } = "90001";
 
         /// <summary>The number of mana points gained per magic level.</summary>
         public static int ManaPointsPerLevel { get; } = 100;

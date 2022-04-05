@@ -108,8 +108,6 @@ namespace Magic.Framework.Spells
                     {
                         ICollection<ResourceClump> clumps = loc.resourceClumps;
 
-                        if (loc is Woods woods)
-                            clumps = woods.stumps;
                         if (clumps != null)
                         {
                             foreach (var rc in clumps)

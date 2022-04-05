@@ -14,14 +14,8 @@ namespace Magic.Framework.Spells
 
         public override bool CanCast(Farmer player, int level)
         {
-            if (player == Game1.player)
-            {
-                foreach (var buff in Game1.buffsDisplay.otherBuffs)
-                {
-                    if (buff.source == "spell:life:haste")
-                        return false;
-                }
-            }
+            if (player.buffs.IsApplied("spell:life:haste"))
+                return false;
 
             return base.CanCast(player, level);
         }
@@ -33,16 +27,20 @@ namespace Magic.Framework.Spells
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
-            if (player != Game1.player)
+            if (player.buffs.IsApplied("spell:life:haste"))
                 return null;
 
-            foreach (var buff in Game1.buffsDisplay.otherBuffs)
-            {
-                if (buff.source == "spell:life:haste")
-                    return null;
-            }
+            var effects = new StardewValley.Buffs.BuffEffects();
+            effects.speed.Value = level + 1;
 
-            Game1.buffsDisplay.addOtherBuff(new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, level + 1, 0, 0, 60 + level * 120, "spell:life:haste", "Haste (spell)"));
+            player.buffs.Apply(new Buff(
+                buff_id: "spell:life:haste",
+                display_source: "Haste (spell)",
+                duration: (60 + level * 120) / 10 * 7000,
+                buff_effects: effects
+            ));
+
+            //Game1.buffsDisplay.addOtherBuff(new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, level + 1, 0, 0, 60 + level * 120, "spell:life:haste", "Haste (spell)"));
             player.AddCustomSkillExperience(Magic.Skill, 5);
             return null;
         }

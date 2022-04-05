@@ -81,7 +81,7 @@ namespace Magic.Framework.Game.Interface
 
                 Game1.playSound("wand");
                 Game1.warpFarmer(this.WarpTo, (int)cloud.getTileLocation().X, (int)cloud.getTileLocation().Y, false);
-                Game1.player.consumeObject(Mod.Ja.GetObjectId("Travel Core"), 1);
+                Game1.player.consumeObject("(O)Travel_Core", 1);
                 Game1.player.AddCustomSkillExperience(Magic.Skill, 25);
             }
 

@@ -14,14 +14,8 @@ namespace Magic.Framework.Spells
 
         public override bool CanCast(Farmer player, int level)
         {
-            if (player == Game1.player)
-            {
-                foreach (var buff in Game1.buffsDisplay.otherBuffs)
-                {
-                    if (buff.source == "spell:life:buff")
-                        return false;
-                }
-            }
+            if (player.buffs.IsApplied("spell:life:buff"))
+                return false;
 
             return base.CanCast(player, level);
         }
@@ -33,17 +27,8 @@ namespace Magic.Framework.Spells
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
-            if (player != Game1.player)
+            if (player.buffs.IsApplied("spell:life:buff"))
                 return null;
-
-            foreach (var buff in Game1.buffsDisplay.otherBuffs)
-            {
-                if (buff.source == "spell:life:buff")
-                    return null;
-            }
-
-            Game1.player.removeBuffAttributes();
-            Game1.player.attack = 0;
 
             int l = level + 1;
             int farm = l, fish = l, mine = l, luck = l, forage = l, def = 0 /*1*/, atk = 2;
@@ -54,7 +39,23 @@ namespace Magic.Framework.Spells
                 _ => atk
             };
 
-            Game1.buffsDisplay.addOtherBuff(new Buff(farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, "spell:life:buff", "Buff (spell)"));
+            var effect = new StardewValley.Buffs.BuffEffects();
+            effect.farmingLevel.Value = farm;
+            effect.fishingLevel.Value = fish;
+            effect.miningLevel.Value = mine;
+            effect.luckLevel.Value = luck;
+            effect.foragingLevel.Value = forage;
+            effect.attack.Value = atk;
+            effect.defense.Value = def;
+
+            player.buffs.Apply(new Buff(
+                buff_id: "spell:life:buff",
+                duration: (60 + level * 120) / 10 * 7000,
+                buff_effects: effect,
+                display_source: "Buff (spell)"
+            ));
+
+            //player.buffs.Apply(new Buff(farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, "spell:life:buff", "Buff (spell)"));
             player.AddCustomSkillExperience(Magic.Skill, 10);
             return null;
         }
