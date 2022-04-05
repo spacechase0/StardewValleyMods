@@ -110,7 +110,7 @@ namespace GenericModConfigMenu
         {
             this.Ui = new RootElement();
 
-            Texture2D tex = this.Helper.Content.Load<Texture2D>("assets/config-button.png");
+            Texture2D tex = this.Helper.ModContent.Load<Texture2D>("assets/config-button.png");
             this.ConfigButton = new Button(tex)
             {
                 LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
