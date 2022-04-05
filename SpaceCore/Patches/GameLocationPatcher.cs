@@ -36,11 +36,6 @@ namespace SpaceCore.Patches
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.explode)),
                 postfix: this.GetHarmonyMethod(nameof(After_Explode))
             );
-
-            harmony.Patch(
-                original: this.RequireMethod<GameLocation>( nameof( GameLocation.GetLocationContext ) ),
-                prefix: this.GetHarmonyMethod( nameof( Before_GetLocationContext ) )
-            );
         }
 
 
@@ -63,46 +58,6 @@ namespace SpaceCore.Patches
         private static void After_Explode(GameLocation __instance, Vector2 tileLocation, int radius, Farmer who)
         {
             SpaceEvents.InvokeBombExploded(who, tileLocation, radius);
-        }
-
-        private static bool Before_GetLocationContext( GameLocation __instance, ref GameLocation.LocationContext __result )
-        {
-            __result = GetLocationContextImpl( __instance );
-            return false;
-        }
-
-        private static GameLocation.LocationContext GetLocationContextImpl( GameLocation loc )
-        {
-            if ( loc.locationContext == ( GameLocation.LocationContext ) ( -1 ) )
-            {
-                if ( loc.map == null )
-                {
-                    loc.reloadMap();
-                }
-                loc.locationContext = GameLocation.LocationContext.Default;
-                string location_context = null;
-                PropertyValue value = null;
-                if ( loc.map == null )
-                {
-                    return GameLocation.LocationContext.Default;
-                }
-                location_context = ( ( !loc.map.Properties.TryGetValue( "LocationContext", out value ) ) ? "" : value.ToString() );
-                bool foundCustom = false;
-                foreach ( var kvp in SpaceCore.CustomLocationContexts )
-                {
-                    if ( kvp.Value.Name == location_context )
-                    {
-                        loc.locationContext = kvp.Key;
-                        foundCustom = true;
-                        break;
-                    }
-                }
-                if ( !foundCustom && location_context != "" && !Enum.TryParse<GameLocation.LocationContext>( location_context, out loc.locationContext ) )
-                {
-                    loc.locationContext = GameLocation.LocationContext.Default;
-                }
-            }
-            return loc.locationContext;
         }
     }
 }
