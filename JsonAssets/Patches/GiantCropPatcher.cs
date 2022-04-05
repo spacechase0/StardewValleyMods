@@ -37,7 +37,7 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (__instance.parentSheetIndex.Value == 1720)
+                if (__instance.parentSheetIndex.Value == "1720")
                 {
                     Texture2D tex = Mod.instance.Crops.Single(cd => cd.Name.Replace(' ', '_') == __instance.ItemID).GiantTexture;
                     double shakeTimer = Mod.instance.Helper.Reflection.GetField<float>(__instance, "shakeTimer").GetValue();

@@ -1736,7 +1736,7 @@ namespace JsonAssets
                     if ( this.OldObjectIds.ContainsKey( rclump.parentSheetIndex.Value.ToString() ) )
                     {
                         rclump.ItemID = this.OldObjectIds[rclump.parentSheetIndex.Value.ToString()].Replace(' ', '_');
-                        rclump.parentSheetIndex.Value = 1720;
+                        rclump.parentSheetIndex.Value = "1720";
                     }
 
                     break;
