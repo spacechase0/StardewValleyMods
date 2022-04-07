@@ -273,7 +273,7 @@ namespace GenericModConfigMenu.Framework
 
                                     // else append if it fits
                                     string possibleLine = $"{nextLine} {word}".Trim();
-                                    if (Label.MeasureString(possibleLine).X <= this.Table.Size.X)
+                                    if (Label.MeasureString(possibleLine, font: Game1.smallFont).X <= this.Table.Size.X)
                                     {
                                         nextLine = possibleLine;
                                         continue;
@@ -292,8 +292,9 @@ namespace GenericModConfigMenu.Framework
                             optionElement = new Label
                             {
                                 UserData = tooltip,
-                                NonBoldScale = 0.75f,
+                                NonBoldScale = 1f,
                                 NonBoldShadow = false,
+                                Font = Game1.smallFont,
                                 String = text.ToString()
                             };
                             break;
