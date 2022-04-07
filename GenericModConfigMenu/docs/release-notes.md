@@ -3,6 +3,7 @@
 # Release notes
 ## Upcoming release
 * The mod list now remembers your scroll position when returning from a config view (thanks to Pathoschild!).
+* Complex Options can now have Height that changes, rather than being fixed when the menu opens (thanks to jltaylor-us).
 
 ## 1.8.1
 Released 12 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
