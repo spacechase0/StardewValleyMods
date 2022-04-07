@@ -640,7 +640,7 @@ namespace DynamicGameAssets
 
         internal static void AddEmbeddedContentPack(IManifest manifest, string dir)
         {
-            Log.Debug($"Loading embedded content pack for \"{manifest.Name}\"...");
+            Log.Trace($"Loading embedded content pack for \"{manifest.Name}\"...");
             if (manifest.ExtraFields == null ||
                  !manifest.ExtraFields.ContainsKey("DGA.FormatVersion") ||
                  !int.TryParse(manifest.ExtraFields["DGA.FormatVersion"].ToString(), out int formatVer))
@@ -669,7 +669,7 @@ namespace DynamicGameAssets
         {
             foreach (var cp in this.Helper.ContentPacks.GetOwned())
             {
-                Log.Debug($"Loading content pack \"{cp.Manifest.Name}\"...");
+                Log.Trace($"Loading content pack \"{cp.Manifest.Name}\"...");
                 if (cp.Manifest.ExtraFields == null ||
                      !cp.Manifest.ExtraFields.ContainsKey("DGA.FormatVersion") ||
                      !int.TryParse(cp.Manifest.ExtraFields["DGA.FormatVersion"].ToString(), out int formatVer))

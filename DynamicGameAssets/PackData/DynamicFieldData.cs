@@ -62,7 +62,7 @@ namespace DynamicGameAssets.PackData
             {
                 string Field = singleField.Key;
                 JToken Data = singleField.Value;
-                Log.Debug( "parsing:"+Field+" and "+Data );
+                Log.Trace( "parsing:"+Field+" and "+Data );
                 if (Data.ToString().Contains("{{"))
                 {
                     string strData = Data.ToString();
