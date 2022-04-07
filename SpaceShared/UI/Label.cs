@@ -24,7 +24,7 @@ namespace SpaceShared.UI
         public Color IdleTextColor { get; set; } = Game1.textColor;
         public Color HoverTextColor { get; set; } = Game1.unselectedOptionColor;
 
-        public SpriteFont Font { get; set; } = Game1.dialogueFont;
+        public SpriteFont Font { get; set; } = Game1.dialogueFont; // Only applies when Bold = false
 
         public float Scale => this.Bold ? 1f : this.NonBoldScale;
 
@@ -86,6 +86,7 @@ namespace SpaceShared.UI
         /// <param name="text">The text to measure.</param>
         /// <param name="bold">Whether the font is bold.</param>
         /// <param name="scale">The scale to apply to the size.</param>
+        /// <param name="font">The font to measure. Defaults to <see cref="Game1.dialogueFont"/> if <c>null</c>.</param>
         public static Vector2 MeasureString(string text, bool bold = false, float scale = 1f, SpriteFont font = null)
         {
             if (bold)
