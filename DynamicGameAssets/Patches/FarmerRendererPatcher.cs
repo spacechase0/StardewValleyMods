@@ -82,14 +82,16 @@ namespace DynamicGameAssets.Patches
         }
 
         /// <summary>The method to call as a finalized on <see cref="FarmerRenderer.ApplyShoeColor"/>.</summary>
-        private static void Finalizer_ApplyShoeColor(Exception __exception, FarmerRenderer __instance)
+        private static Exception Finalizer_ApplyShoeColor(Exception __exception, FarmerRenderer __instance)
         {
             if (__exception is not null)
             {
                 var this_shoes = Mod.instance.Helper.Reflection.GetField<NetInt>(__instance, "shoes").GetValue();
                 Log.Warn($"Detected invalid boots with value {this_shoes.ToString()} and error {__exception}");
                 __instance.recolorShoes(0);
+                return null;
             }
+            return null;
         }
 
         /// <summary>The method to call before <see cref="FarmerRenderer.ApplySleeveColor"/>.</summary>

@@ -195,7 +195,7 @@ namespace DynamicGameAssets
                 if (farmer.boots.Value is CustomBoots boots)
                 {
                     TextureAnimationFrame frame = boots.Data.pack.GetTextureFrame(boots.Data.FarmerColors);
-                    if (this.prevBootsFrame.GetOrCreateValue(farmer).Value != frame.Descriptor)
+                    if (frame is not null && this.prevBootsFrame.GetOrCreateValue(farmer).Value != frame.Descriptor)
                     {
                         if (this.prevBootsFrame.TryGetValue(farmer, out var holder))
                             holder.Value = frame.Descriptor;
