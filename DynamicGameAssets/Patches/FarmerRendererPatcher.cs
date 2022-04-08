@@ -52,11 +52,8 @@ namespace DynamicGameAssets.Patches
         {
             var this_shoes = Mod.instance.Helper.Reflection.GetField<NetInt>(__instance, "shoes").GetValue();
 
-            Log.Debug($"Shoe value is {this_shoes.ToString()}");
-
             if (Mod.itemLookup.ContainsKey(this_shoes.Value))
             {
-                Log.Debug($"Doing the thing to the shoes");
                 BootsPackData data = Mod.Find(Mod.itemLookup[this_shoes.Value]) as BootsPackData;
                 var this__SwapColor = Mod.instance.Helper.Reflection.GetMethod(__instance, "_SwapColor");
 
