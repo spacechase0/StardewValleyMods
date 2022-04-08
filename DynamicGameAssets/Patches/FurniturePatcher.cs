@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
@@ -31,6 +33,10 @@ namespace DynamicGameAssets.Patches
                 original: this.RequireMethod<Furniture>(nameof(Furniture.placementAction)),
                 postfix: this.GetHarmonyMethod(nameof(After_PlacementAction))
             );
+            harmony.Patch(
+                 original: this.RequireMethod<Furniture>(nameof(Furniture.drawAtNonTileSpot)),
+                 prefix: this.GetHarmonyMethod(nameof(Before_drawAtNonTileSpot))
+             );
         }
 
 
@@ -76,6 +82,19 @@ namespace DynamicGameAssets.Patches
                 if (furniture.furniture_type.Value is Furniture.lamp or Furniture.sconce)
                     furniture.resetOnPlayerEntry(location);
             }
+        }
+
+        /// <summary>The method to call before <see cref="Furniture.drawAtNonTileSpot"/>.</summary>
+        /// <returns>Returns whether to run the original method.</returns>
+        private static bool Before_drawAtNonTileSpot(Furniture __instance, SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha)
+        {
+            if (__instance is CustomBasicFurniture furniture)
+            {
+                furniture.drawAtNonTileSpot(spriteBatch, location, layerDepth, alpha);
+                return false;
+            }
+
+            return true;
         }
     }
 }
