@@ -13,12 +13,18 @@ namespace DynamicGameAssets
 
         public void AddToShop(ShopMenu shop)
         {
+            // Check to see if this shopEntry has already been added to this shop--if so, don't add
+            if (shop.itemPriceAndStock.ContainsKey(this.Item))
+                return;
+
             int qty = this.Quantity;
             if (this.Item is StardewValley.Object { IsRecipe: true })
                 qty = 1;
 
             this.Item.Stack = qty;
-            shop.forSale.Add(this.Item);
+            if (!shop.forSale.Contains(this.Item)) {
+                shop.forSale.Add(this.Item);
+            }
             if (this.CurrencyId == null)
             {
                 shop.itemPriceAndStock.Add(this.Item, new[]
