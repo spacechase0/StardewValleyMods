@@ -277,6 +277,29 @@ namespace DynamicGameAssets.Game
             }
         }
 
+        public void drawWithoutShadow(SpriteBatch spriteBatch, int xNonTile, int yNonTile, float layerDepth, float alpha = 1)
+        {
+            if (this.isTemporarilyInvisible)
+                return;
+
+            if (!Game1.eventUp || !Game1.CurrentEvent.isTileWalkedOn(xNonTile / 64, yNonTile / 64))
+            {
+                var tex = this.Data.pack.GetTexture(this.Data.Texture, 16, 16);
+                Texture2D objectSpriteSheet = tex.Texture;
+                Vector2 position2 = Game1.GlobalToLocal(Game1.viewport, new Vector2(xNonTile + 32 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), yNonTile + 32 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0)));
+                Rectangle? sourceRectangle = tex.Rect; // GameLocation.getSourceRectForObject(base.ParentSheetIndex);
+                Color color = Color.White * alpha;
+                Vector2 origin = new Vector2(8f, 8f);
+                _ = this.scale;
+                spriteBatch.Draw(objectSpriteSheet, position2, sourceRectangle, color, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
+                if (this.NetHasColor.Value)
+                {
+                    var colorTex = this.Data.pack.GetTexture(this.Data.TextureColor, 16, 16);
+                    spriteBatch.Draw(colorTex.Texture, position2, colorTex.Rect, this.ObjectColor.Value, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth + 2e-05f);
+                }
+            }
+        }
+
         public override Item getOne()
         {
             var ret = new CustomObject(this.Data);
