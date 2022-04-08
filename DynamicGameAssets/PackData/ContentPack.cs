@@ -314,7 +314,7 @@ namespace DynamicGameAssets.PackData
                 }
                 else
                 {
-                    Log.Warn($"No such \"{frame.FilePath}\" in {this.smapiPack.Manifest.Name} ({this.smapiPack.Manifest.UniqueID})!");
+                    Log.Error($"No such \"{frame.FilePath}\" in {this.smapiPack.Manifest.Name} ({this.smapiPack.Manifest.UniqueID})!");
                     texture = null;
                 }
 
