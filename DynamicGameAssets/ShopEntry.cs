@@ -22,9 +22,7 @@ namespace DynamicGameAssets
                 qty = 1;
 
             this.Item.Stack = qty;
-            if (!shop.forSale.Contains(this.Item)) {
-                shop.forSale.Add(this.Item);
-            }
+            shop.forSale.Add(this.Item);
             if (this.CurrencyId == null)
             {
                 shop.itemPriceAndStock.Add(this.Item, new[]
