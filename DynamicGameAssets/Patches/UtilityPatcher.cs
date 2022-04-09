@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
+using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Patching;
@@ -73,7 +74,7 @@ namespace DynamicGameAssets.Patches
                         continue;
 
                     var item = data.ToItem();
-                    if (item != null && item is Furniture)
+                    if (item != null && item is Furniture && data is FurniturePackData furnData && furnData.ShowInCatalogue)
                     {
                         __result.Add(item, new int[2] { 0, 2147483647 });
                     } 
