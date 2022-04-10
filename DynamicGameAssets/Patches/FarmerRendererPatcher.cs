@@ -104,10 +104,18 @@ namespace DynamicGameAssets.Patches
                 var maleC = shirt.Data.TextureMaleColor == null ? null : shirt.Data.pack.GetTexture(shirt.Data.TextureMaleColor, 8, 32);
                 var femaleNC = shirt.Data.TextureFemale == null ? maleNC : shirt.Data.pack.GetTexture(shirt.Data.TextureFemale, 8, 32);
                 var femaleC = shirt.Data.TextureFemaleColor == null ? null : shirt.Data.pack.GetTexture(shirt.Data.TextureFemaleColor, 8, 32);
-                maleNC.Texture.GetData(0, maleNC.Rect, shirtData[0], 0, 8 * 32);
-                maleC?.Texture?.GetData(0, maleNC.Rect, shirtData[1], 0, 8 * 32);
-                femaleNC.Texture.GetData(0, femaleNC.Rect, shirtData[2], 0, 8 * 32);
-                femaleC?.Texture?.GetData(0, maleNC.Rect, shirtData[3], 0, 8 * 32);
+                try
+                {
+                    maleNC.Texture.GetData(0, maleNC.Rect, shirtData[0], 0, 8 * 32);
+                    maleC?.Texture?.GetData(0, maleNC.Rect, shirtData[1], 0, 8 * 32);
+                    femaleNC.Texture.GetData(0, femaleNC.Rect, shirtData[2], 0, 8 * 32);
+                    femaleC?.Texture?.GetData(0, maleNC.Rect, shirtData[3], 0, 8 * 32);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Failed to apply sleeve color with exception {ex}");
+                    return false;
+                }
                 //FarmerRenderer.shirtsTexture.GetData( shirtData );
                 int index = who.IsMale ? 0 : 2; // __instance.ClampShirt(who.GetShirtIndex()) * 8 / 128 * 32 * FarmerRenderer.shirtsTexture.Bounds.Width + __instance.ClampShirt(who.GetShirtIndex()) * 8 % 128 + FarmerRenderer.shirtsTexture.Width * 4;
                 int dye_index = index + 1;
