@@ -574,7 +574,7 @@ This should be an array of an an object called `FurnitureConfiguration`. A `Furn
 | --- | --- | --- | --- |
 | `Texture` | `Texture` | Required | The texture for this configuration. |
 | `FrontTexture` | `Texture` | Optional* (Default: `null`) | (* Required for beds/fish tanks/furniture with seats to look right.) The texture for this configuration to render on top. |
-| `FrontTexture` | `Texture` | Optional* (Default: `null`) | (* Required for windows, sconces, and lamps to look right.) The texture for this configuration to render when it's nighttime. |
+| `NightTexture` | `Texture` | Optional* (Default: `null`) | (* Required for windows, sconces, and lamps to look right.) The texture for this configuration to render when it's nighttime. |
 | `DisplaySize` | `Vector2` | Required | The display size of this furniture, in tiles. |
 | `CollisionHeight` | `int` | Required | How high from the bottom this furniture is solid. |
 | `Flipped` | `bool` | Default: `false` | If the texture is flipped or not. |
