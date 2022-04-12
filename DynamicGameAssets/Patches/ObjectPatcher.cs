@@ -170,7 +170,6 @@ namespace DynamicGameAssets.Patches
                 string dga_parent_ID = __instance.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"];
                 if (Mod.Find(dga_parent_ID).ToItem() is CustomObject parentItem)
                 {
-                    //Log.Debug($"Changing display name for preserved item with parent named {parentItem.DisplayName}");
                     switch (__instance.preserve.Value)
                     {
                         case SObject.PreserveType.Wine:
