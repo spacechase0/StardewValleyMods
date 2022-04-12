@@ -300,6 +300,17 @@ namespace DynamicGameAssets.Game
             }
         }
 
+        public void drawWhenProduced(SpriteBatch spriteBatch, Vector2 position, float layerDepth, float alpha = 1)
+        {
+            if (this.isTemporarilyInvisible)
+                return;
+
+            var tex = this.Data.pack.GetTexture(this.Data.Texture, 16, 16);
+            Texture2D objectSpriteSheet = tex.Texture;
+            Rectangle? sourceRectangle = tex.Rect;
+            spriteBatch.Draw(objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, position), sourceRectangle, Color.White * 0.75f, 0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, layerDepth);
+        }
+
         public override Item getOne()
         {
             var ret = new CustomObject(this.Data);

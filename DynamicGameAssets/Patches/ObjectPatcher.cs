@@ -1,8 +1,10 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
@@ -40,6 +42,10 @@ namespace DynamicGameAssets.Patches
             harmony.Patch(
                 original: this.RequireMethod<SObject>("loadDisplayName"),
                 postfix: this.GetHarmonyMethod(nameof(After_LoadDisplayName))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) }),
+                postfix: this.GetHarmonyMethod(nameof(After_Draw))
             );
         }
 
@@ -192,5 +198,29 @@ namespace DynamicGameAssets.Patches
             return;
         }
 
+        /// <summary>The method to call after <see cref="SObject.draw(SpriteBatch, int, int, float)"/>.</summary>
+        private static void After_Draw(SObject __instance, SpriteBatch spriteBatch, int x, int y)
+        {
+            if (!__instance.readyForHarvest)
+            {
+                return;
+            }
+            // Only get vanilla big craftables, who are ready for harvest, and have a held object
+            if ((bool)__instance.bigCraftable && __instance.heldObject.Value != null)
+            {
+                if (__instance is not CustomBigCraftable && __instance.heldObject.Value is CustomObject custObj)
+                {
+                    float base_sort = (float)((y + 1) * 64) / 10000f + __instance.tileLocation.X / 50000f;
+                    if ((int)__instance.parentSheetIndex == 105 || (int)__instance.parentSheetIndex == 264)
+                    {
+                        base_sort += 0.02f;
+                    }
+                    float yOffset = 4f * (float)Math.Round(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 250.0), 2);
+                    Vector2 custObjPosition = new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset);
+                    custObj.drawWhenProduced(spriteBatch, custObjPosition, base_sort + 1E-05f);
+                }
+            }
+            return;
+        }
     }
 }

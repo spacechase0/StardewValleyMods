@@ -336,7 +336,8 @@ namespace DynamicGameAssets.Game
             {
                 if (this.heldObject.Value is CustomObject custObj)
                 {
-                    custObj.drawWithoutShadow(spriteBatch, x * 64 + 32, y * 64 - 64 - 8, base_sort + 1E-05f);
+                    Vector2 custObjPosition = new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset);
+                    custObj.drawWhenProduced(spriteBatch, custObjPosition, base_sort + 1E-05f);
                 }
                 else
                 {
