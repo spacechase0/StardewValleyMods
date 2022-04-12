@@ -1,10 +1,15 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+using System.Reflection;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Spacechase.Shared.Patching;
 using SpaceShared;
 using StardewModdingAPI;
+using StardewValley;
 using SObject = StardewValley.Object;
 
 namespace DynamicGameAssets.Patches
@@ -31,6 +36,14 @@ namespace DynamicGameAssets.Patches
                 original: this.RequireMethod<SObject>(nameof(SObject.isSapling)),
                 prefix: this.GetHarmonyMethod(nameof(Before_IsSapling))
             );
+            harmony.Patch(
+                original: this.RequireMethod<SObject>(nameof(SObject.performObjectDropInAction)),
+                postfix: this.GetHarmonyMethod(nameof(After_PerformObjectDropInAction))
+            );
+            //harmony.Patch(
+            //    original: this.RequireMethod<SObject>("loadDisplayName"),
+            //    postfix: this.GetHarmonyMethod(nameof(After_LoadDisplayName))
+            //);
         }
 
 
@@ -82,5 +95,95 @@ namespace DynamicGameAssets.Patches
 
             return true;
         }
+
+        /// <summary>The method to call after <see cref="SObject.performObjectDropInAction"/>.</summary>
+        private static void After_PerformObjectDropInAction(SObject __instance, Item dropInItem, bool probe, Farmer who)
+        {
+            if (dropInItem is CustomObject dropIn)
+            {
+                if (__instance.name.Equals("Keg")) {
+                    switch (dropIn.Category)
+                    {
+                        case -75:
+                            __instance.heldObject.Value = new SObject(Vector2.Zero, 350, dropIn.Name + " Juice", canBeSetDown: false, canBeGrabbed: true, isHoedirt: false, isSpawnedObject: false);
+                            __instance.heldObject.Value.Price = (int)((double)dropIn.Price * 2.25);
+                            if (!probe)
+                            {
+                                __instance.heldObject.Value.name = dropIn.Name + " Juice";
+                                __instance.heldObject.Value.preserve.Value = SObject.PreserveType.Juice;
+                                __instance.heldObject.Value.preservedParentSheetIndex.Value = dropIn.parentSheetIndex;
+                                __instance.heldObject.Value.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"] = dropIn.FullId;
+                            }
+                            return;
+                        case -79:
+                            __instance.heldObject.Value = new SObject(Vector2.Zero, 348, dropIn.Name + " Wine", canBeSetDown: false, canBeGrabbed: true, isHoedirt: false, isSpawnedObject: false);
+                            __instance.heldObject.Value.Price = dropIn.Price * 3;
+                            if (!probe)
+                            {
+                                __instance.heldObject.Value.name = dropIn.Name + " Wine";
+                                __instance.heldObject.Value.preserve.Value = SObject.PreserveType.Wine;
+                                __instance.heldObject.Value.preservedParentSheetIndex.Value = dropIn.parentSheetIndex;
+                                __instance.heldObject.Value.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"] = dropIn.FullId;
+                            }
+                            return;
+                    }
+                }
+                else if (__instance.name.Equals("Preserves Jar"))
+                {
+                    switch (dropIn.Category)
+                    {
+                        case -75:
+                            __instance.heldObject.Value = new SObject(Vector2.Zero, 342, "Pickled " + dropIn.Name, canBeSetDown: false, canBeGrabbed: true, isHoedirt: false, isSpawnedObject: false);
+                            __instance.heldObject.Value.Price = 50 + dropIn.Price * 2;
+                            if (!probe)
+                            {
+                                __instance.heldObject.Value.name = "Pickled " + dropIn.Name;
+                                __instance.heldObject.Value.preserve.Value = SObject.PreserveType.Pickle;
+                                __instance.heldObject.Value.preservedParentSheetIndex.Value = dropIn.parentSheetIndex;
+                                __instance.heldObject.Value.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"] = dropIn.FullId;
+                            }
+                            return;
+                        case -79:
+                            __instance.heldObject.Value = new SObject(Vector2.Zero, 344, dropIn.Name + " Jelly", canBeSetDown: false, canBeGrabbed: true, isHoedirt: false, isSpawnedObject: false);
+                            __instance.heldObject.Value.Price = 50 + dropIn.Price * 2;
+                            if (!probe)
+                            {
+                                __instance.minutesUntilReady.Value = 4000;
+                                __instance.heldObject.Value.name = dropIn.Name + " Jelly";
+                                __instance.heldObject.Value.preserve.Value = SObject.PreserveType.Jelly;
+                                __instance.heldObject.Value.preservedParentSheetIndex.Value = dropIn.parentSheetIndex;
+                                __instance.heldObject.Value.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"] = dropIn.FullId;
+                            }
+                            return;
+                    }
+                }
+            }
+        }
+
+        /// <summary>The method to call after <see cref="SObject.loadDisplayName"/>.</summary>
+        private static void After_LoadDisplayName(SObject __instance, ref string __result)
+        {
+            string dga_parent_ID = __instance.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"];
+            if (dga_parent_ID != null && __instance.preserve.Value != null && Mod.Find(dga_parent_ID).ToItem() is CustomObject parentItem)
+            {
+                Log.Debug("Changing Display Name for DGA parent object");
+                switch (__instance.preserve.Value)
+                {
+                    case SObject.PreserveType.Wine:
+                        __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12730", parentItem.DisplayName);
+                        return;
+                    case SObject.PreserveType.Jelly:
+                        __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12739", parentItem.DisplayName);
+                        return;
+                    case SObject.PreserveType.Pickle:
+                        __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12735", parentItem.DisplayName);
+                        return;
+                    case SObject.PreserveType.Juice:
+                        __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12726", parentItem.DisplayName);
+                        return;
+                }
+            }
+        }
+
     }
 }
