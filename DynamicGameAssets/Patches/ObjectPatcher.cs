@@ -160,25 +160,37 @@ namespace DynamicGameAssets.Patches
         /// <summary>The method to call after <see cref="SObject.loadDisplayName"/>.</summary>
         private static void After_LoadDisplayName(SObject __instance, ref string __result)
         {
-            string dga_parent_ID = __instance.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"];
-            if (dga_parent_ID != null && __instance.preserve.Value != null && Mod.Find(dga_parent_ID).ToItem() is CustomObject parentItem)
+            if (!__instance.preserve.Value.HasValue)
             {
-                switch (__instance.preserve.Value)
+                return;
+            }
+            
+            if (__instance.modData.ContainsKey("spacechase0.DynamicGameAssets/preserved-parent-ID"))
+            {
+                string dga_parent_ID = __instance.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"];
+                if (Mod.Find(dga_parent_ID).ToItem() is CustomObject parentItem)
                 {
-                    case SObject.PreserveType.Wine:
-                        __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12730", parentItem.DisplayName);
-                        return;
-                    case SObject.PreserveType.Jelly:
-                        __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12739", parentItem.DisplayName);
-                        return;
-                    case SObject.PreserveType.Pickle:
-                        __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12735", parentItem.DisplayName);
-                        return;
-                    case SObject.PreserveType.Juice:
-                        __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12726", parentItem.DisplayName);
-                        return;
+                    //Log.Debug($"Changing display name for preserved item with parent named {parentItem.DisplayName}");
+                    switch (__instance.preserve.Value)
+                    {
+                        case SObject.PreserveType.Wine:
+                            __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12730", parentItem.DisplayName);
+                            return;
+                        case SObject.PreserveType.Jelly:
+                            __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12739", parentItem.DisplayName);
+                            return;
+                        case SObject.PreserveType.Pickle:
+                            __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12735", parentItem.DisplayName);
+                            return;
+                        case SObject.PreserveType.Juice:
+                            __result = Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12726", parentItem.DisplayName);
+                            return;
+                        default:
+                            break;
+                    }
                 }
             }
+            return;
         }
 
     }
