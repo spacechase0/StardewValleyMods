@@ -40,10 +40,10 @@ namespace DynamicGameAssets.Patches
                 original: this.RequireMethod<SObject>(nameof(SObject.performObjectDropInAction)),
                 postfix: this.GetHarmonyMethod(nameof(After_PerformObjectDropInAction))
             );
-            //harmony.Patch(
-            //    original: this.RequireMethod<SObject>("loadDisplayName"),
-            //    postfix: this.GetHarmonyMethod(nameof(After_LoadDisplayName))
-            //);
+            harmony.Patch(
+                original: this.RequireMethod<SObject>("loadDisplayName"),
+                postfix: this.GetHarmonyMethod(nameof(After_LoadDisplayName))
+            );
         }
 
 
@@ -166,7 +166,6 @@ namespace DynamicGameAssets.Patches
             string dga_parent_ID = __instance.modData["spacechase0.DynamicGameAssets/preserved-parent-ID"];
             if (dga_parent_ID != null && __instance.preserve.Value != null && Mod.Find(dga_parent_ID).ToItem() is CustomObject parentItem)
             {
-                Log.Debug("Changing Display Name for DGA parent object");
                 switch (__instance.preserve.Value)
                 {
                     case SObject.PreserveType.Wine:
