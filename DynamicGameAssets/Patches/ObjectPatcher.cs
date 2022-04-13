@@ -10,6 +10,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
 using SObject = StardewValley.Object;
+using StardewValley.Objects;
 
 namespace DynamicGameAssets.Patches
 {
@@ -45,6 +46,14 @@ namespace DynamicGameAssets.Patches
             );
             harmony.Patch(
                 original: this.RequireMethod<SObject>(nameof(SObject.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) }),
+                postfix: this.GetHarmonyMethod(nameof(After_Draw))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<CrabPot>(nameof(CrabPot.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) }),
+                postfix: this.GetHarmonyMethod(nameof(After_Draw))
+            );
+            harmony.Patch(
+                original: this.RequireMethod<WoodChipper>(nameof(WoodChipper.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) }),
                 postfix: this.GetHarmonyMethod(nameof(After_Draw))
             );
         }
