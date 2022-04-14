@@ -139,6 +139,7 @@ namespace DynamicGameAssets.Game
                     continue;
 
                 bool hadIngredients = true;
+                ItemAbstraction missingIngred = null;
                 foreach (var ingred in recipe.Ingredients)
                 {
                     int left = ingred.Quantity;
@@ -154,7 +155,17 @@ namespace DynamicGameAssets.Game
                     if (left > 0)
                     {
                         hadIngredients = false;
+                        missingIngred = ingred;
                         break;
+                    }
+                }
+
+                string missingIngredientName = null;
+                if (missingIngred != null)
+                {
+                    if (missingIngred.Type != ItemAbstraction.ItemType.ContextTag)
+                    {
+                        missingIngredientName = missingIngred.Create().DisplayName;
                     }
                 }
 
@@ -215,13 +226,22 @@ namespace DynamicGameAssets.Game
                 else
                 {
                     if (!probe && StardewValley.Object.autoLoadChest == null)
-                        Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12772")); ;
+                    {
+                        if (missingIngredientName != null)
+                        {
+                            Game1.showRedMessage(I18n.NotEnoughIngredients(item: missingIngredientName));
+                        }
+                        else
+                        {
+                            Game1.showRedMessage(I18n.NotEnoughIngredientsGeneric());
+                        }
+                    }
                     return false;
                 }
             }
 
             if (!probe && StardewValley.Object.autoLoadChest == null)
-                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12777"));
+                Game1.showRedMessage(I18n.WrongIngredientSelected(item: dropInItem.DisplayName));
             return false;
         }
 
