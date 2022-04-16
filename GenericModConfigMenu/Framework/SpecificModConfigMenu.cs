@@ -48,6 +48,9 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether a keybinding UI is open.</summary>
         private bool IsBindingKey => this.ActiveKeybindOverlay != null;
 
+        /// <summary>The current width of the title label.</summary>
+        private int TitleLabelWidth = 0;
+
 
         /*********
         ** Accessors
@@ -273,7 +276,7 @@ namespace GenericModConfigMenu.Framework
 
                                     // else append if it fits
                                     string possibleLine = $"{nextLine} {word}".Trim();
-                                    if (Label.MeasureString(possibleLine).X <= this.Table.Size.X)
+                                    if (Label.MeasureString(possibleLine).X <= Game1.uiViewport.Width - 64)
                                     {
                                         nextLine = possibleLine;
                                         continue;
@@ -292,7 +295,7 @@ namespace GenericModConfigMenu.Framework
                             optionElement = new Label
                             {
                                 UserData = tooltip,
-                                NonBoldScale = 0.75f,
+                                NonBoldScale = 2 / 3f,
                                 NonBoldShadow = false,
                                 String = text.ToString()
                             };
@@ -392,7 +395,8 @@ namespace GenericModConfigMenu.Framework
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
 
             // title background
-            IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32, 32, 800 + 64, 50 + 20, Color.White);
+            int titleBoxWidth = Math.Clamp(this.TitleLabelWidth + 64, 800 + 64, Game1.uiViewport.Width);
+            IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - titleBoxWidth) / 2, 32, titleBoxWidth, 50 + 20, Color.White);
 
             // button background
             IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32 - 64, Game1.uiViewport.Height - 50 - 20 - 32, 800 + 64 + 128, 50 + 20, Color.White);
@@ -476,6 +480,7 @@ namespace GenericModConfigMenu.Framework
                 titleLabel.LocalPosition = new Vector2((Game1.uiViewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
                 titleLabel.HoverTextColor = titleLabel.IdleTextColor;
                 this.Ui.AddChild(titleLabel);
+                this.TitleLabelWidth = (int) titleLabel.Measure().X;
             }
 
             // add buttons
