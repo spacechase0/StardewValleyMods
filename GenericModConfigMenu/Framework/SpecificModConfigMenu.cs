@@ -295,7 +295,7 @@ namespace GenericModConfigMenu.Framework
                             optionElement = new Label
                             {
                                 UserData = tooltip,
-                                NonBoldScale = 2 / 3f,
+                                NonBoldScale = 0.75f,
                                 NonBoldShadow = false,
                                 String = text.ToString()
                             };
