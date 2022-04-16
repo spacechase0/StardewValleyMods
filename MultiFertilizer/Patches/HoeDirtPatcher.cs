@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
@@ -88,6 +89,7 @@ namespace MultiFertilizer.Patches
         {
             bool foundFert = false;
             bool stopCaring = false;
+            bool replaceNextLdLoc = false;
 
             // When we find the the fertilizer reference, replace the next draw with our call
             // Add the HoeDirt instance at the end of the argument list
@@ -103,7 +105,15 @@ namespace MultiFertilizer.Patches
 
                 if (insn.opcode == OpCodes.Ldfld && (insn.operand as FieldInfo).Name == "fertilizer")
                 {
+                    newInsns.Add(insn);
                     foundFert = true;
+                    replaceNextLdLoc = true;
+                }
+                else if (replaceNextLdLoc && insn.IsLdloc())
+                {   // Instead of loading the fertilizer and looking at it
+                    // we simply stick a 1 on the stack.
+                    newInsns.Add(new CodeInstruction(OpCodes.Ldc_I4_1));
+                    replaceNextLdLoc = false;
                 }
                 else if (foundFert && insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == "Draw")
                 {
@@ -123,16 +133,17 @@ namespace MultiFertilizer.Patches
         }
 
         /// <summary>The method to call before <see cref="HoeDirt.applySpeedIncreases"/>.</summary>
-        private static void Before_ApplySpeedIncreases(HoeDirt __instance, Farmer who)
+        private static void Before_ApplySpeedIncreases(HoeDirt __instance, Farmer who, out int __state)
         {
+            __state = __instance.fertilizer.Value;
             if (__instance.TryGetFertilizer(Mod.KeySpeed, out FertilizerData fertilizer))
                 __instance.fertilizer.Value = fertilizer.Id;
         }
 
         /// <summary>The method to call after <see cref="HoeDirt.applySpeedIncreases"/>.</summary>
-        private static void After_ApplySpeedIncreases(HoeDirt __instance, Farmer who)
+        private static void After_ApplySpeedIncreases(HoeDirt __instance, Farmer who, int __state)
         {
-            __instance.fertilizer.Value = 0;
+            __instance.fertilizer.Value = __state;
         }
 
         /// <summary>The method to call before <see cref="HoeDirt.canPlantThisSeedHere"/>.</summary>
@@ -147,16 +158,17 @@ namespace MultiFertilizer.Patches
         }
 
         /// <summary>The method to call before <see cref="HoeDirt.dayUpdate"/>.</summary>
-        private static void Before_DayUpdate(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
+        private static void Before_DayUpdate(HoeDirt __instance, GameLocation environment, Vector2 tileLocation, out int __state)
         {
+            __state = __instance.fertilizer.Value;
             if (__instance.TryGetFertilizer(Mod.KeyRetain, out FertilizerData fertilizer))
                 __instance.fertilizer.Value = fertilizer.Id;
         }
 
         /// <summary>The method to call after <see cref="HoeDirt.dayUpdate"/>.</summary>
-        private static void After_DayUpdate(HoeDirt __instance, GameLocation environment, Vector2 tileLocation)
+        private static void After_DayUpdate(HoeDirt __instance, GameLocation environment, Vector2 tileLocation, int __state)
         {
-            __instance.fertilizer.Value = 0;
+            __instance.fertilizer.Value = __state;
         }
 
         /// <summary>The method to call before <see cref="HoeDirt.seasonUpdate"/>.</summary>
@@ -180,7 +192,13 @@ namespace MultiFertilizer.Patches
             }
 
             foreach (FertilizerData fertilizer in fertilizers)
-                spriteBatch.Draw(Game1.mouseCursors, pos, new Rectangle(173 + fertilizer.SpriteIndex / 3 * 16, 462 + fertilizer.SpriteIndex % 3 * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.9E-08f);
+                spriteBatch.Draw(Game1.mouseCursors, pos, new Rectangle(173 + fertilizer.SpriteIndex / 3 * 16, 462 + fertilizer.SpriteIndex % 3 * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1.89E-08f);
+
+            // Draw custom fertilizer, if needed.
+            if (__instance.fertilizer.Value > 0)
+            {
+                spriteBatch.Draw(tex, pos, sourceRect, col, rot, origin, scale, fx, depth);
+            }
         }
     }
 }
