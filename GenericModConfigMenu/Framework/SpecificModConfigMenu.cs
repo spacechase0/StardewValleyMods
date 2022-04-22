@@ -267,6 +267,13 @@ namespace GenericModConfigMenu.Framework
                                 string nextLine = "";
                                 foreach (string word in name.Split(' '))
                                 {
+                                    // respect newline characters
+                                    if (word == "\n") {
+                                        text.AppendLine(nextLine);
+                                        nextLine = "";
+                                        continue;
+                                    }
+
                                     // always add at least one word
                                     if (nextLine == "")
                                     {
