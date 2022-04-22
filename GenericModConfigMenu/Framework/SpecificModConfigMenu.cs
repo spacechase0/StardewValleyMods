@@ -276,7 +276,7 @@ namespace GenericModConfigMenu.Framework
 
                                     // else append if it fits
                                     string possibleLine = $"{nextLine} {word}".Trim();
-                                    if (Label.MeasureString(possibleLine).X <= Game1.uiViewport.Width - 64)
+                                    if (Label.MeasureString(possibleLine).X <= Game1.uiViewport.Width - 128)
                                     {
                                         nextLine = possibleLine;
                                         continue;
