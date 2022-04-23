@@ -101,7 +101,7 @@ namespace MoonMisadventures.Game.Items
                 var mp = Mod.instance.Helper.Reflection.GetField< Multiplayer >( typeof( Game1 ), "multiplayer" ).GetValue();
                 var other = new LunarAnimal( lanimal.lunarType.Value, Vector2.Zero, mp.getNewID() );
                 other.age.Value = lanimal.age.Value;
-                other.currentProduce.Value = lanimal.age.Value;
+                other.currentProduce.Value = lanimal.currentProduce.Value;
                 other.happiness.Value = lanimal.happiness;
                 other.fullness.Value = lanimal.fullness;
                 other.wasPet.Value = lanimal.wasPet.Value;

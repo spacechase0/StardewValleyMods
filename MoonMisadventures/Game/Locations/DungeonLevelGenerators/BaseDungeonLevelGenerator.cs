@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using MoonMisadventures.Game.Items;
 using MoonMisadventures.Game.Monsters;
@@ -162,7 +161,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 int ore = ores[ ore_ ];
                 if ( ore == int.MaxValue )
                 {
-                    var obj = new DynamicGameAssets.Game.CustomObject( ( DynamicGameAssets.PackData.ObjectPackData ) DynamicGameAssets.Mod.Find( ItemIds.MythiciteOreMinable ) );
+                    var obj = new StardewValley.Object( ItemIds.MythiciteOreMinable, 1 );
                     obj.Name = "Stone";
                     obj.MinutesUntilReady = 24;
                     location.netObjects.Add( new Vector2( sx, sy ), obj );
@@ -242,10 +241,10 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                         break;
                     case 3:
                     case 4:
-                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.SoulSapphire ) as ObjectPackData ) );
+                        chest.addItem( new StardewValley.Object( ItemIds.SoulSapphire, 1 ) );
                         break;
                     case 5:
-                        chest.addItem( new DynamicGameAssets.Game.CustomBoots( DynamicGameAssets.Mod.Find( ItemIds.CosmosBoots ) as BootsPackData ) );
+                        chest.addItem(new Boots(ItemIds.CosmosBoots));
                         break;
                     case 6:
                         var item = new AnimalGauntlets();
@@ -275,16 +274,16 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                     case 0:
                     case 1:
                     case 2:
-                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.MythiciteOre ) as ObjectPackData ) { Stack = 3 + rand.Next( 12 ) } );
+                        chest.addItem( new StardewValley.Object( ItemIds.MythiciteOre, 3 + rand.Next( 12 ) ) );
                         break;
                     case 3:
-                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.MythiciteBar ) as ObjectPackData ) { Stack = 1 + rand.Next( 7 ) } );
+                        chest.addItem( new StardewValley.Object( ItemIds.MythiciteBar, 1 + rand.Next( 7 ) ) );
                         break;
                     case 4:
-                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.StellarEssence ) as ObjectPackData ) { Stack = 4 + rand.Next( 9 ) } );
+                        chest.addItem( new StardewValley.Object( ItemIds.StellarEssence, 4 + rand.Next( 9 ) ) );
                         break;
                     case 5:
-                        chest.addItem( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.PersistiumDust ) as ObjectPackData ) { Stack = 2 + rand.Next( 6 ) } );
+                        chest.addItem( new StardewValley.Object( ItemIds.PersistiumDust, 2 + rand.Next( 6 ) ) );
                         break;
 
                 }

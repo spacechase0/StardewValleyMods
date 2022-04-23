@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="2021.03.23" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="50" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="9">
  <properties>
+  <property name="BuildConditions" value="PLAYER_HAS_FLAG Any firstUfoTravel"/>
+  <property name="CanBuildHere" value="T"/>
   <property name="LocationContext" value="Moon"/>
+  <property name="LooserBuildRestrictions" value="T"/>
   <property name="Outdoors" value="T"/>
   <property name="Warp" value="-1 11 Custom_MM_MoonLandingArea 34 27 -1 12 Custom_MM_MoonLandingArea 34 28 37 33 Custom_MM_MoonFarmCave 6 10 34 -1 Custom_MM_MoonPlanetOverlook 22 49 35 -1 Custom_MM_MoonPlanetOverlook 23 49 36 -1 Custom_MM_MoonPlanetOverlook 24 49 37 -1 Custom_MM_MoonPlanetOverlook 25 49 38 -1 Custom_MM_MoonPlanetOverlook 26 49"/>
   <property name="asdf" value="asdf"/>

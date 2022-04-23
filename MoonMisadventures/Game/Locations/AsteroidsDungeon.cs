@@ -17,7 +17,7 @@ using xTile.Tiles;
 namespace MoonMisadventures.Game.Locations
 {
     [XmlType( "Mods_spacechase0_MoonMisadventuress_AsteroidsDungeon" )]
-    public class AsteroidsDungeon : LunarLocation, IAnimalLocation
+    public class AsteroidsDungeon : LunarLocation
     {
         public const string BaseLocationName = "Custom_MM_MoonAsteroidsDungeon";
         public const string LocationRoomInfix = "Room";
@@ -267,12 +267,12 @@ namespace MoonMisadventures.Game.Locations
             }
         }
 
-        protected override bool breakStone( int indexOfStone, int x, int y, Farmer who, Random r )
+        protected override bool breakStone( string indexOfStone, int x, int y, Farmer who, Random r )
         {
-            if ( objects[ new Vector2( x, y ) ] is DynamicGameAssets.Game.CustomObject obj &&
-                 obj.Name == "Stone" && obj.FullId == ItemIds.MythiciteOreMinable )
+            if ( objects[ new Vector2( x, y ) ].Name == "Stone" &&
+                 objects[ new Vector2( x, y ) ].ItemID == ItemIds.MythiciteOreMinable )
             {
-                Game1.createItemDebris( new DynamicGameAssets.Game.CustomObject( ( DynamicGameAssets.PackData.ObjectPackData ) DynamicGameAssets.Mod.Find( ItemIds.MythiciteOre ) )
+                Game1.createItemDebris( new StardewValley.Object( ItemIds.MythiciteOre, 1 )
                 {
                     Stack = r.Next( 2, 5 ),
                 }, new Vector2( x * Game1.tileSize, y * Game1.tileSize ), 0, this );
@@ -323,6 +323,7 @@ namespace MoonMisadventures.Game.Locations
 
             Vector2 warpPrev = Vector2.Zero, warpNext = Vector2.Zero;
             reloadMap();
+            map.Id = BaseLocationName;
 
             if ( Map.GetLayer( "Buildings1" ) == null )
             {
@@ -384,7 +385,7 @@ namespace MoonMisadventures.Game.Locations
             }
             else if ( action == "LunarTeleporterOffline" )
             {
-                if ( Mod.dga.GetDGAItemId( who.ActiveObject ) == ItemIds.MythiciteOre )
+                if ( Game1.player.ActiveObject?.ItemID == ItemIds.MythiciteOre )
                 {
                     who.reduceActiveItemByOne();
                     Game1.playSound( "questcomplete" );
@@ -431,153 +432,6 @@ namespace MoonMisadventures.Game.Locations
         public override bool CanPlaceThisFurnitureHere( Furniture furniture )
         {
             return false;
-        }
-        public bool CheckInspectAnimal( Vector2 position, Farmer who )
-        {
-            foreach ( var animal in Animals.Values )
-            {
-                if ( animal.wasPet.Value && animal.GetCursorPetBoundingBox().Contains( ( int ) position.X, ( int ) position.Y ) )
-                {
-                    animal.pet( who );
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool CheckInspectAnimal( Rectangle rect, Farmer who )
-        {
-            foreach ( var animal in Animals.Values )
-            {
-                if ( animal.wasPet.Value && animal.GetBoundingBox().Intersects( rect ) )
-                {
-                    animal.pet( who );
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool CheckPetAnimal( Vector2 position, Farmer who )
-        {
-            foreach ( var animal in Animals.Values )
-            {
-                if ( !animal.wasPet.Value && animal.GetCursorPetBoundingBox().Contains( ( int ) position.X, ( int ) position.Y ) )
-                {
-                    animal.pet( who );
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool CheckPetAnimal( Rectangle rect, Farmer who )
-        {
-            foreach ( var animal in Animals.Values )
-            {
-                if ( !animal.wasPet.Value && animal.GetBoundingBox().Intersects( rect ) )
-                {
-                    animal.pet( who );
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        public override bool performToolAction( Tool t, int tileX, int tileY )
-        {
-            if ( t is MeleeWeapon )
-            {
-                foreach ( FarmAnimal a in this.animals.Values )
-                {
-                    if ( a.GetBoundingBox().Intersects( ( t as MeleeWeapon ).mostRecentArea ) )
-                    {
-                        a.hitWithWeapon( t as MeleeWeapon );
-                    }
-                }
-            }
-            return base.performToolAction( t, tileX, tileY );
-        }
-
-        public override void performTenMinuteUpdate( int timeOfDay )
-        {
-            base.performTenMinuteUpdate( timeOfDay );
-            if ( Game1.IsMasterGame )
-            {
-                foreach ( FarmAnimal value in this.animals.Values )
-                {
-                    value.updatePerTenMinutes( Game1.timeOfDay, this );
-                }
-            }
-        }
-        public override bool isCollidingPosition( Rectangle position, xTile.Dimensions.Rectangle viewport, bool isFarmer, int damagesFarmer, bool glider, Character character, bool pathfinding, bool projectile = false, bool ignoreCharacterRequirement = false )
-        {
-            if ( !glider )
-            {
-                if ( character != null && !( character is FarmAnimal ) )
-                {
-                    Microsoft.Xna.Framework.Rectangle playerBox = Game1.player.GetBoundingBox();
-                    Farmer farmer = (isFarmer ? (character as Farmer) : null);
-                    foreach ( FarmAnimal animal in this.animals.Values )
-                    {
-                        if ( position.Intersects( animal.GetBoundingBox() ) && ( !isFarmer || !playerBox.Intersects( animal.GetBoundingBox() ) ) )
-                        {
-                            if ( farmer != null && farmer.TemporaryPassableTiles.Intersects( position ) )
-                            {
-                                break;
-                            }
-                            animal.farmerPushing();
-                            return true;
-                        }
-                    }
-                }
-            }
-            return base.isCollidingPosition( position, viewport, isFarmer, damagesFarmer, glider, character, pathfinding, projectile, ignoreCharacterRequirement );
-        }
-        public override bool isTileOccupied( Vector2 tileLocation, string characterToIgnore = "", bool ignoreAllCharacters = false )
-        {
-            foreach ( KeyValuePair<long, FarmAnimal> pair in this.animals.Pairs )
-            {
-                if ( pair.Value.getTileLocation().Equals( tileLocation ) )
-                {
-                    return true;
-                }
-            }
-            return base.isTileOccupied( tileLocation, characterToIgnore, ignoreAllCharacters );
-        }
-        public override bool isTileOccupiedForPlacement( Vector2 tileLocation, StardewValley.Object toPlace = null )
-        {
-            foreach ( KeyValuePair<long, FarmAnimal> pair in this.animals.Pairs )
-            {
-                if ( pair.Value.getTileLocation().Equals( tileLocation ) )
-                {
-                    return true;
-                }
-            }
-            return base.isTileOccupiedForPlacement( tileLocation, toPlace );
-        }
-        public override void draw( SpriteBatch b )
-        {
-            base.draw( b );
-            foreach ( KeyValuePair<long, FarmAnimal> pair in this.animals.Pairs )
-            {
-                pair.Value.draw( b );
-            }
-        }
-        public override void updateEvenIfFarmerIsntHere( GameTime time, bool skipWasUpdatedFlush = false )
-        {
-            base.updateEvenIfFarmerIsntHere( time, skipWasUpdatedFlush );
-            if ( !Game1.currentLocation.Equals( this ) )
-            {
-                NetDictionary<long, FarmAnimal, NetRef<FarmAnimal>, SerializableDictionary<long, FarmAnimal>, NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>>>.PairsCollection pairs = this.animals.Pairs;
-                for ( int i = pairs.Count() - 1; i >= 0; i-- )
-                {
-                    pairs.ElementAt( i ).Value.updateWhenNotCurrentLocation( null, time, this );
-                }
-            }
         }
     }
 }

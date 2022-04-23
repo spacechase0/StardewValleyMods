@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using SpaceCore.Patches;
@@ -130,13 +131,19 @@ namespace SpaceCore.Framework
             }
         }
 
+        private Dictionary<Type, XmlSerializer> serializersAlreadyDone = new();
+
         public XmlSerializer InitializeSerializer(Type baseType, Type[] extra = null)
         {
+            if (serializersAlreadyDone.ContainsKey(baseType))
+                return serializersAlreadyDone[baseType];
+
             var types = extra?.Length > 0
                 ? extra.Concat(SpaceCore.ModTypes)
                 : SpaceCore.ModTypes;
 
             XmlSerializer serializer = new(baseType, types.ToArray());
+            serializersAlreadyDone.Add(baseType, serializer);
             this.NotifyPyTk(serializer);
             return serializer;
         }

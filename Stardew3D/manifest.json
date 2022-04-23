@@ -1,0 +1,12 @@
+﻿{
+    "Name": "Stardew3D",
+    "Author": "spacechase0",
+    "Version": "1.0.0",
+    "MinimumApiVersion": "3.13.0",
+    "Description": "...",
+    "UniqueID": "spacechase0.Stardew3D",
+    "EntryDll": "Stardew3D.dll",
+    "UpdateKeys": [ "Nexus:" ],
+    "Dependencies": [
+    ]
+}

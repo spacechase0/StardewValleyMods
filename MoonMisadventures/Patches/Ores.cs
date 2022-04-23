@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DynamicGameAssets.Game;
 using HarmonyLib;
 using StardewValley;
 
@@ -16,9 +15,9 @@ namespace MoonMisadventures.Patches
         {
             if ( __instance.name == "Furnace" )
             {
-                if ( who.IsLocalPlayer && __instance.GetTallyOfObject( who, 382, false ) > 0 && __instance.heldObject.Value == null && dropInItem is IDGAItem ditem && ditem.FullId == ItemIds.MythiciteOre && dropInItem.Stack >= 5 )
+                if ( who.IsLocalPlayer && __instance.GetTallyOfObject( who, "382", false ) > 0 && __instance.heldObject.Value == null && dropInItem is StardewValley.Object ditem && ditem.ItemID == ItemIds.MythiciteOre && dropInItem.Stack >= 5 )
                 {
-                    __instance.heldObject.Value = ( StardewValley.Object ) Mod.dga.SpawnDGAItem(ItemIds.MythiciteBar);
+                    __instance.heldObject.Value = ( StardewValley.Object ) new StardewValley.Object(ItemIds.MythiciteBar, 1);
                     __instance.minutesUntilReady.Value = 720;
 
                     if (probe)
@@ -35,7 +34,7 @@ namespace MoonMisadventures.Patches
                         {
                             alphaFade = 0.005f
                         });*/
-                        __instance.ConsumeInventoryItem(who, 382, 1);
+                        __instance.ConsumeInventoryItem(who, "382", 1);
                         dropInItem.Stack -= 5;
                         if (dropInItem.Stack <= 0)
                         {

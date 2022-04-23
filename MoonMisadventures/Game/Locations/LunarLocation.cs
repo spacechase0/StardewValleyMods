@@ -198,17 +198,6 @@ namespace MoonMisadventures.Game.Locations
             return true;
         }
 
-        public override bool CanPlantSeedsHere( int crop_index, int tile_x, int tile_y )
-        {
-            // No normal crops - note that moon crops get an override with a harmony patch anyways
-            return false;
-        }
-
-        public override bool CanPlantTreesHere( int sapling_index, int tile_x, int tile_y )
-        {
-            return false;
-        }
-
         public override void UpdateWhenCurrentLocation( GameTime time )
         {
             base.UpdateWhenCurrentLocation( time );
@@ -289,7 +278,7 @@ namespace MoonMisadventures.Game.Locations
             return base.performToolAction( t, tileX, tileY );
         }
 
-        public override StardewValley.Object getFish( float millisecondsAfterNibble, int bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null )
+        public override StardewValley.Object getFish( float millisecondsAfterNibble, string bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null )
         {
             return base.getFish( millisecondsAfterNibble, bait, waterDepth, who, baitPotency, bobberTile, locationName );
         }

@@ -35,7 +35,7 @@ namespace MoonMisadventures
             Assets.MythiciteTools = content.Load<Texture2D>( "assets/tools-mythicite.png" );
             Assets.AnimalGauntlets = content.Load<Texture2D>( "assets/animal-gauntlets.png" );
             Assets.LunarKey = content.Load<Texture2D>( "assets/key.png" );
-            Assets.Necklaces = content.Load<Texture2D>( "assets/necklaces.png" );
+            Assets.Necklaces = content.Load<Texture2D>( "assets/dga/necklaces.png" );
 
             Assets.LaunchBackground = content.Load<Texture2D>( "assets/launch.png" );
             Assets.LaunchUfo = content.Load<Texture2D>( "assets/ufo-small.png" );

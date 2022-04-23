@@ -34,7 +34,7 @@ namespace HybridCropEngine
 
         public T Load<T>(IAssetInfo asset)
         {
-            return (T)(object)new Dictionary<int, HybridCropData>();
+            return (T)(object)new Dictionary<string, HybridCropData>();
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)

@@ -65,7 +65,7 @@ namespace MoonMisadventures.Patches
                     Item tmp = Mod.instance.Helper.Reflection.GetMethod( __instance, "takeHeldItem" ).Invoke<Item>();
                     Item held = necklaceItem.Value;
                     if ( held != null )
-                        ( held as Necklace ).OnUnequip( Game1.player );
+                        ( held as Necklace ).onUnequip( Game1.player );
                     held = Utility.PerformSpecialItemGrabReplacement( held );
                     Mod.instance.Helper.Reflection.GetMethod( __instance, "setHeldItem" ).Invoke( held );
                     necklaceItem.Value = tmp;
@@ -74,7 +74,7 @@ namespace MoonMisadventures.Patches
 
                     if ( necklaceItem.Value != null )
                     {
-                        ( necklaceItem.Value as Necklace ).OnEquip( Game1.player );
+                        ( necklaceItem.Value as Necklace ).onEquip( Game1.player );
                         Game1.playSound( "crit" );
                     }
                     else if ( Game1.player.CursorSlotItem != null )

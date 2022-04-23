@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DynamicGameAssets.PackData;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using MoonMisadventures.Game.Locations;
@@ -86,7 +85,7 @@ namespace MoonMisadventures.Patches
                 Game1.createMultipleObjectDebris( 890, x, y, r.Next( 1, 3 ), who.UniqueMultiplayerID, location );
             if ( r.NextDouble() < 0.01 )
             {
-                Game1.createItemDebris( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.SoulSapphire ) as ObjectPackData ), __instance.TileLocation * Game1.tileSize, 0, location );
+                Game1.createItemDebris( new StardewValley.Object( ItemIds.SoulSapphire, 1 ), __instance.TileLocation * Game1.tileSize, 0, location );
             }
             if ( r.NextDouble() < 0.65 )
             {
@@ -95,12 +94,24 @@ namespace MoonMisadventures.Patches
                 switch ( r.Next( 5 ) )
                 {
                     case 0:
+                        item = new StardewValley.Object( ItemIds.Sunbloom, 4 + r.Next( 13 ) );
+                        item2 = new StardewValley.Object( ItemIds.SunbloomSeeds, 1 + r.Next( 6 ) );
+                        break;
                     case 1:
+                        item = new StardewValley.Object( ItemIds.StarPetal, 4 + r.Next( 13 ) );
+                        item2 = new StardewValley.Object( ItemIds.StarPetalSeeds, 1 + r.Next( 6 ) );
+                        break;
                     case 2:
+                        item = new StardewValley.Object( ItemIds.VoidBlossom, 4 + r.Next( 13 ) );
+                        item2 = new StardewValley.Object( ItemIds.VoidBlossomSeeds, 1 + r.Next( 6 ) );
+                        break;
                     case 3:
+                        item = new StardewValley.Object( ItemIds.SoulSprout, 4 + r.Next( 13 ) );
+                        item2 = new StardewValley.Object( ItemIds.SoulSproutSeeds, 1 + r.Next( 6 ) );
+                        break;
                     case 4:
-                        //item = new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.LunarWheat ) as ObjectPackData ) { Stack = 4 + r.Next( 13 ) };
-                        item2 = new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.LunarWheatSeeds ) as ObjectPackData ) { Stack = 1 + r.Next( 6 ) };
+                        //item = new StardewValley.Object( ItemIds.LunarWheat, 4 + r.Next( 13 ) );
+                        item2 = new StardewValley.Object( ItemIds.LunarWheatSeeds, 1 + r.Next( 6 ) );
                         break;
                 }
                 if ( item != null )
@@ -110,7 +121,7 @@ namespace MoonMisadventures.Patches
             }
             else if ( r.NextDouble() < 0.75 )
             {
-                Game1.createItemDebris( new DynamicGameAssets.Game.CustomObject( DynamicGameAssets.Mod.Find( ItemIds.MythiciteOre ) as ObjectPackData ) { Stack = 1 + r.Next( 4 ) }, __instance.TileLocation * Game1.tileSize, 0, location );
+                Game1.createItemDebris( new StardewValley.Object( ItemIds.MythiciteOre, 1 + r.Next( 4 ) ), __instance.TileLocation * Game1.tileSize, 0, location );
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,35 +12,48 @@ namespace MoonMisadventures.Game.Items
     [XmlType("Mods_spacechase0_MoonMisadventures_Necklace")]
     public class Necklace : Item
     {
-        public enum Type
+        public static class Type
         {
-            Looting,
-            Shocking,
-            Speed,
-            Health,
-            Cooling,
-            Lunar,
-            Water,
-            Sea,
+            public static readonly string Looting = "looting";
+            public static readonly string Shocking = "shocking";
+            public static readonly string Speed = "speed";
+            public static readonly string Health = "health";
+            public static readonly string Cooling = "cooling";
+            public static readonly string Lunar = "lunar";
+            public static readonly string Water = "water";
+            public static readonly string Sea = "sea";
         }
 
-        public readonly NetEnum< Type > necklaceType = new();
-
-        public override string DisplayName { get => I18n.GetByKey($"item.necklace.{this.necklaceType.Value}.name"); set { } }
+        public override string DisplayName { get; set; }
+        public string Description { get; set; }
         public override int Stack { get => 1; set { } }
 
-        public Necklace() { }
-        public Necklace( Type type )
+        public override string GetItemQualifier()
         {
-            necklaceType.Value = type;
-            Name = "Necklace." + type;
+            return "(SC0_MM_N)";
+        }
+
+        public Necklace() { }
+        public Necklace( string type )
+        {
+            ItemID = type;
+            ReloadData();
+        }
+
+        public void ReloadData()
+        {
+            var data = Game1.content.Load< Dictionary< string, NecklaceData > >( "spacechase0.MoonMisadventures/Necklaces" );
+            Name = "Necklace." + ItemID;
+            DisplayName = data[ItemID].DisplayName;
+            Description = data[ItemID].Description;
         }
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
-            if ( drawShadow )
-                ;
-            spriteBatch.Draw( Assets.Necklaces, location + new Vector2( 32, 32 ), new Rectangle( ( ( int ) necklaceType.Value ) % 4 * 16, ( ( int ) necklaceType.Value ) / 4 * 16, 16, 16 ), color * transparency, 0, new Vector2( 8, 8 ) * scaleSize, scaleSize * Game1.pixelZoom, SpriteEffects.None, layerDepth );
+            //spriteBatch.Draw( Assets.Necklaces, location + new Vector2( 32, 32 ), new Rectangle( ( ( int ) necklaceType.Value ) % 4 * 16, ( ( int ) necklaceType.Value ) / 4 * 16, 16, 16 ), color * transparency, 0, new Vector2( 8, 8 ) * scaleSize, scaleSize * Game1.pixelZoom, SpriteEffects.None, layerDepth );
+            var data = Utility.GetItemDataForItemID(QualifiedItemID);
+            Rectangle rect = data.GetSourceRect(0);
+            spriteBatch.Draw(data.texture, location + new Vector2(32, 32) * scaleSize, rect, color * transparency, 0, new Vector2(8, 8) * scaleSize, scaleSize * 4, SpriteEffects.None, layerDepth);
         }
 
         public override int maximumStackSize()
@@ -54,7 +68,7 @@ namespace MoonMisadventures.Game.Items
 
         public override string getDescription()
         {
-            return I18n.GetByKey($"item.necklace.{this.necklaceType.Value}.description");
+            return Game1.parseText(Description, Game1.smallFont, getDescriptionWidth());
         }
 
         public override bool isPlaceable()
@@ -64,7 +78,7 @@ namespace MoonMisadventures.Game.Items
 
         public override Item getOne()
         {
-            var ret = new Necklace( necklaceType.Value );
+            var ret = new Necklace( ItemID );
             ret._GetOneFrom( this );
             return ret;
         }
@@ -84,9 +98,9 @@ namespace MoonMisadventures.Game.Items
             return false;
         }
 
-        public virtual void OnEquip( Farmer player )
+        public override void onEquip( Farmer player )
         {
-            if ( necklaceType.Value == Type.Health )
+            if ( ItemID == Type.Health )
             {
                 int diff = ( int )( player.maxHealth * 0.5f );
                 player.maxHealth += diff;
@@ -94,9 +108,9 @@ namespace MoonMisadventures.Game.Items
             }
         }
 
-        public virtual void OnUnequip( Farmer player )
+        public override void onUnequip( Farmer player )
         {
-            if ( necklaceType.Value == Type.Health )
+            if ( ItemID == Type.Health )
             {
                 int oldHealth = player.health;
                 int oldMax = player.maxHealth;

@@ -27,6 +27,7 @@ namespace MoonMisadventures.Game.Monsters
             Health = MaxHealth = 700;
             DamageToFarmer = 40;
             displayName = "Lunar Slime";
+            objectsToDrop.Clear();
         }
 
         public override void reloadSprite()

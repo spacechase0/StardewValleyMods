@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using MoonMisadventures.Game.Items;
 using StardewValley.Objects;
@@ -32,7 +31,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 chest.synchronized.Value = true;
                 chest.type.Value = "interactive";
                 chest.SetBigCraftableSpriteIndex(227);
-                chest.addItem(new DynamicGameAssets.Game.CustomObject(DynamicGameAssets.Mod.Find(ItemIds.SoulSapphire) as ObjectPackData));
+                chest.addItem(new StardewValley.Object(ItemIds.SoulSapphire, 1));
                 chest.addItem(new Necklace(Necklace.Type.Lunar));
                 if (location.netObjects.ContainsKey(position))
                     location.netObjects.Remove(position);

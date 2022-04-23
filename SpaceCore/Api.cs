@@ -16,15 +16,10 @@ namespace SpaceCore
         void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt);
         int GetProfessionId(string skill, string profession);
 
-        /// Must take (Event, GameLocation, GameTime, string[])
-        void AddEventCommand(string command, MethodInfo info);
-
         /// Must have [XmlType("Mods_SOMETHINGHERE")] attribute (required to start with "Mods_")
         void RegisterSerializerType(Type type);
 
         void RegisterCustomProperty( Type declaringType, string name, Type propType, MethodInfo getter, MethodInfo setter );
-
-        void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc/*, Func<Farmer, string> passoutWakeupLocationFunc, Func<Farmer, Point?> passoutWakeupPointFunc*/ );
     }
 
     public class Api : IApi
@@ -49,20 +44,6 @@ namespace SpaceCore
             return Skills.GetSkill(skill).Professions.Single(p => p.Id == profession).GetVanillaId();
         }
 
-        public void AddEventCommand(string command, MethodInfo info)
-        {
-            if (info.GetParameters().Length != 4)
-                throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
-            if (info.GetParameters()[0].ParameterType != typeof(Event) ||
-                 info.GetParameters()[1].ParameterType != typeof(GameLocation) ||
-                 info.GetParameters()[2].ParameterType != typeof(GameTime) ||
-                 info.GetParameters()[3].ParameterType != typeof(string[]))
-                throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
-
-            Log.Debug("Adding event command: " + command + " = " + info);
-            EventPatcher.CustomCommands.Add(command, info);
-        }
-
         public void RegisterSerializerType(Type type)
         {
             if (!type.GetCustomAttribute<XmlTypeAttribute>().TypeName.StartsWith("Mods_"))
@@ -84,17 +65,6 @@ namespace SpaceCore
                 PropertyType = propType,
                 Getter = getter,
                 Setter = setter,
-            } );
-        }
-
-        public void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc/*, Func<Farmer, string> passoutWakeupLocationFunc, Func<Farmer, Point?> passoutWakeupPointFunc*/ )
-        {
-            SpaceCore.CustomLocationContexts.Add( ( GameLocation.LocationContext ) name.GetDeterministicHashCode(), new CustomLocationContext()
-            {
-                Name = name,
-                GetLocationWeatherForTomorrow = getLocationWeatherForTomorrowFunc,
-                //PassoutWakeupLocation = passoutWakeupLocationFunc,
-                //PassoutWakeupPoint = passoutWakeupPointFunc,
             } );
         }
     }

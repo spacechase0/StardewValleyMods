@@ -9,23 +9,31 @@ namespace MoonMisadventures
 {
     internal static class ItemIds
     {
-        public const string MythiciteOre = "spacechase0.MoonMisadventures/Mythicite Ore";
-        public const string MythiciteBar = "spacechase0.MoonMisadventures/Mythicite Bar";
-        public const string MythiciteOreMinable = "spacechase0.MoonMisadventures/Mythicite Ore Minable";
+        public const string MythiciteOre = "(O)spacechase0.MoonMisadventures_MythiciteOre";
+        public const string MythiciteBar = "(O)spacechase0.MoonMisadventures_MythiciteBar";
+        public const string MythiciteOreMinable = "(O)spacechase0.MoonMisadventures_MythiciteOreMinable";
 
-        public const string StellarEssence = "spacechase0.MoonMisadventures/Stellar Essence";
-        public const string PersistiumDust = "spacechase0.MoonMisadventures/Persistium Dust";
-        public const string SoulSapphire = "spacechase0.MoonMisadventures/Soul Sapphire";
+        public const string StellarEssence = "(O)spacechase0.MoonMisadventures_StellarEssence";
+        public const string PersistiumDust = "(O)spacechase0.MoonMisadventures_PersistiumDust";
+        public const string SoulSapphire = "(O)spacechase0.MoonMisadventures_SoulSapphire";
 
-        public const string LunarWheat = "spacechase0.MoonMisadventures/Lunar Wheat";
-        public const string LunarWheatSeeds = "spacechase0.MoonMisadventures/Lunar Wheat Seeds";
+        public const string LunarWheat = "(O)spacechase0.MoonMisadventures_LunarWheat";
+        public const string LunarWheatSeeds = "(O)spacechase0.MoonMisadventures_LunarWheatSeeds";
+        public const string Sunbloom = "(O)spacechase0.MoonMisadventures_Sunbloom";
+        public const string SunbloomSeeds = "(O)spacechase0.MoonMisadventures_SunbloomSeeds";
+        public const string StarPetal = "(O)spacechase0.MoonMisadventures_StarPetal";
+        public const string StarPetalSeeds = "(O)spacechase0.MoonMisadventures_StarPetalSeeds";
+        public const string VoidBlossom = "(O)spacechase0.MoonMisadventures_VoidBlossom";
+        public const string VoidBlossomSeeds = "(O)spacechase0.MoonMisadventures_VoidBlossomSeeds";
+        public const string SoulSprout = "(O)spacechase0.MoonMisadventures_SoulSprout";
+        public const string SoulSproutSeeds = "(O)spacechase0.MoonMisadventures_SoulSproutSeeds";
 
-        public const string GalaxyEgg = "spacechase0.MoonMisadventures/Galaxy Egg";
-        public const string GalaxyMilk = "spacechase0.MoonMisadventures/Galaxy Milk";
+        public const string GalaxyEgg = "(O)spacechase0.MoonMisadventures_GalaxyEgg";
+        public const string GalaxyMilk = "(O)spacechase0.MoonMisadventures_GalaxyMilk";
 
-        public const string CosmosBoots = "spacechase0.MoonMisadventures/Boots of the Cosmos";
-        public const string CosmosSword = "spacechase0.MoonMisadventures/Blade of the Cosmos";
-        public const string CosmosDagger = "spacechase0.MoonMisadventures/Knife of the Cosmos";
-        public const string CosmosClub = "spacechase0.MoonMisadventures/Hammer of the Cosmos";
+        public const string CosmosBoots = "(B)spacechase0.MoonMisadventures_BootsOfTheCosmos";
+        public const string CosmosSword = "(W)spacechase0.MoonMisadventures_BladeOfTheCosmos";
+        public const string CosmosDagger = "(W)spacechase0.MoonMisadventures_KnifeOfTheCosmos";
+        public const string CosmosClub = "(W)spacechase0.MoonMisadventures_HammerOfTheCosmos";
     }
 }

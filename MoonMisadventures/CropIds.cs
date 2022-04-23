@@ -9,6 +9,6 @@ namespace MoonMisadventures
 {
     internal static class CropIds
     {
-        public const string LunarWheat = "spacechase0.MoonMisadventures/Lunar Wheat";
+        public const string LunarWheat = "spacechase0.MoonMisadventures/LunarWheat";
     }
 }

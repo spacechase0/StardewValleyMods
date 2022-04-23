@@ -1,0 +1,10 @@
+﻿{
+    "enchantment.terraform.name": "Terraform",
+    "hoe-mode.normal": "Normal",
+    "hoe-mode.water": "Water",
+    "hoe-mode.grass": "Grass",
+    "hoe-mode.void": "Void",
+
+    "config.hoe-mode-key.name": "Hoe Mode Switch Key",
+    "config.hoe-mode-key.description":  "The key to swap between hoe mode when the hoe has the Terraform enchantment.",
+}

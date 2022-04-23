@@ -167,25 +167,6 @@ namespace SpaceCore.Patches
             // Save is done as well for the case of creating a new save without loading one
 
             SaveGamePatcher.SerializerManager.InitializeSerializers();
-
-            // See SpaceCore.OnSaving comment
-            if ( Game1.IsMasterGame )
-            {
-                var lws = SaveGame.GetSerializer( typeof( LocationWeather ) );
-                Dictionary<int, string> customLocWeathers = new();
-                foreach ( int context in Game1.netWorldState.Value.LocationWeather.Keys )
-                {
-                    if ( !Enum.IsDefined( ( GameLocation.LocationContext ) context ) )
-                    {
-                        using MemoryStream ms = new();
-                        lws.Serialize( ms, Game1.netWorldState.Value.LocationWeather[ context ] );
-                        customLocWeathers.Add( context, Encoding.ASCII.GetString( ms.ToArray() ) );
-                    }
-                }
-                foreach ( int key in customLocWeathers.Keys )
-                    Game1.netWorldState.Value.LocationWeather.Remove( key );
-                SpaceCore.Instance.Helper.Data.WriteSaveData( "CustomLocationWeathers", customLocWeathers );
-            }
         }
 
         /// <summary>The method to call before <see cref="SaveGame.loadDataToLocations"/>.</summary>

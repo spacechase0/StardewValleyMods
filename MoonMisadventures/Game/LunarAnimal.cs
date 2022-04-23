@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using DynamicGameAssets.Game;
-using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Netcode;
 using StardewValley;
@@ -148,10 +146,10 @@ namespace MoonMisadventures.Game
                 this.friendshipTowardFarmer.Value = Math.Max( 0, ( int ) this.friendshipTowardFarmer - 20 );
             }
             bool produceToday = (byte)this.daysSinceLastLay >= (byte)this.daysToLay - ((this.type.Value.Equals("Sheep") && Game1.getFarmer(this.ownerID).professions.Contains(3)) ? 1 : 0) && r.NextDouble() < (double)(int)(byte)this.fullness / 200.0 && r.NextDouble() < (double)(int)(byte)this.happiness / 70.0;
-            int whichProduce;
+            string whichProduce;
             if ( !produceToday || ( int ) this.age < ( byte ) this.ageWhenMature )
             {
-                whichProduce = -1;
+                whichProduce = "-1";
             }
             else
             {
@@ -187,14 +185,14 @@ namespace MoonMisadventures.Game
             if ( ( byte ) this.harvestType == 1 && produceToday )
             {
                 this.currentProduce.Value = whichProduce;
-                whichProduce = -1;
+                whichProduce = "-1";
             }
-            if ( whichProduce != -1 /*&& this.home != null*/ )
+            if ( whichProduce != "-1" /*&& this.home != null*/ )
             {
                 bool spawn_object = true;
                 foreach ( StardewValley.Object location_object in loc.objects.Values )
                 {
-                    if ( ( bool ) location_object.bigCraftable && ( int ) location_object.parentSheetIndex == 165 && location_object.heldObject.Value != null && ( location_object.heldObject.Value as Chest ).addItem( new CustomObject( DynamicGameAssets.Mod.Find( lunarType.Value == LunarAnimalType.Chicken ? ItemIds.GalaxyEgg : ItemIds.GalaxyMilk ) as ObjectPackData )
+                    if ( ( bool ) location_object.bigCraftable && location_object.ItemID == "165" && location_object.heldObject.Value != null && ( location_object.heldObject.Value as Chest ).addItem( new StardewValley.Object( lunarType.Value == LunarAnimalType.Chicken ? ItemIds.GalaxyEgg : ItemIds.GalaxyMilk, 1 )
                     {
                         Quality = this.produceQuality
                     } ) == null )
@@ -206,7 +204,7 @@ namespace MoonMisadventures.Game
                 }
                 if ( spawn_object && !loc.Objects.ContainsKey( base.getTileLocation() ) )
                 {
-                    loc.Objects.Add( base.getTileLocation(), new CustomObject( DynamicGameAssets.Mod.Find( ItemIds.GalaxyEgg ) as ObjectPackData )
+                    loc.Objects.Add( base.getTileLocation(), new StardewValley.Object( ItemIds.GalaxyEgg, 1 )
                     {
                         CanBeGrabbed = true,
                         IsSpawnedObject = true,
