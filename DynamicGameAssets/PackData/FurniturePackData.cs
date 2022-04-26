@@ -75,7 +75,7 @@ namespace DynamicGameAssets.PackData
 
         // TV specific
         public Vector2 ScreenPosition { get; set; }
-        public int ScreenSize { get; set; }
+        public float ScreenSize { get; set; }
 
         public bool ShouldSerializeScreenPositione() { return this.Type == FurnitureType.TV; }
         public bool ShouldSerializeScreenSize() { return this.Type == FurnitureType.TV; }
