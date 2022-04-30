@@ -53,7 +53,7 @@ namespace DynamicGameAssets.PackData
         public string CraftingDataKey => this.ID;
 
         [JsonIgnore]
-        public string CraftingDataValue => "0 1/meow/0 1/" + (!this.IsCooking ? (this.Result[0].Value.IconSubrect.Size.Y > 20 ? "true" : "false/") : "") + $"/{this.SkillUnlockName} {this.SkillUnlockLevel}/{this.Name}";
+        public string CraftingDataValue => "0 1/meow/0 1/" + (!this.IsCooking ? (this.Result[0].Value.IconSubrect.Size.Y > 20 ? "true/" : "false/") : string.Empty) + $"{this.SkillUnlockName} {this.SkillUnlockLevel}/{this.Name}";
 
         public override void PostLoad()
         {
