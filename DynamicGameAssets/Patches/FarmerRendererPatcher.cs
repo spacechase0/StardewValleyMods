@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
@@ -24,7 +25,8 @@ namespace DynamicGameAssets.Patches
         {
             harmony.Patch(
                 original: this.RequireMethod<FarmerRenderer>("ApplyShoeColor"),
-                prefix: this.GetHarmonyMethod(nameof(Before_ApplyShoeColor))
+                prefix: this.GetHarmonyMethod(nameof(Before_ApplyShoeColor)),
+                finalizer: this.GetHarmonyMethod(nameof(Finalizer_ApplyShoeColor))
             );
             harmony.Patch(
                 original: this.RequireMethod<FarmerRenderer>(nameof(FarmerRenderer.ApplySleeveColor)),
@@ -74,6 +76,19 @@ namespace DynamicGameAssets.Patches
             }
 
             return true;
+        }
+
+        /// <summary>The method to call as a finalized on <see cref="FarmerRenderer.ApplyShoeColor"/>.</summary>
+        private static Exception Finalizer_ApplyShoeColor(Exception __exception, FarmerRenderer __instance)
+        {
+            if (__exception is not null)
+            {
+                var this_shoes = Mod.instance.Helper.Reflection.GetField<NetInt>(__instance, "shoes").GetValue();
+                Log.Warn($"Detected invalid boots with value {this_shoes.ToString()} and error {__exception}");
+                __instance.recolorShoes(0);
+                return null;
+            }
+            return null;
         }
 
         /// <summary>The method to call before <see cref="FarmerRenderer.ApplySleeveColor"/>.</summary>
