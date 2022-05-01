@@ -28,6 +28,9 @@ namespace DynamicGameAssets.PackData
             [DefaultValue(null)]
             public string FrontTexture { get; set; } // for seats, beds, fish tanks
 
+            [DefaultValue(null)]
+            public string NightTexture { get; set; } // for lamps, windows, sconces
+
             public Vector2 DisplaySize { get; set; }
             public int CollisionHeight { get; set; }
 

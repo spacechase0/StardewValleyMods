@@ -79,7 +79,15 @@ namespace DynamicGameAssets.Game
             }
 
             var currConfig = this.GetCurrentConfiguration();
-            var currTex = this.Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            TexturedRect currTex = null;
+            if (Game1.isDarkOut() && currConfig.NightTexture != null)
+            {
+                currTex = this.Data.pack.GetTexture(currConfig.NightTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            }
+            else
+            {
+                currTex = this.Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            }
             var frontTex = currConfig.FrontTexture != null ? this.Data.pack.GetTexture(currConfig.FrontTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom) : null;
 
             if (Furniture.isDrawingLocationFurniture)
@@ -128,7 +136,15 @@ namespace DynamicGameAssets.Game
         public void drawAtNonTileSpot(SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha = 1f)
         {
             var currConfig = this.GetCurrentConfiguration();
-            var currTex = this.Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            TexturedRect currTex = null;
+            if (Game1.isDarkOut() && currConfig.NightTexture != null)
+            {
+                currTex = this.Data.pack.GetTexture(currConfig.NightTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            }
+            else
+            {
+                currTex = this.Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            }
 
             spriteBatch.Draw(currTex.Texture, location, currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
         }
