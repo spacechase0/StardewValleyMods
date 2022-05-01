@@ -271,6 +271,22 @@ namespace DynamicGameAssets
                         }
                         if (ret is CustomObject obj && this.ObjectColor.A > 0)
                             obj.ObjectColor = this.ObjectColor;
+                        if (this.Quantity > 1)
+                        {
+                            if (ret.maximumStackSize() < 1)
+                            {
+                                Log.Warn($"Recipe trying to stack {this.Value}, but it is not stackable. Defaulting to producing 1 item.");
+                            }
+                            else if (this.Quantity > ret.maximumStackSize())
+                            {
+                                Log.Warn($"Recipe would produce more than the maximum stack size of {this.Value}, defaulting to maximum stack size.");
+                                ret.Stack = ret.maximumStackSize();
+                            }
+                            else
+                            {
+                                ret.Stack = this.Quantity;
+                            }
+                        }
                         return ret;
                     }
 
