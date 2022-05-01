@@ -1,0 +1,13 @@
+{
+    /*********
+    ** Building data
+    *********/
+    "spooky-shed.name": "Kísérteties fészer",
+    "spooky-shed.description": "Egy üres épület. De hátborzongató is.",
+
+    "fishing-shack.name": "Horgászkunyhó",
+    "fishing-shack.description": "Egy kunyhó a horgászáshoz.",
+
+    "mini-spa.name": "Mini fürdő",
+    "mini-spa.description": "Egy jó hely a pihenésre és feltöltődésre."
+}
