@@ -301,6 +301,10 @@ namespace DynamicGameAssets.PackData
                     try
                     {
                         texture = this.smapiPack.LoadAsset<Texture2D>(frame.FilePath);
+                        if (texture.Width < xSize)
+                        {
+                            Log.Warn($"Underwidth texture in \"{frame.FilePath}\" in {this.smapiPack.Manifest.Name} ({this.smapiPack.Manifest.UniqueID})!");
+                        }
                         texture.Name = PathUtilities.NormalizeAssetName($"DGA/{this.smapiPack.Manifest.UniqueID}/{frame.FilePath}");
                     }
                     catch
@@ -310,21 +314,24 @@ namespace DynamicGameAssets.PackData
                 }
                 else
                 {
-                    Log.Warn($"No such \"{frame.FilePath}\" in {this.smapiPack.Manifest.Name} ({this.smapiPack.Manifest.UniqueID})!");
+                    Log.Error($"No such \"{frame.FilePath}\" in {this.smapiPack.Manifest.Name} ({this.smapiPack.Manifest.UniqueID})!");
                     texture = null;
                 }
 
                 texture ??= Game1.staminaRect;
+                
                 this.TextureCache[frame.FilePath] = texture;
             }
 
             // build texture + source rectangle
-            int spriteColumns = texture.Width / xSize;
+            int spriteColumns = texture.Width > xSize ? texture.Width / xSize : 1;
             int index = frame.SpriteIndex;
+            int rectWidth = texture.Width > xSize ? xSize : texture.Width;
+            int rectHeight = texture.Height > ySize ? ySize : texture.Height;
             return new TexturedRect
             {
                 Texture = texture,
-                Rect = new Rectangle(index % spriteColumns * xSize, index / spriteColumns * ySize, xSize, ySize)
+                Rect = new Rectangle(index % spriteColumns * xSize, index / spriteColumns * ySize, rectWidth, rectHeight)
             };
         }
     }
