@@ -27,6 +27,17 @@ namespace DynamicGameAssets
                     qty
                 });
             }
+            // Seeds and saplings need price modified
+            else if (this.Item is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+            {
+                shop.itemPriceAndStock.Add(this.Item, new[]
+                {
+                    0,
+                    qty,
+                    this.CurrencyId.Value, // Black magic copied
+                    (int)((float)this.Price*Game1.MasterPlayer.difficultyModifier),
+                });
+            }
             else
             {
                 shop.itemPriceAndStock.Add(this.Item, new[]
@@ -52,6 +63,17 @@ namespace DynamicGameAssets
                 {
                     this.CurrencyId == null ? this.Price : 0,
                     qty
+                });
+            }
+            // Seeds and saplings need price modified
+            else if (this.Item is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+            {
+                stock.Add(this.Item, new[]
+                {
+                    0,
+                    qty,
+                    this.CurrencyId.Value, // Black magic copied
+                    (int)((float)this.Price*Game1.MasterPlayer.difficultyModifier),
                 });
             }
             else

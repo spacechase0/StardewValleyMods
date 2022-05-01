@@ -831,11 +831,16 @@ namespace DynamicGameAssets
                         {
                             if (!Mod.State.TodaysShopEntries.ContainsKey(shopEntry.ShopId))
                                 Mod.State.TodaysShopEntries.Add(shopEntry.ShopId, new List<ShopEntry>());
+                            int shopEntryPrice = shopEntry.Cost;
+                            if (shopEntry.Item.Create() is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+                            {
+                                shopEntryPrice = (int)((float)shopEntryPrice * Game1.MasterPlayer.difficultyModifier);
+                            }
                             Mod.State.TodaysShopEntries[shopEntry.ShopId].Add(new ShopEntry()
                             {
                                 Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
                                 Quantity = shopEntry.MaxSold,
-                                Price = shopEntry.Cost,
+                                Price = shopEntryPrice,
                                 CurrencyId = shopEntry.Currency == null ? null : (int.TryParse(shopEntry.Currency, out int intCurr) ? intCurr : $"{cp.Key}/{shopEntry.Currency}".GetDeterministicHashCode())
                             });
                         }
