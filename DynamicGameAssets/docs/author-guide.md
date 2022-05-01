@@ -560,7 +560,7 @@ Certain furniture types have additional fields:
 | --- | --- | --- | --- | --- | --- |
 | `Bed` | `BedType` | `Enum[Single, Double, Child]` | `"Single"` | The bed type. | (unknown, untested) |
 | `TV` | `ScreenPosition` | `Vector2` | Default: `"0, 0"` | The offset for the screen to render, in pixels, from the texture. | (unknown, untested) |
-| `TV` | `ScreenSize` | `int` | Required | A multiplier for the screen size, in relation to the size of the graphics in the game files. | `true` |
+| `TV` | `ScreenSize` | `float` | Required | A multiplier for the screen size, in relation to the size of the graphics in the game files. | `true` |
 | `FishTank` | `TankSwimmingCapacity` | `int` | Default: `-1` | The max amount of "swimming fish" in the fish tank, or -1 for unlimited. | `true` |
 | `FishTank` | `TankGroundCapacity` | `int` | Default: `-1` | The max amount of "ground fish" in the fish tank, or -1 for unlimited. | `true` |
 | `FishTank` | `TankDecorationCapacity` | `int` | Default: `-1` | The max amount of "decorations" in the fish tank, or -1 for unlimited. (NOTE: Only one of each type of decoration is supported.) | `true` |
