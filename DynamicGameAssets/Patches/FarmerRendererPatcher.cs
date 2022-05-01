@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using DynamicGameAssets.Game;
 using DynamicGameAssets.PackData;
@@ -24,7 +25,8 @@ namespace DynamicGameAssets.Patches
         {
             harmony.Patch(
                 original: this.RequireMethod<FarmerRenderer>("ApplyShoeColor"),
-                prefix: this.GetHarmonyMethod(nameof(Before_ApplyShoeColor))
+                prefix: this.GetHarmonyMethod(nameof(Before_ApplyShoeColor)),
+                finalizer: this.GetHarmonyMethod(nameof(Finalizer_ApplyShoeColor))
             );
             harmony.Patch(
                 original: this.RequireMethod<FarmerRenderer>(nameof(FarmerRenderer.ApplySleeveColor)),
@@ -76,6 +78,19 @@ namespace DynamicGameAssets.Patches
             return true;
         }
 
+        /// <summary>The method to call as a finalized on <see cref="FarmerRenderer.ApplyShoeColor"/>.</summary>
+        private static Exception Finalizer_ApplyShoeColor(Exception __exception, FarmerRenderer __instance)
+        {
+            if (__exception is not null)
+            {
+                var this_shoes = Mod.instance.Helper.Reflection.GetField<NetInt>(__instance, "shoes").GetValue();
+                Log.Warn($"Detected invalid boots with value {this_shoes.ToString()} and error {__exception}");
+                __instance.recolorShoes(0);
+                return null;
+            }
+            return null;
+        }
+
         /// <summary>The method to call before <see cref="FarmerRenderer.ApplySleeveColor"/>.</summary>
         /// <returns>Returns whether to run the original method.</returns>
         private static bool Before_ApplySleeveColor(FarmerRenderer __instance, string texture_name, Color[] pixels, Farmer who)
@@ -104,10 +119,18 @@ namespace DynamicGameAssets.Patches
                 var maleC = shirt.Data.TextureMaleColor == null ? null : shirt.Data.pack.GetTexture(shirt.Data.TextureMaleColor, 8, 32);
                 var femaleNC = shirt.Data.TextureFemale == null ? maleNC : shirt.Data.pack.GetTexture(shirt.Data.TextureFemale, 8, 32);
                 var femaleC = shirt.Data.TextureFemaleColor == null ? null : shirt.Data.pack.GetTexture(shirt.Data.TextureFemaleColor, 8, 32);
-                maleNC.Texture.GetData(0, maleNC.Rect, shirtData[0], 0, 8 * 32);
-                maleC?.Texture?.GetData(0, maleNC.Rect, shirtData[1], 0, 8 * 32);
-                femaleNC.Texture.GetData(0, femaleNC.Rect, shirtData[2], 0, 8 * 32);
-                femaleC?.Texture?.GetData(0, maleNC.Rect, shirtData[3], 0, 8 * 32);
+                try
+                {
+                    maleNC.Texture.GetData(0, maleNC.Rect, shirtData[0], 0, 8 * 32);
+                    maleC?.Texture?.GetData(0, maleNC.Rect, shirtData[1], 0, 8 * 32);
+                    femaleNC.Texture.GetData(0, femaleNC.Rect, shirtData[2], 0, 8 * 32);
+                    femaleC?.Texture?.GetData(0, maleNC.Rect, shirtData[3], 0, 8 * 32);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Failed to apply sleeve color with exception {ex}");
+                    return false;
+                }
                 //FarmerRenderer.shirtsTexture.GetData( shirtData );
                 int index = who.IsMale ? 0 : 2; // __instance.ClampShirt(who.GetShirtIndex()) * 8 / 128 * 32 * FarmerRenderer.shirtsTexture.Bounds.Width + __instance.ClampShirt(who.GetShirtIndex()) * 8 % 128 + FarmerRenderer.shirtsTexture.Width * 4;
                 int dye_index = index + 1;

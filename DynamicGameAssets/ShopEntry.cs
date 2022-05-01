@@ -13,6 +13,10 @@ namespace DynamicGameAssets
 
         public void AddToShop(ShopMenu shop)
         {
+            // Check to see if this shopEntry has already been added to this shop--if so, don't add
+            if (shop.itemPriceAndStock.ContainsKey(this.Item))
+                return;
+
             int qty = this.Quantity;
             if (this.Item is StardewValley.Object { IsRecipe: true })
                 qty = 1;
@@ -25,6 +29,17 @@ namespace DynamicGameAssets
                 {
                     this.CurrencyId == null ? this.Price : 0,
                     qty
+                });
+            }
+            // Seeds and saplings need price modified
+            else if (this.Item is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+            {
+                shop.itemPriceAndStock.Add(this.Item, new[]
+                {
+                    0,
+                    qty,
+                    this.CurrencyId.Value, // Black magic copied
+                    (int)((float)this.Price*Game1.MasterPlayer.difficultyModifier),
                 });
             }
             else
@@ -52,6 +67,17 @@ namespace DynamicGameAssets
                 {
                     this.CurrencyId == null ? this.Price : 0,
                     qty
+                });
+            }
+            // Seeds and saplings need price modified
+            else if (this.Item is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+            {
+                stock.Add(this.Item, new[]
+                {
+                    0,
+                    qty,
+                    this.CurrencyId.Value, // Black magic copied
+                    (int)((float)this.Price*Game1.MasterPlayer.difficultyModifier),
                 });
             }
             else

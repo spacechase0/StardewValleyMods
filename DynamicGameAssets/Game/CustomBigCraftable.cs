@@ -139,6 +139,7 @@ namespace DynamicGameAssets.Game
                     continue;
 
                 bool hadIngredients = true;
+                ItemAbstraction missingIngred = null;
                 foreach (var ingred in recipe.Ingredients)
                 {
                     int left = ingred.Quantity;
@@ -154,7 +155,17 @@ namespace DynamicGameAssets.Game
                     if (left > 0)
                     {
                         hadIngredients = false;
+                        missingIngred = ingred;
                         break;
+                    }
+                }
+
+                string missingIngredientName = null;
+                if (missingIngred != null)
+                {
+                    if (missingIngred.Type != ItemAbstraction.ItemType.ContextTag)
+                    {
+                        missingIngredientName = missingIngred.Create().DisplayName;
                     }
                 }
 
@@ -215,13 +226,23 @@ namespace DynamicGameAssets.Game
                 else
                 {
                     if (!probe && StardewValley.Object.autoLoadChest == null)
-                        Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12772")); ;
+                    {
+                        if (missingIngredientName != null)
+                        {
+                            Game1.showRedMessage(I18n.NotEnoughIngredients(item: missingIngredientName));
+                        }
+                        else
+                        {
+                            Game1.showRedMessage(I18n.NotEnoughIngredientsGeneric());
+                        }
+                    }
+                    }
                     return false;
                 }
             }
 
             if (!probe && StardewValley.Object.autoLoadChest == null)
-                Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.12777"));
+                Game1.showRedMessage(I18n.WrongIngredientSelected(item: dropInItem.DisplayName));
             return false;
         }
 
@@ -334,10 +355,18 @@ namespace DynamicGameAssets.Game
             spriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 - 8, (float)(y * 64 - 96 - 16) + yOffset)), new Rectangle(141, 465, 20, 24), Color.White * 0.75f, 0f, Vector2.Zero, 4f, SpriteEffects.None, base_sort + 1E-06f);
             if (this.heldObject.Value != null)
             {
-                spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset)), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.heldObject.Value.parentSheetIndex, 16, 16), Color.White * 0.75f, 0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, base_sort + 1E-05f);
-                if (this.heldObject.Value is ColoredObject)
+                if (this.heldObject.Value is CustomObject custObj)
                 {
-                    spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset)), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, (int)this.heldObject.Value.parentSheetIndex + 1, 16, 16), (this.heldObject.Value as ColoredObject).color.Value * 0.75f, 0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, base_sort + 1.1E-05f);
+                    Vector2 custObjPosition = new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset);
+                    custObj.drawWhenProduced(spriteBatch, custObjPosition, base_sort + 1E-05f);
+                }
+                else
+                {
+                    spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset)), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.heldObject.Value.parentSheetIndex, 16, 16), Color.White * 0.75f, 0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, base_sort + 1E-05f);
+                    if (this.heldObject.Value is ColoredObject)
+                    {
+                        spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64 + 32, (float)(y * 64 - 64 - 8) + yOffset)), Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, (int)this.heldObject.Value.parentSheetIndex + 1, 16, 16), (this.heldObject.Value as ColoredObject).color.Value * 0.75f, 0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, base_sort + 1.1E-05f);
+                    }
                 }
             }
         }

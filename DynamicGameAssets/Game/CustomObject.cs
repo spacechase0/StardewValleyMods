@@ -277,6 +277,40 @@ namespace DynamicGameAssets.Game
             }
         }
 
+        public void drawWithoutShadow(SpriteBatch spriteBatch, int xNonTile, int yNonTile, float layerDepth, float alpha = 1)
+        {
+            if (this.isTemporarilyInvisible)
+                return;
+
+            if (!Game1.eventUp || !Game1.CurrentEvent.isTileWalkedOn(xNonTile / 64, yNonTile / 64))
+            {
+                var tex = this.Data.pack.GetTexture(this.Data.Texture, 16, 16);
+                Texture2D objectSpriteSheet = tex.Texture;
+                Vector2 position2 = Game1.GlobalToLocal(Game1.viewport, new Vector2(xNonTile + 32 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), yNonTile + 32 + ((this.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0)));
+                Rectangle? sourceRectangle = tex.Rect; // GameLocation.getSourceRectForObject(base.ParentSheetIndex);
+                Color color = Color.White * alpha;
+                Vector2 origin = new Vector2(8f, 8f);
+                _ = this.scale;
+                spriteBatch.Draw(objectSpriteSheet, position2, sourceRectangle, color, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
+                if (this.NetHasColor.Value)
+                {
+                    var colorTex = this.Data.pack.GetTexture(this.Data.TextureColor, 16, 16);
+                    spriteBatch.Draw(colorTex.Texture, position2, colorTex.Rect, this.ObjectColor.Value, 0f, origin, (this.scale.Y > 1f) ? this.getScale().Y : 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth + 2e-05f);
+                }
+            }
+        }
+
+        public void drawWhenProduced(SpriteBatch spriteBatch, Vector2 position, float layerDepth, float alpha = 1)
+        {
+            if (this.isTemporarilyInvisible)
+                return;
+
+            var tex = this.Data.pack.GetTexture(this.Data.Texture, 16, 16);
+            Texture2D objectSpriteSheet = tex.Texture;
+            Rectangle? sourceRectangle = tex.Rect;
+            spriteBatch.Draw(objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, position), sourceRectangle, Color.White * 0.75f, 0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, layerDepth);
+        }
+
         public override Item getOne()
         {
             var ret = new CustomObject(this.Data);
@@ -299,6 +333,20 @@ namespace DynamicGameAssets.Game
 
         public override bool canBePlacedHere(GameLocation l, Vector2 tile)
         {
+            Vector2 nonTile = tile * 64f * 64f;
+            nonTile.X += 32f;
+            nonTile.Y += 32f;
+            foreach (Furniture f in l.furniture)
+            {
+                if ((int)f.furniture_type.Value == 11 && f.getBoundingBox(f.TileLocation).Contains((int)nonTile.X, (int)nonTile.Y) && f.heldObject.Value == null)
+                {
+                    return true;
+                }
+                if (f.getBoundingBox(f.TileLocation).Intersects(new Rectangle((int)tile.X * 64, (int)tile.Y * 64, 64, 64)) && !f.isPassable() && !f.AllowPlacementOnThisTile((int)tile.X, (int)tile.Y))
+                {
+                    return false;
+                }
+            }
             return this.isPlaceable() && !l.isTileOccupiedForPlacement(tile, this);
         }
 

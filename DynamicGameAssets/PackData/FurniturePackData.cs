@@ -28,6 +28,9 @@ namespace DynamicGameAssets.PackData
             [DefaultValue(null)]
             public string FrontTexture { get; set; } // for seats, beds, fish tanks
 
+            [DefaultValue(null)]
+            public string NightTexture { get; set; } // for lamps, windows, sconces
+
             public Vector2 DisplaySize { get; set; }
             public int CollisionHeight { get; set; }
 
@@ -66,6 +69,9 @@ namespace DynamicGameAssets.PackData
         [DefaultValue(FurnitureType.Decoration)]
         [JsonConverter(typeof(StringEnumConverter))]
         public FurnitureType Type { get; set; }
+
+        [DefaultValue(true)]
+        public bool ShowInCatalogue { get; set; } = true;
 
         // Bed specific
         [JsonConverter(typeof(StringEnumConverter))]

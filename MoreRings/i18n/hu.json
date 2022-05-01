@@ -1,4 +1,4 @@
-﻿{
+{
     /*********
     ** Ring items
     *********/
@@ -11,14 +11,14 @@
     "ring-of-regeneration.name": "Regeneráló gyűrű",
     "ring-of-regeneration.description": "Idővel lassan gyógyulni fogsz.",
 
-    "ring-of-diamond-booze.name": "Gyémánt borgyűrű",
-    "ring-of-diamond-booze.description": "Ellensúlyozza az enyhe alkohol hatását.",
+    "ring-of-diamond-booze.name": "Gyémánt bor gyűrű",
+    "ring-of-diamond-booze.description": "Enyhén ellensúlyozza az alkohol hatását.",
 
     "ring-of-wide-nets.name": "Széles háló gyűrű",
     "ring-of-wide-nets.description": "50%-kal megnöveli a horgászbot kapási területét.",
 
-    "ring-of-far-reaching.name": "Messzire érő gyűrű",
-    "ring-of-far-reaching.description": "Szerszámokat használhatsz távolról.",
+    "ring-of-far-reaching.name": "Messzesség gyűrű",
+    "ring-of-far-reaching.description": "A szerszámokat távol is használhatod.",
 
     "ring-of-true-sight.name": "Igaz látás gyűrűje",
     "ring-of-true-sight.description": "Láss túl azon, mint amit láthatsz.",
@@ -27,19 +27,18 @@
     /*********
     ** Generic Mod Config Menu UI
     *********/
-    // TODO
-    "config.quality-ring-chance.name": "Quality+ Ring: Chance",
-    "config.quality-ring-chance.description": "The percentage chance of a higher crop quality with the Quality+ Ring equipped.",
+    "config.quality-ring-chance.name": "Minőség növelő gyűrű: Esély",
+    "config.quality-ring-chance.description": "A magasabb terméshozam százalékos esélye.",
 
-    "config.ring-of-wide-nets-multiplier.name": "Ring of Wide Nets: Multiplier",
-    "config.ring-of-wide-nets-multiplier.description": "The multiplier applied to the fishing bar size with the Ring of Wide Nets equipped.",
+    "config.ring-of-wide-nets-multiplier.name": "Széles háló gyűrű: Szorzó",
+    "config.ring-of-wide-nets-multiplier.description": "A horgászsáv méretére alkalmazott szorzó.",
 
-    "config.ring-of-regeneration-rate.name": "Ring of Regeneration: Regen",
-    "config.ring-of-regeneration-rate.description": "The health regen rate per second with the Ring of Regeneration equipped.",
+    "config.ring-of-regeneration-rate.name": "Regeneráló gyűrű: Regenerálódás",
+    "config.ring-of-regeneration-rate.description": "Az életerő regenerálódásának másodpercenkénti sebessége.",
 
-    "config.refreshing-ring-rate.name": "Refreshing Ring: Regen",
-    "config.refreshing-ring-rate.description": "The stamina regen rate per second with the Refreshing Ring equipped.",
+    "config.refreshing-ring-rate.name": "Felfrissítő gyűrű: Felfrissítés",
+    "config.refreshing-ring-rate.description": "Az állóképesség regenerálódásának másodpercenkénti sebessége.",
 
-    "config.ring-of-far-reaching-distance.name": "Ring of Far Reaching: Distance",
-    "config.ring-of-far-reaching-distance.description": "The distance in tiles at which you can use tools with the Ring of Far Reaching equipped."
+    "config.ring-of-far-reaching-distance.name": "Messzeség gyűrű: Távolság",
+    "config.ring-of-far-reaching-distance.description": "Csempékben megadott távolság, melyen belül a szerszámokat használhatod."
 }

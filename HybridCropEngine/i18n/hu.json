@@ -1,0 +1,7 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.scan-everywhere.name": "Viszgálat mindenhol",
+    "config.scan-everywhere.tooltip": "Mindenhol megvizsgálja a hibridek létrehozását.\nA hamis azt jelenti, hogy csak a Farmot és az Üvegházat viszgálja."
+}

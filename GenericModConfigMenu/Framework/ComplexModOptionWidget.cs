@@ -15,7 +15,7 @@ namespace GenericModConfigMenu.Framework
         public override int Width { get; } = 0;
 
         /// <inheritdoc />
-        public override int Height { get; }
+        public override int Height { get => ModOption.Height(); }
 
 
         /*********
@@ -24,7 +24,6 @@ namespace GenericModConfigMenu.Framework
         public ComplexModOptionWidget(ComplexModOption modOption)
         {
             this.ModOption = modOption;
-            this.Height = modOption.Height();
         }
 
         /// <inheritdoc />
