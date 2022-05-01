@@ -67,6 +67,9 @@ namespace DynamicGameAssets.PackData
         [JsonConverter(typeof(StringEnumConverter))]
         public FurnitureType Type { get; set; }
 
+        [DefaultValue(true)]
+        public bool ShowInCatalogue { get; set; } = true;
+
         // Bed specific
         [JsonConverter(typeof(StringEnumConverter))]
         public BedFurniture.BedType BedType { get; set; } = BedFurniture.BedType.Single;
