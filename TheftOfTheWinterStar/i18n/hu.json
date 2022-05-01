@@ -1,0 +1,55 @@
+{
+    /*********
+    ** Items
+    *********/
+    // crafting recipe
+    "recipe.frosty-stardrop.name": "Fagyos csillaghulló",
+
+    // items
+    "item.festive-big-key-a.name": "Ünnepi nagy kulcs (A)",
+    "item.festive-big-key-a.description": "A fagyos kazamatában használható 'nagy kulcs' első fele.",
+
+    "item.festive-big-key-b.name": "Ünnepi nagy kulcs (B)",
+    "item.festive-big-key-b.description": "A fagyos kazamatában használható 'nagy kulcs' második fele.",
+
+    "item.festive-key.name": "Ünnepi kulcs",
+    "item.festive-key.description": "A fagyos kazamatában használható kulcs.",
+
+    "item.frosty-stardrop-piece.name": "Fagyos csillaghulló darab",
+    "item.frosty-stardrop-piece.description": "Egy csillaghulló darab. Öt kombinálható össze egy teljes egésszé.",
+
+    "item.tempus-globe.name": "Időgömb",
+    "item.tempus-globe.description": "Egy misztikus tárgy, mely lehetővé teszi, hogy a körülötte lévő növények egész évben növekedjenek. A közelében lévő növényeket meg is öntözi.\nA lefedettség 5x5 terület, a tárgy középpontjától.",
+
+    // weapons
+    "weapon.festive-scepter.name": "Ünnepi jogar",
+    "weapon.festive-scepter.description": "Fagyos sugarat lő ki.",
+
+
+    /*********
+    ** Lewis event
+    *********/
+    "event.lewis-speech": "Helló, @.#$b#Éppen a Téli csillag ünnepére készültem, és... Nem találom a dekorációkat!$s#$b#Úgy tűnik, hogy valaki ellopta a dekorációkat.$4#$b#Nem tudom, hogy bárki is miért tenne ilyet... De a dekorációk nem tűnnek el maguktól!$s#$b#Mindegy, reméltem, hogy te vissza tudnád szerezni nekünk?$h#$b#A buszmegállótól balra, az alagútban törött díszek nyomai vezetnek. Mindannyian nagyra értékelnénk, ha megtennéd ezt értünk.$n#$b#Vagy felbérelhetnénk Marlont, de az nagyon sokba kerülne.$s#$b#Sok szerencsét!$n",
+
+
+    /*********
+    ** Map messages
+    *********/
+    "map-messages.locked-entrance": "Ez az ajtó jelenleg még zárva van.",
+    "map-messages.locked-door": "Ez az ajtó zárva van. Valószínűleg kulcs kell hozzá.",
+    "map-messages.locked-boss": "Ez a hatalmas ajtó zárva van. Talán a közelben lehet a nyitója.",
+    "map-messages.unlocked": "Az ajtó nyitva van.",
+    "map-messages.item-puzzle": "Úgy tűnik, mintha egy sziluett lenne a talapzaton.",
+    "map-messages.target": "A célpont.",
+    "map-messages.trail-lights": "Néhány ünnepi fényfüzér.",
+    "map-messages.trail-candy-cane": "Egy összetört cukorrúd.",
+    "map-messages.trail-ornaments": "Néhány összetört ünnepi dísz.",
+    "map-messages.trail-tree": "Egy összetört miniatűr fa.",
+
+
+    /*********
+    ** Final boss
+    *********/
+    "final-boss.speech": "Hogy MERÉSZELNEK nélkülem szórakozni! Soha nem kapják vissza a dekorációjukat!",
+    "final-boss.victory-message": "Visszakaptad a dekorációkat!\nMegtanultad a 'Időgömb' receptjét is!"
+}
