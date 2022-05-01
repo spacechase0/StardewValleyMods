@@ -77,7 +77,7 @@ namespace DynamicGameAssets.Game
         public override Rectangle GetTankBounds()
         {
             var ret = base.GetTankBounds();
-            ret.Y -= 64 * 3;
+            ret.Y = (int)base.TileLocation.Y * 64 - 4 * defaultSourceRect.Height + this.boundingBox.Height + 64;
             return ret;
         }
 

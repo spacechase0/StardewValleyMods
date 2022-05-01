@@ -1,0 +1,7 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.hearts-needed.name": "하트 필요",
+    "config.hearts-needed.desc": "봄꽃 무도회에서 NPC와 함께 춤을 추기 위해 필요한 하트 수."
+}

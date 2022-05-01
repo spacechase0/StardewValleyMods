@@ -160,7 +160,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Custom_Crops", "Custom_Crop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewGamePlus", "NewGamePlus\NewGamePlus.csproj", "{3DA3FB18-AC0C-40F4-B45B-5D13916D032A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DyeableHats", "DyeableHats\DyeableHats.csproj", "{AACF284D-8352-4727-9F9E-9916BA2266AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DyeableHats", "DyeableHats\DyeableHats.csproj", "{AACF284D-8352-4727-9F9E-9916BA2266AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Designs", "Designs\Designs.csproj", "{1D6C6511-624C-4332-9E70-486F81A28888}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaiseJunimos", "RaiseJunimos\RaiseJunimos.csproj", "{CB5BB6E2-D963-4A27-A3B9-1E4BB068983B}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -184,6 +188,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{16c65e62-e346-4aea-809a-36ebc0442607}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1c1289bd-f40b-4343-aa8a-4f151f887463}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1c3d86aa-c048-4798-bec5-07d7269cce53}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{1d6c6511-624c-4332-9e70-486f81a28888}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{20e193c9-a779-494e-83f1-b2a920551b19}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{273b7946-725e-4dcf-8a8c-0d9e5b2d2eec}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{27983ca4-bc2e-4c12-bd06-60c6be031eb1}*SharedItemsImports = 5
@@ -248,6 +253,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{c3d5972f-cb65-4c85-8e1c-55c78a99940a}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{c5df0500-3462-4095-aef7-3abc5ebfa5ea}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{c5df0500-3462-4095-aef7-3abc5ebfa5ea}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{cb5bb6e2-d963-4a27-a3b9-1e4bb068983b}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{cb66640e-62e0-4efe-b2f2-5c06720275f3}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{d93e668b-6c2a-470c-b9d3-ab86bd3a1e99}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{d93e668b-6c2a-470c-b9d3-ab86bd3a1e99}*SharedItemsImports = 5
@@ -546,6 +552,14 @@ Global
 		{AACF284D-8352-4727-9F9E-9916BA2266AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AACF284D-8352-4727-9F9E-9916BA2266AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AACF284D-8352-4727-9F9E-9916BA2266AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D6C6511-624C-4332-9E70-486F81A28888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D6C6511-624C-4332-9E70-486F81A28888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D6C6511-624C-4332-9E70-486F81A28888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D6C6511-624C-4332-9E70-486F81A28888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB5BB6E2-D963-4A27-A3B9-1E4BB068983B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB5BB6E2-D963-4A27-A3B9-1E4BB068983B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB5BB6E2-D963-4A27-A3B9-1E4BB068983B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB5BB6E2-D963-4A27-A3B9-1E4BB068983B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -568,6 +582,8 @@ Global
 		{43EDE3D9-2062-4F79-B581-708FFAF9D195} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{34AB99B0-096E-4919-933C-A7A04D1E9F91} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{695CDA6A-9398-4D71-9432-9763CC510020} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{1D6C6511-624C-4332-9E70-486F81A28888} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{CB5BB6E2-D963-4A27-A3B9-1E4BB068983B} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}

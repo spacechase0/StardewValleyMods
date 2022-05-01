@@ -236,6 +236,7 @@ namespace DynamicGameAssets.Game
                             Game1.showRedMessage(I18n.NotEnoughIngredientsGeneric());
                         }
                     }
+                    }
                     return false;
                 }
             }

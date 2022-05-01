@@ -25,6 +25,8 @@ namespace SpaceShared.UI
 
         private const int RowPadding = 16;
         private int RowHeightImpl;
+        private bool FixedRowHeight;
+        private int ContentHeight;
 
 
         /*********
@@ -64,8 +66,9 @@ namespace SpaceShared.UI
         /*********
         ** Public methods
         *********/
-        public Table()
+        public Table(bool fixedRowHeight = true)
         {
+            this.FixedRowHeight = fixedRowHeight;
             this.UpdateChildren = false; // table will update children itself
             this.Scrollbar = new Scrollbar
             {
@@ -77,10 +80,13 @@ namespace SpaceShared.UI
         public void AddRow(Element[] elements)
         {
             this.Rows.Add(elements);
+            int maxElementHeight = 0;
             foreach (var child in elements)
             {
                 this.AddChild(child);
+                maxElementHeight = Math.Max(maxElementHeight, child.Height);
             }
+            this.ContentHeight += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             this.UpdateScrollbar();
         }
 
@@ -91,36 +97,42 @@ namespace SpaceShared.UI
             if (this.IsHidden(isOffScreen))
                 return;
 
-            int ir = 0;
+            int topPx = 0;
             foreach (var row in this.Rows)
             {
+                int maxElementHeight = 0;
                 foreach (var element in row)
                 {
-                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.TopRow * this.RowHeight);
+                    element.LocalPosition = new Vector2(element.LocalPosition.X, topPx - this.Scrollbar.TopRow * this.RowHeight);
                     bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
 
                     if (!isChildOffScreen || element is Label) // Labels must update anyway to get rid of hovertext on scrollwheel
                         element.Update(isOffScreen: isChildOffScreen);
+                    maxElementHeight = Math.Max(maxElementHeight, element.Height);
                 }
-                ++ir;
+                topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             }
+            this.ContentHeight = topPx;
             this.Scrollbar.Update();
         }
 
         public void ForceUpdateEvenHidden(bool isOffScreen = false)
         {
-            int ir = 0;
+            int topPx = 0;
             foreach (var row in this.Rows)
             {
+                int maxElementHeight = 0;
                 foreach (var element in row)
                 {
-                    element.LocalPosition = new Vector2(element.LocalPosition.X, ir * this.RowHeight - this.Scrollbar.ScrollPercent * this.Rows.Count * this.RowHeight);
+                    element.LocalPosition = new Vector2(element.LocalPosition.X, topPx - this.Scrollbar.ScrollPercent * this.Rows.Count * this.RowHeight);
                     bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
 
                     element.Update(isOffScreen: isChildOffScreen);
+                    maxElementHeight = Math.Max(maxElementHeight, element.Height);
                 }
-                ++ir;
+                topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             }
+            this.ContentHeight = topPx;
             this.Scrollbar.Update(isOffScreen);
         }
 
@@ -171,14 +183,14 @@ namespace SpaceShared.UI
         {
             return
                 element.Position.Y + element.Height < this.Position.Y
-                || element.Position.Y + this.RowHeight - Table.RowPadding > this.Position.Y + this.Size.Y;
+                || element.Position.Y > this.Position.Y + this.Size.Y;
         }
 
         private void UpdateScrollbar()
         {
             this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);
             this.Scrollbar.RequestHeight = (int)this.Size.Y;
-            this.Scrollbar.Rows = this.Rows.Count;
+            this.Scrollbar.Rows = this.ContentHeight / this.RowHeight;
             this.Scrollbar.FrameSize = (int)(this.Size.Y / this.RowHeight);
         }
 

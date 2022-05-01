@@ -195,7 +195,7 @@ namespace DynamicGameAssets
                 if (farmer.boots.Value is CustomBoots boots)
                 {
                     TextureAnimationFrame frame = boots.Data.pack.GetTextureFrame(boots.Data.FarmerColors);
-                    if (this.prevBootsFrame.GetOrCreateValue(farmer).Value != frame.Descriptor)
+                    if (frame is not null && this.prevBootsFrame.GetOrCreateValue(farmer).Value != frame.Descriptor)
                     {
                         if (this.prevBootsFrame.TryGetValue(farmer, out var holder))
                             holder.Value = frame.Descriptor;
@@ -640,7 +640,7 @@ namespace DynamicGameAssets
 
         internal static void AddEmbeddedContentPack(IManifest manifest, string dir)
         {
-            Log.Debug($"Loading embedded content pack for \"{manifest.Name}\"...");
+            Log.Trace($"Loading embedded content pack for \"{manifest.Name}\"...");
             if (manifest.ExtraFields == null ||
                  !manifest.ExtraFields.ContainsKey("DGA.FormatVersion") ||
                  !int.TryParse(manifest.ExtraFields["DGA.FormatVersion"].ToString(), out int formatVer))
@@ -669,7 +669,7 @@ namespace DynamicGameAssets
         {
             foreach (var cp in this.Helper.ContentPacks.GetOwned())
             {
-                Log.Debug($"Loading content pack \"{cp.Manifest.Name}\"...");
+                Log.Trace($"Loading content pack \"{cp.Manifest.Name}\"...");
                 if (cp.Manifest.ExtraFields == null ||
                      !cp.Manifest.ExtraFields.ContainsKey("DGA.FormatVersion") ||
                      !int.TryParse(cp.Manifest.ExtraFields["DGA.FormatVersion"].ToString(), out int formatVer))
@@ -831,11 +831,16 @@ namespace DynamicGameAssets
                         {
                             if (!Mod.State.TodaysShopEntries.ContainsKey(shopEntry.ShopId))
                                 Mod.State.TodaysShopEntries.Add(shopEntry.ShopId, new List<ShopEntry>());
+                            int shopEntryPrice = shopEntry.Cost;
+                            if (shopEntry.Item.Create() is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+                            {
+                                shopEntryPrice = (int)((float)shopEntryPrice * Game1.MasterPlayer.difficultyModifier);
+                            }
                             Mod.State.TodaysShopEntries[shopEntry.ShopId].Add(new ShopEntry()
                             {
                                 Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
                                 Quantity = shopEntry.MaxSold,
-                                Price = shopEntry.Cost,
+                                Price = shopEntryPrice,
                                 CurrencyId = shopEntry.Currency == null ? null : (int.TryParse(shopEntry.Currency, out int intCurr) ? intCurr : $"{cp.Key}/{shopEntry.Currency}".GetDeterministicHashCode())
                             });
                         }

@@ -56,5 +56,5 @@
     ** Generic Mod Config Menu UI
     *********/
     "config.grid-layout.name": "실험적 그리드 레이아웃",
-    "config.grid-layout.tooltip": "상점에서 실험 그리드 레이아웃을 사용할지 여부입니다. 이로 인해 사소한 디스플레이 문제가 발생하거나 상점 메뉴의 다른 모드 기능에 영향을 미칠 수 있습니다."
+    "config.grid-layout.tooltip": "상점에서 실험 그리드 레이아웃을 사용할지 여부입니다."
 }

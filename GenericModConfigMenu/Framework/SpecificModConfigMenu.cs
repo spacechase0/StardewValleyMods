@@ -70,7 +70,7 @@ namespace GenericModConfigMenu.Framework
 
             this.ModConfig.ActiveDisplayPage = this.ModConfig.Pages[this.CurrPage];
 
-            this.Table = new Table
+            this.Table = new Table(fixedRowHeight: false)
             {
                 RowHeight = 50,
                 Size = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116)
@@ -273,7 +273,7 @@ namespace GenericModConfigMenu.Framework
 
                                     // else append if it fits
                                     string possibleLine = $"{nextLine} {word}".Trim();
-                                    if (Label.MeasureString(possibleLine).X <= this.Table.Size.X)
+                                    if (Label.MeasureString(possibleLine, font: Game1.smallFont).X <= this.Table.Size.X)
                                     {
                                         nextLine = possibleLine;
                                         continue;
@@ -292,8 +292,9 @@ namespace GenericModConfigMenu.Framework
                             optionElement = new Label
                             {
                                 UserData = tooltip,
-                                NonBoldScale = 0.75f,
+                                NonBoldScale = 1f,
                                 NonBoldShadow = false,
+                                Font = Game1.smallFont,
                                 String = text.ToString()
                             };
                             break;
@@ -323,17 +324,6 @@ namespace GenericModConfigMenu.Framework
 
                 this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
 
-                // add spacer rows for multi-row content
-                {
-                    int elementHeight = new[] { label?.Height, optionElement?.Height, rightLabel?.Height }.Max(p => p ?? 0);
-                    float overlapRows = ((elementHeight * 1.0f) / this.Table.RowHeight) - 1;
-
-                    if (overlapRows > 0.05f) // avoid adding an empty row if an element only overlaps slightly
-                    {
-                        for (int i = 0; i < overlapRows; i++)
-                            this.Table.AddRow(Array.Empty<Element>());
-                    }
-                }
             }
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);

@@ -1,4 +1,4 @@
-﻿{
+{
     /*********
     ** Festival
     *********/
@@ -6,9 +6,9 @@
     "festival.name": "Szörf fesztivál",
 
     // race
-    "race.start.question": "Ready for the race?", // TODO
-    "race.start.yes": "Yes, let's start.", // TODO
-    "race.start.no": "Not yet.", // TODO
+    "race.start.question": "Felkészültél a versenyre?",
+    "race.start.yes": "Igen, kezdjük.",
+    "race.start.no": "Még nem.",
     "race.instructions": "Elemek leírása (Jobb gombbal használható):^ Csillaghulló lendület - Ideiglenes sebesség növelés.^ Gömbhal lövedék - Gömbhal kilövése egy másik játékosra.^ Viharfelhő - Áramütés az 1. helyen lévő versenyzőnek.^ Junimo erő - Legyőzhetetlenség és egy kis sebesség növelés.",
     "race.lewis-start.0": "Készülj...",
     "race.lewis-start.1": "Vigyázz.....",
@@ -71,7 +71,7 @@
     *********/
     "ui.laps": "Kör: {{laps}}/2",
     "ui.ranking": "Rangsor",
-    "ui.wood": "Rakj fát a máglyára",
+    "ui.wood": "Rakj fát a máglyára.",
     "dialog.wood": "50 fát tettél a máglyára.",
     "dialog.shorts": "...Ez fura. Miért lett lila a tűz?",
     "dialog.prize-money": "1500g-t kaptál.",
@@ -137,5 +137,5 @@
     ** Object items
     *********/
     "items.cheap-amulet.name": "Olcsó amulett?",
-    "items.cheap-amulet.description": "Valami nem stimmel ezzel az amulettel. Vajon miért olyan olcsó?"
+    "items.cheap-amulet.description": "Valami nem stimmel ezzel az amulettel. Vajon miért ilyen olcsó?"
 }
