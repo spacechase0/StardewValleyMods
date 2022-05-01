@@ -1385,7 +1385,7 @@ namespace JsonAssets
                 }
                 Log.Trace($"Adding objects for shop IDs '{string.Join("', '", shopIds)}'.");
 
-                bool isPierre = shopIds.Contains("Pierre");
+                bool isPierre = shopIds.Contains("Pierre") || shopIds.Contains("SeedShop");
                 bool isQiGemShop = shopIds.Contains("QiGemShop");
 
                 bool doAllSeeds = Game1.player.hasOrWillReceiveMail("PierreStocklist");
