@@ -1,0 +1,25 @@
+{
+    // skill
+    "skill.name": "Szerencse",
+    "skill.level-up": "Szerencse megnövekedett",
+
+    // professions
+    "fortunate.name": "Szerencse",
+    "fortunate.desc": "Jobb napi szerencse.",
+    "lucky.name": "Szerencsés",
+    "lucky.desc": "20%-os esély a maximális napi szerencsére.",
+    "popular-helper.name": "Népszerű segítő",
+    "popular-helper.desc": "A napi küldetések háromszor olyan gyakran fordulnak elő.",
+    "shooting-star.name": "Hullócsillag",
+    "shooting-star.desc": "Az éjszakai események kétszer olyan gyakran fordulnak elő.",
+    "spirit-child.name": "Szellemgyerek",
+    "spirit-child.desc": "Az ajándékozás boldoggá teszi a junimokat. Segítenek a gazdaságodnak.\n(15%-os esély valamilyen farmfejlesztésre.)",
+    "un-unlucky.name": "Nem szerencsétlen",
+    "un-unlucky.desc": "Soha nincs balszerencséd.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "A junimok megkedvelték néhány állatodat!",
+    "junimo-rewards.grow-crops": "A junimok learatták a termést!",
+    "junimo-rewards.grow-grass": "A junimok megnövesztették a füvet és megjavították a kerítéseket!",
+    "junimo-rewards.prismatic-shard": "A junimok adtak neked egy prizmás töredéket!"
+}
