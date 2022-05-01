@@ -56,5 +56,5 @@
     ** Generic Mod Config Menu UI
     *********/
     "config.grid-layout.name": "Disposición de cuadrícula",
-    "config.grid-layout.tooltip": "Si se utiliza el diseño de la rejilla en las tiendas. Esto puede afectar a las características de otros mods en los menús de las tiendas."
+    "config.grid-layout.tooltip": "Si se utiliza el diseño de la rejilla en las tiendas."
 }
