@@ -785,6 +785,7 @@ namespace BetterShopMenu
                          e.IsDown(SButton.LeftAlt) &&
                          //menuRect.Contains(x, y) &&
                          (shop.hoveredItem != null) &&
+                         (this.HoverIndex > 0) &&
                          (this.Shop.forSale[this.HoverIndex].maximumStackSize() > 1)
                         )
                 {
