@@ -190,6 +190,7 @@ namespace BetterShopMenu
             this.Quantity_OKButton = null;
             this.Quantity_TextBox = null;
             this.QuantityIndex = -1;
+            this.HoverIndex = -1;
         }
 
         private void InitShop2()
@@ -704,6 +705,7 @@ namespace BetterShopMenu
             this.Quantity_TextBox = null;
             this.Quantity_OKButton = null;
             this.QuantityIndex = -1;
+            this.HoverIndex = -1;
 
             //call the purchase code here
             if (ok && (idx >= 0))
@@ -781,6 +783,7 @@ namespace BetterShopMenu
                 }
                 else if (
                          Config.QuantityDialog &&
+                         this.GridLayoutActive &&
                          (e.Button == SButton.MouseRight) &&
                          e.IsDown(SButton.LeftAlt) &&
                          //menuRect.Contains(x, y) &&
@@ -883,6 +886,7 @@ namespace BetterShopMenu
                 }
 
                 this.QuantityIndex = -1;
+                this.HoverIndex = -1;
                 this.Quantity_OKButton = null;
                 if (this.Quantity_TextBox != null)
                 {
