@@ -134,7 +134,6 @@ namespace BetterShopMenu
         private Dictionary<int, string> CropData;
         private const int SeedsOtherCategory = -174; //seeds - 100;
 
-        private int HoverIndex;
         private Point PurchasePoint;
         private bool RightClickDown;
         private int Purchase_Countdown;
@@ -190,7 +189,6 @@ namespace BetterShopMenu
             this.Quantity_OKButton = null;
             this.Quantity_TextBox = null;
             this.QuantityIndex = -1;
-            this.HoverIndex = -1;
         }
 
         private void InitShop2()
@@ -473,7 +471,6 @@ namespace BetterShopMenu
             var scrollBar = shop.scrollBar;
             var scrollBarRunner = this.Reflect_scrollBarRunner.GetValue();
             ISalable hover = null;
-            int hoverIdx = -1;
 
             if (!Game1.options.showMenuBackground)
                 b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.75f);
@@ -508,10 +505,7 @@ namespace BetterShopMenu
 
                 ISalable item = forSale[i];
                 if (selectedItem)
-                {
                     hover = item;
-                    hoverIdx = i;
-                }
 
                 StackDrawType stackDrawType;
                 if (shop.storeContext == "QiGemShop")
@@ -658,7 +652,6 @@ namespace BetterShopMenu
             if (!background)
             {
                 shop.hoveredItem = hover;// lookup anything mod examines the hoveredItem field. maybe others.
-                this.HoverIndex = hoverIdx;
 
                 if (hover != null)
                 {
@@ -699,13 +692,15 @@ namespace BetterShopMenu
         {
             int amount;
             bool ok = int.TryParse(this.Quantity_TextBox.Text, out amount);
+            if (amount > 999)
+                amount = 999;
+
             int idx = this.QuantityIndex;
 
             this.Quantity_TextBox.Selected = false;
             this.Quantity_TextBox = null;
             this.Quantity_OKButton = null;
             this.QuantityIndex = -1;
-            this.HoverIndex = -1;
 
             //call the purchase code here
             if (ok && (idx >= 0))
@@ -714,8 +709,6 @@ namespace BetterShopMenu
 
         private void CreateQuantityDialog(Vector2 cursorPos)
         {
-            this.QuantityIndex = this.HoverIndex;
-
             int X = (int)cursorPos.X + Game1.tileSize;
             int Y = (int)cursorPos.Y;
 
@@ -736,6 +729,22 @@ namespace BetterShopMenu
             this.Quantity_TextBox.OnEnterPressed += this.CloseQuantityDialog;
             this.Quantity_TextBox.numbersOnly = true;
             this.Quantity_TextBox.SelectMe();
+        }
+
+        private bool GetQuantityIndex()
+        {
+            var shop = this.Shop;
+            var forSale = shop.forSale;
+
+            for (int i = 0; i < forSale.Count; i++)
+            {
+                if (forSale[i] == shop.hoveredItem)
+                {
+                    this.QuantityIndex = i;
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
@@ -783,13 +792,11 @@ namespace BetterShopMenu
                 }
                 else if (
                          Config.QuantityDialog &&
-                         this.GridLayoutActive &&
                          (e.Button == SButton.MouseRight) &&
                          e.IsDown(SButton.LeftAlt) &&
-                         //menuRect.Contains(x, y) &&
                          (shop.hoveredItem != null) &&
-                         (this.HoverIndex > 0) &&
-                         (this.Shop.forSale[this.HoverIndex].maximumStackSize() > 1)
+                         this.GetQuantityIndex() &&
+                         (this.Shop.forSale[this.QuantityIndex].maximumStackSize() > 1)
                         )
                 {
                     this.Helper.Input.Suppress(e.Button);
@@ -886,7 +893,6 @@ namespace BetterShopMenu
                 }
 
                 this.QuantityIndex = -1;
-                this.HoverIndex = -1;
                 this.Quantity_OKButton = null;
                 if (this.Quantity_TextBox != null)
                 {
