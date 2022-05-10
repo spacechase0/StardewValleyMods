@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 
@@ -14,7 +15,7 @@ namespace ContentPatcherAnimations.Framework
         ** Fields
         *********/
         /// <summary>The textures that were drawn recently, indexed by normalized asset name.</summary>
-        private readonly Dictionary<string, AssetDrawData> LastDrawn = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<IAssetName, AssetDrawData> LastDrawn = new();
 
         /// <summary>The language suffix for the current language code in asset names, if any.</summary>
         private string CurrentLanguageSuffix;
@@ -26,14 +27,16 @@ namespace ContentPatcherAnimations.Framework
         /// <summary>Track that an asset was drawn to the screen.</summary>
         /// <param name="assetName">The asset name that was drawn.</param>
         /// <param name="area">The pixel area that was drawn, or <c>null</c> for the entire texture.</param>
-        public void Track(string assetName, Rectangle? area)
+        public void Track(IAssetName assetName, Rectangle? area)
         {
+            /*
             if (string.IsNullOrWhiteSpace(assetName))
                 return;
 
             assetName = PathUtilities.NormalizeAssetName(assetName);
             if (this.CurrentLanguageSuffix != null && assetName.EndsWith(this.CurrentLanguageSuffix, StringComparison.OrdinalIgnoreCase))
                 assetName = assetName[..^this.CurrentLanguageSuffix.Length]; // normalize `assetName.fr-FR` to `assetName`
+            */
 
             if (!this.LastDrawn.TryGetValue(assetName, out AssetDrawData data))
                 this.LastDrawn[assetName] = data = new AssetDrawData(assetName);
@@ -45,7 +48,7 @@ namespace ContentPatcherAnimations.Framework
         /// <param name="normalizedAssetName">The normalized asset name to check.</param>
         /// <param name="area">The area to check.</param>
         /// <param name="maxTicksAgo">The maximum ticks since the area was drawn to consider.</param>
-        public bool WasDrawnWithin(string normalizedAssetName, Rectangle area, int maxTicksAgo)
+        public bool WasDrawnWithin(IAssetName normalizedAssetName, Rectangle area, int maxTicksAgo)
         {
             return
                 this.LastDrawn.TryGetValue(normalizedAssetName, out AssetDrawData data)
@@ -56,12 +59,12 @@ namespace ContentPatcherAnimations.Framework
         /// <param name="maxTicksAgo">The maximum ticks since the area was drawn to consider.</param>
         public void ForgetExpired(int maxTicksAgo)
         {
-            string[] expiredKeys = this.LastDrawn
+            IAssetName[] expiredKeys = this.LastDrawn
                 .Where(data => data.Value.ForgetExpired(maxTicksAgo))
                 .Select(p => p.Key)
                 .ToArray();
 
-            foreach (string key in expiredKeys)
+            foreach (IAssetName key in expiredKeys)
                 this.LastDrawn.Remove(key);
         }
 

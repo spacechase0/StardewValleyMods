@@ -21,6 +21,11 @@ namespace ContentPatcherAnimations
         /*********
         ** Fields
         *********/
+        /// <summary>
+        /// Mod instance for 
+        /// </summary>
+        internal static Mod instance;
+
         /// <summary>The Content Patcher mod instance.</summary>
         private StardewModdingAPI.Mod ContentPatcher;
 
@@ -46,6 +51,7 @@ namespace ContentPatcherAnimations
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            instance = this;
             Log.Monitor = this.Monitor;
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
@@ -280,14 +286,14 @@ namespace ContentPatcherAnimations
                     {
                         report.AppendLine($"{patchGroup.Key}:");
 
-                        int targetWidth = Math.Max(patchGroup.Max(p => p.Value.TargetName.Length), "target asset".Length);
+                        int targetWidth = Math.Max(patchGroup.Max(p => p.Value.TargetName.ToString().Length), "target asset".Length);
                         int logNameWidth = Math.Max(patchGroup.Max(p => p.Key.LogName.Length), "patch name".Length);
                         int frameWidth = Math.Max(patchGroup.Max(p => $"{p.Value.CurrentFrame + 1} of {p.Key.AnimationFrameCount}".Length), "cur frame".Length);
 
                         report.AppendLine($"   {"target asset".PadRight(targetWidth)} | {"patch name".PadRight(logNameWidth)} | {"cur frame".PadRight(frameWidth)}");
                         report.AppendLine($"   {"".PadRight(targetWidth, '-')} | {"".PadRight(logNameWidth, '-')} | {"".PadRight(frameWidth, '-')}");
-                        foreach (var patch in patchGroup.OrderBy(p => p.Value.TargetName, StringComparer.OrdinalIgnoreCase))
-                            report.AppendLine($"   {patch.Value.TargetName.PadRight(targetWidth)} | {patch.Key.LogName.PadRight(logNameWidth)} | {patch.Value.CurrentFrame + 1} of {patch.Key.AnimationFrameCount}");
+                        foreach (var patch in patchGroup.OrderBy(p => p.Value.TargetName.ToString(), StringComparer.OrdinalIgnoreCase))
+                            report.AppendLine($"   {patch.Value.TargetName.ToString().PadRight(targetWidth)} | {patch.Key.LogName.PadRight(logNameWidth)} | {patch.Value.CurrentFrame + 1} of {patch.Key.AnimationFrameCount}");
                         report.AppendLine();
                     }
                 }
@@ -320,7 +326,7 @@ namespace ContentPatcherAnimations
 
                         report.AppendLine($"   {"patch name".PadRight(logNameWidth)} | reason paused");
                         report.AppendLine($"   {"".PadRight(logNameWidth, '-')} | {"".PadRight(reasonWidth, '-')}");
-                        foreach (var patch in patchGroup.OrderBy(p => p.Value.TargetName, StringComparer.OrdinalIgnoreCase))
+                        foreach (var patch in patchGroup.OrderBy(p => p.Value.TargetName.ToString(), StringComparer.OrdinalIgnoreCase))
                             report.AppendLine($"   {patch.Key.LogName.PadRight(logNameWidth)} | {this.GetReasonPaused(state, patch.Value)}");
                         report.AppendLine();
                     }
