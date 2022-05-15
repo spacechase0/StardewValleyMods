@@ -188,7 +188,7 @@ namespace GenericModConfigMenu.Framework
             {
                 foreach (var label in this.LabelsWithTooltips)
                 {
-                    if (!label.Hover)
+                    if (!label.Hover || label.UserData == null)
                         continue;
                     string text = (string)label.UserData;
                     if (text != null && !text.Contains("\n"))
