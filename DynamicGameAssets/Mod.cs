@@ -18,6 +18,7 @@ using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 
 // TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
@@ -87,6 +88,8 @@ namespace DynamicGameAssets
 
         private static readonly PerScreen<StateData> _state = new(() => new StateData());
         internal static StateData State => Mod._state.Value;
+
+        public object LastShopMenu { get; private set; }
 
         public static CommonPackData Find(string fullId)
         {
@@ -436,6 +439,20 @@ namespace DynamicGameAssets
                 if (shop.storeContext is "ResortBar" or "VolcanoShop")
                 {
                     PatchCommon.DoShop(shop.storeContext, shop);
+                }
+
+                // handle STF shop menu -- this is copied from JA
+                if (!object.ReferenceEquals(e.NewMenu, this.LastShopMenu))
+                {
+                    this.LastShopMenu = shop;
+
+                    string? id = shop.portraitPerson?.Name;
+                    if (id is null || id.StartsWith("STF", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
+                    Log.Trace($"Adding objects for STF shop '{id}'.");
+                    PatchCommon.DoShop(id, shop);
                 }
             }
         }
@@ -832,13 +849,14 @@ namespace DynamicGameAssets
                             if (!Mod.State.TodaysShopEntries.ContainsKey(shopEntry.ShopId))
                                 Mod.State.TodaysShopEntries.Add(shopEntry.ShopId, new List<ShopEntry>());
                             int shopEntryPrice = shopEntry.Cost;
-                            if (shopEntry.Item.Create() is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+                            var salable = shopEntry.Item.Create();
+                            if (salable is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
                             {
                                 shopEntryPrice = (int)((float)shopEntryPrice * Game1.MasterPlayer.difficultyModifier);
                             }
                             Mod.State.TodaysShopEntries[shopEntry.ShopId].Add(new ShopEntry()
                             {
-                                Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
+                                Item = salable,//MakeItemFrom( shopEntry.Item, cp.Value ),
                                 Quantity = shopEntry.MaxSold,
                                 Price = shopEntryPrice,
                                 CurrencyId = shopEntry.Currency == null ? null : (int.TryParse(shopEntry.Currency, out int intCurr) ? intCurr : $"{cp.Key}/{shopEntry.Currency}".GetDeterministicHashCode())
