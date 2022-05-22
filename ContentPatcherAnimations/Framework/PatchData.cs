@@ -31,7 +31,7 @@ namespace ContentPatcherAnimations.Framework
         private readonly IReflectedProperty<string> FromAssetProperty;
 
         /// <summary>The underlying patch's <c>TargetAsset</c> property.</summary>
-        private readonly IReflectedProperty<string> TargetAssetProperty;
+        private readonly IReflectedProperty<IAssetName> TargetAssetProperty;
 
         /// <summary>The underlying patch's <c>FromArea</c> field.</summary>
         private readonly IReflectedField<object> FromAreaProperty;
@@ -62,7 +62,7 @@ namespace ContentPatcherAnimations.Framework
         public bool IsActive { get; protected set; }
 
         /// <summary>The normalized target asset name.</summary>
-        public string TargetName { get; protected set; }
+        public IAssetName TargetName { get; protected set; }
 
         /// <summary>The texture to which the patch applies.</summary>
         public Texture2D Target { get; protected set; }
@@ -91,6 +91,7 @@ namespace ContentPatcherAnimations.Framework
         /// <param name="name">The raw patch name to display in error messages.</param>
         /// <param name="patch">The patch instance from Content Patcher.</param>
         /// <param name="reflection">Simplifies access to private code.</param>
+        /// <param name="reflection">Simplifies access to game content.</param>
         public PatchData(IContentPack contentPack, string name, object patch, IReflectionHelper reflection)
         {
             this.ContentPack = contentPack;
@@ -101,7 +102,7 @@ namespace ContentPatcherAnimations.Framework
             this.IsReadyProperty = reflection.GetProperty<bool>(patch, "IsReady");
             this.IsAppliedProperty = reflection.GetProperty<bool>(patch, "IsApplied");
             this.FromAssetProperty = reflection.GetProperty<string>(patch, "FromAsset");
-            this.TargetAssetProperty = reflection.GetProperty<string>(patch, "TargetAsset");
+            this.TargetAssetProperty = reflection.GetProperty<IAssetName>(patch, "TargetAsset");
             this.FromAreaProperty = reflection.GetField<object>(patch, "FromArea");
             this.ToAreaProperty = reflection.GetField<object>(patch, "ToArea");
 
@@ -133,10 +134,6 @@ namespace ContentPatcherAnimations.Framework
                         this.TargetName = this.TargetAssetProperty.GetValue();
                         this.FromArea = this.GetRectangleFromPatch(this.FromAreaProperty) ?? Rectangle.Empty;
                         this.ToArea = this.GetRectangleFromPatch(this.ToAreaProperty) ?? new Rectangle(0, 0, this.FromArea.Width, this.FromArea.Height);
-
-                        this.TargetName = !string.IsNullOrWhiteSpace(this.TargetName)
-                            ? PathUtilities.NormalizeAssetName(this.TargetName)
-                            : null;
                     }
                     else
                         this.Clear();
@@ -206,7 +203,7 @@ namespace ContentPatcherAnimations.Framework
             try
             {
                 string path = this.FromAssetProperty.GetValue();
-                texture = this.ContentPack.LoadAsset<Texture2D>(path);
+                texture = this.ContentPack.ModContent.Load<Texture2D>(path);
                 return true;
             }
             catch
@@ -222,15 +219,15 @@ namespace ContentPatcherAnimations.Framework
         {
             try
             {
-                string assetName = PathUtilities.NormalizeAssetName(this.TargetAssetProperty.GetValue());
+                IAssetName assetName = this.TargetAssetProperty.GetValue();
 
-                if (assetName == PathUtilities.NormalizeAssetName("TileSheets/tools"))
+                if (assetName.IsEquivalentTo("TileSheets/tools"))
                 {
                     texture = Game1.toolSpriteSheet;
                     return true;
                 }
 
-                texture = Game1.content.Load<Texture2D>(assetName);
+                texture = Game1.content.Load<Texture2D>(assetName.Name);
                 if (texture.GetType().Name == "ScaledTexture2D")
                     texture = this.Reflection.GetProperty<Texture2D>(texture, "STexture").GetValue();
 

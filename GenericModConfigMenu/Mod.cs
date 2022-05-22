@@ -86,7 +86,16 @@ namespace GenericModConfigMenu
         /// <param name="scrollRow">The initial scroll position, represented by the row index at the top of the visible area.</param>
         private void OpenListMenu(int? scrollRow = null)
         {
-            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenu(mod, page: null, listScrollRow: curScrollRow), this.ConfigManager, scrollRow);
+            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenu(mod, page: null, listScrollRow: curScrollRow), openKeybindingsMenu: currScrollRow => OpenKeybindingsMenu( currScrollRow ), this.ConfigManager, Helper.ModContent.Load<Texture2D>("assets/keybindings-button.png"), scrollRow);
+        }
+
+        private void OpenKeybindingsMenu(int listScrollRow)
+        {
+            Mod.ActiveConfigMenu = new SpecificModConfigMenu(
+                mods: this.ConfigManager,
+                scrollSpeed: this.Config.ScrollSpeed,
+                returnToList: () => this.OpenListMenu(listScrollRow)
+            );
         }
 
         /// <summary>Open the config UI for a specific mod.</summary>

@@ -64,7 +64,7 @@ namespace ContentPatcherAnimations.Patches
             if (!string.IsNullOrWhiteSpace(texture?.Name))
             {
                 AssetDrawTracker tracker = SpriteBatchPatcher.GetDrawTracker();
-                tracker.Track(texture.Name, sourceRectangle);
+                tracker.Track(Mod.instance.Helper.GameContent.ParseAssetName(texture.Name), sourceRectangle);
             }
         }
 
