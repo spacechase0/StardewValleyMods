@@ -8,6 +8,7 @@
     // mod list UI
     "list.editable-heading": "Configure Mods",
     "list.not-editable-heading": "Editable from the title screen:",
+    "list.keybindings": "Keybindings",
 
     // mod config pages
     "config.buttons.cancel": "Cancel",

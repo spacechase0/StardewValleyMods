@@ -1,7 +1,14 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
-## Upcoming release
+# 1.9.1
+* Fix crash when hovering over mod with null tooltip.
+
+## 1.9.0
+* Added keybindings menu (icon thanks to mistyspring!).
+* Added description tooltip for mods on mod list menu.
+
+## 1.8.2
 * The mod list now remembers your scroll position when returning from a config view (thanks to Pathoschild!).
 * Complex Options can now have Height that changes, rather than being fixed when the menu opens (thanks to jltaylor-us).
 

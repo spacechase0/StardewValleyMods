@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +26,8 @@ namespace GenericModConfigMenu.Framework
         private readonly Action<IManifest, int> OpenModMenu;
         private bool InGame => Context.IsWorldReady;
 
+        private List<Label> LabelsWithTooltips = new();
+
 
         /*********
         ** Accessors
@@ -45,7 +48,7 @@ namespace GenericModConfigMenu.Framework
         /// <param name="openModMenu">Open the config UI for a specific mod.</param>
         /// <param name="configs">The mod configurations to display.</param>
         /// <param name="scrollTo">The initial scroll position, represented by the row index at the top of the visible area.</param>
-        public ModConfigMenu(int scrollSpeed, Action<IManifest, int> openModMenu, ModConfigManager configs, int? scrollTo = null)
+        public ModConfigMenu(int scrollSpeed, Action<IManifest, int> openModMenu, Action<int> openKeybindingsMenu, ModConfigManager configs, Texture2D keybindingsTex, int? scrollTo = null)
         {
             this.ScrollSpeed = scrollSpeed;
             this.OpenModMenu = openModMenu;
@@ -83,9 +86,11 @@ namespace GenericModConfigMenu.Framework
                         Label label = new Label
                         {
                             String = entry.ModName,
+                            UserData = entry.ModManifest.Description,
                             Callback = _ => this.ChangeToModPage(entry.ModManifest)
                         };
                         this.Table.AddRow(new Element[] { label });
+                        LabelsWithTooltips.Add(label);
                     }
                 }
             }
@@ -115,16 +120,25 @@ namespace GenericModConfigMenu.Framework
                         Label label = new Label
                         {
                             String = entry.ModName,
+                            UserData = entry.ModManifest.Description,
                             IdleTextColor = Color.Black * 0.4f,
                             HoverTextColor = Color.Black * 0.4f
                         };
 
                         this.Table.AddRow(new Element[] { label });
+                        LabelsWithTooltips.Add(label);
                     }
                 }
             }
 
             this.Ui.AddChild(this.Table);
+
+            var button = new Button(keybindingsTex)
+            {
+                LocalPosition = this.Table.LocalPosition - new Vector2( keybindingsTex.Width / 2 + 32, 0 ),
+                Callback = _ => openKeybindingsMenu( this.ScrollRow),
+            };
+            this.Ui.AddChild(button);
 
             if (Constants.TargetPlatform == GamePlatform.Android)
                 this.initializeUpperRightCloseButton();
@@ -169,6 +183,22 @@ namespace GenericModConfigMenu.Framework
             this.upperRightCloseButton?.draw(b); // bring it above the backdrop
             if (this.InGame)
                 this.drawMouse(b);
+
+            if (Constants.TargetPlatform != GamePlatform.Android)
+            {
+                foreach (var label in this.LabelsWithTooltips)
+                {
+                    if (!label.Hover || label.UserData == null)
+                        continue;
+                    string text = (string)label.UserData;
+                    if (text != null && !text.Contains("\n"))
+                        text = Game1.parseText(text, Game1.smallFont, 800);
+                    string title = label.String;
+                    if (title != null && !title.Contains("\n"))
+                        title = Game1.parseText(title, Game1.dialogueFont, 800);
+                    IClickableMenu.drawToolTip(b, text, title, null);
+                }
+            }
         }
 
         /// <inheritdoc />
