@@ -89,7 +89,12 @@ namespace DynamicGameAssets
         private static readonly PerScreen<StateData> _state = new(() => new StateData());
         internal static StateData State => Mod._state.Value;
 
-        private ShopMenu LastShopMenu { get; set; }
+        private PerScreen<ShopMenu?> _lastShopMenu = new();
+        private ShopMenu? LastShopMenu
+        {
+            get => this._lastShopMenu.Value;
+            set => this._lastShopMenu.Value = value;
+        }
 
         public static CommonPackData Find(string fullId)
         {
