@@ -428,14 +428,15 @@ namespace DynamicGameAssets
                 this.RefreshSpritebatchCache();
             }
 
-            this.Helper.Content.InvalidateCache("Data\\CraftingRecipes");
-            this.Helper.Content.InvalidateCache("Data\\CookingRecipes");
+            this.Helper.GameContent.InvalidateCache("Data\\CraftingRecipes");
+            this.Helper.GameContent.InvalidateCache("Data\\CookingRecipes");
         }
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is ShopMenu shop)
             {
+                Log.Trace($"We have found a shop: {shop.portraitPerson?.Name}");
                 if (shop.storeContext is "ResortBar" or "VolcanoShop")
                 {
                     PatchCommon.DoShop(shop.storeContext, shop);
@@ -447,7 +448,7 @@ namespace DynamicGameAssets
                     this.LastShopMenu = shop;
 
                     string? id = shop.portraitPerson?.Name;
-                    if (id is null || id.StartsWith("STF", StringComparison.OrdinalIgnoreCase))
+                    if (id is null || !id.StartsWith("STF", StringComparison.OrdinalIgnoreCase))
                     {
                         return;
                     }
