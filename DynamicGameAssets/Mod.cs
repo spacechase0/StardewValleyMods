@@ -89,7 +89,7 @@ namespace DynamicGameAssets
         private static readonly PerScreen<StateData> _state = new(() => new StateData());
         internal static StateData State => Mod._state.Value;
 
-        public object LastShopMenu { get; private set; }
+        private ShopMenu LastShopMenu { get; set; }
 
         public static CommonPackData Find(string fullId)
         {
@@ -371,13 +371,13 @@ namespace DynamicGameAssets
                     {
                         if (giftTaste.Enabled)
                         {
-                            string[] npcs = giftTaste.Npc.Split(',').Select(npc => npc.Trim()).ToArray();
+                            string[] npcs = giftTaste.Npc.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                             foreach (string npc in npcs)
                             {
                                 if (!Mod.giftTastes.ContainsKey(npc))
                                     Mod.giftTastes.Add(npc, new());
 
-                                string[] objects = giftTaste.ObjectId.Split(',').Select(obj => obj.Trim()).ToArray();
+                                string[] objects = giftTaste.ObjectId.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                                 foreach (string obj in objects)
                                     if (!Mod.giftTastes[npc].ContainsKey(obj))
                                         Mod.giftTastes[npc].Add(obj, giftTaste);
@@ -430,13 +430,18 @@ namespace DynamicGameAssets
 
             this.Helper.GameContent.InvalidateCache("Data\\CraftingRecipes");
             this.Helper.GameContent.InvalidateCache("Data\\CookingRecipes");
+            if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
+            {
+                this.Helper.GameContent.InvalidateCache($@"Data\CraftingRecipes.{this.Helper.GameContent.CurrentLocale}");
+                this.Helper.GameContent.InvalidateCache($@"Data\CookingRecipes.{this.Helper.GameContent.CurrentLocale}");
+            }
         }
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is ShopMenu shop)
             {
-                Log.Trace($"We have found a shop: {shop.portraitPerson?.Name}");
+                // Log.Trace($"We have found a shop: {shop.portraitPerson?.Name}");
                 if (shop.storeContext is "ResortBar" or "VolcanoShop")
                 {
                     PatchCommon.DoShop(shop.storeContext, shop);
