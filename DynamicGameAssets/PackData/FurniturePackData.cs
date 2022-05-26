@@ -81,7 +81,7 @@ namespace DynamicGameAssets.PackData
 
         // TV specific
         public Vector2 ScreenPosition { get; set; }
-        public float ScreenSize { get; set; }
+        public int ScreenSize { get; set; }
 
         public bool ShouldSerializeScreenPositione() { return this.Type == FurnitureType.TV; }
         public bool ShouldSerializeScreenSize() { return this.Type == FurnitureType.TV; }
@@ -101,6 +101,10 @@ namespace DynamicGameAssets.PackData
         public string Name => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.name");
         [JsonIgnore]
         public string Description => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.description");
+        [JsonIgnore]
+        public string CategoryTextOverride => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.category").UsePlaceholder(false).ToString();
+        [DefaultValue(null)]
+        public Color? CategoryColorOverride { get; set; } = null;
 
         public int GetVanillaFurnitureType()
         {
