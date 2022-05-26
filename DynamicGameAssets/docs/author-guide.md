@@ -545,7 +545,7 @@ Example `DynamicFields` for a spring-only `CanGrowNow`:
 ## Furniture
 `$ItemType` - `"Furniture"`
 
-Furniture can be localized in the following keys: `"furniture.YourFurniture.name"` and `"furniture.YourFurniture.description"`.
+Furniture can be localized in the following keys: `"furniture.YourFurniture.name"` and `"furniture.YourFurniture.description"`. Additionally, `"furniture.YourFurniture.category"` can be specified for a category text override.
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
