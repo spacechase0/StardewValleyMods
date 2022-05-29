@@ -1230,6 +1230,7 @@ namespace JsonAssets
             // When we go back to the title menu we need to reset things so things don't break when
             // going back to a save.
             this.ClearIds(out this.ObjectIds, this.Objects.ToList<DataNeedsId>());
+            this.ClearIds(out this.ObjectIds, this.Boots.ToList<DataNeedsId>());
             this.ClearIds(out this.CropIds, this.Crops.ToList<DataNeedsId>());
             this.ClearIds(out this.FruitTreeIds, this.FruitTrees.ToList<DataNeedsId>());
             this.ClearIds(out this.BigCraftableIds, this.BigCraftables.ToList<DataNeedsId>());
