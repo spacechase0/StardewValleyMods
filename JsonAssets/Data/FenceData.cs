@@ -10,6 +10,7 @@ namespace JsonAssets.Data
 {
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
+    [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class FenceData : DataNeedsIdWithTexture, ITranslatableItem
     {
         /*********

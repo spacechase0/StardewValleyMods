@@ -4,6 +4,7 @@ using JsonAssets.Framework;
 
 namespace JsonAssets.Data
 {
+    [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class FruitTreeData : DataNeedsIdWithTexture
     {
         /*********
