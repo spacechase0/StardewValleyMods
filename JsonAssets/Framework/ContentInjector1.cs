@@ -87,7 +87,7 @@ namespace JsonAssets.Framework
                 }
             }
 
-            lock(FenceIndexes)
+            lock (FenceIndexes)
             {
                 FenceIndexes.Clear();
                 foreach (FenceData fence in Mod.instance.Fences)
@@ -204,9 +204,7 @@ namespace JsonAssets.Framework
             {
                 try
                 {
-                    if (obj.Recipe == null)
-                        continue;
-                    if (obj.Category != ObjectCategory.Cooking)
+                    if (obj.Recipe == null || obj.Category != ObjectCategory.Cooking)
                         continue;
                     string recipestring = obj.Recipe.GetRecipeString(obj).ToString();
                     Log.Verbose($"Injecting to cooking recipes: {obj.Name}: {recipestring}");
@@ -226,9 +224,7 @@ namespace JsonAssets.Framework
             {
                 try
                 {
-                    if (obj.Recipe == null)
-                        continue;
-                    if (obj.Category == ObjectCategory.Cooking)
+                    if (obj.Recipe == null || obj.Category == ObjectCategory.Cooking)
                         continue;
                     string recipestring = obj.Recipe.GetRecipeString(obj).ToString();
                     Log.Verbose($"Injecting to crafting recipes: {obj.Name}: {recipestring}");
@@ -264,7 +260,8 @@ namespace JsonAssets.Framework
             {
                 try
                 {
-                    Log.Verbose($"Injecting to big craftables: {big.GetCraftableId()}: {big.GetCraftableInformation()}");
+                    string bigcraftableinfo = big.GetCraftableInformation();
+                    Log.Verbose($"Injecting to big craftables: {big.GetCraftableId()}: {bigcraftableinfo}");
                     if (!data.TryAdd(big.GetCraftableId(), big.GetCraftableInformation()))
                         Log.Error($"{big.Name} already seems to exist!");
                 }
@@ -281,7 +278,8 @@ namespace JsonAssets.Framework
             {
                 try
                 {
-                    Log.Verbose($"Injecting to hats: {hat.GetHatId()}: {hat.GetHatInformation()}");
+                    string hatinfo = hat.GetHatInformation();
+                    Log.Verbose($"Injecting to hats: {hat.GetHatId()}: {hatinfo}");
                     if (!data.TryAdd(hat.GetHatId(), hat.GetHatInformation()))
                         Log.Error($"Hat {hat.GetHatId()} appears to be a duplicate???");
                 }
@@ -396,7 +394,7 @@ namespace JsonAssets.Framework
                     var rect = ContentInjector1.ObjectRect(obj.GetObjectId());
                     var target = TileSheetExtensions.GetAdjustedTileSheetTarget(asset.AssetName, rect);
                     int ts = target.TileSheet;
-                    obj.Tilesheet = asset.AssetName + (ts == 0 ? "" : (ts + 1).ToString());
+                    obj.Tilesheet = asset.NameWithoutLocale.BaseName + (ts == 0 ? "" : (ts + 1).ToString());
                     obj.TilesheetX = rect.X;
                     obj.TilesheetY = target.Y;
                 }
@@ -431,6 +429,7 @@ namespace JsonAssets.Framework
         {
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
+            Log.Trace($"Crops are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var crop in Mod.instance.Crops)
             {
@@ -457,6 +456,7 @@ namespace JsonAssets.Framework
         {
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
+            Log.Trace($"FruitTrees are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var fruitTree in Mod.instance.FruitTrees)
             {
@@ -572,7 +572,6 @@ namespace JsonAssets.Framework
 
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
-
             Log.Trace($"Shirts are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var shirt in Mod.instance.Shirts)

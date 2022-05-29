@@ -23,9 +23,9 @@ namespace SpaceShared
             // This is really bad. Pathos don't kill me.
             var modInfo = modRegistry.Get( packId );
             if ( modInfo.GetType().GetProperty( "Mod" ).GetValue( modInfo ) is IMod mod )
-                return mod.Helper.Content.Load<Texture2D>( path );
+                return mod.Helper.ModContent.Load<Texture2D>( path );
             else if ( modInfo.GetType().GetProperty( "ContentPack" ).GetValue( modInfo ) is IContentPack pack )
-                return pack.LoadAsset<Texture2D>( path );
+                return pack.ModContent.Load<Texture2D>( path );
 
             return Game1.staminaRect;
         }

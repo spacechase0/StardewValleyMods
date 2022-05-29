@@ -42,8 +42,6 @@ namespace JsonAssets
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
         public static Mod instance;
 
-        private ContentInjector2 Content2;
-
         /// <summary>The Expanded Preconditions Utility API, if that mod is loaded.</summary>
         private IExpandedPreconditionsUtilityApi ExpandedPreconditionsUtility;
 
@@ -113,6 +111,7 @@ namespace JsonAssets
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
             ContentInjector1.OnAssetRequested(e);
+            ContentInjector2.OnAssetRequested(e);
         }
 
         private Api Api;
@@ -1312,7 +1311,6 @@ namespace JsonAssets
 
             ContentInjector1.InvalidateUsed();
             ContentInjector1.Clear();
-            this.Helper.Content.AssetEditors.Remove(this.Content2);
 
             this.LocationsFixedAlready.Clear();
         }
@@ -1573,17 +1571,15 @@ namespace JsonAssets
             }
 
             // assign IDs
-            var objList = new List<DataNeedsId>();
-            objList.AddRange(this.Objects.ToList<DataNeedsId>());
-            objList.AddRange(this.Boots.ToList<DataNeedsId>());
+            var objList = new List<DataNeedsId>(this.Objects);
+            objList.AddRange(this.Boots); // boots are objects too.
             this.ObjectIds = this.AssignIds("objects", Mod.StartingObjectId, objList);
             this.CropIds = this.AssignIds("crops", Mod.StartingCropId, this.Crops.ToList<DataNeedsId>());
             this.FruitTreeIds = this.AssignIds("fruittrees", Mod.StartingFruitTreeId, this.FruitTrees.ToList<DataNeedsId>());
             this.BigCraftableIds = this.AssignIds("big-craftables", Mod.StartingBigCraftableId, this.BigCraftables.ToList<DataNeedsId>());
             this.HatIds = this.AssignIds("hats", Mod.StartingHatId, this.Hats.ToList<DataNeedsId>());
             this.WeaponIds = this.AssignIds("weapons", Mod.StartingWeaponId, this.Weapons.ToList<DataNeedsId>());
-            List<DataNeedsId> clothing = new List<DataNeedsId>();
-            clothing.AddRange(this.Shirts);
+            List<DataNeedsId> clothing = new(this.Shirts);
             clothing.AddRange(this.Pants);
             this.ClothingIds = this.AssignIds("clothing", Mod.StartingClothingId, clothing.ToList<DataNeedsId>());
 
@@ -1611,7 +1607,6 @@ namespace JsonAssets
             this.Api.InvokeIdsAssigned();
 
             ContentInjector1.InvalidateUsed();
-            this.Helper.Content.AssetEditors.Add(this.Content2 = new ContentInjector2());
 
             // This happens here instead of with ID fixing because TMXL apparently
             // uses the ID fixing API before ID fixing happens everywhere.
@@ -1773,19 +1768,13 @@ namespace JsonAssets
             if (translations is null || string.IsNullOrWhiteSpace(item?.TranslationKey))
                 return;
 
-            foreach (var pair in translations.GetInAllLocales($"{item.TranslationKey}.name"))
+            foreach (var (locale, text) in translations.GetInAllLocales($"{item.TranslationKey}.name"))
             {
-                string locale = pair.Key;
-                string text = pair.Value;
-
                 item.NameLocalization[locale] = text;
             }
 
-            foreach (var pair in translations.GetInAllLocales($"{item.TranslationKey}.description"))
+            foreach (var (locale, text) in translations.GetInAllLocales($"{item.TranslationKey}.description"))
             {
-                string locale = pair.Key;
-                string text = pair.Value;
-
                 item.DescriptionLocalization[locale] = text;
                 if (locale == "default" && string.IsNullOrWhiteSpace(item.Description))
                     item.Description = text;
