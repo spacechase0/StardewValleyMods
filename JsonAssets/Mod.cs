@@ -40,7 +40,6 @@ namespace JsonAssets
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
         public static Mod instance;
 
-        private ContentInjector1 Content1;
         private ContentInjector2 Content2;
 
         /// <summary>The Expanded Preconditions Utility API, if that mod is loaded.</summary>
@@ -80,8 +79,7 @@ namespace JsonAssets
             helper.Events.Specialized.LoadStageChanged += this.OnLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += this.ClientConnected;
 
-            helper.Content.AssetEditors.Add(this.Content1 = new ContentInjector1());
-            helper.Content.AssetLoaders.Add(this.Content1);
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
             TileSheetExtensions.RegisterExtendedTileSheet(@"Maps\springobjects", 16);
             TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\Craftables", 32);
@@ -105,6 +103,11 @@ namespace JsonAssets
                 new BootPatcher(),
                 new CraftingRecipePatcher()
             );
+        }
+
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            ContentInjector1.OnAssetRequested(e);
         }
 
         private Api Api;
@@ -1290,19 +1293,20 @@ namespace JsonAssets
             this.DidInit = false;
             // When we go back to the title menu we need to reset things so things don't break when
             // going back to a save.
-            this.ClearIds(out this.ObjectIds, this.Objects.ToList<DataNeedsId>());
-            this.ClearIds(out this.ObjectIds, this.Boots.ToList<DataNeedsId>());
-            this.ClearIds(out this.CropIds, this.Crops.ToList<DataNeedsId>());
-            this.ClearIds(out this.FruitTreeIds, this.FruitTrees.ToList<DataNeedsId>());
-            this.ClearIds(out this.BigCraftableIds, this.BigCraftables.ToList<DataNeedsId>());
-            this.ClearIds(out this.HatIds, this.Hats.ToList<DataNeedsId>());
-            this.ClearIds(out this.WeaponIds, this.Weapons.ToList<DataNeedsId>());
-            List<DataNeedsId> clothing = new List<DataNeedsId>();
-            clothing.AddRange(this.Shirts);
+            var objects = new List<DataNeedsId>(this.Objects);
+            objects.AddRange(this.Boots); // boots are also in objects.
+            this.ClearIds(this.ObjectIds, objects);
+            this.ClearIds(this.CropIds, this.Crops.ToList<DataNeedsId>());
+            this.ClearIds(this.FruitTreeIds, this.FruitTrees.ToList<DataNeedsId>());
+            this.ClearIds(this.BigCraftableIds, this.BigCraftables.ToList<DataNeedsId>());
+            this.ClearIds(this.HatIds, this.Hats.ToList<DataNeedsId>());
+            this.ClearIds(this.WeaponIds, this.Weapons.ToList<DataNeedsId>());
+            List<DataNeedsId> clothing = new List<DataNeedsId>(this.Shirts);
             clothing.AddRange(this.Pants);
-            this.ClearIds(out this.ClothingIds, clothing.ToList<DataNeedsId>());
+            this.ClearIds(this.ClothingIds, clothing.ToList());
 
-            this.Content1.InvalidateUsed();
+            ContentInjector1.InvalidateUsed();
+            ContentInjector1.Clear();
             this.Helper.Content.AssetEditors.Remove(this.Content2);
 
             this.LocationsFixedAlready.Clear();
@@ -1589,9 +1593,11 @@ namespace JsonAssets
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
 
+            // Call before invoking Ids Assigned since clients may want to edit after.
+            ContentInjector1.Initialize(this.Helper.GameContent);
             this.Api.InvokeIdsAssigned();
 
-            this.Content1.InvalidateUsed();
+            ContentInjector1.InvalidateUsed();
             this.Helper.Content.AssetEditors.Add(this.Content2 = new ContentInjector2());
 
             // This happens here instead of with ID fixing because TMXL apparently
@@ -1646,7 +1652,7 @@ namespace JsonAssets
             {
                 var item = Game1.player.Items[i];
                 if (item is SObject obj && ringIds.Contains(obj.ParentSheetIndex))
-                {
+                { // NOTE: Rings are not SObjects, so duplicate conversions do not occur.
                     Log.Trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
                     Game1.player.Items[i] = new Ring(obj.ParentSheetIndex);
                 }
@@ -1744,7 +1750,7 @@ namespace JsonAssets
         internal ISet<int> VanillaClothingIds;
 
         /// <summary>The vanilla boot IDs.</summary>
-        internal ISet<int> VanillaBootIds;
+        //internal ISet<int> VanillaBootIds;
 
         public int ResolveObjectId(object data)
         {
@@ -1839,7 +1845,7 @@ namespace JsonAssets
         {
             data.Sort((dni1, dni2) => dni1.Name.CompareTo(dni2.Name));
 
-            Dictionary<string, int> ids = new Dictionary<string, int>();
+            Dictionary<string, int> ids = new();
 
             int[] bigSkip = new[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812 };
 
@@ -1898,9 +1904,9 @@ namespace JsonAssets
             }
         }
 
-        private void ClearIds(out IDictionary<string, int> ids, List<DataNeedsId> objs)
+        private void ClearIds(IDictionary<string, int> ids, List<DataNeedsId> objs)
         {
-            ids = null;
+            ids?.Clear();
             foreach (DataNeedsId obj in objs)
             {
                 obj.Id = -1;
@@ -2999,7 +3005,8 @@ namespace JsonAssets
                         return false;
                     }
                 }
-                else return false;
+                else
+                    return false;
             }
             else
             {
@@ -3020,7 +3027,8 @@ namespace JsonAssets
                         return true;
                     }
                 }
-                else return false;
+                else
+                    return false;
             }
         }
     }

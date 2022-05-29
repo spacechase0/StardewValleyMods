@@ -5,67 +5,126 @@ using Microsoft.Xna.Framework;
 using SpaceCore;
 using SpaceShared;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.GameData.Crafting;
 
 namespace JsonAssets.Framework
 {
-    internal class ContentInjector1 : IAssetEditor, IAssetLoader
+    internal static class ContentInjector1
     {
-        private delegate void Injector(IAssetData asset);
-        private readonly Dictionary<string, Injector> Files;
-        public ContentInjector1()
-        {
-            Func<string, string> normalize = Mod.instance.Helper.Content.NormalizeAssetName;
+        private static readonly Dictionary<string, Action<IAssetData>> Files = new();
 
-            //normalize with 
-            this.Files = new Dictionary<string, Injector>
+        private static readonly Dictionary<int, FenceData> FenceIndexes = new();
+
+        /// <summary>
+        /// Call after assigning IDs. Populate the content injector's dictionary
+        /// with only the assets that need editing.
+        /// </summary>
+        /// <param name="helper">Game content helper.</param>
+        internal static void Initialize(IGameContentHelper helper)
+        {
+            lock (Files)
             {
-                {normalize("Data\\ObjectInformation"), this.InjectDataObjectInformation},
-                {normalize("Data\\ObjectContextTags"), this.InjectDataObjectContextTags},
-                {normalize("Data\\Crops"), this.InjectDataCrops},
-                {normalize("Data\\fruitTrees"), this.InjectDataFruitTrees},
-                {normalize("Data\\CookingRecipes"), this.InjectDataCookingRecipes},
-                {normalize("Data\\CraftingRecipes"), this.InjectDataCraftingRecipes},
-                {normalize("Data\\BigCraftablesInformation"), this.InjectDataBigCraftablesInformation},
-                {normalize("Data\\hats"), this.InjectDataHats},
-                {normalize("Data\\weapons"), this.InjectDataWeapons},
-                {normalize("Data\\ClothingInformation"), this.InjectDataClothingInformation},
-                {normalize("Data\\TailoringRecipes"), this.InjectDataTailoringRecipes},
-                {normalize("Data\\Boots"), this.InjectDataBoots},
-                {normalize("Maps\\springobjects"), this.InjectMapsSpringobjects},
-                {normalize("TileSheets\\crops"), this.InjectTileSheetsCrops},
-                {normalize("TileSheets\\fruitTrees"), this.InjectTileSheetsFruitTrees},
-                {normalize("TileSheets\\Craftables"), this.InjectTileSheetsCraftables},
-                {normalize("Characters\\Farmer\\hats"), this.InjectCharactersFarmerHats},
-                {normalize("TileSheets\\weapons"), this.InjectTileSheetsWeapons},
-                {normalize("Characters\\Farmer\\shirts"), this.InjectCharactersFarmerShirts},
-                {normalize("Characters\\Farmer\\pants"), this.InjectCharactersFarmerPants},
-                {normalize("Characters\\Farmer\\shoeColors"), this.InjectCharactersFarmerShoeColors}
-            };
+                Files.Clear();
+                if (Mod.instance.Objects.Count > 0 || Mod.instance.Boots.Count > 0)
+                { // boots are objects too.
+                    Files[helper.ParseAssetName(@"Data\ObjectInformation").BaseName] = InjectDataObjectInformation;
+                    Files[helper.ParseAssetName(@"Data\ObjectContextTags").BaseName] = InjectDataObjectContextTags;
+                    Files[helper.ParseAssetName(@"Data\CookingRecipes").BaseName] = InjectDataCookingRecipes;
+                    Files[helper.ParseAssetName(@"Maps\springobjects").BaseName] = InjectMapsSpringobjects;
+                }
+                if (Mod.instance.Objects.Count > 0 || Mod.instance.Boots.Count > 0 || Mod.instance.BigCraftables.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Data\CraftingRecipes").BaseName] = InjectDataCraftingRecipes;
+                }
+                if (Mod.instance.BigCraftables.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Data\BigCraftablesInformation").BaseName] = InjectDataBigCraftablesInformation;
+                    Files[helper.ParseAssetName(@"TileSheets\Craftables").BaseName] = InjectTileSheetsCraftables;
+                }
+                if (Mod.instance.Crops.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Data\Crops").BaseName] = InjectDataCrops;
+                    Files[helper.ParseAssetName(@"TileSheets\crops").BaseName] = InjectTileSheetsCrops;
+                }
+                if (Mod.instance.FruitTrees.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Data\fruitTrees").BaseName] = InjectDataFruitTrees;
+                    Files[helper.ParseAssetName(@"TileSheets\fruitTrees").BaseName] = InjectTileSheetsFruitTrees;
+                }
+                if (Mod.instance.Hats.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Data\hats").BaseName] = InjectDataHats;
+                    Files[helper.ParseAssetName(@"Characters\Farmer\hats").BaseName] = InjectCharactersFarmerHats;
+                }
+                if (Mod.instance.Weapons.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Data\weapons").BaseName] = InjectDataWeapons;
+                    Files[helper.ParseAssetName(@"TileSheets\weapons").BaseName] = InjectTileSheetsWeapons;
+                }
+                if (Mod.instance.Shirts.Count > 0 || Mod.instance.Pants.Count > 0 )
+                {
+                    Files[helper.ParseAssetName(@"Data\ClothingInformation").BaseName] = InjectDataClothingInformation;
+                }
+                if (Mod.instance.Shirts.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Characters\Farmer\shirts").BaseName] = InjectCharactersFarmerShirts;
+                }
+                if (Mod.instance.Pants.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Characters\Farmer\pants").BaseName] = InjectCharactersFarmerPants;
+                }
+                if (Mod.instance.Tailoring.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Data\TailoringRecipes").BaseName] = InjectDataTailoringRecipes;
+                }
+                if (Mod.instance.Boots.Count > 0)
+                {
+                    Files[helper.ParseAssetName(@"Data\Boots").BaseName] = InjectDataBoots;
+                    Files[helper.ParseAssetName(@"Characters\Farmer\shoeColors").BaseName] = InjectCharactersFarmerShoeColors;
+                }
+            }
+
+            lock(FenceIndexes)
+            {
+                FenceIndexes.Clear();
+                foreach (FenceData fence in Mod.instance.Fences)
+                    if (fence?.CorrespondingObject?.GetObjectId() is int index)
+                        FenceIndexes[index] = fence;
+            }
         }
 
-        public void InvalidateUsed()
+        internal static void Clear()
         {
-            Mod.instance.Helper.Content.InvalidateCache(asset => this.Files.ContainsKey(asset.AssetName));
+            lock (Files)
+            {
+                Files.Clear();
+            }
+            lock (FenceIndexes)
+            {
+                FenceIndexes.Clear();
+            }
         }
 
-        public bool CanEdit<T>(IAssetInfo asset)
+        public static void InvalidateUsed()
         {
-            return this.Files.ContainsKey(asset.AssetName);
+            Mod.instance.Helper.GameContent.InvalidateCache(asset => Files.ContainsKey(asset.NameWithoutLocale.BaseName));
         }
 
-        public void Edit<T>(IAssetData asset)
+        public static void OnAssetRequested(AssetRequestedEventArgs e)
         {
-            if (!Mod.instance.DidInit)
-                return;
-
-            this.Files[asset.AssetName](asset);
+            if (e.NameWithoutLocale.IsDirectlyUnderPath(@"LooseSprites\Fence")
+                && int.TryParse(e.NameWithoutLocale.BaseName[@"LooseSprites\Fence".Length..], out int index) && FenceIndexes.ContainsKey(index))
+                e.LoadFrom(() => FenceIndexes[index].Texture, AssetLoadPriority.Low);
+            else if (Files.TryGetValue(e.NameWithoutLocale.BaseName, out var injector))
+                e.Edit(injector, (AssetEditPriority)int.MinValue); // insist on editing first.
         }
 
-        private void InjectDataObjectInformation(IAssetData asset)
+        private static void InjectDataObjectInformation(IAssetData asset)
         {
+#warning - crosscheck boots?
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var obj in Mod.instance.Objects)
             {
@@ -82,7 +141,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataObjectContextTags(IAssetData asset)
+        private static void InjectDataObjectContextTags(IAssetData asset)
         {
             var data = asset.AsDictionary<string, string>().Data;
             foreach (var obj in Mod.instance.Objects)
@@ -102,7 +161,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataCrops(IAssetData asset)
+        private static void InjectDataCrops(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var crop in Mod.instance.Crops)
@@ -120,7 +179,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataFruitTrees(IAssetData asset)
+        private static void InjectDataFruitTrees(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var fruitTree in Mod.instance.FruitTrees)
@@ -138,7 +197,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataCookingRecipes(IAssetData asset)
+        private static void InjectDataCookingRecipes(IAssetData asset)
         {
             var data = asset.AsDictionary<string, string>().Data;
             foreach (var obj in Mod.instance.Objects)
@@ -160,7 +219,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataCraftingRecipes(IAssetData asset)
+        private static void InjectDataCraftingRecipes(IAssetData asset)
         {
             var data = asset.AsDictionary<string, string>().Data;
             foreach (var obj in Mod.instance.Objects)
@@ -198,7 +257,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataBigCraftablesInformation(IAssetData asset)
+        private static void InjectDataBigCraftablesInformation(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var big in Mod.instance.BigCraftables)
@@ -215,7 +274,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataHats(IAssetData asset)
+        private static void InjectDataHats(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var hat in Mod.instance.Hats)
@@ -232,7 +291,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataWeapons(IAssetData asset)
+        private static void InjectDataWeapons(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var weapon in Mod.instance.Weapons)
@@ -250,7 +309,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataClothingInformation(IAssetData asset)
+        private static void InjectDataClothingInformation(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var shirt in Mod.instance.Shirts)
@@ -271,7 +330,8 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to clothing information: {pants.GetClothingId()}: {pants.GetClothingInformation()}");
-                    data.Add(pants.GetClothingId(), pants.GetClothingInformation());
+                    if (!data.TryAdd(pants.GetClothingId(), pants.GetClothingInformation()))
+                        Log.Error($"Pants {pants.GetClothingId()} appears to be a duplicate?");
                 }
                 catch (Exception e)
                 {
@@ -279,7 +339,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataTailoringRecipes(IAssetData asset)
+        private static void InjectDataTailoringRecipes(IAssetData asset)
         {
             var data = asset.GetData<List<TailorItemRecipe>>();
             foreach (var recipe in Mod.instance.Tailoring)
@@ -295,7 +355,7 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectDataBoots(IAssetData asset)
+        private static void InjectDataBoots(IAssetData asset)
         {
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var boots in Mod.instance.Boots)
@@ -312,13 +372,14 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectMapsSpringobjects(IAssetData asset)
+        private static void InjectMapsSpringobjects(IAssetData asset)
         {
+            if (Mod.instance.Objects.Count == 0 && Mod.instance.Boots.Count == 0)
+                return;
+
             var tex= asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
-            //Texture2D newTex = new Texture2D(Game1.graphics.GraphicsDevice, oldTex.Width, Math.Max(oldTex.Height, 4096));
-            //asset.ReplaceWith(newTex);
-            //asset.AsImage().PatchImage(oldTex);
+            Log.Trace($"SpringObjects are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var obj in Mod.instance.Objects)
             {
@@ -366,7 +427,7 @@ namespace JsonAssets.Framework
             }
         }
 
-        private void InjectTileSheetsCrops(IAssetData asset)
+        private static void InjectTileSheetsCrops(IAssetData asset)
         {
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
@@ -392,7 +453,7 @@ namespace JsonAssets.Framework
             }
         }
 
-        private void InjectTileSheetsFruitTrees(IAssetData asset)
+        private static void InjectTileSheetsFruitTrees(IAssetData asset)
         {
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
@@ -418,7 +479,7 @@ namespace JsonAssets.Framework
             }
         }
 
-        private void InjectTileSheetsCraftables(IAssetData asset)
+        private static void InjectTileSheetsCraftables(IAssetData asset)
         {
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
@@ -452,7 +513,7 @@ namespace JsonAssets.Framework
             }
         }
 
-        private void InjectCharactersFarmerHats(IAssetData asset)
+        private static void InjectCharactersFarmerHats(IAssetData asset)
         {
             var image = asset.AsImage();
             image.ExtendImage(image.Data.Width, 4096);
@@ -479,7 +540,7 @@ namespace JsonAssets.Framework
             }
         }
 
-        private void InjectTileSheetsWeapons(IAssetData asset)
+        private static void InjectTileSheetsWeapons(IAssetData asset)
         {
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
@@ -504,11 +565,15 @@ namespace JsonAssets.Framework
                 }
             }
         }
-        private void InjectCharactersFarmerShirts(IAssetData asset)
+        private static void InjectCharactersFarmerShirts(IAssetData asset)
         {
-            var oldTex = asset.AsImage().Data;
-            asset.AsImage().ExtendImage(oldTex.Width, 4096);
-            Log.Trace($"Shirts are now ({oldTex.Width}, {Math.Max(oldTex.Height, 4096)})");
+            if (Mod.instance.Shirts.Count == 0)
+                return;
+
+            var tex = asset.AsImage();
+            tex.ExtendImage(tex.Data.Width, 4096);
+
+            Log.Trace($"Shirts are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var shirt in Mod.instance.Shirts)
             {
@@ -528,14 +593,14 @@ namespace JsonAssets.Framework
 
                         Log.Verbose($"Injecting {shirt.Name} sprites @ {string.Join(',', rects)}");
                     }
-                    asset.AsImage().PatchExtendedTileSheet(shirt.TextureMale, null, ContentInjector1.ShirtRectPlain(shirt.GetMaleIndex()));
+                    tex.PatchExtendedTileSheet(shirt.TextureMale, null, ContentInjector1.ShirtRectPlain(shirt.GetMaleIndex()));
                     if (shirt.Dyeable)
-                        asset.AsImage().PatchExtendedTileSheet(shirt.TextureMaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetMaleIndex()));
+                        tex.PatchExtendedTileSheet(shirt.TextureMaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetMaleIndex()));
                     if (shirt.HasFemaleVariant)
                     {
-                        asset.AsImage().PatchExtendedTileSheet(shirt.TextureFemale, null, ContentInjector1.ShirtRectPlain(shirt.GetFemaleIndex()));
+                        tex.PatchExtendedTileSheet(shirt.TextureFemale, null, ContentInjector1.ShirtRectPlain(shirt.GetFemaleIndex()));
                         if (shirt.Dyeable)
-                            asset.AsImage().PatchExtendedTileSheet(shirt.TextureFemaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetFemaleIndex()));
+                            tex.PatchExtendedTileSheet(shirt.TextureFemaleColor, null, ContentInjector1.ShirtRectDye(shirt.GetFemaleIndex()));
                     }
                 }
                 catch (Exception e)
@@ -545,7 +610,7 @@ namespace JsonAssets.Framework
             }
         }
 
-        private void InjectCharactersFarmerPants(IAssetData asset)
+        private static void InjectCharactersFarmerPants(IAssetData asset)
         {
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
@@ -565,8 +630,11 @@ namespace JsonAssets.Framework
             }
         }
 
-        private void InjectCharactersFarmerShoeColors(IAssetData asset)
+        private static void InjectCharactersFarmerShoeColors(IAssetData asset)
         {
+            if (Mod.instance.Boots.Count == 0)
+                return;
+
             var tex = asset.AsImage();
             tex.ExtendImage(tex.Data.Width, 4096);
             Log.Trace($"Boots are now ({tex.Data.Width}, {tex.Data.Height})");
@@ -625,26 +693,6 @@ namespace JsonAssets.Framework
         internal static Rectangle BootsRect(int index)
         {
             return new(0, index, 4, 1);
-        }
-
-        public bool CanLoad<T>(IAssetInfo asset)
-        {
-            foreach (var fence in Mod.instance.Fences)
-            {
-                if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.CorrespondingObject?.GetObjectId()))
-                    return true;
-            }
-            return false;
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            foreach (var fence in Mod.instance.Fences)
-            {
-                if (asset.AssetNameEquals("LooseSprites\\Fence" + fence.CorrespondingObject?.GetObjectId()))
-                    return (T)(object)fence.Texture;
-            }
-            return default(T);
         }
     }
 }
