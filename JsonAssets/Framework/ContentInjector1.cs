@@ -115,6 +115,8 @@ namespace JsonAssets.Framework
 
         public static void OnAssetRequested(AssetRequestedEventArgs e)
         {
+            if (!Mod.instance.DidInit)
+                return;
             if (e.NameWithoutLocale.IsDirectlyUnderPath(@"LooseSprites\Fence")
                 && int.TryParse(e.NameWithoutLocale.BaseName[@"LooseSprites\Fence".Length..], out int index) && FenceIndexes.ContainsKey(index))
                 e.LoadFrom(() => FenceIndexes[index].Texture, AssetLoadPriority.Low);
