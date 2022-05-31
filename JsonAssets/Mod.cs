@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using JsonAssets.Data;
 using JsonAssets.Framework;
 using JsonAssets.Framework.ContentPatcher;
@@ -1580,7 +1581,7 @@ namespace JsonAssets
             this.WeaponIds = this.AssignIds("weapons", Mod.StartingWeaponId, this.Weapons.ToList<DataNeedsId>());
             List<DataNeedsId> clothing = new(this.Shirts);
             clothing.AddRange(this.Pants);
-            this.ClothingIds = this.AssignIds("clothing", Mod.StartingClothingId, clothing.ToList<DataNeedsId>());
+            this.ClothingIds = this.AssignIds("clothing", Mod.StartingClothingId, clothing);
 
             this.AssignTextureIndices("shirts", Mod.StartingShirtTextureIndex, this.Shirts.ToList<DataSeparateTextureIndex>());
             this.AssignTextureIndices("pants", Mod.StartingPantsTextureIndex, this.Pants.ToList<DataSeparateTextureIndex>());
@@ -1631,14 +1632,17 @@ namespace JsonAssets
             if (!Directory.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets")))
                 Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
 
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds));
-            //File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-boots.json"), JsonConvert.SerializeObject(this.BootIds));
+                // NOTE: Have to save the file even if it's empty - maybe the user removed a JA pack?
+                Task objects = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds)));
+                Task crops = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds)));
+                Task fruitTrees = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds)));
+                Task bigs = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds)));
+                Task hats = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds)));
+                Task weapons = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds)));
+                Task clothing = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds)));
+
+            }
+            this.Helper.Events.GameLoop.Saving -= this.OnSaving;
         }
 
         internal IList<ObjectData> MyRings = new List<ObjectData>();
@@ -2018,8 +2022,8 @@ namespace JsonAssets
                 // Copied from Game1.applySaveFix (case FixBotchedBundleData)
                 while (toks.Count > 4 && !int.TryParse(toks[^1], out _))
                 {
-                    string lastValue = toks[toks.Count - 1];
-                    if (char.IsDigit(lastValue[lastValue.Length - 1]) && lastValue.Contains(":") && lastValue.Contains("\\"))
+                    string lastValue = toks[^1];
+                    if (char.IsDigit(lastValue[^1]) && lastValue.Contains(':') && lastValue.Contains('\\'))
                     {
                         break;
                     }
@@ -2058,7 +2062,7 @@ namespace JsonAssets
                         }
                     }
                 }
-                toks[1] = string.Join(" ", toks1);
+                toks[1] = string.Join(' ', toks1);
                 string[] toks2 = toks[2].Split(' ');
                 for (int i = 0; i < toks2.Length; i += 3)
                 {
@@ -2075,8 +2079,8 @@ namespace JsonAssets
                         }
                     }
                 }
-                toks[2] = string.Join(" ", toks2);
-                bundleData[entry.Key] = string.Join("/", toks);
+                toks[2] = string.Join(' ', toks2);
+                bundleData[entry.Key] = string.Join('/', toks);
             }
             // Fix bad bundle data
             Game1.netWorldState.Value.SetBundleData(bundleData);

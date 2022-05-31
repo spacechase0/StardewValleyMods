@@ -162,8 +162,9 @@ namespace JsonAssets.Patches
                     Game1.bigCraftablesInformation.TryGetValue(__instance.ParentSheetIndex, out string str);
                     if (!string.IsNullOrEmpty(str))
                     {
-                        string[] strArray = str.Split('/');
-                        __result = strArray[strArray.Length - 1];
+                        int index = str.LastIndexOf('/');
+                        if (index >= 0)
+                            __result = str[(index + 1)..];
                     }
                     return false;
                 }
