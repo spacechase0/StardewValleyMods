@@ -11,7 +11,7 @@ namespace DynamicGameAssets.Game
     [XmlType("Mods_DGABasicFurniture")]
     public partial class CustomBasicFurniture : Furniture, ISittable
     {
-        public HashSet<Vector2> lightGlowPositionList;
+        public HashSet<Vector2> lightGlowPositionList = new HashSet<Vector2>();
 
         private FurniturePackData.FurnitureConfiguration GetCurrentConfiguration()
         {
