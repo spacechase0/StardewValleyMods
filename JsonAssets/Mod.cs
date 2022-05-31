@@ -100,7 +100,8 @@ namespace JsonAssets
                 new ItemPatcher(),
                 new ObjectPatcher(),
                 new RingPatcher(),
-                new ShopMenuPatcher()
+                new ShopMenuPatcher(),
+                new BootPatcher()
             );
         }
 

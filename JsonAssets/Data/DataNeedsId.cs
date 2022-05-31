@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace JsonAssets.Data
 {
     [DebuggerDisplay("name = {Name}, id = {Id}")]
