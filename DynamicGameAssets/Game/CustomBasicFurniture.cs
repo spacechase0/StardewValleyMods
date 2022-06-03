@@ -142,7 +142,7 @@ namespace DynamicGameAssets.Game
             }
         }
 
-        public void drawAtNonTileSpot(SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha = 1f)
+        public override void drawAtNonTileSpot(SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha = 1f)
         {
             var currConfig = this.GetCurrentConfiguration();
             TexturedRect currTex = null;
