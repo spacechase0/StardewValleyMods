@@ -1865,9 +1865,9 @@ namespace JsonAssets
                 Log.Info("Reversing!");
             }
 
-
             this.FixCharacter(Game1.player);
 
+            // <- does this get run for farmhands?
             this.FixIdDict(Game1.player.basicShipped, removeUnshippable: true);
             this.FixIdDict(Game1.player.mineralsFound);
             this.FixIdDict(Game1.player.recipesCooked);
@@ -1876,84 +1876,86 @@ namespace JsonAssets
             foreach (var dict in Game1.player.giftedItems.Values)
                 this.FixIdDict3(dict);
 
-
-            this.FixItemList(Game1.player.team.junimoChest);
-            foreach (var loc in Game1.locations)
-                this.FixLocation(loc);
-
-            var bundleData = Game1.netWorldState.Value.GetUnlocalizedBundleData();
-            var bundleDataCopy = new Dictionary<string, string>(Game1.netWorldState.Value.GetUnlocalizedBundleData());
-
-            foreach (var entry in bundleDataCopy)
+            if (Context.IsMainPlayer)
             {
-                List<string> toks = new List<string>(entry.Value.Split('/'));
+                this.FixItemList(Game1.player.team.junimoChest);
+                foreach (var loc in Game1.locations)
+                    this.FixLocation(loc);
 
-                // First, fix some stuff we broke in an earlier build by using .BundleData instead of the unlocalized version
-                // Copied from Game1.applySaveFix (case FixBotchedBundleData)
-                while (toks.Count > 4 && !int.TryParse(toks[toks.Count - 1], out _))
-                {
-                    string lastValue = toks[toks.Count - 1];
-                    if (char.IsDigit(lastValue[lastValue.Length - 1]) && lastValue.Contains(":") && lastValue.Contains("\\"))
-                    {
-                        break;
-                    }
-                    toks.RemoveAt(toks.Count - 1);
-                }
+                var bundleData = Game1.netWorldState.Value.GetUnlocalizedBundleData();
+                var bundleDataCopy = new Dictionary<string, string>(Game1.netWorldState.Value.GetUnlocalizedBundleData());
 
-                // Then actually fix IDs
-                string[] toks1 = toks[1].Split(' ');
-                if (toks1[0] == "O")
+                foreach (var entry in bundleDataCopy)
                 {
-                    if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
+                    List<string> toks = new List<string>(entry.Value.Split('/'));
+
+                    // First, fix some stuff we broke in an earlier build by using .BundleData instead of the unlocalized version
+                    // Copied from Game1.applySaveFix (case FixBotchedBundleData)
+                    while (toks.Count > 4 && !int.TryParse(toks[toks.Count - 1], out _))
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
+                        string lastValue = toks[toks.Count - 1];
+                        if (char.IsDigit(lastValue[lastValue.Length - 1]) && lastValue.Contains(":") && lastValue.Contains("\\"))
                         {
-                            Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
-                            oldId = -1;
+                            break;
                         }
-                        else
+                        toks.RemoveAt(toks.Count - 1);
+                    }
+
+                    // Then actually fix IDs
+                    string[] toks1 = toks[1].Split(' ');
+                    if (toks1[0] == "O")
+                    {
+                        if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
                         {
-                            toks1[1] = oldId.ToString();
+                            if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
+                            {
+                                Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
+                                oldId = -1;
+                            }
+                            else
+                            {
+                                toks1[1] = oldId.ToString();
+                            }
                         }
                     }
-                }
-                else if (toks1[0] == "BO")
-                {
-                    if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
+                    else if (toks1[0] == "BO")
                     {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, ref oldId, this.VanillaBigCraftableIds))
+                        if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
                         {
-                            Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
-                            oldId = -1;
-                        }
-                        else
-                        {
-                            toks1[1] = oldId.ToString();
+                            if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, ref oldId, this.VanillaBigCraftableIds))
+                            {
+                                Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
+                                oldId = -1;
+                            }
+                            else
+                            {
+                                toks1[1] = oldId.ToString();
+                            }
                         }
                     }
-                }
-                toks[1] = string.Join(" ", toks1);
-                string[] toks2 = toks[2].Split(' ');
-                for (int i = 0; i < toks2.Length; i += 3)
-                {
-                    if (int.TryParse(toks2[i], out int oldId) && oldId != -1)
+                    toks[1] = string.Join(" ", toks1);
+                    string[] toks2 = toks[2].Split(' ');
+                    for (int i = 0; i < toks2.Length; i += 3)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
+                        if (int.TryParse(toks2[i], out int oldId) && oldId != -1)
                         {
-                            Log.Warn($"Bundle item missing ({entry.Key}, {oldId})! Probably broken now!");
-                            oldId = -1;
-                        }
-                        else
-                        {
-                            toks2[i] = oldId.ToString();
+                            if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
+                            {
+                                Log.Warn($"Bundle item missing ({entry.Key}, {oldId})! Probably broken now!");
+                                oldId = -1;
+                            }
+                            else
+                            {
+                                toks2[i] = oldId.ToString();
+                            }
                         }
                     }
+                    toks[2] = string.Join(" ", toks2);
+                    bundleData[entry.Key] = string.Join("/", toks);
                 }
-                toks[2] = string.Join(" ", toks2);
-                bundleData[entry.Key] = string.Join("/", toks);
+                // Fix bad bundle data
+                Game1.netWorldState.Value.SetBundleData(bundleData);
             }
-            // Fix bad bundle data
-            Game1.netWorldState.Value.SetBundleData(bundleData);
 
             if (!this.ReverseFixing)
                 this.Api.InvokeIdsFixed();
