@@ -25,6 +25,7 @@ using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Network;
 using StardewValley.Objects;
+using StardewValley.Quests;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using SObject = StardewValley.Object;
@@ -1855,6 +1856,90 @@ namespace JsonAssets
             );
         }
 
+        private static readonly Regex ItemContextTag = new("item_(?<type>[a-zA-Z]+)_(?<id>[0-9]+)", RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+        private static readonly Regex PreservesContextTag = new("preserve_sheet_index_(?<id>[0-9]+)", RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+
+        private static string AdjustPreservesContextTag(Match m)
+        {
+            if (m.Success && m.Groups["id"] is Group group && group.Success)
+            {
+                int oldId = int.Parse(group.Value);
+                if (Mod.instance.VanillaObjectIds.Contains(oldId))
+                    return m.Value;
+                KeyValuePair<string, int> item = Mod.instance.OldObjectIds.FirstOrDefault(x => x.Value == oldId);
+                if (Mod.instance.ObjectIds.TryGetValue(item.Key, out int newID))
+                    return m.Value.Replace(group.Value, newID.ToString());
+            }
+            return m.Value;
+        }
+
+        private static readonly MatchEvaluator PreservesEvaluator = new(AdjustPreservesContextTag);
+
+        // F (furniture), H (hat), O (object), R (ring), W (melee weapon)
+        private static string AdjustContextTag(Match m)
+        {
+            if (m.Success && m.Groups["id"] is Group id && id.Success
+                && m.Groups["type"] is Group type && type.Success)
+            {
+                int oldId = int.Parse(id.Value);
+                switch (type.Value)
+                {
+                    // the index for boots are also in objects
+                    case "B":
+                    case "O":
+                    case "R":
+                    {
+                        if (Mod.instance.VanillaObjectIds.Contains(oldId))
+                            return m.Value;
+                        KeyValuePair<string, int> item = Mod.instance.OldObjectIds.FirstOrDefault(x => x.Value == oldId);
+                        if (Mod.instance.ObjectIds.TryGetValue(item.Key, out int newID))
+                            return m.Value.Replace(id.Value, newID.ToString());
+                        break;
+                    }
+                    case "BO":
+                    {
+                        if (Mod.instance.VanillaBigCraftableIds.Contains(oldId))
+                            return m.Value;
+                        KeyValuePair<string, int> item = Mod.instance.OldBigCraftableIds.FirstOrDefault(x => x.Value == oldId);
+                        if (Mod.instance.BigCraftableIds.TryGetValue(item.Key, out int newID))
+                            return m.Value.Replace(id.Value, newID.ToString());
+                        break;
+                    }
+                    case "C":
+                    {
+                        if (Mod.instance.VanillaClothingIds.Contains(oldId))
+                            return m.Value;
+                        KeyValuePair<string, int> item = Mod.instance.OldClothingIds.FirstOrDefault(x => x.Value == oldId);
+                        if (Mod.instance.ClothingIds.TryGetValue(item.Key, out int newID))
+                            return m.Value.Replace(id.Value, newID.ToString());
+                        break;
+                    }
+                    case "H":
+                    {
+                        if (Mod.instance.VanillaHatIds.Contains(oldId))
+                            return m.Value;
+                        KeyValuePair<string, int> item = Mod.instance.OldHatIds.FirstOrDefault(x => x.Value == oldId);
+                        if (Mod.instance.HatIds.TryGetValue(item.Key, out int newID))
+                            return m.Value.Replace(id.Value, newID.ToString());
+                        break;
+                    }
+                    case "W":
+                    {
+                        if (Mod.instance.VanillaWeaponIds.Contains(oldId))
+                            return m.Value;
+                        KeyValuePair<string, int> item = Mod.instance.OldWeaponIds.FirstOrDefault(x => x.Value == oldId);
+                        if (Mod.instance.WeaponIds.TryGetValue(item.Key, out int newID))
+                            return m.Value.Replace(id.Value, newID.ToString());
+                        break;
+                    }
+                    // JA doesn't do furniture, yes?
+                }
+            }
+            return m.Value;
+        }
+
+        private static readonly MatchEvaluator ItemEvaluator = new(AdjustContextTag);
+
         private bool ReverseFixing;
         private readonly HashSet<string> LocationsFixedAlready = new();
         private void FixIdsEverywhere(bool reverse = false)
@@ -1876,8 +1961,20 @@ namespace JsonAssets
             foreach (var dict in Game1.player.giftedItems.Values)
                 this.FixIdDict3(dict);
 
+            foreach (var quest in Game1.player.questLog)
+            {
+                if (!this.FixQuest(quest))
+                {
+                    quest.reloadDescription();
+                    quest.reloadObjective();
+                }
+            }
+
             if (Context.IsMainPlayer)
             {
+                foreach (SpecialOrder order in Game1.player.team.specialOrders)
+                    this.FixSpecialOrder(order);
+
                 this.FixItemList(Game1.player.team.junimoChest);
                 foreach (var loc in Game1.locations)
                     this.FixLocation(loc);
@@ -1960,6 +2057,87 @@ namespace JsonAssets
             if (!this.ReverseFixing)
                 this.Api.InvokeIdsFixed();
             this.ReverseFixing = false;
+        }
+
+        /// <summary>
+        /// Fixes IDs related to quests.
+        /// </summary>
+        /// <param name="quest"></param>
+        /// <returns>Inverse of whether or not the quest was fixed.</returns>
+        private bool FixQuest(Quest quest)
+        {
+            switch (quest)
+            {
+                case CraftingQuest cq:
+                    return cq.isBigCraftable.Value
+                        ? this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, cq.indexToCraft, this.VanillaBigCraftableIds)
+                        : this.FixId(this.OldObjectIds, this.ObjectIds, cq.indexToCraft, this.VanillaObjectIds);
+                case FishingQuest fq:
+                    return this.FixId(this.OldObjectIds, this.ObjectIds, fq.whichFish, this.VanillaObjectIds)
+                        || this.FixItem(fq.fish.Value);
+                case ItemDeliveryQuest idq:
+                    return this.FixId(this.OldObjectIds, this.ObjectIds, idq.item, this.VanillaObjectIds)
+                        || this.FixItem(idq.deliveryItem.Value);
+                case ItemHarvestQuest ihq:
+                    return this.FixId(this.OldObjectIds, this.ObjectIds, ihq.itemIndex, this.VanillaObjectIds);
+                case LostItemQuest liq:
+                    return this.FixId(this.OldObjectIds, this.ObjectIds, liq.itemIndex, this.VanillaObjectIds);
+                default:
+                    return false;
+            }
+        }
+
+        private void FixSpecialOrder(SpecialOrder order)
+        {
+            foreach (var objective in order.objectives)
+                FixSpecialOrderObjective(objective);
+        }
+
+        private void FixSpecialOrderObjective(OrderObjective objective)
+        {
+            switch (objective)
+            {
+                case CollectObjective collect:
+                {
+                    this.FixContextList(collect.acceptableContextTagSets);
+                    break;
+                }
+                case DonateObjective donate:
+                {
+                    this.FixContextList(donate.acceptableContextTagSets);
+                    break;
+                }
+                case ShipObjective ship:
+                {
+                    this.FixContextList(ship.acceptableContextTagSets);
+                    break;
+                }
+                case FishObjective fish:
+                {
+                    this.FixContextList(fish.acceptableContextTagSets);
+                    break;
+                }
+                case GiftObjective gift:
+                {
+                    this.FixContextList(gift.acceptableContextTagSets);
+                    break;
+                }
+            }
+        }
+
+        private void FixContextList(NetStringList tags)
+        {
+            for (int i = tags.Count - 1; i >=0; i++)
+            {
+                tags[i] = this.FixContextTagString(tags[i]);
+            }
+        }
+
+        private string FixContextTagString(string contextstring)
+        {
+            contextstring = PreservesContextTag.Replace(contextstring, PreservesEvaluator);
+            contextstring = ItemContextTag.Replace(contextstring, ItemEvaluator);
+            return contextstring;
         }
 
         /// <summary>Fix item IDs contained by an item, including the item itself.</summary>
@@ -2498,8 +2676,6 @@ namespace JsonAssets
                 if (this.VanillaObjectIds.Contains(key))
                     continue;
 
-                // this is probably hellishly inefficient, building a lookup table is probably better
-                // but I'm being lazy rn ~atra.
                 KeyValuePair<string, int> item = this.OldObjectIds.FirstOrDefault(x => x.Value == key);
                 if (item.Key is not null) // default(kvp(string,int)) is (null,0)
                 {
