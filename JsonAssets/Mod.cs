@@ -2719,7 +2719,7 @@ namespace JsonAssets
                         if (this.OldObjectIds.TryGetValue(item.Key, out int oldindex))
                         {
                             if (oldindex != item.Value)
-                                toAddOrUpdate.Add(oldindex, val)
+                                toAddOrUpdate.Add(oldindex, val);
                         }
                         else
                         {
