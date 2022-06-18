@@ -2349,19 +2349,17 @@ namespace JsonAssets
                 loc.terrainFeatures.Remove(rem);
 
             toRemove.Clear();
-            foreach (var pair in loc.netObjects.Pairs)
+            foreach (var (key, obj) in loc.netObjects.Pairs)
             {
-                SObject obj = pair.Value;
                 if (this.FixItem(obj))
-                    toRemove.Add(pair.Key);
+                    toRemove.Add(key);
             }
             foreach (var rem in toRemove)
                 loc.objects.Remove(rem);
 
             toRemove.Clear();
-            foreach (var pair in loc.overlayObjects)
+            foreach (var (key, obj) in loc.overlayObjects)
             {
-                SObject obj = pair.Value;
                 if (obj is Chest chest)
                     this.FixItemList(chest.items);
                 else if (obj is Sign sign)
@@ -2374,12 +2372,12 @@ namespace JsonAssets
                     if (!obj.bigCraftable.Value)
                     {
                         if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
-                            toRemove.Add(pair.Key);
+                            toRemove.Add(key);
                     }
                     else
                     {
                         if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
-                            toRemove.Add(pair.Key);
+                            toRemove.Add(key);
                         else if (obj.ParentSheetIndex == 126 && obj.Quality != 0) // Alien rarecrow stores what ID is it is wearing here
                         {
                             obj.Quality--;
@@ -2434,7 +2432,7 @@ namespace JsonAssets
                     this.FixFarmAnimal(animal);
             }
 
-            foreach (var clump in loc.resourceClumps.Where(this.FixResourceClump))
+            foreach (var clump in loc.resourceClumps.Where(this.FixResourceClump).ToArray())
                 loc.resourceClumps.Remove(clump);
         }
 
@@ -2565,29 +2563,29 @@ namespace JsonAssets
             if (items is null)
                 return;
 
-            for (int i = 0; i < items.Count; ++i)
+            for (int i = items.Count - 1; i >= 0; i--)
             {
                 var item = items[i];
                 if (item == null)
-                    continue;
+                    items.RemoveAt(i);
                 if (item.GetType() == typeof(SObject))
                 {
                     var obj = item as SObject;
                     if (!obj.bigCraftable.Value)
                     {
                         if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
-                            items[i] = null;
+                            items.RemoveAt(i);
                     }
                     else
                     {
                         if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
-                            items[i] = null;
+                            items.RemoveAt(i);
                     }
                 }
                 else if (item is Hat hat)
                 {
                     if (this.FixId(this.OldHatIds, this.HatIds, hat.which, this.VanillaHatIds))
-                        items[i] = null;
+                        items.RemoveAt(i);
                 }
                 else if (item is Tool tool)
                 {
@@ -2612,27 +2610,27 @@ namespace JsonAssets
                     if (item is MeleeWeapon weapon)
                     {
                         if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.VanillaWeaponIds))
-                            items[i] = null;
+                            items.RemoveAt(i);
                         else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds))
-                            items[i] = null;
+                            items.RemoveAt(i);
                         else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.indexOfMenuItemView, this.VanillaWeaponIds))
-                            items[i] = null;
+                            items.RemoveAt(i);
                     }
                 }
                 else if (item is Ring ring)
                 {
                     if (this.FixRing(ring))
-                        items[i] = null;
+                        items.RemoveAt(i);
                 }
                 else if (item is Clothing clothing)
                 {
                     if (this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds))
-                        items[i] = null;
+                        items.RemoveAt(i);
                 }
                 else if (item is Boots boots)
                 {
                     if (this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds))
-                        items[i] = null;
+                        items.RemoveAt(i);
                     /*else
                         boots.reloadData();*/
                 }
