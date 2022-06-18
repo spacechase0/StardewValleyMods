@@ -178,6 +178,11 @@ namespace JsonAssets
             }
             else if (cmd == "ja_unfix")
             {
+                if (!Context.IsMainPlayer)
+                {
+                    Log.Warn("Only the main player can use this command!");
+                    return;
+                }
                 this.LocationsFixedAlready.Clear();
                 this.FixIdsEverywhere(reverse: true);
             }
@@ -1856,6 +1861,8 @@ namespace JsonAssets
             );
         }
 
+        private static readonly Regex TailoringStandardDescription = new("(?<type>[a-zA-Z]) (?<id>[0-9]+)", RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+
         private static readonly Regex ItemContextTag = new("item_(?<type>[a-zA-Z]+)_(?<id>[0-9]+)", RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
         private static readonly Regex PreservesContextTag = new("preserve_sheet_index_(?<id>[0-9]+)", RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
 
@@ -1875,8 +1882,7 @@ namespace JsonAssets
 
         private static readonly MatchEvaluator PreservesEvaluator = new(AdjustPreservesContextTag);
 
-        // F (furniture), H (hat), O (object), R (ring), W (melee weapon)
-        private static string AdjustContextTag(Match m)
+        private static string AdjustContextTagOrStandardDescription(Match m)
         {
             if (m.Success && m.Groups["id"] is Group id && id.Success
                 && m.Groups["type"] is Group type && type.Success)
@@ -1884,10 +1890,12 @@ namespace JsonAssets
                 int oldId = int.Parse(id.Value);
                 switch (type.Value)
                 {
-                    // the index for boots are also in objects
-                    case "B":
+                    case "B": //boots are in objects
+                    case "b":
                     case "O":
-                    case "R":
+                    case "o":
+                    case "R": //rings are in objects too.
+                    case "r": 
                     {
                         if (Mod.instance.VanillaObjectIds.Contains(oldId))
                             return m.Value;
@@ -1897,6 +1905,7 @@ namespace JsonAssets
                         break;
                     }
                     case "BO":
+                    case "bo":
                     {
                         if (Mod.instance.VanillaBigCraftableIds.Contains(oldId))
                             return m.Value;
@@ -1906,6 +1915,7 @@ namespace JsonAssets
                         break;
                     }
                     case "C":
+                    case "c":
                     {
                         if (Mod.instance.VanillaClothingIds.Contains(oldId))
                             return m.Value;
@@ -1914,6 +1924,7 @@ namespace JsonAssets
                             return m.Value.Replace(id.Value, newID.ToString());
                         break;
                     }
+                    case "h":
                     case "H":
                     {
                         if (Mod.instance.VanillaHatIds.Contains(oldId))
@@ -1923,6 +1934,7 @@ namespace JsonAssets
                             return m.Value.Replace(id.Value, newID.ToString());
                         break;
                     }
+                    case "w":
                     case "W":
                     {
                         if (Mod.instance.VanillaWeaponIds.Contains(oldId))
@@ -1938,7 +1950,7 @@ namespace JsonAssets
             return m.Value;
         }
 
-        private static readonly MatchEvaluator ItemEvaluator = new(AdjustContextTag);
+        private static readonly MatchEvaluator ItemEvaluator = new(AdjustContextTagOrStandardDescription);
 
         private bool ReverseFixing;
         private readonly HashSet<string> LocationsFixedAlready = new();
@@ -1952,107 +1964,89 @@ namespace JsonAssets
 
             this.FixCharacter(Game1.player);
 
-            // <- does this get run for farmhands?
-            this.FixIdDict(Game1.player.basicShipped, removeUnshippable: true);
-            this.FixIdDict(Game1.player.mineralsFound);
-            this.FixIdDict(Game1.player.recipesCooked);
-            this.FixIdDict2(Game1.player.archaeologyFound);
-            this.FixIdDict2(Game1.player.fishCaught);
-            foreach (var dict in Game1.player.giftedItems.Values)
-                this.FixIdDict3(dict);
+            foreach (SpecialOrder order in Game1.player.team.specialOrders)
+                this.FixSpecialOrder(order);
 
-            foreach (var quest in Game1.player.questLog)
+            this.FixItemList(Game1.player.team.junimoChest);
+            foreach (var loc in Game1.locations)
+                this.FixLocation(loc);
+
+            // fix museum donations
+            this.FixVector2Dictionary(Game1.netWorldState.Value.MuseumPieces);
+
+            var bundleData = Game1.netWorldState.Value.GetUnlocalizedBundleData();
+            var bundleDataCopy = new Dictionary<string, string>(Game1.netWorldState.Value.GetUnlocalizedBundleData());
+
+            foreach (var entry in bundleDataCopy)
             {
-                if (!this.FixQuest(quest))
+                List<string> toks = new List<string>(entry.Value.Split('/'));
+
+                // First, fix some stuff we broke in an earlier build by using .BundleData instead of the unlocalized version
+                // Copied from Game1.applySaveFix (case FixBotchedBundleData)
+                while (toks.Count > 4 && !int.TryParse(toks[toks.Count - 1], out _))
                 {
-                    quest.reloadDescription();
-                    quest.reloadObjective();
+                    string lastValue = toks[toks.Count - 1];
+                    if (char.IsDigit(lastValue[lastValue.Length - 1]) && lastValue.Contains(":") && lastValue.Contains("\\"))
+                    {
+                        break;
+                    }
+                    toks.RemoveAt(toks.Count - 1);
                 }
-            }
 
-            if (Context.IsMainPlayer)
-            {
-                foreach (SpecialOrder order in Game1.player.team.specialOrders)
-                    this.FixSpecialOrder(order);
-
-                this.FixItemList(Game1.player.team.junimoChest);
-                foreach (var loc in Game1.locations)
-                    this.FixLocation(loc);
-
-                var bundleData = Game1.netWorldState.Value.GetUnlocalizedBundleData();
-                var bundleDataCopy = new Dictionary<string, string>(Game1.netWorldState.Value.GetUnlocalizedBundleData());
-
-                foreach (var entry in bundleDataCopy)
+                // Then actually fix IDs
+                string[] toks1 = toks[1].Split(' ');
+                if (toks1[0] == "O")
                 {
-                    List<string> toks = new List<string>(entry.Value.Split('/'));
-
-                    // First, fix some stuff we broke in an earlier build by using .BundleData instead of the unlocalized version
-                    // Copied from Game1.applySaveFix (case FixBotchedBundleData)
-                    while (toks.Count > 4 && !int.TryParse(toks[toks.Count - 1], out _))
+                    if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
                     {
-                        string lastValue = toks[toks.Count - 1];
-                        if (char.IsDigit(lastValue[lastValue.Length - 1]) && lastValue.Contains(":") && lastValue.Contains("\\"))
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
                         {
-                            break;
+                            Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
+                            oldId = -1;
                         }
-                        toks.RemoveAt(toks.Count - 1);
-                    }
-
-                    // Then actually fix IDs
-                    string[] toks1 = toks[1].Split(' ');
-                    if (toks1[0] == "O")
-                    {
-                        if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
+                        else
                         {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
-                            {
-                                Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
-                                oldId = -1;
-                            }
-                            else
-                            {
-                                toks1[1] = oldId.ToString();
-                            }
+                            toks1[1] = oldId.ToString();
                         }
                     }
-                    else if (toks1[0] == "BO")
-                    {
-                        if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
-                        {
-                            if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, ref oldId, this.VanillaBigCraftableIds))
-                            {
-                                Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
-                                oldId = -1;
-                            }
-                            else
-                            {
-                                toks1[1] = oldId.ToString();
-                            }
-                        }
-                    }
-                    toks[1] = string.Join(" ", toks1);
-                    string[] toks2 = toks[2].Split(' ');
-                    for (int i = 0; i < toks2.Length; i += 3)
-                    {
-                        if (int.TryParse(toks2[i], out int oldId) && oldId != -1)
-                        {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
-                            {
-                                Log.Warn($"Bundle item missing ({entry.Key}, {oldId})! Probably broken now!");
-                                oldId = -1;
-                            }
-                            else
-                            {
-                                toks2[i] = oldId.ToString();
-                            }
-                        }
-                    }
-                    toks[2] = string.Join(" ", toks2);
-                    bundleData[entry.Key] = string.Join("/", toks);
                 }
-                // Fix bad bundle data
-                Game1.netWorldState.Value.SetBundleData(bundleData);
+                else if (toks1[0] == "BO")
+                {
+                    if (int.TryParse(toks1[1], out int oldId) && oldId != -1)
+                    {
+                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, ref oldId, this.VanillaBigCraftableIds))
+                        {
+                            Log.Warn($"Bundle reward item missing ({entry.Key}, {oldId})! Probably broken now!");
+                            oldId = -1;
+                        }
+                        else
+                        {
+                            toks1[1] = oldId.ToString();
+                        }
+                    }
+                }
+                toks[1] = string.Join(" ", toks1);
+                string[] toks2 = toks[2].Split(' ');
+                for (int i = 0; i < toks2.Length; i += 3)
+                {
+                    if (int.TryParse(toks2[i], out int oldId) && oldId != -1)
+                    {
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, ref oldId, this.VanillaObjectIds))
+                        {
+                            Log.Warn($"Bundle item missing ({entry.Key}, {oldId})! Probably broken now!");
+                            oldId = -1;
+                        }
+                        else
+                        {
+                            toks2[i] = oldId.ToString();
+                        }
+                    }
+                }
+                toks[2] = string.Join(" ", toks2);
+                bundleData[entry.Key] = string.Join("/", toks);
             }
+            // Fix bad bundle data
+            Game1.netWorldState.Value.SetBundleData(bundleData);
 
             if (!this.ReverseFixing)
                 this.Api.InvokeIdsFixed();
@@ -2138,6 +2132,17 @@ namespace JsonAssets
             contextstring = PreservesContextTag.Replace(contextstring, PreservesEvaluator);
             contextstring = ItemContextTag.Replace(contextstring, ItemEvaluator);
             return contextstring;
+        }
+
+        private void FixTailoringDict(NetStringDictionary<int, NetInt> dictionary)
+        {
+            Dictionary<string, int> newValues = new();
+            foreach (var (k, v) in dictionary.Pairs)
+                newValues[TailoringStandardDescription.Replace(k, ItemEvaluator)] = v;
+
+            dictionary.Clear();
+            foreach (var (k, v) in newValues)
+                dictionary[k] = v;
         }
 
         /// <summary>Fix item IDs contained by an item, including the item itself.</summary>
@@ -2231,6 +2236,7 @@ namespace JsonAssets
                     break;
 
                 case Farmer player:
+                    // inventory and equipment
                     this.FixItemList(player.Items);
                     if (this.FixRing(player.leftRing.Value))
                         player.leftRing.Value = null;
@@ -2244,6 +2250,35 @@ namespace JsonAssets
                         player.pantsItem.Value = null;
                     if (this.FixId(this.OldObjectIds, this.ObjectIds, player.boots.Value?.indexInTileSheet, this.VanillaObjectIds))
                         player.boots.Value = null;
+
+                    // items lost to death;
+                    this.FixItemList(player.itemsLostLastDeath);
+                    if (player.recoveredItem is not null && this.FixItem(player.recoveredItem))
+                    {
+                        player.recoveredItem = null;
+                        player.mailbox.Remove("MarlonRecovery");
+                        player.mailForTomorrow.Remove("MarlonRecovery");
+                    }
+
+                    // completion metadata
+                    this.FixIdDict(player.basicShipped, removeUnshippable: true);
+                    this.FixIdDict(player.mineralsFound);
+                    this.FixIdDict(player.recipesCooked);
+                    this.FixIdDict2(player.archaeologyFound);
+                    this.FixIdDict2(player.fishCaught);
+                    foreach (var dict in player.giftedItems.Values)
+                        this.FixIdDict3(dict);
+
+                    this.FixTailoringDict(player.tailoredItems);
+
+                    foreach (var quest in player.questLog)
+                    {
+                        if (!this.FixQuest(quest))
+                        {
+                            quest.reloadDescription();
+                            quest.reloadObjective();
+                        }
+                    }
                     break;
             }
         }
@@ -2399,7 +2434,7 @@ namespace JsonAssets
                     this.FixFarmAnimal(animal);
             }
 
-            foreach (var clump in loc.resourceClumps.Where(this.FixResourceClump).ToArray())
+            foreach (var clump in loc.resourceClumps.Where(this.FixResourceClump))
                 loc.resourceClumps.Remove(clump);
         }
 
@@ -2676,23 +2711,92 @@ namespace JsonAssets
                 if (this.VanillaObjectIds.Contains(key))
                     continue;
 
-                KeyValuePair<string, int> item = this.OldObjectIds.FirstOrDefault(x => x.Value == key);
-                if (item.Key is not null) // default(kvp(string,int)) is (null,0)
+                if (this.ReverseFixing)
                 {
-                    if (this.ObjectIds.TryGetValue(item.Key, out int newindex))
+                    KeyValuePair<string, int> item = this.ObjectIds.FirstOrDefault(x => x.Value == key);
+                    if (item.Key is not null)
                     {
-                        if (newindex != item.Value)
-                            toAddOrUpdate.Add(newindex, val);
+                        if (this.OldObjectIds.TryGetValue(item.Key, out int oldindex))
+                        {
+                            if (oldindex != item.Value)
+                                toAddOrUpdate.Add(oldindex, val)
+                        }
+                        else
+                        {
+                            toRemove.Add(key);
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    KeyValuePair<string, int> item = this.OldObjectIds.FirstOrDefault(x => x.Value == key);
+                    if (item.Key is not null) // default(kvp(string,int)) is (null,0)
                     {
-                        toRemove.Add(key);
+                        if (this.ObjectIds.TryGetValue(item.Key, out int newindex))
+                        {
+                            if (newindex != item.Value)
+                                toAddOrUpdate.Add(newindex, val);
+                        }
+                        else
+                        {
+                            toRemove.Add(key);
+                        }
                     }
                 }
             }
             foreach (int entry in toRemove)
                 dict.Remove(entry);
             foreach ((int entry, int val) in toAddOrUpdate)
+                dict[entry] = val;
+        }
+
+        private void FixVector2Dictionary(NetVector2Dictionary<int, NetInt> dict)
+        {
+            var toRemove = new List<Vector2>();
+            var addOrUpdate = new Dictionary<Vector2, int>();
+            foreach (var (loc, index) in dict.Pairs)
+            {
+
+                if (this.VanillaObjectIds.Contains(index))
+                    continue;
+
+                if (this.ReverseFixing)
+                {
+                    KeyValuePair<string, int> item = this.ObjectIds.FirstOrDefault(x => x.Value == index);
+                    if (item.Key is not null)
+                    {
+                        if (this.OldObjectIds.TryGetValue(item.Key, out int oldindex))
+                        {
+                            if (oldindex != item.Value)
+                                addOrUpdate.Add(loc, item.Value);
+                        }
+                        else
+                        {
+                            toRemove.Add(loc);
+                        }
+                    }
+                }
+                else
+                {
+                    KeyValuePair<string, int> item = this.OldObjectIds.FirstOrDefault(x => x.Value == index);
+                    if (item.Key is not null) // default(kvp(string,int)) is (null,0)
+                    {
+                        if (this.ObjectIds.TryGetValue(item.Key, out int newindex))
+                        {
+                            if (newindex != item.Value)
+                                addOrUpdate.Add(loc, item.Value);
+                        }
+                        else
+                        {
+                            toRemove.Add(loc);
+                        }
+                    }
+                }
+            }
+
+            foreach (var entry in toRemove)
+                dict.Remove(entry);
+            foreach ((var entry, int val) in addOrUpdate)
                 dict[entry] = val;
         }
 
