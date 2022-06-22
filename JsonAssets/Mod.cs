@@ -2085,6 +2085,7 @@ namespace JsonAssets
         {
             foreach (var objective in order.objectives)
                 FixSpecialOrderObjective(objective);
+            FixItemList(order.donatedItems);
         }
 
         private void FixSpecialOrderObjective(OrderObjective objective)
