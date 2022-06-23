@@ -286,6 +286,15 @@ namespace JsonAssets
             if (!this.AssertHasName(obj, "object", source, translations))
                 return;
 
+            // check for duplicates
+            if (this.DupObjects.TryGetValue(obj.Name, out IManifest prevManifest))
+            {
+                Log.Error($"Duplicate object: {obj.Name} from {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
+            else
+                this.DupObjects[obj.Name] = source;
+
             // save data
             this.Objects.Add(obj);
 
@@ -338,12 +347,6 @@ namespace JsonAssets
             if (obj.Category == ObjectCategory.Ring)
                 this.MyRings.Add(obj);
 
-            // check for duplicates
-            if (this.DupObjects.TryGetValue(obj.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
-            else
-                this.DupObjects[obj.Name] = source;
-
             // track added
             if (!this.ObjectsByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.ObjectsByContentPack[source] = new();
@@ -384,6 +387,7 @@ namespace JsonAssets
                 DescriptionLocalization = crop.SeedDescriptionLocalization,
                 TranslationKey = crop.SeedTranslationKey
             };
+
             this.PopulateTranslations(crop.Seed, translations);
 
             // validate
@@ -391,6 +395,15 @@ namespace JsonAssets
                 return;
             if (!this.AssertHasName(crop.Seed, "crop seed", source, translations, discriminator: $"crop: {crop.Name}", fieldName: nameof(crop.SeedName)))
                 return;
+
+            // check for duplicates
+            if (this.DupCrops.TryGetValue(crop.Name, out IManifest prevManifest))
+            {
+                Log.Error($"Duplicate crop: {crop.Name} by {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
+            else
+                this.DupCrops[crop.Name] = source;
 
             // save crop data
             this.Crops.Add(crop);
@@ -450,12 +463,6 @@ namespace JsonAssets
                 }
             }
 
-            // check for duplicates
-            if (this.DupCrops.TryGetValue(crop.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
-            else
-                this.DupCrops[crop.Name] = source;
-
             // save seed data
             this.Objects.Add(crop.Seed);
 
@@ -504,6 +511,15 @@ namespace JsonAssets
             };
             this.PopulateTranslations(tree.Sapling, translations);
 
+            // check for duplicates
+            if (this.DupFruitTrees.TryGetValue(tree.Name, out IManifest prevManifest))
+            {
+                Log.Error($"Duplicate fruit tree: {tree.Name} by {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
+            else
+                this.DupFruitTrees[tree.Name] = source;
+
             // validate
             if (!this.AssertHasName(tree, "fruit tree", source, translations))
                 return;
@@ -536,12 +552,6 @@ namespace JsonAssets
                 }
             }
 
-            // check for duplicates
-            if (this.DupFruitTrees.TryGetValue(tree.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
-            else
-                this.DupFruitTrees[tree.Name] = source;
-
             if (!this.FruitTreesByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.FruitTreesByContentPack[source] = new List<string>();
             addedNames.Add(tree.Name);
@@ -568,6 +578,16 @@ namespace JsonAssets
             // validate
             if (!this.AssertHasName(craftable, "craftable", source, translations))
                 return;
+
+            // check for duplicates
+            if (this.DupBigCraftables.TryGetValue(craftable.Name, out IManifest prevManifest))
+            {
+                Log.Error($"Duplicate big craftable: {craftable.Name} by {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
+            else
+                this.DupBigCraftables[craftable.Name] = source;
+
 
             // save data
             this.BigCraftables.Add(craftable);
@@ -616,12 +636,6 @@ namespace JsonAssets
                 }
             }
 
-            // check for duplicates
-            if (this.DupBigCraftables.TryGetValue(craftable.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
-            else
-                this.DupBigCraftables[craftable.Name] = source;
-
             if (!this.BigCraftablesByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.BigCraftablesByContentPack[source] = new();
             addedNames.Add(craftable.Name);
@@ -649,6 +663,15 @@ namespace JsonAssets
             if (!this.AssertHasName(hat, "hat", source, translations))
                 return;
 
+            // check for duplicates
+            if (this.DupHats.TryGetValue(hat.Name, out IManifest prevManifest))
+            {
+                Log.Error($"Duplicate hat: {hat.Name} by {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
+            else
+                this.DupHats[hat.Name] = source;
+
             // save data
             this.Hats.Add(hat);
 
@@ -663,12 +686,6 @@ namespace JsonAssets
                     Object = () => new Hat(hat.Id)
                 });
             }
-
-            // check for duplicates
-            if (this.DupHats.TryGetValue(hat.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
-            else
-                this.DupHats[hat.Name] = source;
 
             if (!this.HatsByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.HatsByContentPack[source] = new();
@@ -697,6 +714,15 @@ namespace JsonAssets
             if (!this.AssertHasName(weapon, "weapon", source, translations))
                 return;
 
+            // check for duplicates
+            if (this.DupWeapons.TryGetValue(weapon.Name, out IManifest prevManifest))
+            {
+                Log.Error($"Duplicate weapon: {weapon.Name} by {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
+            else
+                this.DupWeapons[weapon.Name] = source;
+
             // save data
             this.Weapons.Add(weapon);
 
@@ -721,12 +747,6 @@ namespace JsonAssets
                     });
                 }
             }
-
-            // check for duplicates
-            if (this.DupWeapons.TryGetValue(weapon.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
-            else
-                this.DupWeapons[weapon.Name] = source;
 
             if (!this.WeaponsByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.WeaponsByContentPack[source] = new();
@@ -755,14 +775,17 @@ namespace JsonAssets
             if (!this.AssertHasName(shirt, "shirt", source, translations))
                 return;
 
-            // save data
-            this.Shirts.Add(shirt);
-
             // check for duplicates
             if (this.DupShirts.TryGetValue(shirt.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+            {
+                Log.Error($"Duplicate shirt: {shirt.Name} by {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupShirts[shirt.Name] = source;
+
+            // save data
+            this.Shirts.Add(shirt);
 
             if (!this.ClothingByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.ClothingByContentPack[source] = new();
@@ -791,14 +814,17 @@ namespace JsonAssets
             if (!this.AssertHasName(pants, "pants", source, translations))
                 return;
 
-            // save data
-            this.Pants.Add(pants);
-
             // check for duplicates
             if (this.DupPants.TryGetValue(pants.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate pants: {pants.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+            {
+                Log.Error($"Duplicate pants: {pants.Name} by {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupPants[pants.Name] = source;
+
+            // save data
+            this.Pants.Add(pants);
 
             if (!this.ClothingByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.ClothingByContentPack[source] = new();
@@ -837,6 +863,15 @@ namespace JsonAssets
             if (!this.AssertHasName(boots, "boots", source, translations))
                 return;
 
+            // check for duplicates
+            if (this.DupBoots.TryGetValue(boots.Name, out IManifest prevManifest))
+            {
+                Log.Error($"Duplicate boots: {boots.Name} by {source.Name} will not be added, already added by {prevManifest.Name}!");
+                return;
+            }
+            else
+                this.DupBoots[boots.Name] = source;
+
             // save data
             this.Boots.Add(boots);
 
@@ -862,12 +897,6 @@ namespace JsonAssets
                     });
                 }
             }
-
-            // check for duplicates
-            if (this.DupBoots.TryGetValue(boots.Name, out IManifest prevManifest))
-                Log.Error($"Duplicate boots: {boots.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
-            else
-                this.DupBoots[boots.Name] = source;
 
             if (!this.BootsByContentPack.TryGetValue(source, out List<string> addedNames))
                 addedNames = this.BootsByContentPack[source] = new();
