@@ -8,6 +8,7 @@
     // mod list UI
     "list.editable-heading": "Налаштування модів",
     "list.not-editable-heading": "Можна редагувати в головному меню:",
+    "list.keybindings": "Прив'язки клавіш",
 
     // mod config pages
     "config.buttons.cancel": "Скасувати",
