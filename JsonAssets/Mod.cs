@@ -2003,6 +2003,9 @@ namespace JsonAssets
             // fix museum donations
             this.FixVector2Dictionary(Game1.netWorldState.Value.MuseumPieces);
 
+            //fix returned items
+            this.FixItemList(Game1.player.team.returnedDonations);
+
             var bundleData = Game1.netWorldState.Value.GetUnlocalizedBundleData();
             var bundleDataCopy = new Dictionary<string, string>(Game1.netWorldState.Value.GetUnlocalizedBundleData());
 
