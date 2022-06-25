@@ -2504,6 +2504,9 @@ namespace JsonAssets
                     if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.neededItem.Value?.parentSheetIndex, this.VanillaObjectIds))
                         pond.neededItem.Value = null;
                     break;
+                case JunimoHut hut:
+                    this.FixItemList(hut.output.Value.items);
+                    break;
             }
         }
 
@@ -2627,7 +2630,7 @@ namespace JsonAssets
 
                         if (attached.GetType() != typeof(SObject) || attached.bigCraftable.Value)
                         {
-                            Log.Warn($"Unsupported attachment types! Let spacechase0 know he needs to support {attached.bigCraftable.Value} {attached}");
+                            Log.Warn($"Unsupported attachment types! Consider reporting {attached.bigCraftable.Value} {attached} to the mod page.");
                         }
                         else
                         {
