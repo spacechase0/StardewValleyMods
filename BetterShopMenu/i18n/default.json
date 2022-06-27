@@ -59,6 +59,9 @@
     "config.grid-layout.name": "Grid Layout",
     "config.grid-layout.tooltip": "Whether to use the grid layout in shops.",
 
+    "config.quantity-dialog.name": "Quantity Dialog",
+    "config.quantity-dialog.tooltip": "Opens a dialog for a custom purchase amount. Open via LeftAlt/Option + RightClick.",
+
     /** grid/std layout button hover text */
     "button.grid-layout.tooltip": "Select Grid Layout",
     "button.std-layout.tooltip": "Select Standard Layout"

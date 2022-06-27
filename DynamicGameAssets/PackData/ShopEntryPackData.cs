@@ -30,6 +30,7 @@ namespace DynamicGameAssets.PackData
         AnimalSupplies
         Blacksmith
         Dwarf
+        STF.stfshopname
         */
         public string ShopId { get; set; }
 

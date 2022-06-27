@@ -1,61 +1,65 @@
 {
-    /*********
-    ** Shop UI
-    *********/
-    // filter labels
-    "filter.category": "Kategória:",
-    "filter.sorting": "Rendezés:",
+	/*********
+	** Shop UI
+	*********/
+	// filter labels
+	"filter.category": "Kategória:",
+	"filter.sorting": "Rendezés:",
 
-    // sort types
-    "sort.none": "Nincs",
-    "sort.name": "Név", 
-    "sort.price": "Ár", 
+	// sort types
+	"sort.none": "Nincs",
+	"sort.name": "Név", 
+	"sort.price": "Ár", 
 
-    // category names
-    "categories.everything": "Minden",
-    "categories.other": "Egyéb",
-    "categories.artisan-goods": "Kézműves termék",
-    "categories.bait": "Csali",
-    "categories.big-craftables": "Nagy kézműves áru",
-    "categories.boots": "Csizma",
-    "categories.building-resources": "Építési erőforrás",
-    "categories.clothing": "Ruha",
-    "categories.cooking": "Étel",
-    "categories.crafting": "Barkácsolás",
-    "categories.eggs": "Tojás",
-    "categories.equipment": "Berendezés",
-    "categories.fertilizer": "Trágya",
-    "categories.fish": "Hal",
-    "categories.flowers": "Virág",
-    "categories.fruits": "Gyümölcs",
-    "categories.furniture": "Bútor",
-    "categories.gems": "Ásvány",
-    "categories.greens": "Fű",
-    "categories.hats": "Kalap",
-    "categories.ingredients": "Hozzávaló",
-    "categories.junk": "Szemét",
-    "categories.meat": "Hús",
-    "categories.metals": "Alapanyag",
-    "categories.milk": "Tej",
-    "categories.minerals": "Ásvány",
-    "categories.monster-loot": "Szörny zsákmány",
-    "categories.recipes": "Recept",
-    "categories.rings": "Gyűrű",
-    "categories.seeds": "Magvak",
-    "categories.seedsOther": "Egyéb magvak",
-    "categories.sell-to-pierre-or-marnie": "Eladható @ Pierre/Marnie",
-    "categories.sell-to-pierre": "Eladható @ Pierre",
-    "categories.sell-to-willy": "Eladható @ Willy",
-    "categories.syrups": "Szirup",
-    "categories.tackle": "Szerszám",
-    "categories.tools": "Eszköz",
-    "categories.vegetables": "Zöldség",
-    "categories.weapons": "Fegyver",
+	// category names
+	"categories.everything": "Minden",
+	"categories.other": "Egyéb",
+	"categories.artisan-goods": "Kézműves termék",
+	"categories.bait": "Csali",
+	"categories.big-craftables": "Nagy kézműves áru",
+	"categories.boots": "Csizma",
+	"categories.building-resources": "Építési erőforrás",
+	"categories.clothing": "Ruha",
+	"categories.cooking": "Étel",
+	"categories.crafting": "Barkácsolás",
+	"categories.eggs": "Tojás",
+	"categories.equipment": "Berendezés",
+	"categories.fertilizer": "Trágya",
+	"categories.fish": "Hal",
+	"categories.flowers": "Virág",
+	"categories.fruits": "Gyümölcs",
+	"categories.furniture": "Bútor",
+	"categories.gems": "Ásvány",
+	"categories.greens": "Fű",
+	"categories.hats": "Kalap",
+	"categories.ingredients": "Hozzávaló",
+	"categories.junk": "Szemét",
+	"categories.meat": "Hús",
+	"categories.metals": "Alapanyag",
+	"categories.milk": "Tej",
+	"categories.minerals": "Ásvány",
+	"categories.monster-loot": "Szörny zsákmány",
+	"categories.recipes": "Recept",
+	"categories.rings": "Gyűrű",
+	"categories.seeds": "Magvak",
+	"categories.seedsOther": "Egyéb magvak",
+	"categories.sell-to-pierre-or-marnie": "Eladható @ Pierre/Marnie",
+	"categories.sell-to-pierre": "Eladható @ Pierre",
+	"categories.sell-to-willy": "Eladható @ Willy",
+	"categories.syrups": "Szirup",
+	"categories.tackle": "Szerszám",
+	"categories.tools": "Eszköz",
+	"categories.vegetables": "Zöldség",
+	"categories.weapons": "Fegyver",
 
 
-    /*********
-    ** Generic Mod Config Menu UI
-    *********/
-    "config.grid-layout.name": "Kísérleti rácsos elrendezés",
-    "config.grid-layout.tooltip": "Kísérleti rácsos elrendezés az üzletekben. Ez kisebb megjelenítési problémákat okozhat, vagy hatással lehet más modok funkcióira a boltok menüjében."
+	/*********
+	** Generic Mod Config Menu UI
+	*********/
+	"config.grid-layout.name": "Kísérleti rácsos elrendezés",
+	"config.grid-layout.tooltip": "Kísérleti rácsos elrendezés az üzletekben. Ez kisebb megjelenítési problémákat okozhat, vagy hatással lehet más modok funkcióira a boltok menüjében.",
+
+	/** grid/std layout button hover text */
+	"button.grid-layout.tooltip": "Rácsos elrendezés kiválasztása",
+	"button.std-layout.tooltip": "Normál elrendezés kiválasztása",
 }

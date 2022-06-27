@@ -5,6 +5,7 @@ namespace DynamicGameAssets
 {
     public interface IDynamicGameAssetsApi
     {
+
         /// <summary>
         /// Get the DGA item ID of this item, if it has one.
         /// </summary>
@@ -28,6 +29,25 @@ namespace DynamicGameAssets
         /// <param name="fullId">The full ID of the item to spawn.</param>
         /// <returns></returns>
         object SpawnDGAItem(string fullId);
+
+        /// <summary>
+        /// Gets the names of all installed packs.
+        /// </summary>
+        /// <returns>Array of all pack names.</returns>
+        string[] ListContentPacks();
+
+        /// <summary>
+        /// Gets all items provided by a pack.
+        /// </summary>
+        /// <param name="packname">The name of the pack.</param>
+        /// <returns>Namespaced item names.</returns>
+        string[]? GetItemsByPack(string packname);
+
+        /// <summary>
+        /// Gets all the items (namespaced names)
+        /// </summary>
+        /// <returns>A list of all items.</returns>
+        string[] GetAllItems();
 
         /// <summary>
         /// Register a DGA pack embedded in another mod.

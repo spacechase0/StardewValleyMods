@@ -42,6 +42,9 @@ namespace MoonMisadventures.Patches
         private static AlphaTestEffect ate;
         public static void Prefix( ref DepthStencilState depthStencilState, ref BlendState blendState, ref Effect effect )
         {
+            if (Game1.currentLocation is not Game.Locations.LunarLocation)
+                return;
+
             if ( Mod.DefaultStencilOverride != null && depthStencilState == null )
             {
                 if ( ate == null || true )

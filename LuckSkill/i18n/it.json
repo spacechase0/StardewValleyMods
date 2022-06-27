@@ -1,0 +1,25 @@
+{
+    // skill
+    "skill.name": "Fortuna",
+    "skill.level-up": "Fortuna Aumentata",
+
+    // professions
+    "fortunate.name": "Fortunato",
+    "fortunate.desc": "Fortuna giornaliera aumentata.",
+    "lucky.name": "Fortunello",
+    "lucky.desc": "20% di possibilità di fortuna giornaliera massima.",
+    "popular-helper.name": "Aiutante Popolare",
+    "popular-helper.desc": "Le richieste giornaliere hanno il triplo di possibilità di accadere.",
+    "shooting-star.name": "Stella cadente",
+    "shooting-star.desc": "Gli eventi notturni hanno il doppio di possibilità di accadere.",
+    "spirit-child.name": "Figlio degli spiriti",
+    "spirit-child.desc": "Fare regali rende gli junimo felici. Potrebbero aiutarti in fattoria.\n(15% di possibilità per qualche miglioria in fattoria.)",
+    "un-unlucky.name": "S-sfortunato",
+    "un-unlucky.desc": "Mai sfortuna.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "Gli junimo hanno reso alcuni animali più amichevoli!",
+    "junimo-rewards.grow-crops": "Gli junimo hanno fatto crescere le tue colture!",
+    "junimo-rewards.grow-grass": "Gli junimo hanno fatto crescere l'erba e riparato le staccionate!",
+    "junimo-rewards.prismatic-shard": "Gli junimo ti hanno regalato una pietra prismatica!"
+}
