@@ -11,6 +11,8 @@ namespace DynamicGameAssets.Game
     [XmlType("Mods_DGABasicFurniture")]
     public partial class CustomBasicFurniture : Furniture, ISittable
     {
+        public HashSet<Vector2> lightGlowPositionList = new HashSet<Vector2>();
+
         private FurniturePackData.FurnitureConfiguration GetCurrentConfiguration()
         {
             return this.Data.Configurations.Count > this.currentRotation.Value ? this.Data.Configurations[this.currentRotation.Value] : new FurniturePackData.FurnitureConfiguration();
@@ -170,17 +172,31 @@ namespace DynamicGameAssets.Game
         public override void AddLightGlow(GameLocation location)
         {
             // equivalent to the base logic, but correct lighting position for custom furniture
-            if (!this.lightGlowPosition.HasValue)
+            if (this.lightGlowPositionList.Count == 0)
             {
                 Vector2 furniturePixel = this.TileLocation * Game1.tileSize;
                 Vector2 glowPixel = furniturePixel + new Vector2((float)Game1.tileSize / 2, Game1.tileSize);
 
-                if (!location.lightGlows.Contains(glowPixel))
+                for (int i = 0; i < this.getTilesWide(); i++)
                 {
-                    this.lightGlowPosition = glowPixel;
-                    location.lightGlows.Add(glowPixel);
+                    if (!location.lightGlows.Contains(glowPixel))
+                    {
+                        this.lightGlowPositionList.Add(glowPixel);
+                        location.lightGlows.Add(glowPixel);
+
+                        glowPixel.X += 64f;
+                    }
                 }
             }
+        }
+
+        public override void RemoveLightGlow(GameLocation location)
+        {
+            foreach (Vector2 pos in this.lightGlowPositionList)
+            {
+                location.lightGlows.Remove(pos);
+            }
+            this.lightGlowPositionList.Clear();
         }
 
         public override bool DoesTileHaveProperty(int tile_x, int tile_y, string property_name, string layer_name, ref string property_value)
