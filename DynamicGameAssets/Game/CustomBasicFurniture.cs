@@ -92,10 +92,13 @@ namespace DynamicGameAssets.Game
 
             if (Furniture.isDrawingLocationFurniture)
             {
-                if (this.HasSittingFarmers() && this.sourceRect.Right <= Furniture.furnitureFrontTexture.Width && this.sourceRect.Bottom <= Furniture.furnitureFrontTexture.Height)
+                if (this.HasSittingFarmers())
                 {
                     spriteBatch.Draw(currTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Top + 16) / 10000f);
-                    spriteBatch.Draw(frontTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), frontTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Bottom - 8) / 10000f);
+                    if (frontTex != null && this.sourceRect.Right <= Furniture.furnitureFrontTexture.Width && this.sourceRect.Bottom <= Furniture.furnitureFrontTexture.Height)
+                    {
+                        spriteBatch.Draw(frontTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), frontTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Bottom - 8) / 10000f);
+                    }
                 }
                 else
                 {
@@ -192,12 +195,54 @@ namespace DynamicGameAssets.Game
 
         public override int GetSeatCapacity()
         {
+            if (this.GetCurrentConfiguration().Seats.Count == 0 && (this.furniture_type == 0 || this.furniture_type == 1 || this.furniture_type == 3))
+            {
+                return base.GetSeatCapacity();
+            }
+            if (this.GetCurrentConfiguration().Seats.Count == 0 && this.furniture_type == 2)
+            {
+                return this.defaultSourceRect.Width / 16 - 1;
+            }
             return this.GetCurrentConfiguration().Seats.Count;
         }
 
         public override List<Vector2> GetSeatPositions(bool ignore_offsets = false)
         {
+            if (this.GetCurrentConfiguration().Seats.Count == 0 && (this.furniture_type == 0 || this.furniture_type == 1 || this.furniture_type == 3))
+            {
+                return base.GetSeatPositions();
+            }
+
             var ret = new List<Vector2>();
+
+            if (this.GetCurrentConfiguration().Seats.Count == 0 && this.furniture_type == 2)
+            {
+                int width = this.defaultSourceRect.Width / 16 - 1;
+                if ((int)this.currentRotation == 0 || (int)this.currentRotation == 2)
+                {
+                    ret.Add(base.TileLocation + new Vector2(0.5f, 0f));
+                    for (int i = 1; i < width - 1; i++)
+                    {
+                        ret.Add(base.TileLocation + new Vector2((float)i + 0.5f, 0f));
+                    }
+                    ret.Add(base.TileLocation + new Vector2((float)(width - 1) + 0.5f, 0f));
+                }
+                else if ((int)this.currentRotation == 1)
+                {
+                    for (int k = 0; k < width; k++)
+                    {
+                        ret.Add(base.TileLocation + new Vector2(1f, k));
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < width; j++)
+                    {
+                        ret.Add(base.TileLocation + new Vector2(0f, j));
+                    }
+                }
+                return ret;
+            }
 
             foreach (var seat in this.GetCurrentConfiguration().Seats)
             {
@@ -209,6 +254,11 @@ namespace DynamicGameAssets.Game
 
         public int GetSittingDirection()
         {
+            if (this.GetCurrentConfiguration().Seats.Count == 0 && this.furniture_type == 0 || this.furniture_type == 1 || this.furniture_type == 2 || this.furniture_type == 3)
+            {
+                return base.GetSittingDirection();
+            }
+
             return this.GetCurrentConfiguration().SittingDirection == FurniturePackData.FurnitureConfiguration.SeatDirection.Any ?
                    Game1.player.FacingDirection : (int)this.GetCurrentConfiguration().SittingDirection;
         }
