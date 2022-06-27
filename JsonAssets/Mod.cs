@@ -2279,6 +2279,15 @@ namespace JsonAssets
                 case Farmer player:
                     // inventory and equipment
                     this.FixItemList(player.Items);
+
+                    //fix inventory size that atra broke.
+                    if (player.items.Count != player.maxItems)
+                    {
+                        for (int i = 0; i < player.maxItems - player.items.Count; i++)
+                        {
+                            player.items.Add(null);
+                        }
+                    }
                     if (this.FixRing(player.leftRing.Value))
                         player.leftRing.Value = null;
                     if (this.FixRing(player.rightRing.Value))
