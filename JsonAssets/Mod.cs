@@ -1997,6 +1997,8 @@ namespace JsonAssets
                 this.FixSpecialOrder(order);
 
             this.FixItemList(Game1.player.team.junimoChest);
+            this.RemoveNulls(Game1.player.team.junimoChest);
+
             foreach (var loc in Game1.locations)
                 this.FixLocation(loc);
 
@@ -2005,6 +2007,7 @@ namespace JsonAssets
 
             //fix returned items
             this.FixItemList(Game1.player.team.returnedDonations);
+            this.RemoveNulls(Game1.player.team.returnedDonations);
 
             var bundleData = Game1.netWorldState.Value.GetUnlocalizedBundleData();
             var bundleDataCopy = new Dictionary<string, string>(Game1.netWorldState.Value.GetUnlocalizedBundleData());
@@ -2116,8 +2119,9 @@ namespace JsonAssets
         private void FixSpecialOrder(SpecialOrder order)
         {
             foreach (var objective in order.objectives)
-                FixSpecialOrderObjective(objective);
-            FixItemList(order.donatedItems);
+                this.FixSpecialOrderObjective(objective);
+            this.FixItemList(order.donatedItems);
+            this.RemoveNulls(order.donatedItems);
         }
 
         private void FixSpecialOrderObjective(OrderObjective objective)
@@ -2212,6 +2216,7 @@ namespace JsonAssets
                         else
                             chest.startingLidFrame.Value = chest.ParentSheetIndex + 1;
                         this.FixItemList(chest.items);
+                        chest.clearNulls();
                     }
                     else if (obj is IndoorPot pot)
                     {
@@ -2243,7 +2248,10 @@ namespace JsonAssets
                             obj.heldObject.Value = null;
 
                         if (obj.heldObject.Value is Chest innerChest)
+                        {
                             this.FixItemList(innerChest.items);
+                            innerChest.clearNulls();
+                        }
                     }
                     break;
             }
@@ -2286,6 +2294,7 @@ namespace JsonAssets
 
                     // items lost to death;
                     this.FixItemList(player.itemsLostLastDeath);
+                    this.RemoveNulls(player.itemsLostLastDeath);
                     if (player.recoveredItem is not null && this.FixItem(player.recoveredItem))
                     {
                         player.recoveredItem = null;
@@ -2360,12 +2369,14 @@ namespace JsonAssets
             {
                 case FarmHouse house:
                     this.FixItemList(house.fridge.Value?.items);
+                    house.fridge.Value?.clearNulls();
                     if (house is Cabin cabin)
                         this.FixCharacter(cabin.farmhand.Value);
                     break;
 
                 case IslandFarmHouse house:
                     this.FixItemList(house.fridge.Value?.items);
+                    house.fridge.Value?.clearNulls();
                     break;
             }
 
@@ -2394,7 +2405,10 @@ namespace JsonAssets
             foreach (var (key, obj) in loc.overlayObjects)
             {
                 if (obj is Chest chest)
+                {
                     this.FixItemList(chest.items);
+                    chest.clearNulls();
+                }
                 else if (obj is Sign sign)
                 {
                     if (!this.FixItem(sign.displayItem.Value))
@@ -2427,7 +2441,10 @@ namespace JsonAssets
                         obj.heldObject.Value = null;
 
                     if (obj.heldObject.Value is Chest chest2)
+                    {
                         this.FixItemList(chest2.items);
+                        chest2.clearNulls();
+                    }
                 }
             }
             foreach (var rem in toRemove)
@@ -2456,7 +2473,10 @@ namespace JsonAssets
                     }
                 }
                 if (furniture is StorageFurniture storage)
+                {
                     this.FixItemList(storage.heldItems);
+                    storage.ClearNulls();
+                }
             }
 
             if (loc is Farm farm)
@@ -2483,7 +2503,9 @@ namespace JsonAssets
             {
                 case Mill mill:
                     this.FixItemList(mill.input.Value.items);
+                    mill.input.Value.clearNulls();
                     this.FixItemList(mill.output.Value.items);
+                    mill.output.Value.clearNulls();
                     break;
 
                 case FishPond pond:
@@ -2509,6 +2531,7 @@ namespace JsonAssets
                     break;
                 case JunimoHut hut:
                     this.FixItemList(hut.output.Value.items);
+                    hut.output.Value.clearNulls();
                     break;
             }
         }
@@ -2593,6 +2616,11 @@ namespace JsonAssets
             }
         }
 
+        /// <summary>
+        /// Fixes the items in an item list. Sets items that it cannot be found to null.
+        /// NOTE: Will need to remove nulls for chests later!
+        /// </summary>
+        /// <param name="items">A list of items.</param>
         [SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         internal void FixItemList(IList<Item> items)
         {
@@ -2603,25 +2631,25 @@ namespace JsonAssets
             {
                 var item = items[i];
                 if (item == null)
-                    items.RemoveAt(i);
+                    continue;
                 if (item.GetType() == typeof(SObject))
                 {
                     var obj = item as SObject;
                     if (!obj.bigCraftable.Value)
                     {
                         if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
-                            items.RemoveAt(i);
+                            items[i] = null;
                     }
                     else
                     {
                         if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
-                            items.RemoveAt(i);
+                            items[i] = null;
                     }
                 }
                 else if (item is Hat hat)
                 {
                     if (this.FixId(this.OldHatIds, this.HatIds, hat.which, this.VanillaHatIds))
-                        items.RemoveAt(i);
+                        items[i] = null;
                 }
                 else if (item is Tool tool)
                 {
@@ -2646,30 +2674,44 @@ namespace JsonAssets
                     if (item is MeleeWeapon weapon)
                     {
                         if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.VanillaWeaponIds))
-                            items.RemoveAt(i);
+                            items[i] = null;
                         else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds))
-                            items.RemoveAt(i);
+                            items[i] = null;
                         else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.indexOfMenuItemView, this.VanillaWeaponIds))
-                            items.RemoveAt(i);
+                            items[i] = null;
                     }
                 }
                 else if (item is Ring ring)
                 {
                     if (this.FixRing(ring))
-                        items.RemoveAt(i);
+                        items[i] = null;
                 }
                 else if (item is Clothing clothing)
                 {
                     if (this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds))
-                        items.RemoveAt(i);
+                        items[i] = null;
                 }
                 else if (item is Boots boots)
                 {
                     if (this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds))
-                        items.RemoveAt(i);
+                        items[i] = null;
                     /*else
                         boots.reloadData();*/
                 }
+            }
+        }
+
+        /// <summary>
+        /// Removes the nulls from an item list.
+        /// (This is required to prevent chests from causing crashes).
+        /// </summary>
+        /// <param name="items"></param>
+        internal void RemoveNulls(IList<Item> items)
+        {
+            for (int i = items.Count - 1; i >= 0; i--)
+            {
+                if (items[i] is null)
+                    items.RemoveAt(i);
             }
         }
 
