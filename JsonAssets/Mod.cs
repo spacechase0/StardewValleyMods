@@ -82,13 +82,13 @@ namespace JsonAssets
             helper.Content.AssetEditors.Add(this.Content1 = new ContentInjector1());
             helper.Content.AssetLoaders.Add(this.Content1);
 
-            TileSheetExtensions.RegisterExtendedTileSheet("Maps\\springobjects", 16);
-            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\Craftables", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\crops", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet("TileSheets\\fruitTrees", 80);
-            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\shirts", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\pants", 688);
-            TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\hats", 80);
+            TileSheetExtensions.RegisterExtendedTileSheet(@"Maps\springobjects", 16);
+            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\Craftables", 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\crops", 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\fruitTrees", 80);
+            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\shirts", 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\pants", 688);
+            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\hats", 80);
 
             HarmonyPatcher.Apply(this,
                 new CropPatcher(),
@@ -100,7 +100,8 @@ namespace JsonAssets
                 new ItemPatcher(),
                 new ObjectPatcher(),
                 new RingPatcher(),
-                new ShopMenuPatcher()
+                new ShopMenuPatcher(),
+                new BootPatcher()
             );
         }
 
@@ -122,7 +123,7 @@ namespace JsonAssets
             }
             foreach (var newId in newIds)
             {
-                if (ret.TryGetValue(newId.Key, out var pair))
+                if (ret.TryGetValue(newId.Key, out KeyValuePair<int, int> pair))
                     ret[newId.Key] = new KeyValuePair<int, int>(pair.Key, newId.Value);
                 else
                     ret.Add(newId.Key, new KeyValuePair<int, int>(-1, newId.Value));
@@ -224,10 +225,9 @@ namespace JsonAssets
 
                 this.ResetAtTitle();
             }
-
         }
 
-        private static readonly Regex NameToId = new("[^a-zA-Z0-9_.]");
+        private static readonly Regex NameToId = new("[^a-zA-Z0-9_.]", RegexOptions.Compiled|RegexOptions.ECMAScript);
 
         /// <summary>Load a folder as a Json Assets content pack.</summary>
         /// <param name="path">The absolute path to the content pack folder.</param>
@@ -1231,6 +1231,7 @@ namespace JsonAssets
             // When we go back to the title menu we need to reset things so things don't break when
             // going back to a save.
             this.ClearIds(out this.ObjectIds, this.Objects.ToList<DataNeedsId>());
+            this.ClearIds(out this.ObjectIds, this.Boots.ToList<DataNeedsId>());
             this.ClearIds(out this.CropIds, this.Crops.ToList<DataNeedsId>());
             this.ClearIds(out this.FruitTreeIds, this.FruitTrees.ToList<DataNeedsId>());
             this.ClearIds(out this.BigCraftableIds, this.BigCraftables.ToList<DataNeedsId>());
@@ -1480,26 +1481,29 @@ namespace JsonAssets
                 this.OldHatIds = LoadDictionary<string, int>("ids-hats.json") ?? new Dictionary<string, int>();
                 this.OldWeaponIds = LoadDictionary<string, int>("ids-weapons.json") ?? new Dictionary<string, int>();
                 this.OldClothingIds = LoadDictionary<string, int>("ids-clothing.json") ?? new Dictionary<string, int>();
-                this.OldBootsIds = LoadDictionary<string, int>("ids-boots.json") ?? new Dictionary<string, int>();
+                //this.OldBootsIds = LoadDictionary<string, int>("ids-boots.json") ?? new Dictionary<string, int>();
 
-                Log.Verbose("OLD IDS START");
-                foreach (var id in this.OldObjectIds)
-                    Log.Verbose("\tObject " + id.Key + " = " + id.Value);
-                foreach (var id in this.OldCropIds)
-                    Log.Verbose("\tCrop " + id.Key + " = " + id.Value);
-                foreach (var id in this.OldFruitTreeIds)
-                    Log.Verbose("\tFruit Tree " + id.Key + " = " + id.Value);
-                foreach (var id in this.OldBigCraftableIds)
-                    Log.Verbose("\tBigCraftable " + id.Key + " = " + id.Value);
-                foreach (var id in this.OldHatIds)
-                    Log.Verbose("\tHat " + id.Key + " = " + id.Value);
-                foreach (var id in this.OldWeaponIds)
-                    Log.Verbose("\tWeapon " + id.Key + " = " + id.Value);
-                foreach (var id in this.OldClothingIds)
-                    Log.Verbose("\tClothing " + id.Key + " = " + id.Value);
-                foreach (var id in this.OldBootsIds)
-                    Log.Verbose("\tBoots " + id.Key + " = " + id.Value);
-                Log.Verbose("OLD IDS END");
+                if (this.Monitor.IsVerbose)
+                {
+                    Log.Verbose("OLD IDS START");
+                    foreach (var id in this.OldObjectIds)
+                        Log.Verbose("\tObject " + id.Key + " = " + id.Value);
+                    foreach (var id in this.OldCropIds)
+                        Log.Verbose("\tCrop " + id.Key + " = " + id.Value);
+                    foreach (var id in this.OldFruitTreeIds)
+                        Log.Verbose("\tFruit Tree " + id.Key + " = " + id.Value);
+                    foreach (var id in this.OldBigCraftableIds)
+                        Log.Verbose("\tBigCraftable " + id.Key + " = " + id.Value);
+                    foreach (var id in this.OldHatIds)
+                        Log.Verbose("\tHat " + id.Key + " = " + id.Value);
+                    foreach (var id in this.OldWeaponIds)
+                        Log.Verbose("\tWeapon " + id.Key + " = " + id.Value);
+                    foreach (var id in this.OldClothingIds)
+                        Log.Verbose("\tClothing " + id.Key + " = " + id.Value);
+                    //foreach (var id in this.OldBootsIds)
+                    //    Log.Verbose("\tBoots " + id.Key + " = " + id.Value);
+                    Log.Verbose("OLD IDS END");
+                }
             }
 
             // assign IDs
@@ -1561,6 +1565,7 @@ namespace JsonAssets
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds));
             File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds));
+            //File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-boots.json"), JsonConvert.SerializeObject(this.BootIds));
         }
 
         internal IList<ObjectData> MyRings = new List<ObjectData>();
@@ -1655,7 +1660,7 @@ namespace JsonAssets
         internal IDictionary<string, int> OldClothingIds;
 
         /// <summary>The custom boots' previously assigned IDs from the save data, indexed by item name.</summary>
-        internal IDictionary<string, int> OldBootsIds;
+        //internal IDictionary<string, int> OldBootsIds;
 
         /// <summary>The vanilla object IDs.</summary>
         internal ISet<int> VanillaObjectIds;
@@ -1781,35 +1786,32 @@ namespace JsonAssets
             int currId = starting;
             foreach (var d in data)
             {
-                if (d.Id == -1)
+                // handle name conflict
+                if (ids.TryGetValue(d.Name, out int prevId))
                 {
-                    // handle name conflict
-                    if (ids.TryGetValue(d.Name, out int prevId))
-                    {
-                        Log.Warn($"Found ID conflict: there are two custom '{type}' items with the name '{d.Name}'. This may have unintended consequences.");
-                        d.Id = prevId;
-                    }
+                    Log.Warn($"Found ID conflict: there are two custom '{type}' items with the name '{d.Name}'. This may have unintended consequences.");
+                    d.Id = prevId;
+                }
 
-                    // else assign new ID
-                    else
+                // else assign new ID
+                else
+                {
+                    Log.Verbose($"New ID: {d.Name} = {currId}");
+                    int id = currId++;
+                    if (type == "big-craftables")
                     {
-                        Log.Verbose($"New ID: {d.Name} = {currId}");
-                        int id = currId++;
-                        if (type == "big-craftables")
+                        while (bigSkip.Contains(id))
                         {
-                            while (bigSkip.Contains(id))
-                            {
-                                id = currId++;
-                            }
+                            id = currId++;
                         }
-
-                        ids.Add(d.Name, id);
-                        if (type == "objects" && d is ObjectData { IsColored: true })
-                            ++currId;
-                        else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
-                            currId += ((BigCraftableData)d).ReserveExtraIndexCount;
-                        d.Id = ids[d.Name];
                     }
+
+                    ids.Add(d.Name, id);
+                    if (type == "objects" && d is ObjectData { IsColored: true })
+                        ++currId;
+                    else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
+                        currId += ((BigCraftableData)d).ReserveExtraIndexCount;
+                    d.Id = ids[d.Name];
                 }
             }
 
@@ -1885,7 +1887,7 @@ namespace JsonAssets
 
                 // First, fix some stuff we broke in an earlier build by using .BundleData instead of the unlocalized version
                 // Copied from Game1.applySaveFix (case FixBotchedBundleData)
-                while (toks.Count > 4 && !int.TryParse(toks[toks.Count - 1], out _))
+                while (toks.Count > 4 && !int.TryParse(toks[^1], out _))
                 {
                     string lastValue = toks[toks.Count - 1];
                     if (char.IsDigit(lastValue[lastValue.Length - 1]) && lastValue.Contains(":") && lastValue.Contains("\\"))
@@ -1981,7 +1983,6 @@ namespace JsonAssets
 
                 case Boots boots:
                     return this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds);
-
 
                 case SObject obj:
                     if (obj is Chest chest)
@@ -2516,7 +2517,8 @@ namespace JsonAssets
                         return false;
                     }
                 }
-                else return false;
+                else
+                    return false;
             }
             else
             {
@@ -2537,7 +2539,8 @@ namespace JsonAssets
                         return true;
                     }
                 }
-                else return false;
+                else
+                    return false;
             }
         }
 
