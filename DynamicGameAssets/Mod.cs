@@ -216,6 +216,7 @@ namespace DynamicGameAssets
             }
         }
 
+        [EventPriority(EventPriority.Low)]
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             foreach (var recipe in Mod.customCraftingRecipes)
