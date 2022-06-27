@@ -92,9 +92,11 @@ namespace JsonAssets.Framework
         /// <param name="translations">The translations by language code.</param>
         private static string GetLocalized(string defaultText, IDictionary<string, string> translations)
         {
-            var locale = LocalizedContentManager.CurrentLanguageCode;
+            string locale = LocalizedContentManager.CurrentLanguageCode.ToString();
+            if (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.mod)
+                locale = LocalizedContentManager.CurrentModLanguage?.LanguageCode ?? locale;
 
-            return translations.TryGetValue(locale.ToString(), out string translated) || translations.TryGetValue("default", out translated)
+            return translations.TryGetValue(locale, out string translated) || translations.TryGetValue("default", out translated)
                 ? translated
                 : defaultText;
         }

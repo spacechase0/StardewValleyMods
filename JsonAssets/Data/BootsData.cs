@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
@@ -10,6 +11,7 @@ namespace JsonAssets.Data
 {
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
+    [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class BootsData : DataSeparateTextureIndex, ITranslatableItem
     {
         /*********

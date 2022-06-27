@@ -15,7 +15,7 @@ namespace DynamicGameAssets.Game
     [XmlType("Mods_DGACrop")]
     public partial class CustomCrop : Crop
     {
-        private CropPackData.PhaseData GetCurrentPhase()
+        public CropPackData.PhaseData GetCurrentPhase()
         {
             return this.Data.Phases.Count > this.currentPhase.Value ? this.Data.Phases[this.currentPhase.Value] : new CropPackData.PhaseData();
         }
