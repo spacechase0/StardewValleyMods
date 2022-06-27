@@ -1903,7 +1903,7 @@ namespace JsonAssets
                 if (Mod.instance.VanillaObjectIds.Contains(oldId))
                     return m.Value;
                 KeyValuePair<string, int> item = Mod.instance.OldObjectIds.FirstOrDefault(x => x.Value == oldId);
-                if (Mod.instance.ObjectIds.TryGetValue(item.Key, out int newID))
+                if (item.Key is not null && Mod.instance.ObjectIds.TryGetValue(item.Key, out int newID))
                     return m.Value.Replace(group.Value, newID.ToString());
             }
             return m.Value;
@@ -1929,7 +1929,7 @@ namespace JsonAssets
                         if (Mod.instance.VanillaObjectIds.Contains(oldId))
                             return m.Value;
                         KeyValuePair<string, int> item = Mod.instance.OldObjectIds.FirstOrDefault(x => x.Value == oldId);
-                        if (Mod.instance.ObjectIds.TryGetValue(item.Key, out int newID))
+                        if (item.Key is not null && Mod.instance.ObjectIds.TryGetValue(item.Key, out int newID))
                             return m.Value.Replace(id.Value, newID.ToString());
                         break;
                     }
@@ -1939,7 +1939,7 @@ namespace JsonAssets
                         if (Mod.instance.VanillaBigCraftableIds.Contains(oldId))
                             return m.Value;
                         KeyValuePair<string, int> item = Mod.instance.OldBigCraftableIds.FirstOrDefault(x => x.Value == oldId);
-                        if (Mod.instance.BigCraftableIds.TryGetValue(item.Key, out int newID))
+                        if (item.Key is not null && Mod.instance.BigCraftableIds.TryGetValue(item.Key, out int newID))
                             return m.Value.Replace(id.Value, newID.ToString());
                         break;
                     }
@@ -1949,7 +1949,7 @@ namespace JsonAssets
                         if (Mod.instance.VanillaClothingIds.Contains(oldId))
                             return m.Value;
                         KeyValuePair<string, int> item = Mod.instance.OldClothingIds.FirstOrDefault(x => x.Value == oldId);
-                        if (Mod.instance.ClothingIds.TryGetValue(item.Key, out int newID))
+                        if (item.Key is not null && Mod.instance.ClothingIds.TryGetValue(item.Key, out int newID))
                             return m.Value.Replace(id.Value, newID.ToString());
                         break;
                     }
@@ -1959,7 +1959,7 @@ namespace JsonAssets
                         if (Mod.instance.VanillaHatIds.Contains(oldId))
                             return m.Value;
                         KeyValuePair<string, int> item = Mod.instance.OldHatIds.FirstOrDefault(x => x.Value == oldId);
-                        if (Mod.instance.HatIds.TryGetValue(item.Key, out int newID))
+                        if (item.Key is not null && Mod.instance.HatIds.TryGetValue(item.Key, out int newID))
                             return m.Value.Replace(id.Value, newID.ToString());
                         break;
                     }
@@ -1969,7 +1969,7 @@ namespace JsonAssets
                         if (Mod.instance.VanillaWeaponIds.Contains(oldId))
                             return m.Value;
                         KeyValuePair<string, int> item = Mod.instance.OldWeaponIds.FirstOrDefault(x => x.Value == oldId);
-                        if (Mod.instance.WeaponIds.TryGetValue(item.Key, out int newID))
+                        if (item.Key is not null && Mod.instance.WeaponIds.TryGetValue(item.Key, out int newID))
                             return m.Value.Replace(id.Value, newID.ToString());
                         break;
                     }
@@ -2154,7 +2154,7 @@ namespace JsonAssets
 
         private void FixContextList(NetStringList tags)
         {
-            for (int i = tags.Count - 1; i >=0; i++)
+            for (int i = tags.Count - 1; i >=0; i--)
             {
                 tags[i] = this.FixContextTagString(tags[i]);
             }
@@ -2855,7 +2855,7 @@ namespace JsonAssets
                     int curId = id.Value;
                     string key = newIds.FirstOrDefault(x => x.Value == curId).Key;
 
-                    if (oldIds.TryGetValue(key, out int oldId))
+                    if (key is not null && oldIds.TryGetValue(key, out int oldId))
                     {
                         id.Value = oldId;
                         Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
@@ -2876,7 +2876,7 @@ namespace JsonAssets
                     int curId = id.Value;
                     string key = oldIds.FirstOrDefault(x => x.Value == curId).Key;
 
-                    if (newIds.TryGetValue(key, out int newId))
+                    if (key is not null && newIds.TryGetValue(key, out int newId))
                     {
                         id.Value = newId;
                         Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
@@ -2906,7 +2906,7 @@ namespace JsonAssets
                     int curId = id;
                     string key = newIds.FirstOrDefault(xTile => xTile.Value == curId).Key;
 
-                    if (oldIds.TryGetValue(key, out int oldId))
+                    if (key is not null && oldIds.TryGetValue(key, out int oldId))
                     {
                         id = oldId;
                         Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id);
@@ -2927,7 +2927,7 @@ namespace JsonAssets
                     int curId = id;
                     string key = oldIds.FirstOrDefault(x => x.Value == curId).Key;
 
-                    if (newIds.TryGetValue(key, out int newId))
+                    if (key is not null && newIds.TryGetValue(key, out int newId))
                     {
                         id = newId;
                         Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id);
