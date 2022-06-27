@@ -2630,7 +2630,7 @@ namespace JsonAssets
                 var item = items[i];
                 if (item == null)
                     items.RemoveAt(i);
-                if (item.GetType() == typeof(SObject))
+                if (item?.GetType() == typeof(SObject))
                 {
                     var obj = item as SObject;
                     if (!obj.bigCraftable.Value)

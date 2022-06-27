@@ -174,7 +174,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactionsFramework", "Factio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniGolfMod", "MiniGolfMod\MiniGolfMod.csproj", "{104FCF4D-7776-4C16-94CE-EDE8209D6D9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloodedValleyFarm", "FloodedValleyFarm\FloodedValleyFarm.csproj", "{EF733B78-4F0A-46D4-8529-923EEBBFA4DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloodedValleyFarm", "FloodedValleyFarm\FloodedValleyFarm.csproj", "{EF733B78-4F0A-46D4-8529-923EEBBFA4DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradientHairColors", "GradientHairColors\GradientHairColors.csproj", "{1E295971-F8E9-45D6-BDF5-DE76675753FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -486,6 +488,10 @@ Global
 		{EF733B78-4F0A-46D4-8529-923EEBBFA4DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF733B78-4F0A-46D4-8529-923EEBBFA4DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF733B78-4F0A-46D4-8529-923EEBBFA4DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E295971-F8E9-45D6-BDF5-DE76675753FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E295971-F8E9-45D6-BDF5-DE76675753FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E295971-F8E9-45D6-BDF5-DE76675753FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E295971-F8E9-45D6-BDF5-DE76675753FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -515,6 +521,7 @@ Global
 		{7AA1C02E-9099-4C1A-B8AF-AC1966B337E5} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{104FCF4D-7776-4C16-94CE-EDE8209D6D9F} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{EF733B78-4F0A-46D4-8529-923EEBBFA4DA} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{1E295971-F8E9-45D6-BDF5-DE76675753FA} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
@@ -543,6 +550,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{1c1289bd-f40b-4343-aa8a-4f151f887463}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1c3d86aa-c048-4798-bec5-07d7269cce53}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1d6c6511-624c-4332-9e70-486f81a28888}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{1e295971-f8e9-45d6-bdf5-de76675753fa}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{20e193c9-a779-494e-83f1-b2a920551b19}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{273b7946-725e-4dcf-8a8c-0d9e5b2d2eec}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{27983ca4-bc2e-4c12-bd06-60c6be031eb1}*SharedItemsImports = 5
