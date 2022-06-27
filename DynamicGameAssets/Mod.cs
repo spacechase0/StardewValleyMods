@@ -253,6 +253,7 @@ namespace DynamicGameAssets
 
                 void DoEnableDisable(ContentIndexPackData parent)
                 {
+                    bool shouldreject = false;
                     foreach (var data in cp.Value.enableIndex[parent])
                     {
                         var conds = new Dictionary<string, string>();
@@ -264,6 +265,17 @@ namespace DynamicGameAssets
                                 foreach (var opt in parent.pack.configIndex)
                                 {
                                     string val = parent.pack.currConfig.Values[opt.Key].ToString();
+
+                                    if (key == opt.Key)
+                                    {// this one we should handle ourselves
+                                        if (val != value)
+                                        { // fail the pack, we get to skip the rest of the work too.
+                                            shouldreject = true;
+                                            goto BreakBreak;
+                                        }
+                                        goto DontAdd;
+                                    }
+
                                     if (parent.pack.configIndex[opt.Key].ValueType == ConfigPackData.ConfigValueType.String)
                                         val = "'" + val + "'";
 
@@ -271,9 +283,11 @@ namespace DynamicGameAssets
                                     value = value.Replace("{{" + opt.Key + "}}", val);
                                 }
                                 conds.Add(key, value);
+DontAdd:;
                             }
                         }
 
+BreakBreak:;
                         data.EnableConditionsObject = Mod.instance.cp.ParseConditions(
                             Mod.instance.ModManifest,
                             conds,
@@ -284,7 +298,7 @@ namespace DynamicGameAssets
                             Log.Warn("Invalid enable conditions for " + data + " " + data.pack.smapiPack.Manifest.Name + "! " + data.EnableConditionsObject.ValidationError);
 
                         bool wasEnabled = data.Enabled;
-                        data.Enabled = data.original.Enabled = data.EnableConditionsObject.IsMatch;
+                        data.Enabled = data.original.Enabled = (data.EnableConditionsObject.IsMatch && !shouldreject);
 
                         if (data is CommonPackData cdata && !cdata.Enabled && wasEnabled)
                         {
