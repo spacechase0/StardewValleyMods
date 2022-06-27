@@ -63,7 +63,11 @@ namespace DynamicGameAssets.PackData
             TV,
             Lamp,
             Sconce,
-            Window
+            Window,
+            Chair,
+            Bench,
+            Couch,
+            Armchair
         }
 
         [DefaultValue(FurnitureType.Decoration)]
@@ -101,6 +105,8 @@ namespace DynamicGameAssets.PackData
         public string Name => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.name");
         [JsonIgnore]
         public string Description => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.description");
+        [JsonIgnore]
+        public string CategoryTextOverride => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.category").UsePlaceholder(false).ToString();
 
         public int GetVanillaFurnitureType()
         {
@@ -118,6 +124,10 @@ namespace DynamicGameAssets.PackData
                 FurnitureType.Lamp => Furniture.lamp,
                 FurnitureType.Sconce => Furniture.sconce,
                 FurnitureType.Window => Furniture.window,
+                FurnitureType.Chair => Furniture.chair,
+                FurnitureType.Bench => Furniture.bench,
+                FurnitureType.Couch => Furniture.couch,
+                FurnitureType.Armchair => Furniture.armchair,
                 _ => Furniture.other
             };
         }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using DynamicGameAssets.Game;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -30,6 +32,28 @@ namespace DynamicGameAssets
         public object SpawnDGAItem(string fullId)
         {
             return Mod.Find(fullId)?.ToItem();
+        }
+
+        public string[] ListContentPacks()
+        {
+            return Mod.contentPacks.Keys.ToArray();
+        }
+
+        public string[]? GetItemsByPack(string packname)
+        {
+            if (Mod.contentPacks.TryGetValue(packname, out var pack))
+                return pack.items.Where((kvp) => kvp.Value.Enabled).Select((kvp) => packname+"/"+kvp.Key).ToArray();
+            return null;
+        }
+
+        public string[] GetAllItems()
+        {
+            List<string> ret = new(50);
+            foreach (var(packname, pack) in Mod.contentPacks)
+            {
+                ret.AddRange(pack.items.Where((kvp) => kvp.Value.Enabled).Select((kvp) => packname + "/" + kvp.Key));
+            }
+            return ret.ToArray();
         }
 
         /// <inheritdoc/>

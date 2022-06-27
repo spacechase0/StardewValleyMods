@@ -293,7 +293,7 @@ namespace SpaceCore.Interface
                         List<ClickableTextureComponent> skillBars = this.skillBars;
                         ClickableTextureComponent textureComponent = new ClickableTextureComponent(
                             name: NewSkillsPage.CustomSkillPrefix + profession.Id,
-                            bounds: new Rectangle(drawX + addedX - 4 + (professionLevel * 36), drawY + (gameSkillCount * 56), 56, 36),
+                            bounds: new Rectangle(drawX + addedX - 4 + (professionLevel * 36), drawY + (totalSkillIndex * 56), 56, 36),
                             label: null, hoverText: professionBlurb,
                             texture: Game1.mouseCursors, sourceRect: new Rectangle(159, 338, 14, 9), scale: 4f,
                             drawShadow: true

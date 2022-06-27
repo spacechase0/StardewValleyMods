@@ -112,7 +112,12 @@ namespace SpaceShared.UI
                 }
                 topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             }
-            this.ContentHeight = topPx;
+
+            if (topPx != this.ContentHeight) {
+                this.ContentHeight = topPx;
+                this.Scrollbar.Rows = this.ContentHeight / this.RowHeight;
+            }
+
             this.Scrollbar.Update();
         }
 
@@ -149,6 +154,7 @@ namespace SpaceShared.UI
 
             // draw background
             IClickableMenu.drawTextureBox(b, backgroundArea.X, backgroundArea.Y, backgroundArea.Width, backgroundArea.Height, Color.White);
+            b.Draw(Game1.menuTexture, contentArea, new Rectangle(64, 128, 64, 64), Color.White); // Smoother gradient for the content area.
 
             // draw table contents
             // This uses a scissor rectangle to clip content taller than one row that might be

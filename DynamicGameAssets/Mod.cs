@@ -18,6 +18,7 @@ using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 
 // TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
@@ -87,6 +88,13 @@ namespace DynamicGameAssets
 
         private static readonly PerScreen<StateData> _state = new(() => new StateData());
         internal static StateData State => Mod._state.Value;
+
+        private PerScreen<ShopMenu?> _lastShopMenu = new();
+        private ShopMenu? LastShopMenu
+        {
+            get => this._lastShopMenu.Value;
+            set => this._lastShopMenu.Value = value;
+        }
 
         public static CommonPackData Find(string fullId)
         {
@@ -208,6 +216,7 @@ namespace DynamicGameAssets
             }
         }
 
+        [EventPriority(EventPriority.Low)]
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             foreach (var recipe in Mod.customCraftingRecipes)
@@ -245,6 +254,7 @@ namespace DynamicGameAssets
 
                 void DoEnableDisable(ContentIndexPackData parent)
                 {
+                    bool shouldreject = false;
                     foreach (var data in cp.Value.enableIndex[parent])
                     {
                         var conds = new Dictionary<string, string>();
@@ -256,6 +266,17 @@ namespace DynamicGameAssets
                                 foreach (var opt in parent.pack.configIndex)
                                 {
                                     string val = parent.pack.currConfig.Values[opt.Key].ToString();
+
+                                    if (key == opt.Key)
+                                    {// this one we should handle ourselves
+                                        if (val != value)
+                                        { // fail the pack, we get to skip the rest of the work too.
+                                            shouldreject = true;
+                                            goto BreakBreak;
+                                        }
+                                        goto DontAdd;
+                                    }
+
                                     if (parent.pack.configIndex[opt.Key].ValueType == ConfigPackData.ConfigValueType.String)
                                         val = "'" + val + "'";
 
@@ -263,9 +284,11 @@ namespace DynamicGameAssets
                                     value = value.Replace("{{" + opt.Key + "}}", val);
                                 }
                                 conds.Add(key, value);
+DontAdd:;
                             }
                         }
 
+BreakBreak:;
                         data.EnableConditionsObject = Mod.instance.cp.ParseConditions(
                             Mod.instance.ModManifest,
                             conds,
@@ -276,7 +299,7 @@ namespace DynamicGameAssets
                             Log.Warn("Invalid enable conditions for " + data + " " + data.pack.smapiPack.Manifest.Name + "! " + data.EnableConditionsObject.ValidationError);
 
                         bool wasEnabled = data.Enabled;
-                        data.Enabled = data.original.Enabled = data.EnableConditionsObject.IsMatch;
+                        data.Enabled = data.original.Enabled = (data.EnableConditionsObject.IsMatch && !shouldreject);
 
                         if (data is CommonPackData cdata && !cdata.Enabled && wasEnabled)
                         {
@@ -368,13 +391,13 @@ namespace DynamicGameAssets
                     {
                         if (giftTaste.Enabled)
                         {
-                            string[] npcs = giftTaste.Npc.Split(',').Select(npc => npc.Trim()).ToArray();
+                            string[] npcs = giftTaste.Npc.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                             foreach (string npc in npcs)
                             {
                                 if (!Mod.giftTastes.ContainsKey(npc))
                                     Mod.giftTastes.Add(npc, new());
 
-                                string[] objects = giftTaste.ObjectId.Split(',').Select(obj => obj.Trim()).ToArray();
+                                string[] objects = giftTaste.ObjectId.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                                 foreach (string obj in objects)
                                     if (!Mod.giftTastes[npc].ContainsKey(obj))
                                         Mod.giftTastes[npc].Add(obj, giftTaste);
@@ -425,17 +448,37 @@ namespace DynamicGameAssets
                 this.RefreshSpritebatchCache();
             }
 
-            this.Helper.Content.InvalidateCache("Data\\CraftingRecipes");
-            this.Helper.Content.InvalidateCache("Data\\CookingRecipes");
+            this.Helper.GameContent.InvalidateCache("Data\\CraftingRecipes");
+            this.Helper.GameContent.InvalidateCache("Data\\CookingRecipes");
+            if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
+            {
+                this.Helper.GameContent.InvalidateCache($@"Data\CraftingRecipes.{this.Helper.GameContent.CurrentLocale}");
+                this.Helper.GameContent.InvalidateCache($@"Data\CookingRecipes.{this.Helper.GameContent.CurrentLocale}");
+            }
         }
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is ShopMenu shop)
             {
+                // Log.Trace($"We have found a shop: {shop.portraitPerson?.Name}");
                 if (shop.storeContext is "ResortBar" or "VolcanoShop")
                 {
                     PatchCommon.DoShop(shop.storeContext, shop);
+                }
+
+                // handle STF shop menu -- this is copied from JA
+                if (!object.ReferenceEquals(e.NewMenu, this.LastShopMenu))
+                {
+                    this.LastShopMenu = shop;
+
+                    string? id = shop.portraitPerson?.Name;
+                    if (id is null || !id.StartsWith("STF", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
+                    Log.Trace($"Adding objects for STF shop '{id}'.");
+                    PatchCommon.DoShop(id, shop);
                 }
             }
         }
@@ -832,13 +875,14 @@ namespace DynamicGameAssets
                             if (!Mod.State.TodaysShopEntries.ContainsKey(shopEntry.ShopId))
                                 Mod.State.TodaysShopEntries.Add(shopEntry.ShopId, new List<ShopEntry>());
                             int shopEntryPrice = shopEntry.Cost;
-                            if (shopEntry.Item.Create() is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+                            var salable = shopEntry.Item.Create();
+                            if (salable is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
                             {
                                 shopEntryPrice = (int)((float)shopEntryPrice * Game1.MasterPlayer.difficultyModifier);
                             }
                             Mod.State.TodaysShopEntries[shopEntry.ShopId].Add(new ShopEntry()
                             {
-                                Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
+                                Item = salable,//MakeItemFrom( shopEntry.Item, cp.Value ),
                                 Quantity = shopEntry.MaxSold,
                                 Price = shopEntryPrice,
                                 CurrencyId = shopEntry.Currency == null ? null : (int.TryParse(shopEntry.Currency, out int intCurr) ? intCurr : $"{cp.Key}/{shopEntry.Currency}".GetDeterministicHashCode())

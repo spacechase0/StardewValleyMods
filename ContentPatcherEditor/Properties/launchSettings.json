@@ -1,0 +1,8 @@
+﻿{
+  "profiles": {
+    "ContentPatcherEditor": {
+      "commandName": "Project",
+      //"nativeDebugging": true
+    }
+  }
+}
