@@ -80,19 +80,23 @@ namespace DynamicGameAssets.Game
             }
 
             var currConfig = this.GetCurrentConfiguration();
-            var currTex = this.Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            TexturedRect currTex = null;
+            if (Game1.isDarkOut() && currConfig.NightTexture != null)
+            {
+                currTex = this.Data.pack.GetTexture(currConfig.NightTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            }
+            else
+            {
+                currTex = this.Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);
+            }
             var frontTex = currConfig.FrontTexture != null ? this.Data.pack.GetTexture(currConfig.FrontTexture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom) : null;
 
             if (Furniture.isDrawingLocationFurniture)
             {
-                if (this.HasSittingFarmers() && this.sourceRect.Right <= Furniture.furnitureFrontTexture.Width && this.sourceRect.Bottom <= Furniture.furnitureFrontTexture.Height)
+                spriteBatch.Draw(currTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Top + 16) / 10000f);
+                if (frontTex != null && this.sourceRect.Right <= Furniture.furnitureFrontTexture.Width && this.sourceRect.Bottom <= Furniture.furnitureFrontTexture.Height)
                 {
-                    spriteBatch.Draw(currTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Top + 16) / 10000f);
-                    spriteBatch.Draw(frontTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), frontTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Bottom - 8) / 10000f);
-                }
-                else
-                {
-                    spriteBatch.Draw(currTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), currTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, ((int)this.furniture_type == 12) ? (2E-09f + this.tileLocation.Y / 100000f) : ((float)(this.boundingBox.Value.Bottom - (((int)this.furniture_type == 6 || (int)this.furniture_type == 17 || (int)this.furniture_type == 13) ? 48 : 8)) / 10000f));
+                    spriteBatch.Draw(frontTex.Texture, Game1.GlobalToLocal(Game1.viewport, this.drawPosition + ((this.shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero)), frontTex.Rect, Color.White * alpha, 0f, Vector2.Zero, 4f, this.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (float)(this.boundingBox.Value.Bottom + 16) / 10000f);
                 }
             }
             else
@@ -107,8 +111,17 @@ namespace DynamicGameAssets.Game
                 }
                 else
                 {
-                    spriteBatch.Draw(Game1.shadowTexture, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.drawHeldObjectLow ? 32 : 85))) + new Vector2(32f, 53f), Game1.shadowTexture.Bounds, Color.White * alpha, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (float)this.boundingBox.Bottom / 10000f);
-                    spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.drawHeldObjectLow ? 32 : 85))), GameLocation.getSourceRectForObject(this.heldObject.Value.ParentSheetIndex), Color.White * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)(this.boundingBox.Bottom + 1) / 10000f);
+                    spriteBatch.Draw(Game1.shadowTexture, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.drawHeldObjectLow.Value ? 32 : 85))) + new Vector2(32f, 53f), Game1.shadowTexture.Bounds, Color.White * alpha, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (float)this.boundingBox.Bottom / 10000f);
+                    if (this.heldObject.Value is CustomObject customObject)
+                    {
+                        Vector2 position = new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.drawHeldObjectLow.Value ? 32 : 85));
+                        customObject.draw(spriteBatch, (int)position.X, (int)position.Y, (float)(this.boundingBox.Bottom + 1) / 10000f + 0.5f, alpha);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(this.boundingBox.Center.X - 32, this.boundingBox.Center.Y - (this.drawHeldObjectLow.Value ? 32 : 85))), GameLocation.getSourceRectForObject(this.heldObject.Value.ParentSheetIndex), Color.White * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)(this.boundingBox.Bottom + 1) / 10000f);
+
+                    }
                 }
             }
             if ((bool)this.isOn && (int)this.furniture_type == 14)
