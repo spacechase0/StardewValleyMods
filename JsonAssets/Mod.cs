@@ -2307,9 +2307,9 @@ namespace JsonAssets
                     this.FixItemList(player.Items);
 
                     //fix inventory size that atra broke.
-                    if (player.items.Count != player.maxItems)
+                    if (player.items.Count != player.MaxItems)
                     {
-                        for (int i = 0; i < player.maxItems - player.items.Count; i++)
+                        for (int i = 0; i < player.MaxItems - player.items.Count; i++)
                         {
                             player.items.Add(null);
                         }
