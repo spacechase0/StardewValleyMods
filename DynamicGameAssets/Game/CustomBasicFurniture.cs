@@ -62,6 +62,11 @@ namespace DynamicGameAssets.Game
             return this.Data.Description;
         }
 
+        public override string getCategoryName()
+        {
+            return this.Data.CategoryTextOverride ?? base.getCategoryName();
+        }
+
         public override void drawInMenu(SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
         {
             spriteBatch.Draw(this.Data.GetTexture().Texture, location + new Vector2(32f, 32f), this.Data.GetTexture().Rect, color * transparency, 0f, new Vector2(this.defaultSourceRect.Width / 2, this.defaultSourceRect.Height / 2), 1f * this.getScaleSize() * scaleSize, SpriteEffects.None, layerDepth);

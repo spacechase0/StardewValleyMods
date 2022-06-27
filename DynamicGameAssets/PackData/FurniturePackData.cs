@@ -105,6 +105,8 @@ namespace DynamicGameAssets.PackData
         public string Name => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.name");
         [JsonIgnore]
         public string Description => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.description");
+        [JsonIgnore]
+        public string CategoryTextOverride => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.category").UsePlaceholder(false).ToString();
 
         public int GetVanillaFurnitureType()
         {
