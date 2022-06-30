@@ -6,6 +6,7 @@ using System.Text;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
+using SpaceCore.Events;
 using SpaceCore.Framework;
 using SpaceCore.Interface;
 using SpaceCore.Patches;
@@ -68,6 +69,8 @@ namespace SpaceCore
             helper.Events.GameLoop.Saved += this.OnSaved;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
+            SpaceEvents.ActionActivated += this.SpaceEvents_ActionActivated;
+
             Commands.Register();
             Skills.Init(helper.Events);
             TileSheetExtensions.Init();
@@ -91,7 +94,10 @@ namespace SpaceCore
                 new SaveGamePatcher(serializerManager),
                 new SerializationPatcher(),
                 new SpriteBatchPatcher(),
-                new UtilityPatcher()
+                new UtilityPatcher(),
+
+                // I've started organizing by purpose instead of class patched
+                new PortableCarpenterPatcher()
             );
         }
 
@@ -247,6 +253,15 @@ namespace SpaceCore
         {
             if (e.NewMenu is StardewValley.Menus.ForgeMenu)
                 Game1.activeClickableMenu = new NewForgeMenu();
+        }
+
+        private void SpaceEvents_ActionActivated(object sender, EventArgsAction e)
+        {
+            if (e.Action == "CarpenterMenu")
+            {
+                bool magic = e.ActionString.Split(' ')[1] == "true";
+                Game1.activeClickableMenu = new StardewValley.Menus.CarpenterMenu(magic);
+            }
         }
 
         private void DoLoadCustomLocationWeather()

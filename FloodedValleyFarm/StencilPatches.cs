@@ -12,6 +12,7 @@ using xTile.Layers;
 
 namespace FloodedValleyFarm
 {
+#if false
     [HarmonyPatch(typeof(SpriteBatch), nameof(SpriteBatch.Begin))]
     public static class SpriteBatchForceStencilPatch
     {
@@ -139,4 +140,5 @@ namespace FloodedValleyFarm
             }
         }
     }
+#endif
 }
