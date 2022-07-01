@@ -58,6 +58,34 @@ namespace SpaceCore.Patches
                 original: this.RequireMethod<Game1>(nameof(Game1.findStructure)),
                 postfix: this.GetHarmonyMethod(nameof(Postfix_findStructure))
             );
+
+            foreach (var meth in typeof(CarpenterMenu).GetMethods( BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static ) )
+            {
+                if (meth.DeclaringType != typeof(CarpenterMenu))
+                    continue;
+
+                harmony.Patch(
+                    original: meth,
+                    prefix:  this.GetHarmonyMethod( nameof( CarpenterPrefix ), -100 ), // TODO: Are these priorities backwards?
+                    postfix: this.GetHarmonyMethod( nameof( CarpenterPostfix ), 100 )
+                );
+            }
+        }
+
+        private static void CarpenterPrefix( MethodBase __originalMethod, ref object __state )
+        {
+            __state = shouldRedirectGetLocationFarm;
+            ++shouldRedirectGetLocationFarm;
+
+            // This should handle returnToCarpentryMenu, returnToCarpentryMenuAfterSuccessfulBuild,
+            // and their lambdas
+            if (__originalMethod.Name != null && (__originalMethod.Name.Contains("returnToCarpentryMenu") || __originalMethod.Name == nameof(CarpenterMenu.robinConstructionMessage)))
+                shouldRedirectGetLocationFarm = 0;
+        }
+
+        private static void CarpenterPostfix( object __state )
+        {
+            shouldRedirectGetLocationFarm = (int)__state;
         }
 
         private static IEnumerable<CodeInstruction> TranspileFarmToBGL(IEnumerable<CodeInstruction> insns, MethodBase method)
@@ -84,20 +112,10 @@ namespace SpaceCore.Patches
             return ret;
         }
 
+        private static int shouldRedirectGetLocationFarm = 0;
         private static bool GetLocationFromName_ReturnCurrentForCarpenterMenu(string name, ref GameLocation __result)
         {
-            var st = new StackTrace();
-            bool shouldRedirect = false;
-            foreach ( var sf in st.GetFrames() )
-            {
-                if (sf != null && ( sf.GetMethod()?.DeclaringType == typeof(CarpenterMenu) /*|| sf.GetMethod()?.Name == "updateInteriorWarps"*/ ) )
-                {
-                    shouldRedirect = true;
-                    break;
-                }
-            }
-
-            if (name == "Farm" && Game1.currentLocation is BuildableGameLocation && shouldRedirect )
+            if (shouldRedirectGetLocationFarm > 0 && name == "Farm" && Game1.currentLocation is BuildableGameLocation )
             {
                 __result = Game1.currentLocation;
                 return false;
