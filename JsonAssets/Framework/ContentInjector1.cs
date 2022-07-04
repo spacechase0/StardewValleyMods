@@ -117,7 +117,7 @@ namespace JsonAssets.Framework
         {
             if (!Mod.instance.DidInit)
                 return;
-            if (e.NameWithoutLocale.IsDirectlyUnderPath(@"LooseSprites\Fence")
+            if (e.NameWithoutLocale.StartsWith(@"LooseSprites\Fence")
                 && int.TryParse(e.NameWithoutLocale.BaseName[@"LooseSprites\Fence".Length..], out int index) && FenceIndexes.ContainsKey(index))
                 e.LoadFrom(() => FenceIndexes[index].Texture, AssetLoadPriority.Low);
             else if (Files.TryGetValue(e.NameWithoutLocale.BaseName, out var injector))
