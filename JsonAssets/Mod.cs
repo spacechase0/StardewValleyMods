@@ -2942,7 +2942,8 @@ namespace JsonAssets
                     if (key is not null && oldIds.TryGetValue(key, out int oldId))
                     {
                         id.Value = oldId;
-                        Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
+                        if (curId != id.Value)
+                            Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
                         return false;
                     }
                     else
@@ -2964,7 +2965,8 @@ namespace JsonAssets
                     if (key is not null && newIds.TryGetValue(key, out int newId))
                     {
                         id.Value = newId;
-                        Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
+                        if (curId != newId)
+                            Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id.Value);
                         return false;
                     }
                     else
@@ -2995,7 +2997,8 @@ namespace JsonAssets
                     if (key is not null && oldIds.TryGetValue(key, out int oldId))
                     {
                         id = oldId;
-                        Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id);
+                        if (id != curId)
+                            Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id);
                         return false;
                     }
                     else
@@ -3016,7 +3019,8 @@ namespace JsonAssets
                     if (key is not null && newIds.TryGetValue(key, out int newId))
                     {
                         id = newId;
-                        Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id);
+                        if (curId != id)
+                            Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id);
                         return false;
                     }
                     else
