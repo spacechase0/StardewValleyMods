@@ -176,9 +176,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniGolfMod", "MiniGolfMod\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloodedValleyFarm", "FloodedValleyFarm\FloodedValleyFarm.csproj", "{EF733B78-4F0A-46D4-8529-923EEBBFA4DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradientHairColors", "GradientHairColors\GradientHairColors.csproj", "{1E295971-F8E9-45D6-BDF5-DE76675753FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradientHairColors", "GradientHairColors\GradientHairColors.csproj", "{1E295971-F8E9-45D6-BDF5-DE76675753FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DimensionalPockets", "DimensionalPockets\DimensionalPockets.csproj", "{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DimensionalPockets", "DimensionalPockets\DimensionalPockets.csproj", "{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerRadialKeybindings", "ControllerRadialKeybindings\ControllerRadialKeybindings.csproj", "{D99B6186-A545-4CD1-B422-3C8F6B575E37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -498,6 +500,10 @@ Global
 		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -529,6 +535,7 @@ Global
 		{EF733B78-4F0A-46D4-8529-923EEBBFA4DA} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{1E295971-F8E9-45D6-BDF5-DE76675753FA} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
+using StardewValley;
 
 namespace SpaceShared.APIs
 {
@@ -24,6 +25,7 @@ namespace SpaceShared.APIs
 
         public record RawTextureData(int Width, int Height, Color[] Data) : IRawTextureData;
 
+        KeyValuePair<bool, string> SetAppearance(Type appearanceType, string targetPackId, string targetAppearanceName, IManifest callerManifest);
         KeyValuePair<bool, string> SetHatAppearance(string targetPackId, string targetAppearanceName, IManifest callerManifest);
         KeyValuePair<bool, string> SetHairAppearance(string targetPackId, string targetAppearanceName, IManifest callerManifest);
         KeyValuePair<bool, string> SetAccessoryPrimaryAppearance(string targetPackId, string targetAppearanceName, IManifest callerManifest);
@@ -34,6 +36,7 @@ namespace SpaceShared.APIs
         KeyValuePair<bool, string> SetPantsAppearance(string targetPackId, string targetAppearanceName, IManifest callerManifest);
         KeyValuePair<bool, string> SetShoesAppearance(string targetPackId, string targetAppearanceName, IManifest callerManifest);
 
+        KeyValuePair<bool, string> ClearAppearance(Type appearanceType, IManifest callerManifest);
         KeyValuePair<bool, string> ClearHatAppearance(IManifest callerManifest);
         KeyValuePair<bool, string> ClearHairAppearance(IManifest callerManifest);
         KeyValuePair<bool, string> ClearAccessoryPrimaryAppearance(IManifest callerManifest);
@@ -44,11 +47,11 @@ namespace SpaceShared.APIs
         KeyValuePair<bool, string> ClearPantsAppearance(IManifest callerManifest);
         KeyValuePair<bool, string> ClearShoesAppearance(IManifest callerManifest);
 
-        KeyValuePair<bool, string> GetCurrentAppearanceId(Type appearanceType);
-        KeyValuePair<bool, IRawTextureData> GetAppearanceTexture(Type appearanceType, string targetPackId, string targetAppearanceName);
-        KeyValuePair<bool, IRawTextureData> GetAppearanceTexture(string appearanceId);
-        KeyValuePair<bool, string> SetAppearanceTexture(Type appearanceType, string targetPackId, string targetAppearanceName, IRawTextureData textureData, IManifest callerManifest);
-        KeyValuePair<bool, string> SetAppearanceTexture(string appearanceId, IRawTextureData textureData, IManifest callerManifest);
+        KeyValuePair<bool, string> GetCurrentAppearanceId(Type appearanceType, Farmer target = null);
+        KeyValuePair<bool, IRawTextureData> GetAppearanceTexture(Type appearanceType, string targetPackId, string targetAppearanceName, bool getOriginalTexture = false);
+        KeyValuePair<bool, IRawTextureData> GetAppearanceTexture(string appearanceId, bool getOriginalTexture = false);
+        KeyValuePair<bool, string> SetAppearanceTexture(Type appearanceType, string targetPackId, string targetAppearanceName, IRawTextureData textureData, IManifest callerManifest, bool shouldOverridePersist = false);
+        KeyValuePair<bool, string> SetAppearanceTexture(string appearanceId, IRawTextureData textureData, IManifest callerManifest, bool shouldOverridePersist = false);
         KeyValuePair<bool, string> ResetAppearanceTexture(Type appearanceType, string targetPackId, string targetAppearanceName, IManifest callerManifest);
         KeyValuePair<bool, string> ResetAppearanceTexture(string appearanceId, IManifest callerManifest);
 

@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
+using Netcode;
 using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceCore.Framework;
@@ -15,9 +18,47 @@ using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Network;
 
 namespace SpaceCore
 {
+    /*
+    public static class Fix1_5NetCodeBugPatch
+    {
+        public static void Prefix(
+            NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>> __instance,
+            string key,
+            ref object __state
+        )
+        {
+            __state = __instance is ModDataDictionary && __instance.ContainsKey(key);
+        }
+        public static void Postfix(
+            NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>> __instance,
+            string key,
+            string value,
+            object __state,
+            System.Collections.IList ___outgoingChanges,
+            Dictionary<string, NetVersion> ___dictReassigns
+        )
+        {
+            if(__instance is ModDataDictionary)
+            if (__state as bool? == true)
+            {
+                var field = __instance.FieldDict[key];
+                var ogts = __instance.GetType().BaseType.BaseType.BaseType.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+                var ogt = ogts.First(t => t.Name.StartsWith("OutgoingChange"));
+                ogt = ogt.MakeGenericType(new Type[] { typeof( string ), typeof( string ), typeof( NetString ), typeof( SerializableDictionary<string, string> ), typeof( NetStringDictionary<string,NetString> ) });
+                var ogc = ogt.GetConstructors(BindingFlags.Public | BindingFlags.Instance)[0];
+                object og = ogc.Invoke(new object[] { false, key, field, ___dictReassigns[ key ] });
+                ___outgoingChanges.Add(og);
+                if (key.Contains("spacechase0"))
+                    Log.Debug("oc:" + ___outgoingChanges.Count);
+            }
+        }
+    }
+    */
+
     /// <summary>The mod entry class.</summary>
     internal class SpaceCore : Mod
     {
@@ -99,6 +140,23 @@ namespace SpaceCore
                 // I've started organizing by purpose instead of class patched
                 new PortableCarpenterPatcher()
             );
+            /*
+            var ps = typeof(NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>>).GetProperties();
+            MethodBase m = null;
+            foreach (var p in ps)
+            {
+                if (p.GetIndexParameters() == null || p.GetIndexParameters().Length == 0)
+                    continue;
+                if (p.GetSetMethod() == null)
+                    continue;
+                m = p.GetSetMethod();
+                break;
+            }
+            Harmony.Patch(m,
+                prefix: new HarmonyMethod(typeof(Fix1_5NetCodeBugPatch).GetMethod("Prefix", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)),
+                postfix: new HarmonyMethod(typeof(Fix1_5NetCodeBugPatch).GetMethod("Postfix", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)));
+            */
+            Harmony.PatchAll();
         }
 
         /// <inheritdoc />
