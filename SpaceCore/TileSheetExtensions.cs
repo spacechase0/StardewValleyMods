@@ -10,6 +10,9 @@ namespace SpaceCore
 {
     public static class TileSheetExtensions
     {
+
+        public const int MAXTILESHEETHEIGHT = 4096;
+
         internal class ExtensionData
         {
             public ExtensionData(string assetPath, int unitSize)

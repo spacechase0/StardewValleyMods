@@ -378,8 +378,8 @@ namespace JsonAssets.Framework
                 return;
 
             var tex= asset.AsImage();
-            tex.ExtendImage(tex.Data.Width, 4096);
-            Log.Trace($"SpringObjects are now ({tex.Data.Width}, {tex.Data.Height})");
+            if (tex.ExtendImage(tex.Data.Width, TileSheetExtensions.MAXTILESHEETHEIGHT))
+                Log.Trace($"SpringObjects are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var obj in Mod.instance.Objects)
             {
@@ -430,8 +430,8 @@ namespace JsonAssets.Framework
         private static void InjectTileSheetsCrops(IAssetData asset)
         {
             var tex = asset.AsImage();
-            tex.ExtendImage(tex.Data.Width, 4096);
-            Log.Trace($"Crops are now ({tex.Data.Width}, {tex.Data.Height})");
+            if (tex.ExtendImage(tex.Data.Width, TileSheetExtensions.MAXTILESHEETHEIGHT))
+                Log.Trace($"Crops are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var crop in Mod.instance.Crops)
             {
@@ -457,8 +457,8 @@ namespace JsonAssets.Framework
         private static void InjectTileSheetsFruitTrees(IAssetData asset)
         {
             var tex = asset.AsImage();
-            tex.ExtendImage(tex.Data.Width, 4096);
-            Log.Trace($"FruitTrees are now ({tex.Data.Width}, {tex.Data.Height})");
+            if (tex.ExtendImage(tex.Data.Width, TileSheetExtensions.MAXTILESHEETHEIGHT))
+                Log.Trace($"FruitTrees are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var fruitTree in Mod.instance.FruitTrees)
             {
@@ -484,8 +484,8 @@ namespace JsonAssets.Framework
         private static void InjectTileSheetsCraftables(IAssetData asset)
         {
             var tex = asset.AsImage();
-            tex.ExtendImage(tex.Data.Width, 4096);
-            Log.Trace($"Big craftables are now ({tex.Data.Width}, {tex.Data.Height})");
+            if (tex.ExtendImage(tex.Data.Width, TileSheetExtensions.MAXTILESHEETHEIGHT))
+                Log.Trace($"Big craftables are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var big in Mod.instance.BigCraftables)
             {
@@ -518,8 +518,8 @@ namespace JsonAssets.Framework
         private static void InjectCharactersFarmerHats(IAssetData asset)
         {
             var image = asset.AsImage();
-            image.ExtendImage(image.Data.Width, 4096);
-            Log.Trace($"Hats are now ({image.Data.Width}, {image.Data.Width})");
+            if (image.ExtendImage(image.Data.Width, TileSheetExtensions.MAXTILESHEETHEIGHT))
+                Log.Trace($"Hats are now ({image.Data.Width}, {image.Data.Height})");
 
             foreach (var hat in Mod.instance.Hats)
             {
@@ -545,8 +545,8 @@ namespace JsonAssets.Framework
         private static void InjectTileSheetsWeapons(IAssetData asset)
         {
             var tex = asset.AsImage();
-            tex.ExtendImage(tex.Data.Width, 4096);
-            Log.Trace($"Weapons are now ({tex.Data.Width}, {tex.Data.Height})");
+            if (tex.ExtendImage(tex.Data.Width, TileSheetExtensions.MAXTILESHEETHEIGHT))
+                Log.Trace($"Weapons are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var weapon in Mod.instance.Weapons)
             {
@@ -573,8 +573,9 @@ namespace JsonAssets.Framework
                 return;
 
             var tex = asset.AsImage();
-            tex.ExtendImage(tex.Data.Width, 4096);
-            Log.Trace($"Shirts are now ({tex.Data.Width}, {tex.Data.Height})");
+
+            if (tex.ExtendImage(tex.Data.Width, TileSheetExtensions.MAXTILESHEETHEIGHT))
+                Log.Trace($"Shirts are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var shirt in Mod.instance.Shirts)
             {
@@ -614,8 +615,8 @@ namespace JsonAssets.Framework
         private static void InjectCharactersFarmerPants(IAssetData asset)
         {
             var tex = asset.AsImage();
-            tex.ExtendImage(tex.Data.Width, 4096);
-            Log.Trace($"Pants are now ({tex.Data.Width}, {tex.Data.Height})");
+            if (tex.ExtendImage(tex.Data.Width, TileSheetExtensions.MAXTILESHEETHEIGHT))
+                Log.Trace($"Pants are now ({tex.Data.Width}, {tex.Data.Height})");
 
             foreach (var pants in Mod.instance.Pants)
             {
