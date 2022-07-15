@@ -2255,7 +2255,7 @@ namespace JsonAssets
                             return true;
                         fence.ParentSheetIndex = -fence.whichType.Value;
                     }
-                    else if (obj.GetType() == typeof(SObject) || obj.GetType() == typeof(Cask))
+                    else if (obj.GetType() == typeof(SObject) || obj.GetType() == typeof(Cask) || obj.GetType() == typeof(ColoredObject))
                     {
                         if (!obj.bigCraftable.Value)
                         {
@@ -2449,7 +2449,7 @@ namespace JsonAssets
                     if (!this.FixItem(sign.displayItem.Value))
                         sign.displayItem.Value = null;
                 }
-                else if (obj.GetType() == typeof(SObject))
+                else if (obj.GetType() == typeof(SObject) || obj.GetType() == typeof(ColoredObject))
                 {
                     if (!obj.bigCraftable.Value)
                     {
@@ -2668,7 +2668,7 @@ namespace JsonAssets
                 if (item == null)
 
                     continue;
-                if (item.GetType() == typeof(SObject))
+                if (item.GetType() == typeof(SObject) || item.GetType() == typeof(ColoredObject))
                 {
                     var obj = item as SObject;
                     if (!obj.bigCraftable.Value)
