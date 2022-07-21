@@ -2413,6 +2413,10 @@ namespace JsonAssets
                     this.FixItemList(house.fridge.Value?.items);
                     house.fridge.Value?.clearNulls();
                     break;
+                case ShopLocation shop:
+                    this.FixItemList(shop.itemsFromPlayerToSell);
+                    this.RemoveNulls(shop.itemsFromPlayerToSell);
+                    break;
             }
 
             foreach (var npc in loc.characters)
