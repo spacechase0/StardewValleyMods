@@ -49,7 +49,8 @@ namespace Magic.Framework.Spells
                 Game1.getLocationFromName("Custom_Ridgeside_AguarCaveTemporary"),
                 Game1.getLocationFromName("Custom_Ridgeside_SummitFarm"),
                 // SVE:
-                Game1.getLocationFromName("Custom_GrandpasShedGreenhouse")
+                Game1.getLocationFromName("Custom_GrandpasShedGreenhouse"),
+                Game1.getLocationFromName("Custom_GrampletonFields")
             };
             foreach (GameLocation loc in mod_compat_locs)
             {
@@ -68,7 +69,7 @@ namespace Magic.Framework.Spells
                     select building.indoors.Value
                 ))
             {
-                if (location.IsGreenhouse)
+                if (location.IsGreenhouse || location.IsFarm)
                 {
                     if (!locs.Contains(location))
                     {
