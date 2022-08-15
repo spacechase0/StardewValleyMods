@@ -1836,7 +1836,7 @@ namespace JsonAssets
 
         private Dictionary<string, int> AssignIds(string type, int starting, List<DataNeedsId> data)
         {
-            data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.Ordinal));
+            data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.InvariantCulture));
 
             Dictionary<string, int> ids = new Dictionary<string, int>();
 
@@ -1879,7 +1879,7 @@ namespace JsonAssets
 
         private void AssignTextureIndices(string type, int starting, List<DataSeparateTextureIndex> data)
         {
-            data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.Ordinal));
+            data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.InvariantCulture));
 
             Dictionary<string, int> idxs = new Dictionary<string, int>();
 
@@ -2121,25 +2121,19 @@ namespace JsonAssets
         /// <returns>Inverse of whether or not the quest was fixed.</returns>
         private bool FixQuest(Quest quest)
         {
-            switch (quest)
+            return quest switch
             {
-                case CraftingQuest cq:
-                    return cq.isBigCraftable.Value
-                        ? this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, cq.indexToCraft, this.VanillaBigCraftableIds)
-                        : this.FixId(this.OldObjectIds, this.ObjectIds, cq.indexToCraft, this.VanillaObjectIds);
-                case FishingQuest fq:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, fq.whichFish, this.VanillaObjectIds)
-                        || this.FixItem(fq.fish.Value);
-                case ItemDeliveryQuest idq:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, idq.item, this.VanillaObjectIds)
-                        || this.FixItem(idq.deliveryItem.Value);
-                case ItemHarvestQuest ihq:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, ihq.itemIndex, this.VanillaObjectIds);
-                case LostItemQuest liq:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, liq.itemIndex, this.VanillaObjectIds);
-                default:
-                    return false;
-            }
+                CraftingQuest cq => cq.isBigCraftable.Value
+                                        ? this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, cq.indexToCraft, this.VanillaBigCraftableIds)
+                                        : this.FixId(this.OldObjectIds, this.ObjectIds, cq.indexToCraft, this.VanillaObjectIds),
+                FishingQuest fq => this.FixId(this.OldObjectIds, this.ObjectIds, fq.whichFish, this.VanillaObjectIds)
+                                        || this.FixItem(fq.fish.Value),
+                ItemDeliveryQuest idq => this.FixId(this.OldObjectIds, this.ObjectIds, idq.item, this.VanillaObjectIds)
+                                        || this.FixItem(idq.deliveryItem.Value),
+                ItemHarvestQuest ihq => this.FixId(this.OldObjectIds, this.ObjectIds, ihq.itemIndex, this.VanillaObjectIds),
+                LostItemQuest liq => this.FixId(this.OldObjectIds, this.ObjectIds, liq.itemIndex, this.VanillaObjectIds),
+                _ => false,
+            };
         }
 
         private void FixSpecialOrder(SpecialOrder order)
@@ -2352,8 +2346,15 @@ namespace JsonAssets
                     {
                         if (!this.FixQuest(quest))
                         {
-                            quest.reloadDescription();
-                            quest.reloadObjective();
+                            try
+                            {
+                                quest.reloadObjective();
+                                quest.reloadDescription();
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error($"Failed refreshing quest objectives:\n\n{ex}");
+                            }
                         }
                     }
                     break;
