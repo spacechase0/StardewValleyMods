@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
 
 namespace SpaceCore
@@ -29,7 +30,31 @@ namespace SpaceCore
 
         internal static void Init()
         {
-            SpaceCore.Instance.Helper.Content.AssetLoaders.Add(new ExtendedTileSheetLoader());
+            SpaceCore.Instance.Helper.Events.Content.AssetRequested += Load;
+        }
+
+        internal static void Load(object? _, AssetRequestedEventArgs e)
+        {
+            // all assets we want to load will end with a number.
+            if (char.IsDigit(e.NameWithoutLocale.BaseName[^1]))
+            {
+                foreach (var (assetName, extdata) in TileSheetExtensions.ExtendedTextureAssets)
+                {
+                    if (extdata.Extensions.Count > 0 && e.NameWithoutLocale.BaseName.StartsWith(assetName))
+                    {
+                        if (int.TryParse(e.NameWithoutLocale.BaseName.AsSpan(assetName.Length), out int pos)
+                            && pos >= 2 && pos < extdata.Extensions.Count + 2)
+                        {
+                            e.LoadFrom(() => extdata.Extensions[pos - 2], AssetLoadPriority.Exclusive);
+                        }
+                        else
+                        {
+                            Log.Error($"Failed to find extension for {e.NameWithoutLocale.BaseName}.");
+                        }
+                        break;
+                    }
+                }
+            }
         }
 
         public static void RegisterExtendedTileSheet(string asset, int unitSize)
@@ -212,6 +237,7 @@ namespace SpaceCore
         */
     }
 
+    /*
     public class ExtendedTileSheetLoader : IAssetLoader
     {
         public bool CanLoad<T>(IAssetInfo asset)
@@ -238,4 +264,5 @@ namespace SpaceCore
             return default;
         }
     }
+    */
 }
