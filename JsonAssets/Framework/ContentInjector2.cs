@@ -28,12 +28,12 @@ namespace JsonAssets.Framework
         }
 
         // Using a Lazy to build the list of gift tastes only when first requested.
-        internal static Lazy<Dictionary<string, HashSet<string>[]>> gifts = new(GenerateGiftTastes);
+        internal static Lazy<Dictionary<string, HashSet<string>[]>> Gifts = new(GenerateGiftTastes);
 
         internal static Dictionary<string, HashSet<string>[]> GenerateGiftTastes()
         {
             Log.Trace("Generating gift taste dictionary");
-            Dictionary<string, HashSet<string>[]> friendship = new();
+            Dictionary<string, HashSet<string>[]> friendship = new(StringComparer.OrdinalIgnoreCase);
 
             foreach (Data.ObjectData obj in Mod.instance.Objects)
             {
@@ -75,8 +75,8 @@ namespace JsonAssets.Framework
 
         internal static void ResetGiftTastes()
         {
-            if (gifts.IsValueCreated)
-                gifts = new(GenerateGiftTastes);
+            if (Gifts.IsValueCreated)
+                Gifts = new(GenerateGiftTastes);
         }
 
         internal static void OnAssetRequested(AssetRequestedEventArgs e)
@@ -87,7 +87,7 @@ namespace JsonAssets.Framework
                     (asset) =>
                     {
                         var data = asset.AsDictionary<string, string>().Data;
-                        foreach (var (key, tastes) in gifts.Value)
+                        foreach (var (key, tastes) in Gifts.Value)
                         {
                             if (key == "Universal")
                             {
@@ -128,7 +128,7 @@ namespace JsonAssets.Framework
                                 if (data.TryGetValue(key, out string oldTastes))
                                     tastearray = new(oldTastes.Split('/'));
                                 else
-                                    tastearray = new(10);
+                                    continue;
 
                                 int loveindex = ((int)GiftTasteIndex.Love) * 2 + 1;
                                 int likeindex = ((int)GiftTasteIndex.Like) * 2 + 1;
