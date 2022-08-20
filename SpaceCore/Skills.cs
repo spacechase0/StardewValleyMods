@@ -156,7 +156,7 @@ namespace SpaceCore
             Skills.ValidateSkill(farmer, skillName);
 
             var skill = Skills.SkillsByName[skillName];
-            for (int i = skill.ExperienceCurve.Length - 1; i >= 0; --i)
+            for (int i = skill.ExperienceCurve.Length - 1; i > 0; --i)
             {
                 if (Skills.GetExperienceFor(farmer, skillName) >= skill.ExperienceCurve[i])
                 {
