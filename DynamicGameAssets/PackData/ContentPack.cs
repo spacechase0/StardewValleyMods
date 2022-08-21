@@ -9,12 +9,13 @@ using Newtonsoft.Json.Linq;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 
 namespace DynamicGameAssets.PackData
 {
-    public class ContentPack : IAssetLoader
+    public class ContentPack
     {
         internal class ConfigModel
         {
@@ -81,22 +82,15 @@ namespace DynamicGameAssets.PackData
             return null;
         }
 
-        public bool CanLoad<T>(IAssetInfo asset)
+        public bool TryLoad(AssetRequestedEventArgs e)
         {
-            string path = asset.AssetName.Replace('\\', '/');
-            string start = "DGA/" + this.smapiPack.Manifest.UniqueID + "/";
-            if (!path.StartsWith(start) || !path.EndsWith(".png"))
-                return false;
-            return this.smapiPack.HasFile(path.Substring(start.Length));
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            string path = asset.AssetName.Replace('\\', '/');
-            string start = "DGA/" + this.smapiPack.Manifest.UniqueID + "/";
-            if (!path.StartsWith(start) || !path.EndsWith(".png"))
-                return default;
-            return (T)(object)this.smapiPack.LoadAsset<Texture2D>(path.Substring(start.Length));
+            string localPath = e.NameWithoutLocale.BaseName.Substring(this.smapiPack.Manifest.UniqueID.Length + 5);
+            if (this.smapiPack.HasFile(localPath))
+            {
+                e.LoadFrom(() => this.smapiPack.ModContent.Load<Texture2D>(localPath), AssetLoadPriority.Exclusive);
+                return true;
+            }
+            return false;
         }
 
         private void LoadConfig()
