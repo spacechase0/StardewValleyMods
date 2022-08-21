@@ -21,6 +21,8 @@ using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
+
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Characters;
@@ -83,13 +85,13 @@ namespace JsonAssets
 
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
-            TileSheetExtensions.RegisterExtendedTileSheet(@"Maps\springobjects", 16);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\Craftables", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\crops", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\fruitTrees", 80);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\shirts", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\pants", 688);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\hats", 80);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"Maps\springobjects"), 16);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"TileSheets\Craftables"), 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"TileSheets\crops"), 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"TileSheets\fruitTrees"), 80);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"Characters\Farmer\shirts"), 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"Characters\Farmer\pants"), 688);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"Characters\Farmer\hats"), 80);
 
             HarmonyPatcher.Apply(this,
                 new CropPatcher(),
@@ -1317,6 +1319,7 @@ namespace JsonAssets
 
             ContentInjector1.InvalidateUsed();
             ContentInjector1.Clear();
+            ContentInjector2.ResetGiftTastes();
 
             this.LocationsFixedAlready.Clear();
         }
@@ -1549,22 +1552,22 @@ namespace JsonAssets
 
                 if (this.Monitor.IsVerbose)
                 {
-                    Log.Verbose("OLD IDS START");
+                    Log.Trace("OLD IDS START");
                     foreach (var id in this.OldObjectIds)
-                        Log.Verbose("\tObject " + id.Key + " = " + id.Value);
+                        Log.Trace("\tObject " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldCropIds)
-                        Log.Verbose("\tCrop " + id.Key + " = " + id.Value);
+                        Log.Trace("\tCrop " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldFruitTreeIds)
-                        Log.Verbose("\tFruit Tree " + id.Key + " = " + id.Value);
+                        Log.Trace("\tFruit Tree " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldBigCraftableIds)
-                        Log.Verbose("\tBigCraftable " + id.Key + " = " + id.Value);
+                        Log.Trace("\tBigCraftable " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldHatIds)
-                        Log.Verbose("\tHat " + id.Key + " = " + id.Value);
+                        Log.Trace("\tHat " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldWeaponIds)
-                        Log.Verbose("\tWeapon " + id.Key + " = " + id.Value);
+                        Log.Trace("\tWeapon " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldClothingIds)
-                        Log.Verbose("\tClothing " + id.Key + " = " + id.Value);
-                    Log.Verbose("OLD IDS END");
+                        Log.Trace("\tClothing " + id.Key + " = " + id.Value);
+                    Log.Trace("OLD IDS END");
                 }
             }
 
@@ -1589,6 +1592,8 @@ namespace JsonAssets
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
 
+            // Call before invoking Ids Assigned since clients may want to edit after.
+            ContentInjector1.Initialize(this.Helper.GameContent);
             Log.Trace("Resolving Crop and Tree product Ids");
             CropData.giantCropMap.Clear();
             foreach (var crop in this.Crops)

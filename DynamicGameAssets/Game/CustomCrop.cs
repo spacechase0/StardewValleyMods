@@ -43,7 +43,7 @@ namespace DynamicGameAssets.Game
             this.updateDrawMath(new Vector2(tileX, tileY));
         }
 
-        public void ResetPhaseDays()
+        public override void ResetPhaseDays()
         {
             this.phaseDays.Clear();
             this.phaseDays.AddRange(this.Data.Phases.Select(p => p.Length));
