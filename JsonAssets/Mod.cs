@@ -1313,9 +1313,9 @@ namespace JsonAssets
 
         internal void OnBlankSave()
         {
-            Log.Trace("Loading stuff early (really super early)");
             if (string.IsNullOrEmpty(Constants.CurrentSavePath))
             {
+                Log.Trace("Loading stuff early (for blank save)");
                 this.InitStuff(loadIdFiles: false);
             }
         }
@@ -2252,7 +2252,7 @@ namespace JsonAssets
                     {
                         if (val != boots.indexInTileSheet.Value)
                         {
-                            Log.Trace($"Fixing clothing {boots.Name} with new id {val} by name");
+                            Log.Trace($"Fixing boots {boots.Name} with new id {val} by name");
                             boots.indexInTileSheet.Value = val;
                         }
                     }
@@ -2260,6 +2260,16 @@ namespace JsonAssets
                         return true;
                     var bootdata = this.Boots.FirstOrDefault((boot) => boot.GetObjectId() == boots.indexInTileSheet.Value);
                     boots.indexInColorSheet.Value = bootdata is null ? 0 : bootdata.GetTextureIndex();
+                    return false;
+                }
+                case Tool tool:
+                {
+                    for (int a = 0; a < tool.attachments?.Count; ++a)
+                    {
+                        var attached = tool.attachments[a];
+                        if (attached is not null && this.FixItem(attached))
+                                tool.attachments[a] = null;
+                    }
                     return false;
                 }
                 case SObject obj:
@@ -2297,7 +2307,7 @@ namespace JsonAssets
                             {
                                 if (val != obj.ParentSheetIndex)
                                 {
-                                    Log.Trace($"Fixing clothing {obj.Name} with new id {val} by name");
+                                    Log.Trace($"Fixing object {obj.Name} with new id {val} by name");
                                     obj.ParentSheetIndex = val;
                                 }
                             }
@@ -2308,16 +2318,16 @@ namespace JsonAssets
                             return true;
                     }
 
-                    if (obj.heldObject.Value != null)
+                    if (obj.heldObject.Value is SObject heldObject)
                     {
 
-                        if (!this.VanillaObjectIds.Contains(obj.ParentSheetIndex)
-                                && this.ObjectIds.TryGetValue(obj.Name, out int val))
+                        if (!this.VanillaObjectIds.Contains(heldObject.ParentSheetIndex)
+                                && this.ObjectIds.TryGetValue(heldObject.Name, out int val))
                         {
-                            if (val != obj.ParentSheetIndex)
+                            if (val != heldObject.ParentSheetIndex)
                             {
-                                Log.Trace($"Fixing clothing {obj.Name} with new id {val} by name");
-                                obj.ParentSheetIndex = val;
+                                Log.Trace($"Fixing held object {heldObject.Name} with new id {val} by name");
+                                heldObject.ParentSheetIndex = val;
                             }
                         }
                         else if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
@@ -2340,20 +2350,23 @@ namespace JsonAssets
         [SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         private void FixCharacter(Character character)
         {
-            Log.Trace($"Fixing character {character.Name}");
             switch (character)
             {
                 case Horse horse:
+                    Log.Trace($"Fixing horse {horse.Name}");
                     if (this.FixId(this.OldHatIds, this.HatIds, horse.hat.Value?.which, this.VanillaHatIds))
                         horse.hat.Value = null;
                     break;
 
                 case Child child:
+                    Log.Trace($"Fixing child {child.Name}");
                     if (this.FixId(this.OldHatIds, this.HatIds, child.hat.Value?.which, this.VanillaHatIds))
                         child.hat.Value = null;
                     break;
 
                 case Farmer player:
+                    Log.Trace($"Fixing player {player.Name} - {player.UniqueMultiplayerID}");
+
                     // inventory and equipment
                     this.FixItemList(player.Items);
 
@@ -2365,22 +2378,28 @@ namespace JsonAssets
                             player.items.Add(null);
                         }
                     }
+
+
                     if (this.FixRing(player.leftRing.Value))
                         player.leftRing.Value = null;
                     if (this.FixRing(player.rightRing.Value))
                         player.rightRing.Value = null;
-                    if (this.FixId(this.OldHatIds, this.HatIds, player.hat.Value?.which, this.VanillaHatIds))
+
+
+                    if (this.FixItem(player.hat.Value))
                         player.hat.Value = null;
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, player.shirtItem.Value?.parentSheetIndex, this.VanillaClothingIds))
+                    if (this.FixItem(player.shirtItem.Value))
                         player.shirtItem.Value = null;
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, player.pantsItem.Value?.parentSheetIndex, this.VanillaClothingIds))
+                    if (this.FixItem(player.pantsItem.Value))
                         player.pantsItem.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, player.boots.Value?.indexInTileSheet, this.VanillaObjectIds))
+                    if (this.FixItem(player.boots.Value))
                         player.boots.Value = null;
 
                     // items lost to death;
                     this.FixItemList(player.itemsLostLastDeath);
                     this.RemoveNulls(player.itemsLostLastDeath);
+
+
                     if (player.recoveredItem is not null && this.FixItem(player.recoveredItem))
                     {
                         player.recoveredItem = null;
@@ -2439,7 +2458,7 @@ namespace JsonAssets
             {
                 if (ring.indexInTileSheet.Value != index)
                 {
-                    Log.Trace($"Fixing hat {ring.Name} with new id {index} by name");
+                    Log.Trace($"Fixing ring {ring.Name} with new id {index} by name");
                     ring.indexInTileSheet.Value = index;
                 }
             }
@@ -2735,79 +2754,19 @@ namespace JsonAssets
             if (items is null)
                 return;
 
+            int count = 0;
             for (int i = items.Count - 1; i >= 0; i--)
             {
                 var item = items[i];
-                if (item == null)
-
-                    continue;
-                if (item.GetType() == typeof(SObject) || item.GetType() == typeof(ColoredObject))
+                if (item is not null)
                 {
-                    var obj = item as SObject;
-                    if (!obj.bigCraftable.Value)
-                    {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
-                            items[i] = null;
-                    }
-                    else
-                    {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
-                            items[i] = null;
-                    }
-                }
-                else if (item is Hat hat)
-                {
-                    if (this.FixId(this.OldHatIds, this.HatIds, hat.which, this.VanillaHatIds))
+                    count++;
+                    if (this.FixItem(item))
                         items[i] = null;
-                }
-                else if (item is Tool tool)
-                {
-                    for (int a = 0; a < tool.attachments?.Count; ++a)
-                    {
-                        var attached = tool.attachments[a];
-                        if (attached == null)
-                            continue;
-
-                        if (attached.GetType() != typeof(SObject) || attached.bigCraftable.Value)
-                        {
-                            Log.Warn($"Unsupported attachment types! Consider reporting {attached.bigCraftable.Value} {attached} to the mod page.");
-                        }
-                        else
-                        {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, attached.parentSheetIndex, this.VanillaObjectIds))
-                            {
-                                tool.attachments[a] = null;
-                            }
-                        }
-                    }
-                    if (item is MeleeWeapon weapon)
-                    {
-                        if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.VanillaWeaponIds))
-                            items[i] = null;
-                        else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds))
-                            items[i] = null;
-                        else if (this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.indexOfMenuItemView, this.VanillaWeaponIds))
-                            items[i] = null;
-                    }
-                }
-                else if (item is Ring ring)
-                {
-                    if (this.FixRing(ring))
-                        items[i] = null;
-                }
-                else if (item is Clothing clothing)
-                {
-                    if (this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds))
-                        items[i] = null;
-                }
-                else if (item is Boots boots)
-                {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds))
-                        items[i] = null;
-                    /*else
-                        boots.reloadData();*/
                 }
             }
+
+            Log.Verbose($"Found {count} items in list");
         }
 
         /// <summary>
