@@ -593,7 +593,6 @@ namespace JsonAssets
             else
                 this.DupBigCraftables[craftable.Name] = source;
 
-
             // save data
             this.BigCraftables.Add(craftable);
 
@@ -1632,14 +1631,18 @@ namespace JsonAssets
             if (!Directory.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets")))
                 Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
 
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds));
-            File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds));
-            //File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-boots.json"), JsonConvert.SerializeObject(this.BootIds));
+                // NOTE: Have to save the file even if it's empty - maybe the user removed a JA pack?
+                Task objects = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds)));
+                Task crops = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds)));
+                Task fruitTrees = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds)));
+                Task bigs = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds)));
+                Task hats = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds)));
+                Task weapons = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds)));
+                Task clothing = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds)));
+
+                // Task.WaitAll(objects, crops, fruitTrees, bigs, hats, weapons, clothing);
+            }
+            this.Helper.Events.GameLoop.Saving -= this.OnSaving;
         }
 
         internal IList<ObjectData> MyRings = new List<ObjectData>();
@@ -1757,8 +1760,7 @@ namespace JsonAssets
         /// <summary>The vanilla clothing IDs.</summary>
         internal ISet<int> VanillaClothingIds;
 
-        /// <summary>The vanilla boot IDs.</summary>
-        internal ISet<int> VanillaBootIds;
+
 
         /// <summary>Populate an item's localization fields based on the <see cref="ITranslatableItem.TranslationKey"/> property, if defined.</summary>
         /// <param name="item">The item for which to populate translations.</param>
@@ -2190,26 +2192,80 @@ namespace JsonAssets
             switch (item)
             {
                 case Hat hat:
+                {
+                    if (this.VanillaHatIds.Contains(hat.which.Value))
+                        return false;
+                    if (this.HatIds.TryGetValue(hat.Name, out int val))
+                    {
+                        if (val != hat.which.Value)
+                        {
+                            Log.Trace($"Fixing hat {hat.Name} with new id {val} by name");
+                            hat.which.Value = val;
+                        }
+                        return false;
+                    }
                     return this.FixId(this.OldHatIds, this.HatIds, hat.which, this.VanillaHatIds);
-
+                }
                 case MeleeWeapon weapon:
+                {
+                    if (this.VanillaWeaponIds.Contains(weapon.InitialParentTileIndex))
+                        return false;
+                    if (this.WeaponIds.TryGetValue(weapon.Name, out int val))
+                    {
+                        if (val != weapon.InitialParentTileIndex)
+                        {
+                            Log.Trace($"Fixing weapon {weapon.Name} with new id {val} by name");
+                            weapon.InitialParentTileIndex = val;
+                            weapon.CurrentParentTileIndex = val;
+                            weapon.IndexOfMenuItemView = val;
+                        }
+                        return false;
+                    }
                     return
                         this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.initialParentTileIndex, this.VanillaWeaponIds)
                         || this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.currentParentTileIndex, this.VanillaWeaponIds)
                         || this.FixId(this.OldWeaponIds, this.WeaponIds, weapon.indexOfMenuItemView, this.VanillaWeaponIds);
-
+                }
                 case Ring ring:
                     return this.FixRing(ring);
 
                 case Clothing clothing:
+                {
+                    if (this.VanillaClothingIds.Contains(clothing.ParentSheetIndex))
+                        return false;
+                    if (this.ClothingIds.TryGetValue(clothing.Name, out int val))
+                    {
+                        if (val != clothing.ParentSheetIndex)
+                        {
+                            Log.Trace($"Fixing clothing {clothing.Name} with new id {val} by name");
+                            clothing.ParentSheetIndex = val;
+                        }
+                        return false;
+                    }
                     return this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds);
-
+                }
                 case Boots boots:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds);
-
+                {
+                    if (this.VanillaObjectIds.Contains(boots.indexInTileSheet.Value))
+                        return false;
+                    if (this.ObjectIds.TryGetValue(boots.Name, out int val))
+                    {
+                        if (val != boots.indexInTileSheet.Value)
+                        {
+                            Log.Trace($"Fixing clothing {boots.Name} with new id {val} by name");
+                            boots.indexInTileSheet.Value = val;
+                        }
+                    }
+                    else if (this.FixId(this.OldObjectIds, this.ObjectIds, boots.indexInTileSheet, this.VanillaObjectIds))
+                        return true;
+                    var bootdata = this.Boots.FirstOrDefault((boot) => boot.GetObjectId() == boots.indexInTileSheet.Value);
+                    boots.indexInColorSheet.Value = bootdata is null ? 0 : bootdata.GetTextureIndex();
+                    return false;
+                }
                 case SObject obj:
                     if (obj is Chest chest)
                     {
+                        Log.Trace($"Fixing chest at {chest.TileLocation}");
                         if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, chest.parentSheetIndex, this.VanillaBigCraftableIds))
                             chest.ParentSheetIndex = 130;
                         else
@@ -2235,7 +2291,17 @@ namespace JsonAssets
                             if (obj.Name != "Drum Block" && obj.Name != "Flute Block"
                                 && this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
                                 obj.preservedParentSheetIndex.Value = -1;
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
+
+                            if (!this.VanillaObjectIds.Contains(obj.ParentSheetIndex)
+                                && this.ObjectIds.TryGetValue(obj.Name, out int val))
+                            {
+                                if (val != obj.ParentSheetIndex)
+                                {
+                                    Log.Trace($"Fixing clothing {obj.Name} with new id {val} by name");
+                                    obj.ParentSheetIndex = val;
+                                }
+                            }
+                            else if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
                                 return true;
                         }
                         else if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
@@ -2244,7 +2310,17 @@ namespace JsonAssets
 
                     if (obj.heldObject.Value != null)
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
+
+                        if (!this.VanillaObjectIds.Contains(obj.ParentSheetIndex)
+                                && this.ObjectIds.TryGetValue(obj.Name, out int val))
+                        {
+                            if (val != obj.ParentSheetIndex)
+                            {
+                                Log.Trace($"Fixing clothing {obj.Name} with new id {val} by name");
+                                obj.ParentSheetIndex = val;
+                            }
+                        }
+                        else if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
                             obj.heldObject.Value = null;
 
                         if (obj.heldObject.Value is Chest innerChest)
@@ -2264,6 +2340,7 @@ namespace JsonAssets
         [SuppressMessage("SMAPI.CommonErrors", "AvoidNetField")]
         private void FixCharacter(Character character)
         {
+            Log.Trace($"Fixing character {character.Name}");
             switch (character)
             {
                 case Horse horse:
@@ -2356,8 +2433,17 @@ namespace JsonAssets
             if (ring is null)
                 return false;
 
-            // main ring
-            if (this.FixId(this.OldObjectIds, this.ObjectIds, ring.indexInTileSheet, this.VanillaObjectIds))
+            // fix main ring
+            if (!this.VanillaObjectIds.Contains(ring.indexInTileSheet.Value)
+                && this.ObjectIds.TryGetValue(ring.Name, out int index))
+            {
+                if (ring.indexInTileSheet.Value != index)
+                {
+                    Log.Trace($"Fixing hat {ring.Name} with new id {index} by name");
+                    ring.indexInTileSheet.Value = index;
+                }
+            }
+            else if (this.FixId(this.OldObjectIds, this.ObjectIds, ring.indexInTileSheet, this.VanillaObjectIds))
                 return true;
 
             // inner rings
@@ -2387,6 +2473,8 @@ namespace JsonAssets
             if (this.LocationsFixedAlready.Contains(loc.NameOrUniqueName))
                 return;
             this.LocationsFixedAlready.Add(loc.NameOrUniqueName);
+
+            Log.Trace($"Fixing {loc.NameOrUniqueName}");
 
             switch (loc)
             {
@@ -2419,8 +2507,9 @@ namespace JsonAssets
             foreach (Vector2 rem in toRemove)
                 loc.terrainFeatures.Remove(rem);
 
+            
             toRemove.Clear();
-            foreach (var (key, obj) in loc.netObjects.Pairs)
+            foreach (var (key, obj) in loc.objects.Pairs)
             {
                 if (this.FixItem(obj))
                     toRemove.Add(key);
