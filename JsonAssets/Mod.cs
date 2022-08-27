@@ -2477,6 +2477,9 @@ namespace JsonAssets
 
                 if (obj.heldObject.Value != null)
                 {
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
+                        obj.preservedParentSheetIndex.Value = -1;
+
                     if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
                         obj.heldObject.Value = null;
 
