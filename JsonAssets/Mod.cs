@@ -2532,31 +2532,20 @@ namespace JsonAssets
                 }
                 else if (obj.GetType() == typeof(SObject) || obj.GetType() == typeof(ColoredObject))
                 {
-                    if (!obj.bigCraftable.Value)
+                    if (this.FixItem(obj))
+                        toRemove.Add(key);
+                    else if (obj.ParentSheetIndex == 126 && obj.Quality != 0) // Alien rarecrow stores what ID is it is wearing here
                     {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
-                            toRemove.Add(key);
-                    }
-                    else
-                    {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
-                            toRemove.Add(key);
-                        else if (obj.ParentSheetIndex == 126 && obj.Quality != 0) // Alien rarecrow stores what ID is it is wearing here
-                        {
-                            obj.Quality--;
-                            if (this.FixId(this.OldHatIds, this.HatIds, obj.quality, this.VanillaHatIds))
-                                obj.Quality = 0;
-                            else obj.Quality++;
-                        }
+                        obj.Quality--;
+                        if (this.FixId(this.OldHatIds, this.HatIds, obj.quality, this.VanillaHatIds))
+                            obj.Quality = 0;
+                        else obj.Quality++;
                     }
                 }
 
                 if (obj.heldObject.Value != null)
                 {
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
-                        obj.preservedParentSheetIndex.Value = -1;
-
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
+                    if (this.FixItem(obj.heldObject.Value))
                         obj.heldObject.Value = null;
 
                     if (obj.heldObject.Value is Chest chest2)
