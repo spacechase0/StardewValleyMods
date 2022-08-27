@@ -2314,6 +2314,15 @@ namespace JsonAssets
                             else if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
                                 return true;
                         }
+                        else if (!this.VanillaBigCraftableIds.Contains(obj.ParentSheetIndex)
+                            && this.BigCraftableIds.TryGetValue(obj.Name, out int id))
+                        {
+                            if (id != obj.ParentSheetIndex)
+                            {
+                                Log.Trace($"Fixing big craftable {obj.Name} with new id {id} by name");
+                                obj.ParentSheetIndex = id;
+                            }
+                        }
                         else if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, obj.parentSheetIndex, this.VanillaBigCraftableIds))
                             return true;
                     }
@@ -2321,12 +2330,15 @@ namespace JsonAssets
                     if (obj.heldObject.Value is SObject heldObject)
                     {
 
+                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
+                            obj.preservedParentSheetIndex.Value = -1;
+
                         if (!this.VanillaObjectIds.Contains(heldObject.ParentSheetIndex)
                                 && this.ObjectIds.TryGetValue(heldObject.Name, out int val))
                         {
                             if (val != heldObject.ParentSheetIndex)
                             {
-                                Log.Trace($"Fixing held object {heldObject.Name} with new id {val} by name");
+                                Log.Trace($"Fixing held object {heldObject.Name} with new id {val} by name at tilelocation {obj.TileLocation}.");
                                 heldObject.ParentSheetIndex = val;
                             }
                         }
@@ -2586,19 +2598,9 @@ namespace JsonAssets
             //if (loc is DecoratableLocation decoLoc)
             foreach (var furniture in loc.furniture)
             {
-                if (furniture.heldObject.Value != null)
-                {
-                    if (!furniture.heldObject.Value.bigCraftable.Value)
-                    {
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, furniture.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
-                            furniture.heldObject.Value = null;
-                    }
-                    else
-                    {
-                        if (this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, furniture.heldObject.Value.parentSheetIndex, this.VanillaBigCraftableIds))
-                            furniture.heldObject.Value = null;
-                    }
-                }
+                if (furniture.heldObject.Value != null && this.FixItem(furniture.heldObject.Value))
+                    furniture.heldObject.Value = null;
+
                 if (furniture is StorageFurniture storage)
                 {
                     this.FixItemList(storage.heldItems);
@@ -3057,7 +3059,7 @@ namespace JsonAssets
                     {
                         id = newId;
                         if (curId != id)
-                            Log.Verbose("Changing ID: " + key + " from ID " + curId + " to " + id);
+                            Log.Trace("Changing ID: " + key + " from ID " + curId + " to " + id);
                         return false;
                     }
                     else
