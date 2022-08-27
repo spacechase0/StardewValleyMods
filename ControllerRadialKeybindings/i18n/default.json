@@ -1,0 +1,15 @@
+﻿{
+    "main.configure.first": "Configure first radial menu",
+    "main.configure.second": "Configure second radial menu",
+    "title.configure.first": "First Radial Menu",
+    "title.configure.second": "Second Radial Menu",
+    "configure.radial.trigger": "Trigger radial menu",
+    "configure.radial.trigger.tooltip": "The keybinding to open the radial menu. Letting go will close the menu and execute the chosen keybinding (if any).",
+    "configure.radial.tip": "The entries start on the right, and go counter-clockwise.",
+    "configure.radial.entry": "Segment {{num}} Keybinding",
+    "configure.radial.entry.tooltip": "The keybinding to use for this segment",
+    "configure.radial.entry.duration": "Segment {{num}} Press Duration",
+    "configure.radial.entry.duration.tooltip": "How long to 'press' the keybinding before unpressing",
+    "instant": "Instant",
+    "seconds": "{{num}} seconds"
+}
