@@ -1753,10 +1753,10 @@ namespace JsonAssets
             if (this.ObjectIds.TryGetValue((string)data, out int id))
                 return id;
 
-            foreach (var obj in Game1.objectInformation)
+            foreach (var (key, value) in Game1.objectInformation)
             {
-                if (obj.Value.Split('/')[0] == (string)data)
-                    return obj.Key;
+                if (value?.Split('/')[0] == (string)data)
+                    return key;
             }
 
             Log.Warn($"No idea what '{data}' is!");
