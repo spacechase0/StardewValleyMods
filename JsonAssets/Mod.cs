@@ -2239,10 +2239,13 @@ namespace JsonAssets
                         {
                             Log.Trace($"Fixing clothing {clothing.Name} with new id {val} by name");
                             clothing.ParentSheetIndex = val;
+                            this.Helper.Reflection.GetField<bool>(clothing, "_LoadedData").SetValue(false);
+                            clothing.LoadData();
                         }
                         return false;
                     }
-                    return this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds);
+                    else
+                        return this.FixId(this.OldClothingIds, this.ClothingIds, clothing.parentSheetIndex, this.VanillaClothingIds);
                 }
                 case Boots boots:
                 {
@@ -2651,11 +2654,11 @@ namespace JsonAssets
                         pond.maxOccupants.Value = 0;
                         this.Helper.Reflection.GetField<SObject>(pond, "_fishObject").SetValue(null);
                     }
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.sign.Value?.parentSheetIndex, this.VanillaObjectIds))
+                    if (this.FixItem(pond.sign.Value))
                         pond.sign.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.output.Value?.parentSheetIndex, this.VanillaObjectIds))
+                    if (this.FixItem(pond.output.Value))
                         pond.output.Value = null;
-                    if (this.FixId(this.OldObjectIds, this.ObjectIds, pond.neededItem.Value?.parentSheetIndex, this.VanillaObjectIds))
+                    if (this.FixItem(pond.neededItem.Value))
                         pond.neededItem.Value = null;
                     break;
                 case JunimoHut hut:
