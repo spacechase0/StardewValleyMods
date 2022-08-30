@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,10 +8,43 @@ using StardewValley;
 
 namespace FloodedValleyFarm
 {
+    public static class SpriteBatcherWaterPatch
+    {
+        public static void Prefix(ref Effect effect, Texture texture)
+        {
+            if (Game1.currentLocation == null)
+                return;
+
+            string texName = texture?.Name?.Replace('/', '_');
+            if (texName != null && Game1.currentLocation.Name == "Farm" && Mod.maskTextures.ContainsKey(texName))
+            {
+                Color wcol = Game1.currentLocation.waterColor.Value;
+
+                effect = Mod.waterEffect;
+                effect.Parameters["SpriteTexture"].SetValue(texture);
+                effect.Parameters["WaterTexture"].SetValue(Mod.waterTex);
+                effect.Parameters["MaskTexture"].SetValue(Mod.maskTextures[texName]);
+                effect.Parameters["WaterColor"].SetValue(wcol.ToVector4());
+            }
+        }
+        public static void Postfix(ref Effect effect, Texture texture)
+        {
+            if (Game1.currentLocation == null)
+                return;
+
+            string texName = texture?.Name?.Replace('/', '_');
+            if (texName != null && Game1.currentLocation.Name == "Farm" && Mod.maskTextures.ContainsKey(texName))
+            {
+                Mod.instance.Helper.Reflection.GetField<EffectPass>(Game1.spriteBatch, "_spritePass").GetValue().Apply();
+            }
+        }
+    }
+
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
 
+#if false
         internal static DepthStencilState DefaultStencilOverride = null;
         internal static DepthStencilState StencilBrighten = new()
         {
@@ -37,22 +70,74 @@ namespace FloodedValleyFarm
             ReferenceStencil = 1,
             DepthBufferEnable = false,
         };
+#endif
 
-        private static Effect waterEffect;
+        internal static Texture2D waterTex;
+        internal static Effect waterEffect;
+
+        internal static Dictionary<string, Texture2D> maskTextures = new();
 
         public override void Entry(StardewModdingAPI.IModHelper helper)
         {
             instance = this;
             Log.Monitor = Monitor;
 
-            helper.Events.Display.RenderingWorld += this.Display_RenderingWorld;
-            helper.Events.Display.RenderedWorld += this.Display_RenderedWorld;
+            waterTex = Helper.ModContent.Load<Texture2D>("assets/water.png");
+            waterEffect = Helper.ModContent.Load<Effect>("assets/PartialWater.xnb");
+
+            //helper.Events.Display.RenderingWorld += this.Display_RenderingWorld;
+            //helper.Events.Display.RenderedWorld += this.Display_RenderedWorld;
 
             var harmony = new Harmony(ModManifest.UniqueID);
             harmony.PatchAll();
-            harmony.Patch(AccessTools.Method("StardewModdingAPI.Framework.SGame:DrawImpl"), transpiler: new HarmonyMethod(typeof(Game1CatchLightingRenderPatch).GetMethod("Transpiler")));
+            //harmony.Patch(AccessTools.Method("StardewModdingAPI.Framework.SGame:DrawImpl"), transpiler: new HarmonyMethod(typeof(Game1CatchLightingRenderPatch).GetMethod("Transpiler")));
+            harmony.Patch(
+                AccessTools.Method("Microsoft.Xna.Framework.Graphics.SpriteBatcher:FlushVertexArray"),
+                prefix: new HarmonyMethod(typeof(SpriteBatcherWaterPatch).GetMethod("Prefix")),
+                postfix: new HarmonyMethod(typeof(SpriteBatcherWaterPatch).GetMethod("Postfix"))
+            );
+
+            //maskTextures.Add("TileSheets_Craftables", Helper.ModContent.Load<Texture2D>("assets/masks/TileSheets_Craftables.png"));
+
+            helper.Events.Content.AssetRequested += this.Content_AssetRequested;
         }
 
+        [EventPriority(EventPriority.Low - 1 ) ]
+        private void Content_AssetRequested(object sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
+        {
+            if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/Craftables"))
+            {
+                e.Edit(ad =>
+                {
+                    Texture2D tex = ad.AsImage().Data;
+                    string texName = ad.NameWithoutLocale.Name.Replace('/', '_');
+
+                    if (maskTextures.ContainsKey(texName))
+                        maskTextures.Remove(texName);
+
+                    var baseMask = Helper.ModContent.Load<Texture2D>("assets/masks/" + texName + ".png");
+
+                    Color[] baseCols = new Color[baseMask.Width * baseMask.Height];
+                    baseMask.GetData(baseCols);
+
+                    Color[] cols = new Color[tex.Width * tex.Height];
+                    for (int ix = 0; ix < tex.Width; ++ix)
+                    {
+                        for (int iy = 0; iy < tex.Height; ++iy)
+                        {
+                            cols[ix + iy * tex.Width] = baseCols[ix % 16 + (iy % 32) * 16];
+                        }
+                    }
+
+                    Texture2D newTex = new(Game1.graphics.GraphicsDevice, tex.Width, tex.Height);
+                    newTex.SetData(cols);
+                    maskTextures.Add(texName, newTex);
+                }, AssetEditPriority.Late + 1);
+            }
+        }
+
+
+#if false
         private void Display_RenderingWorld(object sender, RenderingWorldEventArgs e)
         {
             if (Game1.currentLocation.Name != "Farm")
@@ -114,5 +199,6 @@ namespace FloodedValleyFarm
                 e.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
             }
         }
+#endif
     }
 }

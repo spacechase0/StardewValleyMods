@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IDynamicGameAssetsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IEntoaroxFrameworkApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IFashionSenseApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IManaBarApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IRushOrdersApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IContentPatcherApi.cs" />

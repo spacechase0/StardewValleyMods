@@ -176,7 +176,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniGolfMod", "MiniGolfMod\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloodedValleyFarm", "FloodedValleyFarm\FloodedValleyFarm.csproj", "{EF733B78-4F0A-46D4-8529-923EEBBFA4DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradientHairColors", "GradientHairColors\GradientHairColors.csproj", "{1E295971-F8E9-45D6-BDF5-DE76675753FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GradientHairColors", "GradientHairColors\GradientHairColors.csproj", "{1E295971-F8E9-45D6-BDF5-DE76675753FA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DimensionalPockets", "DimensionalPockets\DimensionalPockets.csproj", "{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerRadialKeybindings", "ControllerRadialKeybindings\ControllerRadialKeybindings.csproj", "{D99B6186-A545-4CD1-B422-3C8F6B575E37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -492,6 +496,14 @@ Global
 		{1E295971-F8E9-45D6-BDF5-DE76675753FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E295971-F8E9-45D6-BDF5-DE76675753FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E295971-F8E9-45D6-BDF5-DE76675753FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -522,6 +534,8 @@ Global
 		{104FCF4D-7776-4C16-94CE-EDE8209D6D9F} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{EF733B78-4F0A-46D4-8529-923EEBBFA4DA} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{1E295971-F8E9-45D6-BDF5-DE76675753FA} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{3D194335-89D4-4B5F-82FD-4E326EB2E8BB} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{D99B6186-A545-4CD1-B422-3C8F6B575E37} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
@@ -563,6 +577,7 @@ Global
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{39ee1a29-bcbd-4ba5-867f-1439a9359b0e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{39ee1a29-bcbd-4ba5-867f-1439a9359b0e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3aeb49fd-d27f-410a-8483-8bb6fc8e51c6}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{3d194335-89d4-4b5f-82fd-4e326eb2e8bb}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3da3fb18-ac0c-40f4-b45b-5d13916d032a}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3f979f1d-6d46-45ee-9201-8a4e9864fcbf}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{41bbd68d-b674-4ddc-b0a4-7e189f13873a}*SharedItemsImports = 5
@@ -571,7 +586,6 @@ Global
 		SpaceShared\SpaceShared.projitems*{43ede3d9-2062-4f79-b581-708ffaf9d195}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{4c8538cc-9720-4b94-be88-f9e809b49268}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{4c8538cc-9720-4b94-be88-f9e809b49268}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{505f7d71-20b2-4010-ac06-79b1229a74c6}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{5ad9a1bf-dc0c-4177-b362-de4706c99780}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{5ad9a1bf-dc0c-4177-b362-de4706c99780}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{5be81c98-3845-4dff-adab-e0b57cfd044b}*SharedItemsImports = 5

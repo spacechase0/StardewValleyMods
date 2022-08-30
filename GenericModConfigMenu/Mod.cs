@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using GenericModConfigMenu.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,10 +10,14 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 
+
 namespace GenericModConfigMenu
 {
+
     internal class Mod : StardewModdingAPI.Mod
     {
+        public static Mod instance;
+
         /*********
         ** Fields
         *********/
@@ -21,7 +26,7 @@ namespace GenericModConfigMenu
         private Button ConfigButton;
 
         /// <summary>Manages registered mod config menus.</summary>
-        private readonly ModConfigManager ConfigManager = new();
+        internal readonly ModConfigManager ConfigManager = new();
 
         /// <summary>The mod API, if initialized.</summary>
         private Api Api;
@@ -56,6 +61,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
         {
+            instance = this;
             I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<OwnModConfig>();
