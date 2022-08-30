@@ -2253,7 +2253,8 @@ namespace JsonAssets
                     {
                         if (!obj.bigCraftable.Value)
                         {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
+                            if (obj.Name != "Drum Block" && obj.Name != "Flute Block"
+                                && this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
                                 obj.preservedParentSheetIndex.Value = -1;
                             if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
                                 return true;
