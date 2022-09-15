@@ -1,0 +1,15 @@
+﻿{
+    "main-setting": "Main Settings",
+    "render-setting": "Render mana bar?",
+    "render-setting-des": "If sets true, game will render mana bar.",
+
+    "position-settings": "Position Settings",
+    "bar-x-position": "X Offset",
+    "bar-x-position-des": "Sets 'X' Axis offset.\nIf value is too big, bar can render baggily.",
+    "bar-y-position": "Y Offset",
+    "bar-y-position-des": "Sets 'Y' Axis offset.\nIf value is too big, bar can render baggily.",
+
+    "additional-settings": "Additional Settings",
+    "size-multiplier": "Bar Size Multiplier",
+    "size-multiplier-des": "Sets bar size multiplier, that applies when you extend maximum level of mana."
+}

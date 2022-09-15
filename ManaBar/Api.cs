@@ -13,6 +13,8 @@ namespace ManaBar
 
     public class Api : IApi
     {
+        public const int BaseMaxMana = 100;
+
         public int GetMana(Farmer farmer)
         {
             return farmer.GetCurrentMana();
