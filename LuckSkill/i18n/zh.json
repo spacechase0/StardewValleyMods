@@ -1,0 +1,25 @@
+﻿{
+    // skill
+    "skill.name": "幸运",
+    "skill.level-up": "运气等级提升",
+
+    // professions
+    "fortunate.name": "幸运儿",
+    "fortunate.desc": "拥有更高的每日运气.",
+    "lucky.name": "好运来",
+    "lucky.desc": "有20%几率获得最大的每日运气.",
+    "popular-helper.name": "讨喜的伙计",
+    "popular-helper.desc": "布告栏任务的出现频率变为原来的三倍.",
+    "shooting-star.name": "流星",
+    "shooting-star.desc": "夜晚事件发生频率翻倍.",
+    "spirit-child.name": "精灵之友",
+    "spirit-child.desc": "送礼物来让祝尼魔开心. 它们会帮助你的农场发展.\n(15% 几率触发特殊的农场发展事件.)",
+    "un-unlucky.name": "厄运退散",
+    "un-unlucky.desc": "永远不会拥有坏运气.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "祝尼魔们让你的一些动物更加的亲近你了!",
+    "junimo-rewards.grow-crops": "祝尼魔们提高了你的收成!",
+    "junimo-rewards.grow-grass": "祝尼魔们催生了你的牧草并且修好了你的篱笆!",
+    "junimo-rewards.prismatic-shard": "祝尼魔们赠予你了一个五彩碎片!"
+}
