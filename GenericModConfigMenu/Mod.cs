@@ -1,12 +1,15 @@
-using System.Runtime.CompilerServices;
 using GenericModConfigMenu.Framework;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
 using SpaceShared;
 using SpaceShared.UI;
+
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+
 using StardewValley;
 using StardewValley.Menus;
 
@@ -22,8 +25,10 @@ namespace GenericModConfigMenu
         ** Fields
         *********/
         private OwnModConfig Config;
-        private RootElement Ui;
+        private RootElement? Ui;
         private Button ConfigButton;
+
+        private int countdown = 5;
 
         /// <summary>Manages registered mod config menus.</summary>
         internal readonly ModConfigManager ConfigManager = new();
@@ -66,8 +71,6 @@ namespace GenericModConfigMenu
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<OwnModConfig>();
 
-            this.SetupTitleMenuButton();
-
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicking += this.OnUpdateTicking;
             helper.Events.Display.WindowResized += this.OnWindowResized;
@@ -76,6 +79,8 @@ namespace GenericModConfigMenu
             helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             helper.Events.Input.ButtonsChanged += this.OnButtonChanged;
+
+            helper.Events.Content.AssetRequested += static (_, e) => AssetManager.Apply(e);
         }
 
         /// <inheritdoc />
@@ -92,7 +97,7 @@ namespace GenericModConfigMenu
         /// <param name="scrollRow">The initial scroll position, represented by the row index at the top of the visible area.</param>
         private void OpenListMenu(int? scrollRow = null)
         {
-            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenu(mod, page: null, listScrollRow: curScrollRow), openKeybindingsMenu: currScrollRow => OpenKeybindingsMenu( currScrollRow ), this.ConfigManager, Helper.ModContent.Load<Texture2D>("assets/keybindings-button.png"), scrollRow);
+            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenu(mod, page: null, listScrollRow: curScrollRow), openKeybindingsMenu: currScrollRow => OpenKeybindingsMenu( currScrollRow ), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow);
         }
 
         private void OpenKeybindingsMenu(int listScrollRow)
@@ -125,7 +130,7 @@ namespace GenericModConfigMenu
         {
             this.Ui = new RootElement();
 
-            Texture2D tex = this.Helper.Content.Load<Texture2D>("assets/config-button.png");
+            Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
             this.ConfigButton = new Button(tex)
             {
                 LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
@@ -156,6 +161,10 @@ namespace GenericModConfigMenu
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
+            // delay for long enough that CP can get a chance to edit
+            // the texture.
+            this.Helper.Events.GameLoop.UpdateTicking += this.FiveTicksAfterGameLaunched;
+
             Api configMenu = (Api)this.GetApi();
 
             configMenu.Register(
@@ -185,13 +194,22 @@ namespace GenericModConfigMenu
             );
         }
 
+        private void FiveTicksAfterGameLaunched(object sender, UpdateTickingEventArgs e)
+        {
+            if (this.countdown-- < 5)
+            {
+                this.SetupTitleMenuButton();
+                this.Helper.Events.GameLoop.UpdateTicking -= this.FiveTicksAfterGameLaunched;
+            }
+        }
+
         /// <inheritdoc cref="IGameLoopEvents.UpdateTicking"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicking(object sender, UpdateTickingEventArgs e)
         {
             if (this.IsTitleMenuInteractable())
-                this.Ui.Update();
+                this.Ui?.Update();
         }
 
         /// <inheritdoc cref="IDisplayEvents.WindowResized"/>
@@ -208,7 +226,7 @@ namespace GenericModConfigMenu
         private void OnRendered(object sender, RenderedEventArgs e)
         {
             if (this.IsTitleMenuInteractable())
-                this.Ui.Draw(e.SpriteBatch);
+                this.Ui?.Draw(e.SpriteBatch);
         }
 
         /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
