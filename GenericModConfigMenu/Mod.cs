@@ -196,7 +196,7 @@ namespace GenericModConfigMenu
 
         private void FiveTicksAfterGameLaunched(object sender, UpdateTickingEventArgs e)
         {
-            if (this.countdown-- < 5)
+            if (this.countdown-- < 0)
             {
                 this.SetupTitleMenuButton();
                 this.Helper.Events.GameLoop.UpdateTicking -= this.FiveTicksAfterGameLaunched;
