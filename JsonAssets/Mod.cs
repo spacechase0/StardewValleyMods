@@ -1333,6 +1333,10 @@ namespace JsonAssets
             {
                 Log.Trace("Fixing IDs");
                 this.FixIdsEverywhere();
+
+                sfapi = this.Helper.ModRegistry.GetApi<ISolidFoundationsAPI>("PeacefulEnd.SolidFoundations");
+                if (sfapi is not null)
+                    sfapi.AfterBuildingRestoration += this.FixSFBuildings;
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
             {
@@ -2007,7 +2011,11 @@ namespace JsonAssets
 
         private static readonly MatchEvaluator ItemEvaluator = new(AdjustContextTagOrStandardDescription);
 
+        // this ID marks SF buildings.
+        private const string SFID = "SolidFoundations.GenericBuilding.Id";
+
         private bool ReverseFixing;
+        private ISolidFoundationsAPI sfapi;
         private readonly HashSet<string> LocationsFixedAlready = new();
         private void FixIdsEverywhere(bool reverse = false)
         {
@@ -2578,6 +2586,27 @@ namespace JsonAssets
                     hut.output.Value.clearNulls();
                     break;
             }
+
+            if (building.modData.ContainsKey(SFID))
+            {
+                var chests = this.Helper.Reflection.GetField<NetList<Chest, NetRef<Chest>>>(building, "buildingChests", required: false)?.GetValue();
+                if (chests?.Count > 0)
+                {
+                    Log.Trace($"Fixing SF building's chests: {chests.Count} chests.");
+                    try
+                    {
+                        foreach (var chest in chests)
+                        {
+                            this.FixItemList(chest.items);
+                            this.RemoveNulls(chest.items);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error($"Error while deshuffling {building.modData[SFID]}:\n\n{ex}");
+                    }
+                }
+            }
         }
 
         /// <summary>Fix item IDs contained by a crop, including the crop itself.</summary>
@@ -3035,6 +3064,59 @@ namespace JsonAssets
                     }
                 }
                 else return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets all the buildings.
+        /// </summary>
+        /// <returns>IEnumerable of all buildings.</returns>
+        public static IEnumerable<Building> GetBuildings()
+        {
+            foreach (GameLocation? loc in Game1.locations)
+            {
+                if (loc is BuildableGameLocation buildable)
+                {
+                    foreach (Building? building in GetBuildings(buildable))
+                    {
+                        yield return building;
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<Building> GetBuildings(BuildableGameLocation loc)
+        {
+            foreach (Building building in loc.buildings)
+            {
+                yield return building;
+                if (building.indoors?.Value is BuildableGameLocation buildable)
+                {
+                    foreach (Building interiorBuilding in GetBuildings(buildable))
+                    {
+                        yield return interiorBuilding;
+                    }
+                }
+            }
+        }
+
+        private void FixSFBuildings(object sender, EventArgs e)
+        {
+            this.sfapi.AfterBuildingRestoration -= this.FixSFBuildings;
+
+            try
+            {
+                foreach (var building in GetBuildings())
+                {
+                    if (building.modData.ContainsKey(SFID))
+                    {
+                        this.FixBuilding(building);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed while trying to deshuffle SF buildings {ex}");
             }
         }
     }
