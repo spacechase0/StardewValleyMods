@@ -133,17 +133,23 @@ namespace JsonAssets.Framework
         }
         private void InjectDataCookingRecipes(IAssetData asset)
         {
+            // Game1.objectInformation may not be populated early enough
+            // for splitscreen players.
+            IDictionary<int, string> objData = Game1.objectInformation
+                                        ?? Game1.content.Load<Dictionary<int, string>>("Data/ObjectInformation");
+
             var data = asset.AsDictionary<string, string>().Data;
             foreach (var obj in Mod.instance.Objects)
             {
                 try
                 {
-                    if (obj.Recipe == null)
+                    if (obj.Recipe is null)
                         continue;
                     if (obj.Category != ObjectCategory.Cooking)
                         continue;
-                    Log.Verbose($"Injecting to cooking recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
-                    data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
+                    string recipestring = obj.Recipe.GetRecipeString(obj, objData);
+                    Log.Verbose($"Injecting to cooking recipes: {obj.Name}: {recipestring}");
+                    data.Add(obj.Name, recipestring);
                 }
                 catch (Exception e)
                 {
@@ -153,6 +159,11 @@ namespace JsonAssets.Framework
         }
         private void InjectDataCraftingRecipes(IAssetData asset)
         {
+            // Game1.objectInformation may not be populated early enough
+            // for splitscreen players.
+            IDictionary<int, string> objData = Game1.objectInformation
+                                        ?? Game1.content.Load<Dictionary<int, string>>("Data/ObjectInformation");
+
             var data = asset.AsDictionary<string, string>().Data;
             foreach (var obj in Mod.instance.Objects)
             {
@@ -162,8 +173,9 @@ namespace JsonAssets.Framework
                         continue;
                     if (obj.Category == ObjectCategory.Cooking)
                         continue;
-                    Log.Verbose($"Injecting to crafting recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
-                    data.Add(obj.Name, obj.Recipe.GetRecipeString(obj));
+                    string recipestring = obj.Recipe.GetRecipeString(obj, objData);
+                    Log.Verbose($"Injecting to crafting recipes: {obj.Name}: {recipestring}");
+                    data.Add(obj.Name, recipestring);
                 }
                 catch (Exception e)
                 {
@@ -176,8 +188,9 @@ namespace JsonAssets.Framework
                 {
                     if (big.Recipe == null)
                         continue;
-                    Log.Verbose($"Injecting to crafting recipes: {big.Name}: {big.Recipe.GetRecipeString(big)}");
-                    data.Add(big.Name, big.Recipe.GetRecipeString(big));
+                    string recipestring = big.Recipe.GetRecipeString(big, objData);
+                    Log.Verbose($"Injecting to crafting recipes: {big.Name}: {recipestring}");
+                    data.Add(big.Name, recipestring);
                 }
                 catch (Exception e)
                 {
@@ -263,13 +276,17 @@ namespace JsonAssets.Framework
         }
         private void InjectDataTailoringRecipes(IAssetData asset)
         {
+            IDictionary<int, string> clothingData = Game1.clothingInformation
+                                                    ?? Game1.content.Load<Dictionary<int, string>>("Data/ClothingInformation");
+
             var data = asset.GetData<List<TailorItemRecipe>>();
             foreach (var recipe in Mod.instance.Tailoring)
             {
                 try
                 {
-                    Log.Verbose($"Injecting to tailoring recipe: {recipe.ToGameData()}");
-                    data.Add(recipe.ToGameData());
+                    var str = recipe.ToGameData(clothingData);
+                    Log.Verbose($"Injecting to tailoring recipe: {str}");
+                    data.Add(str);
                 }
                 catch (Exception e)
                 {

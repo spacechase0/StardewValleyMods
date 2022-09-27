@@ -1745,15 +1745,17 @@ namespace JsonAssets
         /// <summary>The vanilla boot IDs.</summary>
         internal ISet<int> VanillaBootIds;
 
-        public int ResolveObjectId(object data)
+        public int ResolveObjectId(object data, IDictionary<int, string> objectInfo = null)
         {
+            objectInfo ??= Game1.objectInformation;
+
             if (data is long inputId)
                 return (int)inputId;
 
             if (this.ObjectIds.TryGetValue((string)data, out int id))
                 return id;
 
-            foreach (var obj in Game1.objectInformation)
+            foreach (var obj in objectInfo)
             {
                 if (obj.Value.Split('/')[0] == (string)data)
                     return obj.Key;
@@ -1763,15 +1765,17 @@ namespace JsonAssets
             return 0;
         }
 
-        public int ResolveClothingId(object data)
+        public int ResolveClothingId(object data, IDictionary<int, string> clothingInfo = null)
         {
+            clothingInfo ??= Game1.clothingInformation;
+
             if (data is long inputId)
                 return (int)inputId;
 
             if (this.ClothingIds.TryGetValue((string)data, out int id))
                 return id;
 
-            foreach (var obj in Game1.clothingInformation)
+            foreach (var obj in clothingInfo)
             {
                 if (obj.Value.Split('/')[0] == (string)data)
                     return obj.Key;

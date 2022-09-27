@@ -27,12 +27,12 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        internal string GetRecipeString(ObjectData parent)
+        internal string GetRecipeString(ObjectData parent, IDictionary<int, string> objectInfo)
         {
             string str = "";
             foreach (var ingredient in this.Ingredients)
             {
-                int id = Mod.instance.ResolveObjectId(ingredient.Object);
+                int id = Mod.instance.ResolveObjectId(ingredient.Object, objectInfo);
                 if (id == 0)
                     continue;
                 str += id + " " + ingredient.Count + " ";
