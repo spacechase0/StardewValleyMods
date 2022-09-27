@@ -40,7 +40,7 @@ namespace JsonAssets.Data
             {
                 recipe.CraftedItemIDs = new List<string>();
                 foreach (object entry in this.CraftedItems)
-                    recipe.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString(), clothingData); // TODO: always uses first crafted item?
+                    recipe.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0], clothingData).ToString()); // TODO: always uses first crafted item?
             }
             else
                 recipe.CraftedItemID = Mod.instance.ResolveClothingId(this.CraftedItems[0]);
