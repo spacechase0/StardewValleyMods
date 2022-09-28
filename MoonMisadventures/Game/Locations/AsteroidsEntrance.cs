@@ -10,7 +10,7 @@ namespace MoonMisadventures.Game.Locations
     public class AsteroidsEntrance : LunarLocation
     {
         public AsteroidsEntrance() { }
-        public AsteroidsEntrance( IContentHelper content )
+        public AsteroidsEntrance( IModContentHelper content )
         :   base( content, "MoonAsteroidsEntrance", "MoonAsteroidsEntrance" )
         {
         }

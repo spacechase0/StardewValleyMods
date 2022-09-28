@@ -1,10 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
+
+using MoonMisadventures.Game.Locations;
+
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
+
+using StardewValley;
 
 namespace MoonMisadventures
 {
@@ -29,7 +30,7 @@ namespace MoonMisadventures
 
         public static Texture2D NecklaceBg;
 
-        internal static void Load( IContentHelper content )
+        internal static void Load( IModContentHelper content )
         {
             Assets.RadioactiveTools = content.Load<Texture2D>( "assets/tools-radioactive.png" );
             Assets.MythiciteTools = content.Load<Texture2D>( "assets/tools-mythicite.png" );
@@ -49,6 +50,14 @@ namespace MoonMisadventures
             Assets.HoeDirt = content.Load<Texture2D>( "assets/hoedirt.png" );
 
             Assets.NecklaceBg = content.Load<Texture2D>( "assets/necklace-bg.png" );
+        }
+
+        internal static void ApplyEdits(AssetRequestedEventArgs e)
+        {
+            if (Game1.currentLocation is LunarLocation &&  e.NameWithoutLocale.IsEquivalentTo("TerrainFeatures/hoeDirt"))
+            {
+                e.LoadFrom(static () => Assets.HoeDirt, AssetLoadPriority.Exclusive);
+            }
         }
     }
 }

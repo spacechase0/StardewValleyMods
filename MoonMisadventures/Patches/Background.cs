@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
@@ -127,7 +128,7 @@ namespace MoonMisadventures.Patches
             int countdown = 0;
             foreach ( var insn in insns )
             {
-                if ( insn.opcode == OpCodes.Ldsfld && insn.operand == typeof( Game1 ).GetField( "drawLighting" ) )
+                if (insn.opcode == OpCodes.Ldsfld && (FieldInfo)insn.operand == typeof( Game1 ).GetField( "drawLighting" ) )
                 {
                     countdown = 4;
                 }

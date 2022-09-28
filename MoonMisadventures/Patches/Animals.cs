@@ -37,20 +37,20 @@ namespace MoonMisadventures.Patches
             {
                 ___animal = Utility.GetBestHarvestableFarmAnimal( aloc.Animals.Values, __instance, r );
             }
-            if ( ___animal != null && ( int ) ___animal.currentProduce > 0 && ( int ) ___animal.age >= ( byte ) ___animal.ageWhenMature && ___animal.toolUsedForHarvest.Equals( __instance.BaseName ) && who.couldInventoryAcceptThisObject( ___animal.currentProduce, 1 ) )
+            if ( ___animal != null && ___animal.currentProduce.Value > 0 && ( int ) ___animal.age >= ( byte ) ___animal.ageWhenMature && ___animal.toolUsedForHarvest.Equals( __instance.BaseName ) && who.couldInventoryAcceptThisObject( ___animal.currentProduce, 1 ) )
             {
                 ___animal.doEmote( 20 );
                 ___animal.friendshipTowardFarmer.Value = Math.Min( 1000, ( int ) ___animal.friendshipTowardFarmer + 5 );
                 who.currentLocation.localSound( "Milking" );
                 ___animal.pauseTimer = 1500;
             }
-            else if ( ___animal != null && ( int ) ___animal.currentProduce > 0 && ( int ) ___animal.age >= ( byte ) ___animal.ageWhenMature )
+            else if ( ___animal != null && ( int ) ___animal.currentProduce > 0 && ___animal.age.Value >= ___animal.ageWhenMature.Value)
             {
                 if ( who != null && Game1.player.Equals( who ) )
                 {
                     if ( !___animal.toolUsedForHarvest.Equals( __instance.BaseName ) )
                     {
-                        if ( !( ___animal.toolUsedForHarvest == null ) && !___animal.toolUsedForHarvest.Equals( "null" ) )
+                        if ( !( ___animal.toolUsedForHarvest.Value is null ) && !___animal.toolUsedForHarvest.Equals( "null" ) )
                         {
                             Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:MilkPail.cs.14167", ___animal.toolUsedForHarvest ) );
                         }
