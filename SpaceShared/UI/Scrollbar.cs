@@ -89,6 +89,10 @@ namespace SpaceShared.UI
             if (this.IsHidden())
                 return;
 
+            // Don't draw a scrollbar if scrolling is (currently) not possible.
+            if (this.MaxTopRow == 0)
+                return; 
+
             Rectangle back = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
             Vector2 front = new Vector2(back.X, back.Y + (this.Height - 40) * this.ScrollPercent);
 

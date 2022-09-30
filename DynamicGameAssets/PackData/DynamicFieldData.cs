@@ -24,10 +24,18 @@ namespace DynamicGameAssets.PackData
                 var conds = new Dictionary<string, string>();
                 foreach (var cond in this.Conditions)
                 {
-                    string key = cond.Key, value = cond.Value;
+                    (string key, string value) = cond;
                     foreach (var opt in parent.pack.configIndex)
                     {
                         string val = parent.pack.currConfig.Values[opt.Key].ToString();
+
+                        if (key == opt.Key)
+                        { // this is one we should handle ourselves.
+                            if (val != value)
+                                return false;
+                            goto DontAdd;
+                        }
+
                         if (parent.pack.configIndex[opt.Key].ValueType == ConfigPackData.ConfigValueType.String)
                             val = "'" + val + "'";
 
@@ -35,6 +43,7 @@ namespace DynamicGameAssets.PackData
                         value = value.Replace("{{" + opt.Key + "}}", val);
                     }
                     conds.Add(key, value);
+DontAdd:;
                 }
 
                 this.ConditionsObject = Mod.instance.cp.ParseConditions(

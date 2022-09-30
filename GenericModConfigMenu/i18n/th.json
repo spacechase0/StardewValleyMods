@@ -3,11 +3,12 @@
     ** Generic config UI
     *********/
     // button text at the bottom of the in-game options menu
-    "button.mod-options": "ตัวเลือก Mod",
+    "button.mod-options": "ตัวเลือกม็อด",
 
     // mod list UI
-    "list.editable-heading": "กำหนดค่า Mods",
-    "list.not-editable-heading": "Editable from the title screen:", // TODO
+    "list.editable-heading": "กำหนดค่าม็อด",
+    "list.not-editable-heading": "แก้ไขได้จากหน้าจอเริ่มต้นเกม:",
+    "list.keybindings": "คีย์ลัด",
 
     // mod config pages
     "config.buttons.cancel": "ยกเลิก",
