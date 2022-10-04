@@ -2769,20 +2769,22 @@ namespace JsonAssets
                 if (this.VanillaObjectIds.Contains(entry))
                     continue;
 
-                if (this.OldObjectIds.Values.Contains(entry))
+                if (this.OldObjectIds.FirstOrDefault(x => x.Value == entry).Key is string name)
                 {
-                    string key = this.OldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
-                    bool isRing = this.MyRings.FirstOrDefault(r => r.Id == entry) != null;
-                    bool canShip = this.Objects.FirstOrDefault(o => o.Id == entry)?.CanSell ?? true;
-                    bool hideShippable = this.Objects.FirstOrDefault(o => o.Id == entry)?.HideFromShippingCollection ?? true;
-
                     toRemove.Add(entry);
-                    if (this.ObjectIds.TryGetValue(key, out int id) && (!removeUnshippable || (canShip && !hideShippable && !isRing)))
-                        toAdd.Add(id, dict[entry]);
+
+                    if (this.ObjectIds.TryGetValue(name, out int id))
+                    {
+                        var obj = this.Objects.First(o => o.Name == name);
+                        if (!removeUnshippable || (obj.CanSell && !obj.HideFromShippingCollection && !this.MyRings.Any(r => r.Name == name)))
+                            toAdd.Add(id, dict[entry]);
+                    }
                 }
             }
+
             foreach (int entry in toRemove)
                 dict.Remove(entry);
+
             foreach (var entry in toAdd)
             {
                 if (dict.ContainsKey(entry.Key))
@@ -2794,7 +2796,10 @@ namespace JsonAssets
                             Log.Error("\tobj = " + obj.Name);
                     }
                 }
-                dict.Add(entry.Key, entry.Value);
+                else
+                {
+                    dict.Add(entry.Key, entry.Value);
+                }
             }
         }
 
