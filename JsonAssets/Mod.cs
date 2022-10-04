@@ -2332,16 +2332,23 @@ namespace JsonAssets
                         player.mailForTomorrow.Remove("MarlonRecovery");
                     }
 
-                    // completion metadata
-                    this.FixIdDict(player.basicShipped, removeUnshippable: true);
-                    this.FixIdDict(player.mineralsFound);
-                    this.FixIdDict(player.recipesCooked);
-                    this.FixIdDict2(player.archaeologyFound);
-                    this.FixIdDict2(player.fishCaught);
-                    foreach (var dict in player.giftedItems.Values)
-                        this.FixIdDict3(dict);
+                    try
+                    {
+                        // completion metadata
+                        this.FixIdDict(player.basicShipped, removeUnshippable: true);
+                        this.FixIdDict(player.mineralsFound);
+                        this.FixIdDict(player.recipesCooked);
+                        this.FixIdDict2(player.archaeologyFound);
+                        this.FixIdDict2(player.fishCaught);
+                        foreach (var dict in player.giftedItems.Values)
+                            this.FixIdDict3(dict);
 
-                    this.FixTailoringDict(player.tailoredItems);
+                        this.FixTailoringDict(player.tailoredItems);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error($"Error in fixing player metadata:\n\n{ex}");
+                    }
 
                     foreach (var quest in player.questLog)
                     {
