@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -20,7 +21,7 @@ namespace JsonAssets.Data
         ** Accessors
         *********/
         [JsonIgnore]
-        public Texture2D GiantTexture { get; set; }
+        public Lazy<Texture2D>? GiantTexture { get; set; } = null;
 
         public object Product { get; set; }
         public string SeedName { get; set; }
@@ -48,6 +49,11 @@ namespace JsonAssets.Data
 
         internal ObjectData Seed { get; set; }
 
+        [JsonIgnore]
+        internal int ProductId { get; set; } = -1;
+
+        [JsonIgnore]
+        internal static Dictionary<int, Lazy<Texture2D>> giantCropMap = new();
 
         /*********
         ** Public methods
@@ -76,7 +82,7 @@ namespace JsonAssets.Data
                 str += season + " ";
             }
             str = str.Substring(0, str.Length - 1) + "/";
-            str += $"{this.GetCropSpriteIndex()}/{Mod.instance.ResolveObjectId(this.Product)}/{this.RegrowthPhase}/";
+            str += $"{this.GetCropSpriteIndex()}/{this.ProductId}/{this.RegrowthPhase}/";
             str += (this.HarvestWithScythe ? "1" : "0") + "/";
             if (this.Bonus != null)
                 str += $"true {this.Bonus.MinimumPerHarvest} {this.Bonus.MaximumPerHarvest} {this.Bonus.MaxIncreasePerFarmLevel} {this.Bonus.ExtraChance}/";
