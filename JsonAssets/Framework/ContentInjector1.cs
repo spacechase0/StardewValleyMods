@@ -114,7 +114,13 @@ namespace JsonAssets.Framework
 
         public static void InvalidateUsed()
         {
-            Mod.instance.Helper.GameContent.InvalidateCache(asset => Files.ContainsKey(asset.NameWithoutLocale.BaseName));
+            if (Files.Count > 0)
+                Mod.instance.Helper.GameContent.InvalidateCache(asset => Files.ContainsKey(asset.NameWithoutLocale.BaseName));
+            if (FenceIndexes.Count > 0)
+            {
+                foreach (int fence in FenceIndexes.Keys)
+                    Mod.instance.Helper.GameContent.InvalidateCache($@"LooseSprites\Fence{fence}");
+            }    
         }
 
         public static void OnAssetRequested(AssetRequestedEventArgs e)
