@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Patching;
@@ -26,12 +28,13 @@ namespace SpaceCore.Patches
             harmony.Patch(
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.performAction)),
                 prefix: this.GetHarmonyMethod(nameof(Before_PerformAction)),
-                postfix: this.GetHarmonyMethod(nameof(After_PerformAction))
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_PerformAction))
             );
 
             harmony.Patch(
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.answerDialogueAction)),
-                postfix: this.GetHarmonyMethod(nameof(After_AnswerDialogueAction))
+                postfix: this.GetHarmonyMethod(nameof(After_AnswerDialogueAction)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_AnswerDialogueAction))
             );
 
             harmony.Patch(
@@ -60,52 +63,58 @@ namespace SpaceCore.Patches
             return !SpaceEvents.InvokeActionActivated(who, action, tileLocation);
         }
 
-        private static void After_PerformAction(GameLocation __instance, string action, Farmer who, Location tileLocation)
+        private static IEnumerable<CodeInstruction> Transpile_PerformAction(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
-            if (action == "DogStatue")
+            List<CodeInstruction> ret = new List<CodeInstruction>();
+            var codes = new List<CodeInstruction>(insns);
+            bool isPatched = false;
+            for (int i = 0; i < codes.Count; i++)
             {
-                // close existing dialogue
-                Game1.exitActiveMenu();
-
-                if (Skills.CanRespecAnySkill())
+                if (!isPatched && i < codes.Count - 1 && CodeInstructionExtensions.Is(codes[i + 1], OpCodes.Call, PatchHelper.RequireMethod<GameLocation>(nameof(GameLocation.canRespec))))
                 {
-                    __instance.createQuestionDialogue(Game1.content.LoadString("Strings\\Locations:Sewer_DogStatue"), __instance.createYesNoResponses(), "dogStatue");
-                    return;
+                    Label canRespec = gen.DefineLabel();
+
+                    ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Skills>(nameof(Skills.CanRespecAnyCustomSkill))).WithLabels(codes[i].labels));
+                    ret.Add(new CodeInstruction(OpCodes.Brtrue, canRespec));
+                    ret.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
+
+                    // TODO: use non-relative reference to label location
+                    codes[i + 15].labels.Add(canRespec);
+                    isPatched = true;
+                } else
+                {
+                    ret.Add(codes[i]);
                 }
-                string displayed_text = Game1.content.LoadString("Strings\\Locations:Sewer_DogStatue");
-                displayed_text = displayed_text.Substring(0, displayed_text.LastIndexOf('^'));
-                Game1.drawObjectDialogue(displayed_text);
             }
+
+            return ret;
+        }
+
+        private static IEnumerable<CodeInstruction> Transpile_AnswerDialogueAction(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            List<CodeInstruction> ret = new List<CodeInstruction>();
+            var codes = new List<CodeInstruction>(insns);
+            bool isPatched = false;
+            for (int i = 0; i < codes.Count; i++)
+            {
+                if (!isPatched && CodeInstructionExtensions.Is(codes[i + 3], OpCodes.Ldstr, "Strings\\Locations:Sewer_DogStatueCancel"))
+                {
+                    ret.Add(new CodeInstruction(OpCodes.Ldloc_1).WithLabels(codes[i].labels));
+                    ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Skills>(nameof(Skills.GetRespecCustomResponses))));
+                    ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<List<Response>>(nameof(List<Response>.AddRange))));
+                    codes[i].labels.Clear();
+
+                    isPatched = true;
+                }
+                ret.Add(codes[i]);
+            }
+
+            return ret;
         }
 
         private static void After_AnswerDialogueAction(GameLocation __instance, string questionAndAnswer, string[] questionParams)
         {
-            if (questionAndAnswer == "dogStatue_Yes")
-            {
-                if (Game1.player.Money < 10000)
-                {
-                    return;
-                }
-                List<Response> responses = new List<Response>();
-                for (int i = 0; i < 5; i++)
-                {
-                    if (GameLocation.canRespec(i))
-                    {
-                        responses.Add(new Response(Farmer.getSkillNameFromIndex(i).ToLower(), Farmer.getSkillDisplayNameFromIndex(i)));
-                    }
-                }
-
-                foreach (string skill in Skills.GetSkillList())
-                {
-                    if (Skills.CanRespecCustomSkill(skill))
-                    {
-                        responses.Add(new Response(skill, Skills.GetSkill(skill).GetName()));
-                    }
-                }
-                responses.Add(new Response("cancel", Game1.content.LoadString("Strings\\Locations:Sewer_DogStatueCancel")));
-                __instance.createQuestionDialogue(Game1.content.LoadString("Strings\\Locations:Sewer_DogStatueQuestion"), responses.ToArray(), "professionForget");
-            }
-            else if (questionAndAnswer.StartsWith("professionForget_"))
+            if (questionAndAnswer.StartsWith("professionForget_"))
             {
                 Skills.Skill skill = Skills.GetSkill(questionAndAnswer.Split('_', 2)[1]);
                 if (skill is null)

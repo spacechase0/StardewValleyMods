@@ -420,15 +420,8 @@ namespace SpaceCore
 
             return null;
         }
-        internal static bool CanRespecAnySkill()
+        internal static bool CanRespecAnyCustomSkill()
         {
-            for (int i = 0; i < 5; i++)
-            {
-                if (GameLocation.canRespec(i))
-                {
-                    return true;
-                }
-            }
             foreach (string s in GetSkillList())
             {
                 if (CanRespecCustomSkill(s))
@@ -453,6 +446,19 @@ namespace SpaceCore
                 }
             }
             return true;
+        }
+
+        internal static List<Response> GetRespecCustomResponses()
+        {
+            List<Response> responses = new List<Response>();
+            foreach (string skill in Skills.GetSkillList())
+            {
+                if (Skills.CanRespecCustomSkill(skill))
+                {
+                    responses.Add(new Response(skill, Skills.GetSkill(skill).GetName()));
+                }
+            }
+            return responses;
         }
     }
 
