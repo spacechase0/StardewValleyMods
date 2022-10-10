@@ -420,6 +420,40 @@ namespace SpaceCore
 
             return null;
         }
+        internal static bool CanRespecAnySkill()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (GameLocation.canRespec(i))
+                {
+                    return true;
+                }
+            }
+            foreach (string s in GetSkillList())
+            {
+                if (CanRespecCustomSkill(s))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static bool CanRespecCustomSkill(string skillId)
+        {
+            if (Game1.player.GetCustomSkillLevel(skillId) < 5)
+            {
+                return false;
+            }
+            foreach (KeyValuePair<string, int> newLevel in NewLevels)
+            {
+                if (newLevel.Key == skillId && newLevel.Value == 5 || newLevel.Value == 10)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     public static class SkillExtensions
