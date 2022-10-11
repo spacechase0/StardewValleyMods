@@ -28,13 +28,13 @@ namespace SpaceCore.Patches
             harmony.Patch(
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.performAction)),
                 prefix: this.GetHarmonyMethod(nameof(Before_PerformAction)),
-                transpiler: this.GetHarmonyMethod(nameof(Transpile_PerformAction))
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_PerformAction), after: "DaLion.ImmersiveProfessions")
             );
 
             harmony.Patch(
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.answerDialogueAction)),
                 postfix: this.GetHarmonyMethod(nameof(After_AnswerDialogueAction)),
-                transpiler: this.GetHarmonyMethod(nameof(Transpile_AnswerDialogueAction))
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_AnswerDialogueAction), after: "DaLion.ImmersiveProfessions")
             );
 
             harmony.Patch(
