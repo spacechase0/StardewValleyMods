@@ -269,9 +269,11 @@ namespace DynamicGameAssets
 
                                     if (key == opt.Key)
                                     {// this one we should handle ourselves
+                                        Log.Trace($"Evaluating pack config option {key} in EnableCondition");
                                         if (!val.Equals(value, StringComparison.OrdinalIgnoreCase))
                                         { // fail the pack, we get to skip the rest of the work too.
                                             shouldreject = true;
+                                            Log.Trace($"Rejecting condition {key} with value {val} because it's not equal to {value}");
                                             goto BreakBreak;
                                         }
                                         goto DontAdd;
