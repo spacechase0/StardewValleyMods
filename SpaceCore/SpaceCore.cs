@@ -136,6 +136,7 @@ namespace SpaceCore
                 new SerializationPatcher(),
                 new SpriteBatchPatcher(),
                 new UtilityPatcher(),
+                new HoeDirtPatcher(),
 
                 // I've started organizing by purpose instead of class patched
                 new PortableCarpenterPatcher()
