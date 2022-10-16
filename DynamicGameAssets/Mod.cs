@@ -269,7 +269,7 @@ namespace DynamicGameAssets
 
                                     if (key == opt.Key)
                                     {// this one we should handle ourselves
-                                        if (val != value)
+                                        if (!val.Equals(value, StringComparison.OrdinalIgnoreCase))
                                         { // fail the pack, we get to skip the rest of the work too.
                                             shouldreject = true;
                                             goto BreakBreak;
