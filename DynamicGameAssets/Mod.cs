@@ -254,9 +254,9 @@ namespace DynamicGameAssets
 
                 void DoEnableDisable(ContentIndexPackData parent)
                 {
-                    bool shouldreject = false;
                     foreach (var data in cp.Value.enableIndex[parent])
                     {
+                        bool shouldreject = false;
                         var conds = new Dictionary<string, string>();
                         if (data.EnableConditions != null)
                         {
@@ -305,14 +305,21 @@ BreakBreak:;
 
                         if (data is CommonPackData cdata && !cdata.Enabled && wasEnabled)
                         {
+                            Log.Trace($"Disabling item {cdata.ID}");
                             cdata.OnDisabled();
                         }
                         else if (data is ContentIndexPackData cidata)
                         {
                             if (!cidata.Enabled && wasEnabled)
+                            {
+                                Log.Trace($"Disabling content index {cidata.FilePath}");
                                 DoDisable(cidata);
+                            }
                             else
+                            {
+                                Log.Trace($"Enabling content index {cidata.FilePath}");
                                 DoEnableDisable(cidata);
+                            }
                         }
                     }
                 }
