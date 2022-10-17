@@ -69,6 +69,7 @@ namespace DynamicGameAssets
 {
     public class Mod : StardewModdingAPI.Mod
     {
+        private static readonly string AssetPrefix = "DGA" + PathUtilities.PreferredAssetSeparator;
         public static Mod instance;
         internal ContentPatcher.IContentPatcherAPI cp;
 
@@ -748,7 +749,7 @@ BreakBreak:;
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            if (e.NameWithoutLocale.StartsWith("DGA", false, true)
+            if (e.NameWithoutLocale.StartsWith(AssetPrefix, false, true)
                 && e.NameWithoutLocale.BaseName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
             {
                 string id = e.NameWithoutLocale.BaseName.GetNthChunk(new[] { '/' , '\\'}, 1).ToString();
