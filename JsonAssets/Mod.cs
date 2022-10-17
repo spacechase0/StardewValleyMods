@@ -1838,9 +1838,13 @@ namespace JsonAssets
         {
             data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.InvariantCulture));
 
-            Dictionary<string, int> ids = new Dictionary<string, int>();
+            Log.Trace($"Assiging {type} ids starting at {starting}: {data.Count} items");
 
-            int[] bigSkip = new[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812 };
+            Dictionary<string, int> ids = new();
+
+            // some places the game doesn't distinguish between normal SObjects and big craftables and just checks by ID. We'll skip these numbers because they may cause problems
+            // ie, the preserves jar at least used to accept 812 as roe.
+            int[] bigSkip = type == "big-craftables" ? new[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812, 872, 928 } : Array.Empty<int>();
 
             int currId = starting;
             foreach (var d in data)
@@ -1857,7 +1861,7 @@ namespace JsonAssets
                 {
                     Log.Verbose($"New ID: {d.Name} = {currId}");
                     int id = currId++;
-                    if (type == "big-craftables")
+                    if (bigSkip.Length != 0)
                     {
                         while (bigSkip.Contains(id))
                         {
@@ -1867,7 +1871,7 @@ namespace JsonAssets
 
                     ids.Add(d.Name, id);
                     if (type == "objects" && d is ObjectData { IsColored: true })
-                        ++currId;
+                        currId++;
                     else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
                         currId += ((BigCraftableData)d).ReserveExtraIndexCount;
                     d.Id = ids[d.Name];
