@@ -29,7 +29,7 @@ namespace HybridCropEngine
             helper.Events.Content.AssetRequested += (_, e) =>
             {
                 if (e.NameWithoutLocale.IsEquivalentTo("Data/HybridCrops"))
-                    e.LoadFrom(() => new Dictionary<int, HybridCropData>, AssetLoadPriority.Exclusive);
+                    e.LoadFrom(() => new Dictionary<int, HybridCropData>(), AssetLoadPriority.Exclusive);
             };
         }
 
