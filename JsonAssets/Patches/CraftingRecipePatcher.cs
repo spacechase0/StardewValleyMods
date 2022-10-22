@@ -46,17 +46,6 @@ namespace JsonAssets.Patches
             else
             {
                 isJAContent = Mod.instance.ObjectIds.Values.Contains(__instance.itemToProduce[0]);
-                if (isJAContent)
-                {
-                    Log.Debug($"Found JA Recipe with produced item ID {__instance.itemToProduce[0]}");
-                    foreach (var kvp in Mod.instance.ObjectIds)
-                    {
-                        if (kvp.Value == __instance.itemToProduce[0])
-                        {
-                            Log.Debug($"Corresponding to item {kvp.Key}");
-                        }
-                    }
-                }
             }
 
             // Location of display name depending on if it's a cooking or a crafting recipe
@@ -69,7 +58,6 @@ namespace JsonAssets.Patches
                     if (data.Split('/') is string[] split && split.Length >= displayNameIndex)
                     {
                         __instance.DisplayName = split.Last();
-                        Log.Debug($"Setting display name to {split.Last()}");
                     }
                 }
                 // If it's a cooking recipe, grab the data and set display name
@@ -78,7 +66,6 @@ namespace JsonAssets.Patches
                     if (data.Split('/') is string[] split && split.Length >= displayNameIndex)
                     {
                         __instance.DisplayName = split.Last();
-                        Log.Debug($"Setting display name to {split.Last()}");
                     }
                 }
             }
