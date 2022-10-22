@@ -46,12 +46,15 @@ namespace JsonAssets.Patches
             else
             {
                 isJAContent = Mod.instance.ObjectIds.Values.Contains(__instance.itemToProduce[0]);
-                Log.Debug($"Found JA Recipe with produced item ID {__instance.itemToProduce[0]}");
-                foreach (var kvp in Mod.instance.ObjectIds)
+                if (isJAContent)
                 {
-                    if (kvp.Value == __instance.itemToProduce[0])
+                    Log.Debug($"Found JA Recipe with produced item ID {__instance.itemToProduce[0]}");
+                    foreach (var kvp in Mod.instance.ObjectIds)
                     {
-                        Log.Debug($"Corresponding to item {kvp.Key}");
+                        if (kvp.Value == __instance.itemToProduce[0])
+                        {
+                            Log.Debug($"Corresponding to item {kvp.Key}");
+                        }
                     }
                 }
             }
