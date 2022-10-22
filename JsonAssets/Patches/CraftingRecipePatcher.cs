@@ -60,7 +60,7 @@ namespace JsonAssets.Patches
             int displayNameIndex = __instance.isCookingRecipe ? 4 : 5;
 
             // Check that we're only affecting JA content and only in English
-            if (isJAContent && LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en) {
+            if (isJAContent && LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.en) {
                 // If it's a cooking recipe, grab the data and set display name
                 if (isCookingRecipe && StardewValley.CraftingRecipe.cookingRecipes.TryGetValue(__instance.name, out string data)) {
                     if (data.Split('/') is string[] split && split.Length >= displayNameIndex)
