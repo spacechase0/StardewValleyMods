@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
 using SpaceCore;
+using SpaceCore.Framework.Extensions;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -66,15 +67,16 @@ using StardewValley.TerrainFeatures;
 
 namespace DynamicGameAssets
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader, IAssetEditor
+    public class Mod : StardewModdingAPI.Mod
     {
+        private static readonly string AssetPrefix = "DGA" + PathUtilities.PreferredAssetSeparator;
         public static Mod instance;
         internal ContentPatcher.IContentPatcherAPI cp;
 
         public static readonly int BaseFakeObjectId = 1720;
         public static ContentPack DummyContentPack;
 
-        internal static Dictionary<string, ContentPack> contentPacks = new();
+        internal static Dictionary<string, ContentPack> contentPacks = new(StringComparer.OrdinalIgnoreCase);
 
         internal static Dictionary<int, string> itemLookup = new();
 
@@ -100,8 +102,8 @@ namespace DynamicGameAssets
         {
             int slash = fullId.IndexOf('/');
             if (slash < 0) return null;
-            string pack = fullId.Substring(0, slash);
-            string item = fullId.Substring(slash + 1);
+            string pack = fullId[..slash];
+            string item = fullId[(slash + 1)..];
             return Mod.contentPacks.ContainsKey(pack) ? Mod.contentPacks[pack].Find(item) : null;
         }
 
@@ -124,6 +126,8 @@ namespace DynamicGameAssets
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
+
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
             helper.ConsoleCommands.Add("dga_list", "List all items.", this.OnListCommand);
             helper.ConsoleCommands.Add("dga_add", "`dga_add <mod.id/ItemId> [amount] - Add an item to your inventory.", this.OnAddCommand/*, AddCommandAutoComplete*/ );
@@ -742,72 +746,58 @@ BreakBreak:;
                 }
             }
         }
-        public bool CanLoad<T>(IAssetInfo asset)
+
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            foreach (var pack in Mod.contentPacks)
+            if (e.NameWithoutLocale.StartsWith(AssetPrefix, false, true)
+                && e.NameWithoutLocale.BaseName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
             {
-                if (pack.Value.CanLoad<T>(asset))
-                    return true;
-            }
-
-            return false;
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            foreach (var pack in Mod.contentPacks)
-            {
-                if (pack.Value.CanLoad<T>(asset))
-                    return pack.Value.Load<T>(asset);
-            }
-
-            return default;
-        }
-
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            if (asset.AssetNameEquals("Data\\CookingRecipes"))
-                return true;
-            if (asset.AssetNameEquals("Data\\CraftingRecipes"))
-                return true;
-            if (asset.AssetNameEquals("Data\\ObjectInformation"))
-                return true;
-            return false;
-        }
-
-        public void Edit<T>(IAssetData asset)
-        {
-            if (asset.AssetNameEquals("Data\\CookingRecipes"))
-            {
-                var dict = asset.AsDictionary<string, string>().Data;
-                int i = 0;
-                foreach (var crecipe in Mod.customCraftingRecipes)
+                string id = e.NameWithoutLocale.BaseName.GetNthChunk(new[] { '/' , '\\'}, 1).ToString();
+                if (Mod.contentPacks.TryGetValue(id, out var pack))
                 {
-                    if (crecipe.data.Enabled && crecipe.data.IsCooking)
-                    {
-                        dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
-                        ++i;
-                    }
+                    _ = pack.TryLoad(e);
                 }
-                Log.Trace("Added " + i + "/" + Mod.customCraftingRecipes.Count + " entries to cooking recipes");
             }
-            else if (asset.AssetNameEquals("Data\\CraftingRecipes"))
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data\\CookingRecipes"))
             {
-                var dict = asset.AsDictionary<string, string>().Data;
-                int i = 0;
-                foreach (var crecipe in Mod.customCraftingRecipes)
+                e.Edit(static (asset) =>
                 {
-                    if (crecipe.data.Enabled && !crecipe.data.IsCooking)
+                    var dict = asset.AsDictionary<string, string>().Data;
+                    int i = 0;
+                    foreach (var crecipe in Mod.customCraftingRecipes)
                     {
-                        dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
-                        ++i;
+                        if (crecipe.data.Enabled && crecipe.data.IsCooking)
+                        {
+                            dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
+                            ++i;
+                        }
                     }
-                }
-                Log.Trace("Added " + i + "/" + Mod.customCraftingRecipes.Count + " entries to crafting recipes");
+                    Log.Trace($"Added {i}/{Mod.customCraftingRecipes.Count} entries to cooking recipes");
+                });
             }
-            else if (asset.AssetNameEquals("Data\\ObjectInformation"))
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data\\CraftingRecipes"))
             {
-                asset.AsDictionary<int, string>().Data.Add(Mod.BaseFakeObjectId, "DGA Dummy Object/0/0/Basic -20/DGA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0");
+                e.Edit(static (asset) =>
+                {
+                    var dict = asset.AsDictionary<string, string>().Data;
+                    int i = 0;
+                    foreach (var crecipe in Mod.customCraftingRecipes)
+                    {
+                        if (crecipe.data.Enabled && !crecipe.data.IsCooking)
+                        {
+                            dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
+                            ++i;
+                        }
+                    }
+                    Log.Trace($"Added {i}/{Mod.customCraftingRecipes.Count} entries to crafting recipes");
+                });
+            }
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data\\ObjectInformation"))
+            {
+                e.Edit(static (asset) =>
+                {
+                    asset.AsDictionary<int, string>().Data.Add(Mod.BaseFakeObjectId, "DGA Dummy Object/0/0/Basic -20/DGA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0");
+                });
             }
         }
 
