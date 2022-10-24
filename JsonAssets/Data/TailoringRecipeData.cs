@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
+using JsonAssets.Utilities;
+
 using Microsoft.Xna.Framework;
 using StardewValley.GameData.Crafting;
 
@@ -40,10 +42,11 @@ namespace JsonAssets.Data
             {
                 recipe.CraftedItemIDs = new List<string>();
                 foreach (object entry in this.CraftedItems)
-                    recipe.CraftedItemIDs.Add(Mod.instance.ResolveClothingId(this.CraftedItems[0]).ToString()); // TODO: always uses first crafted item?
+                    recipe.CraftedItemIDs.Add(ItemResolver.GetClothingID(this.CraftedItems[0]).ToString()); // TODO: always uses first crafted item?
+                                                                                                                      // atra is confused here too.
             }
             else
-                recipe.CraftedItemID = Mod.instance.ResolveClothingId(this.CraftedItems[0]);
+                recipe.CraftedItemID = ItemResolver.GetClothingID(this.CraftedItems[0]);
 
             return recipe;
         }

@@ -8,6 +8,8 @@ using JsonAssets.Data;
 using JsonAssets.Framework;
 using JsonAssets.Framework.ContentPatcher;
 using JsonAssets.Patches;
+using JsonAssets.Utilities;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
@@ -103,6 +105,9 @@ namespace JsonAssets
                 new BootPatcher(),
                 new CraftingRecipePatcher()
             );
+
+            ItemResolver.Initialize(helper.GameContent);
+
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -1059,7 +1064,7 @@ namespace JsonAssets
                     // save crop
                     crop.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/crop.png");
                     if (contentPack.HasFile($"{relativePath}/giant.png"))
-                        crop.GiantTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/giant.png");
+                        crop.GiantTexture = new (() => contentPack.ModContent.Load<Texture2D>($"{relativePath}/giant.png"));
 
                     this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"), translations);
                 }
@@ -1545,7 +1550,6 @@ namespace JsonAssets
                 this.OldHatIds = LoadDictionary<string, int>("ids-hats.json") ?? new Dictionary<string, int>();
                 this.OldWeaponIds = LoadDictionary<string, int>("ids-weapons.json") ?? new Dictionary<string, int>();
                 this.OldClothingIds = LoadDictionary<string, int>("ids-clothing.json") ?? new Dictionary<string, int>();
-                //this.OldBootsIds = LoadDictionary<string, int>("ids-boots.json") ?? new Dictionary<string, int>();
 
                 if (this.Monitor.IsVerbose)
                 {
@@ -1564,8 +1568,6 @@ namespace JsonAssets
                         Log.Verbose("\tWeapon " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldClothingIds)
                         Log.Verbose("\tClothing " + id.Key + " = " + id.Value);
-                    //foreach (var id in this.OldBootsIds)
-                    //    Log.Verbose("\tBoots " + id.Key + " = " + id.Value);
                     Log.Verbose("OLD IDS END");
                 }
             }
@@ -1593,8 +1595,19 @@ namespace JsonAssets
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
 
-            // Call before invoking Ids Assigned since clients may want to edit after.
-            ContentInjector1.Initialize(this.Helper.GameContent);
+            Log.Trace("Resolving Crop and Tree product Ids");
+            CropData.giantCropMap.Clear();
+            foreach (var crop in this.Crops)
+            {
+                crop.ProductId = ItemResolver.GetObjectID(crop.Product);
+                if (crop.GiantTexture is not null)
+                    CropData.giantCropMap[crop.ProductId] = crop.GiantTexture;
+            }
+            foreach (var fruitTree in this.FruitTrees)
+            {
+                fruitTree.ProductId = ItemResolver.GetObjectID(fruitTree.Product);
+            }
+
             this.Api.InvokeIdsAssigned();
 
             ContentInjector1.InvalidateUsed();
@@ -1752,48 +1765,12 @@ namespace JsonAssets
         /// <summary>The vanilla boot IDs.</summary>
         //internal ISet<int> VanillaBootIds;
 
-        public int ResolveObjectId(object data)
-        {
-            if (data is long inputId)
-                return (int)inputId;
-
-            if (this.ObjectIds.TryGetValue((string)data, out int id))
-                return id;
-
-            foreach (var obj in Game1.objectInformation)
-            {
-                if (obj.Value.Split('/')[0] == (string)data)
-                    return obj.Key;
-            }
-
-            Log.Warn($"No idea what '{data}' is!");
-            return 0;
-        }
-
-        public int ResolveClothingId(object data)
-        {
-            if (data is long inputId)
-                return (int)inputId;
-
-            if (this.ClothingIds.TryGetValue((string)data, out int id))
-                return id;
-
-            foreach (var obj in Game1.clothingInformation)
-            {
-                if (obj.Value.Split('/')[0] == (string)data)
-                    return obj.Key;
-            }
-
-            Log.Warn($"No idea what '{data}' is!");
-            return 0;
-        }
-
         /// <summary>Populate an item's localization fields based on the <see cref="ITranslatableItem.TranslationKey"/> property, if defined.</summary>
         /// <param name="item">The item for which to populate translations.</param>
         /// <param name="translations">The translation helper from which to fetch translations.</param>
         private void PopulateTranslations(ITranslatableItem item, ITranslationHelper translations)
         {
-            if (translations == null || string.IsNullOrWhiteSpace(item?.TranslationKey))
+            if (translations is null || string.IsNullOrWhiteSpace(item?.TranslationKey))
                 return;
 
             foreach (var pair in translations.GetInAllLocales($"{item.TranslationKey}.name"))
@@ -2593,10 +2570,10 @@ namespace JsonAssets
             // fix index of harvest
             string key = this.CropIds.FirstOrDefault(x => x.Value == crop.rowInSpriteSheet.Value).Key;
             CropData cropData = this.Crops.FirstOrDefault(x => x.Name == key);
-            if (cropData != null) // Non-JA crop
+            if (cropData is not null) // JA-managed crop
             {
-                Log.Verbose($"Fixing crop product: From {crop.indexOfHarvest.Value} to {cropData.Product}={this.ResolveObjectId(cropData.Product)}");
-                crop.indexOfHarvest.Value = this.ResolveObjectId(cropData.Product);
+                Log.Verbose($"Fixing crop product: From {crop.indexOfHarvest.Value} to {cropData.Product}={cropData.ProductId}");
+                crop.indexOfHarvest.Value = cropData.ProductId;
                 this.FixId(this.OldObjectIds, this.ObjectIds, crop.netSeedIndex, this.VanillaObjectIds);
             }
 
@@ -2644,10 +2621,10 @@ namespace JsonAssets
 
                         string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
                         FruitTreeData treeData = this.FruitTrees.FirstOrDefault(x => x.Name == key);
-                        if (treeData != null) // Non-JA fruit tree
+                        if (treeData is not null) // Non-JA fruit tree
                         {
-                            Log.Verbose($"Fixing fruit tree product: From {tree.indexOfFruit.Value} to {treeData.Product}={this.ResolveObjectId(treeData.Product)}");
-                            tree.indexOfFruit.Value = this.ResolveObjectId(treeData.Product);
+                            Log.Verbose($"Fixing fruit tree product: From {tree.indexOfFruit.Value} to {treeData.Product}={treeData.ProductId}");
+                            tree.indexOfFruit.Value = treeData.ProductId;
                         }
 
                         return false;
