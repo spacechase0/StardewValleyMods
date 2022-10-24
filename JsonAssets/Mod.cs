@@ -107,7 +107,6 @@ namespace JsonAssets
             );
 
             ItemResolver.Initialize(helper.GameContent);
-
         }
 
         private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
@@ -1045,9 +1044,9 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    obj.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
+                    obj.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/object.png");
                     if (obj.IsColored)
-                        obj.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
+                        obj.TextureColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/color.png");
 
                     this.RegisterObject(contentPack.Manifest, obj, translations);
                 }
@@ -1069,11 +1068,11 @@ namespace JsonAssets
                         continue;
 
                     // save crop
-                    crop.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/crop.png");
+                    crop.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/crop.png");
                     if (contentPack.HasFile($"{relativePath}/giant.png"))
                         crop.GiantTexture = new (() => contentPack.ModContent.Load<Texture2D>($"{relativePath}/giant.png"));
 
-                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"), translations);
+                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.ModContent.Load<Texture2D>($"{relativePath}/seeds.png"), translations);
                 }
             }
 
@@ -1093,8 +1092,8 @@ namespace JsonAssets
                         continue;
 
                     // save fruit tree
-                    tree.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/tree.png");
-                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"), translations);
+                    tree.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/tree.png");
+                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.ModContent.Load<Texture2D>($"{relativePath}/sapling.png"), translations);
                 }
             }
 
@@ -1114,14 +1113,14 @@ namespace JsonAssets
                         continue;
 
                     // save craftable
-                    craftable.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
+                    craftable.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/big-craftable.png");
                     if (craftable.ReserveNextIndex && craftable.ReserveExtraIndexCount == 0)
                         craftable.ReserveExtraIndexCount = 1;
                     if (craftable.ReserveExtraIndexCount > 0)
                     {
                         craftable.ExtraTextures = new Texture2D[craftable.ReserveExtraIndexCount];
                         for (int i = 0; i < craftable.ReserveExtraIndexCount; ++i)
-                            craftable.ExtraTextures[i] = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
+                            craftable.ExtraTextures[i] = contentPack.ModContent.Load<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
                     }
                     this.RegisterBigCraftable(contentPack.Manifest, craftable, translations);
                 }
@@ -1143,7 +1142,7 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    hat.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
+                    hat.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/hat.png");
                     this.RegisterHat(contentPack.Manifest, hat, translations);
                 }
             }
@@ -1164,7 +1163,7 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    weapon.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
+                    weapon.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/weapon.png");
                     this.RegisterWeapon(contentPack.Manifest, weapon, translations);
                 }
             }
@@ -1185,14 +1184,14 @@ namespace JsonAssets
                         continue;
 
                     // save shirt
-                    shirt.TextureMale = contentPack.LoadAsset<Texture2D>($"{relativePath}/male.png");
+                    shirt.TextureMale = contentPack.ModContent.Load<Texture2D>($"{relativePath}/male.png");
                     if (shirt.Dyeable)
-                        shirt.TextureMaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/male-color.png");
+                        shirt.TextureMaleColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/male-color.png");
                     if (shirt.HasFemaleVariant)
                     {
-                        shirt.TextureFemale = contentPack.LoadAsset<Texture2D>($"{relativePath}/female.png");
+                        shirt.TextureFemale = contentPack.ModContent.Load<Texture2D>($"{relativePath}/female.png");
                         if (shirt.Dyeable)
-                            shirt.TextureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
+                            shirt.TextureFemaleColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/female-color.png");
                     }
                     this.RegisterShirt(contentPack.Manifest, shirt, translations);
                 }
@@ -1214,7 +1213,7 @@ namespace JsonAssets
                         continue;
 
                     // save pants
-                    pants.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
+                    pants.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/pants.png");
                     this.RegisterPants(contentPack.Manifest, pants, translations);
                 }
             }
@@ -1253,8 +1252,8 @@ namespace JsonAssets
                     if (boots == null || (boots.DisableWithMod != null && this.Helper.ModRegistry.IsLoaded(boots.DisableWithMod)) || (boots.EnableWithMod != null && !this.Helper.ModRegistry.IsLoaded(boots.EnableWithMod)))
                         continue;
 
-                    boots.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/boots.png");
-                    boots.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
+                    boots.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/boots.png");
+                    boots.TextureColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/color.png");
                     this.RegisterBoots(contentPack.Manifest, boots, translations);
                 }
             }
@@ -1274,8 +1273,8 @@ namespace JsonAssets
                     if (fence == null || (fence.DisableWithMod != null && this.Helper.ModRegistry.IsLoaded(fence.DisableWithMod)) || (fence.EnableWithMod != null && !this.Helper.ModRegistry.IsLoaded(fence.EnableWithMod)))
                         continue;
 
-                    fence.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/fence.png");
-                    fence.ObjectTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
+                    fence.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/fence.png");
+                    fence.ObjectTexture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/object.png");
                     this.RegisterFence(contentPack.Manifest, fence, translations);
                 }
             }
@@ -1299,7 +1298,6 @@ namespace JsonAssets
                 }
             }
         }
-
         private void ResetAtTitle()
         {
             this.DidInit = false;
@@ -1632,16 +1630,14 @@ namespace JsonAssets
             if (!Directory.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets")))
                 Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
 
-                // NOTE: Have to save the file even if it's empty - maybe the user removed a JA pack?
-                Task objects = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds)));
-                Task crops = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds)));
-                Task fruitTrees = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds)));
-                Task bigs = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds)));
-                Task hats = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds)));
-                Task weapons = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds)));
-                Task clothing = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds)));
-
-            }
+            // NOTE: Have to save the file even if it's empty - maybe the user removed a JA pack?
+            Task objects = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds)));
+            Task crops = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds)));
+            Task fruitTrees = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds)));
+            Task bigs = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds)));
+            Task hats = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds)));
+            Task weapons = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds)));
+            Task clothing = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds)));
             this.Helper.Events.GameLoop.Saving -= this.OnSaving;
         }
 
