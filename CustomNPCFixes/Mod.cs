@@ -7,6 +7,8 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Characters;
+using StardewValley.Monsters;
 
 namespace CustomNPCFixes
 {
@@ -61,7 +63,7 @@ namespace CustomNPCFixes
                         continue;
                     try
                     {
-                        string[] defaultpos = dispo.Split('/')[10].Split(' ');
+                        string[] defaultpos = dispo.Split('/')[10].Split(' '); // fix this after Casey moves GetNthChunk.
                         GameLocation map = Game1.getLocationFromName(defaultpos[0]);
                         if (map is null)
                         {
@@ -109,7 +111,7 @@ namespace CustomNPCFixes
         {
             foreach (var npc in Utility.getAllCharacters())
             {
-                if (npc.Schedule == null)
+                if (npc.Schedule is null && npc is not Monster or Junimo or Horse or Child)
                 {
                     try
                     {
