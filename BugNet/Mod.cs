@@ -46,9 +46,9 @@ namespace BugNet
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
 
-            BugNetTool.Texture = helper.Content.Load<Texture2D>("assets/bugnet.png");
+            BugNetTool.Texture = helper.ModContent.Load<Texture2D>("assets/bugnet.png");
 
-            var tilesheet = helper.Content.Load<Texture2D>("assets/critters.png");
+            var tilesheet = helper.ModContent.Load<Texture2D>("assets/critters.png");
 
             Rectangle GetTilesheetArea(int index)
             {
@@ -165,7 +165,7 @@ namespace BugNet
             // save critter data
             Mod.CrittersData.Add(critterId, new CritterData(
                 defaultName: defaultCritterName,
-                translatedName: () => TranslateCritterName(this.Helper.Content.CurrentLocale),
+                translatedName: () => TranslateCritterName(this.Helper.GameContent.CurrentLocale),
                 texture: new TextureTarget(texture, textureArea),
                 isThisCritter: isThisCritter,
                 makeCritter: makeCritter
@@ -262,7 +262,8 @@ namespace BugNet
         /// <param name="textureArea">The pixel area within the <paramref name="texture"/> to copy.</param>
         private Texture2D CloneTextureArea(Texture2D texture, Rectangle textureArea)
         {
-            var data = new Color[textureArea.Width * textureArea.Height];
+            // 256 is kinda borderline for array rental.
+            Color[] data = GC.AllocateUninitializedArray<Color>(textureArea.Width * textureArea.Height);
             texture.GetData(0, textureArea, data, 0, data.Length);
             Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, textureArea.Width, textureArea.Height);
             newTexture.SetData(data);
