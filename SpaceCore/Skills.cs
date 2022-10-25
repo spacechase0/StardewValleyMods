@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -97,7 +98,7 @@ namespace SpaceCore
         private const string MsgData = "spacechase0.SpaceCore.SkillData";
         private const string MsgExperience = "spacechase0.SpaceCore.SkillExperience";
 
-        internal static Dictionary<string, Skill> SkillsByName = new();
+        internal static Dictionary<string, Skill> SkillsByName = new(StringComparer.OrdinalIgnoreCase);
         private static Dictionary<long, Dictionary<string, int>> Exp = new();
         internal static List<KeyValuePair<string, int>> NewLevels = new();
 
@@ -134,7 +135,8 @@ namespace SpaceCore
 
             foreach (var skill in Skills.SkillsByName)
             {
-                if (skill.Key.ToLower() == name.ToLower() || skill.Value.GetName().ToLower() == name.ToLower())
+                if (skill.Key.Equals(name, StringComparison.OrdinalIgnoreCase)
+                    || skill.Value.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
                     return skill.Value;
             }
 
@@ -201,8 +203,7 @@ namespace SpaceCore
                 Skills.Exp.Add(farmer.UniqueMultiplayerID, skillExp);
             }
 
-            if (!skillExp.ContainsKey(skillName))
-                skillExp.Add(skillName, 0);
+            _ = skillExp.TryAdd(skillName, 0);
         }
 
         private static void ClientJoined(object sender, EventArgsServerGotClient args)
@@ -215,8 +216,7 @@ namespace SpaceCore
 
             foreach (var skill in Skills.SkillsByName)
             {
-                if (!skillExp.ContainsKey(skill.Key))
-                    skillExp.Add(skill.Key, 0);
+                _ = skillExp.TryAdd(skill.Key, 0);
             }
 
             using var stream = new MemoryStream();
@@ -291,6 +291,8 @@ namespace SpaceCore
                 Log.Trace("Saving custom data");
                 Skills.DataApi.WriteSaveData(Skills.DataKey, Skills.Exp);
             }
+
+            SpaceCore.Instance.Helper.Events.GameLoop.Saved -= OnSaved;
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
