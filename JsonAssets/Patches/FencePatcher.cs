@@ -1,13 +1,23 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+
 using HarmonyLib;
+
 using JsonAssets.Data;
+using JsonAssets.Framework;
+
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
 using Spacechase.Shared.Patching;
+
 using SpaceShared;
+
 using StardewModdingAPI;
+
 using StardewValley;
 using StardewValley.Tools;
+
 using SObject = StardewValley.Object;
 
 namespace JsonAssets.Patches
@@ -63,8 +73,11 @@ namespace JsonAssets.Patches
         ** Private methods
         *********/
         /// <summary>The method to call after the <see cref="Fence"/> constructor.</summary>
-        private static void After_Constructor(Fence __instance, Vector2 tileLocation, int whichType, bool isGate)
+        private static void After_Constructor(Fence __instance, int whichType)
         {
+            if (!ContentInjector1.FenceIndexes.ContainsKey(whichType))
+                return;
+
             foreach (var fence in Mod.instance.Fences)
             {
                 if (whichType == fence.CorrespondingObject.GetObjectId())
@@ -83,6 +96,9 @@ namespace JsonAssets.Patches
         /// <summary>The method to call before <see cref="Fence.repair"/>.</summary>
         private static bool Before_Repair(Fence __instance)
         {
+            if (!ContentInjector1.FenceIndexes.ContainsKey(__instance.whichType.Value))
+                return true;
+
             foreach (var fence in Mod.instance.Fences)
             {
                 if (__instance.whichType.Value == fence.CorrespondingObject.GetObjectId())
@@ -93,7 +109,6 @@ namespace JsonAssets.Patches
                     return false;
                 }
             }
-
             return true;
         }
 
@@ -101,6 +116,9 @@ namespace JsonAssets.Patches
         private static bool Before_DropItem(Fence __instance, GameLocation location, Vector2 origin, Vector2 destination)
         {
             if (__instance.isGate.Value)
+                return true;
+
+            if (!ContentInjector1.FenceIndexes.ContainsKey(__instance.whichType.Value))
                 return true;
 
             foreach (var fence in Mod.instance.Fences)
@@ -123,17 +141,18 @@ namespace JsonAssets.Patches
             else if (__instance.isGate.Value && t is Axe or Pickaxe)
                 return true;
 
+            if (!ContentInjector1.FenceIndexes.ContainsKey(__instance.whichType.Value))
+                return true;
+
             foreach (var fence in Mod.instance.Fences)
             {
                 if (__instance.whichType.Value == fence.CorrespondingObject.GetObjectId())
                 {
                     __result = false;
 
-                    if (fence.BreakTool == FenceBreakToolType.Pickaxe && t is Pickaxe ||
-                         fence.BreakTool == FenceBreakToolType.Axe && t is Axe)
-                    {
-                    }
-                    else return false;
+                    if ((fence.BreakTool != FenceBreakToolType.Pickaxe || t is not Pickaxe) &&
+                         (fence.BreakTool != FenceBreakToolType.Axe || t is not Axe))
+                        return false;
 
                     location.playSound(t is Axe ? "axchop" : "hammer");
                     location.objects.Remove(__instance.TileLocation);
@@ -174,6 +193,9 @@ namespace JsonAssets.Patches
             if (__instance.health.Value > 1 || !__instance.CanRepairWithThisItem(dropIn))
                 return true;
 
+            if (!ContentInjector1.FenceIndexes.ContainsKey(__instance.whichType.Value))
+                return true;
+
             foreach (var fence in Mod.instance.Fences)
             {
                 if (__instance.whichType.Value == fence.CorrespondingObject.GetObjectId())
@@ -201,6 +223,9 @@ namespace JsonAssets.Patches
         private static bool Before_CanRepairWithThisItem(Fence __instance, Item item, ref bool __result)
         {
             if (__instance.health.Value > 1 || item is not SObject)
+                return true;
+
+            if (!ContentInjector1.FenceIndexes.ContainsKey(__instance.whichType.Value))
                 return true;
 
             foreach (var fence in Mod.instance.Fences)

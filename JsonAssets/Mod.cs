@@ -1588,6 +1588,20 @@ namespace JsonAssets
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
 
+            Log.Trace("Resolving Crop and Tree product Ids");
+            CropData.giantCropMap.Clear();
+            foreach (var crop in this.Crops)
+            {
+                crop.ProductId = ItemResolver.GetObjectID(crop.Product);
+                if (crop.GiantTexture is not null)
+                    CropData.giantCropMap[crop.ProductId] = crop.GiantTexture;
+            }
+            foreach (var fruitTree in this.FruitTrees)
+            {
+                fruitTree.ProductId = ItemResolver.GetObjectID(fruitTree.Product);
+                FruitTreeData.SaplingIds.Add(fruitTree.GetSaplingId());
+            }
+
             if (this.MyRings.Count > 0)
             {
                 Log.Trace("Indexing rings");

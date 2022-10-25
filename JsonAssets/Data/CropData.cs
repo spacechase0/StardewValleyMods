@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -48,6 +49,11 @@ namespace JsonAssets.Data
 
         internal ObjectData Seed { get; set; }
 
+        [JsonIgnore]
+        internal int ProductId { get; set; } = -1;
+
+        [JsonIgnore]
+        internal static Dictionary<int, Lazy<Texture2D>> giantCropMap = new();
 
         /*********
         ** Public methods
