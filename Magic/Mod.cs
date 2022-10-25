@@ -278,7 +278,7 @@ namespace Magic
 
             this.LegacyDataMigrator.OnSaved();
 
-            this.Helper.Events.GameLoop.Saving += this.OnSaving;
+            this.Helper.Events.GameLoop.Saving -= this.OnSaving;
         }
     }
 }
