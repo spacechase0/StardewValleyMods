@@ -33,10 +33,6 @@ namespace GenericModConfigMenu
         /// <summary>Manages registered mod config menus.</summary>
         internal readonly ModConfigManager ConfigManager = new();
 
-        /// <summary>The mod API, if initialized.</summary>
-        private Api Api;
-
-
         /*********
         ** Accessors
         *********/
@@ -84,9 +80,9 @@ namespace GenericModConfigMenu
         }
 
         /// <inheritdoc />
-        public override object GetApi()
+        public override object GetApi(IModInfo mod)
         {
-            return this.Api ??= new Api(this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null));
+            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), Log.Info);
         }
 
 
