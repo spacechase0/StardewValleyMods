@@ -121,9 +121,10 @@ namespace JsonAssets.Framework
         {
             if (!Mod.instance.DidInit)
                 return;
-            if (e.NameWithoutLocale.StartsWith(@"LooseSprites\Fence")
-                && int.TryParse(e.NameWithoutLocale.BaseName[@"LooseSprites\Fence".Length..], out int index) && FenceIndexes.ContainsKey(index))
-                e.LoadFrom(() => FenceIndexes[index].Texture, AssetLoadPriority.Low);
+            if (FenceIndexes.Count > 0 && e.NameWithoutLocale.StartsWith(@"LooseSprites\Fence")
+                && int.TryParse(e.NameWithoutLocale.BaseName[@"LooseSprites\Fence".Length..], out int index)
+                && FenceIndexes.TryGetValue(index, out var fenceData))
+                e.LoadFrom(() => fenceData.Texture, AssetLoadPriority.Low);
             else if (Files.TryGetValue(e.NameWithoutLocale.BaseName, out var injector))
                 e.Edit(injector, (AssetEditPriority)int.MinValue); // insist on editing first.
         }
