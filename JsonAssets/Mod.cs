@@ -1588,6 +1588,17 @@ namespace JsonAssets
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
 
+            if (this.MyRings.Count > 0)
+            {
+                Log.Trace("Indexing rings");
+                ObjectData.TrackedRings.Clear();
+                foreach (var ring in this.MyRings)
+                    ObjectData.TrackedRings.Add(ring.GetObjectId());
+
+                this.Helper.Events.Player.InventoryChanged -= this.OnInventoryChanged;
+                this.Helper.Events.Player.InventoryChanged += this.OnInventoryChanged;
+            }
+
             this.Api.InvokeIdsAssigned();
 
             this.Content1.InvalidateUsed();
@@ -1637,14 +1648,10 @@ namespace JsonAssets
             if (!e.IsLocalPlayer)
                 return;
 
-            IList<int> ringIds = new List<int>();
-            foreach (var ring in this.MyRings)
-                ringIds.Add(ring.Id);
-
             for (int i = 0; i < Game1.player.Items.Count; ++i)
             {
                 var item = Game1.player.Items[i];
-                if (item is SObject obj && ringIds.Contains(obj.ParentSheetIndex))
+                if (item is SObject obj && ObjectData.TrackedRings.Contains(obj.ParentSheetIndex))
                 {
                     Log.Trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
                     Game1.player.Items[i] = new Ring(obj.ParentSheetIndex);

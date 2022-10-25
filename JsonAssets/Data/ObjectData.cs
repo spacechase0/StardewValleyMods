@@ -62,6 +62,10 @@ namespace JsonAssets.Data
 
         public List<string> ContextTags { get; set; } = new();
 
+        // A list of IDs that match rings for JA.
+        [JsonIgnore]
+        internal readonly static HashSet<int> TrackedRings = new();
+
 
         /*********
         ** Public methods
