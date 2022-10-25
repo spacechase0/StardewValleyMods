@@ -758,7 +758,7 @@ BreakBreak:;
                     _ = pack.TryLoad(e);
                 }
             }
-            else if (e.NameWithoutLocale.IsEquivalentTo("Data\\CookingRecipes"))
+            else if (Mod.customCraftingRecipes.Count > 0 && e.NameWithoutLocale.IsEquivalentTo("Data\\CookingRecipes"))
             {
                 e.Edit(static (asset) =>
                 {
@@ -775,7 +775,7 @@ BreakBreak:;
                     Log.Trace($"Added {i}/{Mod.customCraftingRecipes.Count} entries to cooking recipes");
                 });
             }
-            else if (e.NameWithoutLocale.IsEquivalentTo("Data\\CraftingRecipes"))
+            else if (Mod.customCraftingRecipes.Count > 0 && e.NameWithoutLocale.IsEquivalentTo("Data\\CraftingRecipes"))
             {
                 e.Edit(static (asset) =>
                 {
