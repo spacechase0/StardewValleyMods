@@ -422,6 +422,14 @@ namespace JsonAssets
             else
                 this.DupCrops[crop.Name] = source;
 
+            if (this.DupObjects.TryGetValue(crop.Seed.Name, out var oldmanifest))
+            {
+                Log.Error($"{crop.Seed.Name} previously added by {oldmanifest.UniqueID}, this may cause errors. Crop {crop.Name} by {source.Name} will not be added");
+                return;
+            }
+            else
+                this.DupObjects[crop.Seed.Name] = source;
+
             // save crop data
             this.Crops.Add(crop);
 

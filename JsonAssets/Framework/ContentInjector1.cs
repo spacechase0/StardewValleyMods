@@ -130,7 +130,6 @@ namespace JsonAssets.Framework
 
         private static void InjectDataObjectInformation(IAssetData asset)
         {
-#warning - crosscheck boots?
             var data = asset.AsDictionary<int, string>().Data;
             foreach (var obj in Mod.instance.Objects)
             {
@@ -155,7 +154,7 @@ namespace JsonAssets.Framework
             {
                 try
                 {
-                    string tags = string.Join(", ", obj.ContextTags);
+                    string tags = string.Join(',', obj.ContextTags);
                     if (Log.IsVerbose)
                         Log.Trace($"Injecting to object context tags: {obj.Name}: {tags}");
                     if (!data.TryGetValue(obj.Name, out string prevTags) || string.IsNullOrWhiteSpace(prevTags))
