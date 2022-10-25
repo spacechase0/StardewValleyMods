@@ -1613,6 +1613,18 @@ namespace JsonAssets
                 this.Helper.Events.Player.InventoryChanged += this.OnInventoryChanged;
             }
 
+            // the game rewrites the display names of anything with honey in the name.
+            BigCraftableData.HasHoneyInName.Clear();
+            ObjectData.HasHoneyInName.Clear();
+
+            foreach (var obj in this.Objects)
+                if (obj.Name.Contains("Honey"))
+                    ObjectData.HasHoneyInName.Add(obj.GetObjectId());
+
+            foreach (var big in this.BigCraftables)
+                if (big.Name.Contains("Honey"))
+                    BigCraftableData.HasHoneyInName.Add(big.GetCraftableId());
+
             this.Api.InvokeIdsAssigned();
 
             this.Content1.InvalidateUsed();
