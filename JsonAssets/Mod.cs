@@ -2331,6 +2331,7 @@ namespace JsonAssets
                     {
                         if (!obj.bigCraftable.Value)
                         {
+                            // preserves index.
                             if (obj.Name != "Drum Block" && obj.Name != "Flute Block"
                                 && this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
                                 obj.preservedParentSheetIndex.Value = -1;
@@ -2362,27 +2363,8 @@ namespace JsonAssets
 
                     if (obj.heldObject.Value is SObject heldObject)
                     {
-
-                        if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
-                            obj.preservedParentSheetIndex.Value = -1;
-
-                        if (!this.VanillaObjectIds.Contains(heldObject.ParentSheetIndex)
-                                && this.ObjectIds.TryGetValue(heldObject.Name, out int val))
-                        {
-                            if (val != heldObject.ParentSheetIndex)
-                            {
-                                Log.Trace($"Fixing held object {heldObject.Name} with new id {val} by name at tilelocation {obj.TileLocation}.");
-                                heldObject.ParentSheetIndex = val;
-                            }
-                        }
-                        else if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
+                        if (this.FixItem(heldObject))
                             obj.heldObject.Value = null;
-
-                        if (obj.heldObject.Value is Chest innerChest)
-                        {
-                            this.FixItemList(innerChest.items);
-                            innerChest.clearNulls();
-                        }
                     }
                     break;
             }
@@ -2709,9 +2691,8 @@ namespace JsonAssets
             if (this.FixId(this.OldCropIds, this.CropIds, crop.rowInSpriteSheet, this.VanillaCropIds))
                 return true;
 
-            // fix index of harvest
-            string key = this.CropIds.FirstOrDefault(x => x.Value == crop.rowInSpriteSheet.Value).Key;
-            CropData cropData = this.Crops.FirstOrDefault(x => x.Name == key);
+            // fix index of harvest and netSeedIndex.
+            CropData cropData = this.Crops.FirstOrDefault(x => crop.rowInSpriteSheet.Value == x.GetCropSpriteIndex());
             if (cropData is not null) // JA-managed crop
             {
                 if (cropData.ProductId != crop.indexOfHarvest.Value)
