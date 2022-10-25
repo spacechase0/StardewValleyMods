@@ -96,7 +96,8 @@ namespace JsonAssets.Framework
             if (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.mod)
                 locale = LocalizedContentManager.CurrentModLanguage?.LanguageCode ?? locale;
 
-            return translations.TryGetValue(locale, out string translated) || translations.TryGetValue("default", out translated)
+            return (translations.TryGetValue(locale, out string translated) || translations.TryGetValue("default", out translated))
+                && !string.IsNullOrWhiteSpace(translated)
                 ? translated
                 : defaultText;
         }

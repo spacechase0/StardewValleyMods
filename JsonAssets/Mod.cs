@@ -1808,7 +1808,7 @@ namespace JsonAssets
 
         private Dictionary<string, int> AssignIds(string type, int starting, List<DataNeedsId> data)
         {
-            data.Sort((dni1, dni2) => dni1.Name.CompareTo(dni2.Name));
+            data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.InvariantCulture));
 
             Dictionary<string, int> ids = new();
 
@@ -1851,7 +1851,7 @@ namespace JsonAssets
 
         private void AssignTextureIndices(string type, int starting, List<DataSeparateTextureIndex> data)
         {
-            data.Sort((dni1, dni2) => dni1.Name.CompareTo(dni2.Name));
+            data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.InvariantCulture));
 
             Dictionary<string, int> idxs = new Dictionary<string, int>();
 
@@ -2093,25 +2093,19 @@ namespace JsonAssets
         /// <returns>Inverse of whether or not the quest was fixed.</returns>
         private bool FixQuest(Quest quest)
         {
-            switch (quest)
+            return quest switch
             {
-                case CraftingQuest cq:
-                    return cq.isBigCraftable.Value
-                        ? this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, cq.indexToCraft, this.VanillaBigCraftableIds)
-                        : this.FixId(this.OldObjectIds, this.ObjectIds, cq.indexToCraft, this.VanillaObjectIds);
-                case FishingQuest fq:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, fq.whichFish, this.VanillaObjectIds)
-                        || this.FixItem(fq.fish.Value);
-                case ItemDeliveryQuest idq:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, idq.item, this.VanillaObjectIds)
-                        || this.FixItem(idq.deliveryItem.Value);
-                case ItemHarvestQuest ihq:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, ihq.itemIndex, this.VanillaObjectIds);
-                case LostItemQuest liq:
-                    return this.FixId(this.OldObjectIds, this.ObjectIds, liq.itemIndex, this.VanillaObjectIds);
-                default:
-                    return false;
-            }
+                CraftingQuest cq => cq.isBigCraftable.Value
+                                        ? this.FixId(this.OldBigCraftableIds, this.BigCraftableIds, cq.indexToCraft, this.VanillaBigCraftableIds)
+                                        : this.FixId(this.OldObjectIds, this.ObjectIds, cq.indexToCraft, this.VanillaObjectIds),
+                FishingQuest fq => this.FixId(this.OldObjectIds, this.ObjectIds, fq.whichFish, this.VanillaObjectIds)
+                                        || this.FixItem(fq.fish.Value),
+                ItemDeliveryQuest idq => this.FixId(this.OldObjectIds, this.ObjectIds, idq.item, this.VanillaObjectIds)
+                                        || this.FixItem(idq.deliveryItem.Value),
+                ItemHarvestQuest ihq => this.FixId(this.OldObjectIds, this.ObjectIds, ihq.itemIndex, this.VanillaObjectIds),
+                LostItemQuest liq => this.FixId(this.OldObjectIds, this.ObjectIds, liq.itemIndex, this.VanillaObjectIds),
+                _ => false,
+            };
         }
 
         private void FixSpecialOrder(SpecialOrder order)
@@ -2227,11 +2221,12 @@ namespace JsonAssets
                             return true;
                         fence.ParentSheetIndex = -fence.whichType.Value;
                     }
-                    else if (obj.GetType() == typeof(SObject) || obj.GetType() == typeof(Cask))
+                    else if (obj.GetType() == typeof(SObject) || obj.GetType() == typeof(Cask) || obj.GetType() == typeof(ColoredObject))
                     {
                         if (!obj.bigCraftable.Value)
                         {
-                            if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
+                            if (obj.Name != "Drum Block" && obj.Name != "Flute Block"
+                                && this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
                                 obj.preservedParentSheetIndex.Value = -1;
                             if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.parentSheetIndex, this.VanillaObjectIds))
                                 return true;
@@ -2309,23 +2304,37 @@ namespace JsonAssets
                         player.mailForTomorrow.Remove("MarlonRecovery");
                     }
 
-                    // completion metadata
-                    this.FixIdDict(player.basicShipped, removeUnshippable: true);
-                    this.FixIdDict(player.mineralsFound);
-                    this.FixIdDict(player.recipesCooked);
-                    this.FixIdDict2(player.archaeologyFound);
-                    this.FixIdDict2(player.fishCaught);
-                    foreach (var dict in player.giftedItems.Values)
-                        this.FixIdDict3(dict);
+                    try
+                    {
+                        // completion metadata
+                        this.FixIdDict(player.basicShipped, removeUnshippable: true);
+                        this.FixIdDict(player.mineralsFound);
+                        this.FixIdDict(player.recipesCooked);
+                        this.FixIdDict2(player.archaeologyFound);
+                        this.FixIdDict2(player.fishCaught);
+                        foreach (var dict in player.giftedItems.Values)
+                            this.FixIdDict3(dict);
 
-                    this.FixTailoringDict(player.tailoredItems);
+                        this.FixTailoringDict(player.tailoredItems);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error($"Error in fixing player metadata:\n\n{ex}");
+                    }
 
                     foreach (var quest in player.questLog)
                     {
                         if (!this.FixQuest(quest))
                         {
-                            quest.reloadDescription();
-                            quest.reloadObjective();
+                            try
+                            {
+                                quest.reloadObjective();
+                                quest.reloadDescription();
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error($"Failed refreshing quest objectives:\n\n{ex}");
+                            }
                         }
                     }
                     break;
@@ -2385,6 +2394,10 @@ namespace JsonAssets
                     this.FixItemList(house.fridge.Value?.items);
                     house.fridge.Value?.clearNulls();
                     break;
+                case ShopLocation shop:
+                    this.FixItemList(shop.itemsFromPlayerToSell);
+                    this.RemoveNulls(shop.itemsFromPlayerToSell);
+                    break;
             }
 
             foreach (var npc in loc.characters)
@@ -2421,7 +2434,7 @@ namespace JsonAssets
                     if (!this.FixItem(sign.displayItem.Value))
                         sign.displayItem.Value = null;
                 }
-                else if (obj.GetType() == typeof(SObject))
+                else if (obj.GetType() == typeof(SObject) || obj.GetType() == typeof(ColoredObject))
                 {
                     if (!obj.bigCraftable.Value)
                     {
@@ -2444,6 +2457,9 @@ namespace JsonAssets
 
                 if (obj.heldObject.Value != null)
                 {
+                    if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
+                        obj.preservedParentSheetIndex.Value = -1;
+
                     if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.heldObject.Value.parentSheetIndex, this.VanillaObjectIds))
                         obj.heldObject.Value = null;
 
@@ -2640,7 +2656,7 @@ namespace JsonAssets
                 if (item == null)
 
                     continue;
-                if (item.GetType() == typeof(SObject))
+                if (item.GetType() == typeof(SObject) || item.GetType() == typeof(ColoredObject))
                 {
                     var obj = item as SObject;
                     if (!obj.bigCraftable.Value)
@@ -2732,20 +2748,22 @@ namespace JsonAssets
                 if (this.VanillaObjectIds.Contains(entry))
                     continue;
 
-                if (this.OldObjectIds.Values.Contains(entry))
+                if (this.OldObjectIds.FirstOrDefault(x => x.Value == entry).Key is string name)
                 {
-                    string key = this.OldObjectIds.FirstOrDefault(x => x.Value == entry).Key;
-                    bool isRing = this.MyRings.FirstOrDefault(r => r.Id == entry) != null;
-                    bool canShip = this.Objects.FirstOrDefault(o => o.Id == entry)?.CanSell ?? true;
-                    bool hideShippable = this.Objects.FirstOrDefault(o => o.Id == entry)?.HideFromShippingCollection ?? true;
-
                     toRemove.Add(entry);
-                    if (this.ObjectIds.TryGetValue(key, out int id) && (!removeUnshippable || (canShip && !hideShippable && !isRing)))
-                        toAdd.Add(id, dict[entry]);
+
+                    if (this.ObjectIds.TryGetValue(name, out int id))
+                    {
+                        var obj = this.Objects.First(o => o.Name == name);
+                        if (!removeUnshippable || (obj.CanSell && !obj.HideFromShippingCollection && !this.MyRings.Any(r => r.Name == name)))
+                            toAdd.Add(id, dict[entry]);
+                    }
                 }
             }
+
             foreach (int entry in toRemove)
                 dict.Remove(entry);
+
             foreach (var entry in toAdd)
             {
                 if (dict.ContainsKey(entry.Key))
@@ -2757,7 +2775,10 @@ namespace JsonAssets
                             Log.Error("\tobj = " + obj.Name);
                     }
                 }
-                dict.Add(entry.Key, entry.Value);
+                else
+                {
+                    dict.Add(entry.Key, entry.Value);
+                }
             }
         }
 
@@ -2803,7 +2824,10 @@ namespace JsonAssets
                         if (this.OldObjectIds.TryGetValue(item.Key, out int oldindex))
                         {
                             if (oldindex != item.Value)
+                            {
+                                toRemove.Add(key);
                                 toAddOrUpdate.Add(oldindex, val);
+                            }
                         }
                         else
                         {
@@ -2819,7 +2843,10 @@ namespace JsonAssets
                         if (this.ObjectIds.TryGetValue(item.Key, out int newindex))
                         {
                             if (newindex != item.Value)
+                            {
+                                toRemove.Add(key);
                                 toAddOrUpdate.Add(newindex, val);
+                            }
                         }
                         else
                         {
