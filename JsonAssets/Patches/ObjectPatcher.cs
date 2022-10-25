@@ -212,6 +212,11 @@ namespace JsonAssets.Patches
         {
             try
             {
+                if (!Mod.instance.DidInit)
+                {
+                    Log.Error($"Not initalized? What?");
+                    return;
+                }
                 foreach (var ring in Mod.instance.MyRings)
                 {
                     if (ring.GetObjectId() == index)
