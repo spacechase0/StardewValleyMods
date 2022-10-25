@@ -63,8 +63,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
-            if (entry == null)
+            if (!Mod.Entries.TryGetValue(__instance.Name, out Entry entry))
                 return true;
 
             string placementSound = "hammer";
@@ -109,8 +108,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
-            if (entry == null)
+            if (!Mod.Entries.TryGetValue(__instance.Name, out Entry entry))
                 return true;
             int hdiff = entry.Texture.Height - entry.Length * 16;
 
@@ -132,8 +130,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
-            if (entry == null)
+            if (!Mod.Entries.TryGetValue(__instance.Name, out Entry entry))
                 return true;
             int hdiff = entry.Texture.Height;
 
@@ -156,8 +153,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
-            if (entry == null)
+            if (!Mod.Entries.TryGetValue(__instance.Name, out Entry entry))
                 return true;
 
             spriteBatch.Draw(entry.Texture, objectPosition + new Vector2(32, 32), null, Color.White, 0, new Vector2(entry.Texture.Width / 2, entry.Texture.Height / 2), 4, SpriteEffects.None, Math.Max(0.0f, (f.getStandingY() + 3) / 10000f));
@@ -170,8 +166,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
-            if (entry == null)
+            if (!Mod.Entries.TryGetValue(__instance.Name, out Entry entry))
                 return true;
 
             if (__instance.IsRecipe)
@@ -199,8 +194,7 @@ namespace BiggerCraftables.Patches
         {
             if (!__instance.bigCraftable.Value)
                 return true;
-            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == __instance.Name);
-            if (entry == null)
+            if (!Mod.Entries.TryGetValue(__instance.Name, out Entry entry))
                 return true;
 
             int x = (int)Game1.GetPlacementGrabTile().X * 64;

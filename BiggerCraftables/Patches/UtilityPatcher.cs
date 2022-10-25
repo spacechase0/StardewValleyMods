@@ -1,6 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
+using BiggerCraftables.Framework;
+
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Patching;
@@ -38,8 +41,7 @@ namespace BiggerCraftables.Patches
         {
             if (!(item is SObject obj && obj.bigCraftable.Value))
                 return true;
-            var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == obj.Name);
-            if (entry == null)
+            if (!Mod.Entries.TryGetValue(obj.Name, out Entry entry))
                 return true;
 
             if (Utility.isPlacementForbiddenHere(location))
