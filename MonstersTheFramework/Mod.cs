@@ -9,7 +9,7 @@ using StardewValley;
 namespace MonstersTheFramework
 {
     // TODO: Chunks
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader
+    public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
         public static IDynamicGameAssetsApi dga;
@@ -26,28 +26,18 @@ namespace MonstersTheFramework
             Helper.Events.GameLoop.TimeChanged += (e, a) => DoSpawning(SpawnTryTime.OnTimeChange);
             Helper.Events.Player.Warped += (e, a) => DoSpawning(SpawnTryTime.OnLocationChange, a.NewLocation.NameOrUniqueName);
 
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
+
         }
 
-        public bool CanLoad<T>( IAssetInfo asset )
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            // TODO: monster eradication goals?
-            if ( asset.AssetNameEquals( "spacechase0.MonstersTheFramework/Monsters" ) )
-                return true;
-            if ( asset.AssetNameEquals( "spacechase0.MonstersTheFramework/Spawning" ) )
-                return true;
-
-            return false;
+            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.MonstersTheFramework/Monsters"))
+                e.LoadFrom( static () => new Dictionary<string, MonsterType>(), AssetLoadPriority.Exclusive);
+            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.MonstersTheFramework/Spawning"))
+                e.LoadFrom(static () => new Dictionary<string, SpawnData>(), AssetLoadPriority.Exclusive);
         }
 
-        public T Load<T>( IAssetInfo asset )
-        {
-            if ( asset.AssetNameEquals( "spacechase0.MonstersTheFramework/Monsters" ) )
-                return ( T ) ( object ) new Dictionary<string, MonsterType>();
-            if ( asset.AssetNameEquals( "spacechase0.MonstersTheFramework/Spawning" ) )
-                return ( T ) ( object ) new Dictionary<string, SpawnData>();
-
-            return default( T );
-        }
         private void OnSpawnCommand( string cmd, string[] args )
         {
             var data = Game1.content.Load< Dictionary< string, MonsterType > >( "spacechase0.MonstersTheFramework/Monsters" );
