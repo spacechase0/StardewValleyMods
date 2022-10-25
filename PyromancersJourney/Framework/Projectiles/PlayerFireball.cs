@@ -8,7 +8,7 @@ namespace PyromancersJourney.Framework.Projectiles
 {
     internal class PlayerFireball : BaseProjectile
     {
-        public static Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/fireball.png");
+        public static Texture2D Tex = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/fireball.png");
 
         public int Level = 0;
         public Vector2 Speed;
