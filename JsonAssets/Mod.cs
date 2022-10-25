@@ -1618,6 +1618,10 @@ namespace JsonAssets
             this.Api.InvokeIdsAssigned();
 
             ContentInjector1.InvalidateUsed();
+            ContentInjector2.ResetGiftTastes();
+            this.Helper.GameContent.InvalidateCache("Data/NPCGiftTastes");
+            if (this.Helper.GameContent.CurrentLocaleConstant != LocalizedContentManager.LanguageCode.en)
+                this.Helper.GameContent.InvalidateCache($"Data/NPCGiftTastes.{this.Helper.GameContent.CurrentLocale}");
 
             // This happens here instead of with ID fixing because TMXL apparently
             // uses the ID fixing API before ID fixing happens everywhere.
