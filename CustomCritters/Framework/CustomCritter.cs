@@ -26,7 +26,7 @@ namespace CustomCritters.Framework
             this.Rand = new Random(((int)this.startingPosition.X) << 32 | ((int)this.startingPosition.Y));
 
             var tex = CustomCritter.LoadCritterTexture(data.Id);
-            string texStr = Mod.Instance.Helper.Content.GetActualAssetKey($"Critters/{data.Id}/critter.png");
+            string texStr = Mod.Instance.Helper.ModContent.GetInternalAssetName($"Critters/{data.Id}/critter.png").BaseName;
 
             this.baseFrame = Game1.random.Next(data.SpriteData.Variations) * (tex.Width / data.SpriteData.FrameWidth);
 
@@ -50,7 +50,7 @@ namespace CustomCritters.Framework
 
         public static Texture2D LoadCritterTexture(string id)
         {
-            return Mod.Instance.Helper.Content.Load<Texture2D>($"Critters/{id}/critter.png");
+            return Mod.Instance.Helper.ModContent.Load<Texture2D>($"Critters/{id}/critter.png");
         }
 
         private int PatrolIndex;
