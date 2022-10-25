@@ -46,9 +46,9 @@ namespace ManaBar
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.Display.RenderedHud += Mod.OnRenderedHud;
 
-            Mod.ManaBg = helper.Content.Load<Texture2D>("assets/manabg.png");
+            Mod.ManaBg = helper.ModContent.Load<Texture2D>("assets/manabg.png");
 
-            Color manaCol = new Color(0, 48, 255);
+            Color manaCol = new(0, 48, 255);
             Mod.ManaFg = new Texture2D(Game1.graphics.GraphicsDevice, 1, 1);
             Mod.ManaFg.SetData(new[] { manaCol });
         }
