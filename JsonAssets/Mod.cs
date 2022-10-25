@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
 using JsonAssets.Data;
 using JsonAssets.Framework;
 using JsonAssets.Framework.ContentPatcher;
@@ -1660,17 +1662,16 @@ namespace JsonAssets
             if (!Directory.Exists(Path.Combine(Constants.CurrentSavePath, "JsonAssets")))
                 Directory.CreateDirectory(Path.Combine(Constants.CurrentSavePath, "JsonAssets"));
 
-                // NOTE: Have to save the file even if it's empty - maybe the user removed a JA pack?
-                Task objects = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds)));
-                Task crops = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds)));
-                Task fruitTrees = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds)));
-                Task bigs = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds)));
-                Task hats = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds)));
-                Task weapons = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds)));
-                Task clothing = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds)));
+            // NOTE: Have to save the file even if it's empty - maybe the user removed a JA pack?
+            Task objects = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-objects.json"), JsonConvert.SerializeObject(this.ObjectIds)));
+            Task crops = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-crops.json"), JsonConvert.SerializeObject(this.CropIds)));
+            Task fruitTrees = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-fruittrees.json"), JsonConvert.SerializeObject(this.FruitTreeIds)));
+            Task bigs = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-big-craftables.json"), JsonConvert.SerializeObject(this.BigCraftableIds)));
+            Task hats = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-hats.json"), JsonConvert.SerializeObject(this.HatIds)));
+            Task weapons = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds)));
+            Task clothing = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds)));
 
-                // Task.WaitAll(objects, crops, fruitTrees, bigs, hats, weapons, clothing);
-            }
+            // Task.WaitAll(objects, crops, fruitTrees, bigs, hats, weapons, clothing);
             this.Helper.Events.GameLoop.Saving -= this.OnSaving;
         }
 
@@ -2317,7 +2318,7 @@ namespace JsonAssets
                     }
                     else if (obj is IndoorPot pot)
                     {
-                        if (pot.hoeDirt.Value != null && this.FixCrop(pot.hoeDirt.Value.crop))
+                        if (pot.hoeDirt.Value is not null && this.FixCrop(pot.hoeDirt.Value.crop))
                             pot.hoeDirt.Value.crop = null;
                     }
                     else if (obj is Fence fence)
@@ -2398,13 +2399,13 @@ namespace JsonAssets
             {
                 case Horse horse:
                     Log.Trace($"Fixing horse {horse.Name}");
-                    if (this.FixId(this.OldHatIds, this.HatIds, horse.hat.Value?.which, this.VanillaHatIds))
+                    if (this.FixItem(horse.hat.Value))
                         horse.hat.Value = null;
-                    break;
+                break;
 
                 case Child child:
                     Log.Trace($"Fixing child {child.Name}");
-                    if (this.FixId(this.OldHatIds, this.HatIds, child.hat.Value?.which, this.VanillaHatIds))
+                    if (this.FixItem(child.hat.Value))
                         child.hat.Value = null;
                     break;
 
@@ -2713,9 +2714,13 @@ namespace JsonAssets
             CropData cropData = this.Crops.FirstOrDefault(x => x.Name == key);
             if (cropData is not null) // JA-managed crop
             {
-                Log.Verbose($"Fixing crop product: From {crop.indexOfHarvest.Value} to {cropData.Product}={cropData.ProductId}");
-                crop.indexOfHarvest.Value = cropData.ProductId;
-                this.FixId(this.OldObjectIds, this.ObjectIds, crop.netSeedIndex, this.VanillaObjectIds);
+                if (cropData.ProductId != crop.indexOfHarvest.Value)
+                {
+                    Log.Trace($"Fixing crop product: From {crop.indexOfHarvest.Value} to {cropData.Product}={cropData.ProductId}");
+                    crop.indexOfHarvest.Value = cropData.ProductId;
+                }
+                if (this.FixId(this.OldObjectIds, this.ObjectIds, crop.netSeedIndex, this.VanillaObjectIds))
+                    crop.netSeedIndex.Value = -1; // game will try to infer it again if it's used.
             }
 
             return false;
@@ -2751,25 +2756,27 @@ namespace JsonAssets
             switch (feature)
             {
                 case HoeDirt dirt:
+                {
                     if (this.FixCrop(dirt.crop))
                         dirt.crop = null;
                     return false;
+                }
 
                 case FruitTree tree:
+                {
+                    if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, tree.treeType, this.VanillaFruitTreeIds))
+                        return true;
+
+                    string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
+                    FruitTreeData treeData = this.FruitTrees.FirstOrDefault(x => x.Name == key);
+                    if (treeData is not null && treeData.ProductId != tree.indexOfFruit.Value) // JA managed fruit tree.
                     {
-                        if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, tree.treeType, this.VanillaFruitTreeIds))
-                            return true;
-
-                        string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
-                        FruitTreeData treeData = this.FruitTrees.FirstOrDefault(x => x.Name == key);
-                        if (treeData is not null) // Non-JA fruit tree
-                        {
-                            Log.Verbose($"Fixing fruit tree product: From {tree.indexOfFruit.Value} to {treeData.Product}={treeData.ProductId}");
-                            tree.indexOfFruit.Value = treeData.ProductId;
-                        }
-
-                        return false;
+                        Log.Trace($"Fixing fruit tree product: From {tree.indexOfFruit.Value} to {treeData.Product}={treeData.ProductId}");
+                        tree.indexOfFruit.Value = treeData.ProductId;
                     }
+
+                    return false;
+                }
 
                 default:
                     return false;
