@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using System.Text;
+
 using JsonAssets.Framework;
+using JsonAssets.Framework.Internal;
+
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using SpaceShared;
@@ -59,13 +63,17 @@ namespace JsonAssets.Data
 
         internal string GetCraftableInformation()
         {
-            string str = $"{this.Name}/{this.Price}/-300/Crafting -9/{this.LocalizedDescription()}/true/true/0";
-            if (this.ProvidesLight)
-                str += "/true";
-            str += $"/{this.LocalizedName()}";
-            return str;
-        }
+            StringBuilder str = StringBuilderCache.Acquire();
 
+            str.Append(this.Name).Append('/')
+                .Append(this.Price).Append("/-300/Crafting -9/")
+                .Append(this.LocalizedDescription())
+                .Append("/true/true/0");
+            if (this.ProvidesLight)
+                str.Append("/true");
+            str.Append($"/{this.LocalizedName()}");
+            return StringBuilderCache.GetStringAndRelease(str);
+        }
 
         /*********
         ** Private methods
