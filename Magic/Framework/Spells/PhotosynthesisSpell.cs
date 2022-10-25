@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Magic.Framework.Schools;
 using StardewValley;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
@@ -48,13 +49,7 @@ namespace Magic.Framework.Spells
                     switch (terrainFeature)
                     {
                         case HoeDirt dirt:
-                            if (dirt.crop != null)
-                            {
-                                dirt.crop.currentPhase.Value = Math.Min(dirt.crop.phaseDays.Count - 1, dirt.crop.currentPhase.Value + 1);
-                                dirt.crop.dayOfCurrentPhase.Value = 0;
-                                if (dirt.crop.regrowAfterHarvest.Value != -1 && dirt.crop.currentPhase.Value == dirt.crop.phaseDays.Count - 1)
-                                    dirt.crop.fullyGrown.Value = true;
-                            }
+                            this.GrowHoeDirt(dirt);
                             break;
 
                         case FruitTree tree:
@@ -73,10 +68,27 @@ namespace Magic.Framework.Spells
                             break;
                     }
                 }
+
+                foreach (var obj in loc.Objects.Values)
+                {
+                    if (obj is IndoorPot pot)
+                        this.GrowHoeDirt(pot.hoeDirt.Value);
+                }    
             }
 
             player.consumeObject(SObject.prismaticShardIndex, 1);
             return null;
+        }
+
+        private void GrowHoeDirt(HoeDirt dirt)
+        {
+            if (dirt?.crop is not null)
+            {
+                dirt.crop.currentPhase.Value = Math.Min(dirt.crop.phaseDays.Count - 1, dirt.crop.currentPhase.Value + 1);
+                dirt.crop.dayOfCurrentPhase.Value = 0;
+                if (dirt.crop.regrowAfterHarvest.Value != -1 && dirt.crop.currentPhase.Value == dirt.crop.phaseDays.Count - 1)
+                    dirt.crop.fullyGrown.Value = true;
+            }
         }
     }
 }
