@@ -49,7 +49,7 @@ namespace Magic.Framework
                     (int altarX, int altarY) = this.GetAltarPosition();
                     Map altar = this.Content.Load<Map>("assets/altar.tmx");
                     asset.AsMap().PatchMap(altar, targetArea: new Rectangle(altarX, altarY, 3, 3));
-                });
+                }, AssetEditPriority.Late);
 
                 return true;
             }
@@ -89,7 +89,7 @@ namespace Magic.Framework
                     (int radioX, int radioY) = this.GetRadioPosition();
                     frontLayer.Tiles[radioX, radioY] = new StaticTile(frontLayer, tilesheet, BlendMode.Alpha, 512);
                     (buildingsLayer.Tiles[radioX, radioY] ?? frontLayer.Tiles[radioX, radioY]).Properties["Action"] = "MagicRadio";
-                });
+                }, AssetEditPriority.Late);
                 return true;
             }
 
