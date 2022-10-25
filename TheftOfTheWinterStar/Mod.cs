@@ -664,7 +664,7 @@ namespace TheftOfTheWinterStar
                     // which preserves the normal indices of the tilesheets.
                     char comeLast = '\u03a9'; // Omega
 
-                    tilesheet = new TileSheet(map, this.Helper.Content.GetActualAssetKey("assets/trail-decorations.png"), new xTile.Dimensions.Size(2, 2), new xTile.Dimensions.Size(16, 16));
+                    tilesheet = new TileSheet(map, this.Helper.ModContent.GetInternalAssetName("assets/trail-decorations.png").BaseName, new xTile.Dimensions.Size(2, 2), new xTile.Dimensions.Size(16, 16));
                     tilesheet.Id = comeLast + tilesheet.Id;
                     map.AddTileSheet(tilesheet);
                     map.LoadTileSheets(Game1.mapDisplayDevice);
@@ -713,7 +713,7 @@ namespace TheftOfTheWinterStar
 
             foreach (string locName in this.LocationNames)
             {
-                GameLocation location = new GameLocation(this.Helper.Content.GetActualAssetKey($"assets/{locName}.tmx"), $"FrostDungeon.{locName}");
+                GameLocation location = new GameLocation(this.Helper.ModContent.GetInternalAssetName($"assets/{locName}.tmx").BaseName, $"FrostDungeon.{locName}");
                 Game1.locations.Add(location);
             }
         }
