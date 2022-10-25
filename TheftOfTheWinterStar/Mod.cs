@@ -325,14 +325,16 @@ namespace TheftOfTheWinterStar
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             // update maps
-            this.Helper.Content.InvalidateCache("Maps/Tunnel");
+            this.Helper.GameContent.InvalidateCache("Maps/Tunnel");
             foreach (string mapName in this.DecoSpots.Keys)
-                this.Helper.Content.InvalidateCache($"Maps/{mapName}");
+                this.Helper.GameContent.InvalidateCache($"Maps/{mapName}");
 
             // apply Tempus Globe logic
             int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
-            foreach (GameLocation loc in Game1.locations.Where(this.IsFarm))
+            Utility.ForAllLocations((loc) =>
             {
+                if (!this.IsFarm(loc))
+                    return;
                 foreach (var pair in loc.Objects.Pairs)
                 {
                     var obj = pair.Value;
@@ -361,7 +363,7 @@ namespace TheftOfTheWinterStar
                         });
                     }
                 }
-            }
+            });
         }
 
         /// <inheritdoc cref="IGameLoopEvents.DayEnding"/>
@@ -395,8 +397,11 @@ namespace TheftOfTheWinterStar
 
             // prevent crops from withering
             int tempusGlobeId = Mod.Ja.GetBigCraftableId("Tempus Globe");
-            foreach (GameLocation loc in Game1.locations.Where(this.IsFarm))
+
+            Utility.ForAllLocations((loc) =>
             {
+                if (!this.IsFarm(loc))
+                    return;
                 // find Tempus Globes coverage
                 HashSet<Vector2> covered = new();
                 foreach (var pair in loc.Objects.Pairs)
@@ -432,7 +437,8 @@ namespace TheftOfTheWinterStar
                             this.RestoreCropDataIfNeeded(dirt);
                     }
                 }
-            }
+            });
+
         }
 
         /// <summary>Get whether a location can be farmed.</summary>
@@ -440,7 +446,7 @@ namespace TheftOfTheWinterStar
         private bool IsFarm(GameLocation location)
         {
             return
-                location.IsFarm
+                location.IsFarm || location.IsGreenhouse
                 || location is Farm or IslandWest;
         }
 
