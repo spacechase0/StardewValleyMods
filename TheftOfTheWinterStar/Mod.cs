@@ -37,7 +37,7 @@ using SObject = StardewValley.Object;
 namespace TheftOfTheWinterStar
 {
     /// <summary>The mod entry class.</summary>
-    internal class Mod : StardewModdingAPI.Mod, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod
     {
         /*********
         ** Fields
