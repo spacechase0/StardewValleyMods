@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
 using JsonAssets.Data;
@@ -49,6 +50,11 @@ namespace JsonAssets.Patches
             harmony.Patch(
                 original: this.RequireMethod<Fence>(nameof(Fence.CanRepairWithThisItem)),
                 prefix: this.GetHarmonyMethod(nameof(Before_CanRepairWithThisItem))
+            );
+
+            harmony.Patch(
+                original: this.RequireMethod<Fence>(nameof(Fence.loadFenceTexture)),
+                finalizer: this.GetHarmonyMethod(nameof(FinalizeLoadTexture))
             );
         }
 
@@ -207,6 +213,16 @@ namespace JsonAssets.Patches
             }
 
             return true;
+        }
+
+        private static Exception? FinalizeLoadTexture(Fence __instance, Exception __exception, ref Texture2D __result)
+        {
+            if (__exception is not null)
+            {
+                Log.Error($@"LooseSprits\Fence{__instance.whichType} could not be loaded!");
+                __result = Mod.instance.Helper.ModContent.Load<Texture2D>(@"assets\fence.png");
+            }
+            return null;
         }
     }
 }
