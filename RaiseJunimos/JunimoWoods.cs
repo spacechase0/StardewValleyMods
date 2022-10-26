@@ -16,8 +16,8 @@ namespace RaiseJunimos
         {
         }
 
-        public JunimoWoods( IContentHelper content )
-        : base(content.GetActualAssetKey("assets/JunimoWoods.tmx"), "Custom_JunimoWoods")
+        public JunimoWoods( IModContentHelper content )
+        : base(content.GetInternalAssetName("assets/JunimoWoods.tmx").BaseName, "Custom_JunimoWoods")
         {
         }
 
