@@ -15,12 +15,13 @@ using StardewValley.Menus;
 
 namespace CustomBuildings
 {
-    internal class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 
         internal Dictionary<string, BuildingData> Buildings = new();
 
+        // do I need to copy JA's object resolver here too?
         internal static int ResolveObjectId(object data)
         {
             if (data is long inputId)
@@ -43,6 +44,7 @@ namespace CustomBuildings
 
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
             helper.Events.Player.Warped += this.OnWarped;
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
             HarmonyPatcher.Apply(this,
                 new CoopPatcher()
@@ -58,8 +60,8 @@ namespace CustomBuildings
                     BuildingData buildingData = cp.ReadJsonFile<BuildingData>(Path.Combine(relDir, "building.json"));
                     if (buildingData == null)
                         continue;
-                    buildingData.Texture = cp.LoadAsset<Texture2D>(Path.Combine(relDir, "building.png"));
-                    buildingData.MapLoader = () => cp.LoadAsset<xTile.Map>(Path.Combine(relDir, "building.tbin"));
+                    buildingData.Texture = cp.ModContent.Load<Texture2D>(Path.Combine(relDir, "building.png"));
+                    buildingData.MapLoader = () => cp.ModContent.Load<xTile.Map>(Path.Combine(relDir, "building.tbin"));
                     this.Buildings.Add(buildingData.Id, buildingData);
                 }
             }
@@ -102,39 +104,28 @@ namespace CustomBuildings
             }
         }
 
-        public bool CanLoad<T>(IAssetInfo asset)
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            foreach (var building in this.Buildings)
+            if (e.NameWithoutLocale.StartsWith("Buildings/")
+                && this.Buildings.TryGetValue(e.NameWithoutLocale.BaseName["Buildings/".Length..], out var data))
             {
-                if (asset.AssetNameEquals("Buildings\\" + building.Key) || asset.AssetNameEquals("Maps\\" + building.Key))
-                    return true;
+                e.LoadFrom(() => data.Texture, AssetLoadPriority.Exclusive);
             }
-            return false;
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            foreach (var building in this.Buildings)
+            else if (e.NameWithoutLocale.StartsWith("Maps/")
+                && this.Buildings.TryGetValue(e.NameWithoutLocale.BaseName["Maps/".Length..], out data))
             {
-                if (asset.AssetNameEquals("Buildings\\" + building.Key))
-                    return (T)(object)building.Value.Texture;
-                else if (asset.AssetNameEquals("Maps\\" + building.Key))
-                    return (T)(object)building.Value.MapLoader();
+                e.LoadFrom(() => data.MapLoader(), AssetLoadPriority.Exclusive);
             }
-            return default;
-        }
-
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            return asset.AssetNameEquals("Data\\Blueprints");
-        }
-
-        public void Edit<T>(IAssetData asset)
-        {
-            var dict = asset.AsDictionary<string, string>();
-            foreach (var building in this.Buildings)
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data\\Blueprints"))
             {
-                dict.Data.Add(building.Value.Id, building.Value.BlueprintString());
+                e.Edit((asset) =>
+                {
+                    var dict = asset.AsDictionary<string, string>();
+                    foreach (var building in this.Buildings)
+                    {
+                        dict.Data.Add(building.Value.Id, building.Value.BlueprintString());
+                    }
+                });
             }
         }
     }
