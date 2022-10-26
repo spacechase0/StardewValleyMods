@@ -34,9 +34,7 @@ namespace FlowerRain
             Color[] transparent = ArrayPool<Color>.Shared.Rent(pixelCount);
             try
             {
-                for (int i = 0; i < transparent.Length; i++)
-                    transparent[i] = Color.Transparent;
-
+                Array.Fill(transparent, Color.Transparent, 0, pixelCount);
                 this.InvisibleRain = new Texture2D(Game1.graphics.GraphicsDevice, 256, 64);
                 this.InvisibleRain.SetData(transparent, 0, pixelCount);
             }
