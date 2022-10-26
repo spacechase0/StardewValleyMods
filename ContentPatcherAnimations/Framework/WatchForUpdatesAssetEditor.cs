@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 
 namespace ContentPatcherAnimations.Framework
 {
     // TODO: Optimize this
     /// <summary>An asset editor which detects when an animated texture changes.</summary>
-    internal class WatchForUpdatesAssetEditor : IAssetEditor
+    internal class WatchForUpdatesAssetEditor
     {
         /*********
         ** Fields
@@ -25,29 +26,17 @@ namespace ContentPatcherAnimations.Framework
             this.GetAnimatedPatches = getAnimatedPatches;
         }
 
-        /// <inheritdoc />
-        public bool CanEdit<T>(IAssetInfo asset)
+#warning - ignoring locale for now to match CP.
+        public void Ready(AssetReadyEventArgs e)
         {
             var animatedPatches = this.GetAnimatedPatches();
 
             foreach (PatchData patch in animatedPatches.Values)
             {
-                if (patch.TargetName != null && asset.Name.IsEquivalentTo(patch.TargetName))
-                    return true;
-            }
-            return false;
-        }
-
-        /// <inheritdoc />
-        public void Edit<T>(IAssetData asset)
-        {
-            var animatedPatches = this.GetAnimatedPatches();
-
-            foreach (PatchData patch in animatedPatches.Values)
-            {
-                if (patch.TargetName != null && asset.Name.IsEquivalentTo(patch.TargetName))
+                if (patch.TargetName != null && e.NameWithoutLocale.IsEquivalentTo(patch.TargetName))
                     patch.ForceNextRefresh = true;
             }
         }
+
     }
 }
