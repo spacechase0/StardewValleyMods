@@ -39,7 +39,7 @@ namespace ArcadeRoom
 
         private void OnBlankSave(object sender, EventArgs e)
         {
-            var arcade = new GameLocation(this.Helper.Content.GetActualAssetKey("assets/Arcade.tbin"), "Arcade");
+            var arcade = new GameLocation(this.Helper.ModContent.GetInternalAssetName("assets/Arcade.tbin").BaseName, "Arcade");
             Game1.locations.Add(arcade);
             for (int ix = 0; ix < arcade.Map.Layers[0].LayerWidth; ++ix)
             {
@@ -59,7 +59,7 @@ namespace ArcadeRoom
 
             var map = e.NewLocation.Map;
 
-            var ts = new TileSheet(e.NewLocation.Map, this.Helper.Content.GetActualAssetKey("assets/tiles.png"), new xTile.Dimensions.Size(8, 8), new xTile.Dimensions.Size(16, 16));
+            var ts = new TileSheet(e.NewLocation.Map, this.Helper.ModContent.GetInternalAssetName("assets/tiles.png").BaseName, new xTile.Dimensions.Size(8, 8), new xTile.Dimensions.Size(16, 16));
             ts.Id = "\u03A9" + ts.Id;
             e.NewLocation.Map.AddTileSheet(ts);
             e.NewLocation.Map.LoadTileSheets(Game1.mapDisplayDevice);
