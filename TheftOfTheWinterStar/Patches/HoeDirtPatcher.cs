@@ -56,7 +56,7 @@ namespace TheftOfTheWinterStar.Patches
                         {
                             if (__instance.crop == null)
                             {
-                                Crop crop = new Crop(objectIndex, tileX, tileY);
+                                Crop crop = new(objectIndex, tileX, tileY);
                                 __result = !crop.raisedSeeds.Value || !Utility.doesRectangleIntersectTile(Game1.player.GetBoundingBox(), tileX, tileY);
                             }
                             else
@@ -96,8 +96,11 @@ namespace TheftOfTheWinterStar.Patches
                 }
             }
 
+            if (!foundDelimiter)
+                return true;
+
             // Now for the original method
-            Crop c = new Crop(index, tileX, tileY);
+            Crop c = new(index, tileX, tileY);
             if (c.seasonsToGrowIn.Count == 0)
             {
                 return false;

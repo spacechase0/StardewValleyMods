@@ -699,8 +699,15 @@ namespace TheftOfTheWinterStar
                 foreach (var item in e.Added)
                 {
                     if (item is SObject obj && obj.ParentSheetIndex == Mod.Ja.GetObjectId("Frosty Stardrop Piece"))
+                    {
                         e.Player.craftingRecipes.Add("Frosty Stardrop", 0);
+                        this.Helper.Events.Player.InventoryChanged -= OnInventoryChanged;
+                    }
                 }
+            }
+            else
+            {
+                this.Helper.Events.Player.InventoryChanged -= OnInventoryChanged;
             }
         }
 
@@ -713,7 +720,7 @@ namespace TheftOfTheWinterStar
 
             foreach (string locName in this.LocationNames)
             {
-                GameLocation location = new GameLocation(this.Helper.ModContent.GetInternalAssetName($"assets/{locName}.tmx").BaseName, $"FrostDungeon.{locName}");
+                GameLocation location = new(this.Helper.ModContent.GetInternalAssetName($"assets/{locName}.tmx").BaseName, $"FrostDungeon.{locName}");
                 Game1.locations.Add(location);
             }
         }
@@ -731,7 +738,7 @@ namespace TheftOfTheWinterStar
             if (e.ActionString == "Message \"FrostDungeon.Locked\"")
             {
                 int key = Mod.Ja.GetObjectId("Festive Key");
-                if (farmer.ActiveObject?.ParentSheetIndex == key)
+                if (Utility.IsNormalObjectAtParentSheetIndex(farmer.ActiveObject, key))
                 {
                     farmer.removeFirstOfThisItemFromInventory(key);
                     farmer.mailReceived.Add("FrostDungeon.Locked." + location.doesTileHaveProperty(e.Position.X, e.Position.Y, "Buildings", "UnlockId"));
@@ -805,7 +812,7 @@ namespace TheftOfTheWinterStar
                     {
                         string[] tokens = e.ActionString.Split(' ');
                         int item = int.Parse(tokens[1]);
-                        if (farmer.ActiveObject?.ParentSheetIndex == item)
+                        if (Utility.IsNormalObjectAtParentSheetIndex(farmer.ActiveObject, item))
                         {
                             farmer.removeFirstOfThisItemFromInventory(item);
                             location.removeTileProperty(e.Position.X, e.Position.Y, "Buildings", "Action");
@@ -829,7 +836,7 @@ namespace TheftOfTheWinterStar
                         string[] tokens = e.ActionString.Split(' ');
 
                         int key = Mod.Ja.GetObjectId("Festive Big Key (" + tokens[1] + ")");
-                        if (farmer.ActiveObject?.ParentSheetIndex == key)
+                        if (Utility.IsNormalObjectAtParentSheetIndex(farmer.ActiveObject, key))
                         {
                             farmer.removeFirstOfThisItemFromInventory(key);
 
