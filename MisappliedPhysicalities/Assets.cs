@@ -18,7 +18,7 @@ namespace MisappliedPhysicalities
         public static Texture2D LogicConnector;
         public static Texture2D LeverBlock;
 
-        internal static void Load( IContentHelper content )
+        internal static void Load( IModContentHelper content )
         {
             Assets.Drill = content.Load<Texture2D>( "assets/drill.png" );
             Assets.WireCutter = content.Load<Texture2D>( "assets/wire-cutter.png" );

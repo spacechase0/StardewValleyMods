@@ -42,7 +42,7 @@ namespace MisappliedPhysicalities
 
             Config = Helper.ReadConfig<Configuration>();
 
-            Assets.Load( helper.Content );
+            Assets.Load( helper.ModContent );
 
             Helper.ConsoleCommands.Add( "mp_items", "...", OnItemsCommand );
 
