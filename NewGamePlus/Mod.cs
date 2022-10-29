@@ -36,8 +36,8 @@ namespace NewGamePlus
 
             plusButton = new ClickableTextureComponent("NewGamePlus", new Rectangle(0, 0, 36, 36), null, null, Game1.mouseCursors, new Rectangle(227, 425, 9, 9), 4);
 
-            legacyTokenTex = Helper.Content.Load<Texture2D>("assets/LegacyToken.png");
-            stableTokenTex = Helper.Content.Load<Texture2D>("assets/StableToken.png");
+            legacyTokenTex = Helper.ModContent.Load<Texture2D>("assets/LegacyToken.png");
+            stableTokenTex = Helper.ModContent.Load<Texture2D>("assets/StableToken.png");
 
             Helper.ConsoleCommands.Add("legacytoken", "...", (cmd, args) => Game1.player.addItemByMenuIfNecessary(new LegacyToken()));
 
