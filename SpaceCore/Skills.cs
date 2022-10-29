@@ -39,6 +39,7 @@ namespace SpaceCore
                 }
 
                 public virtual void DoImmediateProfessionPerk() { }
+                public virtual void UndoImmediateProfessionPerk() { }
 
                 protected Profession(Skill skill, string id)
                 {
@@ -423,6 +424,46 @@ namespace SpaceCore
             }
 
             return null;
+        }
+        internal static bool CanRespecAnyCustomSkill()
+        {
+            foreach (string s in GetSkillList())
+            {
+                if (CanRespecCustomSkill(s))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static bool CanRespecCustomSkill(string skillId)
+        {
+            if (Game1.player.GetCustomSkillLevel(skillId) < 5)
+            {
+                return false;
+            }
+            foreach (KeyValuePair<string, int> newLevel in NewLevels)
+            {
+                if (newLevel.Key == skillId && newLevel.Value == 5 || newLevel.Value == 10)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        internal static List<Response> GetRespecCustomResponses()
+        {
+            List<Response> responses = new List<Response>();
+            foreach (string skill in Skills.GetSkillList())
+            {
+                if (Skills.CanRespecCustomSkill(skill))
+                {
+                    responses.Add(new Response(skill, Skills.GetSkill(skill).GetName()));
+                }
+            }
+            return responses;
         }
     }
 
