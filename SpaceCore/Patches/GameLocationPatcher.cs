@@ -131,6 +131,7 @@ namespace SpaceCore.Patches
                 Game1.player.Money = Math.Max(0, Game1.player.Money - 10000);
                 foreach (Skills.Skill.Profession profession in skill.Professions)
                 {
+                    profession.UndoImmediateProfessionPerk();
                     GameLocation.RemoveProfession(profession.GetVanillaId());
                     Game1.drawObjectDialogue(Game1.content.LoadString("Strings\\Locations:Sewer_DogStatueFinished"));
                     int level = Skills.GetSkillLevel(Game1.player, skill.Id);
