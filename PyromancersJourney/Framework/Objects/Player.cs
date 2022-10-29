@@ -28,7 +28,7 @@ namespace PyromancersJourney.Framework.Objects
         {
             this.Health = this.HealthMax;
 
-            this.StaffTex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/staff.png");
+            this.StaffTex = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/staff.png");
 
             var staffVerts = new VertexPositionColorTexture[]
             {

@@ -103,7 +103,7 @@ namespace RaiseJunimos
         {
             if (e.NewStage == LoadStage.CreatedInitialLocations || e.NewStage == LoadStage.SaveAddedLocations)
             {
-                Game1.locations.Add(new JunimoWoods(Helper.Content));
+                Game1.locations.Add(new JunimoWoods(Helper.ModContent));
             }
         }
     }

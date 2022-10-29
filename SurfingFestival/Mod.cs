@@ -21,7 +21,7 @@ using SObject = StardewValley.Object;
 
 namespace SurfingFestival
 {
-    internal class Mod : StardewModdingAPI.Mod, IAssetLoader, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
 
@@ -48,10 +48,10 @@ namespace SurfingFestival
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            Mod.SurfboardTex = helper.Content.Load<Texture2D>("assets/surfboards.png");
-            Mod.SurfboardWaterTex = helper.Content.Load<Texture2D>("assets/surfboard-water.png");
-            Mod.StunTex = helper.Content.Load<Texture2D>("assets/net-stun.png");
-            Mod.ObstaclesTex = helper.Content.Load<Texture2D>("assets/obstacles.png");
+            Mod.SurfboardTex = helper.ModContent.Load<Texture2D>("assets/surfboards.png");
+            Mod.SurfboardWaterTex = helper.ModContent.Load<Texture2D>("assets/surfboard-water.png");
+            Mod.StunTex = helper.ModContent.Load<Texture2D>("assets/net-stun.png");
+            Mod.ObstaclesTex = helper.ModContent.Load<Texture2D>("assets/obstacles.png");
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
@@ -59,6 +59,7 @@ namespace SurfingFestival
             //helper.Events.Display.RenderedWorld += onRenderedWorld;
             helper.Events.Display.RenderedHud += this.OnRenderedHud;
             helper.Events.Multiplayer.ModMessageReceived += this.OnMessageReceived;
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
             SpaceEvents.ActionActivated += this.OnActionActivated;
 
@@ -69,40 +70,26 @@ namespace SurfingFestival
             );
         }
 
-        public bool CanLoad<T>(IAssetInfo asset)
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            return asset.AssetNameEquals("Data\\Festivals\\summer5") ||
-                   asset.AssetNameEquals("Maps\\Beach-Surfing") ||
-                   asset.AssetNameEquals("Maps\\surfing");
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            if (asset.AssetNameEquals("Data\\Festivals\\summer5"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data\\Festivals\\summer5"))
             {
-                var data = this.BuildFestivalData();
-                Mod.FestivalName = data["name"];
-                return (T)data;
+                e.LoadFrom(() =>
+                {
+                    var data = this.BuildFestivalData();
+                    Mod.FestivalName = data["name"];
+                    return data;
+                }, AssetLoadPriority.Exclusive);
             }
-            if (asset.AssetNameEquals("Maps\\Beach-Surfing"))
-                return (T)(object)this.Helper.Content.Load<Map>("assets/Beach.tbin");
-            if (asset.AssetNameEquals("Maps\\surfing"))
-                return (T)(object)this.Helper.Content.Load<Texture2D>("assets/surfing.png");
-
-            return default(T);
-        }
-
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            return asset.AssetNameEquals("Data\\Festivals\\FestivalDates");
-        }
-
-        public void Edit<T>(IAssetData asset)
-        {
-            if (asset.AssetNameEquals("Data\\Festivals\\FestivalDates"))
-            {
-                asset.AsDictionary<string, string>().Data.Add("summer5", Mod.FestivalName);
-            }
+            else if (e.NameWithoutLocale.IsEquivalentTo("Maps\\Beach-Surfing"))
+                e.LoadFromModFile<Map>("assets/Beach.tbin", AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Maps\\surfing"))
+                e.LoadFromModFile<Texture2D>("assets/surfing.png", AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data\\Festivals\\FestivalDates"))
+                e.Edit(static (asset) =>
+                {
+                    asset.AsDictionary<string, string>().Data.Add("summer5", Mod.FestivalName);
+                });
         }
 
         /// <summary>Build the festival data file from the mod translations.</summary>

@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Buffs and debuffs
+    *********/
+    "buff.full": "Ситість",
+    "buff.hungry": "Голод",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.fullness-ui-X.name": "КІ ситості (X)",
+    "config.fullness-ui-X.tooltip": "Позиція пікселів за X в КІ ситості.",
+    "config.fullness-ui-Y.name": "КІ ситості (Y)",
+    "config.fullness-ui-Y.tooltip": "Позиція пікселів за Y в КІ ситості.",
+
+    "config.fullness-ui-alignment.name": "КІ ситості (вирівнювання)",
+    "config.fullness-ui-alignment.tooltip": "Вирівнювання повноти КІ ситості на екрані гри.",
+    "config.fullness-ui-alignment.topLeft": "вгорі ліворуч",
+    "config.fullness-ui-alignment.topRight": "вгорі праворуч",
+    "config.fullness-ui-alignment.bottomLeft": "внизу ліворуч",
+    "config.fullness-ui-alignment.bottomRight": "праворуч внизу",
+
+    "config.fullness-max.name": "Максимальна ситість",
+    "config.fullness-max.tooltip": "Максимальна кількість ситості, яку ви можете мати.",
+    "config.fullness-drain.name": "Вичерпання ситості",
+    "config.fullness-drain.tooltip": "Обсяг ситості, який потрібно вичерпати за хвилину гри.",
+
+    "config.edibility-multiplier.name": "Множник їстівності",
+    "config.edibility-multiplier.tooltip": "Коефіцієнт ситості, який ви отримуєте, на основі їстівності їжі.",
+
+    "config.positive-buff-threshold.name": "Порог позитивного ефекту",
+    "config.positive-buff-threshold.tooltip": "Мінімальна ситість, необхідна для застосування позитивних ефектів.",
+    "config.negative-buff-threshold.name": "Поріг негативного ефекту",
+    "config.negative-buff-threshold.tooltip": "Максимальна ситість перед застосуванням негативних ефектів.",
+    "config.starvation-damage.name": "Шкода від голоду",
+    "config.starvation-damage.tooltip": "Обсяг шкоди від голодування, яку ви отримуєте кожну ігрову хвилину, коли не вдосталь ситі.",
+    "config.unfed-spouse-penalty.name": "Покарання за негодовану половинку",
+    "config.unfed-spouse-penalty.tooltip": "Покарання в стосунках за те, що ви не годуєте свою половинку."
+}

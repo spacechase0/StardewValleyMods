@@ -7,7 +7,7 @@ namespace PyromancersJourney.Framework.Projectiles
 {
     internal class GolemArm : BaseProjectile
     {
-        public static Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/golem_arm.png");
+        public static Texture2D Tex = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/golem_arm.png");
 
         public Vector2 Speed;
 

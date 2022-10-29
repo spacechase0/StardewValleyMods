@@ -31,7 +31,7 @@ namespace MoonMisadventures.Game.Monsters
 
         public override void reloadSprite()
         {
-            this.Sprite = new AnimatedSprite(Mod.instance.Helper.Content.GetActualAssetKey( "assets/enemies/slime" + (Game1.random.Next(2)+1) + ".png"), 0, 16, 16);
+            this.Sprite = new AnimatedSprite(Mod.instance.Helper.ModContent.GetInternalAssetName( "assets/enemies/slime" + (Game1.random.Next(2)+1) + ".png").BaseName, 0, 16, 16);
         }
     }
 }

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Buffers;
 using FlowerRain.Framework;
 using FlowerRain.Patches;
 using Microsoft.Xna.Framework;
@@ -15,22 +15,12 @@ using SObject = StardewValley.Object;
 
 namespace FlowerRain
 {
-    internal class Mod : StardewModdingAPI.Mod, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
         public static Config Config;
         private readonly Dictionary<string, List<FlowerData>> Fd = new();
         private Texture2D InvisibleRain;
-
-        public bool CanLoad<T>(IAssetInfo asset)
-        {
-            return asset.AssetNameEquals("TileSheets\\rain");
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            return (T)(object)this.InvisibleRain;
-        }
 
         public override void Entry(IModHelper helper)
         {
@@ -40,14 +30,27 @@ namespace FlowerRain
 
             Mod.Config = helper.ReadConfig<Config>();
 
-            helper.Events.GameLoop.GameLaunched += this.GameLaunched;
-
-            // https://stackoverflow.com/a/9664937/1687492
-            Color[] transparent = Enumerable.Range(0, 256 * 64).Select(p => Color.Transparent).ToArray();
-            this.InvisibleRain = new Texture2D(Game1.graphics.GraphicsDevice, 256, 64);
-            this.InvisibleRain.SetData(transparent);
+            int pixelCount = 256 * 64;
+            Color[] transparent = ArrayPool<Color>.Shared.Rent(pixelCount);
+            try
+            {
+                Array.Fill(transparent, Color.Transparent, 0, pixelCount);
+                this.InvisibleRain = new Texture2D(Game1.graphics.GraphicsDevice, 256, 64);
+                this.InvisibleRain.SetData(transparent, 0, pixelCount);
+            }
+            finally
+            {
+                ArrayPool<Color>.Shared.Return(transparent);
+            }
 
             this.BuildFlowerData(useWhitelist: true);
+
+            helper.Events.GameLoop.GameLaunched += this.GameLaunched;
+            helper.Events.Content.AssetRequested += (_, e) =>
+            {
+                if (e.NameWithoutLocale.IsEquivalentTo("TileSheets\\rain"))
+                    e.LoadFrom(() => this.InvisibleRain, AssetLoadPriority.Exclusive);
+            };
 
             HarmonyPatcher.Apply(this,
                 new Game1Patcher(this.Fd)

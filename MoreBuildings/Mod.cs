@@ -22,7 +22,7 @@ using StardewValley.Menus;
 namespace MoreBuildings
 {
     /// <summary>The mod entry point.</summary>
-    internal class Mod : StardewModdingAPI.Mod, IAssetEditor, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod
     {
         /*********
         ** Fields
@@ -57,18 +57,18 @@ namespace MoreBuildings
             helper.Events.Player.Warped += this.OnWarped;
             helper.Events.Specialized.LoadStageChanged += this.OnLoadStageChanged;
             helper.Events.Specialized.UnvalidatedUpdateTicked += this.OnUnvalidatedUpdateTicked;
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
-            this.Shed2Exterior = this.Helper.Content.Load<Texture2D>("assets/BigShed/building.png");
-            this.SpookyExterior = this.Helper.Content.Load<Texture2D>("assets/SpookyShed/building.png");
-            this.FishingExterior = this.Helper.Content.Load<Texture2D>("assets/FishingShack/building.png");
-            this.SpaExterior = this.Helper.Content.Load<Texture2D>("assets/MiniSpa/building.png");
-            this.SpookyGemTex = this.Helper.Content.Load<Texture2D>("assets/SpookyShed/Shrine_Gem.png");
+            this.Shed2Exterior = this.Helper.ModContent.Load<Texture2D>("assets/BigShed/building.png");
+            this.SpookyExterior = this.Helper.ModContent.Load<Texture2D>("assets/SpookyShed/building.png");
+            this.FishingExterior = this.Helper.ModContent.Load<Texture2D>("assets/FishingShack/building.png");
+            this.SpaExterior = this.Helper.ModContent.Load<Texture2D>("assets/MiniSpa/building.png");
+            this.SpookyGemTex = this.Helper.ModContent.Load<Texture2D>("assets/SpookyShed/Shrine_Gem.png");
 
             HarmonyPatcher.Apply(this,
                 new ShedPatcher()
             );
         }
-
 
         /*********
         ** Private methods
@@ -267,52 +267,34 @@ namespace MoreBuildings
             }
         }
 
-        public bool CanEdit<T>(IAssetInfo asset)
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            return asset.AssetNameEquals("Data\\Blueprints");
+            if (e.NameWithoutLocale.IsEquivalentTo("Data\\Blueprints"))
+                e.Edit(this.EditBluePrints);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Buildings\\Shed2"))
+                e.LoadFrom(() => this.Shed2Exterior, AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Maps\\Shed2_"))
+                e.LoadFromModFile<xTile.Map>("assets/BigShed/map.tbin", AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Buildings\\SpookyShed"))
+                e.LoadFrom(()=> this.SpookyExterior, AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Maps\\SpookyShed"))
+                e.LoadFromModFile<xTile.Map>("assets/SpookyShed/map.tbin", AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Buildings\\FishShack"))
+                e.LoadFrom(() => this.FishingExterior, AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Maps\\FishShack"))
+                e.LoadFromModFile<xTile.Map>("assets/FishingShack/map.tbin", AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Buildings\\MiniSpa"))
+                e.LoadFrom(() => this.SpaExterior, AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo("Maps\\MiniSpa"))
+                e.LoadFromModFile<xTile.Map>("assets/MiniSpa/map.tbin", AssetLoadPriority.Exclusive);
         }
 
-        public void Edit<T>(IAssetData asset)
+        public void EditBluePrints(IAssetData asset)
         {
             asset.AsDictionary<string, string>().Data.Add("Shed2", "388 750/7/3/3/2/-1/-1/Shed2/Big Shed/An even bigger Shed./Upgrades/Shed/96/96/20/null/Farm/25000/false");
             asset.AsDictionary<string, string>().Data.Add("SpookyShed", $"156 10 768 25 769 25 337 20 388 500/7/3/3/2/-1/-1/SpookyShed/{I18n.SpookyShed_Name()}/{I18n.SpookyShed_Description()}/Buildings/none/96/96/20/null/Farm/25000/false");
             asset.AsDictionary<string, string>().Data.Add("FishShack", $"163 1 390 250 388 500/7/3/3/2/-1/-1/FishShack/{I18n.FishingShack_Name()}/{I18n.FishingShack_Description()}/Buildings/none/96/96/20/null/Farm/50000/false");
             asset.AsDictionary<string, string>().Data.Add("MiniSpa", $"337 25 390 999 388 999/7/3/3/2/-1/-1/MiniSpa/{I18n.MiniSpa_Name()}/{I18n.MiniSpa_Description()}/Buildings/none/96/96/20/null/Farm/250000/false");
-        }
-
-        public bool CanLoad<T>(IAssetInfo asset)
-        {
-            if (asset.AssetNameEquals("Buildings\\Shed2") || asset.AssetNameEquals("Maps\\Shed2_"))
-                return true;
-            if (asset.AssetNameEquals("Buildings\\SpookyShed") || asset.AssetNameEquals("Maps\\SpookyShed"))
-                return true;
-            if (asset.AssetNameEquals("Buildings\\FishShack") || asset.AssetNameEquals("Maps\\FishShack"))
-                return true;
-            if (asset.AssetNameEquals("Buildings\\MiniSpa") || asset.AssetNameEquals("Maps\\MiniSpa"))
-                return true;
-            return false;
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            if (asset.AssetNameEquals("Buildings\\Shed2"))
-                return (T)(object)this.Shed2Exterior;
-            else if (asset.AssetNameEquals("Maps\\Shed2_"))
-                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/BigShed/map.tbin");
-            if (asset.AssetNameEquals("Buildings\\SpookyShed"))
-                return (T)(object)this.SpookyExterior;
-            else if (asset.AssetNameEquals("Maps\\SpookyShed"))
-                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/SpookyShed/map.tbin");
-            if (asset.AssetNameEquals("Buildings\\FishShack"))
-                return (T)(object)this.FishingExterior;
-            else if (asset.AssetNameEquals("Maps\\FishShack"))
-                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/FishingShack/map.tbin");
-            if (asset.AssetNameEquals("Buildings\\MiniSpa"))
-                return (T)(object)this.SpaExterior;
-            else if (asset.AssetNameEquals("Maps\\MiniSpa"))
-                return (T)(object)this.Helper.Content.Load<xTile.Map>("assets/MiniSpa/map.tbin");
-
-            return (T)(object)null;
         }
     }
 }

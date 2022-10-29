@@ -145,7 +145,7 @@ namespace DynamicGameAssets.Patches
             }
 
             // override by name
-            if (tex?.Name != null && SpriteBatchPatcher.packOverrides.TryGetValue(tex.Name, out var overrides) && overrides.TryGetValue(sourceRect, out var packOverride))
+            if (tex?.Name != null && SpriteBatchPatcher.packOverrides.TryGetValue(tex.Name, out var overrides) && overrides.TryGetValue(sourceRect, out var packOverride) && packOverride.Enabled)
             {
                 var texRect = packOverride.GetCurrentTexture();
                 tex = texRect.Texture;

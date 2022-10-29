@@ -37,7 +37,7 @@ namespace Magic.Framework.Skills
         public Skill()
             : base(Skill.MagicSkillId)
         {
-            this.Icon = Mod.Instance.Helper.Content.Load<Texture2D>("assets/interface/magicexpicon.png");
+            this.Icon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magicexpicon.png");
             this.SkillsPageIcon = null; // TODO: Make an icon for this
 
             this.ExperienceCurve = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };

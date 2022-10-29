@@ -23,7 +23,7 @@ using SObject = StardewValley.Object;
 
 namespace LuckSkill
 {
-    internal class Mod : StardewModdingAPI.Mod, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod 
     {
         /*********
         ** Fields
@@ -61,6 +61,7 @@ namespace LuckSkill
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.DayEnding += this.OnDayEnding;
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
             SpaceEvents.ChooseNightlyFarmEvent += this.ChangeFarmEvent;
 
@@ -72,27 +73,26 @@ namespace LuckSkill
             this.CheckForAllProfessions();
         }
 
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            if (e.NameWithoutLocale.IsEquivalentTo(@"Strings\UI"))
+                e.Edit((asset) =>
+                {
+                    var data = asset.AsDictionary<string, string>().Data;
+
+                    foreach (IProfession profession in this.GetProfessions().Values)
+                    {
+                        string internalKey = this.Helper.Reflection.GetMethod(typeof(LevelUpMenu), "getProfessionName").Invoke<string>(profession.Id);
+                        data.Add($"LevelUp_ProfessionName_{internalKey}", profession.Name);
+                        data.Add($"LevelUp_ProfessionDescription_{internalKey}", profession.Description);
+                    }
+                });
+        }
+
         /// <inheritdoc />
         public override object GetApi()
         {
             return new LuckSkillApi();
-        }
-
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            return asset.AssetNameEquals("Strings\\UI");
-        }
-
-        public void Edit<T>(IAssetData asset)
-        {
-            var data = asset.AsDictionary<string, string>().Data;
-
-            foreach (IProfession profession in this.GetProfessions().Values)
-            {
-                string internalKey = this.Helper.Reflection.GetMethod(typeof(LevelUpMenu), "getProfessionName").Invoke<string>(profession.Id);
-                data.Add($"LevelUp_ProfessionName_{internalKey}", profession.Name);
-                data.Add($"LevelUp_ProfessionDescription_{internalKey}", profession.Description);
-            }
         }
 
         /// <summary>Get the available Luck professions.</summary>

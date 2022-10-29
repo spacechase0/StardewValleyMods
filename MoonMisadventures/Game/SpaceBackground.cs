@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using StardewValley;
 
 namespace MoonMisadventures.Game
@@ -20,7 +18,7 @@ namespace MoonMisadventures.Game
         {
             if ( planet )
             {
-                this.planet = new TemporaryAnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/planet.png" ), new Rectangle( 0, 0, 128, 128 ), new Vector2( 20.5f, 8.5f ) * Game1.tileSize, false, 0, Color.White )
+                this.planet = new TemporaryAnimatedSprite( Mod.instance.Helper.ModContent.GetInternalAssetName( "assets/planet.png" ).BaseName, new Rectangle( 0, 0, 128, 128 ), new Vector2( 20.5f, 8.5f ) * Game1.tileSize, false, 0, Color.White )
                 {
                     scale = Game1.pixelZoom,
                     animationLength = 16 * 16,
