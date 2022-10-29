@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using Spacechase.Shared.Patching;
+
 using SpaceCore.Events;
+
 using SpaceShared;
 using SpaceShared.APIs;
+
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Utilities;
+
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
@@ -20,16 +25,19 @@ using StardewValley.Objects;
 using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+
 using TheftOfTheWinterStar.Framework;
 using TheftOfTheWinterStar.Patches;
+
 using xTile;
 using xTile.Tiles;
+
 using SObject = StardewValley.Object;
 
 namespace TheftOfTheWinterStar
 {
     /// <summary>The mod entry class.</summary>
-    internal class Mod : StardewModdingAPI.Mod, IAssetEditor
+    internal class Mod : StardewModdingAPI.Mod
     {
         /*********
         ** Fields
@@ -102,8 +110,8 @@ namespace TheftOfTheWinterStar
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            this.BossBarBg = this.Helper.Content.Load<Texture2D>("assets/bossbar-bg.png");
-            this.BossBarFg = this.Helper.Content.Load<Texture2D>("assets/bossbar-fg.png");
+            this.BossBarBg = this.Helper.ModContent.Load<Texture2D>("assets/bossbar-bg.png");
+            this.BossBarFg = this.Helper.ModContent.Load<Texture2D>("assets/bossbar-fg.png");
             this.PrevCropDataKey = $"{this.ModManifest.UniqueID}/prev-data";
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
@@ -117,6 +125,7 @@ namespace TheftOfTheWinterStar
             helper.Events.Player.InventoryChanged += this.OnInventoryChanged;
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             helper.Events.Display.RenderedHud += this.OnRenderedHud;
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
             SpaceEvents.OnBlankSave += this.OnBlankSave;
             SpaceEvents.ActionActivated += this.OnActionActivated;
@@ -127,62 +136,60 @@ namespace TheftOfTheWinterStar
             );
         }
 
-        /// <inheritdoc />
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            return
-                asset.AssetNameEquals("Data/CraftingRecipes")
-                || asset.AssetNameEquals("Maps/Tunnel")
-                || asset.AssetNameEquals("Strings/StringsFromMaps")
-                || this.TryGetDecoSpots(asset, out _);
-        }
-
-        /// <inheritdoc />
-        public void Edit<T>(IAssetData asset)
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
             // scatter decorations
-            if (this.TryGetDecoSpots(asset, out Vector2[] decoSpots))
-                this.ScatterDecorationsIfNeeded(asset.Data as Map, decoSpots);
+            if (this.IsPossibleDecoSpotsMap(e.NameWithoutLocale))
+                e.Edit(asset =>
+                {
+                    if (this.TryGetDecoSpots(asset, out Vector2[] decoSpots))
+                        this.ScatterDecorationsIfNeeded(asset.Data as Map, decoSpots);
+                });
 
             // add Frosty Stardrop recipe
-            if (asset.AssetNameEquals("Data/CraftingRecipes"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/CraftingRecipes") && Mod.Ja is not null)
             {
-                if (Mod.Ja != null)
+                e.Edit(static asset =>
                 {
                     var dict = asset.AsDictionary<string, string>().Data;
                     dict.Add("Frosty Stardrop", $"{Mod.Ja.GetObjectId("Frosty Stardrop Piece")} 5/Field/434/false/null/{I18n.Recipe_FrostyStardrop_Name()}");
-                }
+                });
             }
 
             // add map strings
-            else if (asset.AssetNameEquals("Strings/StringsFromMaps"))
+            else if (e.NameWithoutLocale.IsEquivalentTo("Strings/StringsFromMaps"))
             {
-                var dict = asset.AsDictionary<string, string>().Data;
-                dict.Add("FrostDungeon.LockedEntrance", I18n.MapMessages_LockedEntrance());
-                dict.Add("FrostDungeon.Locked", I18n.MapMessages_LockedDoor());
-                dict.Add("FrostDungeon.LockedBoss", I18n.MapMessages_LockedBoss());
-                dict.Add("FrostDungeon.Unlock", I18n.MapMessages_Unlocked());
-                dict.Add("FrostDungeon.ItemPuzzle", I18n.MapMessages_ItemPuzzle());
-                dict.Add("FrostDungeon.Target", I18n.MapMessages_Target());
-                dict.Add("FrostDungeon.Trail0", I18n.MapMessages_TrailLights());
-                dict.Add("FrostDungeon.Trail1", I18n.MapMessages_TrailCandyCane());
-                dict.Add("FrostDungeon.Trail2", I18n.MapMessages_TrailOrnaments());
-                dict.Add("FrostDungeon.Trail3", I18n.MapMessages_TrailTree());
+                e.Edit(static asset =>
+                {
+                    var dict = asset.AsDictionary<string, string>().Data;
+                    dict.Add("FrostDungeon.LockedEntrance", I18n.MapMessages_LockedEntrance());
+                    dict.Add("FrostDungeon.Locked", I18n.MapMessages_LockedDoor());
+                    dict.Add("FrostDungeon.LockedBoss", I18n.MapMessages_LockedBoss());
+                    dict.Add("FrostDungeon.Unlock", I18n.MapMessages_Unlocked());
+                    dict.Add("FrostDungeon.ItemPuzzle", I18n.MapMessages_ItemPuzzle());
+                    dict.Add("FrostDungeon.Target", I18n.MapMessages_Target());
+                    dict.Add("FrostDungeon.Trail0", I18n.MapMessages_TrailLights());
+                    dict.Add("FrostDungeon.Trail1", I18n.MapMessages_TrailCandyCane());
+                    dict.Add("FrostDungeon.Trail2", I18n.MapMessages_TrailOrnaments());
+                    dict.Add("FrostDungeon.Trail3", I18n.MapMessages_TrailTree());
+                });
             }
 
             // edit tunnel map
-            else if (asset.AssetNameEquals("Maps/Tunnel"))
+            else if (e.NameWithoutLocale.IsEquivalentTo("Maps/Tunnel"))
             {
-                var overlay = Game1.currentSeason == "winter" && Game1.dayOfMonth < 25
-                    ? this.Helper.Content.Load<Map>("assets/OverlayPortal.tmx")
-                    : this.Helper.Content.Load<Map>("assets/OverlayPortalLocked.tmx");
+                e.Edit(asset =>
+                {
+                    var overlay = Game1.currentSeason == "winter" && Game1.dayOfMonth < 25
+                        ? this.Helper.ModContent.Load<Map>("assets/OverlayPortal.tmx")
+                        : this.Helper.ModContent.Load<Map>("assets/OverlayPortalLocked.tmx");
 
-                asset
-                    .AsMap()
-                    .PatchMap(overlay, targetArea: new Rectangle(7, 4, 3, 3));
+                    asset
+                        .AsMap()
+                        .PatchMap(overlay, targetArea: new Rectangle(7, 4, 3, 3));
+                });
             }
         }
-
 
         /*********
         ** Private methods
@@ -241,26 +248,26 @@ namespace TheftOfTheWinterStar
                         switch (this.SaveData.ArenaStage)
                         {
                             case ArenaStage.Stage1:
-                                {
-                                    this.SaveData.ArenaStage = ArenaStage.Finished1;
-                                    int key = Mod.Ja.GetObjectId("Festive Key");
-                                    var pos = new Vector2(6, 13);
-                                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(key, 1) }), pos);
-                                    location.overlayObjects[pos] = chest;
-                                    Game1.playSound("questcomplete");
-                                }
-                                break;
+                            {
+                                this.SaveData.ArenaStage = ArenaStage.Finished1;
+                                int key = Mod.Ja.GetObjectId("Festive Key");
+                                var pos = new Vector2(6, 13);
+                                var chest = new Chest(0, new List<Item>(new Item[] { new SObject(key, 1) }), pos);
+                                location.overlayObjects[pos] = chest;
+                                Game1.playSound("questcomplete");
+                            }
+                            break;
 
                             case ArenaStage.Stage2:
-                                {
-                                    this.SaveData.ArenaStage = ArenaStage.Finished2;
-                                    int stardropPiece = Mod.Ja.GetObjectId("Frosty Stardrop Piece");
-                                    var pos = new Vector2(13, 13);
-                                    var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
-                                    location.overlayObjects[pos] = chest;
-                                    Game1.playSound("questcomplete");
-                                }
-                                break;
+                            {
+                                this.SaveData.ArenaStage = ArenaStage.Finished2;
+                                int stardropPiece = Mod.Ja.GetObjectId("Frosty Stardrop Piece");
+                                var pos = new Vector2(13, 13);
+                                var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
+                                location.overlayObjects[pos] = chest;
+                                Game1.playSound("questcomplete");
+                            }
+                            break;
                         }
                     }
                     break;
@@ -325,14 +332,16 @@ namespace TheftOfTheWinterStar
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             // update maps
-            this.Helper.Content.InvalidateCache("Maps/Tunnel");
+            this.Helper.GameContent.InvalidateCache("Maps/Tunnel");
             foreach (string mapName in this.DecoSpots.Keys)
-                this.Helper.Content.InvalidateCache($"Maps/{mapName}");
+                this.Helper.GameContent.InvalidateCache($"Maps/{mapName}");
 
             // apply Tempus Globe logic
             int seasonalDelimiter = Mod.Ja.GetBigCraftableId("Tempus Globe");
-            foreach (GameLocation loc in Game1.locations.Where(this.IsFarm))
+            Utility.ForAllLocations((loc) =>
             {
+                if (!this.IsFarm(loc))
+                    return;
                 foreach (var pair in loc.Objects.Pairs)
                 {
                     var obj = pair.Value;
@@ -361,7 +370,7 @@ namespace TheftOfTheWinterStar
                         });
                     }
                 }
-            }
+            });
         }
 
         /// <inheritdoc cref="IGameLoopEvents.DayEnding"/>
@@ -395,8 +404,11 @@ namespace TheftOfTheWinterStar
 
             // prevent crops from withering
             int tempusGlobeId = Mod.Ja.GetBigCraftableId("Tempus Globe");
-            foreach (GameLocation loc in Game1.locations.Where(this.IsFarm))
+
+            Utility.ForAllLocations((loc) =>
             {
+                if (!this.IsFarm(loc))
+                    return;
                 // find Tempus Globes coverage
                 HashSet<Vector2> covered = new();
                 foreach (var pair in loc.Objects.Pairs)
@@ -432,7 +444,8 @@ namespace TheftOfTheWinterStar
                             this.RestoreCropDataIfNeeded(dirt);
                     }
                 }
-            }
+            });
+
         }
 
         /// <summary>Get whether a location can be farmed.</summary>
@@ -440,7 +453,7 @@ namespace TheftOfTheWinterStar
         private bool IsFarm(GameLocation location)
         {
             return
-                location.IsFarm
+                location.IsFarm || location.IsGreenhouse
                 || location is Farm or IslandWest;
         }
 
@@ -500,40 +513,40 @@ namespace TheftOfTheWinterStar
                         break;
 
                     case "Bonus1" or "Bonus2" or "Bonus3":
+                    {
+                        var pos = new Vector2(9, 9);
+                        if (locName == "Bonus2")
                         {
-                            var pos = new Vector2(9, 9);
-                            if (locName == "Bonus2")
-                            {
-                                pos.X = 13;
-                            }
-                            var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
-                            loc.overlayObjects[pos] = chest;
+                            pos.X = 13;
                         }
-                        break;
+                        var chest = new Chest(0, new List<Item>(new Item[] { new SObject(stardropPiece, 1) }), pos);
+                        loc.overlayObjects[pos] = chest;
+                    }
+                    break;
 
                     case "WeaponRoom":
-                        {
-                            var pos = new Vector2(13, 9);
-                            var chest = new Chest(0, new List<Item>(new Item[] { new MeleeWeapon(scepter) }), pos);
-                            loc.overlayObjects[pos] = chest;
-                        }
-                        break;
+                    {
+                        var pos = new Vector2(13, 9);
+                        var chest = new Chest(0, new List<Item>(new Item[] { new MeleeWeapon(scepter) }), pos);
+                        loc.overlayObjects[pos] = chest;
+                    }
+                    break;
 
                     case "KeyRoom":
-                        {
-                            var pos = new Vector2(13, 9);
-                            var chest = new Chest(0, new List<Item>(new Item[] { new SObject(key, 1) }), pos);
-                            loc.overlayObjects[pos] = chest;
-                        }
-                        break;
+                    {
+                        var pos = new Vector2(13, 9);
+                        var chest = new Chest(0, new List<Item>(new Item[] { new SObject(key, 1) }), pos);
+                        loc.overlayObjects[pos] = chest;
+                    }
+                    break;
 
                     case "Maze":
-                        {
-                            var pos = new Vector2(20, 26);
-                            var chest = new Chest(0, new List<Item>(new Item[] { new SObject(keyHalfB, 1) }), pos);
-                            loc.overlayObjects[pos] = chest;
-                        }
-                        break;
+                    {
+                        var pos = new Vector2(20, 26);
+                        var chest = new Chest(0, new List<Item>(new Item[] { new SObject(keyHalfB, 1) }), pos);
+                        loc.overlayObjects[pos] = chest;
+                    }
+                    break;
                     case "Branch2":
                         /*
                         Rectangle r = new Rectangle(8, 6, 4, 3);
@@ -613,6 +626,9 @@ namespace TheftOfTheWinterStar
             }
         }
 
+        private bool IsPossibleDecoSpotsMap(IAssetName assetName)
+            => assetName.StartsWith("Maps/") && this.DecoSpots.ContainsKey(Path.GetFileNameWithoutExtension(assetName.BaseName));
+
         /// <summary>Get the <see cref="DecoSpots"/> for a map asset, if any.</summary>
         /// <param name="asset">The map asset being edited.</param>
         /// <param name="decoSpots">The tiles on which to drop decorations.</param>
@@ -626,7 +642,7 @@ namespace TheftOfTheWinterStar
             }
 
             // check for deco spots
-            string mapName = PathUtilities.GetSegments(asset.AssetName).Last();
+            string mapName = Path.GetFileNameWithoutExtension(asset.NameWithoutLocale.BaseName);
             return
                 this.DecoSpots.TryGetValue(mapName, out decoSpots)
                 && decoSpots.Any();
@@ -648,7 +664,7 @@ namespace TheftOfTheWinterStar
                     // which preserves the normal indices of the tilesheets.
                     char comeLast = '\u03a9'; // Omega
 
-                    tilesheet = new TileSheet(map, this.Helper.Content.GetActualAssetKey("assets/trail-decorations.png"), new xTile.Dimensions.Size(2, 2), new xTile.Dimensions.Size(16, 16));
+                    tilesheet = new TileSheet(map, this.Helper.ModContent.GetInternalAssetName("assets/trail-decorations.png").BaseName, new xTile.Dimensions.Size(2, 2), new xTile.Dimensions.Size(16, 16));
                     tilesheet.Id = comeLast + tilesheet.Id;
                     map.AddTileSheet(tilesheet);
                     map.LoadTileSheets(Game1.mapDisplayDevice);
@@ -683,8 +699,15 @@ namespace TheftOfTheWinterStar
                 foreach (var item in e.Added)
                 {
                     if (item is SObject obj && obj.ParentSheetIndex == Mod.Ja.GetObjectId("Frosty Stardrop Piece"))
+                    {
                         e.Player.craftingRecipes.Add("Frosty Stardrop", 0);
+                        this.Helper.Events.Player.InventoryChanged -= OnInventoryChanged;
+                    }
                 }
+            }
+            else
+            {
+                this.Helper.Events.Player.InventoryChanged -= OnInventoryChanged;
             }
         }
 
@@ -697,7 +720,7 @@ namespace TheftOfTheWinterStar
 
             foreach (string locName in this.LocationNames)
             {
-                GameLocation location = new GameLocation(this.Helper.Content.GetActualAssetKey($"assets/{locName}.tmx"), $"FrostDungeon.{locName}");
+                GameLocation location = new(this.Helper.ModContent.GetInternalAssetName($"assets/{locName}.tmx").BaseName, $"FrostDungeon.{locName}");
                 Game1.locations.Add(location);
             }
         }
@@ -715,7 +738,7 @@ namespace TheftOfTheWinterStar
             if (e.ActionString == "Message \"FrostDungeon.Locked\"")
             {
                 int key = Mod.Ja.GetObjectId("Festive Key");
-                if (farmer.ActiveObject?.ParentSheetIndex == key)
+                if (Utility.IsNormalObjectAtParentSheetIndex(farmer.ActiveObject, key))
                 {
                     farmer.removeFirstOfThisItemFromInventory(key);
                     farmer.mailReceived.Add("FrostDungeon.Locked." + location.doesTileHaveProperty(e.Position.X, e.Position.Y, "Buildings", "UnlockId"));
@@ -735,174 +758,174 @@ namespace TheftOfTheWinterStar
                 switch (e.Action)
                 {
                     case "ActivateArena" when location.Name == "FrostDungeon.Arena":
+                    {
+                        Log.Trace("Activate arena: Stage " + this.SaveData.ArenaStage);
+                        Game1.playSound("batScreech");
+                        Game1.playSound("rockGolemSpawn");
+                        switch (this.SaveData.ArenaStage)
                         {
-                            Log.Trace("Activate arena: Stage " + this.SaveData.ArenaStage);
-                            Game1.playSound("batScreech");
-                            Game1.playSound("rockGolemSpawn");
-                            switch (this.SaveData.ArenaStage)
-                            {
-                                case ArenaStage.NotTriggered:
-                                    this.SaveData.ArenaStage = ArenaStage.Stage1;
-                                    for (int i = 0; i < 9; ++i)
+                            case ArenaStage.NotTriggered:
+                                this.SaveData.ArenaStage = ArenaStage.Stage1;
+                                for (int i = 0; i < 9; ++i)
+                                {
+                                    int cx = e.Position.X, cy = e.Position.Y;
+                                    int dx = (int)(Math.Cos(Math.PI * 2 / 9 * i) * 5);
+                                    int dy = (int)(Math.Sin(Math.PI * 2 / 9 * i) * 5);
+                                    int x = cx + dx, y = cy + dy;
+                                    x *= Game1.tileSize;
+                                    y *= Game1.tileSize;
+
+                                    Monster monster = (i % 3) switch
                                     {
-                                        int cx = e.Position.X, cy = e.Position.Y;
-                                        int dx = (int)(Math.Cos(Math.PI * 2 / 9 * i) * 5);
-                                        int dy = (int)(Math.Sin(Math.PI * 2 / 9 * i) * 5);
-                                        int x = cx + dx, y = cy + dy;
-                                        x *= Game1.tileSize;
-                                        y *= Game1.tileSize;
+                                        0 => new Ghost(new Vector2(x, y)),
+                                        1 => new Skeleton(new Vector2(x, y)),
+                                        2 => new DustSpirit(new Vector2(x, y)),
+                                        _ => null
+                                    };
 
-                                        Monster monster = (i % 3) switch
-                                        {
-                                            0 => new Ghost(new Vector2(x, y)),
-                                            1 => new Skeleton(new Vector2(x, y)),
-                                            2 => new DustSpirit(new Vector2(x, y)),
-                                            _ => null
-                                        };
+                                    if (monster != null)
+                                        location.addCharacter(monster);
+                                }
+                                break;
 
-                                        if (monster != null)
-                                            location.addCharacter(monster);
-                                    }
-                                    break;
+                            case ArenaStage.Finished1:
+                                this.SaveData.ArenaStage = ArenaStage.Stage2;
+                                for (int i = 0; i < 3; ++i)
+                                {
+                                    int cx = e.Position.X, cy = e.Position.Y;
+                                    int dx = (int)(Math.Cos(Math.PI * 2 / 3 * i) * 4);
+                                    int dy = (int)(Math.Sin(Math.PI * 2 / 3 * i) * 4);
+                                    int x = cx + dx, y = cy + dy;
+                                    x *= Game1.tileSize;
+                                    y *= Game1.tileSize;
 
-                                case ArenaStage.Finished1:
-                                    this.SaveData.ArenaStage = ArenaStage.Stage2;
-                                    for (int i = 0; i < 3; ++i)
-                                    {
-                                        int cx = e.Position.X, cy = e.Position.Y;
-                                        int dx = (int)(Math.Cos(Math.PI * 2 / 3 * i) * 4);
-                                        int dy = (int)(Math.Sin(Math.PI * 2 / 3 * i) * 4);
-                                        int x = cx + dx, y = cy + dy;
-                                        x *= Game1.tileSize;
-                                        y *= Game1.tileSize;
-
-                                        if (i % 2 == 0)
-                                            location.addCharacter(new Bat(new Vector2(x, y), 77377));
-                                    }
-                                    location.addCharacter(new DinoMonster(new Vector2(9 * Game1.tileSize, 8 * Game1.tileSize)));
-                                    break;
-                            }
+                                    if (i % 2 == 0)
+                                        location.addCharacter(new Bat(new Vector2(x, y), 77377));
+                                }
+                                location.addCharacter(new DinoMonster(new Vector2(9 * Game1.tileSize, 8 * Game1.tileSize)));
+                                break;
                         }
-                        break;
+                    }
+                    break;
 
                     case "ItemPuzzle":
+                    {
+                        string[] tokens = e.ActionString.Split(' ');
+                        int item = int.Parse(tokens[1]);
+                        if (Utility.IsNormalObjectAtParentSheetIndex(farmer.ActiveObject, item))
                         {
-                            string[] tokens = e.ActionString.Split(' ');
-                            int item = int.Parse(tokens[1]);
-                            if (farmer.ActiveObject?.ParentSheetIndex == item)
-                            {
-                                farmer.removeFirstOfThisItemFromInventory(item);
-                                location.removeTileProperty(e.Position.X, e.Position.Y, "Buildings", "Action");
+                            farmer.removeFirstOfThisItemFromInventory(item);
+                            location.removeTileProperty(e.Position.X, e.Position.Y, "Buildings", "Action");
 
-                                int warpIndex = location.Map.GetLayer("Buildings").Tiles[e.Position.X, e.Position.Y].TileIndex - 32;
-                                var back = location.Map.GetLayer("Back");
-                                back.Tiles[e.Position.X, e.Position.Y + 3] = new StaticTile(back, location.Map.TileSheets[0], BlendMode.Additive, warpIndex);
+                            int warpIndex = location.Map.GetLayer("Buildings").Tiles[e.Position.X, e.Position.Y].TileIndex - 32;
+                            var back = location.Map.GetLayer("Back");
+                            back.Tiles[e.Position.X, e.Position.Y + 3] = new StaticTile(back, location.Map.TileSheets[0], BlendMode.Additive, warpIndex);
 
-                                var warp = new Warp(e.Position.X, e.Position.Y + 3, tokens[2], 7, 9, false);
-                                location.warps.Add(warp);
+                            var warp = new Warp(e.Position.X, e.Position.Y + 3, tokens[2], 7, 9, false);
+                            location.warps.Add(warp);
 
-                                Game1.playSound("secret1");
-                            }
-                            else
-                                Game1.drawDialogueNoTyping(Game1.content.LoadString("Strings\\StringsFromMaps:FrostDungeon.ItemPuzzle"));
+                            Game1.playSound("secret1");
                         }
-                        break;
+                        else
+                            Game1.drawDialogueNoTyping(Game1.content.LoadString("Strings\\StringsFromMaps:FrostDungeon.ItemPuzzle"));
+                    }
+                    break;
 
                     case "BossKeyHalf":
+                    {
+                        string[] tokens = e.ActionString.Split(' ');
+
+                        int key = Mod.Ja.GetObjectId("Festive Big Key (" + tokens[1] + ")");
+                        if (Utility.IsNormalObjectAtParentSheetIndex(farmer.ActiveObject, key))
                         {
-                            string[] tokens = e.ActionString.Split(' ');
+                            farmer.removeFirstOfThisItemFromInventory(key);
 
-                            int key = Mod.Ja.GetObjectId("Festive Big Key (" + tokens[1] + ")");
-                            if (farmer.ActiveObject?.ParentSheetIndex == key)
+                            location.removeTile(e.Position.X, e.Position.Y - 1, "Front");
+                            location.removeTile(e.Position.X, e.Position.Y, "Buildings");
+
+                            Game1.playSound("secret1");
+
+                            if (++Mod.BossKeysUsed >= 2)
                             {
-                                farmer.removeFirstOfThisItemFromInventory(key);
-
-                                location.removeTile(e.Position.X, e.Position.Y - 1, "Front");
-                                location.removeTile(e.Position.X, e.Position.Y, "Buildings");
-
-                                Game1.playSound("secret1");
-
-                                if (++Mod.BossKeysUsed >= 2)
+                                var buildings = location.Map.GetLayer("Buildings");
+                                int bx = 9, by = 4;
+                                for (int i = 0; i < 4; ++i)
                                 {
-                                    var buildings = location.Map.GetLayer("Buildings");
-                                    int bx = 9, by = 4;
-                                    for (int i = 0; i < 4; ++i)
-                                    {
-                                        int ix = i % 2, iy = i / 2;
-                                        int x = bx + ix, y = by + iy;
-                                        buildings.Tiles[x, y].TileIndex += 2;
+                                    int ix = i % 2, iy = i / 2;
+                                    int x = bx + ix, y = by + iy;
+                                    buildings.Tiles[x, y].TileIndex += 2;
 
-                                        string prop = location.doesTileHaveProperty(x, y, "UnlockAction", "Buildings");
-                                        if (!string.IsNullOrEmpty(prop))
-                                        {
-                                            location.setTileProperty(x, y, "Buildings", "Action", prop);
-                                        }
+                                    string prop = location.doesTileHaveProperty(x, y, "UnlockAction", "Buildings");
+                                    if (!string.IsNullOrEmpty(prop))
+                                    {
+                                        location.setTileProperty(x, y, "Buildings", "Action", prop);
                                     }
                                 }
                             }
                         }
-                        break;
+                    }
+                    break;
 
                     case "Movable":
+                    {
+                        int dir = farmer.FacingDirection;
+                        int ox = 0, oy = 0;
+                        switch (dir)
                         {
-                            int dir = farmer.FacingDirection;
-                            int ox = 0, oy = 0;
-                            switch (dir)
-                            {
-                                case 2: oy = 1; break;
-                                case 0: oy = -1; break;
-                                case 3: ox = -1; break;
-                                case 1: ox = 1; break;
-                            }
+                            case 2: oy = 1; break;
+                            case 0: oy = -1; break;
+                            case 3: ox = -1; break;
+                            case 1: ox = 1; break;
+                        }
 
-                            int[] validPuzzleTiles = new[]
-                            {
+                        int[] validPuzzleTiles = new[]
+                        {
                                 240, 241, 242, 243,
                                 256, 257, 258, 259, 260,
                                 272, 273, 274, 275, 276
                             };
-                            int target = 243;
+                        int target = 243;
 
-                            int tx = e.Position.X, ty = e.Position.Y;
-                            while (true)
+                        int tx = e.Position.X, ty = e.Position.Y;
+                        while (true)
+                        {
+                            tx += ox;
+                            ty += oy;
+                            if (!validPuzzleTiles.Contains(location.getTileIndexAt(tx, ty, "Back")) || location.doesTileHaveProperty(tx, ty, "Action", "Buildings") == "Movable")
                             {
-                                tx += ox;
-                                ty += oy;
-                                if (!validPuzzleTiles.Contains(location.getTileIndexAt(tx, ty, "Back")) || location.doesTileHaveProperty(tx, ty, "Action", "Buildings") == "Movable")
-                                {
-                                    tx -= ox;
-                                    ty -= oy;
-                                    break;
-                                }
+                                tx -= ox;
+                                ty -= oy;
+                                break;
                             }
+                        }
 
-                            int curIndex = location.getTileIndexAt(e.Position.X, e.Position.Y, "Buildings");
-                            location.removeTile(e.Position.X, e.Position.Y, "Buildings");
-                            var buildings = location.Map.GetLayer("Buildings");
-                            buildings.Tiles[tx, ty] = new StaticTile(buildings, location.Map.TileSheets[0], BlendMode.Additive, curIndex);
-                            location.setTileProperty(tx, ty, "Buildings", "Action", "Movable");
-                            Game1.playSound("throw");
+                        int curIndex = location.getTileIndexAt(e.Position.X, e.Position.Y, "Buildings");
+                        location.removeTile(e.Position.X, e.Position.Y, "Buildings");
+                        var buildings = location.Map.GetLayer("Buildings");
+                        buildings.Tiles[tx, ty] = new StaticTile(buildings, location.Map.TileSheets[0], BlendMode.Additive, curIndex);
+                        location.setTileProperty(tx, ty, "Buildings", "Action", "Movable");
+                        Game1.playSound("throw");
 
-                            if (location.getTileIndexAt(tx, ty, "Back") == target)
+                        if (location.getTileIndexAt(tx, ty, "Back") == target)
+                        {
+                            var back = location.Map.GetLayer("Back");
+                            back.Tiles[tx, ty] = new StaticTile(back, location.Map.TileSheets[0], BlendMode.Additive, 257);
+                            var pos = new Vector2(14, 13);
+                            var chest = new Chest(0, new List<Item>(new Item[] { new SObject(Mod.Ja.GetObjectId("Festive Big Key (B)"), 1) }), pos);
+                            location.overlayObjects[pos] = chest;
+                            Game1.playSound("secret1");
+
+                            for (int ix = 0; ix < back.LayerWidth; ++ix)
                             {
-                                var back = location.Map.GetLayer("Back");
-                                back.Tiles[tx, ty] = new StaticTile(back, location.Map.TileSheets[0], BlendMode.Additive, 257);
-                                var pos = new Vector2(14, 13);
-                                var chest = new Chest(0, new List<Item>(new Item[] { new SObject(Mod.Ja.GetObjectId("Festive Big Key (B)"), 1) }), pos);
-                                location.overlayObjects[pos] = chest;
-                                Game1.playSound("secret1");
-
-                                for (int ix = 0; ix < back.LayerWidth; ++ix)
+                                for (int iy = 0; iy < back.LayerHeight; ++iy)
                                 {
-                                    for (int iy = 0; iy < back.LayerHeight; ++iy)
-                                    {
-                                        if (location.doesTileHaveProperty(ix, iy, "Action", "Buildings") == "Movable")
-                                            location.removeTile(ix, iy, "Buildings");
-                                    }
+                                    if (location.doesTileHaveProperty(ix, iy, "Action", "Buildings") == "Movable")
+                                        location.removeTile(ix, iy, "Buildings");
                                 }
                             }
                         }
-                        break;
+                    }
+                    break;
                 }
             }
         }
@@ -1002,21 +1025,21 @@ namespace TheftOfTheWinterStar
                 switch (action)
                 {
                     case "Buildings":
-                        {
-                            int index = int.Parse(arguments);
-                            var buildings = location.Map.GetLayer("Buildings");
-                            var existingTile = buildings.Tiles[(int)tile.X, (int)tile.Y];
-                            buildings.Tiles[(int)tile.X, (int)tile.Y] = (index == -1) ? null : new StaticTile(buildings, existingTile.TileSheet, BlendMode.Additive, index);
-                        }
-                        break;
+                    {
+                        int index = int.Parse(arguments);
+                        var buildings = location.Map.GetLayer("Buildings");
+                        var existingTile = buildings.Tiles[(int)tile.X, (int)tile.Y];
+                        buildings.Tiles[(int)tile.X, (int)tile.Y] = (index == -1) ? null : new StaticTile(buildings, existingTile.TileSheet, BlendMode.Additive, index);
+                    }
+                    break;
 
                     case "Warp":
-                        {
-                            string[] tokens = arguments.Split(',');
-                            var warp = new Warp((int)tile.X, (int)tile.Y, tokens[2], int.Parse(tokens[0]), int.Parse(tokens[1]), false);
-                            location.warps.Add(warp);
-                        }
-                        break;
+                    {
+                        string[] tokens = arguments.Split(',');
+                        var warp = new Warp((int)tile.X, (int)tile.Y, tokens[2], int.Parse(tokens[0]), int.Parse(tokens[1]), false);
+                        location.warps.Add(warp);
+                    }
+                    break;
                 }
             }
 
