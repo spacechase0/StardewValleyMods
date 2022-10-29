@@ -26,7 +26,23 @@ namespace SpaceShared.UI
         /*********
         ** Accessors
         *********/
-        public Element RenderLast { get; set; }
+        private Element renderLast = null;
+        public Element RenderLast
+        {
+            get => renderLast;
+            set {
+                renderLast = value;
+                if (this.Parent is not null) {
+                    if (value is null) {
+                        if (this.Parent.RenderLast == this) {
+                            this.Parent.RenderLast = null;
+                        }
+                    } else {
+                        this.Parent.RenderLast = this;
+                    }
+                }
+            }
+        }
 
         public Element[] Children => this.ChildrenImpl.ToArray();
 
