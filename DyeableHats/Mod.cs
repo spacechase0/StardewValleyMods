@@ -1,16 +1,21 @@
-using System;
 using System.Collections.Generic;
+
 using HarmonyLib;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using SpaceShared;
+
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
+
 using StardewValley;
 using StardewValley.Objects;
 
 namespace DyeableHats
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader
+    public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
 
@@ -20,6 +25,12 @@ namespace DyeableHats
             Log.Monitor = Monitor;
 
             helper.ConsoleCommands.Add("hat_dye", "hat_dye <color>", OnCommand);
+
+            helper.Events.Content.AssetRequested += (_, e) =>
+            {
+                if (e.NameWithoutLocale.IsEquivalentTo(this.ModManifest.UniqueID))
+                    e.LoadFrom(() => new Dictionary<string, string>(), AssetLoadPriority.Exclusive);
+            };
 
             var harmony = new Harmony(ModManifest.UniqueID);
             harmony.PatchAll();
@@ -46,22 +57,12 @@ namespace DyeableHats
             }
         }
 
-        public bool CanLoad<T>(IAssetInfo asset)
-        {
-            return asset.AssetNameEquals(ModManifest.UniqueID);
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            return (T) (object) new Dictionary<string, string>();
-        }
-
         internal static bool GetDataForHat(Hat hat, out Color col, out Texture2D tex)
         {
             if (!hat.modData.ContainsKey("color"))
             {
-                col = default(Color);
-                tex = default(Texture2D);
+                col = default;
+                tex = default;
                 return false;
             }
 
@@ -73,8 +74,8 @@ namespace DyeableHats
                 texPath = hats[hat.Name];
             if (texPath == null)
             {
-                col = default(Color);
-                tex = default(Texture2D);
+                col = default;
+                tex = default;
                 return false;
             }
 
@@ -82,7 +83,7 @@ namespace DyeableHats
             if (tex == Game1.staminaRect)
             {
                 Log.Monitor.LogOnce("Hat " + hat.Name + " has invalid color texture path! " + texPath, LogLevel.Error);
-                col = default(Color);
+                col = default;
                 return false;
             }
 
@@ -108,7 +109,7 @@ namespace DyeableHats
 
                 var hsr = ___hatSourceRect;
                 hsr.X = 0;
-                hsr.Y = hsr.Y % 80;
+                hsr.Y %= 80;
 
                 // Vanilla code
                 bool flip = who.FarmerSprite.CurrentAnimationFrame.flip;
@@ -136,7 +137,7 @@ namespace DyeableHats
     public static class HatDrawColorInMenuPatch
     {
         public static void Postfix(Hat __instance,
-                                   SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow)
+                                   SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth)
         {
             if (!Mod.GetDataForHat(__instance, out Color col, out Texture2D tex))
                 return;
