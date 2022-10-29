@@ -1,0 +1,15 @@
+﻿{
+    "main.configure.first": "Налаштувати перше радіальне меню",
+    "main.configure.second": "Налаштувати друге радіальне меню",
+    "title.configure.first": "Перше радіальне меню",
+    "title.configure.second": "Друге радіальне меню",
+    "configure.radial.trigger": "Запуск радіального меню",
+    "configure.radial.trigger.tooltip": "Клавіша для виклику радіального меню. Відпускання клавіші призведе до закриття меню та виконання обраної комбінації клавіш (якщо така є).",
+    "configure.radial.tip": "Записи починаються праворуч і йдуть проти годинникової стрілки.",
+    "configure.radial.entry": "Клавіша {{num}} сегмента",
+    "configure.radial.entry.tooltip": "Клавіша, яку слід використовувати для цього сегмента",
+    "configure.radial.entry.duration": "Тривалість натискання {{num}} сегмента",
+    "configure.radial.entry.duration.tooltip": "Скільки часу потрібно \"натискати\" на сполучення клавіш, перш ніж відпустити",
+    "instant": "Миттєво",
+    "seconds": "{{num}} сек."
+}

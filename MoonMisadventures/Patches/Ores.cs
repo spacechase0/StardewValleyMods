@@ -19,7 +19,7 @@ namespace MoonMisadventures.Patches
                 if ( who.IsLocalPlayer && __instance.GetTallyOfObject( who, 382, false ) > 0 && __instance.heldObject.Value == null && dropInItem is IDGAItem ditem && ditem.FullId == ItemIds.MythiciteOre && dropInItem.Stack >= 5 )
                 {
                     __instance.heldObject.Value = ( StardewValley.Object ) Mod.dga.SpawnDGAItem(ItemIds.MythiciteBar);
-                    __instance.minutesUntilReady.Value = 720;
+                    __instance.MinutesUntilReady = 720;
 
                     if (probe)
                     {
@@ -28,7 +28,7 @@ namespace MoonMisadventures.Patches
                     else
                     {
                         who.currentLocation.playSound("furnace");
-                        __instance.initializeLightSource(__instance.tileLocation);
+                        __instance.initializeLightSource(__instance.TileLocation);
                         __instance.showNextIndex.Value = true;
                         // TODO: Don't be lazy and actually do this when Game1.multiplayer is public
                         /*Game1.multiplayer.broadcastSprites(who.currentLocation, new TemporaryAnimatedSprite(30, this.tileLocation.Value * 64f + new Vector2(0f, -16f), Color.White, 4, flipped: false, 50f, 10, 64, (this.tileLocation.Y + 1f) * 64f / 10000f + 0.0001f)

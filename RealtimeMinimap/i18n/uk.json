@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // top section
+    "config.show-by-default.name": "Показати за замовчуванням",
+    "config.show-by-default.tooltip": "Чи показувати мінімапу за замовчуванням.\nВи повинні перезапустити гру, щоб це вступило в силу.",
+    "config.toggle-key.name": "Клавіша перемикання",
+    "config.toggle-key.tooltip": "Клавіша, яка показує або приховує мінімапу.",
+    "config.update-interval.name": "Інтервал оновлення",
+    "config.update-interval.tooltip": "Інтервал у мілісекундах між кожним оновленням мінімапи. 0 - кожен кадр; -1 буде робити це тільки при вході в нову місцевість. (Маркери оновлюються у кожному кадрі незалежно від цього).",
+
+    // Positioning & Size section
+    "config.positioning-and-size.text": "Розміщення та розмір",
+    "config.positioning-and-size.tooltip": "Параметри, що стосуються розміщення мінімапи.",
+    "config.anchor-x.name": "X координата закріплення мінімапи",
+    "config.anchor-x.tooltip": "Відсоток ширини екрану, на якому буде розміщено лівий верхній кут мінімапи.",
+    "config.anchor-y.name": "Y координата закріплення мінімапи",
+    "config.anchor-y.tooltip": "Відсоток висоти екрану, на якому буде розміщено лівий верхній кут мінімапи.",
+    "config.offset-x.name": "Зміщення мінімапи по X",
+    "config.offset-x.tooltip": "Зміщення по X від закріплення, на якому буде розміщена мінімапа.",
+    "config.offset-y.name": "Зміщення мінімапи по Y",
+    "config.offset-y.tooltip": "Зміщення по Y від закріплення, на якому буде розміщена мінімапа.",
+    "config.size.name": "Розмір мінімапи",
+    "config.size.tooltip": "Розмір мінімапи, в пікселях (до масштабу інтерфейсу).",
+
+    // Markers section
+    "config.markers.text": "Маркери",
+    "config.markers.tooltip": "Опції, що стосуються відображення маркерів на мапі.",
+    "config.player-marker-scale.name": "Голови гравців",
+    "config.player-marker-scale.tooltip": "Масштаб відображення для голови гравця. Якщо 0 - він вимкнений.",
+    "config.npc-marker-scale.name": "Голови НІПів",
+    "config.npc-marker-scale.tooltip": "Масштаб відображення для голови НІПа. Якщо 0 - він вимкнений.",
+    "config.wood-sign-marker-scale.name": "Дерев'яні знаки",
+    "config.wood-sign-marker-scale.tooltip": "Масштаб відображення для предметів, розміщених на дерев'яних знаках. Якщо 0 - він вимкнений.",
+    "config.stone-sign-marker-scale.name": "Кам'яні знаки",
+    "config.stone-sign-marker-scale.tooltip": "Масштаб відображення для предметів, розміщених на кам'яних знаках. Якщо 0 - він вимкнений.",
+    "config.dark-sign-marker-scale.name": "Темні знаки",
+    "config.dark-sign-marker-scale.tooltip": "Масштаб відображення для предметів, розміщених на темних знаках. Якщо 0 - він вимкнений."
+}

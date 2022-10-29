@@ -12,10 +12,10 @@ namespace MoonMisadventures.Game.Locations
         private readonly string ufoTexPath;
 
         public MoonLandingArea() { }
-        public MoonLandingArea( IContentHelper content )
+        public MoonLandingArea( IModContentHelper content )
         :   base( content, "MoonLandingArea", "MoonLandingArea" )
         {
-            ufoTexPath = content.GetActualAssetKey( "assets/ufo-big.png" );
+            ufoTexPath = content.GetInternalAssetName("assets/ufo-big.png").BaseName;
         }
 
         protected override void resetLocalState()

@@ -102,7 +102,6 @@ namespace JsonAssets
                 new ForgeMenuPatcher(),
                 new Game1Patcher(),
                 new GiantCropPatcher(),
-                new HoeDirtPatcher(),
                 new ItemPatcher(),
                 new ObjectPatcher(),
                 new RingPatcher(),
@@ -1368,6 +1367,10 @@ namespace JsonAssets
                     Log.Trace("Fixing IDs");
                     this.FixIdsEverywhere();
                 }
+
+                sfapi = this.Helper.ModRegistry.GetApi<ISolidFoundationsAPI>("PeacefulEnd.SolidFoundations");
+                if (sfapi is not null)
+                    sfapi.AfterBuildingRestoration += this.FixSFBuildings;
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
             {
@@ -1631,7 +1634,31 @@ namespace JsonAssets
             foreach (var fruitTree in this.FruitTrees)
             {
                 fruitTree.ProductId = ItemResolver.GetObjectID(fruitTree.Product);
+                FruitTreeData.SaplingIds.Add(fruitTree.GetSaplingId());
             }
+
+            if (this.MyRings.Count > 0)
+            {
+                Log.Trace("Indexing rings");
+                ObjectData.TrackedRings.Clear();
+                foreach (var ring in this.MyRings)
+                    ObjectData.TrackedRings.Add(ring.GetObjectId());
+
+                this.Helper.Events.Player.InventoryChanged -= this.OnInventoryChanged;
+                this.Helper.Events.Player.InventoryChanged += this.OnInventoryChanged;
+            }
+
+            // the game rewrites the display names of anything with honey in the name.
+            BigCraftableData.HasHoneyInName.Clear();
+            ObjectData.HasHoneyInName.Clear();
+
+            foreach (var obj in this.Objects)
+                if (obj.Name.Contains("Honey"))
+                    ObjectData.HasHoneyInName.Add(obj.GetObjectId());
+
+            foreach (var big in this.BigCraftables)
+                if (big.Name.Contains("Honey"))
+                    BigCraftableData.HasHoneyInName.Add(big.GetCraftableId());
 
             this.Api.InvokeIdsAssigned();
 
@@ -1685,14 +1712,10 @@ namespace JsonAssets
             if (!e.IsLocalPlayer)
                 return;
 
-            IList<int> ringIds = new List<int>();
-            foreach (var ring in this.MyRings)
-                ringIds.Add(ring.Id);
-
             for (int i = 0; i < Game1.player.Items.Count; ++i)
             {
                 var item = Game1.player.Items[i];
-                if (item is SObject obj && ringIds.Contains(obj.ParentSheetIndex))
+                if (item is SObject obj && ObjectData.TrackedRings.Contains(obj.ParentSheetIndex))
                 {
                     Log.Trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
                     Game1.player.Items[i] = new Ring(obj.ParentSheetIndex);
@@ -1790,7 +1813,8 @@ namespace JsonAssets
         /// <summary>The vanilla clothing IDs.</summary>
         internal ISet<int> VanillaClothingIds;
 
-
+        /// <summary>The vanilla boot IDs.</summary>
+        internal ISet<int> VanillaBootIds;
 
         /// <summary>Populate an item's localization fields based on the <see cref="ITranslatableItem.TranslationKey"/> property, if defined.</summary>
         /// <param name="item">The item for which to populate translations.</param>
@@ -1849,9 +1873,13 @@ namespace JsonAssets
         {
             data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.InvariantCulture));
 
-            Dictionary<string, int> ids = new Dictionary<string, int>();
+            Log.Trace($"Assiging {type} ids starting at {starting}: {data.Count} items");
 
-            int[] bigSkip = new[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812 };
+            Dictionary<string, int> ids = new();
+
+            // some places the game doesn't distinguish between normal SObjects and big craftables and just checks by ID. We'll skip these numbers because they may cause problems
+            // ie, the preserves jar at least used to accept 812 as roe.
+            int[] bigSkip = type == "big-craftables" ? new[] { 309, 310, 311, 326, 340, 434, 447, 459, 599, 621, 628, 629, 630, 631, 632, 633, 645, 812, 872, 928 } : Array.Empty<int>();
 
             int currId = starting;
             foreach (var d in data)
@@ -1868,7 +1896,7 @@ namespace JsonAssets
                 {
                     Log.Verbose($"New ID: {d.Name} = {currId}");
                     int id = currId++;
-                    if (type == "big-craftables")
+                    if (bigSkip.Length != 0)
                     {
                         while (bigSkip.Contains(id))
                         {
@@ -1878,7 +1906,7 @@ namespace JsonAssets
 
                     ids.Add(d.Name, id);
                     if (type == "objects" && d is ObjectData { IsColored: true })
-                        ++currId;
+                        currId++;
                     else if (type == "big-craftables" && ((BigCraftableData)d).ReserveExtraIndexCount > 0)
                         currId += ((BigCraftableData)d).ReserveExtraIndexCount;
                     d.Id = ids[d.Name];
@@ -2018,7 +2046,11 @@ namespace JsonAssets
 
         private static readonly MatchEvaluator ItemEvaluator = new(AdjustContextTagOrStandardDescription);
 
+        // this ID marks SF buildings.
+        private const string SFID = "SolidFoundations.GenericBuilding.Id";
+
         private bool ReverseFixing;
+        private ISolidFoundationsAPI sfapi;
         private readonly HashSet<string> LocationsFixedAlready = new();
         private void FixIdsEverywhere(bool reverse = false)
         {
@@ -2680,6 +2712,27 @@ namespace JsonAssets
                     hut.output.Value.clearNulls();
                     break;
             }
+
+            if (building.modData.ContainsKey(SFID))
+            {
+                var chests = this.Helper.Reflection.GetField<NetList<Chest, NetRef<Chest>>>(building, "buildingChests", required: false)?.GetValue();
+                if (chests?.Count > 0)
+                {
+                    Log.Trace($"Fixing SF building's chests: {chests.Count} chests.");
+                    try
+                    {
+                        foreach (var chest in chests)
+                        {
+                            this.FixItemList(chest.items);
+                            this.RemoveNulls(chest.items);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error($"Error while deshuffling {building.modData[SFID]}:\n\n{ex}");
+                    }
+                }
+            }
         }
 
         /// <summary>Fix item IDs contained by a crop, including the crop itself.</summary>
@@ -3091,6 +3144,59 @@ namespace JsonAssets
                     }
                 }
                 else return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets all the buildings.
+        /// </summary>
+        /// <returns>IEnumerable of all buildings.</returns>
+        public static IEnumerable<Building> GetBuildings()
+        {
+            foreach (GameLocation? loc in Game1.locations)
+            {
+                if (loc is BuildableGameLocation buildable)
+                {
+                    foreach (Building? building in GetBuildings(buildable))
+                    {
+                        yield return building;
+                    }
+                }
+            }
+        }
+
+        private static IEnumerable<Building> GetBuildings(BuildableGameLocation loc)
+        {
+            foreach (Building building in loc.buildings)
+            {
+                yield return building;
+                if (building.indoors?.Value is BuildableGameLocation buildable)
+                {
+                    foreach (Building interiorBuilding in GetBuildings(buildable))
+                    {
+                        yield return interiorBuilding;
+                    }
+                }
+            }
+        }
+
+        private void FixSFBuildings(object sender, EventArgs e)
+        {
+            this.sfapi.AfterBuildingRestoration -= this.FixSFBuildings;
+
+            try
+            {
+                foreach (var building in GetBuildings())
+                {
+                    if (building.modData.ContainsKey(SFID))
+                    {
+                        this.FixBuilding(building);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed while trying to deshuffle SF buildings {ex}");
             }
         }
     }

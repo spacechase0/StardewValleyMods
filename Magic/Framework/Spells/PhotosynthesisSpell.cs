@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Magic.Framework.Schools;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
@@ -35,8 +37,46 @@ namespace Magic.Framework.Spells
             List<GameLocation> locs = new List<GameLocation>
             {
                 Game1.getLocationFromName("Farm"),
-                Game1.getLocationFromName("Greenhouse")
+                Game1.getLocationFromName("Greenhouse"),
+                Game1.getLocationFromName("IslandWest")
             };
+
+            List<GameLocation> mod_compat_locs = new List<GameLocation>
+            {
+                // Ridgeside Village:
+                Game1.getLocationFromName("Custom_Ridgeside_RSVGreenhouse1"),
+                Game1.getLocationFromName("Custom_Ridgeside_RSVGreenhouse2"),
+                Game1.getLocationFromName("Custom_Ridgeside_AguarCaveTemporary"),
+                Game1.getLocationFromName("Custom_Ridgeside_SummitFarm"),
+                // SVE:
+                Game1.getLocationFromName("Custom_GrandpasShedGreenhouse"),
+                Game1.getLocationFromName("Custom_GrampletonFields")
+            };
+            foreach (GameLocation loc in mod_compat_locs)
+            {
+                if (loc != null)
+                {
+                    locs.Add(loc);
+                }
+            }
+
+
+            foreach (GameLocation location in Game1.locations
+                .Concat(
+                    from location in Game1.locations.OfType<BuildableGameLocation>()
+                    from building in location.buildings
+                    where building.indoors.Value != null
+                    select building.indoors.Value
+                ))
+            {
+                if (location.IsGreenhouse || location.IsFarm)
+                {
+                    if (!locs.Contains(location))
+                    {
+                        locs.Add(location);
+                    }
+                }
+            }
             // TODO: API for other places to grow
             // TODO: Garden pots
             // Such as the SDM farms

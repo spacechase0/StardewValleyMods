@@ -32,6 +32,9 @@ namespace JsonAssets.Data
 
         [JsonIgnore]
         internal int ProductId { get; set; } = -1;
+        
+        [JsonIgnore]
+        internal static HashSet<int> SaplingIds { get; } = new();
 
         /*********
         ** Public methods

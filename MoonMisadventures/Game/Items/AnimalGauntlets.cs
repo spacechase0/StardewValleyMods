@@ -102,8 +102,8 @@ namespace MoonMisadventures.Game.Items
                 var other = new LunarAnimal( lanimal.lunarType.Value, Vector2.Zero, mp.getNewID() );
                 other.age.Value = lanimal.age.Value;
                 other.currentProduce.Value = lanimal.age.Value;
-                other.happiness.Value = lanimal.happiness;
-                other.fullness.Value = lanimal.fullness;
+                other.happiness.Value = lanimal.happiness.Value;
+                other.fullness.Value = lanimal.fullness.Value;
                 other.wasPet.Value = lanimal.wasPet.Value;
                 ret.holding.Value = other;
             }

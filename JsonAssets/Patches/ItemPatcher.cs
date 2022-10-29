@@ -1,13 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+
 using HarmonyLib;
-using JsonAssets.Data;
+
 using Spacechase.Shared.Patching;
+
 using SpaceShared;
+
 using StardewModdingAPI;
+
 using StardewValley;
 using StardewValley.Tools;
+
 using SObject = StardewValley.Object;
 
 namespace JsonAssets.Patches
@@ -42,14 +47,11 @@ namespace JsonAssets.Patches
         {
             try
             {
-                if (__instance is SObject obj)
+                if (__instance is SObject obj && __result && !obj.bigCraftable.Value)
                 {
-                    if (!obj.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(obj.ParentSheetIndex))
-                    {
-                        var objData = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
-                        if (objData?.CanTrash == false)
-                            __result = false;
-                    }
+                    var objData = Mod.instance.Objects.FirstOrDefault(od => od.GetObjectId() == obj.ParentSheetIndex);
+                    if (objData?.CanTrash == false)
+                        __result = false;
                 }
             }
             catch (Exception ex)
@@ -61,25 +63,25 @@ namespace JsonAssets.Patches
         /// <summary>The method to call after <see cref="Item.canBeTrashed"/>.</summary>
         private static void After_CanBeTrashed(Item __instance, ref bool __result)
         {
+            if (!__result)
+                return;
+
             try
             {
                 if (__instance is SObject obj)
                 {
                     if (!obj.bigCraftable.Value && Mod.instance.ObjectIds.Values.Contains(obj.ParentSheetIndex))
                     {
-                        var objData = new List<ObjectData>(Mod.instance.Objects).Find(od => od.GetObjectId() == obj.ParentSheetIndex);
+                        var objData = Mod.instance.Objects.FirstOrDefault(od => od.GetObjectId() == obj.ParentSheetIndex);
                         if (objData?.CanTrash == false)
                             __result = false;
                     }
                 }
                 else if (__instance is MeleeWeapon weapon)
                 {
-                    if (Mod.instance.WeaponIds.Values.Contains(weapon.ParentSheetIndex))
-                    {
-                        var weaponData = new List<WeaponData>(Mod.instance.Weapons).Find(wd => wd.GetWeaponId() == weapon.ParentSheetIndex);
-                        if (weaponData?.CanTrash == false)
-                            __result = false;
-                    }
+                    var weaponData = Mod.instance.Weapons.FirstOrDefault(wd => wd.GetWeaponId() == weapon.ParentSheetIndex);
+                    if (weaponData?.CanTrash == false)
+                        __result = false;
                 }
             }
             catch (Exception ex)
