@@ -1,6 +1,10 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+
+## 1.0.2
+* Updated for SMAPI 3.14.0
+
 ## 1.0.1
 Released 06 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 

@@ -5,6 +5,7 @@
     "Description": "...",
     "UniqueID": "spacechase0.MonstersTheFramework",
     "EntryDll": "MonstersTheFramework.dll",
+    "MinimumApiVersion": "3.17.0",
     "Dependencies": [
         {
             "UniqueID": "spacechase0.SpaceCore"

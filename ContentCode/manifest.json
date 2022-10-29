@@ -2,7 +2,7 @@
     "Name": "Content Code",
     "Author": "spacechase0",
     "Version": "1.0.1",
-    "MinimumApiVersion": "3.13.0",
+    "MinimumApiVersion": "3.17.0",
     "Description": "Run C# code in Content Patcher packs.",
     "UniqueID": "spacechase0.ContentCode",
     "EntryDll": "ContentCode.dll",

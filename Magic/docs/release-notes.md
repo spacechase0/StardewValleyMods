@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+
+## 0.8.2
+* Updated for SMAPI 3.14.0
+* Photosynthesis now handles crops off the farm.
+
 ## 0.8.1
 Released 12 January 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
