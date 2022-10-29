@@ -1,0 +1,44 @@
+﻿{
+    /*********
+    ** Ring items
+    *********/
+    "quality-ring.name": "Перстень суперякості",
+    "quality-ring.description": "Дає шанс на більш якісні врожаї культур.",
+
+    "refreshing-ring.name": "Відсвіжний перстень",
+    "refreshing-ring.description": "Цікаво, що він робить.",
+
+    "ring-of-regeneration.name": "Перстень відновення",
+    "ring-of-regeneration.description": "Повільно лікує з часом.",
+
+    "ring-of-diamond-booze.name": "Перстень діамантового питва",
+    "ring-of-diamond-booze.description": "Нівелює п'янкий ефект від легкого алкоголю.",
+
+    "ring-of-wide-nets.name": "Кільце широких тенет",
+    "ring-of-wide-nets.description": "Збільшує розмір рибальської сітки на 50%.",
+
+    "ring-of-far-reaching.name": "Перстень далекосяжності",
+    "ring-of-far-reaching.description": "Використовуйте інструмент на відстані.",
+
+    "ring-of-true-sight.name": "Перстень істинного бачення",
+    "ring-of-true-sight.description": "Бачте більше, ніж можете побачити.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.quality-ring-chance.name": "Перстень суперякості: шанс",
+    "config.quality-ring-chance.description": "Відсоткова ймовірність вищої якості врожаю за одягненого персня суперякості.",
+
+    "config.ring-of-wide-nets-multiplier.name": "Перстень широких сіток: множник",
+    "config.ring-of-wide-nets-multiplier.description": "Множник, що застосовується до розміру рибальської сітки, якщо на вас є перстень широких сіток.",
+
+    "config.ring-of-regeneration-rate.name": "Перстень відновення: відновення",
+    "config.ring-of-regeneration-rate.description": "Швидкість відновення здоров'я в секунду з одягненим перснем відновення.",
+
+    "config.refreshing-ring-rate.name": "Відсвіжний перстень: відсвіження",
+    "config.refreshing-ring-rate.description": "Швидкість відновення витривалості в секунду з одягненим відсвіжним перснем.",
+
+    "config.ring-of-far-reaching-distance.name": "Перстень далекосяжності: відстань",
+    "config.ring-of-far-reaching-distance.description": "Відстань у клітинках, на якій можна використовувати інструменти, якщо на вас одягнений перстень далекосяжності."
+}

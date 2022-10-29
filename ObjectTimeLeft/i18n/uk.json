@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.show-on-start.name": "Показувати при запуску",
+    "config.show-on-start.tooltip": "Чи варто запускати гру, коли час, що залишився, вже показується.",
+
+    "config.toggle-key.name": "Клавіша: перемикання дисплея",
+    "config.toggle-key.tooltip": "Клавіша для перемикання відображення на об'єктах.",
+
+    "config.text-scale.name": "Масштабування тексту",
+    "config.text-scale.tooltip": "Масштаб тексту для накладання на об'єкти."
+}
