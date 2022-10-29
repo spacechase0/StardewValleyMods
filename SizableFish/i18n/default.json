@@ -1,0 +1,5 @@
+﻿{
+    // Generic Mod Config Menu UI
+    "config.randomize-unstored.name": "Randomize size of fish without a stored size",
+    "config.randomize-unstored.description": "Randomize the size of fish that don't have a stored size (shown in tooltip, need a special tackle for this).\nIf false, the fish will be the median size possible."
+}
