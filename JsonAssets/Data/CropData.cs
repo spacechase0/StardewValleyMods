@@ -21,7 +21,7 @@ namespace JsonAssets.Data
         ** Accessors
         *********/
         [JsonIgnore]
-        public Texture2D GiantTexture { get; set; }
+        public Lazy<Texture2D>? GiantTexture { get; set; } = null;
 
         public object Product { get; set; }
         public string SeedName { get; set; }
@@ -82,7 +82,7 @@ namespace JsonAssets.Data
                 str += season + " ";
             }
             str = str.Substring(0, str.Length - 1) + "/";
-            str += $"{this.GetCropSpriteIndex()}/{Mod.instance.ResolveObjectId(this.Product)}/{this.RegrowthPhase}/";
+            str += $"{this.GetCropSpriteIndex()}/{this.ProductId}/{this.RegrowthPhase}/";
             str += (this.HarvestWithScythe ? "1" : "0") + "/";
             if (this.Bonus != null)
                 str += $"true {this.Bonus.MinimumPerHarvest} {this.Bonus.MaximumPerHarvest} {this.Bonus.MaxIncreasePerFarmLevel} {this.Bonus.ExtraChance}/";

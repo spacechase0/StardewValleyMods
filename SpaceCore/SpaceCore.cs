@@ -113,7 +113,6 @@ namespace SpaceCore
             SpaceEvents.ActionActivated += this.SpaceEvents_ActionActivated;
 
             Commands.Register();
-            Skills.Init(helper.Events);
             TileSheetExtensions.Init();
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
@@ -136,6 +135,7 @@ namespace SpaceCore
                 new SerializationPatcher(),
                 new SpriteBatchPatcher(),
                 new UtilityPatcher(),
+                new HoeDirtPatcher(),
 
                 // I've started organizing by purpose instead of class patched
                 new PortableCarpenterPatcher()
@@ -174,6 +174,9 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
+            // Set up skills in GameLaunched to allow ModRegistry to be used here.
+            Skills.Init(this.Helper.Events);
+
             var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
             if (configMenu != null)
             {

@@ -65,7 +65,7 @@ namespace SpaceCore
 
         public void RegisterSerializerType(Type type)
         {
-            if (!type.GetCustomAttribute<XmlTypeAttribute>().TypeName.StartsWith("Mods_"))
+            if (type.GetCustomAttribute<XmlTypeAttribute>()?.TypeName?.StartsWith("Mods_") != true)
             {
                 throw new ArgumentException("Custom types must have an [XmlType] attribute with the TypeName starting with \"Mods_\"");
             }

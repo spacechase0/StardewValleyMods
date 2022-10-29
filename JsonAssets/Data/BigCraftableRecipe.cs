@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
+using JsonAssets.Utilities;
+
 using StardewValley;
 
 namespace JsonAssets.Data
@@ -32,11 +35,15 @@ namespace JsonAssets.Data
             string str = "";
             foreach (var ingredient in this.Ingredients)
             {
-                int id = Mod.instance.ResolveObjectId(ingredient.Object);
+                int id = ItemResolver.GetObjectID(ingredient.Object);
                 if (id == 0)
                     continue;
                 str += id + " " + ingredient.Count + " ";
             }
+
+            if (str.Length == 0)
+                throw new InvalidDataException("No ingredients could be resolved.");
+
             str = str.Substring(0, str.Length - 1);
             str += $"/what is this for?/{parent.Id} {this.ResultCount}/true/";
             if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)

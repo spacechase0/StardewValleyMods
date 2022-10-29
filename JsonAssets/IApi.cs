@@ -54,5 +54,9 @@ namespace JsonAssets
 
         bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect);
         bool TryGetCustomSpriteSheet(object entity, out Texture2D texture, out Rectangle sourceRect);
+
+        bool TryGetGiantCropSprite(int productID, out Lazy<Texture2D> texture);
+
+        int[] GetGiantCropIndexes();
     }
 }

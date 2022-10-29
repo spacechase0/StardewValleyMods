@@ -32,7 +32,7 @@ namespace JsonAssets.Data
 
         [JsonIgnore]
         internal int ProductId { get; set; } = -1;
-
+        
         [JsonIgnore]
         internal static HashSet<int> SaplingIds { get; } = new();
 
@@ -51,7 +51,7 @@ namespace JsonAssets.Data
 
         internal string GetFruitTreeInformation()
         {
-            return $"{this.GetFruitTreeIndex()}/{this.Season}/{Mod.instance.ResolveObjectId(this.Product)}/what goes here?";
+            return $"{this.GetFruitTreeIndex()}/{this.Season}/{this.ProductId}/what goes here?";
         }
 
 

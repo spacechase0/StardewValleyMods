@@ -8,6 +8,9 @@ using StardewValley;
 
 namespace SpaceShared
 {
+
+#nullable enable
+
     internal static class Util
     {
         public static bool UsingMono => Type.GetType("Mono.Runtime") != null;
@@ -22,31 +25,42 @@ namespace SpaceShared
 
             // This is really bad. Pathos don't kill me.
             var modInfo = modRegistry.Get( packId );
-            if ( modInfo.GetType().GetProperty( "Mod" ).GetValue( modInfo ) is IMod mod )
-                return mod.Helper.Content.Load<Texture2D>( path );
-            else if ( modInfo.GetType().GetProperty( "ContentPack" ).GetValue( modInfo ) is IContentPack pack )
-                return pack.LoadAsset<Texture2D>( path );
+            if (modInfo is null)
+                return Game1.staminaRect;
+
+            if ( modInfo.GetType().GetProperty( "Mod" )?.GetValue( modInfo ) is IMod mod )
+                return mod.Helper.ModContent.Load<Texture2D>( path );
+            else if ( modInfo.GetType().GetProperty( "ContentPack" )?.GetValue( modInfo ) is IContentPack pack )
+                return pack.ModContent.Load<Texture2D>( path );
 
             return Game1.staminaRect;
         }
 
-        public static string FetchTexturePath( IModRegistry modRegistry, string modIdAndPath )
+        public static IAssetName? FetchTextureLocation(IModRegistry modRegistry, string modIdAndPath)
         {
-            if ( modIdAndPath == null || modIdAndPath.IndexOf( '/' ) == -1 )
+            if (modIdAndPath == null || modIdAndPath.IndexOf('/') == -1)
                 return null;
 
-            string packId = modIdAndPath.Substring( 0, modIdAndPath.IndexOf( '/' ) );
-            string path = modIdAndPath.Substring( modIdAndPath.IndexOf( '/' ) + 1 );
+            string packId = modIdAndPath.Substring(0, modIdAndPath.IndexOf('/'));
+            string path = modIdAndPath.Substring(modIdAndPath.IndexOf('/') + 1);
 
             // This is really bad. Pathos don't kill me.
-            var modInfo = modRegistry.Get( packId );
-            if ( modInfo.GetType().GetProperty( "Mod" ).GetValue( modInfo ) is IMod mod )
-                return mod.Helper.Content.GetActualAssetKey( path );
-            else if ( modInfo.GetType().GetProperty( "ContentPack" ).GetValue( modInfo ) is IContentPack pack )
-                return pack.GetActualAssetKey( path );
+            var modInfo = modRegistry.Get(packId);
+            if (modInfo is null)
+                return null;
+
+            if (modInfo.GetType().GetProperty("Mod")?.GetValue(modInfo) is IMod mod)
+                return mod.Helper.ModContent.GetInternalAssetName(path);
+            else if (modInfo.GetType().GetProperty("ContentPack")?.GetValue(modInfo) is IContentPack pack)
+                return pack.ModContent.GetInternalAssetName(path);
 
             return null;
         }
+
+        public static string? FetchTexturePath( IModRegistry modRegistry, string modIdAndPath )
+            => FetchTextureLocation(modRegistry, modIdAndPath)?.BaseName;
+
+#nullable restore
 
         public static Texture2D DoPaletteSwap(Texture2D baseTex, Texture2D from, Texture2D to)
         {

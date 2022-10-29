@@ -1,0 +1,8 @@
+﻿{
+    "object.Film.name": "Фільм",
+    "object.Film.description": "Для використання з відеокамерами.",
+    "object.Film.category": "Інструмент",
+
+    "furniture.TestPortrait.name": "Пробний портрет",
+    "furniture.TestPortrait.description": "Няв"
+}

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using HarmonyLib;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using SpaceCore.Events;
@@ -15,7 +14,7 @@ using StardewValley;
 
 namespace ContentCode
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader
+    public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
 
@@ -38,6 +37,8 @@ namespace ContentCode
             "TouchAction",
         };
 
+        private IAssetName[] SupportedAssetNames = null!;
+
         public override void Entry( IModHelper helper )
         {
             instance = this;
@@ -45,18 +46,19 @@ namespace ContentCode
 
             compileRefs = CompileReferences();
 
+            SupportedAssetNames = SupportedFiles.Select((file) => helper.GameContent.ParseAssetName($"spacechase0.ContentCode/{file}")).ToArray();
+
             string path = Path.Combine( Helper.DirectoryPath, "_generated" );
             if ( !Directory.Exists( path ) )
                 Directory.CreateDirectory( path );
 
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
+            helper.Events.Content.AssetsInvalidated += this.OnAssetInvalidated;
             Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
 
             Helper.Events.GameLoop.SaveLoaded += ( sender, args ) => Run( "SaveLoaded", new[] { args } );
             SpaceEvents.ActionActivated += ( sender, args ) => Run( "Action", new[] { args }, args.Action );
             SpaceEvents.TouchActionActivated += ( sender, args ) => Run( "TouchAction", new[] { args }, args.Action );
-
-            var harmony = new Harmony( ModManifest.UniqueID );
-            harmony.PatchAll();
 
             // These should be empty at this point, but when they get reloaded our compilation stuff will run
             foreach ( string file in SupportedFiles )
@@ -66,24 +68,25 @@ namespace ContentCode
             }
         }
 
-        public bool CanLoad<T>( IAssetInfo asset )
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            foreach ( string file in SupportedFiles )
+            if (e.NameWithoutLocale.IsDirectlyUnderPath("spacechase0.ContentCode"))
             {
-                if ( asset.AssetNameEquals( $"spacechase0.ContentCode/{file}" ) )
-                    return true;
+                string file = Path.GetFileName(e.NameWithoutLocale.BaseName);
+                if (SupportedFiles.Contains(file))
+                    e.LoadFrom(static () => new Dictionary<string, string>(), AssetLoadPriority.Exclusive);
             }
-            return false;
         }
 
-        public T Load<T>( IAssetInfo asset )
+        private void OnAssetInvalidated(object? sender, AssetsInvalidatedEventArgs e)
         {
-            foreach ( string file in SupportedFiles )
+            foreach (IAssetName file in SupportedAssetNames)
             {
-                if ( asset.AssetNameEquals( $"spacechase0.ContentCode/{file}" ) )
-                    return ( T ) ( object ) new Dictionary< string, string >();
+                if (e.NamesWithoutLocale.Contains(file))
+                {
+                    this.pendingUpdateFiles.Enqueue(file.BaseName);
+                }
             }
-            return default( T );
         }
 
         private void OnUpdateTicked( object sender, UpdateTickedEventArgs e )
@@ -246,22 +249,6 @@ namespace ContentCode
             }
 
             return ret;
-        }
-    }
-
-
-    [HarmonyPatch]
-    public static class SmapiWatchAssetsPatch
-    {
-        public static IEnumerable<MethodBase> TargetMethods()
-        {
-            yield return AccessTools.Method( "StardewModdingAPI.Framework.Content.ContentCache:Remove", new[] { typeof( string ), typeof( bool ) } );
-        }
-
-        public static void Postfix(string key)
-        {
-            if ( key.StartsWith( "spacechase0.ContentCode" ) )
-                Mod.instance.pendingUpdateFiles.Enqueue( key );
         }
     }
 }
