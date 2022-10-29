@@ -44,6 +44,7 @@ namespace ContentPatcherAnimations
         /// <summary>The current mod state.</summary>
         private ScreenState ScreenState => this.ScreenStateImpl.Value;
 
+        private WatchForUpdatesAssetEditor watcher = null!;
 
         /*********
         ** Public methods
@@ -58,7 +59,8 @@ namespace ContentPatcherAnimations
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             LocalizedContentManager.OnLanguageChange += this.OnLocaleChanged;
 
-            helper.Content.AssetEditors.Add(new WatchForUpdatesAssetEditor(() => this.ScreenState.AnimatedPatches));
+            watcher = new WatchForUpdatesAssetEditor(() => this.ScreenState.AnimatedPatches);
+            helper.Events.Content.AssetReady += this.Content_AssetReady;
 
             helper.ConsoleCommands.Add("cpa", "...", this.OnCommand);
 
@@ -74,6 +76,11 @@ namespace ContentPatcherAnimations
         /****
         ** Event handlers
         ****/
+        private void Content_AssetReady(object sender, AssetReadyEventArgs e)
+        {
+            watcher.Ready(e);
+        }
+
         /// <summary>Handle a command received through the SMAPI console.</summary>
         /// <param name="name">The root command name.</param>
         /// <param name="args">The command arguments.</param>
