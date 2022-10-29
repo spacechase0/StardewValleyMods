@@ -258,9 +258,9 @@ namespace DynamicGameAssets
 
                 void DoEnableDisable(ContentIndexPackData parent)
                 {
-                    bool shouldreject = false;
                     foreach (var data in cp.Value.enableIndex[parent])
                     {
+                        bool shouldreject = false;
                         var conds = new Dictionary<string, string>();
                         if (data.EnableConditions != null)
                         {
@@ -273,9 +273,11 @@ namespace DynamicGameAssets
 
                                     if (key == opt.Key)
                                     {// this one we should handle ourselves
-                                        if (val != value)
+                                        Log.Trace($"Evaluating pack config option {key} in EnableCondition");
+                                        if (!val.Equals(value, StringComparison.OrdinalIgnoreCase))
                                         { // fail the pack, we get to skip the rest of the work too.
                                             shouldreject = true;
+                                            Log.Trace($"Rejecting condition {key} with value {val} because it's not equal to {value}");
                                             goto BreakBreak;
                                         }
                                         goto DontAdd;
@@ -307,14 +309,21 @@ BreakBreak:;
 
                         if (data is CommonPackData cdata && !cdata.Enabled && wasEnabled)
                         {
+                            Log.Trace($"Disabling item {cdata.ID}");
                             cdata.OnDisabled();
                         }
                         else if (data is ContentIndexPackData cidata)
                         {
                             if (!cidata.Enabled && wasEnabled)
+                            {
+                                Log.Trace($"Disabling content index {cidata.FilePath}");
                                 DoDisable(cidata);
+                            }
                             else
+                            {
+                                Log.Trace($"Enabling content index {cidata.FilePath}");
                                 DoEnableDisable(cidata);
+                            }
                         }
                     }
                 }
