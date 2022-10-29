@@ -11,7 +11,7 @@ using StardewValley.Menus;
 namespace Displays
 {
     /// <summary>The mod entry point.</summary>
-    internal class Mod : StardewModdingAPI.Mod, IAssetLoader
+    internal class Mod : StardewModdingAPI.Mod
     {
         /*********
         ** Accessors
@@ -32,20 +32,9 @@ namespace Displays
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
             helper.ConsoleCommands.Add("player_adddisplay", "mannequin", this.HandleCommand);
-        }
 
-        /// <inheritdoc />
-        public bool CanLoad<T>(IAssetInfo asset)
-        {
-            return asset.AssetNameEquals("Characters\\Farmer\\farmer_transparent");
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
         }
-
-        /// <inheritdoc />
-        public T Load<T>(IAssetInfo asset)
-        {
-            return (T)(object)this.Helper.Content.Load<Texture2D>("assets/farmer_transparent.png");
-        }
-
 
         /*********
         ** Private methods
@@ -57,6 +46,12 @@ namespace Displays
         {
             var sc = this.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
             sc.RegisterSerializerType(typeof(Mannequin));
+        }
+
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            if (e.NameWithoutLocale.IsEquivalentTo("Characters\\Farmer\\farmer_transparent"))
+                e.LoadFromModFile<Texture2D>("assets/farmer_transparent.png", AssetLoadPriority.Exclusive);
         }
 
         private void HandleCommand(string cmd, string[] args)
