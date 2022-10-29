@@ -2,7 +2,7 @@
     "Name": "Custom Critters",
     "Author": "spacechase0",
     "Version": "1.3.2",
-    "MinimumApiVersion": "3.13.0",
+    "MinimumApiVersion": "3.17.0",
     "Description": "Lets content packs add custom critters to the world.",
     "UniqueID": "spacechase0.CustomCritters",
     "EntryDll": "CustomCritters.dll",

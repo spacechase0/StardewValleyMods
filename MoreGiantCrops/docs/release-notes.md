@@ -1,6 +1,11 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+
+## 1.1.1
+* Updated for SMAPI 3.14.0
+* Fixed issue with giant crops persisting off farm
+
 ## 1.1.0
 Released 12 January 2022 for SMAPI 3.13.0 or later.
 

@@ -5,7 +5,7 @@
     "Description": "Want to go to the moon? Now you can!",
     "UniqueID": "spacechase0.MoonMisadventures",
     "EntryDll": "MoonMisadventures.dll",
-    "MinimumApiVersion": "3.13.0",
+    "MinimumApiVersion": "3.17.0",
     "UpdateKeys": [ "Nexus:10612" ],
     "Dependencies": [
         {

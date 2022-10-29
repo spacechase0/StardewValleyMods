@@ -1,6 +1,12 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+
+# 1.9.2
+* Updated for SMAPI 3.14.0
+* Allow content packs to patch the textures for this mod.
+* Added deprecation warnings.
+
 # 1.9.1
 * Fix crash when hovering over mod with null tooltip.
 
