@@ -1,0 +1,28 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // Clint's shop
+    "clint.rush.description": "Оновлення інструменту займе один день.",
+    "clint.rush.dialogue": "Дякую. Я почну прямо зараз. Завтра все буде готово.",
+
+    "clint.instant.description": "Інструмент буде негайно оновлено.",
+    "clint.instant.dialogue": "Дякую. Я зараз же почну. Буде готово за кілька хвилин..",
+
+    // Robin's shop
+    "robin.rush-question": "Поспішаєте зі зведенням будівлі? ({{daysLeft}} дн. лишилося.)",
+    "robin.rush-answer-yes": "Так ({{price}} з.)",
+    "robin.rush-answer-no": "Ні",
+    "robin.not-enough-money": "У вас недостатньо коштів.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.price-tool-one-day.name": "Ціна: Інструмент - Один день",
+    "config.price-tool-one-day.tooltip": "Ціновий множник на одноденне оновлення інструменту.",
+    "config.price-tool-instant.name": "Ціна: Інструмент - Негайно",
+    "config.price-tool-instant.tooltip": "Ціновий множник на негайне оновлення інструменту.",
+    "config.price-building.name": "Ціна: Будівля - Прискорення",
+    "config.price-building.tooltip": "Ціновий множник для прискорення будівництва на один день."
+}

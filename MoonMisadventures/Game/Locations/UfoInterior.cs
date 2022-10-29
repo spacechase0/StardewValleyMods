@@ -16,8 +16,8 @@ namespace MoonMisadventures.Game.Locations
     public class UfoInterior : GameLocation
     {
         public UfoInterior() { }
-        public UfoInterior( IContentHelper content )
-        : base( content.GetActualAssetKey( "assets/maps/UfoInterior.tmx" ), "Custom_MM_UfoInterior" )
+        public UfoInterior( IModContentHelper content )
+        : base( content.GetInternalAssetName( "assets/maps/UfoInterior.tmx" ).BaseName, "Custom_MM_UfoInterior" )
         {
         }
 

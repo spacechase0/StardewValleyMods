@@ -1,0 +1,42 @@
+﻿{
+    "option.stock-list.name": "Список товарів П'єра",
+    "option.stock-list.description": "Почніть зі списку товарів П'єра, де представлені всі насіння на цілий рік.",
+    "option.ginger-island.name": "Імбирний острів",
+    "option.ginger-island.description": "Почніть з полагодженого човна на Імбирний острів.",
+    "option.additional-profit.name": "Множник прибутку",
+    "option.additional-profit.description": "Помножує обраний вами на початку гри коефіцієнт прибутку на цю суму.",
+    "option.relationship-penalty.name": "Штрафні санкції стосунків %",
+    "option.relationship-penalty.description": "Наскільки менше балів дружби ви отримуєте від подарунків та інших речей.",
+    "option.exp-curve.name": "Експон. крива",
+    "option.exp-curve.description": "Кількість досвіду, необхідного для отримання навички на максимальний рівень.\n(Стандартно - 15 000).",
+    "option.starting-points.name": "Початкові очки",
+    "option.starting-points.description": "Скільки очок ви можете витратити на спадкове меню.",
+    "option.gold-per-leftover-point.name": "Золото за залишкові очки",
+    "option.gold-per-leftover-point.description": "Скільки золота ви отримуєте за не витрачені очки.",
+
+    "create.option.name": "Нова гра+",
+    "create.option.description": "Перемикач, якщо функція Нова гра+ ввімкнена або вимкнена тут.",
+
+    "item.legacy-token.name": "Спадковий жетон",
+    "item.legacy-token.description": "Заявіть про свій спадок тут",
+
+    "item.stable-token.name": "Жетон стойла",
+    "item.stable-token.description": "Помістіть в нижньому правому куті того місця, де ви хочете розмістити стойло.",
+
+    "menu.title": "Спадок",
+    "menu.points": "Залишкові очки: {{pts}}",
+    "menu.gold": "Золото: {{gold}}",
+    "menu.accept": "Прийняти",
+    "menu.cancel": "Скасувати",
+    "menu.item.sword": "Меч",
+    "menu.item.dagger": "Кинджал",
+    "menu.item.club": "Клуб",
+    "menu.item.return-scepter": "Повернути\nскіпетр",
+    "menu.item.house.0": "Дім:\nзвичайний",
+    "menu.item.house.1": "Дім:\nw/ кухня",
+    "menu.item.town-key": "Ключ від міста",
+    "menu.item.horse": "Кінь",
+    "menu.item.backpack": "Рюкзак",
+    "menu.item.recipes": "Звичайні\nрецепти",
+    "menu.item.ring": "Без персня"
+}

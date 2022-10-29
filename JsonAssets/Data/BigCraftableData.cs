@@ -19,6 +19,9 @@ namespace JsonAssets.Data
     [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class BigCraftableData : DataNeedsIdWithTexture, ITranslatableItem
     {
+        [JsonIgnore]
+        internal static HashSet<int> HasHoneyInName { get; } = new();
+
         /*********
         ** Accessors
         *********/

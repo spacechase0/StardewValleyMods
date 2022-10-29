@@ -1,0 +1,76 @@
+﻿{
+    /*********
+    ** Items
+    *********/
+    // tools
+    "tool.axe.radioactive": "Радіоактивна сокира",
+    "tool.axe.mythicite": "Мітична сокира",
+    "tool.wcan.radioactive": "Радіоактивна лійка",
+    "tool.wcan.mythicite": "Мітична лійка",
+    "tool.pick.radioactive": "Радіоактивне кайло",
+    "tool.pick.mythicite": "Мітичне кайло",
+    "tool.hoe.radioactive": "Радіоактивна мотика",
+    "tool.hoe.mythicite": "Мітична мотика",
+    "tool.animal-gauntlets.name": "Антигравітаційні рукавиці",
+    "tool.animal-gauntlets.description": "З ними ви можете піднімати тварин і переміщувати їх... якщо на Місяці.",
+    "tool.animal-gauntlets.holding": "Зараз у повітрі:",
+    "tool.animal-gauntlets.moon-requirement": "Має бути на Місяці.",
+
+    // items
+    "item.lunar-key.name": "Місячний ключ",
+    "item.necklace.Looting.name": "Намисто мародерства",
+    "item.necklace.Looting.description": "Отримуйте золото, виходячи з максимального рівня здоров'я вбитих вами істот.",
+    "item.necklace.Shocking.name": "Намисто шоку",
+    "item.necklace.Shocking.description": "Після атаки нанести короткочасний ефект пошкодження з плином часу.",
+    "item.necklace.Speed.name": "Намисто швидкості",
+    "item.necklace.Speed.description": "Збільшує вашу швидкість.",
+    "item.necklace.Health.name": "Намисто здоров'я",
+    "item.necklace.Health.description": "Збільшує ваш максимальний рівень здоров'я на 50%.",
+    "item.necklace.Cooling.name": "Намисто готування",
+    "item.necklace.Cooling.description": "Охолоджує лавові плитки навколо вас у вулкані.",
+    "item.necklace.Lunar.name": "Місячне намисто",
+    "item.necklace.Lunar.description": "Зводить нанівець ефект магнетизму, що притягує сірі астероїди.",
+    "item.necklace.Water.name": "Намисто води",
+    "item.necklace.Water.description": "Поливає ґрунт при обробці.",
+    "item.necklace.Sea.name": "Намисто моря",
+    "item.necklace.Sea.description": "Значно підвищує ефективність рибальства.",
+
+    // item enchantments
+    "tooltip.persists": "Не можна втратити після смерті.",
+
+
+    /*********
+    ** Monsters
+    *********/
+    "monster.boom-eye.name": "Бум-око",
+    "monster.lunar-slime.name": "Місячний слайм",
+
+
+    /*********
+    ** Interactions
+    *********/
+    // UFO
+    "message.ufo.repair": "Полагодити НЛО за 10 радіоактивних злитків та 1 галактичну душу?",
+    "message.ufo.repair.lacking": "У вас недостатньо матеріалів.",
+    "message.ufo.travel": "Піднятися на борт НЛО?",
+
+    // moon
+    "message.gargoyle": "Погладити... ґаргулью? Хто знає, чим це обернеться?",
+    "message.dirt-tutorial": "Якби тільки у вас був інструмент, щоб відламати кінець, аби піти вперед...",
+    "message.lunar-teleporter-offline": "На вигляд несправне. Можливо, йому потрібна міфіцитова руда.",
+    "message.lunar-temple.locked": "Замкнено.",
+    "message.necklace-exchange": "Обміняти 1 Місячне намисто та 1 Сапфір душі на випадкове намисто? (Всього 7 видів без урахування Місячного)",
+    "message.necklace-exchange.lacking": "У вас нема необхідних матеріалів.",
+    "message.planet.jump": "Стрибнути?",
+    "message.farm.crystal-lock": "Можливо, він буде рости з міфіцитовою рудою.",
+    "message.infuser.1": "Небесний інфузорій, частина 1.^Він може зачаровувати інструменти, даючи їм зберігати до 2 первинних зачарувань.^(Якщо вже є два, то змінюється лише друге.)",
+    "message.infuser.2": "Небесний інфузорій, частина 2.^Він може перетворити зброю безмежного потенціалу в її істинну форму за допомогою енергії Сапфіру душі.",
+    "message.infuser.3": "Небесний інфузорій, частина 3.^Він може доповнити будь-яку річ певним пилом, даючи їй можливість залишатися з вами навіть після смерті.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.flashing-ufo.name": "Миготливий НЛО",
+    "config.flashing-ufo.description": "Чи має відремонтований НЛО миготливі вогні."
+}

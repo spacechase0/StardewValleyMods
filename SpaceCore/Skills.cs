@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -38,6 +39,7 @@ namespace SpaceCore
                 }
 
                 public virtual void DoImmediateProfessionPerk() { }
+                public virtual void UndoImmediateProfessionPerk() { }
 
                 protected Profession(Skill skill, string id)
                 {
@@ -97,9 +99,11 @@ namespace SpaceCore
         private const string MsgData = "spacechase0.SpaceCore.SkillData";
         private const string MsgExperience = "spacechase0.SpaceCore.SkillExperience";
 
-        internal static Dictionary<string, Skill> SkillsByName = new();
+        internal static Dictionary<string, Skill> SkillsByName = new(StringComparer.OrdinalIgnoreCase);
         private static Dictionary<long, Dictionary<string, int>> Exp = new();
         internal static List<KeyValuePair<string, int>> NewLevels = new();
+
+        private static IExperienceBarsApi? BarsApi;
 
         internal static void Init(IModEvents events)
         {
@@ -107,12 +111,17 @@ namespace SpaceCore
             events.GameLoop.Saving += Skills.OnSaving;
             events.GameLoop.Saved += Skills.OnSaved;
             events.Display.MenuChanged += Skills.OnMenuChanged;
-            events.Player.Warped += Skills.OnWarped;
-            events.Display.RenderedHud += Skills.OnRenderedHud;
             SpaceEvents.ShowNightEndMenus += Skills.ShowLevelMenu;
             SpaceEvents.ServerGotClient += Skills.ClientJoined;
             Networking.RegisterMessageHandler(Skills.MsgData, Skills.OnDataMessage);
             Networking.RegisterMessageHandler(Skills.MsgExperience, Skills.OnExpMessage);
+
+            if (SpaceCore.Instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+                events.Player.Warped += Skills.OnWarped;
+
+            BarsApi = SpaceCore.Instance.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
+            if (BarsApi is not null)
+                events.Display.RenderedHud += Skills.OnRenderedHud;
         }
 
         public static void RegisterSkill(Skill skill)
@@ -127,7 +136,8 @@ namespace SpaceCore
 
             foreach (var skill in Skills.SkillsByName)
             {
-                if (skill.Key.ToLower() == name.ToLower() || skill.Value.GetName().ToLower() == name.ToLower())
+                if (skill.Key.Equals(name, StringComparison.OrdinalIgnoreCase)
+                    || skill.Value.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
                     return skill.Value;
             }
 
@@ -194,8 +204,7 @@ namespace SpaceCore
                 Skills.Exp.Add(farmer.UniqueMultiplayerID, skillExp);
             }
 
-            if (!skillExp.ContainsKey(skillName))
-                skillExp.Add(skillName, 0);
+            _ = skillExp.TryAdd(skillName, 0);
         }
 
         private static void ClientJoined(object sender, EventArgsServerGotClient args)
@@ -208,8 +217,7 @@ namespace SpaceCore
 
             foreach (var skill in Skills.SkillsByName)
             {
-                if (!skillExp.ContainsKey(skill.Key))
-                    skillExp.Add(skill.Key, 0);
+                _ = skillExp.TryAdd(skill.Key, 0);
             }
 
             using var stream = new MemoryStream();
@@ -284,6 +292,8 @@ namespace SpaceCore
                 Log.Trace("Saving custom data");
                 Skills.DataApi.WriteSaveData(Skills.DataKey, Skills.Exp);
             }
+
+            SpaceCore.Instance.Helper.Events.GameLoop.Saved -= OnSaved;
         }
 
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
@@ -340,9 +350,10 @@ namespace SpaceCore
         /// <summary>Raised after a player warps to a new location.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
+        /// <remarks>Used to set all professions for All Professions, matching their code.</remarks>
         private static void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.IsLocalPlayer && SpaceCore.Instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+            if (e.IsLocalPlayer)
             {
                 foreach (var skill in Skills.SkillsByName)
                 {
@@ -395,13 +406,7 @@ namespace SpaceCore
                     progress = -1;
                 }
 
-                var api = SpaceCore.Instance.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
-                if (api == null)
-                {
-                    SpaceCore.Instance.Helper.Events.Display.RenderedHud -= Skills.OnRenderedHud;
-                    return;
-                }
-                api.DrawExperienceBar(skill.Icon ?? Game1.staminaRect, level, progress, skill.ExperienceBarColor);
+                BarsApi.DrawExperienceBar(skill.Icon ?? Game1.staminaRect, level, progress, skill.ExperienceBarColor);
             }
         }
 
@@ -419,6 +424,46 @@ namespace SpaceCore
             }
 
             return null;
+        }
+        internal static bool CanRespecAnyCustomSkill()
+        {
+            foreach (string s in GetSkillList())
+            {
+                if (CanRespecCustomSkill(s))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static bool CanRespecCustomSkill(string skillId)
+        {
+            if (Game1.player.GetCustomSkillLevel(skillId) < 5)
+            {
+                return false;
+            }
+            foreach (KeyValuePair<string, int> newLevel in NewLevels)
+            {
+                if (newLevel.Key == skillId && newLevel.Value == 5 || newLevel.Value == 10)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        internal static List<Response> GetRespecCustomResponses()
+        {
+            List<Response> responses = new List<Response>();
+            foreach (string skill in Skills.GetSkillList())
+            {
+                if (Skills.CanRespecCustomSkill(skill))
+                {
+                    responses.Add(new Response(skill, Skills.GetSkill(skill).GetName()));
+                }
+            }
+            return responses;
         }
     }
 
