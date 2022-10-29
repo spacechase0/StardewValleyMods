@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
 
+using Newtonsoft.Json;
+
 namespace JsonAssets.Data
 {
     [DebuggerDisplay("name = {Name}, id = {Id}")]
@@ -28,6 +30,8 @@ namespace JsonAssets.Data
 
         internal ObjectData Sapling { get; set; }
 
+        [JsonIgnore]
+        internal int ProductId { get; set; } = -1;
 
         /*********
         ** Public methods
@@ -44,7 +48,7 @@ namespace JsonAssets.Data
 
         internal string GetFruitTreeInformation()
         {
-            return $"{this.GetFruitTreeIndex()}/{this.Season}/{Mod.instance.ResolveObjectId(this.Product)}/what goes here?";
+            return $"{this.GetFruitTreeIndex()}/{this.Season}/{this.ProductId}/what goes here?";
         }
 
 

@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
+using JsonAssets.Utilities;
+
 using StardewValley;
 
 namespace JsonAssets.Data
@@ -33,7 +35,7 @@ namespace JsonAssets.Data
             string str = "";
             foreach (var ingredient in this.Ingredients)
             {
-                int id = Mod.instance.ResolveObjectId(ingredient.Object);
+                int id = ItemResolver.GetObjectID(ingredient.Object);
                 if (id == 0)
                     continue;
                 str += id + " " + ingredient.Count + " ";
