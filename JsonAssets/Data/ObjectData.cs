@@ -16,6 +16,9 @@ namespace JsonAssets.Data
     [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class ObjectData : DataNeedsIdWithTexture, ITranslatableItem
     {
+        [JsonIgnore]
+        internal static HashSet<int> HasHoneyInName { get; } = new();
+
         /*********
         ** Accessors
         *********/
@@ -61,6 +64,10 @@ namespace JsonAssets.Data
         public string TranslationKey { get; set; }
 
         public List<string> ContextTags { get; set; } = new();
+
+        // A list of IDs that match rings for JA.
+        [JsonIgnore]
+        internal readonly static HashSet<int> TrackedRings = new();
 
 
         /*********

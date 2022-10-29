@@ -1604,7 +1604,31 @@ namespace JsonAssets
             foreach (var fruitTree in this.FruitTrees)
             {
                 fruitTree.ProductId = ItemResolver.GetObjectID(fruitTree.Product);
+                FruitTreeData.SaplingIds.Add(fruitTree.GetSaplingId());
             }
+
+            if (this.MyRings.Count > 0)
+            {
+                Log.Trace("Indexing rings");
+                ObjectData.TrackedRings.Clear();
+                foreach (var ring in this.MyRings)
+                    ObjectData.TrackedRings.Add(ring.GetObjectId());
+
+                this.Helper.Events.Player.InventoryChanged -= this.OnInventoryChanged;
+                this.Helper.Events.Player.InventoryChanged += this.OnInventoryChanged;
+            }
+
+            // the game rewrites the display names of anything with honey in the name.
+            BigCraftableData.HasHoneyInName.Clear();
+            ObjectData.HasHoneyInName.Clear();
+
+            foreach (var obj in this.Objects)
+                if (obj.Name.Contains("Honey"))
+                    ObjectData.HasHoneyInName.Add(obj.GetObjectId());
+
+            foreach (var big in this.BigCraftables)
+                if (big.Name.Contains("Honey"))
+                    BigCraftableData.HasHoneyInName.Add(big.GetCraftableId());
 
             this.Api.InvokeIdsAssigned();
 
@@ -1655,14 +1679,10 @@ namespace JsonAssets
             if (!e.IsLocalPlayer)
                 return;
 
-            IList<int> ringIds = new List<int>();
-            foreach (var ring in this.MyRings)
-                ringIds.Add(ring.Id);
-
             for (int i = 0; i < Game1.player.Items.Count; ++i)
             {
                 var item = Game1.player.Items[i];
-                if (item is SObject obj && ringIds.Contains(obj.ParentSheetIndex))
+                if (item is SObject obj && ObjectData.TrackedRings.Contains(obj.ParentSheetIndex))
                 {
                     Log.Trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
                     Game1.player.Items[i] = new Ring(obj.ParentSheetIndex);

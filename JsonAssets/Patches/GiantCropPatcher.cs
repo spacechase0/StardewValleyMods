@@ -57,13 +57,12 @@ namespace JsonAssets.Patches
                                      (float)((tileLocation.Y + 2.0) * 64.0 / 10000.0));
                     return false;
                 }
-                return true;
             }
             catch (Exception ex)
             {
                 Log.Error($"Failed in {nameof(GiantCropPatcher)}.{nameof(Before_Draw)}:\n{ex}");
-                return true;
             }
+            return true;
         }
     }
 }
