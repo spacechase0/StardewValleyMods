@@ -39,7 +39,7 @@ namespace PyromancersJourney
                 var ts = vd.Map.TileSheets.FirstOrDefault(t => t.ImageSource.Contains("arcade-machine"));
                 if (ts == null)
                 {
-                    ts = new xTile.Tiles.TileSheet(vd.Map, this.Helper.Content.GetActualAssetKey("assets/arcade-machine.png"), new Size(2, 2), new Size(16, 16));
+                    ts = new xTile.Tiles.TileSheet(vd.Map, this.Helper.ModContent.GetInternalAssetName("assets/arcade-machine.png").BaseName, new Size(2, 2), new Size(16, 16));
                     ts.Id = "z" + ts.Id;
                     vd.Map.AddTileSheet(ts);
                     vd.setMapTile(31, 28, 3, "Buildings", "FireArcadeGame", vd.Map.TileSheets.IndexOf(ts));
