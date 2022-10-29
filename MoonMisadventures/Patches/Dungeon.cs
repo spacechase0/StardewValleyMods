@@ -52,7 +52,7 @@ namespace MoonMisadventures.Patches
         {
             foreach ( var level in AsteroidsDungeon.activeLevels )
             {
-                if ( level.Root != null )
+                if ( level.Root.Value is not null )
                 {
                     level.Root.Clock.InterpolationTicks = __instance.interpolationTicks();
                     __instance.updateRoot( level.Root );
@@ -77,9 +77,9 @@ namespace MoonMisadventures.Patches
 
         private static void DoDrops( BreakableContainer __instance, GameLocation location, Farmer who )
         {
-            Random r = new Random((int)__instance.tileLocation.X + (int)__instance.tileLocation.Y * 10000 + (int)Game1.stats.DaysPlayed);
-            int x = (int)__instance.tileLocation.X;
-            int y = (int)__instance.tileLocation.Y;
+            Random r = new Random((int)__instance.TileLocation.X + (int)__instance.TileLocation.Y * 10000 + (int)Game1.stats.DaysPlayed);
+            int x = (int)__instance.TileLocation.X;
+            int y = (int)__instance.TileLocation.Y;
             if ( r.NextDouble() < 0.2 )
                 return;
             if ( Game1.random.NextDouble() <= 0.075 && Game1.player.team.SpecialOrderRuleActive( "DROP_QI_BEANS" ) )

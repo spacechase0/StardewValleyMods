@@ -229,7 +229,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             Chest chest = new Chest(playerChest: false, position);
             chest.dropContents.Value = true;
             chest.synchronized.Value = true;
-            chest.type.Value = "interactive";
+            chest.Type = "interactive";
             if ( rare )
             {
                 chest.SetBigCraftableSpriteIndex( 227 );

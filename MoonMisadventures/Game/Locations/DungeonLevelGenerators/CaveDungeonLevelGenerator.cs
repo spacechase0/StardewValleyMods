@@ -16,7 +16,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             Random rand = new Random( location.genSeed.Value );
             location.isIndoorLevel = true;
 
-            var caveMap = Game1.game1.xTileContent.Load<Map>( Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/MoonDungeonCave.tmx" ) );
+            var caveMap = Game1.game1.xTileContent.Load<Map>( Mod.instance.Helper.ModContent.GetInternalAssetName("assets/maps/MoonDungeonCave.tmx").BaseName );
 
             int x = ( location.Map.Layers[ 0 ].LayerWidth - caveMap.Layers[ 0 ].LayerWidth ) / 2;
             int y = ( location.Map.Layers[ 0 ].LayerHeight - caveMap.Layers[ 0 ].LayerHeight ) / 2;

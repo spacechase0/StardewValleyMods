@@ -144,7 +144,7 @@ namespace MoonMisadventures.Game.Locations
         public AsteroidsDungeon()
         {
             mapContent = Game1.game1.xTileContent.CreateTemporary();
-            mapPath.Value = Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/MoonAsteroidsTemplate.tmx" );
+            mapPath.Value = Mod.instance.Helper.ModContent.GetInternalAssetName("assets/maps/MoonAsteroidsTemplate.tmx").BaseName;
         }
 
         public AsteroidsDungeon( LevelType type, int level, string name )
@@ -329,7 +329,7 @@ namespace MoonMisadventures.Game.Locations
                 Map.AddLayer( new xTile.Layers.Layer( "Buildings1", Map, Map.Layers[ 0 ].LayerSize, Map.Layers[ 0 ].TileSize ) );
             }
 
-            var ts = new xTile.Tiles.TileSheet( Map, Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/moon-teleporters.png" ), new xTile.Dimensions.Size( 9, 9 ), new xTile.Dimensions.Size( 16, 16 ) );
+            var ts = new xTile.Tiles.TileSheet( Map, Mod.instance.Helper.ModContent.GetInternalAssetName( "assets/maps/moon-teleporters.png" ).BaseName, new xTile.Dimensions.Size( 9, 9 ), new xTile.Dimensions.Size( 16, 16 ) );
             ts.Id = "z_moon-teleporters";
             Map.AddTileSheet( ts );
             Map.LoadTileSheets( Game1.mapDisplayDevice );
