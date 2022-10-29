@@ -161,7 +161,7 @@ namespace GenericModConfigMenu
             // the texture.
             this.Helper.Events.GameLoop.UpdateTicking += this.FiveTicksAfterGameLaunched;
 
-            Api configMenu = (Api)this.GetApi();
+            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), Log.Info);
 
             configMenu.Register(
                 mod: this.ModManifest,

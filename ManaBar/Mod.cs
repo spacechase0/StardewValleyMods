@@ -26,7 +26,7 @@ namespace ManaBar
             {
                 Color manaCol;
 
-                if (Instance.GetApi() is Api)
+                if (Context.IsWorldReady)
                 {
                     double offset = GetManaRatio();
 

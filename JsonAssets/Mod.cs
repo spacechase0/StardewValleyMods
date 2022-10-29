@@ -2812,14 +2812,6 @@ namespace JsonAssets
                         if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, tree.treeType, this.VanillaFruitTreeIds))
                             return true;
 
-                        string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
-                        FruitTreeData treeData = this.FruitTrees.FirstOrDefault(x => x.Name == key);
-                        if (treeData is not null) // Non-JA fruit tree
-                        {
-                            Log.Verbose($"Fixing fruit tree product: From {tree.indexOfFruit.Value} to {treeData.Product}={treeData.ProductId}");
-                            tree.indexOfFruit.Value = treeData.ProductId;
-                        }
-
                     string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
                     FruitTreeData treeData = this.FruitTrees.FirstOrDefault(x => x.Name == key);
                     if (treeData is not null && treeData.ProductId != tree.indexOfFruit.Value) // JA managed fruit tree.
