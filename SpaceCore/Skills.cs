@@ -38,6 +38,7 @@ namespace SpaceCore
                 }
 
                 public virtual void DoImmediateProfessionPerk() { }
+                public virtual void UndoImmediateProfessionPerk() { }
 
                 protected Profession(Skill skill, string id)
                 {
