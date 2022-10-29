@@ -1,0 +1,13 @@
+﻿{
+    // tent tool
+    "tent.name": "Намет",
+    "tent.description": "Спіть тут. Спіть там. Спіть, де подобається вам!",
+
+    // HUD messages
+    "messages.slept-at-lost-location": "Ви ночували в незнайомому місці, тому повернулися додому.",
+    "messages.slept-at-festival": "Ви ночували на території фестивалю, тож повернулися додому.",
+
+    // Generic Mod Config Menu UI
+    "config.seconds-until-save.name": "Кількість секунд до збереження",
+    "config.seconds-until-save.tooltip": "Кількість секунд до того, як інструмент намету повинен задіяти збереження."
+}

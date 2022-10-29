@@ -57,8 +57,8 @@ namespace MoonMisadventures.Game.Locations
         public NetEvent1<PickEdgeEventArgs> pickEdgeEvent = new();
 
         public LunarLocation() { }
-        public LunarLocation( IContentHelper content, string mapPath, string mapName )
-        :   base( content.GetActualAssetKey( "assets/maps/" + mapPath + ".tmx" ), "Custom_MM_" + mapName )
+        public LunarLocation( IModContentHelper content, string mapPath, string mapName )
+        :   base( content.GetInternalAssetName( "assets/maps/" + mapPath + ".tmx" ).BaseName, "Custom_MM_" + mapName )
         {
             PlaceSpaceTiles();
         }
@@ -103,7 +103,7 @@ namespace MoonMisadventures.Game.Locations
                 int debrisTs = Map.TileSheets.IndexOf( Map.GetTileSheet( "flying_debris" ) );
                 if ( debrisTs == -1 )
                 {
-                    var ts = new xTile.Tiles.TileSheet( Map, Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/flying_debris.png" ), new xTile.Dimensions.Size( 4, 6 ), new xTile.Dimensions.Size( 16, 16 ) );
+                    var ts = new xTile.Tiles.TileSheet( Map, Mod.instance.Helper.ModContent.GetInternalAssetName( "assets/maps/flying_debris.png" ).BaseName, new xTile.Dimensions.Size( 4, 6 ), new xTile.Dimensions.Size( 16, 16 ) );
                     Map.AddTileSheet( ts );
                     Map.LoadTileSheets( Game1.mapDisplayDevice );
                     debrisTs = Map.TileSheets.IndexOf( ts );

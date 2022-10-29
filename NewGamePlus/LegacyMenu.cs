@@ -553,7 +553,7 @@ namespace NewGamePlus
                     },
                     new LegacySlot.SlotEntry()
                     {
-                        Texture = Mod.instance.Helper.Content.Load<Texture2D>("assets/recipes1.png"),
+                        Texture = Mod.instance.Helper.ModContent.Load<Texture2D>("assets/recipes1.png"),
                         TexRect = new Rectangle( 0, 0, 50, 50 ),
                         PointCost = 1,
                         Apply = () =>
@@ -565,7 +565,7 @@ namespace NewGamePlus
                     },
                     new LegacySlot.SlotEntry()
                     {
-                        Texture = Mod.instance.Helper.Content.Load<Texture2D>("assets/recipes2.png"),
+                        Texture = Mod.instance.Helper.ModContent.Load<Texture2D>("assets/recipes2.png"),
                         TexRect = new Rectangle( 0, 0, 50, 50 ),
                         PointCost = 3,
                         Apply = () =>

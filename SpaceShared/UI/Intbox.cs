@@ -14,9 +14,11 @@ namespace SpaceShared.UI
         *********/
         public int Value
         {
-            get => (this.String is "" or "-") ? 0 : int.Parse(this.String);
+            get => int.TryParse(this.String, out int value) ? value : 0;
             set => this.String = value.ToString();
         }
+
+        public bool IsValid => int.TryParse(this.String, out _);
 
 
         /*********

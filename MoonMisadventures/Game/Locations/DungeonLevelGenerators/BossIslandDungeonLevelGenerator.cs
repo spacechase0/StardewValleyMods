@@ -15,7 +15,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
     {
         public override void Generate( AsteroidsDungeon location, ref Vector2 warpFromPrev, ref Vector2 warpFromNext )
         {
-            Map place = Mod.instance.Helper.Content.Load< Map >( "assets/maps/MoonBossIsland.tmx" );
+            Map place = Mod.instance.Helper.ModContent.Load< Map >( "assets/maps/MoonBossIsland.tmx" );
             int offsetX = ( location.Map.Layers[ 0 ].LayerWidth - place.Layers[ 0 ].LayerWidth ) / 2;
             int offsetY = ( location.Map.Layers[ 0 ].LayerHeight - place.Layers[ 0 ].LayerHeight ) / 2;
 

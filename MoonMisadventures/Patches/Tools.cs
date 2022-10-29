@@ -169,7 +169,7 @@ namespace MoonMisadventures.Patches
             if ( __instance.UpgradeLevel >= 5 )
             {
                 __state = __instance.UpgradeLevel;
-                __instance.upgradeLevel.Value = 4;
+                __instance.UpgradeLevel = 4;
             }
         }
 

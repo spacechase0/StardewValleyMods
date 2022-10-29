@@ -8,7 +8,7 @@ namespace MoonMisadventures.Game.Locations
     public class MoonInfuserRoom : LunarLocation
     {
         public MoonInfuserRoom() { }
-        public MoonInfuserRoom( IContentHelper content )
+        public MoonInfuserRoom( IModContentHelper content )
         :   base( content, "MoonInfuserRoom", "MoonInfuserRoom")
         {
         }

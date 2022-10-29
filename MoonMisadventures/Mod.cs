@@ -37,7 +37,7 @@ using StardewValley.Tools;
 
 namespace MoonMisadventures
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader
+    public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
         public Configuration Config;
@@ -79,7 +79,7 @@ namespace MoonMisadventures
 
             Config = Helper.ReadConfig<Configuration>();
 
-            Assets.Load( helper.Content );
+            Assets.Load( helper.ModContent );
             SoundEffect mainMusic = SoundEffect.FromFile( Path.Combine( Helper.DirectoryPath, "assets", "into-the-spaceship.wav" ) );
             Game1.soundBank.AddCue( new CueDefinition( "into-the-spaceship", mainMusic, 2, loop: true ) );
 
@@ -97,6 +97,7 @@ namespace MoonMisadventures
             Helper.Events.Display.RenderedWorld += OnRenderedWorld;
             Helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
             Helper.Events.Player.Warped += OnWarped;
+            Helper.Events.Content.AssetRequested += OnAssetRequested;
 
             SpaceEvents.AddWalletItems += AddWalletItems;
             SpaceEvents.AfterGiftGiven += AfterGiftGiven;
@@ -106,24 +107,8 @@ namespace MoonMisadventures
             harmony.Patch( AccessTools.Method( "StardewModdingAPI.Framework.SGame:DrawImpl" ), transpiler: new HarmonyMethod( typeof( Patches.Game1CatchLightingRenderPatch ).GetMethod( "Transpiler" ) ) );
         }
 
-        public bool CanLoad<T>( IAssetInfo asset )
-        {
-            if ( Game1.currentLocation is LunarLocation )
-            {
-                return asset.AssetNameEquals( "TerrainFeatures/hoeDirt" );
-            }
-            return false;
-        }
-
-        public T Load<T>( IAssetInfo asset )
-        {
-            if ( Game1.currentLocation is LunarLocation )
-            {
-                if ( asset.AssetNameEquals( "TerrainFeatures/hoeDirt" ) )
-                    return ( T ) ( object ) Assets.HoeDirt;
-            }
-            return default( T );
-        }
+        private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+            => Assets.ApplyEdits(e);
 
         private void OnItemsCommand( string cmd, string[] args )
         {
@@ -298,15 +283,15 @@ namespace MoonMisadventures
         {
             if ( e.NewStage == LoadStage.CreatedInitialLocations || e.NewStage == LoadStage.SaveAddedLocations )
             {
-                Game1.locations.Add( new MountainTop( Helper.Content ) );
-                Game1.locations.Add( new MoonLandingArea( Helper.Content ) );
-                Game1.locations.Add( new AsteroidsEntrance( Helper.Content ) );
-                Game1.locations.Add( new LunarFarm( Helper.Content ) );
-                Game1.locations.Add( new LunarFarmCave( Helper.Content ) );
-                Game1.locations.Add( new MoonPlanetOverlook( Helper.Content ) );
-                Game1.locations.Add( new UfoInterior( Helper.Content ) );
-                Game1.locations.Add( new LunarFarmHouse( Helper.Content ) );
-                Game1.locations.Add( new MoonInfuserRoom( Helper.Content ) );
+                Game1.locations.Add( new MountainTop( Helper.ModContent ) );
+                Game1.locations.Add( new MoonLandingArea( Helper.ModContent ) );
+                Game1.locations.Add( new AsteroidsEntrance( Helper.ModContent ) );
+                Game1.locations.Add( new LunarFarm( Helper.ModContent ) );
+                Game1.locations.Add( new LunarFarmCave( Helper.ModContent ) );
+                Game1.locations.Add( new MoonPlanetOverlook( Helper.ModContent ) );
+                Game1.locations.Add( new UfoInterior( Helper.ModContent ) );
+                Game1.locations.Add( new LunarFarmHouse( Helper.ModContent ) );
+                Game1.locations.Add( new MoonInfuserRoom( Helper.ModContent ) );
             }
         }
 
@@ -392,8 +377,8 @@ namespace MoonMisadventures
 
         private void OnWarped( object sender, WarpedEventArgs e )
         {
-            if ( e.OldLocation is LunarLocation ^ e.NewLocation is LunarLocation )
-                Helper.Content.InvalidateCache( "TerrainFeatures/hoeDirt" );
+            if ( e.OldLocation is LunarLocation || e.NewLocation is LunarLocation )
+                Helper.GameContent.InvalidateCache( "TerrainFeatures/hoeDirt" );
 
             if ( e.NewLocation?.NameOrUniqueName == "Mine" )
             {

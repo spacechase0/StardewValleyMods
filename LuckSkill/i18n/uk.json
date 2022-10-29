@@ -1,0 +1,25 @@
+﻿{
+    // skill
+    "skill.name": "Удача",
+    "skill.level-up": "Удача зросла",
+
+    // professions
+    "fortunate.name": "Фартовій",
+    "fortunate.desc": "Щодня більше удачі.",
+    "lucky.name": "Щасливчик",
+    "lucky.desc": "20% шанс на максимальну щоденну удачу.",
+    "popular-helper.name": "Народний помічник",
+    "popular-helper.desc": "Щоденні доручення з'являються втричі частіше.",
+    "shooting-star.name": "Падуча зоря",
+    "shooting-star.desc": "Нічні події відбуваються вдвічі частіше.",
+    "spirit-child.name": "Дитя духовів",
+    "spirit-child.desc": "Дарування подарунків робить джунімо щасливими. Вони можуть допомогти вашій фермі.\n(15% шанс на певний розвиток ферми).",
+    "un-unlucky.name": "Не невдаха",
+    "un-unlucky.desc": "У вас ніколи не траплятимуться невдачі.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "Джунімо ще більше полюбилися деяким вашим тваринам!",
+    "junimo-rewards.grow-crops": "Джунімо просунули ваші посіви!",
+    "junimo-rewards.grow-grass": "Джунімо виростили вашу траву та відремонтували ваші огорожі!",
+    "junimo-rewards.prismatic-shard": "Джунімо дали вам райдужний уламок!"
+}

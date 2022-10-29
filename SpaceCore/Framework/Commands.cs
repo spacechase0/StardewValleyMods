@@ -126,7 +126,7 @@ namespace SpaceCore.Framework
 
             foreach (string arg in args)
             {
-                SpaceCore.Instance.Helper.Content.InvalidateCache(arg);
+                SpaceCore.Instance.Helper.GameContent.InvalidateCache(arg);
             }
         }
 

@@ -182,7 +182,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DimensionalPockets", "Dimen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControllerRadialKeybindings", "ControllerRadialKeybindings\ControllerRadialKeybindings.csproj", "{D99B6186-A545-4CD1-B422-3C8F6B575E37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GiantOmelet", "GiantOmelet\GiantOmelet.csproj", "{A3C45306-E621-41F3-9389-E0EA0E4EB934}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GiantOmelet", "GiantOmelet\GiantOmelet.csproj", "{A3C45306-E621-41F3-9389-E0EA0E4EB934}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

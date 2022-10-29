@@ -485,14 +485,16 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 int bis = rand.Next( bigIslands[ bi ].spots.Count );
                 warpFromPrev = bigIslands[ bi ].spots[ bis ];
                 PlacePreviousWarp( location, ( int ) warpFromPrev.X, ( int ) warpFromPrev.Y - 1 );
-                bigIslands[ bi ].spots.RemoveAt( bis );
+                if (bigIslands[bi].spots.Count > 1)
+                    bigIslands[ bi ].spots.RemoveAt( bis );
             }
             {
                 int bi = rand.Next( bigIslands.Count );
                 int bis = rand.Next( bigIslands[ bi ].spots.Count );
                 warpFromNext = bigIslands[ bi ].spots[ bis ];
                 PlaceNextWarp( location, ( int ) warpFromNext.X, ( int ) warpFromNext.Y - 1 );
-                bigIslands[ bi ].spots.RemoveAt( bis );
+                if (bigIslands[bi].spots.Count > 1)
+                    bigIslands[ bi ].spots.RemoveAt( bis );
             }
 
             // Place features
@@ -500,7 +502,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             Map[] pieceMaps = new Map[ pieceSizes.Length ];
             for ( int i = 0; i < pieceSizes.Length; ++i )
             {
-                pieceMaps[ i ] = Game1.game1.xTileContent.Load<Map>( Mod.instance.Helper.Content.GetActualAssetKey( "assets/maps/MoonPieces" + pieceSizes[ i ] + ".tmx" ) );
+                pieceMaps[ i ] = Game1.game1.xTileContent.Load<Map>( Mod.instance.Helper.ModContent.GetInternalAssetName( "assets/maps/MoonPieces" + pieceSizes[ i ] + ".tmx" ).BaseName );
             }
             int featureCounter = 0;
             List<Vector2> stoneSpots = new();

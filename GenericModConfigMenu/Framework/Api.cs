@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
+
 using GenericModConfigMenu.Framework.ModOption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,6 +24,9 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Open the config UI for a specific mod.</summary>
         private readonly Action<IManifest> OpenModMenuImpl;
 
+        private readonly IManifest mod;
+
+        private readonly Action<string> DeprecationWarner;
 
         /*********
         ** Public methods
@@ -29,10 +34,12 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Construct an instance.</summary>
         /// <param name="configManager">Manages the registered mod config menus.</param>
         /// <param name="openModMenu">Open the config UI for a specific mod.</param>
-        internal Api(ModConfigManager configManager, Action<IManifest> openModMenu)
+        internal Api(IManifest mod, ModConfigManager configManager, Action<IManifest> openModMenu, Action<string> DeprecationWarner)
         {
+            this.mod = mod;
             this.ConfigManager = configManager;
             this.OpenModMenuImpl = openModMenu;
+            this.DeprecationWarner = DeprecationWarner;
         }
 
 
@@ -42,12 +49,15 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void Register(IManifest mod, Action reset, Action save, bool titleScreenOnly = true)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(reset, nameof(reset));
-            this.AssertNotNull(save, nameof(save));
+            mod ??= this.mod;
+            this.AssertNotNull(reset);
+            this.AssertNotNull(save);
 
             if (this.ConfigManager.Get(mod, assert: false) != null)
                 throw new InvalidOperationException($"The '{mod.Name}' mod has already registered a config menu, so it can't do it again.");
+
+            if (this.mod.UniqueID != mod.UniqueID)
+                Log.Trace($"{this.mod.UniqueID} is registering on behalf of {mod.UniqueID}");
 
             this.ConfigManager.Set(mod, new ModConfig(mod, reset, save, titleScreenOnly));
         }
@@ -58,8 +68,8 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void AddSectionTitle(IManifest mod, Func<string> text, Func<string> tooltip = null)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(text, nameof(text));
+            mod ??= this.mod;
+            this.AssertNotNull(text);
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new SectionTitleModOption(text, tooltip, modConfig));
@@ -68,8 +78,8 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void AddParagraph(IManifest mod, Func<string> text)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(mod, nameof(text));
+            mod ??= this.mod;
+            this.AssertNotNull(text);
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new ParagraphModOption(text, modConfig));
@@ -78,8 +88,8 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void AddImage(IManifest mod, Func<Texture2D> texture, Rectangle? texturePixelArea = null, int scale = Game1.pixelZoom)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(mod, nameof(texture));
+            mod ??= this.mod;
+            this.AssertNotNull(texture);
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new ImageModOption(texture, texturePixelArea, scale, modConfig));
@@ -131,8 +141,8 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void AddPage(IManifest mod, string pageId, Func<string> pageTitle = null)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(pageId, nameof(pageId));
+            mod ??= this.mod;
+            this.AssertNotNull(pageId);
 
             this.ConfigManager
                 .Get(mod, assert: true)
@@ -142,8 +152,8 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void AddPageLink(IManifest mod, string pageId, Func<string> text, Func<string> tooltip = null)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(pageId, nameof(pageId));
+            mod ??= this.mod;
+            this.AssertNotNull(pageId);
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new PageLinkModOption(pageId, text, tooltip, modConfig));
@@ -163,7 +173,7 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void SetTitleScreenOnlyForNextOptions(IManifest mod, bool titleScreenOnly)
         {
-            this.AssertNotNull(mod, nameof(mod));
+            mod ??= this.mod;
 
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
             config.DefaultTitleScreenOnly = titleScreenOnly;
@@ -172,8 +182,8 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void OnFieldChanged(IManifest mod, Action<string, object> onChange)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(onChange, nameof(onChange));
+            mod ??= this.mod;
+            this.AssertNotNull(onChange);
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.ChangeHandlers.Add(onChange);
@@ -182,7 +192,7 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void OpenModMenu(IManifest mod)
         {
-            this.AssertNotNull(mod, nameof(mod));
+            mod ??= this.mod;
 
             this.OpenModMenuImpl(mod);
         }
@@ -190,7 +200,7 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public void Unregister(IManifest mod)
         {
-            this.AssertNotNull(mod, nameof(mod));
+            mod ??= this.mod;
 
             this.ConfigManager.Remove(mod);
         }
@@ -213,6 +223,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Func<int> height = null, string fieldId = null)
         {
+            this.LogDeprecation(mod);
             this.AddComplexOption(mod: mod, name: name, tooltip: tooltip, draw: draw, beforeMenuOpened: null, beforeSave: beforeSave, afterSave: afterSave, beforeReset: beforeReset, afterReset: afterReset, beforeMenuClosed: null, height: height, fieldId: fieldId);
         }
 
@@ -223,6 +234,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void AddComplexOption(IManifest mod, Func<string> name, Func<string> tooltip, Action<SpriteBatch, Vector2> draw, Action saveChanges, Func<int> height = null, string fieldId = null)
         {
+            this.LogDeprecation(mod);
             this.AddComplexOption(mod: mod, name: name, tooltip: tooltip, draw: draw, beforeMenuOpened: null, beforeSave: saveChanges, height: height, fieldId: fieldId);
         }
 
@@ -230,6 +242,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void AddNumberOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name = null, Func<string> tooltip = null, int? min = null, int? max = null, int? interval = null, string fieldId = null)
         {
+            this.LogDeprecation(mod);
             this.AddNumericOption(mod: mod, name: name, tooltip: tooltip, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval, fieldId: fieldId, formatValue: null);
         }
 
@@ -237,6 +250,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void AddNumberOption(IManifest mod, Func<float> getValue, Action<float> setValue, Func<string> name = null, Func<string> tooltip = null, float? min = null, float? max = null, float? interval = null, string fieldId = null)
         {
+            this.LogDeprecation(mod);
             this.AddNumericOption(mod: mod, name: name, tooltip: tooltip, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval, fieldId: fieldId, formatValue: null);
         }
 
@@ -247,6 +261,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, string fieldId = null)
         {
+            this.LogDeprecation(mod);
             this.AddTextOption(mod: mod, getValue: getValue, setValue: setValue, name: name, tooltip: tooltip, allowedValues: allowedValues, formatAllowedValue: null, fieldId: fieldId);
         }
 
@@ -257,6 +272,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterModConfig(IManifest mod, Action revertToDefault, Action saveToFile)
         {
+            this.LogDeprecation(mod);
             this.Register(mod: mod, reset: revertToDefault, save: saveToFile, titleScreenOnly: true);
         }
 
@@ -264,6 +280,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void UnregisterModConfig(IManifest mod)
         {
+            this.LogDeprecation(mod);
             this.Unregister(mod: mod);
         }
 
@@ -271,6 +288,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void SetDefaultIngameOptinValue(IManifest mod, bool optedIn)
         {
+            this.LogDeprecation(mod);
             this.SetTitleScreenOnlyForNextOptions(mod: mod, titleScreenOnly: !optedIn);
         }
 
@@ -278,6 +296,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void StartNewPage(IManifest mod, string pageName)
         {
+            this.LogDeprecation(mod);
             this.AddPage(mod: mod, pageId: pageName, pageTitle: () => pageName);
         }
 
@@ -285,7 +304,8 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void OverridePageDisplayName(IManifest mod, string pageName, string displayName)
         {
-            this.AssertNotNull(mod, nameof(mod));
+            this.LogDeprecation(mod);
+            mod ??= this.mod;
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             ModConfigPage page = modConfig.Pages.GetOrDefault(pageName) ?? throw new ArgumentException("Page not registered");
@@ -297,6 +317,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterLabel(IManifest mod, string labelName, string labelDesc)
         {
+            this.LogDeprecation(mod);
             this.AddSectionTitle(mod: mod, text: () => labelName, tooltip: () => labelDesc);
         }
 
@@ -304,6 +325,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterPageLabel(IManifest mod, string labelName, string labelDesc, string newPage)
         {
+            this.LogDeprecation(mod);
             this.AddPageLink(mod: mod, pageId: newPage, text: () => labelName, tooltip: () => labelDesc);
         }
 
@@ -311,6 +333,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterParagraph(IManifest mod, string paragraph)
         {
+            this.LogDeprecation(mod);
             this.AddParagraph(mod: mod, text: () => paragraph);
         }
 
@@ -318,6 +341,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterImage(IManifest mod, string texPath, Rectangle? texRect = null, int scale = Game1.pixelZoom)
         {
+            this.LogDeprecation(mod);
             this.AddImage(mod: mod, texture: () => Game1.content.Load<Texture2D>(texPath), texturePixelArea: texRect, scale: scale);
         }
 
@@ -325,6 +349,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<bool> optionGet, Action<bool> optionSet)
         {
+            this.LogDeprecation(mod);
             this.AddBoolOption(mod: mod, fieldId: optionName, getValue: optionGet, setValue: optionSet, name: () => optionName, tooltip: () => optionDesc);
         }
 
@@ -332,6 +357,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet)
         {
+            this.LogDeprecation(mod);
             this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: null, max: null, interval: null, formatValue: null);
         }
 
@@ -339,6 +365,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet)
         {
+            this.LogDeprecation(mod);
             this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: null, max: null, interval: null, formatValue: null);
         }
 
@@ -346,6 +373,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet)
         {
+            this.LogDeprecation(mod);
             this.AddTextOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, formatAllowedValue: null);
         }
 
@@ -353,6 +381,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<SButton> optionGet, Action<SButton> optionSet)
         {
+            this.LogDeprecation(mod);
             this.AddKeybind(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
         }
 
@@ -360,6 +389,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterSimpleOption(IManifest mod, string optionName, string optionDesc, Func<KeybindList> optionGet, Action<KeybindList> optionSet)
         {
+            this.LogDeprecation(mod);
             this.AddKeybindList(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet);
         }
 
@@ -367,6 +397,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max)
         {
+            this.LogDeprecation(mod);
             this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: null, formatValue: null);
         }
 
@@ -374,6 +405,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max)
         {
+            this.LogDeprecation(mod);
             this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: null, formatValue: null);
         }
 
@@ -381,6 +413,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<int> optionGet, Action<int> optionSet, int min, int max, int interval)
         {
+            this.LogDeprecation(mod);
             this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval, formatValue: null);
         }
 
@@ -388,6 +421,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterClampedOption(IManifest mod, string optionName, string optionDesc, Func<float> optionGet, Action<float> optionSet, float min, float max, float interval)
         {
+            this.LogDeprecation(mod);
             this.AddNumericOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, min: min, max: max, interval: interval, formatValue: null);
         }
 
@@ -395,6 +429,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterChoiceOption(IManifest mod, string optionName, string optionDesc, Func<string> optionGet, Action<string> optionSet, string[] choices)
         {
+            this.LogDeprecation(mod);
             this.AddTextOption(mod: mod, fieldId: optionName, name: () => optionName, tooltip: () => optionDesc, getValue: optionGet, setValue: optionSet, allowedValues: choices);
         }
 
@@ -402,10 +437,11 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void RegisterComplexOption(IManifest mod, string optionName, string optionDesc, Func<Vector2, object, object> widgetUpdate, Func<SpriteBatch, Vector2, object, object> widgetDraw, Action<object> onSave)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(widgetUpdate, nameof(widgetUpdate));
-            this.AssertNotNull(widgetDraw, nameof(widgetDraw));
-            this.AssertNotNull(onSave, nameof(onSave));
+            this.LogDeprecation(mod);
+            mod ??= this.mod;
+            this.AssertNotNull(widgetUpdate);
+            this.AssertNotNull(widgetDraw);
+            this.AssertNotNull(onSave);
 
             object state = null;
 
@@ -427,6 +463,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void SubscribeToChange(IManifest mod, Action<string, bool> changeHandler)
         {
+            this.LogDeprecation(mod);
             this.SubscribeToChange<bool>(mod, changeHandler);
         }
 
@@ -434,6 +471,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void SubscribeToChange(IManifest mod, Action<string, int> changeHandler)
         {
+            this.LogDeprecation(mod);
             this.SubscribeToChange<int>(mod, changeHandler);
         }
 
@@ -441,6 +479,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void SubscribeToChange(IManifest mod, Action<string, float> changeHandler)
         {
+            this.LogDeprecation(mod);
             this.SubscribeToChange<float>(mod, changeHandler);
         }
 
@@ -448,6 +487,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete]
         public void SubscribeToChange(IManifest mod, Action<string, string> changeHandler)
         {
+            this.LogDeprecation(mod);
             this.SubscribeToChange<string>(mod, changeHandler);
         }
 
@@ -465,10 +505,10 @@ namespace GenericModConfigMenu.Framework
         /// <param name="fieldId">The unique field ID used when raising field-changed events, or <c>null</c> to generate a random one.</param>
         private void AddSimpleOption<T>(IManifest mod, Func<string> name, Func<string> tooltip, Func<T> getValue, Action<T> setValue, string fieldId)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(name, nameof(name));
-            this.AssertNotNull(getValue, nameof(getValue));
-            this.AssertNotNull(setValue, nameof(setValue));
+            mod ??= this.mod;
+            this.AssertNotNull(name);
+            this.AssertNotNull(getValue);
+            this.AssertNotNull(setValue);
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
 
@@ -494,10 +534,10 @@ namespace GenericModConfigMenu.Framework
         private void AddNumericOption<T>(IManifest mod, Func<string> name, Func<string> tooltip, Func<T> getValue, Action<T> setValue, T? min, T? max, T? interval, Func<T, string> formatValue, string fieldId)
             where T : struct
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(name, nameof(name));
-            this.AssertNotNull(getValue, nameof(getValue));
-            this.AssertNotNull(setValue, nameof(setValue));
+            mod ??= this.mod;
+            this.AssertNotNull(name);
+            this.AssertNotNull(getValue);
+            this.AssertNotNull(setValue);
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
 
@@ -519,10 +559,10 @@ namespace GenericModConfigMenu.Framework
         /// <param name="fieldId">The unique field ID used when raising field-changed events, or <c>null</c> to generate a random one.</param>
         private void AddChoiceOption(IManifest mod, Func<string> name, Func<string> tooltip, Func<string> getValue, Action<string> setValue, string[] allowedValues, Func<string, string> formatAllowedValues, string fieldId)
         {
-            this.AssertNotNull(mod, nameof(mod));
-            this.AssertNotNull(name, nameof(name));
-            this.AssertNotNull(getValue, nameof(getValue));
-            this.AssertNotNull(setValue, nameof(setValue));
+            mod ??= this.mod;
+            this.AssertNotNull(name);
+            this.AssertNotNull(getValue);
+            this.AssertNotNull(setValue);
 
             name ??= () => fieldId;
 
@@ -538,7 +578,7 @@ namespace GenericModConfigMenu.Framework
         [Obsolete("This only exists to support obsolete methods.")]
         private void SubscribeToChange<TValue>(IManifest mod, Action<string, TValue> changeHandler)
         {
-            this.AssertNotNull(changeHandler, nameof(changeHandler));
+            this.AssertNotNull(changeHandler);
 
             this.OnFieldChanged(mod, (fieldId, rawValue) =>
             {
@@ -551,7 +591,7 @@ namespace GenericModConfigMenu.Framework
         /// <param name="value">The parameter value.</param>
         /// <param name="paramName">The parameter name.</param>
         /// <exception cref="ArgumentNullException">The parameter value is null.</exception>
-        private void AssertNotNull(object value, string paramName)
+        private void AssertNotNull(object value, [CallerArgumentExpression("value")] string paramName = "")
         {
             if (value is null)
                 throw new ArgumentNullException(paramName);
@@ -561,10 +601,15 @@ namespace GenericModConfigMenu.Framework
         /// <param name="value">The parameter value.</param>
         /// <param name="paramName">The parameter name.</param>
         /// <exception cref="ArgumentNullException">The parameter value is null.</exception>
-        private void AssertNotNullOrWhitespace(string value, string paramName)
+        private void AssertNotNullOrWhitespace(string value, [CallerArgumentExpression("value")] string paramName = "")
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(paramName);
+        }
+
+        private void LogDeprecation(IManifest client)
+        {
+            this.DeprecationWarner($"{this.mod.UniqueID} (registering for {client.UniqueID}) is using deprecated code that will break in a future version of GMCM.");
         }
     }
 }
