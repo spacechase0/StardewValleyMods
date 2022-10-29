@@ -34,7 +34,7 @@ namespace AnotherHungerMod
             Log.Monitor = this.Monitor;
 
             Mod.Config = helper.ReadConfig<Configuration>();
-            this.HungerBar = helper.Content.Load<Texture2D>("assets/hungerbar.png");
+            this.HungerBar = helper.ModContent.Load<Texture2D>("assets/hungerbar.png");
             this.LegacyDataMigrator = new LegacyDataMigrator(helper.Data, this.Monitor);
 
             helper.ConsoleCommands.Add("player_addfullness", "Add to your fullness", this.Commands);
