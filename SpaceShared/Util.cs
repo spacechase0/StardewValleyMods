@@ -25,6 +25,7 @@ namespace SpaceShared
 
             // This is really bad. Pathos don't kill me.
             var modInfo = modRegistry.Get( packId );
+            
             if (modInfo is null)
                 return Game1.staminaRect;
 

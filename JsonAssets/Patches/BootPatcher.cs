@@ -22,6 +22,7 @@ internal class BootPatcher : BasePatcher
             );
     }
 
+#nullable enable
     private static Exception? FinalizeBootDisplayFields(Boots __instance, Exception __exception)
     {
         if (__exception is not null)

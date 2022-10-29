@@ -2,7 +2,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using System.Text;
+
 using JsonAssets.Framework;
+using JsonAssets.Framework.Internal;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -80,21 +84,18 @@ namespace JsonAssets.Data
 
         internal string GetObjectInformation()
         {
+            StringBuilder sb = StringBuilderCache.Acquire();
+            sb.Append(this.Name).Append('/').Append(this.Price).Append('/').Append(this.Edibility).Append('/')
+            .Append(this.Category == ObjectCategory.Artifact ? "Arch" : $"{(this.Edibility != -300 ? this.Category : "Basic")} {this.Category:D}").Append('/')
+            .Append(this.LocalizedName()).Append('/').Append(this.LocalizedDescription());
+
             if (this.Edibility != SObject.inedible)
             {
-                int itype = (int)this.Category;
-                string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == ObjectCategory.Artifact ? "Arch" : $"{this.Category} {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
-                str += (this.EdibleIsDrink ? "drink" : "food") + "/";
-                str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
-                return str;
+                sb.Append('/').Append(this.EdibleIsDrink ? "drink" : "food").Append('/')
+                    .Append($"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}");
             }
-            else
-            {
-                int itype = (int)this.Category;
-                return $"{this.Name}/{this.Price}/{this.Edibility}/" + (this.Category == ObjectCategory.Artifact ? "Arch" : $"Basic {itype}") + $"/{this.LocalizedName()}/{this.LocalizedDescription()}";
-            }
+            return StringBuilderCache.GetStringAndRelease(sb);
         }
-
 
         /*********
         ** Private methods

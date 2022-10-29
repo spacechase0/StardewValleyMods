@@ -22,6 +22,8 @@ using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
+
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Characters;
@@ -43,9 +45,6 @@ namespace JsonAssets
         [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
         public static Mod instance;
-
-        private ContentInjector1 Content1;
-        private ContentInjector2 Content2;
 
         /// <summary>The Expanded Preconditions Utility API, if that mod is loaded.</summary>
         private IExpandedPreconditionsUtilityApi ExpandedPreconditionsUtility;
@@ -81,20 +80,20 @@ namespace JsonAssets
             helper.Events.Player.InventoryChanged += this.OnInventoryChanged;
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.SaveCreated += this.OnCreated;
+            helper.Events.GameLoop.ReturnedToTitle += this.OnReturnedToTitle;
             helper.Events.GameLoop.UpdateTicked += this.OnTick;
             helper.Events.Specialized.LoadStageChanged += this.OnLoadStageChanged;
             helper.Events.Multiplayer.PeerContextReceived += this.ClientConnected;
 
-            helper.Content.AssetEditors.Add(this.Content1 = new ContentInjector1());
-            helper.Content.AssetLoaders.Add(this.Content1);
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
-            TileSheetExtensions.RegisterExtendedTileSheet(@"Maps\springobjects", 16);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\Craftables", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\crops", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"TileSheets\fruitTrees", 80);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\shirts", 32);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\pants", 688);
-            TileSheetExtensions.RegisterExtendedTileSheet(@"Characters\Farmer\hats", 80);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"Maps\springobjects"), 16);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"TileSheets\Craftables"), 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"TileSheets\crops"), 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"TileSheets\fruitTrees"), 80);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"Characters\Farmer\shirts"), 32);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"Characters\Farmer\pants"), 688);
+            TileSheetExtensions.RegisterExtendedTileSheet(PathUtilities.NormalizeAssetName(@"Characters\Farmer\hats"), 80);
 
             HarmonyPatcher.Apply(this,
                 new CropPatcher(),
@@ -106,11 +105,23 @@ namespace JsonAssets
                 new ObjectPatcher(),
                 new RingPatcher(),
                 new ShopMenuPatcher(),
-                new BootPatcher()
+                new BootPatcher(),
+                new CraftingRecipePatcher()
             );
 
             ItemResolver.Initialize(helper.GameContent);
+        }
 
+        private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
+        {
+            if (this.DidInit)
+                this.ResetAtTitle();
+        }
+
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            ContentInjector1.OnAssetRequested(e);
+            ContentInjector2.OnAssetRequested(e);
         }
 
         private Api Api;
@@ -421,6 +432,14 @@ namespace JsonAssets
             }
             else
                 this.DupCrops[crop.Name] = source;
+
+            if (this.DupObjects.TryGetValue(crop.Seed.Name, out var oldmanifest))
+            {
+                Log.Error($"{crop.Seed.Name} previously added by {oldmanifest.UniqueID}, this may cause errors. Crop {crop.Name} by {source.Name} will not be added");
+                return;
+            }
+            else
+                this.DupObjects[crop.Seed.Name] = source;
 
             // save crop data
             this.Crops.Add(crop);
@@ -1045,9 +1064,9 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    obj.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
+                    obj.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/object.png");
                     if (obj.IsColored)
-                        obj.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
+                        obj.TextureColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/color.png");
 
                     this.RegisterObject(contentPack.Manifest, obj, translations);
                 }
@@ -1069,11 +1088,11 @@ namespace JsonAssets
                         continue;
 
                     // save crop
-                    crop.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/crop.png");
+                    crop.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/crop.png");
                     if (contentPack.HasFile($"{relativePath}/giant.png"))
                         crop.GiantTexture = new (() => contentPack.ModContent.Load<Texture2D>($"{relativePath}/giant.png"));
 
-                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"), translations);
+                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.ModContent.Load<Texture2D>($"{relativePath}/seeds.png"), translations);
                 }
             }
 
@@ -1093,8 +1112,8 @@ namespace JsonAssets
                         continue;
 
                     // save fruit tree
-                    tree.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/tree.png");
-                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"), translations);
+                    tree.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/tree.png");
+                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.ModContent.Load<Texture2D>($"{relativePath}/sapling.png"), translations);
                 }
             }
 
@@ -1114,14 +1133,14 @@ namespace JsonAssets
                         continue;
 
                     // save craftable
-                    craftable.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
+                    craftable.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/big-craftable.png");
                     if (craftable.ReserveNextIndex && craftable.ReserveExtraIndexCount == 0)
                         craftable.ReserveExtraIndexCount = 1;
                     if (craftable.ReserveExtraIndexCount > 0)
                     {
                         craftable.ExtraTextures = new Texture2D[craftable.ReserveExtraIndexCount];
                         for (int i = 0; i < craftable.ReserveExtraIndexCount; ++i)
-                            craftable.ExtraTextures[i] = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
+                            craftable.ExtraTextures[i] = contentPack.ModContent.Load<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
                     }
                     this.RegisterBigCraftable(contentPack.Manifest, craftable, translations);
                 }
@@ -1143,7 +1162,7 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    hat.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
+                    hat.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/hat.png");
                     this.RegisterHat(contentPack.Manifest, hat, translations);
                 }
             }
@@ -1164,7 +1183,7 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    weapon.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
+                    weapon.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/weapon.png");
                     this.RegisterWeapon(contentPack.Manifest, weapon, translations);
                 }
             }
@@ -1185,14 +1204,14 @@ namespace JsonAssets
                         continue;
 
                     // save shirt
-                    shirt.TextureMale = contentPack.LoadAsset<Texture2D>($"{relativePath}/male.png");
+                    shirt.TextureMale = contentPack.ModContent.Load<Texture2D>($"{relativePath}/male.png");
                     if (shirt.Dyeable)
-                        shirt.TextureMaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/male-color.png");
+                        shirt.TextureMaleColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/male-color.png");
                     if (shirt.HasFemaleVariant)
                     {
-                        shirt.TextureFemale = contentPack.LoadAsset<Texture2D>($"{relativePath}/female.png");
+                        shirt.TextureFemale = contentPack.ModContent.Load<Texture2D>($"{relativePath}/female.png");
                         if (shirt.Dyeable)
-                            shirt.TextureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
+                            shirt.TextureFemaleColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/female-color.png");
                     }
                     this.RegisterShirt(contentPack.Manifest, shirt, translations);
                 }
@@ -1214,7 +1233,7 @@ namespace JsonAssets
                         continue;
 
                     // save pants
-                    pants.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
+                    pants.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/pants.png");
                     this.RegisterPants(contentPack.Manifest, pants, translations);
                 }
             }
@@ -1253,8 +1272,8 @@ namespace JsonAssets
                     if (boots == null || (boots.DisableWithMod != null && this.Helper.ModRegistry.IsLoaded(boots.DisableWithMod)) || (boots.EnableWithMod != null && !this.Helper.ModRegistry.IsLoaded(boots.EnableWithMod)))
                         continue;
 
-                    boots.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/boots.png");
-                    boots.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
+                    boots.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/boots.png");
+                    boots.TextureColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/color.png");
                     this.RegisterBoots(contentPack.Manifest, boots, translations);
                 }
             }
@@ -1274,8 +1293,8 @@ namespace JsonAssets
                     if (fence == null || (fence.DisableWithMod != null && this.Helper.ModRegistry.IsLoaded(fence.DisableWithMod)) || (fence.EnableWithMod != null && !this.Helper.ModRegistry.IsLoaded(fence.EnableWithMod)))
                         continue;
 
-                    fence.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/fence.png");
-                    fence.ObjectTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
+                    fence.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/fence.png");
+                    fence.ObjectTexture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/object.png");
                     this.RegisterFence(contentPack.Manifest, fence, translations);
                 }
             }
@@ -1299,26 +1318,26 @@ namespace JsonAssets
                 }
             }
         }
-
         private void ResetAtTitle()
         {
             this.DidInit = false;
             // When we go back to the title menu we need to reset things so things don't break when
             // going back to a save.
-            this.ClearIds(out this.ObjectIds, this.Objects.ToList<DataNeedsId>());
-            this.ClearIds(out this.ObjectIds, this.Boots.ToList<DataNeedsId>());
-            this.ClearIds(out this.CropIds, this.Crops.ToList<DataNeedsId>());
-            this.ClearIds(out this.FruitTreeIds, this.FruitTrees.ToList<DataNeedsId>());
-            this.ClearIds(out this.BigCraftableIds, this.BigCraftables.ToList<DataNeedsId>());
-            this.ClearIds(out this.HatIds, this.Hats.ToList<DataNeedsId>());
-            this.ClearIds(out this.WeaponIds, this.Weapons.ToList<DataNeedsId>());
-            List<DataNeedsId> clothing = new List<DataNeedsId>();
-            clothing.AddRange(this.Shirts);
+            var objects = new List<DataNeedsId>(this.Objects);
+            objects.AddRange(this.Boots); // boots are also in objects.
+            this.ClearIds(this.ObjectIds, objects);
+            this.ClearIds(this.CropIds, this.Crops.ToList<DataNeedsId>());
+            this.ClearIds(this.FruitTreeIds, this.FruitTrees.ToList<DataNeedsId>());
+            this.ClearIds(this.BigCraftableIds, this.BigCraftables.ToList<DataNeedsId>());
+            this.ClearIds(this.HatIds, this.Hats.ToList<DataNeedsId>());
+            this.ClearIds(this.WeaponIds, this.Weapons.ToList<DataNeedsId>());
+            List<DataNeedsId> clothing = new List<DataNeedsId>(this.Shirts);
             clothing.AddRange(this.Pants);
-            this.ClearIds(out this.ClothingIds, clothing.ToList<DataNeedsId>());
+            this.ClearIds(this.ClothingIds, clothing.ToList());
 
-            this.Content1.InvalidateUsed();
-            this.Helper.Content.AssetEditors.Remove(this.Content2);
+            ContentInjector1.InvalidateUsed();
+            ContentInjector1.Clear();
+            ContentInjector2.ResetGiftTastes();
 
             this.LocationsFixedAlready.Clear();
         }
@@ -1441,7 +1460,6 @@ namespace JsonAssets
             }
         }
 
-
         private void ClientConnected(object sender, PeerContextReceivedEventArgs e)
         {
             if (!Context.IsMainPlayer && !this.DidInit)
@@ -1462,13 +1480,6 @@ namespace JsonAssets
         {
             if (e.NewMenu == null)
                 return;
-
-            // handle return to title
-            if (e.NewMenu is TitleMenu)
-            {
-                this.ResetAtTitle();
-                return;
-            }
 
             // handle shop menu
             if (e.NewMenu is ShopMenu { source: not StorageFurniture } menu && !object.ReferenceEquals(e.NewMenu, this.LastShopMenu))
@@ -1581,39 +1592,37 @@ namespace JsonAssets
 
                 if (this.Monitor.IsVerbose)
                 {
-                    Log.Verbose("OLD IDS START");
+                    Log.Trace("OLD IDS START");
                     foreach (var id in this.OldObjectIds)
-                        Log.Verbose("\tObject " + id.Key + " = " + id.Value);
+                        Log.Trace("\tObject " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldCropIds)
-                        Log.Verbose("\tCrop " + id.Key + " = " + id.Value);
+                        Log.Trace("\tCrop " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldFruitTreeIds)
-                        Log.Verbose("\tFruit Tree " + id.Key + " = " + id.Value);
+                        Log.Trace("\tFruit Tree " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldBigCraftableIds)
-                        Log.Verbose("\tBigCraftable " + id.Key + " = " + id.Value);
+                        Log.Trace("\tBigCraftable " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldHatIds)
-                        Log.Verbose("\tHat " + id.Key + " = " + id.Value);
+                        Log.Trace("\tHat " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldWeaponIds)
-                        Log.Verbose("\tWeapon " + id.Key + " = " + id.Value);
+                        Log.Trace("\tWeapon " + id.Key + " = " + id.Value);
                     foreach (var id in this.OldClothingIds)
-                        Log.Verbose("\tClothing " + id.Key + " = " + id.Value);
-                    Log.Verbose("OLD IDS END");
+                        Log.Trace("\tClothing " + id.Key + " = " + id.Value);
+                    Log.Trace("OLD IDS END");
                 }
             }
 
             // assign IDs
-            var objList = new List<DataNeedsId>();
-            objList.AddRange(this.Objects.ToList<DataNeedsId>());
-            objList.AddRange(this.Boots.ToList<DataNeedsId>());
+            var objList = new List<DataNeedsId>(this.Objects);
+            objList.AddRange(this.Boots); // boots are objects too.
             this.ObjectIds = this.AssignIds("objects", Mod.StartingObjectId, objList);
             this.CropIds = this.AssignIds("crops", Mod.StartingCropId, this.Crops.ToList<DataNeedsId>());
             this.FruitTreeIds = this.AssignIds("fruittrees", Mod.StartingFruitTreeId, this.FruitTrees.ToList<DataNeedsId>());
             this.BigCraftableIds = this.AssignIds("big-craftables", Mod.StartingBigCraftableId, this.BigCraftables.ToList<DataNeedsId>());
             this.HatIds = this.AssignIds("hats", Mod.StartingHatId, this.Hats.ToList<DataNeedsId>());
             this.WeaponIds = this.AssignIds("weapons", Mod.StartingWeaponId, this.Weapons.ToList<DataNeedsId>());
-            List<DataNeedsId> clothing = new List<DataNeedsId>();
-            clothing.AddRange(this.Shirts);
+            List<DataNeedsId> clothing = new(this.Shirts);
             clothing.AddRange(this.Pants);
-            this.ClothingIds = this.AssignIds("clothing", Mod.StartingClothingId, clothing.ToList<DataNeedsId>());
+            this.ClothingIds = this.AssignIds("clothing", Mod.StartingClothingId, clothing);
 
             this.AssignTextureIndices("shirts", Mod.StartingShirtTextureIndex, this.Shirts.ToList<DataSeparateTextureIndex>());
             this.AssignTextureIndices("pants", Mod.StartingPantsTextureIndex, this.Pants.ToList<DataSeparateTextureIndex>());
@@ -1623,6 +1632,9 @@ namespace JsonAssets
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxShirtValue").SetValue(-1);
             this.Helper.Reflection.GetField<int>(typeof(Clothing), "_maxPantsValue").SetValue(-1);
 
+            // Call before invoking Ids Assigned since clients may want to edit after.
+            ContentInjector1.Initialize(this.Helper.GameContent);
+            
             Log.Trace("Resolving Crop and Tree product Ids");
             CropData.giantCropMap.Clear();
             foreach (var crop in this.Crops)
@@ -1662,8 +1674,11 @@ namespace JsonAssets
 
             this.Api.InvokeIdsAssigned();
 
-            this.Content1.InvalidateUsed();
-            this.Helper.Content.AssetEditors.Add(this.Content2 = new ContentInjector2());
+            ContentInjector1.InvalidateUsed();
+            ContentInjector2.ResetGiftTastes();
+            this.Helper.GameContent.InvalidateCache("Data/NPCGiftTastes");
+            if (this.Helper.GameContent.CurrentLocaleConstant != LocalizedContentManager.LanguageCode.en)
+                this.Helper.GameContent.InvalidateCache($"Data/NPCGiftTastes.{this.Helper.GameContent.CurrentLocale}");
 
             // This happens here instead of with ID fixing because TMXL apparently
             // uses the ID fixing API before ID fixing happens everywhere.
@@ -1698,7 +1713,6 @@ namespace JsonAssets
             Task weapons = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-weapons.json"), JsonConvert.SerializeObject(this.WeaponIds)));
             Task clothing = Task.Run(() => File.WriteAllText(Path.Combine(Constants.CurrentSavePath, "JsonAssets", "ids-clothing.json"), JsonConvert.SerializeObject(this.ClothingIds)));
 
-            // Task.WaitAll(objects, crops, fruitTrees, bigs, hats, weapons, clothing);
             this.Helper.Events.GameLoop.Saving -= this.OnSaving;
         }
 
@@ -1716,7 +1730,7 @@ namespace JsonAssets
             {
                 var item = Game1.player.Items[i];
                 if (item is SObject obj && ObjectData.TrackedRings.Contains(obj.ParentSheetIndex))
-                {
+                { // NOTE: Rings are not SObjects, so duplicate conversions do not occur.
                     Log.Trace($"Turning a ring-object of {obj.ParentSheetIndex} into a proper ring");
                     Game1.player.Items[i] = new Ring(obj.ParentSheetIndex);
                 }
@@ -1824,19 +1838,13 @@ namespace JsonAssets
             if (translations is null || string.IsNullOrWhiteSpace(item?.TranslationKey))
                 return;
 
-            foreach (var pair in translations.GetInAllLocales($"{item.TranslationKey}.name"))
+            foreach (var (locale, text) in translations.GetInAllLocales($"{item.TranslationKey}.name"))
             {
-                string locale = pair.Key;
-                string text = pair.Value;
-
                 item.NameLocalization[locale] = text;
             }
 
-            foreach (var pair in translations.GetInAllLocales($"{item.TranslationKey}.description"))
+            foreach (var (locale, text) in translations.GetInAllLocales($"{item.TranslationKey}.description"))
             {
-                string locale = pair.Key;
-                string text = pair.Value;
-
                 item.DescriptionLocalization[locale] = text;
                 if (locale == "default" && string.IsNullOrWhiteSpace(item.Description))
                     item.Description = text;
@@ -1936,9 +1944,9 @@ namespace JsonAssets
             }
         }
 
-        private void ClearIds(out IDictionary<string, int> ids, List<DataNeedsId> objs)
+        private void ClearIds(IDictionary<string, int> ids, List<DataNeedsId> objs)
         {
-            ids = null;
+            ids?.Clear();
             foreach (DataNeedsId obj in objs)
             {
                 obj.Id = -1;
@@ -2089,8 +2097,8 @@ namespace JsonAssets
                 // Copied from Game1.applySaveFix (case FixBotchedBundleData)
                 while (toks.Count > 4 && !int.TryParse(toks[^1], out _))
                 {
-                    string lastValue = toks[toks.Count - 1];
-                    if (char.IsDigit(lastValue[lastValue.Length - 1]) && lastValue.Contains(":") && lastValue.Contains("\\"))
+                    string lastValue = toks[^1];
+                    if (char.IsDigit(lastValue[^1]) && lastValue.Contains(':') && lastValue.Contains('\\'))
                     {
                         break;
                     }
@@ -2129,7 +2137,7 @@ namespace JsonAssets
                         }
                     }
                 }
-                toks[1] = string.Join(" ", toks1);
+                toks[1] = string.Join(' ', toks1);
                 string[] toks2 = toks[2].Split(' ');
                 for (int i = 0; i < toks2.Length; i += 3)
                 {
@@ -2146,8 +2154,8 @@ namespace JsonAssets
                         }
                     }
                 }
-                toks[2] = string.Join(" ", toks2);
-                bundleData[entry.Key] = string.Join("/", toks);
+                toks[2] = string.Join(' ', toks2);
+                bundleData[entry.Key] = string.Join('/', toks);
             }
             // Fix bad bundle data
             Game1.netWorldState.Value.SetBundleData(bundleData);
@@ -2800,9 +2808,17 @@ namespace JsonAssets
                 }
 
                 case FruitTree tree:
-                {
-                    if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, tree.treeType, this.VanillaFruitTreeIds))
-                        return true;
+                    {
+                        if (this.FixId(this.OldFruitTreeIds, this.FruitTreeIds, tree.treeType, this.VanillaFruitTreeIds))
+                            return true;
+
+                        string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
+                        FruitTreeData treeData = this.FruitTrees.FirstOrDefault(x => x.Name == key);
+                        if (treeData is not null) // Non-JA fruit tree
+                        {
+                            Log.Verbose($"Fixing fruit tree product: From {tree.indexOfFruit.Value} to {treeData.Product}={treeData.ProductId}");
+                            tree.indexOfFruit.Value = treeData.ProductId;
+                        }
 
                     string key = this.FruitTreeIds.FirstOrDefault(x => x.Value == tree.treeType.Value).Key;
                     FruitTreeData treeData = this.FruitTrees.FirstOrDefault(x => x.Name == key);
@@ -3121,7 +3137,8 @@ namespace JsonAssets
                         return false;
                     }
                 }
-                else return false;
+                else
+                    return false;
             }
             else
             {
@@ -3143,7 +3160,8 @@ namespace JsonAssets
                         return true;
                     }
                 }
-                else return false;
+                else
+                    return false;
             }
         }
 
