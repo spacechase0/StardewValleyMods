@@ -69,7 +69,7 @@ namespace SpaceCore.Interface
         public NewSkillsPage(int x, int y, int width, int height)
             : base(x, y, width, height)
         {
-            this.texture = SpaceCore.Instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
+            this.texture = SpaceCore.Instance.Helper.ModContent.Load<Texture2D>(Path.Combine("assets/sprites.png"));
 
             // Player panel
             this.playerPanel = new ClickableComponent(bounds: new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192), name: null)

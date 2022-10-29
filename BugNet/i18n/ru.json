@@ -1,0 +1,45 @@
+{
+    // net
+    "bug-net.name": "Сачок",
+    "bug-net.description": "Ловите насекомых и других существ",
+
+    // critter cage
+    "cage.name": "Ловушка для насекомых：{{critterName}}",
+    "cage.description": "Это насекомое! В ловушке!",
+
+    // critter names
+    "critter.GreenFrog": "Зеленая лягушка",
+    "critter.OliveFrog": "Оливковая лягушка",
+    "critter.Cloud": "Облако?",
+    "critter.Firefly": "Светлячок",
+    "critter.Seagull": "Чайка",
+    "critter.Crow": "Ворона",
+    "critter.BrownBird": "Коричневая птица",
+    "critter.BlueBird": "Синяя птица",
+    "critter.GrayRabbit": "Серый кролик",
+    "critter.WhiteRabbit": "Белый кролик",
+    "critter.Squirrel": "Белка",
+    "critter.Owl": "Сова",
+    "critter.WoodPecker": "Дятел",
+    "critter.SummerButterflyBlue": "Синяя летняя бабочка",
+    "critter.SummerButterflyGreen": "Зеленая летняя бабочка",
+    "critter.SummerButterflyRed": "Красная летняя бабочка",
+    "critter.SummerButterflyPink": "Розовая летняя бабочка",
+    "critter.SummerButterflyYellow": "Желтая летняя бабочка",
+    "critter.SummerButterflyOrange": "Оранжевая летняя бабочка",
+    "critter.SpringButterflyPalePink": "Бледно-розовая летняя бабочка",
+    "critter.SpringButterflyMagenta": "Пурпурная весенняя бабочка",
+    "critter.SpringButterflyWhite": "Белая весенняя бабочка",
+    "critter.SpringButterflyYellow": "Желтая весенняя бабочка",
+    "critter.SpringButterflyPurple": "Фиолетовая весенняя бабочка",
+    "critter.SpringButterflyPink": "Розовая весенняя бабочка",
+    "critter.BlueParrot": "Синий попугай",
+    "critter.GreenParrot": "Зеленый попугай",
+    "critter.Monkey": "Обезьяна",
+    "critter.OrangeIslandButterfly": "Оранжевая островная бабочка",
+    "critter.PinkIslandButterfly": "Розовая островная бабочка",
+    "critter.PurpleBird": "Фиолетовая птица",
+    "critter.RedBird": "Красная птица",
+    "critter.SunsetTropicalButterfly": "Вечерняя тропическая бабочка",
+    "critter.TropicalButterfly": "Тропическая бабочка"
+}
