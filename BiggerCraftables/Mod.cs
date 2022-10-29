@@ -1,11 +1,15 @@
 using System.Collections.Generic;
-using System.Linq;
+
 using BiggerCraftables.Framework;
 using BiggerCraftables.Patches;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using Spacechase.Shared.Patching;
+
 using SpaceShared;
+
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 
@@ -14,7 +18,7 @@ namespace BiggerCraftables
     internal class Mod : StardewModdingAPI.Mod
     {
         public static Mod Instance;
-        public static List<Entry> Entries = new();
+        public static Dictionary<string, Entry> Entries = new();
 
         public override void Entry(IModHelper helper)
         {
@@ -26,9 +30,10 @@ namespace BiggerCraftables
                 var list = cp.ReadJsonFile<ContentList>("content.json");
                 foreach (var entry in list.BiggerCraftables)
                 {
-                    entry.Texture = cp.LoadAsset<Texture2D>(entry.Image);
+                    entry.Texture = cp.ModContent.Load<Texture2D>(entry.Image);
                     Log.Debug($"Bigger craftable - {entry.Name} from {cp.Manifest.Name} - {entry.Width}x{entry.Length}");
-                    Mod.Entries.Add(entry);
+                    if (!Mod.Entries.TryAdd(entry.Name, entry))
+                        Log.Error($"{entry.Name} appears to be a duplicate and won't be added.");
                 }
             }
 
@@ -54,21 +59,18 @@ namespace BiggerCraftables
 
             var loc = e.Location;
 
-            foreach (var pair in e.Removed)
+            foreach (var (pos, obj) in e.Removed)
             {
-                var pos = pair.Key;
-                var obj = pair.Value;
-
                 if (!obj.bigCraftable.Value)
                     continue;
-                var entry = Mod.Entries.SingleOrDefault(cle => cle.Name == obj.Name);
-                if (entry == null)
+
+                if (!Mod.Entries.TryGetValue(obj.Name, out var entry))
                     continue;
 
                 int ind = obj.GetBiggerIndex();
 
                 int relPosX = ind % entry.Width, relPosY = entry.Length - 1 - ind / entry.Width;
-                Vector2 basePos = new Vector2(pos.X - relPosX, pos.Y - relPosY);
+                Vector2 basePos = new(pos.X - relPosX, pos.Y - relPosY);
                 for (int ix = 0; ix < entry.Width; ++ix)
                 {
                     for (int iy = 0; iy < entry.Length; ++iy)
