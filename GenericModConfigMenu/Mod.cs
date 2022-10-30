@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GenericModConfigMenu.Framework;
 
 using Microsoft.Xna.Framework;
@@ -82,13 +83,22 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi(IModInfo mod)
         {
-            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), Log.Info);
+            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), (s) => LogDeprecated( mod.Manifest.UniqueID, s));
         }
 
 
         /*********
         ** Private methods
         *********/
+        private static HashSet<string> DidDeprecationWarningsFor = new();
+        private void LogDeprecated(string modid, string str)
+        {
+            if (DidDeprecationWarningsFor.Contains(modid))
+                return;
+            DidDeprecationWarningsFor.Add(modid);
+            Log.Info(str);
+        }
+
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
         /// <param name="scrollRow">The initial scroll position, represented by the row index at the top of the visible area.</param>
         private void OpenListMenu(int? scrollRow = null)
@@ -161,7 +171,7 @@ namespace GenericModConfigMenu
             // the texture.
             this.Helper.Events.GameLoop.UpdateTicking += this.FiveTicksAfterGameLaunched;
 
-            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), Log.Info);
+            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), (s) => LogDeprecated( ModManifest.UniqueID, s));
 
             configMenu.Register(
                 mod: this.ModManifest,
@@ -213,7 +223,8 @@ namespace GenericModConfigMenu
         /// <param name="e">The event arguments.</param>
         private void OnWindowResized(object sender, WindowResizedEventArgs e)
         {
-            this.ConfigButton.LocalPosition = new Vector2(this.ConfigButton.Position.X, Game1.viewport.Height - 100);
+            if ( this.ConfigButton != null )
+                this.ConfigButton.LocalPosition = new Vector2(this.ConfigButton.Position.X, Game1.viewport.Height - 100);
         }
 
         /// <inheritdoc cref="IDisplayEvents.Rendered"/>

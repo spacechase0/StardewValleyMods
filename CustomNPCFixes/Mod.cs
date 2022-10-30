@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -46,13 +47,27 @@ namespace CustomNPCFixes
             this.FixSchedules();
         }
 
+        class NpcEqualityChecker : IEqualityComparer<NPC>
+        {
+            public bool Equals(NPC x, NPC y)
+            {
+                return x.Name == y.Name;
+            }
+
+            public int GetHashCode([DisallowNull] NPC obj)
+            {
+                return obj.Name.GetHashCode();
+            }
+        }
+
         private void SpawnNpcs()
         {
             List<NPC> allCharacters = Utility.getPooledList();
             try
             {
                 Utility.getAllCharacters(allCharacters);
-                var chars = allCharacters.Where(c => c.isVillager()).ToDictionary((a) => a.Name, a => a);
+
+                var chars = allCharacters.Where(c => c.isVillager()).Distinct( new NpcEqualityChecker() ).ToDictionary((a) => a.Name, a => a);
                 var dispos = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
 
                 foreach (var (name, dispo) in dispos)
