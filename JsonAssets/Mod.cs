@@ -2309,7 +2309,7 @@ namespace JsonAssets
                         {
                             Log.Trace($"Fixing clothing {clothing.Name} with new id {val} by name");
                             clothing.ParentSheetIndex = val;
-                            this.Helper.Reflection.GetField<bool>(clothing, "_LoadedData").SetValue(false);
+                            this.Helper.Reflection.GetField<bool>(clothing, "_loadedData").SetValue(false);
                             clothing.LoadData();
                         }
                         return false;
