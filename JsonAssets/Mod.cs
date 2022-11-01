@@ -1380,16 +1380,18 @@ namespace JsonAssets
                     && this.DoesntNeedDeshuffling(this.OldClothingIds, this.ClothingIds))
                 {
                     Log.Trace("Nothing has changed, deshuffling unnecessary.");
+                    // for legacy reasons, invoking the event anyways.
+                    this.Api.InvokeIdsFixed();
                 }
                 else
                 {
                     Log.Trace("Fixing IDs");
                     this.FixIdsEverywhere();
-                }
 
-                sfapi = this.Helper.ModRegistry.GetApi<ISolidFoundationsAPI>("PeacefulEnd.SolidFoundations");
-                if (sfapi is not null)
-                    sfapi.AfterBuildingRestoration += this.FixSFBuildings;
+                    sfapi = this.Helper.ModRegistry.GetApi<ISolidFoundationsAPI>("PeacefulEnd.SolidFoundations");
+                    if (sfapi is not null)
+                        sfapi.AfterBuildingRestoration += this.FixSFBuildings;
+                }
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
             {
