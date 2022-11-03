@@ -121,7 +121,11 @@ namespace SpaceCore
             while (data.Extensions.Count <= index - 1)
             {
                 Log.DebugOnlyLog($"Adding extended tilesheet {data.Extensions.Count} for {tex.Name ?? "unknown texture"}");
-                data.Extensions.Add(new Texture2D(Game1.graphics.GraphicsDevice, tex.Width, TileSheetExtensions.MAXTILESHEETHEIGHT));
+                Texture2D newTex = new(Game1.graphics.GraphicsDevice, tex.Width, TileSheetExtensions.MAXTILESHEETHEIGHT)
+                {
+                    Name = "Extended:" + tex.Name ?? "unknown-texture" + ":" + (data.Extensions.Count + 1)
+                };
+                data.Extensions.Add(newTex);
             }
 
             return index == 0
