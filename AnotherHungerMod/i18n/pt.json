@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Buffs and debuffs
+    *********/
+    "buff.full": "Saciado",
+    "buff.hungry": "Inanição",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.fullness-ui-X.name": "Interface de Saciedade (X)",
+    "config.fullness-ui-X.tooltip": "A posição horizontal em pixeis da interface de saciedade.",
+    "config.fullness-ui-Y.name": "Interface de Saciedade (Y)",
+    "config.fullness-ui-Y.tooltip": "A posição vertical em pixeis da interface de saciedade.",
+
+    "config.fullness-ui-alignment.name": "Alinhamento de Interface",
+    "config.fullness-ui-alignment.tooltip": "O alinhamento da interface de saciedade na tela do jogo.",
+    "config.fullness-ui-alignment.topLeft": "Superior Esquerdo",
+    "config.fullness-ui-alignment.topRight": "Superior Direito",
+    "config.fullness-ui-alignment.bottomLeft": "Inferior Esquerdo",
+    "config.fullness-ui-alignment.bottomRight": "Inferior Direito",
+
+    "config.fullness-max.name": "Saciedade Máxima",
+    "config.fullness-max.tooltip": "A quantidade máxima de saciedade que você pode ter.",
+    "config.fullness-drain.name": "Drenagem de Saciedade",
+    "config.fullness-drain.tooltip": "A quantidade de saciedade drenada a cada minuto em jogo.",
+
+    "config.edibility-multiplier.name": "Multiplicador de Comestibilidade",
+    "config.edibility-multiplier.tooltip": "Um mutiplicador para a quantidade de saciedade que você consegue, baseado na comestibilidade dos alimentos.",
+
+    "config.positive-buff-threshold.name": "Limiar de Buff Positivo",
+    "config.positive-buff-threshold.tooltip": "O mínimo de saciedade necessária para que buffs positivos sejam aplicados.",
+    "config.negative-buff-threshold.name": "Limiar de Buff Negativo",
+    "config.negative-buff-threshold.tooltip": "O máximo de saciedade antes que buffs negativos sejam aplicados.",
+    "config.starvation-damage.name": "Dano por Inanição",
+    "config.starvation-damage.tooltip": "A quantidade de dano tomado por inanição a cada minuto em jogo ao esgotar sua saciedade.",
+    "config.unfed-spouse-penalty.name": "Penalidade ao Cônjugue",
+    "config.unfed-spouse-penalty.tooltip": "Pontos de relacionamento penalizados por não alimentar seu cônjugue."
+}
