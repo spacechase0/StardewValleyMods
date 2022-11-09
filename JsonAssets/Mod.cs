@@ -2580,6 +2580,8 @@ namespace JsonAssets
                 case ShopLocation shop:
                     this.FixItemList(shop.itemsFromPlayerToSell);
                     this.RemoveNulls(shop.itemsFromPlayerToSell);
+                    this.FixItemList(shop.itemsToStartSellingTomorrow);
+                    this.RemoveNulls(shop.itemsToStartSellingTomorrow));
                     break;
             }
 
