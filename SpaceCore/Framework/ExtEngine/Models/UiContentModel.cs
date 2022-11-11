@@ -24,7 +24,7 @@ namespace SpaceCore.Framework.ExtEngine.Models
         public Element CreateUi( out Dictionary<string, List<Element>> elemsById )
         {
             using TextReader tr = new StringReader(UiMarkup);
-            var xr = XmlReader.Create(tr);
+            using var xr = XmlReader.Create(tr);
             xr.Read();
             return new UiDeserializer().Deserialize(xr, out elemsById);
         }
