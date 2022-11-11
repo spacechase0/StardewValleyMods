@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewModdingAPI;
@@ -16,6 +17,7 @@ namespace SpaceCore.Framework
             Command.Register("asset_invalidate", Commands.InvalidateCommand);
             Command.Register("exttilesheets_dump", Commands.DumpTilesheetsCommand);
             Command.Register("dump_spacecore_skills", Commands.DumpSkills);
+            Command.Register("harmony_invalidate", Commands.HarmonyInvalidate);
             //Command.register( "test", ( args ) => Game1.player.addItemByMenuIfNecessary( new TestObject() ) );
             //SpaceCore.modTypes.Add( typeof( TestObject ) );
         }
@@ -150,5 +152,27 @@ namespace SpaceCore.Framework
                 }
             }
         }
+
+        private static void HarmonyInvalidate(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                Log.Info("You must specify a method, like: harmony_invalidate StardewValley.CraftingRecipe:consumeIngredients");
+                return;
+            }
+
+            var meth = AccessTools.Method(args[0]);
+            if (meth == null)
+            {
+                Log.Debug("Method not found; note this doesn't work with ambiguous matches");
+                return;
+            }
+
+            // TODO: Unpatch/repatch the same methods instead of constantly adding new patches
+            var dummyPrefix = AccessTools.Method(typeof(Commands), nameof(DummyPrefixForHarmonyInvalidate)); 
+            SpaceCore.Instance.Harmony.Patch(meth, new HarmonyMethod(dummyPrefix));
+        }
+
+        private static void DummyPrefixForHarmonyInvalidate() { }
     }
 }

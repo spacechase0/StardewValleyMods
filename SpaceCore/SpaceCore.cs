@@ -66,7 +66,7 @@ namespace SpaceCore
         /*********
         ** Fields
         *********/
-        private Harmony Harmony;
+        internal Harmony Harmony;
 
         /// <summary>Handles migrating legacy data for a save file.</summary>
         private LegacyDataMigrator LegacyDataMigrator;

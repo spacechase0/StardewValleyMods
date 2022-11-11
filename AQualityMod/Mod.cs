@@ -71,11 +71,9 @@ namespace AQualityMod
     {
         public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
-            Log.Debug("meth:" + original);
             List<CodeInstruction> ret = new();
             foreach (var insn in insns)
             {
-                Log.Debug("insn:" + insn);
                 if (insn.opcode == OpCodes.Ldc_I4_4)
                 {
                     insn.opcode = OpCodes.Ldc_I4_6;
