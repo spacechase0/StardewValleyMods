@@ -12,6 +12,14 @@ using StardewValley.Objects;
 
 namespace AQualityMod
 {
+    public interface IApi
+    {
+        public bool IsPoorQuality(StardewValley.Object obj);
+        public bool IsWonderfulQuality(StardewValley.Object obj);
+        public void MakePoorQuality(StardewValley.Object obj);
+        public void MakeWonderfulQuality(StardewValley.Object obj);
+    }
+
     public class Mod : StardewModdingAPI.Mod
     {
         public static Mod instance;
@@ -28,16 +36,46 @@ namespace AQualityMod
             var harmony = new Harmony(ModManifest.UniqueID);
             harmony.PatchAll();
         }
+
+        public override object GetApi(IModInfo mod)
+        {
+            return new Api();
+        }
+    }
+
+    public class Api : IApi
+    {
+        public bool IsPoorQuality(StardewValley.Object obj)
+        {
+            return obj.Quality == -2;
+        }
+
+        public bool IsWonderfulQuality(StardewValley.Object obj)
+        {
+            return obj.Quality == 6;
+        }
+
+        public void MakePoorQuality(StardewValley.Object obj)
+        {
+            obj.Quality = -2;
+        }
+
+        public void MakeWonderfulQuality(StardewValley.Object obj)
+        {
+            obj.Quality = 6;
+        }
     }
 
     [HarmonyPatch(typeof(Cask), nameof(Cask.performObjectDropInAction))]
     public static class CaskObjectDropInPatch
     {
-        public static IEnumerable<CodeInstruction> Transpile(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
+            Log.Debug("meth:" + original);
             List<CodeInstruction> ret = new();
             foreach (var insn in insns)
             {
+                Log.Debug("insn:" + insn);
                 if (insn.opcode == OpCodes.Ldc_I4_4)
                 {
                     insn.opcode = OpCodes.Ldc_I4_6;
@@ -51,7 +89,7 @@ namespace AQualityMod
     [HarmonyPatch(typeof(Cask), nameof(Cask.checkForMaturity))]
     public static class CaskCheckMaturityPatch
     {
-        public static IEnumerable<CodeInstruction> Transpile(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
             List<CodeInstruction> ret = new();
             foreach (var insn in insns)
@@ -73,6 +111,11 @@ namespace AQualityMod
         {
             if (quality == 6)
             {
+                __result = 0;
+                return false;
+            }
+            if (quality == 4)
+            {
                 __result = 14;
                 return false;
             }
@@ -91,14 +134,14 @@ namespace AQualityMod
     {
         public static bool Prefix(int quality, ref int __result)
         {
-            if (quality == 6)
+            if (quality == 4)
             {
-                __result = 28; // Should this be 14 to match the pattern of vanilla?
+                __result = 6;
                 return false;
             }
             if (quality == -2)
             {
-                __result = 70;
+                __result = 0;
                 return false;
             }
 
@@ -159,7 +202,7 @@ namespace AQualityMod
     {
         public static void Postfix(Cask __instance, SpriteBatch spriteBatch, int x, int y, float alpha)
         {
-            if (__instance.heldObject.Value != null && (int)__instance.heldObject.Value.quality > 0)
+            if (__instance.heldObject.Value != null && (int)__instance.heldObject.Value.quality != 0)
             {
                 if (__instance.heldObject.Value.Quality != 6 && __instance.heldObject.Value.Quality != -2)
                     return;
@@ -169,8 +212,8 @@ namespace AQualityMod
                 Vector2 position = Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - 64));
                 Rectangle destination = new Rectangle((int)(position.X + 32f - 8f - scaleFactor.X / 2f) + ((__instance.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(position.Y + 64f + 8f - scaleFactor.Y / 2f) + ((__instance.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (int)(16f + scaleFactor.X), (int)(16f + scaleFactor.Y / 2f));
                 Microsoft.Xna.Framework.Rectangle quality_rect = new(0, 0, 8, 8);
-                Texture2D quality_sheet = __instance.Quality == 10 ? Mod.wonderfulTex : Mod.poorTex;
-                spriteBatch.Draw(quality_sheet, destination, quality_rect, Color.White * 0.95f, 0f, Vector2.Zero, SpriteEffects.None, (float)((y + 1) * 64) / 10000f);
+                Texture2D quality_sheet = __instance.heldObject.Value.Quality == 6 ? Mod.wonderfulTex : Mod.poorTex;
+                spriteBatch.Draw(quality_sheet, destination, quality_rect, Color.White * 0.95f, 0f, Vector2.Zero, SpriteEffects.None, (float)((y + 1) * 64 + 1) / 10000f);
             }
         }
     }
