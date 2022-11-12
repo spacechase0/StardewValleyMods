@@ -1,0 +1,9 @@
+﻿{
+    "config.price-per-exp-point.name": "Price per Experience Point",
+    "config.price-per-exp-point.description": "The price per experience point you pay in gold.",
+    "config.max-trainable-level.name": "Max Trainable Level",
+    "config.max-trainable-level.description": "The max level you can get from skill training.",
+    "prompt.question": "Train to level {{lvl}} {{skill}} ({{money}}g)",
+    "prompt.broke": "You can't afford that!",
+    "prompt.trained": "You are now level {{lvl}} {{skill}}.",
+}
