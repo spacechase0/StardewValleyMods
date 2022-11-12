@@ -1,0 +1,10 @@
+﻿{
+    "config.always-trigger.name": "Always Trigger",
+    "config.always-trigger.description": "If the menu should always trigger when interacting with an NPC.",
+    "config.trigger-modifier.name": "Trigger Modifier",
+    "config.trigger-modifier.description": "The key to hold when interacting with someone to trigger the advanced interaction menu.",
+    "interaction-with": "Interaction with {{npc}}",
+    "interaction.chat": "Chat",
+    "interaction.gift-held": "Gift Held Item",
+    "interaction.cancel": "Cancel",
+}
