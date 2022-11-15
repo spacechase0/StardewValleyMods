@@ -1,0 +1,33 @@
+﻿{
+    "info.title": "Information about the junimo, {{name}}",
+    "info.age": "Age: {{ageStr}}",
+    "info.happiness": "Happiness: {{happiness}}",
+    "info.stats.speed": "Speed: {{stat}}",
+    "info.stats.strength": "Strength: {{stat}}",
+    "info.stats.mind": "Mind: {{stat}}",
+    "info.stats.magic": "Magic: {{stat}}",
+    "info.stats.stamina": "Stamina: {{stat}}",
+    "info.skills.header": "Skills",
+    "info.skills.none": "(none)",
+
+    "stat-disposition.very-difficult": "Very Difficult",
+    "stat-disposition.difficult": "Difficult",
+    "stat-disposition.normal": "Normal",
+    "stat-disposition.easy": "Easy",
+    "stat-disposition.very-easy": "Very Easy",
+
+
+    "age.baby": "Baby",
+    "age.child": "Child",
+    "age.adult": "Adult",
+
+    "action.prompt": "Junimo: {{name}}",
+    "action.info": "Information",
+    "action.pet": "Pet",
+    "action.gift": "Gift",
+    "action.take-hat": "Take Hat",
+    "action.rename": "Rename",
+    "action.follow": "Follow me",
+    "action.stop-follow": "Send home",
+    "action.cancel": "Cancel"
+}
