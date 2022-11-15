@@ -194,9 +194,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SizableFish", "SizableFish\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LewisNightmare", "LewisNightmare\LewisNightmare.csproj", "{AA841829-B357-403E-B185-C57DB2C97A52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedSocialInteractions", "AdvancedSocialMenu\AdvancedSocialInteractions.csproj", "{08A9F3C9-C9F5-40CF-BD16-12B06512AD52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedSocialInteractions", "AdvancedSocialMenu\AdvancedSocialInteractions.csproj", "{08A9F3C9-C9F5-40CF-BD16-12B06512AD52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillTraining", "SkillTraining\SkillTraining.csproj", "{5932C333-624B-44B3-AA0D-8955EDB8463E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkillTraining", "SkillTraining\SkillTraining.csproj", "{5932C333-624B-44B3-AA0D-8955EDB8463E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -581,8 +581,6 @@ Global
 		{104FCF4D-7776-4C16-94CE-EDE8209D6D9F} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{EF733B78-4F0A-46D4-8529-923EEBBFA4DA} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{AA841829-B357-403E-B185-C57DB2C97A52} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
-		{08A9F3C9-C9F5-40CF-BD16-12B06512AD52} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
-		{5932C333-624B-44B3-AA0D-8955EDB8463E} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}

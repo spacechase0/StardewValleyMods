@@ -31,8 +31,6 @@ namespace SkillTraining
             Config = Helper.ReadConfig<Configuration>();
             I18n.Init(Helper.Translation);
 
-            TrainingMap = GetTrainingMap();
-
             Helper.Events.GameLoop.GameLaunched += this.GameLoop_GameLaunched;
         }
 
@@ -52,6 +50,9 @@ namespace SkillTraining
 
         private void Asi_AdvancedInteractionStarted(object sender, Action<string, Action> e)
         {
+            if (TrainingMap == null)
+                TrainingMap = GetTrainingMap();
+
             var npc = sender as NPC;
             if (!TrainingMap.ContainsKey(npc.Name))
                 return;
