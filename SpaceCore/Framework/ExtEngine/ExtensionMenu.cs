@@ -58,17 +58,17 @@ end while
                 ValList ret = new();
                 string id = ctx.GetVar("id").ToString();
 
-                if (!elemsById.ContainsKey(id))
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+                if (!menu.elemsById.ContainsKey(id))
                     return new Intrinsic.Result(ret);
 
-                foreach (var elem in elemsById[id])
+                foreach (var elem in menu.elemsById[id])
                 {
                     ValMap entry = new();
                     entry.map.Add(new ValString("x"), new ValNumber(elem.LocalPosition.X));
                     entry.map.Add(new ValString("y"), new ValNumber(elem.LocalPosition.Y));
                     entry.assignOverride = (key, value) =>
                     {
-                        Console.WriteLine("hello? " + key + " " + value);
                         switch (key.ToString())
                         {
                             case "x": elem.LocalPosition = new(value.FloatValue(), elem.LocalPosition.Y); break;

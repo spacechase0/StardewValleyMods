@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,21 +41,58 @@ namespace SpaceCore.Framework.ExtEngine
                 types.Add(type.Name, type);
         }
 
-        public Element Deserialize(XmlReader reader, out Dictionary<string, List<Element>> elemsById)
+        public Element Deserialize(string pack, XmlReader reader, out Dictionary<string, List<Element>> elemsById)
         {
             elemsById = new();
-            return ReadElement(reader, elemsById);
+            return ReadElement(pack, reader, elemsById);
         }
 
-        private Element ReadElement(XmlReader reader, Dictionary<string, List<Element>> elemsById)
+        private Element ReadElement(string pack, XmlReader reader, Dictionary<string, List<Element>> elemsById)
         {
+            Element elem;
+
+            if (reader.Name == "Include")
+            {
+                Dictionary<string, string> attrs = new();
+                reader.MoveToFirstAttribute();
+                for (int i = 0; i < reader.AttributeCount; ++i, reader.MoveToNextAttribute())
+                {
+                    string name = reader.Name;
+                    reader.ReadAttributeValue();
+                    string val = reader.Value;
+                    attrs.Add(name.ToLower(), val);
+                }
+
+                bool doStuff = true;
+                if (attrs.ContainsKey("when") && !ExtensionEngine.CheckWhen(pack, attrs["when"]))
+                {
+                    reader.MoveToElement();
+                    reader.ReadOuterXml();
+                    return null;
+                }
+
+                string markup = ExtensionEngine.SubstituteTokens(pack, File.ReadAllText(Util.FetchFullPath(SpaceCore.Instance.Helper.ModRegistry, attrs[ "file" ])));
+                using TextReader tr = new StringReader(markup);
+                using var xr = XmlReader.Create(tr);
+                xr.Read();
+                elem = new UiDeserializer().Deserialize(pack, xr, out Dictionary<string, List<Element>> elemsById2);
+                foreach (var entry in elemsById2)
+                {
+                    if (!elemsById.ContainsKey(entry.Key))
+                        elemsById.Add(entry.Key, new());
+                    elemsById[entry.Key].AddRange(entry.Value);
+                }
+
+                goto AfterParsingAttributes;
+            }
+
             if (!types.ContainsKey(reader.Name))
             {
                 return null;
             }
 
             Type t = types[reader.Name];
-            Element elem = ( Element ) t.GetConstructor(new Type[0]).Invoke( new object[ 0 ] );
+            elem = ( Element ) t.GetConstructor(new Type[0]).Invoke( new object[ 0 ] );
             reader.MoveToFirstAttribute();
             for (int i = 0; i < reader.AttributeCount; ++i, reader.MoveToNextAttribute())
             {
@@ -94,33 +132,43 @@ namespace SpaceCore.Framework.ExtEngine
                             elemsById.Add(val, new());
                         elemsById[val].Add(elem);
                     }
+                    else if (name.Equals("when", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!ExtensionEngine.CheckWhen(pack, val))
+                        {
+                            elem = null;
+                            goto AfterParsingAttributes;
+                        }
+                    }
                     // TODO - abstract into functions section or something
                     else if (name == "LoadFromImage" && elem is Image image)
                     {
                         image.Texture = Util.FetchTexture(SpaceCore.Instance.Helper.ModRegistry, val);
-                        Console.WriteLine("meow! " + val + " " + image.Texture + "!");
                     }
                 }
             }
 
+        AfterParsingAttributes:
             reader.MoveToElement();
-            var children = reader.ReadSubtree();
-            reader.Read();
-            reader.MoveToContent();
-            if (reader.NodeType == XmlNodeType.EndElement)
-                return elem;
+            //var children = reader.ReadSubtree();
 
             if (!reader.IsEmptyElement)
             {
+                reader.Read();
+                reader.MoveToContent();
+                if (reader.NodeType == XmlNodeType.EndElement)
+                    return elem;
+
                 while (reader.NodeType != XmlNodeType.EndElement)
                 {
-                    var child = ReadElement(reader, elemsById);
-                    if (elem is Container container)
+                    var child = ReadElement(pack, reader, elemsById);
+                    if (child != null && elem is Container container)
                         container.AddChild(child);
                     reader.MoveToContent();
                 }
                 reader.ReadEndElement();
             }
+            else reader.Read();
 
             return elem;
         }

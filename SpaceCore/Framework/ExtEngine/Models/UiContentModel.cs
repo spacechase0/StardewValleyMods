@@ -16,6 +16,9 @@ namespace SpaceCore.Framework.ExtEngine.Models
     internal class UiContentModel
     {
         [JsonIgnore]
+        private string MarkupPack { get; set; }
+
+        [JsonIgnore]
         public string UiMarkup { get; set; }
 
         [JsonIgnore]
@@ -23,10 +26,11 @@ namespace SpaceCore.Framework.ExtEngine.Models
 
         public Element CreateUi( out Dictionary<string, List<Element>> elemsById )
         {
-            using TextReader tr = new StringReader(UiMarkup);
+            string actualMarkup = ExtensionEngine.SubstituteTokens(MarkupPack, UiMarkup);
+            using TextReader tr = new StringReader(actualMarkup);
             using var xr = XmlReader.Create(tr);
             xr.Read();
-            return new UiDeserializer().Deserialize(xr, out elemsById);
+            return new UiDeserializer().Deserialize(MarkupPack, xr, out elemsById);
         }
 
         public string UiFile { get; set; }
@@ -39,6 +43,7 @@ namespace SpaceCore.Framework.ExtEngine.Models
         {
             if (UiFile != null)
             {
+                MarkupPack = UiFile.Substring(0, UiFile.IndexOf('/'));
                 UiMarkup = File.ReadAllText(Util.FetchFullPath(SpaceCore.Instance.Helper.ModRegistry, UiFile));
             }
             if (ScriptFile != null)
