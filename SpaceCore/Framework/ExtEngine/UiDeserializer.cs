@@ -6,8 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Miniscript;
 using SpaceCore.UI;
 using SpaceShared;
+using StardewValley;
 
 namespace SpaceCore.Framework.ExtEngine
 {
@@ -141,7 +144,7 @@ namespace SpaceCore.Framework.ExtEngine
         internal bool LoadPropertyToElement(string pack, Element elem, string name, string val, List<string> extra)
         {
             var prop = elem.GetType().GetProperty(name);
-            if (prop != null)
+            if (prop != null && name != "UserData")
             {
                 object obj = val;
 
@@ -179,13 +182,29 @@ namespace SpaceCore.Framework.ExtEngine
                     }
                 }
                 // TODO - abstract into functions section or something
-                else if (name == "LoadFromImage" && elem is Image image)
+                else if (name == "LoadFromImage" && elem is Image image1)
                 {
-                    image.Texture = Util.FetchTexture(SpaceCore.Instance.Helper.ModRegistry, val);
+                    image1.Texture = Util.FetchTexture(SpaceCore.Instance.Helper.ModRegistry, val);
+                }
+                else if (name == "LoadFromGame" && elem is Image image2)
+                {
+                    image2.Texture = Game1.content.Load< Texture2D >(val);
                 }
                 else if (name == "OnClickFunction")
                 {
                     (elem.UserData as UiExtraData).OnClickFunction = val;
+                }
+                else if (name == "ScriptData")
+                {
+                    (elem.UserData as UiExtraData).ScriptData = new ValString(val);
+                }
+                else if (name == "TooltipTitle")
+                {
+                    (elem.UserData as UiExtraData).TooltipTitle = val;
+                }
+                else if (name == "TooltipText")
+                {
+                    (elem.UserData as UiExtraData).TooltipText = val;
                 }
                 else if (name == "CenterH" && !val.Equals("false", StringComparison.OrdinalIgnoreCase))
                 {

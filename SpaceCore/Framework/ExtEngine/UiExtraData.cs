@@ -11,7 +11,9 @@ namespace SpaceCore.Framework.ExtEngine
     {
         public string Id { get; set; }
         public string OnClickFunction { get; set; }
+        public string TooltipTitle { get; set; }
+        public string TooltipText { get; set; }
 
-        public Value ScriptData { get; set; }
+        public Value ScriptData { get; set; } = ValNull.instance;
     }
 }

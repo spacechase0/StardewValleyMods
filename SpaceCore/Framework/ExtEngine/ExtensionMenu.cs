@@ -23,6 +23,7 @@ namespace SpaceCore.Framework.ExtEngine
         private Dictionary<string, List<Element>> elemsById = new();
         private List<Element> allElements;
         private Interpreter interpreter;
+        private List<Element> tooltip = new();
 
         private static Func<Element, Value> makeElemMap;
 
@@ -32,49 +33,7 @@ namespace SpaceCore.Framework.ExtEngine
             ui = ( RootElement ) uiModel.CreateUi(out allElements, out _ ); // can ignore last one since it has to be root element
             foreach (var elem in allElements)
             {
-                var extra = elem.UserData as UiExtraData;
-                if (extra.Id != null)
-                {
-                    if (!elemsById.ContainsKey(extra.Id))
-                        elemsById.Add(extra.Id, new());
-                    elemsById[extra.Id].Add(elem);
-                }
-                if (extra.OnClickFunction != null)
-                {
-                    var callbackProp = elem.GetType().GetProperty("Callback");
-                    if (callbackProp == null || callbackProp.PropertyType != typeof(Action<Element>))
-                    {
-                        Log.Warn($"In {uiModel.UiFile}, element {elem} was given click callback but does not support that");
-                    }
-                    else
-                    {
-                        Action<Element> func = (elem) =>
-                        {
-                            // TODO: Pass element into this
-                            Value callFunc = interpreter.GetGlobalValue(extra.OnClickFunction);
-                            if (callFunc == null)
-                            {
-                                Log.Warn($"In {uiModel.UiFile}, failed to find click function {extra.OnClickFunction} in {uiModel.ScriptFile}");
-                                return;
-                            }
-                            var events = interpreter.GetGlobalValue("_events") as ValList;
-                            if (events == null)
-                            {
-                                Log.Warn("No events queue???");
-                                return;
-                            }
-
-                            ValMap args = new();
-                            args.map.Add(new ValString("element"), makeElemMap(elem));
-                            ValMap call = new();
-                            call.map.Add(new ValString("func"), callFunc);
-                            call.map.Add(new ValString("arguments"), args);
-
-                            events.values.Add(call);
-                        };
-                        callbackProp.SetValue(elem, func);
-                    }
-                }
+                InitElement(elem);
             }
 
             interpreter = ExtensionEngine.SetupInterpreter();
@@ -97,7 +56,6 @@ while true
 end while
 ");
             interpreter.Compile();
-            interpreter.RunUntilDone(0.01);
 
             Value initFunc = interpreter.GetGlobalValue("init");
             if (initFunc == null) return;
@@ -107,6 +65,57 @@ end while
             ValMap callInit = new();
             callInit.map.Add(new ValString("func"), initFunc);
             events.values.Add(callInit);
+
+            interpreter.RunUntilDone(0.01);
+        }
+
+        private void InitElement(Element elem)
+        {
+            var extra = elem.UserData as UiExtraData;
+            if (extra.Id != null)
+            {
+                if (!elemsById.ContainsKey(extra.Id))
+                    elemsById.Add(extra.Id, new());
+                elemsById[extra.Id].Add(elem);
+            }
+            if (extra.OnClickFunction != null)
+            {
+                var callbackProp = elem.GetType().GetProperty("Callback");
+                if (callbackProp == null || callbackProp.PropertyType != typeof(Action<Element>))
+                {
+                    Log.Warn($"In {origModel.UiFile}, element {elem} was given click callback but does not support that");
+                }
+                else
+                {
+                    Action<Element> func = (elem) =>
+                    {
+                        // TODO: Pass element into this
+                        Value callFunc = interpreter.GetGlobalValue(extra.OnClickFunction);
+                        if (callFunc == null)
+                        {
+                            Log.Warn($"In {origModel.UiFile}, failed to find click function {extra.OnClickFunction} in {origModel.ScriptFile}");
+                            return;
+                        }
+                        var events = interpreter.GetGlobalValue("_events") as ValList;
+                        if (events == null)
+                        {
+                            Log.Warn("No events queue???");
+                            return;
+                        }
+
+                        ValMap args = new();
+                        args.map.Add(new ValString("element"), makeElemMap(elem));
+                        ValMap call = new();
+                        call.map.Add(new ValString("func"), callFunc);
+                        call.map.Add(new ValString("arguments"), args);
+
+                        events.values.Add(call);
+                    };
+                    callbackProp.SetValue(elem, func);
+                }
+            }
+            if (extra.TooltipTitle != null || extra.TooltipText != null)
+                tooltip.Add(elem);
         }
 
         // TODO: Change this when I can attach them to just the interpreter
@@ -125,7 +134,8 @@ end while
                 ret.map.Add(new ValString("x"), new ValNumber(elem.LocalPosition.X));
                 ret.map.Add(new ValString("y"), new ValNumber(elem.LocalPosition.Y));
                 ret.map.Add(new ValString("getParent"), egp.GetFunc());
-
+                ret.map.Add(new ValString("scriptData"), (elem.UserData as UiExtraData).ScriptData);
+                
                 if (elem is Container)
                 {
                     ret.map.Add(new ValString("getChildren"), cgc.GetFunc());
@@ -138,10 +148,13 @@ end while
                     {
                         case "x":
                             elem.LocalPosition = new(val.FloatValue(), elem.LocalPosition.Y);
-                            return false;
+                            return true;
                         case "y":
                             elem.LocalPosition = new(elem.LocalPosition.X, val.FloatValue());
-                            return false;
+                            return true;
+                        case "scriptData":
+                            (elem.UserData as UiExtraData).ScriptData = val;
+                            return true;
                     }
                     return true;
                 };
@@ -226,6 +239,7 @@ end while
                     }
                 }
                 parent.AddChild(elem);
+                menu.InitElement(elem);
 
                 return new Intrinsic.Result(makeElemMap(elem));
             };
@@ -262,14 +276,15 @@ end while
             if (updateFunc != null)
             {
                 var events = interpreter.GetGlobalValue("_events") as ValList;
-                if (events == null) return;
+                if (events != null)
+                {
+                    //events.values.Add(updateFunc);
 
-                //events.values.Add(updateFunc);
-
-                ValMap callUpdate = new();
-                callUpdate.map.Add(new ValString("func"), updateFunc);
-                //callUpdate.map.Add(new ValString("arguments"), ValNull.instance);
-                events.values.Add(callUpdate);
+                    ValMap callUpdate = new();
+                    callUpdate.map.Add(new ValString("func"), updateFunc);
+                    //callUpdate.map.Add(new ValString("arguments"), ValNull.instance);
+                    events.values.Add(callUpdate);
+                }
             }
 
             interpreter.RunUntilDone(0.01);
@@ -279,6 +294,19 @@ end while
         {
             base.draw(b);
             ui.Draw(b);
+
+            foreach (var elem in tooltip)
+            {
+                if (elem.Hover)
+                {
+                    var extra = elem.UserData as UiExtraData;
+                    if (extra.TooltipText != null && extra.TooltipTitle != null)
+                        drawToolTip(b, extra.TooltipText, extra.TooltipTitle, null);
+                    else if (extra.TooltipText != null || extra.TooltipTitle != null)
+                        drawHoverText(b, extra.TooltipText ?? extra.TooltipTitle, Game1.smallFont);
+                }
+            }
+
             drawMouse(b);
         }
     }

@@ -13,6 +13,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace SpaceCore.Framework.ExtEngine
 {
@@ -127,7 +128,43 @@ namespace SpaceCore.Framework.ExtEngine
             //ret.implicitOutput = (s) => Log.Trace($"Script output: {s}");
             ret.errorOutput = (s) => Log.Error($"Script error: {s}");
 
-            var i = Intrinsic.Create("openMenu");
+            var i = Intrinsic.Create("substituteTokens");
+            i.AddParam("text");
+            i.code = (ctx, prevResult) =>
+            {
+                string text = ctx.GetVar("text").ToString();
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+
+                return new Intrinsic.Result(new ValString(SubstituteTokens(menu.origModel.ScriptFile.Substring(0, menu.origModel.ScriptFile.IndexOf('/')), text)));
+            };
+
+            i = Intrinsic.Create("hasMail");
+            i.AddParam("mail");
+            i.AddParam("player", new ValString("current"));
+            i.code = (ctx, prevResult) =>
+            {
+                string mail = ctx.GetVar("mail").ToString();
+                var playerVar = ctx.GetVar("player");
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+
+                Farmer player = null;
+                if (playerVar is ValString && playerVar.ToString() == "current")
+                    player = Game1.player;
+                else if (playerVar is ValString && playerVar.ToString() == "master")
+                    player = Game1.MasterPlayer;
+                else if (playerVar is ValNumber vnum)
+                    player = Game1.getFarmerMaybeOffline((long)vnum.value);
+
+                if (player == null)
+                {
+                    Log.Warn($"Bad player ID ({playerVar}) passed to hasMail by {menu.origModel.ScriptFile}");
+                    return new Intrinsic.Result(new ValNumber(0));
+                }
+
+                return new Intrinsic.Result(new ValNumber(player.hasOrWillReceiveMail( mail ) ? 1 : 0));
+            };
+
+            i = Intrinsic.Create("openMenu");
             i.AddParam("id");
             i.AddParam("asChildMenu", new ValNumber(0));
             i.code = (ctx, prevResult) =>
@@ -143,6 +180,22 @@ namespace SpaceCore.Framework.ExtEngine
                     return Intrinsic.Result.Null;
                 }
                 var newMenu = new ExtensionMenu(data[id]);
+                if (asChild && Game1.activeClickableMenu != null)
+                    Game1.activeClickableMenu.SetChildMenu(newMenu);
+                else
+                    Game1.activeClickableMenu = newMenu;
+                return Intrinsic.Result.Null;
+            };
+
+            i = Intrinsic.Create("openLetterMenu");
+            i.AddParam("text");
+            i.AddParam("asChildMenu", new ValNumber(0));
+            i.code = (ctx, prevResult) =>
+            {
+                string text = ctx.GetVar("text").ToString();
+                bool asChild = ctx.GetVar("asChildMenu").BoolValue();
+
+                var newMenu = new LetterViewerMenu(text);
                 if (asChild && Game1.activeClickableMenu != null)
                     Game1.activeClickableMenu.SetChildMenu(newMenu);
                 else
