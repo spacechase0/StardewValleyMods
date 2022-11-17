@@ -42,15 +42,16 @@ namespace SpaceCore.Framework.ExtEngine
                 types.Add(type.Name, type);
         }
 
-        public Element Deserialize(string pack, XmlReader reader, out List<Element> allElements)
+        public Element Deserialize(string pack, XmlReader reader, out List<Element> allElements, out List<string> extra)
         {
             allElements = new();
-            return ReadElement(pack, reader, allElements);
+            return ReadElement(pack, reader, allElements, out extra);
         }
 
-        private Element ReadElement(string pack, XmlReader reader, List<Element> allElements)
+        private Element ReadElement(string pack, XmlReader reader, List<Element> allElements, out List<string> extra)
         {
             Element elem;
+            extra = new();
 
             if (reader.Name == "Include")
             {
@@ -76,7 +77,7 @@ namespace SpaceCore.Framework.ExtEngine
                 using TextReader tr = new StringReader(markup);
                 using var xr = XmlReader.Create(tr);
                 xr.Read();
-                elem = new UiDeserializer().Deserialize(pack, xr, out List<Element> allElements2);
+                elem = new UiDeserializer().Deserialize(pack, xr, out List<Element> allElements2, out extra);
                 allElements.AddRange(allElements2);
 
                 goto AfterParsingAttributes;
@@ -97,8 +98,11 @@ namespace SpaceCore.Framework.ExtEngine
                 reader.ReadAttributeValue();
                 string val = reader.Value;
 
-                if (!LoadPropertyToElement(pack, elem, name, val))
+                if (!LoadPropertyToElement(pack, elem, name, val, extra))
+                {
+                    elem = null;
                     goto AfterParsingAttributes;
+                }
             }
 
         AfterParsingAttributes:
@@ -116,9 +120,15 @@ namespace SpaceCore.Framework.ExtEngine
 
                 while (reader.NodeType != XmlNodeType.EndElement)
                 {
-                    var child = ReadElement(pack, reader, allElements);
+                    var child = ReadElement(pack, reader, allElements, out List<string> extraTmp);
                     if (child != null && elem is Container container)
+                    {
                         container.AddChild(child);
+                        if (extraTmp.Contains("CenterH"))
+                            child.LocalPosition += new Vector2((container.Bounds.Size.ToVector2() - child.Bounds.Size.ToVector2()).X / 2, 0);
+                        if (extraTmp.Contains("CenterV"))
+                            child.LocalPosition += new Vector2(0, (container.Bounds.Size.ToVector2() - child.Bounds.Size.ToVector2()).Y / 2);
+                    }
                     reader.MoveToContent();
                 }
                 reader.ReadEndElement();
@@ -128,7 +138,7 @@ namespace SpaceCore.Framework.ExtEngine
             return elem;
         }
 
-        internal bool LoadPropertyToElement(string pack, Element elem, string name, string val)
+        internal bool LoadPropertyToElement(string pack, Element elem, string name, string val, List<string> extra)
         {
             var prop = elem.GetType().GetProperty(name);
             if (prop != null)
@@ -176,6 +186,14 @@ namespace SpaceCore.Framework.ExtEngine
                 else if (name == "OnClickFunction")
                 {
                     (elem.UserData as UiExtraData).OnClickFunction = val;
+                }
+                else if (name == "CenterH" && !val.Equals("false", StringComparison.OrdinalIgnoreCase))
+                {
+                    extra.Add("CenterH");
+                }
+                else if (name == "CenterV" && !val.Equals("false", StringComparison.OrdinalIgnoreCase))
+                {
+                    extra.Add("CenterV");
                 }
             }
 

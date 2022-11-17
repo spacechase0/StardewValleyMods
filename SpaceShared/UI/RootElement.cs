@@ -1,3 +1,5 @@
+using StardewValley;
+
 #if IS_SPACECORE
 namespace SpaceCore.UI
 {
@@ -14,8 +16,8 @@ namespace SpaceShared.UI
         *********/
         public bool Obscured { get; set; } = false;
 
-        public override int Width => 0;
-        public override int Height => 0;
+        public override int Width => Game1.viewport.Width;
+        public override int Height => Game1.viewport.Height;
 
 
         /*********

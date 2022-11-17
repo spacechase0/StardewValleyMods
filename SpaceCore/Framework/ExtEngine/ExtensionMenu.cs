@@ -29,7 +29,7 @@ namespace SpaceCore.Framework.ExtEngine
         public ExtensionMenu(UiContentModel uiModel)
         {
             origModel = uiModel;
-            ui = ( RootElement ) uiModel.CreateUi(out allElements);
+            ui = ( RootElement ) uiModel.CreateUi(out allElements, out _ ); // can ignore last one since it has to be root element
             foreach (var elem in allElements)
             {
                 var extra = elem.UserData as UiExtraData;
@@ -85,7 +85,7 @@ namespace SpaceCore.Framework.ExtEngine
             interpreter.Reset(uiModel.Script + @"
 _events = []
 while true
-    while _events.len > 0
+    while _events
         _nextEvent = _events.pull
         if _nextEvent.hasIndex(""arguments"") then
             _nextEvent.func _nextEvent.arguments
@@ -117,12 +117,14 @@ end while
             didIntrinsics = true;
             var cgc = Intrinsic.Create("__containerGetChildren");
             var cmc = Intrinsic.Create("__containerMakeChild");
+            var egp = Intrinsic.Create("__elementGetParent");
             makeElemMap = (Element elem) =>
             {
                 ValMap ret = new();
                 ret.map.Add(new ValString("__elem"), new ValUiElement(elem));
                 ret.map.Add(new ValString("x"), new ValNumber(elem.LocalPosition.X));
                 ret.map.Add(new ValString("y"), new ValNumber(elem.LocalPosition.Y));
+                ret.map.Add(new ValString("getParent"), egp.GetFunc());
 
                 if (elem is Container)
                 {
@@ -202,12 +204,39 @@ end while
                 elem.UserData = new UiExtraData();
                 foreach (var entry in ps.map)
                 {
-                    ud.LoadPropertyToElement(menu.origModel.ScriptFile.Substring(0, menu.origModel.ScriptFile.IndexOf('/')), elem, entry.Key.ToString(), entry.Value.ToString());
+                    List<string> extra = new();
+                    ud.LoadPropertyToElement(menu.origModel.ScriptFile.Substring(0, menu.origModel.ScriptFile.IndexOf('/')), elem, entry.Key.ToString(), entry.Value.ToString(), extra);
+                    if (extra.Contains("CenterH"))
+                    {
+                        Vector2 size = new( Game1.viewport.Size.Width, Game1.viewport.Size.Height );
+                        if (parent != null)
+                        {
+                            size = parent.Bounds.Size.ToVector2();
+                        }
+                        elem.LocalPosition += new Vector2( (size - elem.Bounds.Size.ToVector2()).X / 2, 0 );
+                    }
+                    if (extra.Contains("CenterV"))
+                    {
+                        Vector2 size = new(Game1.viewport.Size.Width, Game1.viewport.Size.Height);
+                        if (parent != null)
+                        {
+                            size = parent.Bounds.Size.ToVector2();
+                        }
+                        elem.LocalPosition += new Vector2(0, (size - elem.Bounds.Size.ToVector2()).Y / 2);
+                    }
                 }
                 parent.AddChild(elem);
 
                 return new Intrinsic.Result(makeElemMap(elem));
             };
+
+            egp.code = (ctx, prevResult) =>
+            {
+                var map = ctx.self as ValMap;
+                var elem = (map.map[new ValString("__elem")] as ValUiElement).Element;
+                return elem.Parent == null ? Intrinsic.Result.Null : new Intrinsic.Result(makeElemMap(elem.Parent));
+            };
+
             i = Intrinsic.Create("getRoot");
             i.code = (ctx, prevResult) =>
             {
@@ -230,16 +259,18 @@ end while
             ui.Update();
 
             Value updateFunc = interpreter.GetGlobalValue("update");
-            if (updateFunc == null) return;
-            var events = interpreter.GetGlobalValue("_events") as ValList;
-            if (events == null) return;
+            if (updateFunc != null)
+            {
+                var events = interpreter.GetGlobalValue("_events") as ValList;
+                if (events == null) return;
 
-            //events.values.Add(updateFunc);
+                //events.values.Add(updateFunc);
 
-            ValMap callUpdate = new();
-            callUpdate.map.Add(new ValString("func"), updateFunc);
-            //callUpdate.map.Add(new ValString("arguments"), ValNull.instance);
-            events.values.Add(callUpdate);
+                ValMap callUpdate = new();
+                callUpdate.map.Add(new ValString("func"), updateFunc);
+                //callUpdate.map.Add(new ValString("arguments"), ValNull.instance);
+                events.values.Add(callUpdate);
+            }
 
             interpreter.RunUntilDone(0.01);
         }

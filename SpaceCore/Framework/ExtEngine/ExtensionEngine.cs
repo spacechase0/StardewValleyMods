@@ -129,9 +129,11 @@ namespace SpaceCore.Framework.ExtEngine
 
             var i = Intrinsic.Create("openMenu");
             i.AddParam("id");
+            i.AddParam("asChildMenu", new ValNumber(0));
             i.code = (ctx, prevResult) =>
             {
                 string id = ctx.GetVar("id").ToString();
+                bool asChild = ctx.GetVar("asChildMenu").BoolValue();
                 var menu = ctx.interpreter.hostData as ExtensionMenu;
 
                 var data = Game1.content.Load<Dictionary<string, UiContentModel>>("spacechase0.SpaceCore/UI");
@@ -141,7 +143,10 @@ namespace SpaceCore.Framework.ExtEngine
                     return Intrinsic.Result.Null;
                 }
                 var newMenu = new ExtensionMenu(data[id]);
-                Game1.activeClickableMenu = newMenu;
+                if (asChild && Game1.activeClickableMenu != null)
+                    Game1.activeClickableMenu.SetChildMenu(newMenu);
+                else
+                    Game1.activeClickableMenu = newMenu;
                 return Intrinsic.Result.Null;
             };
 

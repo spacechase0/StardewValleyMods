@@ -37,7 +37,7 @@ namespace SpaceCore.Framework.ExtEngine.Models
             }
         }
 
-        public Element CreateUi( out List<Element> allElements )
+        public Element CreateUi( out List<Element> allElements, out List<string> extra )
         {
             string pack = UiFile.Substring(0, UiFile.IndexOf('/'));
 
@@ -45,7 +45,7 @@ namespace SpaceCore.Framework.ExtEngine.Models
             using TextReader tr = new StringReader(actualMarkup);
             using var xr = XmlReader.Create(tr);
             xr.Read();
-            return new UiDeserializer().Deserialize(pack, xr, out allElements);
+            return new UiDeserializer().Deserialize(pack, xr, out allElements, out extra);
         }
 
         public string UiFile { get; set; }
