@@ -16,40 +16,41 @@ namespace SpaceCore.Framework.ExtEngine.Models
     internal class UiContentModel
     {
         [JsonIgnore]
-        private string MarkupPack { get; set; }
-
-        [JsonIgnore]
-        public string UiMarkup { get; set; }
-
-        [JsonIgnore]
-        public string Script { get; set; }
-
-        public Element CreateUi( out Dictionary<string, List<Element>> elemsById )
+        public string UiMarkup
         {
-            string actualMarkup = ExtensionEngine.SubstituteTokens(MarkupPack, UiMarkup);
+            get
+            {
+                if (UiFile == null)
+                    return null;
+                return File.ReadAllText(Util.FetchFullPath(SpaceCore.Instance.Helper.ModRegistry, UiFile));
+            }
+        }
+
+        [JsonIgnore]
+        public string Script
+        {
+            get
+            {
+                if (ScriptFile == null)
+                    return "";
+                return File.ReadAllText(Util.FetchFullPath(SpaceCore.Instance.Helper.ModRegistry, ScriptFile));
+            }
+        }
+
+        public Element CreateUi( out List<Element> allElements )
+        {
+            string pack = UiFile.Substring(0, UiFile.IndexOf('/'));
+
+            string actualMarkup = ExtensionEngine.SubstituteTokens(pack, UiMarkup);
             using TextReader tr = new StringReader(actualMarkup);
             using var xr = XmlReader.Create(tr);
             xr.Read();
-            return new UiDeserializer().Deserialize(MarkupPack, xr, out elemsById);
+            return new UiDeserializer().Deserialize(pack, xr, out allElements);
         }
 
         public string UiFile { get; set; }
         public string ScriptFile { get; set; }
 
         public bool DefaultClosable { get; set; } = true;
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext ctx)
-        {
-            if (UiFile != null)
-            {
-                MarkupPack = UiFile.Substring(0, UiFile.IndexOf('/'));
-                UiMarkup = File.ReadAllText(Util.FetchFullPath(SpaceCore.Instance.Helper.ModRegistry, UiFile));
-            }
-            if (ScriptFile != null)
-            {
-                Script = File.ReadAllText(Util.FetchFullPath(SpaceCore.Instance.Helper.ModRegistry, ScriptFile));
-            }
-        }
     }
 }

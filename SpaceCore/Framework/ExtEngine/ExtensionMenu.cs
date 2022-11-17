@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,41 +8,105 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Miniscript;
 using SpaceCore.Framework.ExtEngine.Models;
+using SpaceCore.Framework.ExtEngine.Script;
 using SpaceCore.UI;
+using SpaceShared;
+using StardewValley;
 using StardewValley.Menus;
 
 namespace SpaceCore.Framework.ExtEngine
 {
     internal class ExtensionMenu : IClickableMenu
     {
+        internal UiContentModel origModel;
         private RootElement ui;
-        private Dictionary<string, List<Element>> elemsById;
+        private Dictionary<string, List<Element>> elemsById = new();
+        private List<Element> allElements;
         private Interpreter interpreter;
 
-        private static string ScriptPrefix = @"";
-        private static string ScriptEventLoop = @"
-_events = []
-while true
-    if _events.len > 0 then
-        _nextEvent = _events.pull
-//        _nextEvent.function _nextEvent.arguments
-        _nextEvent
-    end if
-    yield
-end while
-";
+        private static Func<Element, Value> makeElemMap;
 
         public ExtensionMenu(UiContentModel uiModel)
         {
-            ui = ( RootElement ) uiModel.CreateUi( out elemsById );
+            origModel = uiModel;
+            ui = ( RootElement ) uiModel.CreateUi(out allElements);
+            foreach (var elem in allElements)
+            {
+                var extra = elem.UserData as UiExtraData;
+                if (extra.Id != null)
+                {
+                    if (!elemsById.ContainsKey(extra.Id))
+                        elemsById.Add(extra.Id, new());
+                    elemsById[extra.Id].Add(elem);
+                }
+                if (extra.OnClickFunction != null)
+                {
+                    var callbackProp = elem.GetType().GetProperty("Callback");
+                    if (callbackProp == null || callbackProp.PropertyType != typeof(Action<Element>))
+                    {
+                        Log.Warn($"In {uiModel.UiFile}, element {elem} was given click callback but does not support that");
+                    }
+                    else
+                    {
+                        Action<Element> func = (elem) =>
+                        {
+                            // TODO: Pass element into this
+                            Value callFunc = interpreter.GetGlobalValue(extra.OnClickFunction);
+                            if (callFunc == null)
+                            {
+                                Log.Warn($"In {uiModel.UiFile}, failed to find click function {extra.OnClickFunction} in {uiModel.ScriptFile}");
+                                return;
+                            }
+                            var events = interpreter.GetGlobalValue("_events") as ValList;
+                            if (events == null)
+                            {
+                                Log.Warn("No events queue???");
+                                return;
+                            }
+
+                            ValMap args = new();
+                            args.map.Add(new ValString("element"), makeElemMap(elem));
+                            ValMap call = new();
+                            call.map.Add(new ValString("func"), callFunc);
+                            call.map.Add(new ValString("arguments"), args);
+
+                            events.values.Add(call);
+                        };
+                        callbackProp.SetValue(elem, func);
+                    }
+                }
+            }
 
             interpreter = ExtensionEngine.SetupInterpreter();
             interpreter.hostData = this;
             AdditionalSetup();
 
-            interpreter.Reset(ScriptPrefix + uiModel.Script + ScriptEventLoop);
+            // The below string isn't a constant so that I can edit + hot reload
+            interpreter.Reset(uiModel.Script + @"
+_events = []
+while true
+    while _events.len > 0
+        _nextEvent = _events.pull
+        if _nextEvent.hasIndex(""arguments"") then
+            _nextEvent.func _nextEvent.arguments
+        else
+            _nextEvent.func
+        end if
+    end while
+    yield
+end while
+");
             interpreter.Compile();
             interpreter.RunUntilDone(0.01);
+
+            Value initFunc = interpreter.GetGlobalValue("init");
+            if (initFunc == null) return;
+            var events = interpreter.GetGlobalValue("_events") as ValList;
+            if (events == null) return;
+
+            ValMap callInit = new();
+            callInit.map.Add(new ValString("func"), initFunc);
+            events.values.Add(callInit);
         }
 
         // TODO: Change this when I can attach them to just the interpreter
@@ -50,8 +115,38 @@ end while
         {
             if (didIntrinsics) return;
             didIntrinsics = true;
+            var cgc = Intrinsic.Create("__containerGetChildren");
+            var cmc = Intrinsic.Create("__containerMakeChild");
+            makeElemMap = (Element elem) =>
+            {
+                ValMap ret = new();
+                ret.map.Add(new ValString("__elem"), new ValUiElement(elem));
+                ret.map.Add(new ValString("x"), new ValNumber(elem.LocalPosition.X));
+                ret.map.Add(new ValString("y"), new ValNumber(elem.LocalPosition.Y));
 
-            var i = Intrinsic.Create("getElements");
+                if (elem is Container)
+                {
+                    ret.map.Add(new ValString("getChildren"), cgc.GetFunc());
+                    ret.map.Add(new ValString("makeChild"), cmc.GetFunc());
+                }
+                ret.assignOverride = (key, val) =>
+                {
+                    elem = elem;
+                    switch (key.ToString())
+                    {
+                        case "x":
+                            elem.LocalPosition = new(val.FloatValue(), elem.LocalPosition.Y);
+                            return false;
+                        case "y":
+                            elem.LocalPosition = new(elem.LocalPosition.X, val.FloatValue());
+                            return false;
+                    }
+                    return true;
+                };
+                return ret;
+            };
+
+            var i = Intrinsic.Create("getElementsWithId");
             i.AddParam("id");
             i.code = (ctx, prevResult) =>
             {
@@ -64,21 +159,62 @@ end while
 
                 foreach (var elem in menu.elemsById[id])
                 {
-                    ValMap entry = new();
-                    entry.map.Add(new ValString("x"), new ValNumber(elem.LocalPosition.X));
-                    entry.map.Add(new ValString("y"), new ValNumber(elem.LocalPosition.Y));
-                    entry.assignOverride = (key, value) =>
-                    {
-                        switch (key.ToString())
-                        {
-                            case "x": elem.LocalPosition = new(value.FloatValue(), elem.LocalPosition.Y); break;
-                            case "y": elem.LocalPosition = new(elem.LocalPosition.X, value.FloatValue()); break;
-                        }
-                        return true;
-                    };
-                    ret.values.Add(entry);
+                    ret.values.Add(makeElemMap(elem));
                 }
                 return new Intrinsic.Result(ret);
+            };
+
+            cgc.code = (ctx, prevResult) =>
+            {
+                var map = ctx.self as ValMap;
+                var elem = (map.map[new ValString("__elem")] as ValUiElement).Element as Container;
+
+                ValList ret = new();
+                foreach (var child in elem.Children)
+                {
+                    ret.values.Add(makeElemMap(child));
+                }
+
+                return new Intrinsic.Result(ret);
+            };
+
+            cmc.AddParam("type");
+            cmc.AddParam("params");
+            cmc.code = (ctx, prevResult) =>
+            {
+                var map = ctx.self as ValMap;
+                var parent = (map.map[new ValString("__elem")] as ValUiElement).Element as Container;
+
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+
+                string type = ctx.GetVar("type").ToString();
+                ValMap ps = ctx.GetVar("params") as ValMap;
+
+                // quick hack
+                UiDeserializer ud = new();
+                if (!ud.types.ContainsKey(type))
+                {
+                    Log.Warn($"Script {menu.origModel.ScriptFile} tried to create UI element type {type}, which does not exist");
+                    return Intrinsic.Result.Null;
+                }
+
+                Element elem = (Element) ud.types[type].GetConstructor(new Type[0]).Invoke(new object[0]);
+                elem.UserData = new UiExtraData();
+                foreach (var entry in ps.map)
+                {
+                    ud.LoadPropertyToElement(menu.origModel.ScriptFile.Substring(0, menu.origModel.ScriptFile.IndexOf('/')), elem, entry.Key.ToString(), entry.Value.ToString());
+                }
+                parent.AddChild(elem);
+
+                return new Intrinsic.Result(makeElemMap(elem));
+            };
+            i = Intrinsic.Create("getRoot");
+            i.code = (ctx, prevResult) =>
+            {
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+                var elem = menu.ui;
+
+                return new Intrinsic.Result(makeElemMap(elem));
             };
         }
 
@@ -91,17 +227,19 @@ end while
         {
             base.update(time);
 
+            ui.Update();
+
             Value updateFunc = interpreter.GetGlobalValue("update");
             if (updateFunc == null) return;
             var events = interpreter.GetGlobalValue("_events") as ValList;
             if (events == null) return;
 
-            //ValMap callUpdate = new();
-            //callUpdate.map.Add(new ValString("function"), updateFunc);
-            //callUpdate.map.Add(new ValString("arguments"), MakeContext());
-            //events.values.Add(callUpdate);
+            //events.values.Add(updateFunc);
 
-            events.values.Add(updateFunc);
+            ValMap callUpdate = new();
+            callUpdate.map.Add(new ValString("func"), updateFunc);
+            //callUpdate.map.Add(new ValString("arguments"), ValNull.instance);
+            events.values.Add(callUpdate);
 
             interpreter.RunUntilDone(0.01);
         }

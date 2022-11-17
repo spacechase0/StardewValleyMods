@@ -127,6 +127,24 @@ namespace SpaceCore.Framework.ExtEngine
             //ret.implicitOutput = (s) => Log.Trace($"Script output: {s}");
             ret.errorOutput = (s) => Log.Error($"Script error: {s}");
 
+            var i = Intrinsic.Create("openMenu");
+            i.AddParam("id");
+            i.code = (ctx, prevResult) =>
+            {
+                string id = ctx.GetVar("id").ToString();
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+
+                var data = Game1.content.Load<Dictionary<string, UiContentModel>>("spacechase0.SpaceCore/UI");
+                if (!data.ContainsKey(id))
+                {
+                    Log.Warn($"In {menu.origModel.ScriptFile}, tried to open menu {id} which does not exist");
+                    return Intrinsic.Result.Null;
+                }
+                var newMenu = new ExtensionMenu(data[id]);
+                Game1.activeClickableMenu = newMenu;
+                return Intrinsic.Result.Null;
+            };
+
             return ret;
         }
     }
