@@ -168,11 +168,7 @@ namespace SpaceCore.Framework
                 return;
             }
 
-            // TODO: Unpatch/repatch the same methods instead of constantly adding new patches
-            var dummyPrefix = AccessTools.Method(typeof(Commands), nameof(DummyPrefixForHarmonyInvalidate)); 
-            SpaceCore.Instance.Harmony.Patch(meth, new HarmonyMethod(dummyPrefix));
+            SpaceCore.Instance.Harmony.Patch(meth);
         }
-
-        private static void DummyPrefixForHarmonyInvalidate() { }
     }
 }
