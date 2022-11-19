@@ -1,0 +1,25 @@
+﻿{
+    // skill
+    "skill.name": "Sorte",
+    "skill.level-up": "Sorte Aumentada",
+
+    // professions
+    "fortunate.name": "Afortunado(a)",
+    "fortunate.desc": "Melhor sorte diária.",
+    "lucky.name": "Sortudo(a)",
+    "lucky.desc": "20% de chance de obter a sorte máxima diária.",
+    "popular-helper.name": "Ajudante Popular",
+    "popular-helper.desc": "Missões diárias ocorrem três vezes mais.",
+    "shooting-star.name": "Estrela Cadente",
+    "shooting-star.desc": "Eventos noturnos ocorrem duas vezes mais.",
+    "spirit-child.name": "Filho Espírito",
+    "spirit-child.desc": "Dar presentes deixa os junimos felizes. Eles podem ajudar sua fazenda.\n(15% de chance de algum tipo de avanço na fazenda.)",
+    "un-unlucky.name": "Não Azarento",
+    "un-unlucky.desc": "Nunca tenha má sorte.",
+
+    // Spirit Child reward messages
+    "junimo-rewards.animal-friendship": "Os junimos fizeram alguns de seus animais gostarem mais de você!",
+    "junimo-rewards.grow-crops": "Os junimos adiantaram suas colheitas!",
+    "junimo-rewards.grow-grass": "Os junimos cultivaram sua grama e consertaram suas cercas!",
+    "junimo-rewards.prismatic-shard": "Os junimos te deram um Fragmento Prismático!"
+}

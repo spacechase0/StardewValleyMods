@@ -1,0 +1,45 @@
+﻿{
+    // net
+    "bug-net.name": "Rede de Insetos",
+    "bug-net.description": "Pega bichos e outras coisas.",
+
+    // critter cage
+    "cage.name": "Gaiola de Bicho: {{critterName}}",
+    "cage.description": "É um bicho! Em uma gaiola!",
+
+    // critter names
+    "critter.GreenFrog": "Sapo Verde",
+    "critter.OliveFrog": "Sapo Verde Oliva",
+    "critter.Cloud": "Nuvem?",
+    "critter.Firefly": "Vagalume",
+    "critter.Seagull": "Gaivota",
+    "critter.Crow": "Corvo",
+    "critter.BrownBird": "Pássaro Marrom",
+    "critter.BlueBird": "Pássaro Azul",
+    "critter.GrayRabbit": "Coelho Cinza",
+    "critter.WhiteRabbit": "Coelho Branco",
+    "critter.Squirrel": "Esquilo",
+    "critter.Owl": "Coruja",
+    "critter.WoodPecker": "Pica-pau",
+    "critter.SummerButterflyBlue": "Borboleta Azul de Verão",
+    "critter.SummerButterflyGreen": "Borboleta Verde de Verão",
+    "critter.SummerButterflyRed": "Borboleta Vermelho de Verão",
+    "critter.SummerButterflyPink": "Borboleta Rosa de Verão",
+    "critter.SummerButterflyYellow": "Borboleta Amarela de Verão",
+    "critter.SummerButterflyOrange": "Borboleta Laranja de Verão",
+    "critter.SpringButterflyPalePink": "Borboleta Rosa Pálido de Primavera",
+    "critter.SpringButterflyMagenta": "Borboleta Magenta de Primavera",
+    "critter.SpringButterflyWhite": "Borboleta Branca de Primavera",
+    "critter.SpringButterflyYellow": "Borboleta Amarela de Primavera",
+    "critter.SpringButterflyPurple": "Borboleta Roxa de Primavera",
+    "critter.SpringButterflyPink": "Borboleta Rosa de Primavera",
+    "critter.BlueParrot": "Papagaio Azul",
+    "critter.GreenParrot": "Papagaio Verde",
+    "critter.Monkey": "Macaco",
+    "critter.OrangeIslandButterfly": "Borboleta Laranja da Ilha",
+    "critter.PinkIslandButterfly": "Borboleta Rosa da Ilha",
+    "critter.PurpleBird": "Pássaro Roxo",
+    "critter.RedBird": "Pássaro Vermelho",
+    "critter.SunsetTropicalButterfly": "Borboleta do Entardecer Tropical",
+    "critter.TropicalButterfly": "Borboleta Tropical"
+}
