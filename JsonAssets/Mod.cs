@@ -1380,16 +1380,18 @@ namespace JsonAssets
                     && this.DoesntNeedDeshuffling(this.OldClothingIds, this.ClothingIds))
                 {
                     Log.Trace("Nothing has changed, deshuffling unnecessary.");
+                    // for legacy reasons, invoking the event anyways.
+                    this.Api.InvokeIdsFixed();
                 }
                 else
                 {
                     Log.Trace("Fixing IDs");
                     this.FixIdsEverywhere();
-                }
 
-                sfapi = this.Helper.ModRegistry.GetApi<ISolidFoundationsAPI>("PeacefulEnd.SolidFoundations");
-                if (sfapi is not null)
-                    sfapi.AfterBuildingRestoration += this.FixSFBuildings;
+                    sfapi = this.Helper.ModRegistry.GetApi<ISolidFoundationsAPI>("PeacefulEnd.SolidFoundations");
+                    if (sfapi is not null)
+                        sfapi.AfterBuildingRestoration += this.FixSFBuildings;
+                }
             }
             else if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
             {
@@ -1643,6 +1645,7 @@ namespace JsonAssets
                 if (crop.GiantTexture is not null)
                     CropData.giantCropMap[crop.ProductId] = crop.GiantTexture;
             }
+            FruitTreeData.SaplingIds.Clear();
             foreach (var fruitTree in this.FruitTrees)
             {
                 fruitTree.ProductId = ItemResolver.GetObjectID(fruitTree.Product);
@@ -2309,7 +2312,7 @@ namespace JsonAssets
                         {
                             Log.Trace($"Fixing clothing {clothing.Name} with new id {val} by name");
                             clothing.ParentSheetIndex = val;
-                            this.Helper.Reflection.GetField<bool>(clothing, "_LoadedData").SetValue(false);
+                            this.Helper.Reflection.GetField<bool>(clothing, "_loadedData").SetValue(false);
                             clothing.LoadData();
                         }
                         return false;
@@ -2577,6 +2580,8 @@ namespace JsonAssets
                 case ShopLocation shop:
                     this.FixItemList(shop.itemsFromPlayerToSell);
                     this.RemoveNulls(shop.itemsFromPlayerToSell);
+                    this.FixItemList(shop.itemsToStartSellingTomorrow);
+                    this.RemoveNulls(shop.itemsToStartSellingTomorrow);
                     break;
             }
 
