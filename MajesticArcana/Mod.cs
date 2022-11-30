@@ -15,6 +15,8 @@ namespace MajesticArcana
             Log.Monitor = Monitor;
             I18n.Init(Helper.Translation);
 
+            AlchemyRecipes.Init();
+
             Helper.ConsoleCommands.Add("magik_alchemy", "...", OnAlchemyCommand);
         }
 

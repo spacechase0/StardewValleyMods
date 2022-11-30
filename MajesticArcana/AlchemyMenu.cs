@@ -61,6 +61,16 @@ namespace MajesticArcana
                 ui.AddChild(ingreds[i]);
             }
 
+            var recipesButton = new Image()
+            {
+                Texture = Game1.objectSpriteSheet,
+                TexturePixelArea = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 102, 16, 16),
+                Scale = 4,
+                Callback = (e) => SetChildMenu(new AlchemyRecipesMenu()),
+                LocalPosition = new( 32, 32 ),
+            };
+            ui.AddChild(recipesButton);
+
             inventory = new InventoryMenu(xPositionOnScreen + 16, yPositionOnScreen + height - 64 * 3 - 16, true, Game1.player.Items);
         }
 
@@ -113,38 +123,73 @@ namespace MajesticArcana
 
         private void CheckRecipe()
         {
-            var recipe = new Tuple< int, bool >[ 6 ];
-            int output = 74;
-
-            recipe[0] = new(768, false);
-            recipe[1] = new(769, false);
-            recipe[2] = new(771, false);
-            recipe[3] = new(766, false);
-            recipe[4] = new(82, false);
-            recipe[5] = new(444, false);
-
-            for (int i = 0; i < ingreds.Length; ++i)
+            foreach (var recipeData in AlchemyRecipes.Get())
             {
-                for (int j = 0; j < recipe.Length; ++j)
+                // TODO: Refactor this in 1.6 to allow other object types
+                var recipe = new Tuple<int, bool>[6];
+                int outX = recipeData.Key.IndexOf("x");
+                int output = int.Parse(outX == -1 ? recipeData.Key.Substring( 3 ) : recipeData.Key.Substring(3, outX - 3 ));
+                int outputQty = outX == -1 ? 1 : int.Parse(recipeData.Key.Substring(outX + 1));
+
+                int ir = 0;
+                foreach (string ingredData in recipeData.Value)
                 {
-                    if (ingreds[i].Item is StardewValley.Object obj && obj.ParentSheetIndex == recipe[j].Item1 && !recipe[j].Item2)
-                        recipe[j] = new(recipe[j].Item1, true);
+                    if (ingredData.StartsWith("-"))
+                        recipe[ir] = new(int.Parse(ingredData), false);
+                    else
+                        recipe[ir] = new(int.Parse(ingredData.Substring(3)), false);
+                    ++ir;
                 }
-            }
+                for (; ir < recipe.Length; ++ir)
+                    recipe[ir] = new(0, true); // Invalid ingredient, but marked as found so it doesn't matter
 
-            bool okay = true;
-            for (int i = 0; i < recipe.Length; ++i)
-            {
-                if (!recipe[i].Item2)
+                List<ItemSlot> notUsed = new(ingreds);
+                for (int i = notUsed.Count - 1; i >= 0; --i)
                 {
+                    if (notUsed[i].Item == null)
+                        notUsed.RemoveAt(i);
+                }
+                for (int i = 0; i < ingreds.Length; ++i)
+                {
+                    for (int j = 0; j < recipe.Length; ++j)
+                    {
+                        if (!notUsed.Contains(ingreds[i]))
+                            continue;
+                        if (recipe[j].Item1 < 0)
+                        {
+                            if (ingreds[i].Item.Category == recipe[j].Item1)
+                            {
+                                recipe[j] = new(recipe[j].Item1, true);
+                                notUsed.Remove(ingreds[i]);
+                            }
+                        }
+                        else
+                        {
+                            if (ingreds[i].Item is StardewValley.Object obj && obj.ParentSheetIndex == recipe[j].Item1 && !recipe[j].Item2)
+                            {
+                                recipe[j] = new(recipe[j].Item1, true);
+                                notUsed.Remove(ingreds[i]);
+                            }
+                        }
+                    }
+                }
+
+                bool okay = true;
+                for (int i = 0; i < recipe.Length; ++i)
+                {
+                    if (!recipe[i].Item2)
+                    {
+                        okay = false;
+                        break;
+                    }
+                }
+                if (notUsed.Count > 0)
                     okay = false;
-                    break;
-                }
-            }
 
-            if (okay)
-            {
-                this.output.ItemDisplay = new StardewValley.Object(output, 1);
+                if (okay)
+                {
+                    this.output.ItemDisplay = new StardewValley.Object(output, outputQty);
+                }
             }
         }
 
