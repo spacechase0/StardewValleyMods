@@ -3048,6 +3048,9 @@ namespace JsonAssets
 
         private void FixStringDictionary(NetStringDictionary<int, NetInt> dict)
         {
+            if (dict.Count == 0)
+                return;
+
             var toRemove = new List<string>();
             var addOrUpdate = new Dictionary<string, int>();
             foreach ((string loc, int index) in dict.Pairs)
