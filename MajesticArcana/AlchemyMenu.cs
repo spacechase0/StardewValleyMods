@@ -12,7 +12,7 @@ namespace MajesticArcana
     internal class AlchemyMenu : IClickableMenu
     {
         private RootElement ui;
-        private ItemSlot[] ingreds;
+        internal ItemSlot[] ingreds;
         private ItemSlot output;
 
         private InventoryMenu inventory;
@@ -121,8 +121,9 @@ namespace MajesticArcana
             }
         }
 
-        private void CheckRecipe()
+        internal void CheckRecipe()
         {
+            this.output.ItemDisplay = null;
             foreach (var recipeData in AlchemyRecipes.Get())
             {
                 // TODO: Refactor this in 1.6 to allow other object types
@@ -189,6 +190,7 @@ namespace MajesticArcana
                 if (okay)
                 {
                     this.output.ItemDisplay = new StardewValley.Object(output, outputQty);
+                    return;
                 }
             }
         }

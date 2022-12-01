@@ -60,9 +60,40 @@ namespace MajesticArcana
                     UserData = fake,
                     Callback = (e) =>
                     {
-                        // todo - put ingredients in slots
+                        var parent = GetParentMenu() as AlchemyMenu;
+                        if (parent == null) return;
+
+                        if (parent.ingreds.Any(slot => slot.Item != null))
+                            return;
+                        if (!fake.doesFarmerHaveIngredientsInInventory())
+                            return;
+
+                        for (int i = 0; i < recipe.Value.Length; ++i)
+                        {
+                            string item = recipe.Value[ i ];
+                            int itemId = int.Parse(item[0] == '-' ? item : item.Substring(3));
+                            for (int j = 0; j < Game1.player.Items.Count; ++j)
+                            {
+                                var invItem = Game1.player.Items[j];
+                                if (invItem == null) continue;
+
+                                if (invItem.ParentSheetIndex == itemId || invItem.Category == itemId)
+                                {
+                                    parent.ingreds[i].Item = invItem.getOne();
+                                    invItem.Stack--;
+                                    if (invItem.Stack <= 0)
+                                        Game1.player.Items[j] = null;
+                                    break;
+                                }
+                            }
+                        }
+
+                        parent.CheckRecipe();
+                        exitThisMenu();
                     },
                 };
+                if (!fake.doesFarmerHaveIngredientsInInventory())
+                    recipe_.TransparentItemDisplay = true;
                 currRow.Add(recipe_);
                 this.recipes.Add(recipe_);
                 if (currRow.Count == 6)
