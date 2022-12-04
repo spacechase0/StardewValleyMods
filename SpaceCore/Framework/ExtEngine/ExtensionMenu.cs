@@ -217,6 +217,9 @@ end while
                 elem.UserData = new UiExtraData();
                 foreach (var entry in ps.map)
                 {
+                    if (entry.Value == null)
+                        continue;
+
                     List<string> extra = new();
                     ud.LoadPropertyToElement(menu.origModel.ScriptFile.Substring(0, menu.origModel.ScriptFile.IndexOf('/')), elem, entry.Key.ToString(), entry.Value.ToString(), extra);
                     if (extra.Contains("CenterH"))
