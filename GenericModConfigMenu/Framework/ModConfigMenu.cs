@@ -147,6 +147,12 @@ namespace GenericModConfigMenu.Framework
 
             if (scrollTo != null)
                 this.ScrollRow = scrollTo.Value;
+
+            if (!InGame)
+            {
+                // This hack lets gamepad cursor movement work without a harmony patch
+                Mod.instance.Helper.Reflection.GetField<bool>(Game1.activeClickableMenu, "titleInPosition").SetValue(false);
+            }
         }
 
         /// <inheritdoc />
@@ -167,11 +173,22 @@ namespace GenericModConfigMenu.Framework
             this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
         }
 
+        private int scrollCounter = 0;
         /// <inheritdoc />
         public override void update(GameTime time)
         {
             base.update(time);
             this.Ui.Update();
+
+            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0)
+            {
+                if (++scrollCounter == 5)
+                {
+                    scrollCounter = 0;
+                    this.Table.Scrollbar.ScrollBy(Math.Sign(Game1.input.GetGamePadState().ThumbSticks.Right.Y) * 120 / -this.ScrollSpeed);
+                }
+            }
+            else scrollCounter = 0;
         }
 
         /// <inheritdoc />
@@ -216,6 +233,11 @@ namespace GenericModConfigMenu.Framework
             this.Ui.AddChild(this.Table);
         }
 
+        /// <inheritdoc/>
+        public override bool overrideSnappyMenuCursorMovementBan()
+        {
+            return true;
+        }
 
         /*********
         ** Private methods

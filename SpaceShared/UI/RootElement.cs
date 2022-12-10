@@ -25,6 +25,14 @@ namespace SpaceShared.UI
         public override void Update(bool isOffScreen = false)
         {
             base.Update(isOffScreen || this.Obscured);
+            if (Dropdown.ActiveDropdown?.GetRoot() != this)
+            {
+                Dropdown.ActiveDropdown = null;
+            }
+            if ( Dropdown.SinceDropdownWasActive > 0 )
+            {
+                Dropdown.SinceDropdownWasActive--;
+            }
         }
 
         /// <inheritdoc />

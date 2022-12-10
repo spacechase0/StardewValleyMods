@@ -156,9 +156,22 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <param name="button">The button to check.</param>
         private bool IsValidKey(SButton button)
         {
-            return
-                button.TryGetKeyboard(out _)
-                || button.TryGetController(out _);
+            SButton[] blacklist = new[]
+            {
+                SButton.ControllerA, // Limitation of how the menu is opened
+                // The rest are because you need to be able to navigate to get to the cancel button...
+                SButton.LeftThumbstickDown,
+                SButton.LeftThumbstickLeft,
+                SButton.LeftThumbstickRight,
+                SButton.LeftThumbstickUp,
+                SButton.RightThumbstickDown,
+                SButton.RightThumbstickLeft,
+                SButton.RightThumbstickRight,
+                SButton.RightThumbstickUp,
+            };
+
+            return (button.TryGetKeyboard(out _) || button.TryGetController(out _)) &&
+                   !blacklist.Contains( button );
         }
 
         /// <summary>Handle the pressed buttons, either by assigning the keybind or cancelling the UI.</summary>

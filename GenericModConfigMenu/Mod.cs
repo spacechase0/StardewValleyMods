@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using GenericModConfigMenu.Framework;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -134,20 +133,36 @@ namespace GenericModConfigMenu
 
         private void SetupTitleMenuButton()
         {
-            this.Ui = new RootElement();
-
-            Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
-            this.ConfigButton = new Button(tex)
+            if (this.Ui == null)
             {
-                LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
-                Callback = _ =>
-                {
-                    Game1.playSound("newArtifact");
-                    this.OpenListMenu();
-                }
-            };
+                this.Ui = new RootElement();
 
-            this.Ui.AddChild(this.ConfigButton);
+                Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
+                this.ConfigButton = new Button(tex)
+                {
+                    LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
+                    Callback = _ =>
+                    {
+                        Game1.playSound("newArtifact");
+                        this.OpenListMenu();
+                    }
+                };
+
+                this.Ui.AddChild(this.ConfigButton);
+            }
+
+            if (Game1.activeClickableMenu is TitleMenu tm && tm.allClickableComponents?.Find( (cc) => cc?.myID == 509800 ) == null )
+            {
+                // Gamepad support
+                Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
+                ClickableComponent button = new(new(0, Game1.viewport.Height - 100, tex.Width / 2, tex.Height / 2), "GMCM") // Why /2? Who knows
+                {
+                    myID = 509800,
+                    rightNeighborID = tm.buttons[0].myID,
+                };
+                tm.allClickableComponents?.Add(button);
+                tm.buttons[0].leftNeighborID = 509800;
+            }
         }
 
         private bool IsTitleMenuInteractable()
@@ -209,13 +224,26 @@ namespace GenericModConfigMenu
             }
         }
 
+        private bool wasConfigMenu = false;
+
         /// <inheritdoc cref="IGameLoopEvents.UpdateTicking"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         private void OnUpdateTicking(object sender, UpdateTickingEventArgs e)
         {
             if (this.IsTitleMenuInteractable())
+            {
+                SetupTitleMenuButton();
                 this.Ui?.Update();
+            }
+
+            if (wasConfigMenu && TitleMenu.subMenu == null)
+            {
+                var f = Helper.Reflection.GetField<bool>(Game1.activeClickableMenu, "titleInPosition");
+                if (!f.GetValue())
+                    f.SetValue(true);
+            }
+            wasConfigMenu = TitleMenu.subMenu is ModConfigMenu || TitleMenu.subMenu is SpecificModConfigMenu;
         }
 
         /// <inheritdoc cref="IDisplayEvents.WindowResized"/>

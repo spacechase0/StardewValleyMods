@@ -66,7 +66,7 @@ namespace SpaceShared.UI
 
             if (this.Clicked)
                 this.Dragging = true;
-            if (Mouse.GetState().LeftButton == ButtonState.Released)
+            if (Mouse.GetState().LeftButton == ButtonState.Released && Game1.input.GetGamePadState().Buttons.A == ButtonState.Released)
                 this.Dragging = false;
 
             if (this.Dragging)

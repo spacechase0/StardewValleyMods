@@ -455,11 +455,23 @@ namespace GenericModConfigMenu.Framework
             return false;
         }
 
+        private int scrollCounter = 0;
         /// <inheritdoc />
         public override void update(GameTime time)
         {
             base.update(time);
             this.Ui.Update();
+
+            // TODO: This will be different if a dropdown is open
+            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0)
+            {
+                if (++scrollCounter == 5)
+                {
+                    scrollCounter = 0;
+                    this.Table.Scrollbar.ScrollBy(Math.Sign(Game1.input.GetGamePadState().ThumbSticks.Right.Y) * 120 / -this.ScrollSpeed);
+                }
+            }
+            else scrollCounter = 0;
 
             if (this.ExitOnNextUpdate)
                 this.Cancel();
@@ -529,6 +541,13 @@ namespace GenericModConfigMenu.Framework
 
             this.ActiveKeybindOverlay?.OnWindowResized();
         }
+
+        /// <inheritdoc/>
+        public override bool overrideSnappyMenuCursorMovementBan()
+        {
+            return true;
+        }
+
 
         /// <summary>Raised when any buttons are pressed or released.</summary>
         /// <param name="e">The event arguments.</param>
