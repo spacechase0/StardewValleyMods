@@ -114,6 +114,21 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
+        public void AddTimePickerOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name, Func<string> tooltip = null, int min = 600, int max = 2600, int interval = 10, string fieldId = null)
+        {
+            mod ??= this.mod;
+            this.AssertNotNull(name);
+            this.AssertNotNull(getValue);
+            this.AssertNotNull(setValue);
+
+            ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
+
+            modConfig.AddOption(new TimePickerModOption(fieldId: fieldId, name: name, tooltip: tooltip, mod: modConfig, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval));
+        }
+        
+
+
+        /// <inheritdoc />
         public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, Func<string, string> formatAllowedValue = null, string fieldId = null)
         {
             if (allowedValues?.Any() == true)
