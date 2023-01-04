@@ -202,9 +202,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MajesticArcana", "MajesticA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNuance", "SocialNuance\SocialNuance.csproj", "{3831A331-9612-47F0-923C-BE7157E087DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackstoryQuestionsFramework", "BackstoryQuestionsFramework\BackstoryQuestionsFramework.csproj", "{024D422A-0474-4D0D-BC23-E2E019791B15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackstoryQuestionsFramework", "BackstoryQuestionsFramework\BackstoryQuestionsFramework.csproj", "{024D422A-0474-4D0D-BC23-E2E019791B15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CavernMadness", "CavernMadness\CavernMadness.csproj", "{9AE07EA1-4287-4344-AA71-50A4FC7D9567}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CavernMadness", "CavernMadness\CavernMadness.csproj", "{9AE07EA1-4287-4344-AA71-50A4FC7D9567}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MercenaryFramework", "MercenaryFramework\MercenaryFramework.csproj", "{7245F384-9D72-435E-8FD6-A5749BBBC2D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -576,6 +578,10 @@ Global
 		{9AE07EA1-4287-4344-AA71-50A4FC7D9567}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AE07EA1-4287-4344-AA71-50A4FC7D9567}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AE07EA1-4287-4344-AA71-50A4FC7D9567}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7245F384-9D72-435E-8FD6-A5749BBBC2D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7245F384-9D72-435E-8FD6-A5749BBBC2D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7245F384-9D72-435E-8FD6-A5749BBBC2D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7245F384-9D72-435E-8FD6-A5749BBBC2D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -608,6 +614,7 @@ Global
 		{D73CF13C-3F6E-408D-BA11-49C4EA036514} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{3831A331-9612-47F0-923C-BE7157E087DB} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{9AE07EA1-4287-4344-AA71-50A4FC7D9567} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{7245F384-9D72-435E-8FD6-A5749BBBC2D7} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
@@ -661,6 +668,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{695cda6a-9398-4d71-9432-9763cc510020}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{6e9ba154-07eb-43c8-8e5a-94247ff28556}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7014c24c-a7b8-446a-8b13-eca54eea1f88}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{7245f384-9d72-435e-8fd6-a5749bbbc2d7}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7aa1c02e-9099-4c1a-b8af-ac1966b337e5}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7e4024e8-392d-4a65-a659-93e8cb261ffe}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{9002aaed-277d-40f9-a6ac-91698952124c}*SharedItemsImports = 5
