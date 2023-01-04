@@ -17,9 +17,9 @@ namespace Displays.Framework
         /*********
         ** Fields
         *********/
-        private static readonly Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-base.png");
-        private static readonly Texture2D TexM = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-male.png");
-        private static readonly Texture2D TexF = Mod.Instance.Helper.Content.Load<Texture2D>("assets/mannequin-female.png");
+        private static readonly Texture2D Tex = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/mannequin-base.png");
+        private static readonly Texture2D TexM = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/mannequin-male.png");
+        private static readonly Texture2D TexF = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/mannequin-female.png");
 
         /// <summary>The backing field for <see cref="GetFarmerForRendering"/>.</summary>
         private Farmer FarmerForRenderingCache;

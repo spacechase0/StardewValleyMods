@@ -40,7 +40,7 @@ namespace MoreGrassStarters
 
             if (File.Exists(Path.Combine(this.Helper.DirectoryPath, "assets", "grass.png")))
             {
-                GrassStarterItem.Tex2 = helper.Content.Load<Texture2D>("assets/grass.png");
+                GrassStarterItem.Tex2 = helper.ModContent.Load<Texture2D>("assets/grass.png");
             }
         }
 

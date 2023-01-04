@@ -1,0 +1,42 @@
+﻿{
+    "option.stock-list.name": "Pierre's Stock List",
+    "option.stock-list.description": "Start with Pierre's stock list, showing all seeds year-round.",
+    "option.ginger-island.name": "Ginger Island",
+    "option.ginger-island.description": "Start with the boat to Ginger Island repaired.",
+    "option.additional-profit.name": "Profit Multiplier",
+    "option.additional-profit.description": "Multiplies the profit ratio you select on game start by this amount.",
+    "option.relationship-penalty.name": "Relationship Penalty %",
+    "option.relationship-penalty.description": "How much less friendship points you get from gifts and stuff.",
+    "option.exp-curve.name": "Exp Curve",
+    "option.exp-curve.description": "The amount of experience needed to get a skill to max level.\n(Vanilla is 15,000.)",
+    "option.starting-points.name": "Starting Points",
+    "option.starting-points.description": "How many points you get to spend on the Legacy menu.",
+    "option.gold-per-leftover-point.name": "Gold Per Leftover Point",
+    "option.gold-per-leftover-point.description": "How many gold you get per point you don't spend.",
+
+    "create.option.name": "New Game+",
+    "create.option.description": "Toggle if New Game+ is enabled or not here.",
+
+    "item.legacy-token.name": "Legacy Token",
+    "item.legacy-token.description": "Claim your legacy here",
+
+    "item.stable-token.name": "Stable Token",
+    "item.stable-token.description": "Place on the bottom right corner of where you want your stable.",
+
+    "menu.title": "Legacy",
+    "menu.points": "Points Remaining: {{pts}}",
+    "menu.gold": "Gold: {{gold}}",
+    "menu.accept": "Accept",
+    "menu.cancel": "Cancel",
+    "menu.item.sword": "Sword",
+    "menu.item.dagger": "Dagger",
+    "menu.item.club": "Club",
+    "menu.item.return-scepter": "Return\nScepter",
+    "menu.item.house.0": "House:\nDefault",
+    "menu.item.house.1": "House:\nw/ Kitchen",
+    "menu.item.town-key": "Town Key",
+    "menu.item.horse": "Horse",
+    "menu.item.backpack": "Backpack",
+    "menu.item.recipes": "Default\nRecipes",
+    "menu.item.ring": "No ring"
+}

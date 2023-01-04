@@ -10,6 +10,8 @@ namespace DynamicGameAssets.Framework.ContentPacks
 
         public ITranslationHelper Translation => new NullTranslationHelper();
 
+        public IModContentHelper ModContent => new NullModContentHelper();
+
         public string GetActualAssetKey(string key)
         {
             return key;

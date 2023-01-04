@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
 using SpaceCore;
+using SpaceCore.Framework.Extensions;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
@@ -18,6 +19,7 @@ using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 
 // TODO: Shirts don't work properly if JA is installed? (Might look funny, might make you run out of GPU memory thanks to SpaceCore tilesheet extensions)
@@ -65,15 +67,16 @@ using StardewValley.TerrainFeatures;
 
 namespace DynamicGameAssets
 {
-    public class Mod : StardewModdingAPI.Mod, IAssetLoader, IAssetEditor
+    public class Mod : StardewModdingAPI.Mod
     {
+        private static readonly string AssetPrefix = "DGA" + PathUtilities.PreferredAssetSeparator;
         public static Mod instance;
         internal ContentPatcher.IContentPatcherAPI cp;
 
         public static readonly int BaseFakeObjectId = 1720;
         public static ContentPack DummyContentPack;
 
-        internal static Dictionary<string, ContentPack> contentPacks = new();
+        internal static Dictionary<string, ContentPack> contentPacks = new(StringComparer.OrdinalIgnoreCase);
 
         internal static Dictionary<int, string> itemLookup = new();
 
@@ -88,12 +91,19 @@ namespace DynamicGameAssets
         private static readonly PerScreen<StateData> _state = new(() => new StateData());
         internal static StateData State => Mod._state.Value;
 
+        private PerScreen<ShopMenu?> _lastShopMenu = new();
+        private ShopMenu? LastShopMenu
+        {
+            get => this._lastShopMenu.Value;
+            set => this._lastShopMenu.Value = value;
+        }
+
         public static CommonPackData Find(string fullId)
         {
             int slash = fullId.IndexOf('/');
             if (slash < 0) return null;
-            string pack = fullId.Substring(0, slash);
-            string item = fullId.Substring(slash + 1);
+            string pack = fullId[..slash];
+            string item = fullId[(slash + 1)..];
             return Mod.contentPacks.ContainsKey(pack) ? Mod.contentPacks[pack].Find(item) : null;
         }
 
@@ -116,6 +126,8 @@ namespace DynamicGameAssets
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
+
+            helper.Events.Content.AssetRequested += this.OnAssetRequested;
 
             helper.ConsoleCommands.Add("dga_list", "List all items.", this.OnListCommand);
             helper.ConsoleCommands.Add("dga_add", "`dga_add <mod.id/ItemId> [amount] - Add an item to your inventory.", this.OnAddCommand/*, AddCommandAutoComplete*/ );
@@ -195,7 +207,7 @@ namespace DynamicGameAssets
                 if (farmer.boots.Value is CustomBoots boots)
                 {
                     TextureAnimationFrame frame = boots.Data.pack.GetTextureFrame(boots.Data.FarmerColors);
-                    if (this.prevBootsFrame.GetOrCreateValue(farmer).Value != frame.Descriptor)
+                    if (frame is not null && this.prevBootsFrame.GetOrCreateValue(farmer).Value != frame.Descriptor)
                     {
                         if (this.prevBootsFrame.TryGetValue(farmer, out var holder))
                             holder.Value = frame.Descriptor;
@@ -208,6 +220,7 @@ namespace DynamicGameAssets
             }
         }
 
+        [EventPriority(EventPriority.Low)]
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             foreach (var recipe in Mod.customCraftingRecipes)
@@ -247,6 +260,7 @@ namespace DynamicGameAssets
                 {
                     foreach (var data in cp.Value.enableIndex[parent])
                     {
+                        bool shouldreject = false;
                         var conds = new Dictionary<string, string>();
                         if (data.EnableConditions != null)
                         {
@@ -256,6 +270,19 @@ namespace DynamicGameAssets
                                 foreach (var opt in parent.pack.configIndex)
                                 {
                                     string val = parent.pack.currConfig.Values[opt.Key].ToString();
+
+                                    if (key == opt.Key)
+                                    {// this one we should handle ourselves
+                                        Log.Trace($"Evaluating pack config option {key} in EnableCondition");
+                                        if (!val.Equals(value, StringComparison.OrdinalIgnoreCase))
+                                        { // fail the pack, we get to skip the rest of the work too.
+                                            shouldreject = true;
+                                            Log.Trace($"Rejecting condition {key} with value {val} because it's not equal to {value}");
+                                            goto BreakBreak;
+                                        }
+                                        goto DontAdd;
+                                    }
+
                                     if (parent.pack.configIndex[opt.Key].ValueType == ConfigPackData.ConfigValueType.String)
                                         val = "'" + val + "'";
 
@@ -263,9 +290,11 @@ namespace DynamicGameAssets
                                     value = value.Replace("{{" + opt.Key + "}}", val);
                                 }
                                 conds.Add(key, value);
+DontAdd:;
                             }
                         }
 
+BreakBreak:;
                         data.EnableConditionsObject = Mod.instance.cp.ParseConditions(
                             Mod.instance.ModManifest,
                             conds,
@@ -276,18 +305,25 @@ namespace DynamicGameAssets
                             Log.Warn("Invalid enable conditions for " + data + " " + data.pack.smapiPack.Manifest.Name + "! " + data.EnableConditionsObject.ValidationError);
 
                         bool wasEnabled = data.Enabled;
-                        data.Enabled = data.original.Enabled = data.EnableConditionsObject.IsMatch;
+                        data.Enabled = data.original.Enabled = (data.EnableConditionsObject.IsMatch && !shouldreject);
 
                         if (data is CommonPackData cdata && !cdata.Enabled && wasEnabled)
                         {
+                            Log.Trace($"Disabling item {cdata.ID}");
                             cdata.OnDisabled();
                         }
                         else if (data is ContentIndexPackData cidata)
                         {
                             if (!cidata.Enabled && wasEnabled)
+                            {
+                                Log.Trace($"Disabling content index {cidata.FilePath}");
                                 DoDisable(cidata);
+                            }
                             else
+                            {
+                                Log.Trace($"Enabling content index {cidata.FilePath}");
                                 DoEnableDisable(cidata);
+                            }
                         }
                     }
                 }
@@ -368,13 +404,13 @@ namespace DynamicGameAssets
                     {
                         if (giftTaste.Enabled)
                         {
-                            string[] npcs = giftTaste.Npc.Split(',').Select(npc => npc.Trim()).ToArray();
+                            string[] npcs = giftTaste.Npc.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                             foreach (string npc in npcs)
                             {
                                 if (!Mod.giftTastes.ContainsKey(npc))
                                     Mod.giftTastes.Add(npc, new());
 
-                                string[] objects = giftTaste.ObjectId.Split(',').Select(obj => obj.Trim()).ToArray();
+                                string[] objects = giftTaste.ObjectId.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                                 foreach (string obj in objects)
                                     if (!Mod.giftTastes[npc].ContainsKey(obj))
                                         Mod.giftTastes[npc].Add(obj, giftTaste);
@@ -425,17 +461,37 @@ namespace DynamicGameAssets
                 this.RefreshSpritebatchCache();
             }
 
-            this.Helper.Content.InvalidateCache("Data\\CraftingRecipes");
-            this.Helper.Content.InvalidateCache("Data\\CookingRecipes");
+            this.Helper.GameContent.InvalidateCache("Data\\CraftingRecipes");
+            this.Helper.GameContent.InvalidateCache("Data\\CookingRecipes");
+            if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
+            {
+                this.Helper.GameContent.InvalidateCache($@"Data\CraftingRecipes.{this.Helper.GameContent.CurrentLocale}");
+                this.Helper.GameContent.InvalidateCache($@"Data\CookingRecipes.{this.Helper.GameContent.CurrentLocale}");
+            }
         }
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is ShopMenu shop)
             {
+                // Log.Trace($"We have found a shop: {shop.portraitPerson?.Name}");
                 if (shop.storeContext is "ResortBar" or "VolcanoShop")
                 {
                     PatchCommon.DoShop(shop.storeContext, shop);
+                }
+
+                // handle STF shop menu -- this is copied from JA
+                if (!object.ReferenceEquals(e.NewMenu, this.LastShopMenu))
+                {
+                    this.LastShopMenu = shop;
+
+                    string? id = shop.portraitPerson?.Name;
+                    if (id is null || !id.StartsWith("STF", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
+                    Log.Trace($"Adding objects for STF shop '{id}'.");
+                    PatchCommon.DoShop(id, shop);
                 }
             }
         }
@@ -640,7 +696,7 @@ namespace DynamicGameAssets
 
         internal static void AddEmbeddedContentPack(IManifest manifest, string dir)
         {
-            Log.Debug($"Loading embedded content pack for \"{manifest.Name}\"...");
+            Log.Trace($"Loading embedded content pack for \"{manifest.Name}\"...");
             if (manifest.ExtraFields == null ||
                  !manifest.ExtraFields.ContainsKey("DGA.FormatVersion") ||
                  !int.TryParse(manifest.ExtraFields["DGA.FormatVersion"].ToString(), out int formatVer))
@@ -669,7 +725,7 @@ namespace DynamicGameAssets
         {
             foreach (var cp in this.Helper.ContentPacks.GetOwned())
             {
-                Log.Debug($"Loading content pack \"{cp.Manifest.Name}\"...");
+                Log.Trace($"Loading content pack \"{cp.Manifest.Name}\"...");
                 if (cp.Manifest.ExtraFields == null ||
                      !cp.Manifest.ExtraFields.ContainsKey("DGA.FormatVersion") ||
                      !int.TryParse(cp.Manifest.ExtraFields["DGA.FormatVersion"].ToString(), out int formatVer))
@@ -699,72 +755,58 @@ namespace DynamicGameAssets
                 }
             }
         }
-        public bool CanLoad<T>(IAssetInfo asset)
+
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            foreach (var pack in Mod.contentPacks)
+            if (e.NameWithoutLocale.StartsWith(AssetPrefix, false, true)
+                && e.NameWithoutLocale.BaseName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
             {
-                if (pack.Value.CanLoad<T>(asset))
-                    return true;
-            }
-
-            return false;
-        }
-
-        public T Load<T>(IAssetInfo asset)
-        {
-            foreach (var pack in Mod.contentPacks)
-            {
-                if (pack.Value.CanLoad<T>(asset))
-                    return pack.Value.Load<T>(asset);
-            }
-
-            return default;
-        }
-
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            if (asset.AssetNameEquals("Data\\CookingRecipes"))
-                return true;
-            if (asset.AssetNameEquals("Data\\CraftingRecipes"))
-                return true;
-            if (asset.AssetNameEquals("Data\\ObjectInformation"))
-                return true;
-            return false;
-        }
-
-        public void Edit<T>(IAssetData asset)
-        {
-            if (asset.AssetNameEquals("Data\\CookingRecipes"))
-            {
-                var dict = asset.AsDictionary<string, string>().Data;
-                int i = 0;
-                foreach (var crecipe in Mod.customCraftingRecipes)
+                string id = e.NameWithoutLocale.BaseName.GetNthChunk(new[] { '/' , '\\'}, 1).ToString();
+                if (Mod.contentPacks.TryGetValue(id, out var pack))
                 {
-                    if (crecipe.data.Enabled && crecipe.data.IsCooking)
-                    {
-                        dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
-                        ++i;
-                    }
+                    _ = pack.TryLoad(e);
                 }
-                Log.Trace("Added " + i + "/" + Mod.customCraftingRecipes.Count + " entries to cooking recipes");
             }
-            else if (asset.AssetNameEquals("Data\\CraftingRecipes"))
+            else if (Mod.customCraftingRecipes.Count > 0 && e.NameWithoutLocale.IsEquivalentTo("Data\\CookingRecipes"))
             {
-                var dict = asset.AsDictionary<string, string>().Data;
-                int i = 0;
-                foreach (var crecipe in Mod.customCraftingRecipes)
+                e.Edit(static (asset) =>
                 {
-                    if (crecipe.data.Enabled && !crecipe.data.IsCooking)
+                    var dict = asset.AsDictionary<string, string>().Data;
+                    int i = 0;
+                    foreach (var crecipe in Mod.customCraftingRecipes)
                     {
-                        dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
-                        ++i;
+                        if (crecipe.data.Enabled && crecipe.data.IsCooking)
+                        {
+                            dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
+                            ++i;
+                        }
                     }
-                }
-                Log.Trace("Added " + i + "/" + Mod.customCraftingRecipes.Count + " entries to crafting recipes");
+                    Log.Trace($"Added {i}/{Mod.customCraftingRecipes.Count} entries to cooking recipes");
+                });
             }
-            else if (asset.AssetNameEquals("Data\\ObjectInformation"))
+            else if (Mod.customCraftingRecipes.Count > 0 && e.NameWithoutLocale.IsEquivalentTo("Data\\CraftingRecipes"))
             {
-                asset.AsDictionary<int, string>().Data.Add(Mod.BaseFakeObjectId, "DGA Dummy Object/0/0/Basic -20/DGA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0");
+                e.Edit(static (asset) =>
+                {
+                    var dict = asset.AsDictionary<string, string>().Data;
+                    int i = 0;
+                    foreach (var crecipe in Mod.customCraftingRecipes)
+                    {
+                        if (crecipe.data.Enabled && !crecipe.data.IsCooking)
+                        {
+                            dict.Add(crecipe.data.CraftingDataKey, crecipe.data.CraftingDataValue);
+                            ++i;
+                        }
+                    }
+                    Log.Trace($"Added {i}/{Mod.customCraftingRecipes.Count} entries to crafting recipes");
+                });
+            }
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data\\ObjectInformation"))
+            {
+                e.Edit(static (asset) =>
+                {
+                    asset.AsDictionary<int, string>().Data.Add(Mod.BaseFakeObjectId, "DGA Dummy Object/0/0/Basic -20/DGA Dummy Object/You shouldn't have this./food/0 0 0 0 0 0 0 0 0 0 0 0/0");
+                });
             }
         }
 
@@ -831,11 +873,17 @@ namespace DynamicGameAssets
                         {
                             if (!Mod.State.TodaysShopEntries.ContainsKey(shopEntry.ShopId))
                                 Mod.State.TodaysShopEntries.Add(shopEntry.ShopId, new List<ShopEntry>());
+                            int shopEntryPrice = shopEntry.Cost;
+                            var salable = shopEntry.Item.Create();
+                            if (salable is StardewValley.Object obj && (obj.Category == StardewValley.Object.SeedsCategory || obj.isSapling()))
+                            {
+                                shopEntryPrice = (int)((float)shopEntryPrice * Game1.MasterPlayer.difficultyModifier);
+                            }
                             Mod.State.TodaysShopEntries[shopEntry.ShopId].Add(new ShopEntry()
                             {
-                                Item = shopEntry.Item.Create(),//MakeItemFrom( shopEntry.Item, cp.Value ),
+                                Item = salable,//MakeItemFrom( shopEntry.Item, cp.Value ),
                                 Quantity = shopEntry.MaxSold,
-                                Price = shopEntry.Cost,
+                                Price = shopEntryPrice,
                                 CurrencyId = shopEntry.Currency == null ? null : (int.TryParse(shopEntry.Currency, out int intCurr) ? intCurr : $"{cp.Key}/{shopEntry.Currency}".GetDeterministicHashCode())
                             });
                         }

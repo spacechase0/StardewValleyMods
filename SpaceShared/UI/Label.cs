@@ -24,6 +24,8 @@ namespace SpaceShared.UI
         public Color IdleTextColor { get; set; } = Game1.textColor;
         public Color HoverTextColor { get; set; } = Game1.unselectedOptionColor;
 
+        public SpriteFont Font { get; set; } = Game1.dialogueFont; // Only applies when Bold = false
+
         public float Scale => this.Bold ? 1f : this.NonBoldScale;
 
         public string String { get; set; }
@@ -55,7 +57,7 @@ namespace SpaceShared.UI
         /// <summary>Measure the label's rendered dialogue text size.</summary>
         public Vector2 Measure()
         {
-            return Label.MeasureString(this.String, this.Bold, scale: this.Bold ? 1f : this.NonBoldScale);
+            return Label.MeasureString(this.String, this.Bold, scale: this.Bold ? 1f : this.NonBoldScale, font: this.Font);
         }
 
         /// <inheritdoc />
@@ -74,9 +76,9 @@ namespace SpaceShared.UI
                     return;
 
                 if (this.NonBoldShadow)
-                    Utility.drawTextWithShadow(b, this.String, Game1.dialogueFont, this.Position, col, this.NonBoldScale);
+                    Utility.drawTextWithShadow(b, this.String, this.Font, this.Position, col, this.NonBoldScale);
                 else
-                    b.DrawString(Game1.dialogueFont, this.String, this.Position, col, 0f, Vector2.Zero, this.NonBoldScale, SpriteEffects.None, 1);
+                    b.DrawString(this.Font, this.String, this.Position, col, 0f, Vector2.Zero, this.NonBoldScale, SpriteEffects.None, 1);
             }
         }
 
@@ -84,12 +86,13 @@ namespace SpaceShared.UI
         /// <param name="text">The text to measure.</param>
         /// <param name="bold">Whether the font is bold.</param>
         /// <param name="scale">The scale to apply to the size.</param>
-        public static Vector2 MeasureString(string text, bool bold = false, float scale = 1f)
+        /// <param name="font">The font to measure. Defaults to <see cref="Game1.dialogueFont"/> if <c>null</c>.</param>
+        public static Vector2 MeasureString(string text, bool bold = false, float scale = 1f, SpriteFont font = null)
         {
             if (bold)
                 return new Vector2(SpriteText.getWidthOfString(text) * scale, SpriteText.getHeightOfString(text) * scale);
             else
-                return Game1.dialogueFont.MeasureString(text) * scale;
+                return (font ?? Game1.dialogueFont).MeasureString(text) * scale;
         }
     }
 }

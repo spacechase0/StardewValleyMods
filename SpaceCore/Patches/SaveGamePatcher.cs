@@ -55,8 +55,8 @@ namespace SpaceCore.Patches
             );
 
             harmony.Patch(
-                original: this.RequireMethod<SaveGame>(nameof(SaveGame.Save)),
-                prefix: this.GetHarmonyMethod(nameof(Before_Save))
+                original: this.RequireMethod<SaveGameMenu>(nameof(SaveGameMenu.update)),
+                transpiler: this.GetHarmonyMethod(nameof(Transpile_SaveGameMenuUpdate))
             );
 
             harmony.Patch(
@@ -187,6 +187,19 @@ namespace SpaceCore.Patches
                         loc.terrainFeatures.Remove(pair.Key);
                 }
             }
+        }
+
+        /// <summary>The method which transpiles <see cref="SaveGame.Save"/>.</summary>
+        internal static IEnumerable<CodeInstruction> Transpile_SaveGameMenuUpdate(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            List<CodeInstruction> newInsns = new();
+            foreach (var insn in insns)
+            {
+                if (insn.opcode == OpCodes.Call && insn.operand is MethodInfo minfo && minfo.DeclaringType == typeof(SaveGame) && minfo.Name == nameof(SaveGame.Save))
+                    newInsns.Add(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SaveGamePatcher), nameof(Before_Save))));
+                newInsns.Add(insn);
+            }
+            return newInsns;
         }
 
         /// <summary>The method which transpiles <see cref="SaveGame.getLoadEnumerator"/>.</summary>

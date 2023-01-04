@@ -15,7 +15,7 @@ namespace DynamicGameAssets.Game
     [XmlType("Mods_DGACrop")]
     public partial class CustomCrop : Crop
     {
-        private CropPackData.PhaseData GetCurrentPhase()
+        public CropPackData.PhaseData GetCurrentPhase()
         {
             return this.Data.Phases.Count > this.currentPhase.Value ? this.Data.Phases[this.currentPhase.Value] : new CropPackData.PhaseData();
         }
@@ -43,7 +43,7 @@ namespace DynamicGameAssets.Game
             this.updateDrawMath(new Vector2(tileX, tileY));
         }
 
-        public void ResetPhaseDays()
+        public override void ResetPhaseDays()
         {
             this.phaseDays.Clear();
             this.phaseDays.AddRange(this.Data.Phases.Select(p => p.Length));

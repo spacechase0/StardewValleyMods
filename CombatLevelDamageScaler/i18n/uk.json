@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.damage-scale.name": "Масштаб шкоди",
+    "config.damage-scale.tooltip": "Розмір шкоди для масштабування за бойовий рівень, у відсотках."
+}

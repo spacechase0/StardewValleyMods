@@ -32,8 +32,9 @@ namespace MultiFertilizer.Patches
         ** Private methods
         *********/
         /// <summary>The method to call before <see cref="Crop.harvest"/>.</summary>
-        private static void Before_Harvest(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester)
+        private static void Before_Harvest(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester, out int __state)
         {
+            __state = soil.fertilizer.Value;
             if (!soil.TryGetFertilizer(Mod.KeyFert, out FertilizerData fertilizer))
                 return;
 
@@ -41,9 +42,9 @@ namespace MultiFertilizer.Patches
         }
 
         /// <summary>The method to call after <see cref="Crop.harvest"/>.</summary>
-        private static void After_Harvest(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester)
+        private static void After_Harvest(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester, int __state)
         {
-            soil.fertilizer.Value = "0";
+            soil.fertilizer.Value = __state;
         }
     }
 }

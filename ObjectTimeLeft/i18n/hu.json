@@ -1,0 +1,13 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.show-on-start.name": "Megjelenítés indításkor",
+    "config.show-on-start.tooltip": "A játék úgy indul, hogy a hátralévő idő már látható.",
+
+    "config.toggle-key.name": "Kijelző aktiváló billentyű",
+    "config.toggle-key.tooltip": "Billentyű az objektumok felett elhelyezett szöveg aktiválására.",
+
+    "config.text-scale.name": "Szöveg méret",
+    "config.text-scale.tooltip": "Az objektumok felett elhelyezett szöveg mérete."
+}

@@ -14,10 +14,10 @@ namespace MoonMisadventures.Game.Locations
         public readonly NetBool ufoRepaired = new NetBool( false );
 
         public MountainTop() { }
-        public MountainTop( IContentHelper content )
-        : base( content.GetActualAssetKey( "assets/maps/InactiveCaldera.tmx" ), "Custom_MM_MountainTop" )
+        public MountainTop( IModContentHelper content )
+        : base( content.GetInternalAssetName( "assets/maps/InactiveCaldera.tmx" ).BaseName, "Custom_MM_MountainTop" )
         {
-            ufoTexPath = content.GetActualAssetKey( "assets/ufo-big.png" );
+            ufoTexPath = content.GetInternalAssetName( "assets/ufo-big.png" ).BaseName;
         }
 
         protected override void initNetFields()

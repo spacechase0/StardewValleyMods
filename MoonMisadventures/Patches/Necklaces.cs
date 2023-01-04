@@ -41,7 +41,11 @@ namespace MoonMisadventures.Patches
     {
         public static void Postfix( InventoryPage __instance, int x, int y, ref Item ___hoveredItem, ref string ___hoverText, ref string ___hoverTitle )
         {
-            var necklaceSlot = __instance.equipmentIcons.First( cc => cc.myID == 123450101 );
+            var necklaceSlot = __instance.equipmentIcons.FirstOrDefault( cc => cc.myID == 123450101 );
+
+            if (necklaceSlot is null)
+                return;
+
             if ( necklaceSlot.containsPoint( x, y ) && Game1.player.get_necklaceItem().Value != null )
             {
                 var necklaceItem = Game1.player.get_necklaceItem().Value;
@@ -56,7 +60,10 @@ namespace MoonMisadventures.Patches
     {
         public static bool Prefix( InventoryPage __instance, int x, int y )
         {
-            var necklaceSlot = __instance.equipmentIcons.First( cc => cc.myID == 123450101 );
+            var necklaceSlot = __instance.equipmentIcons.FirstOrDefault( cc => cc.myID == 123450101 );
+
+            if (necklaceSlot is null)
+                return true;
             if ( necklaceSlot.containsPoint( x, y ) )
             {
                 var necklaceItem = Game1.player.get_necklaceItem();
@@ -94,7 +101,11 @@ namespace MoonMisadventures.Patches
             if (___hoveredItem != null && ___hoveredItem != Game1.player.get_necklaceItem().Value)
                 return;
 
-            var necklaceSlot = __instance.equipmentIcons.First( cc => cc.myID == 123450101 );
+            var necklaceSlot = __instance.equipmentIcons.FirstOrDefault( cc => cc.myID == 123450101 );
+
+            if (necklaceSlot is null)
+                return;
+
             if ( Game1.player.get_necklaceItem().Value != null )
             {
                 b.Draw( Game1.menuTexture, necklaceSlot.bounds, Game1.getSourceRectForStandardTileSheet( Game1.menuTexture, 10 ), Color.White );
@@ -116,13 +127,13 @@ namespace MoonMisadventures.Patches
                 hd.state.Value = HoeDirt.watered;
         }
 
-        public static void Prefix( Hoe __instance, GameLocation location, Farmer who )
+        public static void Prefix(GameLocation location, Farmer who )
         {
             if ( who.HasNecklace( Necklace.Type.Water ) )
                 location.terrainFeatures.OnValueAdded += OnFeatureAdded;
         }
 
-        public static void Postfix( Hoe __instance, GameLocation location, Farmer who )
+        public static void Postfix(GameLocation location, Farmer who )
         {
             if ( who.HasNecklace( Necklace.Type.Water ) )
                 location.terrainFeatures.OnValueAdded -= OnFeatureAdded;

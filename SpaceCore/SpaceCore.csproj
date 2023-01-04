@@ -12,7 +12,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;IS_SPACECORE</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>IS_SPACECORE</DefineConstants>
   </PropertyGroup>
   
   <ItemGroup>

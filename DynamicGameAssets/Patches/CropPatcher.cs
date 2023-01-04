@@ -46,6 +46,10 @@ namespace DynamicGameAssets.Patches
                 original: this.RequireMethod<Crop>(nameof(Crop.drawWithOffset)),
                 prefix: this.GetHarmonyMethod(nameof(Before_DrawWithOffset))
             );
+            harmony.Patch(
+                original: this.RequireMethod<HoeDirt>(nameof(HoeDirt.readyForHarvest)),
+                postfix: this.GetHarmonyMethod(nameof(After_ReadyForHarvest))
+            );
         }
 
 
@@ -128,6 +132,18 @@ namespace DynamicGameAssets.Patches
             }
 
             return true;
+        }
+
+        /// <summary>The method to call after <see cref="HoeDirt.readyForHarvest"/>.</summary>
+        private static void After_ReadyForHarvest(HoeDirt __instance, ref bool __result)
+        {
+            if (__instance.crop != null && __instance.crop is CustomCrop custCrop) {
+                var currPhase = custCrop.GetCurrentPhase();
+                if (currPhase.HarvestedDrops.Count > 0)
+                {
+                    __result = true;
+                }
+            }
         }
     }
 }

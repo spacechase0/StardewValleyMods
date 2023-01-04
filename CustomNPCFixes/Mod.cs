@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Characters;
+using StardewValley.Monsters;
 
 namespace CustomNPCFixes
 {
@@ -15,24 +19,21 @@ namespace CustomNPCFixes
         {
             Log.Monitor = this.Monitor;
 
-            // We need to make sure to run after Content Patcher, which registers its events after its first update tick.
-            helper.Events.GameLoop.UpdateTicked += this.OnUpdate;
+            this.Helper.Events.GameLoop.SaveCreated += this.DoNpcFixes;
+            this.Helper.Events.GameLoop.SaveLoaded += this.DoNpcFixes;
+
+            this.Helper.Events.GameLoop.DayStarted += this.OnDayStart;
         }
 
-        private bool FirstTick = true;
-        private void OnUpdate(object sender, UpdateTickedEventArgs e)
+        [EventPriority(EventPriority.Low)]
+        // See comments in doNpcFixes. This handles conditional spawning.
+        public void OnDayStart(object sender, DayStartedEventArgs e)
         {
-            if (this.FirstTick)
-            {
-                this.FirstTick = false;
-
-                this.Helper.Events.GameLoop.SaveCreated += this.DoNpcFixes;
-                this.Helper.Events.GameLoop.SaveLoaded += this.DoNpcFixes;
-
-                this.Helper.Events.GameLoop.DayStarted += (s, a) => { this.SpawnNpcs(); this.FixSchedules(); }; // See comments in doNpcFixes. This handles conditional spawning.
-            }
+            SpawnNpcs();
+            FixSchedules();
         }
 
+        [EventPriority(EventPriority.Low)]
         public void DoNpcFixes(object sender, EventArgs args)
         {
             // This needs to be called again so that custom NPCs spawn in locations added after the original call
@@ -46,46 +47,71 @@ namespace CustomNPCFixes
             this.FixSchedules();
         }
 
+        class NpcEqualityChecker : IEqualityComparer<NPC>
+        {
+            public bool Equals(NPC x, NPC y)
+            {
+                return x.Name == y.Name;
+            }
+
+            public int GetHashCode([DisallowNull] NPC obj)
+            {
+                return obj.Name.GetHashCode();
+            }
+        }
+
         private void SpawnNpcs()
         {
             List<NPC> allCharacters = Utility.getPooledList();
             try
             {
                 Utility.getAllCharacters(allCharacters);
-                Dictionary<string, string> npcDispositions = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
-                foreach (string s in npcDispositions.Keys)
+
+                var chars = allCharacters.Where(c => c.isVillager()).Distinct( new NpcEqualityChecker() ).ToDictionary((a) => a.Name, a => a);
+                var dispos = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
+
+                foreach (var (name, dispo) in dispos)
                 {
-                    bool found = false;
-                    if ((s == "Kent" && Game1.year <= 1) || (s == "Leo" && !Game1.MasterPlayer.hasOrWillReceiveMail("addedParrotBoy")))
-                    {
+                    if ((name == "Kent" && Game1.year <= 1) || (name == "Leo" && !Game1.MasterPlayer.hasOrWillReceiveMail("addedParrotBoy")))
                         continue;
-                    }
-                    foreach (NPC n2 in allCharacters)
+                    if (chars.ContainsKey(name))
+                        continue;
+                    try
                     {
-                        if (!n2.isVillager() || !n2.Name.Equals(s))
+                        string[] defaultpos = dispo.Split('/')[10].Split(' '); // fix this after Casey moves GetNthChunk.
+                        GameLocation map = Game1.getLocationFromName(defaultpos[0]);
+                        if (map is null)
                         {
+                            Log.Warn($"{name} has a dispo entry for map {defaultpos[0]} which could not be found!");
                             continue;
                         }
-                        found = true;
-                        if (n2.datable.Value && n2.getSpouse() == null)
-                        {
-                            string defaultMap = npcDispositions[s].Split('/')[10].Split(' ')[0];
-                            if (n2.DefaultMap != defaultMap && (n2.DefaultMap.ToLower().Contains("cabin") || n2.DefaultMap.Equals("FarmHouse")))
-                            {
-                                Console.WriteLine("Fixing " + n2.Name + " who was improperly divorced and left stranded");
-                                n2.PerformDivorce();
-                            }
-                        }
-                        break;
+                        map.addCharacter(
+                            new NPC(
+                                sprite: new AnimatedSprite("Characters\\" + NPC.getTextureNameForCharacter(name), 0, 16, 32),
+                                position: new Vector2(int.Parse(defaultpos[1]), int.Parse(defaultpos[2])) * 64f,
+                                defaultMap: defaultpos[0],
+                                facingDir: 0,
+                                name: name,
+                                schedule: null,
+                                portrait: Game1.content.Load<Texture2D>("Portraits\\" + NPC.getTextureNameForCharacter(name)),
+                                eventActor: false));
                     }
-                    if (!found)
+                    catch
                     {
-                        try
+                    }
+                }
+
+                foreach (var (name, npc) in chars)
+                {
+                    if (npc.datable.Value && npc.getSpouse() is null
+                        && (npc.DefaultMap.Contains("cabin", StringComparison.OrdinalIgnoreCase) || npc.DefaultMap.Equals("Farmhouse", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var defaultmap = dispos[name].Split('/')[10].AsSpan();
+                        int index = defaultmap.IndexOf(' ');
+                        if (index > 0 && !npc.DefaultMap.AsSpan().Equals(defaultmap[..index], StringComparison.OrdinalIgnoreCase))
                         {
-                            Game1.getLocationFromName(npcDispositions[s].Split('/')[10].Split(' ')[0]).addCharacter(new NPC(new AnimatedSprite("Characters\\" + NPC.getTextureNameForCharacter(s), 0, 16, 32), new Vector2(Convert.ToInt32(npcDispositions[s].Split('/')[10].Split(' ')[1]) * 64, Convert.ToInt32(npcDispositions[s].Split('/')[10].Split(' ')[2]) * 64), npcDispositions[s].Split('/')[10].Split(' ')[0], 0, s, null, Game1.content.Load<Texture2D>("Portraits\\" + NPC.getTextureNameForCharacter(s)), eventActor: false));
-                        }
-                        catch (Exception)
-                        {
+                            Log.Trace($"Fixing {name} who was improperly divorced and left stranded");
+                            npc.PerformDivorce();
                         }
                     }
                 }
@@ -100,7 +126,7 @@ namespace CustomNPCFixes
         {
             foreach (var npc in Utility.getAllCharacters())
             {
-                if (npc.Schedule == null)
+                if (npc.Schedule is null && npc is not Monster or Junimo or Horse or Child)
                 {
                     try
                     {

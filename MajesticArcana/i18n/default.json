@@ -1,0 +1,5 @@
+﻿{
+    "element.manifestation": "Manifestation: {{text}}",
+    "element.attribute": "Attribute: {{text}}",
+    "spellcrafting.create-chain": "Create Chain Effect"
+}

@@ -164,7 +164,7 @@ namespace Terraforming.Framework
             foreach (var type in types)
             {
                 var ts = new xTile.Tiles.TileSheet(Game1.currentLocation.Map,
-                                                   Mod.Instance.Helper.Content.GetActualAssetKey($"assets/vanilla/{type}.png"),
+                                                   Mod.Instance.Helper.ModContent.GetInternalAssetName($"assets/vanilla/{type}.png").BaseName,
                                                    new xTile.Dimensions.Size(4, 4), new xTile.Dimensions.Size(16, 16));
                 ts.Id = "\u03a9" + ts.Id + "Terraform" + (tsCounter++) + type.ToString();
                 Game1.currentLocation.Map.AddTileSheet(ts);

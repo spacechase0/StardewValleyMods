@@ -12,7 +12,7 @@ namespace MoonMisadventures.Game.Locations
     public class MoonPlanetOverlook : LunarLocation
     {
         public MoonPlanetOverlook() { }
-        public MoonPlanetOverlook( IContentHelper content )
+        public MoonPlanetOverlook( IModContentHelper content )
         :   base( content, "MoonPlanetOverlook", "MoonPlanetOverlook" )
         {
         }
@@ -68,9 +68,9 @@ namespace MoonMisadventures.Game.Locations
                         }
                         else
                         {
-                            Game1.player.items[ necklaceSlot ] = null;
-                            if ( Game1.player.items[ sapphireSlot ].Stack-- == 1 )
-                                Game1.player.items[ sapphireSlot ] = null;
+                            Game1.player.Items[ necklaceSlot ] = null;
+                            if ( Game1.player.Items[ sapphireSlot ].Stack-- == 1 )
+                                Game1.player.Items[ sapphireSlot ] = null;
                             var necklace = new Necklace( PickCombatNecklace() );
                             //var debris = new Debris( necklace, new Vector2( Game1.player.getStandingX(), 128 ) );
                             //Game1.player.currentLocation.debris.Add( debris );

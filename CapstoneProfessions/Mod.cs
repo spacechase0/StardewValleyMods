@@ -27,11 +27,12 @@ namespace CapstoneProfessions
             Mod.Instance = this;
             Log.Monitor = this.Monitor;
 
-            this.Helper.Events.Player.Warped += this.OnWarped;
+            this.Helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+
 
             SpaceEvents.ShowNightEndMenus += this.OnNightMenus;
 
-            Mod.ClockTex = this.Helper.Content.Load<Texture2D>("assets/clock.png");
+            Mod.ClockTex = this.Helper.ModContent.Load<Texture2D>("assets/clock.png");
 
             HarmonyPatcher.Apply(this,
                 new Game1Patcher(),
@@ -39,9 +40,15 @@ namespace CapstoneProfessions
             );
         }
 
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            if (this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+                this.Helper.Events.Player.Warped += this.OnWarped;
+        }
+
         private void OnWarped(object sender, WarpedEventArgs e)
         {
-            if (e.IsLocalPlayer && this.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
+            if (e.IsLocalPlayer)
             {
                 if (e.Player.professions.Contains(Mod.ProfessionTime) && !e.Player.professions.Contains(Mod.ProfessionProfit))
                     e.Player.professions.Add(Mod.ProfessionProfit);

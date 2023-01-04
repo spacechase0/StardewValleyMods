@@ -148,7 +148,7 @@ namespace MonstersTheFramework
         public override void shedChunks( int number, float scale )
         {
             var state = CurrentState;
-            Game1.createRadialDebris( base.currentLocation, this.Sprite.textureName, new Microsoft.Xna.Framework.Rectangle( ( int ) state.Animation.DeathChunkStartCoordinates.X, ( int ) state.Animation.DeathChunkStartCoordinates.Y, 16, 16 ), 8, this.GetBoundingBox().Center.X, this.GetBoundingBox().Center.Y, number, ( int ) base.getTileLocation().Y, Color.White, 4f * scale );
+            Game1.createRadialDebris( base.currentLocation, this.Sprite.textureName.Value, new Microsoft.Xna.Framework.Rectangle( ( int ) state.Animation.DeathChunkStartCoordinates.X, ( int ) state.Animation.DeathChunkStartCoordinates.Y, 16, 16 ), 8, this.GetBoundingBox().Center.X, this.GetBoundingBox().Center.Y, number, ( int ) base.getTileLocation().Y, Color.White, 4f * scale );
         }
 
         public override void update( GameTime time, GameLocation location )
@@ -266,7 +266,7 @@ namespace MonstersTheFramework
 
         private void TriggerEvent( string evtName )
         {
-            if ( evtName != "OnTick" )
+            //if ( evtName != "OnTick" )
                 ;// Log.Debug( "triggering event " + evtName );
 
             var state = CurrentState;
@@ -321,7 +321,7 @@ namespace MonstersTheFramework
                     return;
             }
 
-            if ( action.ToLower().StartsWith( "variable_" ) )
+            if ( action.StartsWith( "variable_", StringComparison.OrdinalIgnoreCase ) )
             {
                 string v = action.Substring( "variable_".Length );
                 using var dt = new DataTable();

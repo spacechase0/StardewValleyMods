@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.wiggly-arms.name": "Хвилясті руки",
+    "config.wiggly-arms.tooltip": "Чи показувати хиткі руки, що тягнуться до курсору."
+}

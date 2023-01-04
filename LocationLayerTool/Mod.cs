@@ -24,7 +24,7 @@ namespace LocationLayerTool
 
         private void DoCommand(string cmd, string[] args)
         {
-            Game1.locations.Add(new GameLocation(this.Helper.Content.GetActualAssetKey("assets/Farm_overlay.tbin"), "Farm_overlay"));
+            Game1.locations.Add(new GameLocation(this.Helper.ModContent.GetInternalAssetName("assets/Farm_overlay.tbin").BaseName, "Farm_overlay"));
             Game1.game1.parseDebugInput("warp Farm_overlay 39 31");
         }
     }

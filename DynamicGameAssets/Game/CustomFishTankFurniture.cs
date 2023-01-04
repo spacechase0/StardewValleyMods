@@ -77,7 +77,7 @@ namespace DynamicGameAssets.Game
         public override Rectangle GetTankBounds()
         {
             var ret = base.GetTankBounds();
-            ret.Y -= 64 * 3;
+            ret.Y = (int)base.TileLocation.Y * 64 - 4 * defaultSourceRect.Height + this.boundingBox.Height + 64;
             return ret;
         }
 
@@ -172,7 +172,7 @@ namespace DynamicGameAssets.Game
             }
         }
 
-        public void drawAtNonTileSpot(SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha = 1f)
+        public override void drawAtNonTileSpot(SpriteBatch spriteBatch, Vector2 location, float layerDepth, float alpha = 1f)
         {
             var currConfig = this.GetCurrentConfiguration();
             var currTex = this.Data.pack.GetTexture(currConfig.Texture, (int)currConfig.DisplaySize.X * Game1.tileSize / Game1.pixelZoom, (int)currConfig.DisplaySize.Y * Game1.tileSize / Game1.pixelZoom);

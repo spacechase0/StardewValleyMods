@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Building data
+    *********/
+    "spooky-shed.name": "Моторошний сарай",
+    "spooky-shed.description": "Порожня будівля. Але й моторошна.",
+
+    "fishing-shack.name": "Рибальський курінь",
+    "fishing-shack.description": "Курінь для риболовлі.",
+
+    "mini-spa.name": "Мінісауна",
+    "mini-spa.description": "Місце для відпочинку та відновлення."
+}

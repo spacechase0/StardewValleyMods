@@ -7,7 +7,7 @@
 
     // mod list UI
     "list.editable-heading": "Konfiguriere Mods",
-    "list.not-editable-heading": "Editable from the title screen:", // TODO
+    "list.not-editable-heading": "Änderbar über den Titelbildschirm:",
 
     // mod config pages
     "config.buttons.cancel": "Abbrechen",

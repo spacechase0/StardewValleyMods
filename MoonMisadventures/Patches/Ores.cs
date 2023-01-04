@@ -27,7 +27,7 @@ namespace MoonMisadventures.Patches
                     else
                     {
                         who.currentLocation.playSound("furnace");
-                        __instance.initializeLightSource(__instance.tileLocation);
+                        __instance.initializeLightSource(__instance.TileLocation);
                         __instance.showNextIndex.Value = true;
                         // TODO: Don't be lazy and actually do this when Game1.multiplayer is public
                         /*Game1.multiplayer.broadcastSprites(who.currentLocation, new TemporaryAnimatedSprite(30, this.tileLocation.Value * 64f + new Vector2(0f, -16f), Color.White, 4, flipped: false, 50f, 10, 64, (this.tileLocation.Y + 1f) * 64f / 10000f + 0.0001f)

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>C:/Programming/StardewValley/ModSource/FloodedValleyFarm/assets/PartialWater.fx</SourceFile>
+  <SourceTime>2022-06-27T21:21:34.4115272-04:00</SourceTime>
+  <DestFile>C:/Programming/StardewValley/ModSource/FloodedValleyFarm/assets/PartialWater.xnb</DestFile>
+  <DestTime>2022-06-27T21:21:36.6657957-04:00</DestTime>
+  <Importer>EffectImporter</Importer>
+  <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
+  <Processor>EffectProcessor</Processor>
+  <ProcessorTime>2020-08-10T12:17:54-04:00</ProcessorTime>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

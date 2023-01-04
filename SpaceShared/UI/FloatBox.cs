@@ -16,9 +16,11 @@ namespace SpaceShared.UI
         *********/
         public float Value
         {
-            get => (this.String is "" or "-") ? 0 : float.Parse(this.String);
+            get => float.TryParse(this.String, out float value) ? value : 0f;
             set => this.String = value.ToString();
         }
+
+        public bool IsValid => float.TryParse(this.String, out _);
 
 
         /*********

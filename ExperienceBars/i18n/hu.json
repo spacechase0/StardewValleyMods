@@ -1,0 +1,11 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.position-x.name": "X pozíció",
+    "config.position-x.tooltip": "A képernyő bal felső sarkához viszonyított X pixel pozíció, ahová a tapasztalat sávok kijelzője lesz rajzolva.",
+    "config.position-y.name": "Y pozíció",
+    "config.position-y.tooltip": "A képernyő bal felső sarkához viszonyított Y pixel pozíció, ahová a tapasztalat sávok kijelzője lesz rajzolva.",
+    "config.toggle-key.name": "Megjelenítő gomb",
+    "config.toggle-key.tooltip": "Az a gomb, amely megjeleníti vagy elrejti a tapasztalat sávok kijelzését. A Shift és a gomb lenyomásával mozgatható a tapasztalat sávok kijelzője."
+}

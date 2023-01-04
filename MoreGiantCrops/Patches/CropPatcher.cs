@@ -46,7 +46,6 @@ namespace MoreGiantCrops.Patches
                 int hookCountdown = 0;
                 bool justHooked = false;
                 object label = null;
-                int farmCheckCounter = 0;
                 foreach (var instr in instructions)
                 {
                     // To allow on Ginger island and elsewhere where crops can grow, we need to take out this check

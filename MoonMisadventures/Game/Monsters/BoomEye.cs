@@ -41,7 +41,7 @@ namespace MoonMisadventures.Game.Monsters
 
         public override void reloadSprite()
         {
-            Sprite = new AnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/enemies/boom-eye.png" ), 0, 16, 32 );
+            Sprite = new AnimatedSprite( Mod.instance.Helper.ModContent.GetInternalAssetName( "assets/enemies/boom-eye.png" ).BaseName, 0, 16, 32 );
         }
 
         public void ReloadShoot()

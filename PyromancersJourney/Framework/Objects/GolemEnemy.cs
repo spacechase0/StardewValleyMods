@@ -9,7 +9,7 @@ namespace PyromancersJourney.Framework.Objects
 {
     internal class GolemEnemy : Enemy
     {
-        public static Texture2D Tex = Mod.Instance.Helper.Content.Load<Texture2D>("assets/golem.png");
+        public static Texture2D Tex = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/golem.png");
 
         public override RectangleF BoundingBox { get; } = new(-0.5f, -0.5f, 1, 1);
 

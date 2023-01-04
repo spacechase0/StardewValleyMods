@@ -48,6 +48,11 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether a keybinding UI is open.</summary>
         private bool IsBindingKey => this.ActiveKeybindOverlay != null;
 
+        /// <summary>The current width of the title label.</summary>
+        private int TitleLabelWidth = 0;
+
+        private ModConfigManager ConfigsForKeybinds;
+
 
         /*********
         ** Accessors
@@ -59,6 +64,86 @@ namespace GenericModConfigMenu.Framework
         /*********
         ** Public methods
         *********/
+        // This is the keybindings menu constructor
+        public SpecificModConfigMenu(ModConfigManager mods, int scrollSpeed, Action returnToList)
+        {
+            ConfigsForKeybinds = mods;
+            ScrollSpeed = scrollSpeed;
+            ReturnToList = returnToList;
+
+            this.Table = new Table(fixedRowHeight: false)
+            {
+                RowHeight = 50,
+                Size = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116)
+            };
+            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
+            foreach (var config in mods.GetAll())
+            {
+                foreach (var opt in config.GetAllOptions())
+                {
+                    if (!(opt is SimpleModOption<SButton> || opt is SimpleModOption<KeybindList>))
+                        continue;
+
+                    string name = config.ModName + ": " + opt.Name();
+                    string tooltip = opt.Tooltip();
+
+                    if (this.InGame && opt.IsTitleScreenOnly)
+                        continue;
+
+                    opt.BeforeMenuOpened();
+
+                    Label label = new Label
+                    {
+                        String = name,
+                        UserData = tooltip
+                    };
+                    if (!string.IsNullOrEmpty(tooltip))
+                        this.OptHovers.Add(label);
+
+                    Element optionElement = new Label
+                    {
+                        String = "TODO",
+                        LocalPosition = new Vector2(500, 0)
+                    };
+                    Label rightLabel = null;
+                    switch (opt)
+                    {
+                        case SimpleModOption<SButton> option:
+                            if (Constants.TargetPlatform == GamePlatform.Android)
+                                continue; // TODO: Support virtual keyboard input.
+
+                            optionElement = new Label
+                            {
+                                String = option.FormatValue(),
+                                LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
+                                Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
+                            };
+                            break;
+
+                        case SimpleModOption<KeybindList> option:
+                            if (Constants.TargetPlatform == GamePlatform.Android)
+                                continue; // TODO: Support virtual keyboard input.
+
+                            optionElement = new Label
+                            {
+                                String = option.FormatValue(),
+                                LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
+                                Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
+                            };
+                            break;
+                    }
+
+                    this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
+                }
+            }
+            this.Ui.AddChild(this.Table);
+            this.AddDefaultLabels(null);
+
+            // We need to update widgets at least once so ComplexModOptionWidget's get initialized
+            this.Table.ForceUpdateEvenHidden();
+
+        }
+
         public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
         {
             this.ModConfig = config;
@@ -70,7 +155,7 @@ namespace GenericModConfigMenu.Framework
 
             this.ModConfig.ActiveDisplayPage = this.ModConfig.Pages[this.CurrPage];
 
-            this.Table = new Table
+            this.Table = new Table(fixedRowHeight: false)
             {
                 RowHeight = 50,
                 Size = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116)
@@ -264,6 +349,13 @@ namespace GenericModConfigMenu.Framework
                                 string nextLine = "";
                                 foreach (string word in name.Split(' '))
                                 {
+                                    // respect newline characters
+                                    if (word == "\n") {
+                                        text.AppendLine(nextLine);
+                                        nextLine = "";
+                                        continue;
+                                    }
+
                                     // always add at least one word
                                     if (nextLine == "")
                                     {
@@ -273,7 +365,7 @@ namespace GenericModConfigMenu.Framework
 
                                     // else append if it fits
                                     string possibleLine = $"{nextLine} {word}".Trim();
-                                    if (Label.MeasureString(possibleLine).X <= this.Table.Size.X)
+                                    if (Label.MeasureString(possibleLine, font: Game1.smallFont).X <= this.Table.Size.X)
                                     {
                                         nextLine = possibleLine;
                                         continue;
@@ -292,8 +384,9 @@ namespace GenericModConfigMenu.Framework
                             optionElement = new Label
                             {
                                 UserData = tooltip,
-                                NonBoldScale = 0.75f,
+                                NonBoldScale = 1f,
                                 NonBoldShadow = false,
+                                Font = Game1.smallFont,
                                 String = text.ToString()
                             };
                             break;
@@ -323,17 +416,6 @@ namespace GenericModConfigMenu.Framework
 
                 this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
 
-                // add spacer rows for multi-row content
-                {
-                    int elementHeight = new[] { label?.Height, optionElement?.Height, rightLabel?.Height }.Max(p => p ?? 0);
-                    float overlapRows = ((elementHeight * 1.0f) / this.Table.RowHeight) - 1;
-
-                    if (overlapRows > 0.05f) // avoid adding an empty row if an element only overlaps slightly
-                    {
-                        for (int i = 0; i < overlapRows; i++)
-                            this.Table.AddRow(Array.Empty<Element>());
-                    }
-                }
             }
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
@@ -373,11 +455,23 @@ namespace GenericModConfigMenu.Framework
             return false;
         }
 
+        private int scrollCounter = 0;
         /// <inheritdoc />
         public override void update(GameTime time)
         {
             base.update(time);
             this.Ui.Update();
+
+            // TODO: This will be different if a dropdown is open
+            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0)
+            {
+                if (++scrollCounter == 5)
+                {
+                    scrollCounter = 0;
+                    this.Table.Scrollbar.ScrollBy(Math.Sign(Game1.input.GetGamePadState().ThumbSticks.Right.Y) * 120 / -this.ScrollSpeed);
+                }
+            }
+            else scrollCounter = 0;
 
             if (this.ExitOnNextUpdate)
                 this.Cancel();
@@ -392,7 +486,8 @@ namespace GenericModConfigMenu.Framework
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
 
             // title background
-            IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32, 32, 800 + 64, 50 + 20, Color.White);
+            int titleBoxWidth = Math.Clamp(this.TitleLabelWidth + 64, 800 + 64, Game1.uiViewport.Width);
+            IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - titleBoxWidth) / 2, 32, titleBoxWidth, 50 + 20, Color.White);
 
             // button background
             IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32 - 64, Game1.uiViewport.Height - 50 - 20 - 32, 800 + 64 + 128, 50 + 20, Color.White);
@@ -447,6 +542,13 @@ namespace GenericModConfigMenu.Framework
             this.ActiveKeybindOverlay?.OnWindowResized();
         }
 
+        /// <inheritdoc/>
+        public override bool overrideSnappyMenuCursorMovementBan()
+        {
+            return true;
+        }
+
+
         /// <summary>Raised when any buttons are pressed or released.</summary>
         /// <param name="e">The event arguments.</param>
         public void OnButtonsChanged(ButtonsChangedEventArgs e)
@@ -467,15 +569,16 @@ namespace GenericModConfigMenu.Framework
         {
             // add page title
             {
-                string pageTitle = this.ModConfig.Pages[this.CurrPage].PageTitle();
+                string pageTitle = modManifest == null ? "" : this.ModConfig.Pages[this.CurrPage].PageTitle();
                 var titleLabel = new Label
                 {
-                    String = modManifest.Name + (pageTitle == "" ? "" : " > " + pageTitle),
+                    String = modManifest == null ? I18n.List_Keybindings() : (modManifest.Name + (pageTitle == "" ? "" : " > " + pageTitle)),
                     Bold = true
                 };
                 titleLabel.LocalPosition = new Vector2((Game1.uiViewport.Width - titleLabel.Measure().X) / 2, 12 + 32);
                 titleLabel.HoverTextColor = titleLabel.IdleTextColor;
                 this.Ui.AddChild(titleLabel);
+                this.TitleLabelWidth = (int) titleLabel.Measure().X;
             }
 
             // add buttons
@@ -495,7 +598,7 @@ namespace GenericModConfigMenu.Framework
                     Bold = true,
                     LocalPosition = leftPosition,
                     Callback = _ => this.ResetConfig(),
-                    ForceHide = () => this.IsSubPage
+                    ForceHide = () => this.IsSubPage || modManifest == null
                 };
                 var saveButton = new Label
                 {
@@ -562,17 +665,60 @@ namespace GenericModConfigMenu.Framework
             if (playSound)
                 Game1.playSound("money");
 
-            foreach (var option in this.ModConfig.GetAllOptions())
-                option.BeforeSave();
-            this.ModConfig.Save();
-            foreach (var option in this.ModConfig.GetAllOptions())
-                option.AfterSave();
+            if (ModConfig != null)
+            {
+                foreach (var option in this.ModConfig.GetAllOptions())
+                    option.BeforeSave();
+                this.ModConfig.Save();
+                foreach (var option in this.ModConfig.GetAllOptions())
+                    option.AfterSave();
+            }
+            else
+            {
+                foreach (var config in ConfigsForKeybinds.GetAll())
+                {
+                    bool foundKey = false;
+                    foreach (var option in config.GetAllOptions())
+                    {
+                        if (option is SimpleModOption<SButton> || option is SimpleModOption<KeybindList>)
+                        {
+                            foundKey = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundKey)
+                        continue;
+
+                    foreach (var option in config.GetAllOptions())
+                        option.BeforeSave();
+                    config.Save();
+                    foreach (var option in config.GetAllOptions())
+                        option.AfterSave();
+                }
+            }
         }
 
         private void Close()
         {
-            foreach (var option in this.ModConfig.ActiveDisplayPage.Options)
-                option.BeforeMenuClosed();
+            if (ModConfig != null)
+            {
+                foreach (var option in this.ModConfig.ActiveDisplayPage.Options)
+                    option.BeforeMenuClosed();
+            }
+            else
+            {
+                foreach (var config in ConfigsForKeybinds.GetAll())
+                {
+                    foreach (var option in config.GetAllOptions())
+                    {
+                        if (option is SimpleModOption<SButton> || option is SimpleModOption<KeybindList>)
+                        {
+                            option.BeforeMenuClosed();
+                        }
+                    }
+                }
+            }
 
             if (this.IsSubPage)
                 this.OpenPage(null);

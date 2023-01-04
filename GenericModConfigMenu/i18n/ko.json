@@ -7,7 +7,7 @@
 
     // mod list UI
     "list.editable-heading": "모드 목록",
-    "list.not-editable-heading": "Editable from the title screen:", // TODO
+    "list.not-editable-heading": "타이틀 화면에서 편집:",
 
     // mod config pages
     "config.buttons.cancel": "취소",

@@ -48,7 +48,7 @@ namespace MoonMisadventures.Patches
                 {
                     if ( !___animal.toolUsedForHarvest.Equals( __instance.BaseName ) )
                     {
-                        if ( !( ___animal.toolUsedForHarvest == null ) && !___animal.toolUsedForHarvest.Equals( "null" ) )
+                        if ( !( ___animal.toolUsedForHarvest.Value is null ) && !___animal.toolUsedForHarvest.Equals( "null" ) )
                         {
                             Game1.showRedMessage( Game1.content.LoadString( "Strings\\StringsFromCSFiles:MilkPail.cs.14167", ___animal.toolUsedForHarvest ) );
                         }

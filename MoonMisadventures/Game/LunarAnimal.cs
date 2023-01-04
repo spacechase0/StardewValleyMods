@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
+
 using Netcode;
+
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Objects;
@@ -68,10 +66,10 @@ namespace MoonMisadventures.Game
             switch ( lunarType.Value )
             {
                 case LunarAnimalType.Cow:
-                    Sprite = new AnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/cow.png" ), 0, 32, 32 );
+                    Sprite = new AnimatedSprite( Mod.instance.Helper.ModContent.GetInternalAssetName("assets/cow.png").BaseName, 0, 32, 32 );
                     break;
                 case LunarAnimalType.Chicken:
-                    Sprite = new AnimatedSprite( Mod.instance.Helper.Content.GetActualAssetKey( "assets/chicken.png" ), 0, 16, 16 );
+                    Sprite = new AnimatedSprite( Mod.instance.Helper.ModContent.GetInternalAssetName("assets/chicken.png").BaseName, 0, 16, 16 );
                     break;
             }
             fullnessDrain.Value *= 2;
@@ -89,7 +87,7 @@ namespace MoonMisadventures.Game
             if ( !Game1.IsClient )
             {
                 // Eat more aggressively since they can't go home to eat
-                if ( !this.isSwimming.Value && location.IsOutdoors && ( byte ) this.fullness < 195 && Game1.random.NextDouble() < 0.1 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick )
+                if ( !this.isSwimming.Value && location.IsOutdoors && this.fullness.Value < 195 && Game1.random.NextDouble() < 0.1 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick )
                 {
                     FarmAnimal.NumPathfindingThisTick++;
                     base.controller = new PathFindController( this, location, grassEndPointFunction, -1, eraseOldPathController: false, behaviorAfterFindingGrassPatch, 200, Point.Zero );
@@ -107,7 +105,7 @@ namespace MoonMisadventures.Game
             if ( !Game1.IsClient )
             {
                 // Eat more aggressively since they can't go home to eat
-                if ( !this.isSwimming.Value && environment.IsOutdoors && ( byte ) this.fullness < 195 && Game1.random.NextDouble() < 0.1 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick )
+                if ( !this.isSwimming.Value && environment.IsOutdoors && this.fullness.Value < 195 && Game1.random.NextDouble() < 0.1 && FarmAnimal.NumPathfindingThisTick < FarmAnimal.MaxPathfindingPerTick )
                 {
                     FarmAnimal.NumPathfindingThisTick++;
                     base.controller = new PathFindController( this, environment, grassEndPointFunction, -1, eraseOldPathController: false, behaviorAfterFindingGrassPatch, 200, Point.Zero );
@@ -129,21 +127,21 @@ namespace MoonMisadventures.Game
             if ( !this.wasPet.Value && !this.wasAutoPet.Value )
             {
                 this.friendshipTowardFarmer.Value = Math.Max( 0, ( int ) this.friendshipTowardFarmer - ( 10 - ( int ) this.friendshipTowardFarmer / 200 ) );
-                this.happiness.Value = ( byte ) Math.Max( 0, ( byte ) this.happiness - ( byte ) this.happinessDrain * 5 );
+                this.happiness.Value = ( byte ) Math.Max( 0, this.happiness.Value - this.happinessDrain.Value * 5 );
             }
             this.wasPet.Value = false;
             this.wasAutoPet.Value = false;
             this.daysOwned.Value++;
-            Random r = new Random((int)(long)this.myID / 2 + (int)Game1.stats.DaysPlayed);
-            if ( ( byte ) this.fullness > 200 || r.NextDouble() < ( double ) ( ( byte ) this.fullness - 30 ) / 170.0 )
+            Random r = new Random((int)this.myID.Value / 2 + (int)Game1.stats.DaysPlayed);
+            if ( this.fullness.Value > 200 || r.NextDouble() < ( double ) ( this.fullness.Value - 30 ) / 170.0 )
             {
                 this.age.Value++;
-                this.happiness.Value = ( byte ) Math.Min( 255, ( byte ) this.happiness + ( byte ) this.happinessDrain * 2 );
+                this.happiness.Value = ( byte ) Math.Min( 255, this.happiness.Value + this.happinessDrain.Value * 2 );
             }
             if ( this.fullness.Value < 200 )
             {
-                this.happiness.Value = ( byte ) Math.Max( 0, ( byte ) this.happiness - 100 );
-                this.friendshipTowardFarmer.Value = Math.Max( 0, ( int ) this.friendshipTowardFarmer - 20 );
+                this.happiness.Value = ( byte ) Math.Max( 0, this.happiness.Value - 100 );
+                this.friendshipTowardFarmer.Value = Math.Max( 0, this.friendshipTowardFarmer.Value - 20 );
             }
             bool produceToday = (byte)this.daysSinceLastLay >= (byte)this.daysToLay - ((this.type.Value.Equals("Sheep") && Game1.getFarmer(this.ownerID).professions.Contains(3)) ? 1 : 0) && r.NextDouble() < (double)(int)(byte)this.fullness / 200.0 && r.NextDouble() < (double)(int)(byte)this.happiness / 70.0;
             string whichProduce;
@@ -153,13 +151,13 @@ namespace MoonMisadventures.Game
             }
             else
             {
-                whichProduce = this.defaultProduceIndex;
-                if ( r.NextDouble() < ( double ) ( int ) ( byte ) this.happiness / 150.0 )
+                whichProduce = this.defaultProduceIndex.Value;
+                if (r.NextDouble() < this.happiness.Value / 150.0 )
                 {
-                    float happinessModifier = (((byte)this.happiness > 200) ? ((float)(int)(byte)this.happiness * 1.5f) : ((float)(((byte)this.happiness <= 100) ? ((byte)this.happiness - 100) : 0)));
+                    float happinessModifier = ((this.happiness.Value > 200) ? ((float)(int)this.happiness.Value * 1.5f) : ((float)((this.happiness.Value <= 100) ? (this.happiness.Value - 100) : 0)));
                     this.daysSinceLastLay.Value = 0;
                     Game1.stats.ChickenEggsLayed++;
-                    double chanceForQuality = (float)(int)this.friendshipTowardFarmer / 1000f - (1f - (float)(int)(byte)this.happiness / 225f);
+                    double chanceForQuality = this.friendshipTowardFarmer.Value / 1000f - (1f - this.happiness.Value / 225f);
                     if ( ( !this.isCoopDweller() && Game1.getFarmer( this.ownerID ).professions.Contains( 3 ) ) || ( this.isCoopDweller() && Game1.getFarmer( this.ownerID ).professions.Contains( 2 ) ) )
                     {
                         chanceForQuality += 0.33;
@@ -182,7 +180,7 @@ namespace MoonMisadventures.Game
                     }
                 }
             }
-            if ( ( byte ) this.harvestType == 1 && produceToday )
+            if ( this.harvestType.Value == 1 && produceToday )
             {
                 this.currentProduce.Value = whichProduce;
                 whichProduce = "-1";
@@ -194,7 +192,7 @@ namespace MoonMisadventures.Game
                 {
                     if ( ( bool ) location_object.bigCraftable && location_object.ItemID == "165" && location_object.heldObject.Value != null && ( location_object.heldObject.Value as Chest ).addItem( new StardewValley.Object( lunarType.Value == LunarAnimalType.Chicken ? ItemIds.GalaxyEgg : ItemIds.GalaxyMilk, 1 )
                     {
-                        Quality = this.produceQuality
+                        Quality = this.produceQuality.Value
                     } ) == null )
                     {
                         location_object.showNextIndex.Value = true;
@@ -208,21 +206,21 @@ namespace MoonMisadventures.Game
                     {
                         CanBeGrabbed = true,
                         IsSpawnedObject = true,
-                        Quality = this.produceQuality
+                        Quality = this.produceQuality.Value
                     } );
                 }
             }
             //if ( !wasLeftOutLastNight )
             {
-                if ( ( byte ) this.fullness < 30 )
+                if ( this.fullness.Value < 30 )
                 {
                     this.moodMessage.Value = 4;
                 }
-                else if ( ( byte ) this.happiness < 30 )
+                else if ( this.happiness.Value < 30 )
                 {
                     this.moodMessage.Value = 3;
                 }
-                else if ( ( byte ) this.happiness < 200 )
+                else if ( this.happiness.Value < 200 )
                 {
                     this.moodMessage.Value = 2;
                 }
@@ -233,7 +231,7 @@ namespace MoonMisadventures.Game
             }
             if ( Game1.timeOfDay < 1700 )
             {
-                this.fullness.Value = ( byte ) Math.Max( 0, ( byte ) this.fullness - ( byte ) this.fullnessDrain * ( 1700 - Game1.timeOfDay ) / 100 );
+                this.fullness.Value = ( byte ) Math.Max( 0, this.fullness.Value - this.fullnessDrain.Value * ( 1700 - Game1.timeOfDay ) / 100 );
             }
             this.fullness.Value = 0;
             if ( Utility.isFestivalDay( Game1.dayOfMonth, Game1.currentSeason ) )

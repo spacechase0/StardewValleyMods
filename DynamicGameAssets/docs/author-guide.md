@@ -366,7 +366,7 @@ Boots can be localized in the following keys: `"boots.YourBoots.name"` and `"boo
 ### Crafting Recipes
 `$ItemType` - `"CraftingRecipe"`
 
-Note: Unlike everything else, the `ID` field must be unique *across the game* (including vanilla recipes).
+Note: Unlike everything else, the `ID` field must be unique *across the game* (including vanilla recipes). Also, the name cannot contain the word `Recipe` or it will not be purchaseable (and might cause other problems). 
 
 Crafting recipes can be localized in the following keys: `"crafting.YourCraftingRecipe.name"` and `"crafting.YourCraftingRecipe.description"`.
 
@@ -545,13 +545,14 @@ Example `DynamicFields` for a spring-only `CanGrowNow`:
 ## Furniture
 `$ItemType` - `"Furniture"`
 
-Furniture can be localized in the following keys: `"furniture.YourFurniture.name"` and `"furniture.YourFurniture.description"`.
+Furniture can be localized in the following keys: `"furniture.YourFurniture.name"` and `"furniture.YourFurniture.description"`. Additionally, `"furniture.YourFurniture.category"` can be specified for a category text override.
 
 | Field | Type | Required or Default value | Description | Dynamic |
 | --- | --- | --- | --- | --- |
 | `ID` | `string` | Required | The ID of this furniture. | `false` |
-| `Type` | `Enum[Bed, Decoration, Dresser, Fireplace, FishTank, Lamp, Painting, Rug, Table, Sconce, TV, Window]` | Required | The type of this furniture. | `false` |
-| `Configurations` | `FurnitureConfiguration[]` | Required | The configurations for this funriture. It uses the first configuration by default, and the others after being rotated. (NOTE: Fish tanks, beds, and TVs may only support one configuration!) | (unknown, untested) |
+| `Type` | `Enum[Bed, Decoration, Dresser, Fireplace, FishTank, Lamp, Painting, Rug, Table, Sconce, TV, Window, Chair, Bench, Couch, Armchair]` | Required | The type of this furniture. | `false` |
+| `Configurations` | `FurnitureConfiguration[]` | Required | The configurations for this funriture. It uses the first configuration by default, and the others after being rotated. (NOTE: Fish tanks, beds, and TVs may only support one configuration! Chairs, benches, couches, and armchairs may only support 4 configurations.) | (unknown, untested) |
+| `ShowInCatalogue` | `bool` | Default: `true` | Whether the furniture shows up in the furniture catalogue. | (unknown, untested) |
 
 Certain furniture types have additional fields:
 
@@ -559,7 +560,7 @@ Certain furniture types have additional fields:
 | --- | --- | --- | --- | --- | --- |
 | `Bed` | `BedType` | `Enum[Single, Double, Child]` | `"Single"` | The bed type. | (unknown, untested) |
 | `TV` | `ScreenPosition` | `Vector2` | Default: `"0, 0"` | The offset for the screen to render, in pixels, from the texture. | (unknown, untested) |
-| `TV` | `ScreenSize` | `int` | Required | A multiplier for the screen size, in relation to the size of the graphics in the game files. | `true` |
+| `TV` | `ScreenSize` | `float` | Required | A multiplier for the screen size, in relation to the size of the graphics in the game files. | `true` |
 | `FishTank` | `TankSwimmingCapacity` | `int` | Default: `-1` | The max amount of "swimming fish" in the fish tank, or -1 for unlimited. | `true` |
 | `FishTank` | `TankGroundCapacity` | `int` | Default: `-1` | The max amount of "ground fish" in the fish tank, or -1 for unlimited. | `true` |
 | `FishTank` | `TankDecorationCapacity` | `int` | Default: `-1` | The max amount of "decorations" in the fish tank, or -1 for unlimited. (NOTE: Only one of each type of decoration is supported.) | `true` |
@@ -573,12 +574,13 @@ This should be an array of an an object called `FurnitureConfiguration`. A `Furn
 | Field | Type | Required or Default value | Description |
 | --- | --- | --- | --- |
 | `Texture` | `Texture` | Required | The texture for this configuration. |
-| `FrontTexture` | `Texture` | Required* | (* Only required for beds/fish tanks, and if this has seats.) The texture for this configuration to render on top. |
+| `FrontTexture` | `Texture` | Optional* (Default: `null`) | (* Required for beds/fish tanks/furniture with seats to look right.) The texture for this configuration to render on top. |
+| `NightTexture` | `Texture` | Optional* (Default: `null`) | (* Required for windows, sconces, and lamps to look right.) The texture for this configuration to render when it's nighttime. |
 | `DisplaySize` | `Vector2` | Required | The display size of this furniture, in tiles. |
 | `CollisionHeight` | `int` | Required | How high from the bottom this furniture is solid. |
 | `Flipped` | `bool` | Default: `false` | If the texture is flipped or not. |
-| `Seats` | `Vector2[]` | Default: `null` | The list of seat positions, in tiles, if any. |
-| `SittingDirection` | `Enum[Any, Up, Down, Left, Right]` | Default: `"Any"` | The direction the seats face. |
+| `Seats` | `Vector2[]` | Default: `null` (Except for Chair, Bench, Couch, Armchair, where the default is the game defaults for those furniture types.) | The list of seat positions, in tiles, if any. |
+| `SittingDirection` | `Enum[Any, Up, Down, Left, Right]` | Default: `"Any"` (Except for Chair, Bench, Couch, Armchair, where the default is the game defaults for those furniture types.) | The direction the seats face. |
 | `TileProperties` | `Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>>` | The tile properties to emulate for this furniture. It goes position -> layer -> property = value. (See example.)
 
 `Texture` and `FrontTexture` (if any) should have the same size: `DisplaySize` multiplied by 16 for both `X` and `Y`.

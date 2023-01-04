@@ -46,6 +46,7 @@ namespace SpaceShared.UI
         public Action<Element> Callback;
 
         public static Dropdown ActiveDropdown;
+        public static int SinceDropdownWasActive = 0;
 
         /// <inheritdoc />
         public override int Width => Math.Max(300, Math.Min(500, this.RequestWidth));
@@ -65,15 +66,20 @@ namespace SpaceShared.UI
         {
             base.Update(isOffScreen);
 
-            if (this.Clicked)
+            bool justClicked = false;
+            if (this.Clicked && ActiveDropdown == null)
             {
+                justClicked = true;
                 this.Dropped = true;
                 this.Parent.RenderLast = this;
             }
 
             if (this.Dropped)
             {
-                if (Mouse.GetState().LeftButton == ButtonState.Released)
+                //if (Mouse.GetState().LeftButton == ButtonState.Released)
+                if ((Mouse.GetState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released ||
+                     Game1.input.GetGamePadState().Buttons.A == ButtonState.Pressed && Game1.oldPadState.Buttons.A == ButtonState.Released)
+                    && !justClicked)
                 {
                     Game1.playSound("drumkit6");
                     this.Dropped = false;
@@ -81,10 +87,12 @@ namespace SpaceShared.UI
                         this.Parent.RenderLast = null;
                 }
 
-                var bounds2 = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height * this.MaxValuesAtOnce);
+                int tall = Math.Min(this.MaxValuesAtOnce, this.Choices.Length - this.ActivePosition) * this.Height;
+                int drawY = Math.Min((int)this.Position.Y, Game1.uiViewport.Height - tall);
+                var bounds2 = new Rectangle((int)this.Position.X, drawY, this.Width, this.Height * this.MaxValuesAtOnce);
                 if (bounds2.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                 {
-                    int choice = (Game1.getOldMouseY() - (int)this.Position.Y) / this.Height;
+                    int choice = (Game1.getOldMouseY() - drawY) / this.Height;
                     this.ActiveChoice = choice + this.ActivePosition;
 
                     this.Callback?.Invoke(this);
@@ -92,9 +100,16 @@ namespace SpaceShared.UI
             }
 
             if (this.Dropped)
+            {
                 Dropdown.ActiveDropdown = this;
+                Dropdown.SinceDropdownWasActive = 3;
+            }
             else
+            {
+                if (Dropdown.ActiveDropdown == this)
+                    Dropdown.ActiveDropdown = null;
                 this.ActivePosition = Math.Min(this.ActiveChoice, this.Choices.Length - this.MaxValuesAtOnce);
+            }
         }
 
         public void ReceiveScrollWheelAction(int direction)
@@ -139,12 +154,13 @@ namespace SpaceShared.UI
                 int start = this.ActivePosition;
                 int end = Math.Min(this.Choices.Length, start + maxValues);
                 int tall = Math.Min(maxValues, this.Choices.Length - this.ActivePosition) * this.Height;
-                IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, tall, Color.White, 4, false);
+                int drawY = Math.Min((int)this.Position.Y, Game1.uiViewport.Height - tall);
+                IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, drawY, this.Width - 48, tall, Color.White, 4, false);
                 for (int i = start; i < end; ++i)
                 {
                     if (i == this.ActiveChoice)
-                        b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 4, (int)this.Position.Y + (i - this.ActivePosition) * this.Height, this.Width - 48 - 8, this.Height), null, Color.Wheat, 0, Vector2.Zero, SpriteEffects.None, 0.98f);
-                    b.DrawString(Game1.smallFont, this.Labels[i], new Vector2(this.Position.X + 4, this.Position.Y + (i - this.ActivePosition) * this.Height + 8), Game1.textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                        b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 4, drawY + (i - this.ActivePosition) * this.Height, this.Width - 48 - 8, this.Height), null, Color.Wheat, 0, Vector2.Zero, SpriteEffects.None, 0.98f);
+                    b.DrawString(Game1.smallFont, this.Labels[i], new Vector2(this.Position.X + 4, drawY + (i - this.ActivePosition) * this.Height + 8), Game1.textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
                 }
             }
         }

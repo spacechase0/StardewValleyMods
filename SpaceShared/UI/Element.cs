@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -81,7 +82,12 @@ namespace SpaceShared.UI
                 Game1.playSound(this.HoveredSound);
             this.Hover = newHover;
 
-            this.ClickGestured = Game1.didPlayerJustLeftClick();
+            this.ClickGestured = (Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released);
+            this.ClickGestured = this.ClickGestured || (Game1.options.gamepadControls && (Game1.input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A)));
+            if (this.ClickGestured && (Dropdown.SinceDropdownWasActive > 0 || Dropdown.ActiveDropdown != null))
+            {
+                this.ClickGestured = false;
+            }
             if (this.Clicked && this.ClickedSound != null)
                 Game1.playSound(this.ClickedSound);
         }

@@ -1,0 +1,68 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // filter labels
+    "filter.category": "Категорія",
+    "filter.sorting": "Сортувати за:",
+
+    // sort types
+    "sort.none": "нічим",
+    "sort.name": "назвою",
+    "sort.price": "ціною",
+
+    // category names
+    "categories.everything": "Все",
+    "categories.other": "Інше",
+    "categories.artisan-goods": "Товари власного вироб.",
+    "categories.bait": "Наживки",
+    "categories.big-craftables": "Великі вироби",
+    "categories.boots": "Взуття",
+    "categories.building-resources": "Будівельні матеріали",
+    "categories.clothing": "Одяг",
+    "categories.cooking": "Готування",
+    "categories.crafting": "Створення",
+    "categories.eggs": "Яйця",
+    "categories.equipment": "Спорядження",
+    "categories.fertilizer": "Добрива",
+    "categories.fish": "Риба",
+    "categories.flowers": "Квіти",
+    "categories.fruits": "Фрукти",
+    "categories.furniture": "Меблі",
+    "categories.gems": "Самоцвіти",
+    "categories.greens": "Зелень",
+    "categories.hats": "Капелюхи",
+    "categories.ingredients": "Складники",
+    "categories.junk": "Мотлох",
+    "categories.meat": "М'ясо",
+    "categories.metals": "Метали",
+    "categories.milk": "Молоко",
+    "categories.minerals": "Мінерали",
+    "categories.monster-loot": "Здобич з монстрів",
+    "categories.recipes": "Рецепти",
+    "categories.rings": "Персні",
+    "categories.seeds": "Насіння",
+    "categories.seedsOther": "Інші насіння",
+    "categories.sell-to-pierre-or-marnie": "Доступні на продаж у П'єра/Марні",
+    "categories.sell-to-pierre": "Доступні на продаж у П'єра",
+    "categories.sell-to-willy": "Доступні на продаж у Віллі",
+    "categories.syrups": "Сиропи",
+    "categories.tackle": "Приманка",
+    "categories.tools": "Приладдя",
+    "categories.vegetables": "Овочі",
+    "categories.weapons": "Зброя",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.grid-layout.name": "Сітчаста викладка",
+    "config.grid-layout.tooltip": "Чи потрібно використовувати сітчасту викладку в крамницях.",
+
+    "config.quantity-dialog.name": "Власна кількість",
+    "config.quantity-dialog.tooltip": "Відкриває діалогове вікно для введення користувацької суми покупки. Відкривається натисканням ЛКМ/Опція + ПКМ.",
+
+    /** grid/std layout button hover text */
+    "button.grid-layout.tooltip": "Вибрати сітчасте розташування",
+    "button.std-layout.tooltip": "Вибрати стандартне розташування"
+}

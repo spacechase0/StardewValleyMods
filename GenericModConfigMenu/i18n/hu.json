@@ -1,0 +1,32 @@
+{
+	/*********
+	** Generic config UI
+	*********/
+	// button text at the bottom of the in-game options menu
+	"button.mod-options": "Mod beállítások",
+
+	// mod list UI
+	"list.editable-heading": "Modok konfigurálása",
+	"list.not-editable-heading": "A címképernyőn szerkeszthető",
+	"list.keybindings": "Billentyűzetek",
+
+	// mod config pages
+	"config.buttons.cancel": "Mégsem",
+	"config.buttons.reset-to-default": "Alap",
+	"config.buttons.save": "Ment",
+	"config.buttons.save-and-close": "Ment/Bezár",
+
+	"config.rebind-key.title": "Új billentyű: {{optionName}}",
+	"config.rebind-key.simple-instructions": "Nyomj meg egy új billentyűt...",
+	"config.rebind-key.combo-instructions": "Nyomj meg egy új billentyűkombinációt...",
+	"config.rebind-key.no-key": "(Nincs)",
+
+
+	/*********
+	** Config options for Generic Mod Config Menu itself
+	*********/
+	"options.open-menu-key.name": "Menüt megnyitó billentyű",
+	"options.open-menu-key.desc": "A konfigurációs menüt megnyitó billentyű.",
+	"options.scroll-speed.name": "Görgetési sebesség",
+	"options.scroll-speed.desc": "A konfigurációs menü görgetésekor elgörgetendő sorok száma."
+}

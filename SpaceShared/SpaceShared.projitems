@@ -9,11 +9,13 @@
     <Import_RootNamespace>SpaceShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IAdvancedSocialInteractionsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IBugNetApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ICookingSkillApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IDynamicGameAssetsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IEntoaroxFrameworkApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IFashionSenseApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IManaBarApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IRushOrdersApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IContentPatcherApi.cs" />
@@ -21,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IGenericModConfigMenuApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IJsonAssetsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IMoreRingsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ISolidFoundationsAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ISpaceCoreApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommonExtensions.cs" />

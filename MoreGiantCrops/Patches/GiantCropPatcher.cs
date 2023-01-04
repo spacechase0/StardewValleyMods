@@ -32,14 +32,21 @@ namespace MoreGiantCrops.Patches
         ** Private methods
         *********/
         /// <summary>The method which transpiles <see cref="GiantCrop.draw"/>.</summary>
-        private static bool Before_Draw(GiantCrop __instance, SpriteBatch spriteBatch, Vector2 tileLocation)
+        private static bool Before_Draw(GiantCrop __instance, SpriteBatch spriteBatch, Vector2 tileLocation, float ___shakeTimer)
         {
             try
             {
-                if (Mod.Sprites.TryGetValue(__instance.parentSheetIndex.Value, out Texture2D tex))
+                if (Mod.Sprites.TryGetValue(__instance.parentSheetIndex.Value, out Lazy<Texture2D> tex))
                 {
-                    double shakeTimer = Mod.Instance.Helper.Reflection.GetField<float>(__instance, "shakeTimer").GetValue();
-                    spriteBatch.Draw(tex, Game1.GlobalToLocal(Game1.viewport, tileLocation * 64f - new Vector2(shakeTimer > 0.0 ? (float)(Math.Sin(2.0 * Math.PI / shakeTimer) * 2.0) : 0.0f, 64f)), null, Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, (float)((tileLocation.Y + 2.0) * 64.0 / 10000.0));
+                    spriteBatch.Draw(tex.Value,
+                                     Game1.GlobalToLocal(Game1.viewport, tileLocation * 64f - new Vector2(___shakeTimer > 0.0 ? (float)(Math.Sin(2.0 * Math.PI / ___shakeTimer) * 2.0) : 0.0f, 64f)),
+                                     null,
+                                     Color.White,
+                                     0.0f,
+                                     Vector2.Zero,
+                                     4f,
+                                     SpriteEffects.None,
+                                     (float)((tileLocation.Y + 2.0) * 64.0 / 10000.0));
                     return false;
                 }
                 return true;

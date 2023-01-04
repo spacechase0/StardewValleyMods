@@ -1,0 +1,6 @@
+{
+	"item-tooltip.added-by-mod": "Mod: {{name}}",
+	"not-enough-ingredients": "Több {{item}} szükséges",
+	"not-enough-ingredients-generic": "Nincs elegendő hozzávaló a recepthez.",
+	"wrong-ingredient-selected": "Nincsenek olyan receptek, melyben a(z) {{tem}} az elsődleges összetevő."
+}

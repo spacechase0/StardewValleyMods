@@ -28,6 +28,9 @@ namespace DynamicGameAssets.PackData
             [DefaultValue(null)]
             public string FrontTexture { get; set; } // for seats, beds, fish tanks
 
+            [DefaultValue(null)]
+            public string NightTexture { get; set; } // for lamps, windows, sconces
+
             public Vector2 DisplaySize { get; set; }
             public int CollisionHeight { get; set; }
 
@@ -60,12 +63,19 @@ namespace DynamicGameAssets.PackData
             TV,
             Lamp,
             Sconce,
-            Window
+            Window,
+            Chair,
+            Bench,
+            Couch,
+            Armchair
         }
 
         [DefaultValue(FurnitureType.Decoration)]
         [JsonConverter(typeof(StringEnumConverter))]
         public FurnitureType Type { get; set; }
+
+        [DefaultValue(true)]
+        public bool ShowInCatalogue { get; set; } = true;
 
         // Bed specific
         [JsonConverter(typeof(StringEnumConverter))]
@@ -75,7 +85,7 @@ namespace DynamicGameAssets.PackData
 
         // TV specific
         public Vector2 ScreenPosition { get; set; }
-        public int ScreenSize { get; set; }
+        public float ScreenSize { get; set; }
 
         public bool ShouldSerializeScreenPositione() { return this.Type == FurnitureType.TV; }
         public bool ShouldSerializeScreenSize() { return this.Type == FurnitureType.TV; }
@@ -95,6 +105,8 @@ namespace DynamicGameAssets.PackData
         public string Name => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.name");
         [JsonIgnore]
         public string Description => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.description");
+        [JsonIgnore]
+        public string CategoryTextOverride => this.pack.smapiPack.Translation.Get($"furniture.{this.ID}.category").UsePlaceholder(false).ToString();
 
         public int GetVanillaFurnitureType()
         {
@@ -112,6 +124,10 @@ namespace DynamicGameAssets.PackData
                 FurnitureType.Lamp => Furniture.lamp,
                 FurnitureType.Sconce => Furniture.sconce,
                 FurnitureType.Window => Furniture.window,
+                FurnitureType.Chair => Furniture.chair,
+                FurnitureType.Bench => Furniture.bench,
+                FurnitureType.Couch => Furniture.couch,
+                FurnitureType.Armchair => Furniture.armchair,
                 _ => Furniture.other
             };
         }
