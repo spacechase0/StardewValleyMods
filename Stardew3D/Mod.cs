@@ -28,6 +28,7 @@ namespace Stardew3D
     {
         public Camera Camera { get; set; } = new();
         public Dictionary<Character, MonoGameModelInstance> CharacterModels { get; set; } = new();
+        public ModelData ActiveLocation { get; set; }
     }
 
     public class Mod : StardewModdingAPI.Mod, IAssetLoader
@@ -65,6 +66,7 @@ namespace Stardew3D
 
             SkinnedEffectBony.Bytecode = File.ReadAllBytes(Path.Combine(Helper.DirectoryPath, "assets", "SkinnedEffectBony.mgfx"));
 
+            Helper.Events.Player.Warped += OnWarp;
             Helper.Events.GameLoop.UpdateTicking += (s, e) => DoInput();
 
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(90), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.01f, 200);
@@ -98,7 +100,6 @@ namespace Stardew3D
             harmony.Patch(AccessTools.Method("SharpGLTF.Runtime.BasicEffectsLoaderContext:CreateSkinnedEffect"),
                           new HarmonyMethod(AccessTools.Method(typeof(BasicEffectsLoaderContextCreateSkinOverride), nameof(BasicEffectsLoaderContextCreateSkinOverride.Prefix))));
         }
-
         public bool CanLoad<T>(IAssetInfo asset)
         {
             if (asset.Name.IsEquivalentTo("spacechase0.Stardew3D/Models"))
@@ -115,10 +116,24 @@ namespace Stardew3D
             return default(T);
         }
 
+        private void OnWarp(object sender, WarpedEventArgs e)
+        {
+            if (e.NewLocation != null)
+            {
+                var models = Game1.content.Load<Dictionary<string, ModelData>>("spacechase0.Stardew3D/Models");
+                if (models.ContainsKey(e.NewLocation.Name))
+                    State.ActiveLocation = models[e.NewLocation.Name];
+                else
+                    State.ActiveLocation = null;
+            }
+            else
+                State.ActiveLocation = null;
+        }
+
         public void DoInput()
         {
             var models = Game1.content.Load<Dictionary<string, ModelData>>("spacechase0.Stardew3D/Models");
-
+            if (true) return;
             if (!Context.IsWorldReady || !Context.IsPlayerFree || !models.ContainsKey(Game1.currentLocation.Name))
                 return;
 
@@ -204,8 +219,8 @@ namespace Stardew3D
                 BoundingBox check = new BoundingBox(Vector3.Zero, objPair.Value.bigCraftable.Value ? new Vector3(1, 2, 1) : Vector3.One);
                 if (model != null && model.InteractBox.HasValue)
                     check = model.InteractBox.Value;
-                check.Min += objPair.Key.To3D();
-                check.Max += objPair.Key.To3D();
+                check.Min += (objPair.Key + new Vector2( 0.5f, 0.5f )).To3D() - new Vector3( 0.5f, 0, 0.5f );
+                check.Max += (objPair.Key + new Vector2( 0.5f, 0.5f )).To3D() - new Vector3(0.5f, 0, 0.5f);
 
                 float? interactDist = check.Intersects(interactRay);
                 if (interactDist.HasValue && interactDist.Value < interactRayIntersectDist)
@@ -269,7 +284,7 @@ namespace Stardew3D
             if (upPressed) moveVec.Y -= 1;
             if (downPressed) moveVec.Y += 1;
             moveVec.Normalize();
-            var moveVec3d = Vector3.Transform(moveVec.To3D(), Quaternion.CreateFromAxisAngle(Vector3.Down, State.Camera.RotationY - MathF.PI / 2));
+            var moveVec3d = Vector3.Transform(moveVec.To3D( false ), Quaternion.CreateFromAxisAngle(Vector3.Down, State.Camera.RotationY - MathF.PI / 2));
 
             float threshold = 0.5f;
             Game1.player.SetMovingLeft(moveVec3d.X < -threshold);
@@ -484,7 +499,7 @@ namespace Stardew3D
                     Matrix m1 = Matrix.CreateScale(model.Scale) *
                                 (Matrix.CreateRotationX(model.Rotation.X) * Matrix.CreateRotationY(model.Rotation.Y) * Matrix.CreateRotationZ(model.Rotation.Z)) *
                                 Matrix.CreateTranslation(model.Translation);
-                    Matrix m = m1 * Matrix.CreateWorld(obj.Key.To3D() + new Vector3(0.5f, 0, 0.5f), Vector3.Forward, Vector3.Up);
+                    Matrix m = m1 * Matrix.CreateWorld((obj.Key + new Vector2( 0.5f, 0.5f )).To3D(), Vector3.Forward, Vector3.Up);
                     inst.Draw(projectionMatrix, basicEffect.View, m);
 
                     if (obj.Value.readyForHarvest)
@@ -498,18 +513,18 @@ namespace Stardew3D
                                 m1 = Matrix.CreateScale(mo.Scale) *
                                      (Matrix.CreateRotationX(mo.Rotation.X) * Matrix.CreateRotationY(mo.Rotation.Y) * Matrix.CreateRotationZ(mo.Rotation.Z)) *
                                      Matrix.CreateTranslation(mo.Translation);
-                                m = m1 * Matrix.CreateWorld(obj.Key.To3D() + new Vector3(0.5f, 0, 0.5f) + model.HeldObjectOffset.Value, Vector3.Forward, Vector3.Up);
+                                m = m1 * Matrix.CreateWorld((obj.Key + new Vector2( 0.5f, 0.5f )).To3D() + model.HeldObjectOffset.Value, Vector3.Forward, Vector3.Up);
                                 inst.Draw(projectionMatrix, basicEffect.View, Matrix.CreateScale(model.HeldObjectScale) * m );
                             }
                             else
                             {
                                 ParsedItemData draw = Utility.GetItemDataForItemID(obj.Value.heldObject.Value.QualifiedItemID);
-                                DoDrawBillboard(draw.texture, obj.Key.To3D() + new Vector3(0.5f, 0, 0.5f) + model.HeldObjectOffset.Value, new Vector2(1, 1) * model.HeldObjectScale, draw.GetSourceRect(0));
+                                DoDrawBillboard(draw.texture, (obj.Key + new Vector2(0.5f, 0.5f)).To3D() + model.HeldObjectOffset.Value, new Vector2(1, 1) * model.HeldObjectScale, draw.GetSourceRect(0));
                             }
                         }
                         else
                         {
-                            Vector3 pos = obj.Key.To3D() + new Vector3(0.5f, 2, 0.5f);
+                            Vector3 pos = (obj.Key + new Vector2(0.5f, 0.5f)).To3D() + new Vector3(0, 2, 0);
                             DoDrawBillboard(Game1.mouseCursors, pos, new Vector2( 1, 1 ), new Rectangle(141, 465, 20, 24) );
                             ParsedItemData draw = Utility.GetItemDataForItemID(obj.Value.heldObject.Value.QualifiedItemID);
                             DoDrawBillboard(draw.texture, pos, new Vector2(0.9f, 0.9f), draw.GetSourceRect(0));
@@ -519,11 +534,11 @@ namespace Stardew3D
                 else
                 {
                     ParsedItemData draw = Utility.GetItemDataForItemID(obj.Value.QualifiedItemID);
-                    DoDrawBillboard(draw.texture, obj.Key.To3D() + new Vector3(0.5f, 0, 0.5f), new Vector2(1, 2), draw.GetSourceRect(obj.Value.showNextIndex.Value ? 1 : 0));
+                    DoDrawBillboard(draw.texture, (obj.Key+ new Vector2(0.5f, 0.5f)).To3D(), new Vector2(1, 2), draw.GetSourceRect(obj.Value.showNextIndex.Value ? 1 : 0));
 
                     if (obj.Value.readyForHarvest)
                     {
-                        Vector3 pos = obj.Key.To3D() + new Vector3(0.5f, 2, 0.5f);
+                        Vector3 pos = (obj.Key + new Vector2( 0.5f, 0.5f )).To3D() + new Vector3(0, 2, 0);
                         DoDrawBillboard(Game1.mouseCursors, pos, new Vector2(1, 1), new Rectangle(141, 465, 20, 24));
                         draw = Utility.GetItemDataForItemID(obj.Value.heldObject.Value.QualifiedItemID);
                         DoDrawBillboard(draw.texture, pos + new Vector3( 0, 0.1f, 0 ), new Vector2(0.9f, 0.9f), draw.GetSourceRect(0));
@@ -551,7 +566,6 @@ namespace Stardew3D
                 }
                 if (ind < modelInst.Controller.Armature.AnimationTracks.Count)
                 {
-                    Log.Debug("set " + Game1.currentGameTime.TotalGameTime.TotalSeconds);
                     modelInst.Controller.Armature.SetAnimationFrame(ind, (float)Game1.currentGameTime.TotalGameTime.TotalSeconds, true);
                 }
 

@@ -26,7 +26,7 @@ namespace SpaceShared.Migrations
         /// <param name="getReplacements">The migration logic indexed by PyTK type identifier.</param>
         public static void MigrateBuildings(SaveGame loaded, Dictionary<string, Func<Building, IDictionary<string, string>, Building>> getReplacements)
         {
-            foreach (BuildableGameLocation location in loaded.locations.OfType<BuildableGameLocation>())
+            foreach (GameLocation location in loaded.locations.OfType<GameLocation>())
             {
                 for (int i = 0; i < location.buildings.Count; i++)
                 {

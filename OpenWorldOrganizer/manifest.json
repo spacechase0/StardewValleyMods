@@ -1,0 +1,12 @@
+﻿{
+    "Name": "Open World Organizer",
+    "Author": "spacechase0",
+    "Version": "1.0.0",
+    "MinimumApiVersion": "3.13.0",
+    "Description": "...",
+    "UniqueID": "spacechase0.OpenWorldOrganizer",
+    "EntryDll": "OpenWorldOrganizer.dll",
+    "UpdateKeys": [ "Nexus:" ],
+    "Dependencies": [
+    ]
+}

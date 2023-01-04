@@ -25,12 +25,6 @@ namespace SpaceCore.Events
         /// Check what item using player.itemToEat
         public static event EventHandler OnItemEaten;
 
-        /// <summary>When a tile "Action" is activated</summary>
-        public static event EventHandler<EventArgsAction> ActionActivated;
-
-        /// <summary>When a tile "TouchAction" is activated</summary>
-        public static event EventHandler<EventArgsAction> TouchActionActivated;
-
         /// <summary>Server side, when a client joins</summary>
         public static event EventHandler<EventArgsServerGotClient> ServerGotClient;
 
@@ -88,24 +82,6 @@ namespace SpaceCore.Events
             if (SpaceEvents.OnItemEaten == null || !farmer.IsLocalPlayer)
                 return;
             Util.InvokeEvent("SpaceEvents.OnItemEaten", SpaceEvents.OnItemEaten.GetInvocationList(), farmer);
-        }
-
-        internal static bool InvokeActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
-        {
-            Log.Trace("Event: ActionActivated");
-            if (SpaceEvents.ActionActivated == null || !who.IsLocalPlayer)
-                return false;
-            var arg = new EventArgsAction(false, action, pos);
-            return Util.InvokeEventCancelable("SpaceEvents.ActionActivated", SpaceEvents.ActionActivated.GetInvocationList(), who, arg);
-        }
-
-        internal static bool InvokeTouchActionActivated(Farmer who, string action, xTile.Dimensions.Location pos)
-        {
-            Log.Trace("Event: TouchActionActivated");
-            if (SpaceEvents.TouchActionActivated == null || !who.IsLocalPlayer)
-                return false;
-            var arg = new EventArgsAction(true, action, pos);
-            return Util.InvokeEventCancelable("SpaceEvents.TouchActionActivated", SpaceEvents.TouchActionActivated.GetInvocationList(), who, arg);
         }
 
         internal static void InvokeServerGotClient(GameServer server, long peer)

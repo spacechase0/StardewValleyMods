@@ -78,9 +78,9 @@ namespace SpaceCore
                 }
             }
 
-            public override Texture2D IconTexture => Utility.GetItemDataForItemID( dummyObj.QualifiedItemID ).texture;
+            public override Texture2D IconTexture => ItemRegistry.GetDataOrErrorItem( dummyObj.QualifiedItemId ).GetTexture();
 
-            public override Rectangle? IconSubrect => Utility.GetItemDataForItemID(dummyObj.QualifiedItemID).GetSourceRect(0, dummyObj.ParentSheetIndex);
+            public override Rectangle? IconSubrect => ItemRegistry.GetDataOrErrorItem(dummyObj.QualifiedItemId).GetSourceRect(0, dummyObj.ParentSheetIndex);
 
             public override int Quantity => this.Quantity;
 
@@ -149,7 +149,7 @@ namespace SpaceCore
 
             private bool ItemMatches(Item item)
             {
-                return item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.ItemID == this.objectIndex || obj.Category.ToString() == this.objectIndex);
+                return item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.ItemId == this.objectIndex || obj.Category.ToString() == this.objectIndex);
             }
         }
 

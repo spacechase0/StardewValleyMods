@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <Version>1.9.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

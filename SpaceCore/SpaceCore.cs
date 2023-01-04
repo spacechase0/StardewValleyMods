@@ -69,7 +69,6 @@ namespace SpaceCore
             var serializerManager = new SerializerManager(helper.ModRegistry);
 
             this.Harmony = HarmonyPatcher.Apply(this,
-                new EventPatcher(),
                 new CraftingRecipePatcher(),
                 new FarmerPatcher(),
                 new ForgeMenuPatcher(),

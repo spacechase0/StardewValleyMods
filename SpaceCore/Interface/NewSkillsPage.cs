@@ -69,7 +69,7 @@ namespace SpaceCore.Interface
         public NewSkillsPage(int x, int y, int width, int height)
             : base(x, y, width, height)
         {
-            this.texture = SpaceCore.Instance.Helper.Content.Load<Texture2D>(Path.Combine("assets/sprites.png"));
+            this.texture = SpaceCore.Instance.Helper.ModContent.Load<Texture2D>(Path.Combine("assets/sprites.png"));
 
             // Player panel
             this.playerPanel = new ClickableComponent(bounds: new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192), name: null)
@@ -903,14 +903,14 @@ namespace SpaceCore.Interface
             {
                 int addedX = 48;
                 int addedY = 48;
-                if (Game1.netWorldState.Value.GoldenWalnuts.Value > 0)
+                if (Game1.netWorldState.Value.GoldenWalnuts > 0)
                 {
                     b.Draw(texture: Game1.objectSpriteSheet,
                         position: new Vector2(x, y),
                         sourceRectangle: Game1.getSourceRectForStandardTileSheet(tileSheet: Game1.objectSpriteSheet, tilePosition: 73, 16, 16),
                         Color.White, rotation: 0f, origin: Vector2.Zero, scale: 2f, SpriteEffects.None, layerDepth: 0f);
                     x += addedX;
-                    b.DrawString(Game1.smallFont, text: string.Concat(Game1.netWorldState.Value.GoldenWalnuts.Value), position: new Vector2(x, y), Game1.textColor);
+                    b.DrawString(Game1.smallFont, text: string.Concat(Game1.netWorldState.Value.GoldenWalnuts), position: new Vector2(x, y), Game1.textColor);
                     x -= addedX;
                 }
                 if (Game1.player.QiGems > 0)

@@ -331,7 +331,7 @@ namespace SpaceCore.Interface
         private void _rightIngredientSpotClicked()
         {
             Item old_item = this.rightIngredientSpot.item;
-            if ((this.heldItem == null || this.IsValidCraftIngredient(this.heldItem)) && (this.heldItem == null || !(this.heldItem.QualifiedItemID == "(O)848")))
+            if ((this.heldItem == null || this.IsValidCraftIngredient(this.heldItem)) && (this.heldItem == null || !(this.heldItem.QualifiedItemId == "(O)848")))
             {
                 Game1.playSound("stoneStep");
                 this.rightIngredientSpot.item = this.heldItem;
@@ -472,7 +472,7 @@ namespace SpaceCore.Interface
                         this._timeUntilCraft = 0;
                         fail = true;
                     }
-                    if (!fail && this.IsValidCraft(this.leftIngredientSpot.item, this.rightIngredientSpot.item) && Game1.player.hasItemInInventory("848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item)))
+                    if (!fail && this.IsValidCraft(this.leftIngredientSpot.item, this.rightIngredientSpot.item) && Game1.player.items.CountId("(O)848") >= this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item))
                     {
                         Game1.playSound("bigSelect");
                         this.startTailoringButton.scale = this.startTailoringButton.baseScale;
@@ -492,7 +492,7 @@ namespace SpaceCore.Interface
                                 delayBeforeAnimationStart = 1400 / crystals2 * k
                             });
                         }
-                        if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemID == "(O)74")
+                        if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemId == "(O)74")
                         {
                             this._sparklingTimer = 900;
                             Rectangle r = this.leftIngredientSpot.bounds;
@@ -539,7 +539,7 @@ namespace SpaceCore.Interface
                 {
                     if (this.IsValidUnforge())
                     {
-                        if (this.leftIngredientSpot.item is MeleeWeapon && !Game1.player.couldInventoryAcceptThisObject("848", (this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() * 5 + ((this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() - 1) * 2))
+                        if (this.leftIngredientSpot.item is MeleeWeapon && !Game1.player.couldInventoryAcceptThisItem("(O)848", (this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() * 5 + ((this.leftIngredientSpot.item as MeleeWeapon).GetTotalForgeLevels() - 1) * 2))
                         {
                             this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_noroom");
                             Game1.playSound("cancel");
@@ -632,15 +632,15 @@ namespace SpaceCore.Interface
 
         public virtual int GetForgeCost(Item left_item, Item right_item)
         {
-            if (right_item != null && right_item.QualifiedItemID == "(O)896")
+            if (right_item != null && right_item.QualifiedItemId == "(O)896")
             {
                 return 20;
             }
-            if (right_item != null && right_item.QualifiedItemID == "(O)74")
+            if (right_item != null && right_item.QualifiedItemId == "(O)74")
             {
                 return 20;
             }
-            if (right_item != null && right_item.QualifiedItemID == "(O)72")
+            if (right_item != null && right_item.QualifiedItemId == "(O)72")
             {
                 return 10;
             }
@@ -701,7 +701,7 @@ namespace SpaceCore.Interface
         {
             if (this.IsBusy())
             {
-                if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemID == "(O)74")
+                if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemId == "(O)74")
                 {
                     this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_enchanting");
                 }
@@ -716,7 +716,7 @@ namespace SpaceCore.Interface
             }
             else if (this._craftState == CraftState.MissingShards)
             {
-                if (this.heldItem != null && this.heldItem.QualifiedItemID == "(O)848")
+                if (this.heldItem != null && this.heldItem.QualifiedItemId == "(O)848")
                 {
                     this.displayedDescription = Game1.content.LoadString("Strings\\UI:Forge_shards");
                 }
@@ -928,7 +928,7 @@ namespace SpaceCore.Interface
                     this.tempSprites.RemoveAt(l);
                 }
             }
-            if (this.leftIngredientSpot.item != null && this.rightIngredientSpot.item != null && !Game1.player.hasItemInInventory("848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item)))
+            if (this.leftIngredientSpot.item != null && this.rightIngredientSpot.item != null && Game1.player.items.CountId("(O)848") < this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item))
             {
                 if (this._craftState != CraftState.MissingShards)
                 {
@@ -967,7 +967,7 @@ namespace SpaceCore.Interface
             else if (this._clankEffectTimer <= 0 && !this.unforging)
             {
                 this._clankEffectTimer = 450;
-                if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemID == "(O)74")
+                if (this.rightIngredientSpot.item != null && this.rightIngredientSpot.item.QualifiedItemId == "(O)74")
                 {
                     Rectangle r2 = this.rightIngredientSpot.bounds;
                     r2.Inflate(-16, -16);
@@ -1111,7 +1111,7 @@ namespace SpaceCore.Interface
                 this._ValidateCraft();
                 return;
             }
-            Game1.player.removeItemsFromInventory("848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item));
+            Game1.player.items.ReduceId("(O)848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item));
             Item crafted_item = this.CraftItem(this.leftIngredientSpot.item, this.rightIngredientSpot.item, forReal: true);
             if (crafted_item != null && !Utility.canItemBeAddedToThisInventoryList(crafted_item, this.inventory.actualInventory))
             {

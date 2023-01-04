@@ -22,14 +22,11 @@ namespace SpaceShared
 
         protected static void _recursiveIterateLocation(GameLocation l, Func<TerrainFeature, TerrainFeature> action)
         {
-            if (l is BuildableGameLocation)
+            foreach (Building b in l.buildings)
             {
-                foreach (Building b in (l as BuildableGameLocation).buildings)
+                if (b.indoors.Value != null)
                 {
-                    if (b.indoors.Value != null)
-                    {
-                        SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
-                    }
+                    SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
                 }
             }
 
@@ -185,38 +182,35 @@ namespace SpaceShared
                     (character as Horse).hat.Value = (Hat)SpaceUtility._recursiveIterateItem((character as Horse).hat.Value, action);
                 }
             }
-            if (l is BuildableGameLocation)
+            foreach (Building b in l.buildings)
             {
-                foreach (Building b in (l as BuildableGameLocation).buildings)
+                if (b.indoors.Value != null)
                 {
-                    if (b.indoors.Value != null)
+                    SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
+                }
+                if (b is Mill)
+                {
+                    IList<Item> list = (b as Mill).output.Value.items;
+                    for (int i = 0; i < list.Count; ++i)
                     {
-                        SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
-                    }
-                    if (b is Mill)
-                    {
-                        IList<Item> list = (b as Mill).output.Value.items;
-                        for (int i = 0; i < list.Count; ++i)
+                        if (list[i] != null)
                         {
-                            if (list[i] != null)
-                            {
-                                list[i] = SpaceUtility._recursiveIterateItem(list[i], action);
-                            }
+                            list[i] = SpaceUtility._recursiveIterateItem(list[i], action);
                         }
                     }
-                    else
+                }
+                else
+                {
+                    if (b is not JunimoHut)
                     {
-                        if (b is not JunimoHut)
+                        continue;
+                    }
+                    IList<Item> list = (b as JunimoHut).output.Value.items;
+                    for (int i = 0; i < list.Count; ++i)
+                    {
+                        if (list[i] != null)
                         {
-                            continue;
-                        }
-                        IList<Item> list = (b as JunimoHut).output.Value.items;
-                        for (int i = 0; i < list.Count; ++i)
-                        {
-                            if (list[i] != null)
-                            {
-                                list[i] = SpaceUtility._recursiveIterateItem(list[i], action);
-                            }
+                            list[i] = SpaceUtility._recursiveIterateItem(list[i], action);
                         }
                     }
                 }

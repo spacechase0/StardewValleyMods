@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using SharpGLTF.Runtime;
 using SpaceShared;
 using StardewValley;
@@ -34,10 +35,18 @@ namespace Stardew3D
         // ...
 
         // Locations
-        // ...
+        public string HeightmapPath { get; set; }
+        public int HeightmapMin { get; set; }
+        public int HeightmapMax { get; set; }
 
         [JsonIgnore]
         public MonoGameDeviceContent<MonoGameModelTemplate> Model;
+
+        [JsonIgnore]
+        public Texture2D HeightmapTex { get; set; }
+        public Color[] Heightmap { get; set; }
+        public Color HeightmapMinColor { get; set; } = Color.White;
+        public Color HeightmapMaxColor { get; set; } = Color.Black;
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext ctx)
@@ -45,6 +54,20 @@ namespace Stardew3D
             if (ModelPath != null)
             {
                 Model = MonoGameModelTemplate.LoadDeviceModel(Game1.game1.GraphicsDevice, Util.FetchFullPath(Mod.instance.Helper.ModRegistry, ModelPath));
+            }
+            if (HeightmapPath != null)
+            {
+                HeightmapTex = Util.FetchTexture(Mod.instance.Helper.ModRegistry, HeightmapPath);
+                Heightmap = new Color[HeightmapTex.Width * HeightmapTex.Height ];
+                HeightmapTex.GetData(Heightmap);
+
+                foreach (var col in Heightmap)
+                {
+                    if (col.R < HeightmapMaxColor.R)
+                        HeightmapMinColor = col;
+                    if (col.R > HeightmapMaxColor.R)
+                        HeightmapMaxColor = col;
+                }
             }
         }
 

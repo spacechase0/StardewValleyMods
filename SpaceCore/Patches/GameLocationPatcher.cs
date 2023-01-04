@@ -23,16 +23,6 @@ namespace SpaceCore.Patches
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
-                original: this.RequireMethod<GameLocation>(nameof(GameLocation.performAction)),
-                prefix: this.GetHarmonyMethod(nameof(Before_PerformAction))
-            );
-
-            harmony.Patch(
-                original: this.RequireMethod<GameLocation>(nameof(GameLocation.performTouchAction)),
-                prefix: this.GetHarmonyMethod(nameof(Before_PerformTouchAction))
-            );
-
-            harmony.Patch(
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.explode)),
                 postfix: this.GetHarmonyMethod(nameof(After_Explode))
             );
@@ -42,17 +32,6 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
-        /// <summary>The method to call before <see cref="GameLocation.performAction"/>.</summary>
-        private static bool Before_PerformAction(GameLocation __instance, string action, Farmer who, Location tileLocation)
-        {
-            return !SpaceEvents.InvokeActionActivated(who, action, tileLocation);
-        }
-
-        /// <summary>The method to call before <see cref="GameLocation.performTouchAction"/>.</summary>
-        private static bool Before_PerformTouchAction(GameLocation __instance, string fullActionString, Vector2 playerStandingPosition)
-        {
-            return !SpaceEvents.InvokeTouchActionActivated(Game1.player, fullActionString, new Location(0, 0));
-        }
 
         /// <summary>The method to call after <see cref="GameLocation.explode"/>.</summary>
         private static void After_Explode(GameLocation __instance, Vector2 tileLocation, int radius, Farmer who)
