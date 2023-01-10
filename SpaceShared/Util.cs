@@ -62,6 +62,27 @@ namespace SpaceShared
         public static string? FetchTexturePath( IModRegistry modRegistry, string modIdAndPath )
             => FetchTextureLocation(modRegistry, modIdAndPath)?.BaseName;
 
+        public static string FetchFullPath(IModRegistry modRegistry, string modIdAndPath)
+        {
+            if (modIdAndPath == null || modIdAndPath.IndexOf('/') == -1)
+                return null;
+
+            string packId = modIdAndPath.Substring(0, modIdAndPath.IndexOf('/'));
+            string path = modIdAndPath.Substring(modIdAndPath.IndexOf('/') + 1);
+
+            // This is really bad. Pathos don't kill me.
+            var modInfo = modRegistry.Get(packId);
+            if (modInfo is null)
+                return null;
+
+            if (modInfo.GetType().GetProperty("Mod")?.GetValue(modInfo) is IMod mod)
+                return Path.Combine(mod.Helper.DirectoryPath, path);
+            else if (modInfo.GetType().GetProperty("ContentPack")?.GetValue(modInfo) is IContentPack pack)
+                return Path.Combine(pack.DirectoryPath, path);
+
+            return null;
+        }
+
 #nullable restore
 
         public static Texture2D DoPaletteSwap(Texture2D baseTex, Texture2D from, Texture2D to)

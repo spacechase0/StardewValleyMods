@@ -68,6 +68,8 @@ namespace SpaceShared.Migrations
             }
         }
 
+        // TODO: Figure this out
+        /*
         /// <summary>Migrate all terrain features in the world which match the custom type.</summary>
         /// <param name="type">The custom type identifier.</param>
         /// <param name="getReplacement">Get the replacement for the given PyTK fields.</param>
@@ -84,6 +86,7 @@ namespace SpaceShared.Migrations
                 }
             }
         }
+        */
 
 
         /*********

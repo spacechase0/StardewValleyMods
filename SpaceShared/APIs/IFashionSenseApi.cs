@@ -7,6 +7,7 @@ using StardewValley;
 
 namespace SpaceShared.APIs
 {
+#if false
     public interface IFashionSenseApi
     {
         public enum Type
@@ -117,4 +118,5 @@ namespace SpaceShared.APIs
          * }
          */
     }
+#endif
 }

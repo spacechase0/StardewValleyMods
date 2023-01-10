@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Spacechase.Shared.Patching;
@@ -105,7 +106,7 @@ namespace SpaceCore
             helper.Events.GameLoop.Saving += this.OnSaving;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            SpaceEvents.ActionActivated += this.SpaceEvents_ActionActivated;
+            GameLocation.RegisterTileAction("CarpenterMenu", CarpenterMenuAction );
 
             Commands.Register();
             Skills.Init(helper.Events);
@@ -124,8 +125,6 @@ namespace SpaceCore
                 new NpcPatcher(),
                 new SaveGamePatcher(serializerManager),
                 new SerializationPatcher(),
-                new UtilityPatcher(),
-                new SpriteBatchPatcher(),
                 new UtilityPatcher(),
                 new HoeDirtPatcher(),
 
@@ -268,29 +267,10 @@ namespace SpaceCore
                 Game1.activeClickableMenu = new NewForgeMenu();
         }
 
-        private void SpaceEvents_ActionActivated(object sender, EventArgsAction e)
+        private bool CarpenterMenuAction(GameLocation loc, string[] args, Farmer farmer, Point spot)
         {
-            if (e.Action == "CarpenterMenu")
-            {
-                bool magic = e.ActionString.Split(' ')[1] == "true";
-                Game1.activeClickableMenu = new StardewValley.Menus.CarpenterMenu(magic);
-            }
-        }
-
-        private void DoLoadCustomLocationWeather()
-        {
-            var lws = SaveGame.GetSerializer( typeof( LocationWeather ) );
-            var customLocWeathers = Helper.Data.ReadSaveData< Dictionary<int, string> >( "CustomLocationWeathers" );
-            if ( customLocWeathers == null )
-                return;
-            foreach ( var kvp in customLocWeathers )
-            {
-                using MemoryStream ms = new( Encoding.Unicode.GetBytes( kvp.Value ) );
-                LocationWeather lw = ( LocationWeather )lws.Deserialize( ms );
-                if ( Game1.netWorldState.Value.LocationWeather.ContainsKey( kvp.Key ) )
-                    Game1.netWorldState.Value.LocationWeather.Remove( kvp.Key );
-                Game1.netWorldState.Value.LocationWeather.Add( kvp.Key, lw );
-            }
+            Game1.activeClickableMenu = new StardewValley.Menus.CarpenterMenu(args[0]);
+            return true;
         }
     }
 }
