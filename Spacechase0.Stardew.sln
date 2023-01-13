@@ -627,7 +627,6 @@ Global
 		{3831A331-9612-47F0-923C-BE7157E087DB} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{9AE07EA1-4287-4344-AA71-50A4FC7D9567} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{7245F384-9D72-435E-8FD6-A5749BBBC2D7} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
-		{5FB98F6C-15E8-489E-8A87-6E975219B46C} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
@@ -652,7 +651,6 @@ Global
 		SpaceShared\SpaceShared.projitems*{1e295971-f8e9-45d6-bdf5-de76675753fa}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{273b7946-725e-4dcf-8a8c-0d9e5b2d2eec}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{27983ca4-bc2e-4c12-bd06-60c6be031eb1}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{34ab99b0-096e-4919-933c-a7a04d1e9f91}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{35253ca1-e09c-4078-8abb-c05880812f7b}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{35253ca1-e09c-4078-8abb-c05880812f7b}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{3762f270-268b-4dcc-8d07-6978304e46ea}*SharedItemsImports = 5
