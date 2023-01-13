@@ -472,7 +472,7 @@ namespace SpaceCore.Interface
                         this._timeUntilCraft = 0;
                         fail = true;
                     }
-                    if (!fail && this.IsValidCraft(this.leftIngredientSpot.item, this.rightIngredientSpot.item) && Game1.player.items.CountId("(O)848") >= this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item))
+                    if (!fail && this.IsValidCraft(this.leftIngredientSpot.item, this.rightIngredientSpot.item) && Game1.player.Items.CountId("(O)848") >= this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item))
                     {
                         Game1.playSound("bigSelect");
                         this.startTailoringButton.scale = this.startTailoringButton.baseScale;
@@ -928,7 +928,7 @@ namespace SpaceCore.Interface
                     this.tempSprites.RemoveAt(l);
                 }
             }
-            if (this.leftIngredientSpot.item != null && this.rightIngredientSpot.item != null && Game1.player.items.CountId("(O)848") < this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item))
+            if (this.leftIngredientSpot.item != null && this.rightIngredientSpot.item != null && Game1.player.Items.CountId("(O)848") < this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item))
             {
                 if (this._craftState != CraftState.MissingShards)
                 {
@@ -1111,7 +1111,7 @@ namespace SpaceCore.Interface
                 this._ValidateCraft();
                 return;
             }
-            Game1.player.items.ReduceId("(O)848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item));
+            Game1.player.Items.ReduceId("(O)848", this.GetForgeCost(this.leftIngredientSpot.item, this.rightIngredientSpot.item));
             Item crafted_item = this.CraftItem(this.leftIngredientSpot.item, this.rightIngredientSpot.item, forReal: true);
             if (crafted_item != null && !Utility.canItemBeAddedToThisInventoryList(crafted_item, this.inventory.actualInventory))
             {

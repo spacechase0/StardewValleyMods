@@ -106,10 +106,7 @@ namespace SpaceCore
             helper.Events.GameLoop.Saving += this.OnSaving;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            GameLocation.RegisterTileAction("CarpenterMenu", CarpenterMenuAction );
-
             Commands.Register();
-            Skills.Init(helper.Events);
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
 
@@ -126,10 +123,7 @@ namespace SpaceCore
                 new SaveGamePatcher(serializerManager),
                 new SerializationPatcher(),
                 new UtilityPatcher(),
-                new HoeDirtPatcher(),
-
-                // I've started organizing by purpose instead of class patched
-                new PortableCarpenterPatcher()
+                new HoeDirtPatcher()
             );
             /*
             var ps = typeof(NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>>).GetProperties();
@@ -265,12 +259,6 @@ namespace SpaceCore
         {
             if (e.NewMenu is StardewValley.Menus.ForgeMenu)
                 Game1.activeClickableMenu = new NewForgeMenu();
-        }
-
-        private bool CarpenterMenuAction(GameLocation loc, string[] args, Farmer farmer, Point spot)
-        {
-            Game1.activeClickableMenu = new StardewValley.Menus.CarpenterMenu(args[0]);
-            return true;
         }
     }
 }

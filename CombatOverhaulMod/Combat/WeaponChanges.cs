@@ -76,13 +76,13 @@ namespace CombatOverhaulMod.Combat
     {
         public static bool Prefix(
             MeleeWeapon __instance, Farmer who,
-            ref bool ___hasBegunWeaponEndPause, ref float ___swipeSpeed, ref bool ___anotherClick)
+            /*ref bool ___hasBegunWeaponEndPause,*/ ref float ___swipeSpeed, ref bool ___anotherClick)
         {
-            Impl(__instance, who, ref ___hasBegunWeaponEndPause, ref ___swipeSpeed, ref ___anotherClick);
+            Impl(__instance, who/*, ref ___hasBegunWeaponEndPause*/, ref ___swipeSpeed, ref ___anotherClick);
             return false;
         }
 
-        private static void Impl(MeleeWeapon weapon, Farmer who, ref bool hasBegunWeaponEndPause, ref float swipeSpeed, ref bool anotherClick)
+        private static void Impl(MeleeWeapon weapon, Farmer who/*, ref bool hasBegunWeaponEndPause*/, ref float swipeSpeed, ref bool anotherClick)
         {
             var weaponType = WeaponTypeManager.GetWeaponType(weapon.type.Value);
 
@@ -91,7 +91,7 @@ namespace CombatOverhaulMod.Combat
 
             who.FarmerSprite.PauseForSingleAnimation = false;
             who.FarmerSprite.StopAnimation();
-            hasBegunWeaponEndPause = false;
+            //hasBegunWeaponEndPause = false;
             swipeSpeed = weaponType.BaseSwipeSpeed - weapon.speed.Value * weaponType.SwipeSpeedModifier - who.addedSpeed * weaponType.SwipeSpeedModifier;
             swipeSpeed *= 1f - who.buffs.WeaponSpeedMultiplier;
             if (swipeSpeed < 1) // Fail-safe
@@ -129,10 +129,10 @@ namespace CombatOverhaulMod.Combat
 
         private static void Impl(int frameOfFarmerAnimation, int facingDirection, SpriteBatch spriteBatch, Vector2 playerPosition, Farmer f, string weapon_item_id, int type, bool isOnSpecial)
         {
-            ItemDataDefinition itemTypeFromIdentifier = Utility.GetItemTypeFromIdentifier("(W)");
+            var itemTypeFromIdentifier = ItemRegistry.GetTypeDefinition("(W)");
             Texture2D texture = null;
-            ParsedItemData itemDataForItemID = itemTypeFromIdentifier.GetItemDataForItemID(weapon_item_id);
-            texture = itemDataForItemID.texture;
+            var itemDataForItemID = ItemRegistry.GetData(weapon_item_id);
+            texture = itemDataForItemID.GetTexture();
             if (texture == null)
             {
                 texture = Tool.weaponsTexture;

@@ -26,8 +26,7 @@ namespace SpaceCore.Patches
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
-                original: this.RequireMethod<GameLocation>(nameof(GameLocation.performAction)),
-                prefix: this.GetHarmonyMethod(nameof(Before_PerformAction)),
+                original: this.RequireMethod<GameLocation>(nameof(GameLocation.performAction), new Type[] { typeof( string[] ), typeof( Farmer ), typeof( Location ) }),
                 transpiler: this.GetHarmonyMethod(nameof(Transpile_PerformAction), after: "DaLion.ImmersiveProfessions")
             );
 
@@ -35,11 +34,6 @@ namespace SpaceCore.Patches
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.answerDialogueAction)),
                 postfix: this.GetHarmonyMethod(nameof(After_AnswerDialogueAction)),
                 transpiler: this.GetHarmonyMethod(nameof(Transpile_AnswerDialogueAction), after: "DaLion.ImmersiveProfessions")
-            );
-
-            harmony.Patch(
-                original: this.RequireMethod<GameLocation>(nameof(GameLocation.performTouchAction)),
-                prefix: this.GetHarmonyMethod(nameof(Before_PerformTouchAction))
             );
 
             harmony.Patch(
@@ -52,11 +46,6 @@ namespace SpaceCore.Patches
         /*********
         ** Private methods
         *********/
-        /// <summary>The method to call before <see cref="GameLocation.performAction"/>.</summary>
-        private static bool Before_PerformAction(GameLocation __instance, string action, Farmer who, Location tileLocation)
-        {
-            return !SpaceEvents.InvokeActionActivated(who, action, tileLocation);
-        }
 
         private static IEnumerable<CodeInstruction> Transpile_PerformAction(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
         {
@@ -82,6 +71,9 @@ namespace SpaceCore.Patches
                 }
             }
 
+            if (!isPatched)
+                Log.Warn("Failed to patch GameLocation.performAction!");
+
             return ret;
         }
 
@@ -103,6 +95,9 @@ namespace SpaceCore.Patches
                 }
                 ret.Add(codes[i]);
             }
+
+            if (!isPatched)
+                Log.Warn("Failed to patch GameLocation.answerDialogueAction!");
 
             return ret;
         }
@@ -143,12 +138,6 @@ namespace SpaceCore.Patches
                     return;
                 }
             }
-        }
-
-        /// <summary>The method to call before <see cref="GameLocation.performTouchAction"/>.</summary>
-        private static bool Before_PerformTouchAction(GameLocation __instance, string fullActionString, Vector2 playerStandingPosition)
-        {
-            return !SpaceEvents.InvokeTouchActionActivated(Game1.player, fullActionString, new Location(0, 0));
         }
 
         /// <summary>The method to call after <see cref="GameLocation.explode"/>.</summary>

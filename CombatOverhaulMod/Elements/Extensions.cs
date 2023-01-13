@@ -37,13 +37,13 @@ namespace CombatOverhaulMod.Elements
             {
                 return;
             }
-            var elem = Game1.content.Load<Dictionary<string, ElementData>>( "MCN\\Elements" )[ element ];
+            var elem = Game1.content.Load<Dictionary<string, ElementData>>( "spacechase0.CombatOverhaulMod\\Elements" )[ element ];
 
             // Following vanilla logic here... Mostly
             amount += Game1.random.Next( Math.Min( -1, -amount / 8 ), Math.Max( 1, amount / 8 ) );
             double resist = farmer.GetElementalResistance( element );
 
-            if (farmer.isWearingRing( Ring.yobaRingID ) && !Game1.player.buffs.IsApplied( Buff.yobaBlessing ) && Game1.random.NextDouble() < (0.9 - (double)((float) farmer.health / 100f)) / (double)(3 - farmer.LuckLevel / 10) + (( farmer.health <= 15) ? 0.2 : 0.0))
+            if (farmer.isWearingRing( Ring.YobaRingId ) && !Game1.player.buffs.IsApplied( Buff.yobaBlessing ) && Game1.random.NextDouble() < (0.9 - (double)((float) farmer.health / 100f)) / (double)(3 - farmer.LuckLevel / 10) + (( farmer.health <= 15) ? 0.2 : 0.0))
             {
                 farmer.currentLocation.playSound("yoba");
                 Game1.player.buffs.Apply(new Buff(Buff.yobaBlessing));
@@ -65,7 +65,7 @@ namespace CombatOverhaulMod.Elements
                 src.takeDamage( damageToMonster, ( int ) trajectory.X, ( int ) trajectory.Y, isBomb: false, 1.0, farmer );
                 src.currentLocation.debris.Add( new Debris( damageToMonster, new Vector2( monsterBox.Center.X + 16, monsterBox.Center.Y ), new Color( 255, 130, 0 ), 1f, src ) );
             }
-            if ( amount > 0 && farmer.isWearingRing(Ring.yobaRingID) && !Game1.player.buffs.IsApplied(Buff.yobaBlessing) && Game1.random.NextDouble() < ( 0.9 - ( double ) ( ( float ) farmer.health / 100f ) ) / ( double ) ( 3 - farmer.LuckLevel / 10 ) + ( ( farmer.health <= 15 ) ? 0.2 : 0.0 ) )
+            if ( amount > 0 && farmer.isWearingRing(Ring.YobaRingId) && !Game1.player.buffs.IsApplied(Buff.yobaBlessing) && Game1.random.NextDouble() < ( 0.9 - ( double ) ( ( float ) farmer.health / 100f ) ) / ( double ) ( 3 - farmer.LuckLevel / 10 ) + ( ( farmer.health <= 15 ) ? 0.2 : 0.0 ) )
             {
                 farmer.currentLocation.playSound( "yoba" );
                 Game1.player.buffs.Apply(new Buff(Buff.yobaBlessing));
@@ -119,7 +119,7 @@ namespace CombatOverhaulMod.Elements
 
         public static void TakeElementalDamage( this Monster monster, string element, int amount, Farmer src )
         {
-            var elem = Game1.content.Load<Dictionary<string, ElementData>>( "MCN\\Elements" )[ element ];
+            var elem = Game1.content.Load<Dictionary<string, ElementData>>("spacechase0.CombatOverhaulMod\\Elements")[ element ];
             double resist = monster.GetElementalResistance( element );
             if ( src != null )
             {
@@ -216,7 +216,7 @@ namespace CombatOverhaulMod.Elements
             }
             else
             {
-                var data = Game1.content.Load< Dictionary< string, Dictionary< string, double > > >( "MCN\\DefaultElementalStats" );
+                var data = Game1.content.Load< Dictionary< string, Dictionary< string, double > > >("spacechase0.CombatOverhaulMod\\DefaultElementalStats");
                 if ( character.Name != null && data.ContainsKey( character.Name ) && data[ character.Name ].ContainsKey( element ) )
                     return data[ character.Name ][ element ];
                 return 0;
@@ -225,7 +225,7 @@ namespace CombatOverhaulMod.Elements
 
         public static Dictionary<string, double> GetElementalResistances( this Character character )
         {
-            var elements = Game1.content.Load< Dictionary< string, ElementData > >( "MCN\\Elements" );
+            var elements = Game1.content.Load< Dictionary< string, ElementData > >("spacechase0.CombatOverhaulMod\\Elements");
 
             Dictionary<string, double> ret = new();
             foreach ( var element in elements )
@@ -268,9 +268,9 @@ namespace CombatOverhaulMod.Elements
 
         public static double GetDefaultElementalStat( this Item item, string element )
         {
-            var data = Game1.content.Load< Dictionary< string, Dictionary< string, double > > >( "MCN\\DefaultElementalStats" );
+            var data = Game1.content.Load< Dictionary< string, Dictionary< string, double > > >("spacechase0.CombatOverhaulMod\\DefaultElementalStats");
 
-            string idStr = item.QualifiedItemID.ToString();
+            string idStr = item.QualifiedItemId.ToString();
             if ( data.ContainsKey( idStr ) && data[ idStr ].ContainsKey( element ) )
                 return data[ idStr ][ element ];
 

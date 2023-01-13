@@ -12,6 +12,7 @@ using StardewValley.Menus;
 
 namespace CombatOverhaulMod.FightStamina
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "<Pending>")]
     internal class FightStaminaEngine
     {
         private BasicEffect effect;

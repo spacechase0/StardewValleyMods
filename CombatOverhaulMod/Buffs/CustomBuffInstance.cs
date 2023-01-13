@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace CombatOverhaulMod.Buffs
 {
-    [XmlType( "Mods_MCN_CustomBuffInstance" )]
+    [XmlType( "Mods_spacechase0_COM_CustomBuffInstance" )]
     public class CustomBuffInstance : INetObject< NetFields >
     {
         public NetFields NetFields => new NetFields();

@@ -91,7 +91,7 @@ namespace CombatOverhaulMod.Elements
         }
     }
 
-    [HarmonyPatch( typeof( IClickableMenu ), nameof( IClickableMenu.drawHoverText ), new Type[] { typeof( SpriteBatch ), typeof( StringBuilder ), typeof( SpriteFont ), typeof( int ), typeof( int ), typeof( int ), typeof( string ), typeof( int ), typeof( string[] ), typeof( Item ), typeof( int ), typeof( string ), typeof( int ), typeof( int ), typeof( int ), typeof( float ), typeof( CraftingRecipe ), typeof( IList<Item> ) } )]
+    [HarmonyPatch( typeof( IClickableMenu ), nameof( IClickableMenu.drawHoverText ), new Type[] { typeof( SpriteBatch ), typeof( StringBuilder ), typeof( SpriteFont ), typeof( int ), typeof( int ), typeof( int ), typeof( string ), typeof( int ), typeof( string[] ), typeof( Item ), typeof( int ), typeof( string ), typeof( int ), typeof( int ), typeof( int ), typeof( float ), typeof( CraftingRecipe ), typeof( IList<Item> ), typeof( Texture2D ), typeof( Rectangle? ), typeof( Color? ), typeof( Color? ) } )]
     public static class IClickableMenuDrawElementalHoverTextPatch
     {
         public static void DrawElementalStats( Item item, SpriteBatch b, ref int x, ref int y, SpriteFont font, float alpha, StringBuilder overrideText )
