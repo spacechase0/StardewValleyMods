@@ -12,6 +12,7 @@ using Netcode;
 using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceCore.Framework;
+using SpaceCore.Framework.ExtEngine;
 using SpaceCore.Interface;
 using SpaceCore.Patches;
 using SpaceShared;
@@ -107,6 +108,7 @@ namespace SpaceCore
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
             Commands.Register();
+            ExtensionEngine.Init();
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
 

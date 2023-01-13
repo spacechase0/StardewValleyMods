@@ -22,4 +22,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" PrivateAssets="all" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="MiniscriptLib">
+      <HintPath>..\..\..\Miniscript\MiniscriptLib\bin\Debug\net5.0\MiniscriptLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
