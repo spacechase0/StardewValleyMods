@@ -16,16 +16,179 @@ using StardewValley.Menus;
 
 namespace SpaceCore.Framework.ExtEngine
 {
+    internal static partial class ExtensionEngine
+    {
+
+        internal static Func<Element, Value> makeUiElementMap;
+        private static void SetupInterpreter_ExtensionMenu(Interpreter interpreter)
+        {
+            var cgc = Intrinsic.Create("__containerGetChildren");
+            var cmc = Intrinsic.Create("__containerMakeChild");
+            var egp = Intrinsic.Create("__elementGetParent");
+            makeUiElementMap = (Element elem) =>
+            {
+                ValMap ret = new();
+                ret.map.Add(new ValString("__elem"), new ValUiElement(elem));
+                ret.map.Add(new ValString("x"), new ValNumber(elem.LocalPosition.X));
+                ret.map.Add(new ValString("y"), new ValNumber(elem.LocalPosition.Y));
+                ret.map.Add(new ValString("getParent"), egp.GetFunc());
+                ret.map.Add(new ValString("scriptData"), (elem.UserData as UiExtraData).ScriptData);
+
+                if (elem is Container)
+                {
+                    ret.map.Add(new ValString("getChildren"), cgc.GetFunc());
+                    ret.map.Add(new ValString("makeChild"), cmc.GetFunc());
+                }
+                ret.assignOverride = (key, val) =>
+                {
+                    elem = elem;
+                    switch (key.ToString())
+                    {
+                        case "x":
+                            elem.LocalPosition = new(val.FloatValue(), elem.LocalPosition.Y);
+                            return true;
+                        case "y":
+                            elem.LocalPosition = new(elem.LocalPosition.X, val.FloatValue());
+                            return true;
+                        case "scriptData":
+                            (elem.UserData as UiExtraData).ScriptData = val;
+                            return true;
+                    }
+                    return true;
+                };
+                return ret;
+            };
+
+            var i = Intrinsic.Create("getElementsWithId");
+            i.AddParam("id");
+            i.code = (ctx, prevResult) =>
+            {
+                if (!(ctx.interpreter.hostData is ExtensionMenu))
+                {
+                    ctx.interpreter.errorOutput("getElementsWithId is only usable for menus!");
+                    return Intrinsic.Result.Null;
+                }
+
+                ValList ret = new();
+                string id = ctx.GetVar("id").ToString();
+
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+                if (!menu.elemsById.ContainsKey(id))
+                    return new Intrinsic.Result(ret);
+
+                foreach (var elem in menu.elemsById[id])
+                {
+                    ret.values.Add(makeUiElementMap(elem));
+                }
+                return new Intrinsic.Result(ret);
+            };
+
+            cgc.code = (ctx, prevResult) =>
+            {
+                var map = ctx.self as ValMap;
+                var elem = (map.map[new ValString("__elem")] as ValUiElement).Element as Container;
+
+                ValList ret = new();
+                foreach (var child in elem.Children)
+                {
+                    ret.values.Add(makeUiElementMap(child));
+                }
+
+                return new Intrinsic.Result(ret);
+            };
+
+            cmc.AddParam("type");
+            cmc.AddParam("params");
+            cmc.code = (ctx, prevResult) =>
+            {
+                if (!(ctx.interpreter.hostData is ExtensionMenu))
+                {
+                    ctx.interpreter.errorOutput("container.makeChild is only usable for menus!");
+                    return Intrinsic.Result.Null;
+                }
+
+                var map = ctx.self as ValMap;
+                var parent = (map.map[new ValString("__elem")] as ValUiElement).Element as Container;
+
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+
+                string type = ctx.GetVar("type").ToString();
+                ValMap ps = ctx.GetVar("params") as ValMap;
+
+                // quick hack
+                UiDeserializer ud = new();
+                if (!ud.types.ContainsKey(type))
+                {
+                    Log.Warn($"Script {menu.origModel.ScriptFile} tried to create UI element type {type}, which does not exist");
+                    return Intrinsic.Result.Null;
+                }
+
+                Element elem = (Element)ud.types[type].GetConstructor(new Type[0]).Invoke(new object[0]);
+                elem.UserData = new UiExtraData();
+                foreach (var entry in ps.map)
+                {
+                    if (entry.Value == null)
+                        continue;
+
+                    List<string> extra = new();
+                    ud.LoadPropertyToElement(menu.origModel.ScriptFile.Substring(0, menu.origModel.ScriptFile.IndexOf('/')), elem, entry.Key.ToString(), entry.Value.ToString(), extra);
+                    if (extra.Contains("CenterH"))
+                    {
+                        Vector2 size = new(Game1.viewport.Size.Width, Game1.viewport.Size.Height);
+                        if (parent != null)
+                        {
+                            size = parent.Bounds.Size.ToVector2();
+                        }
+                        elem.LocalPosition += new Vector2((size - elem.Bounds.Size.ToVector2()).X / 2, 0);
+                    }
+                    if (extra.Contains("CenterV"))
+                    {
+                        Vector2 size = new(Game1.viewport.Size.Width, Game1.viewport.Size.Height);
+                        if (parent != null)
+                        {
+                            size = parent.Bounds.Size.ToVector2();
+                        }
+                        elem.LocalPosition += new Vector2(0, (size - elem.Bounds.Size.ToVector2()).Y / 2);
+                    }
+                }
+                parent.AddChild(elem);
+                menu.InitElement(elem);
+
+                return new Intrinsic.Result(makeUiElementMap(elem));
+            };
+
+            egp.code = (ctx, prevResult) =>
+            {
+                var map = ctx.self as ValMap;
+                var elem = (map.map[new ValString("__elem")] as ValUiElement).Element;
+                return elem.Parent == null ? Intrinsic.Result.Null : new Intrinsic.Result(makeUiElementMap(elem.Parent));
+            };
+
+            i = Intrinsic.Create("getRoot");
+            i.code = (ctx, prevResult) =>
+            {
+                if (!(ctx.interpreter.hostData is ExtensionMenu))
+                {
+                    ctx.interpreter.errorOutput("getRoot is only usable for menus!");
+                    return Intrinsic.Result.Null;
+                }
+
+                var menu = ctx.interpreter.hostData as ExtensionMenu;
+                var elem = menu.ui;
+
+                return new Intrinsic.Result(makeUiElementMap(elem));
+            };
+        }
+    }
+
     internal class ExtensionMenu : IClickableMenu
     {
         internal UiContentModel origModel;
-        private RootElement ui;
-        private Dictionary<string, List<Element>> elemsById = new();
-        private List<Element> allElements;
+        internal RootElement ui;
+        internal Dictionary<string, List<Element>> elemsById = new();
+        internal List<Element> allElements;
         private Interpreter interpreter;
         private List<Element> tooltip = new();
-
-        private static Func<Element, Value> makeElemMap;
 
         public ExtensionMenu(UiContentModel uiModel)
         {
@@ -38,7 +201,6 @@ namespace SpaceCore.Framework.ExtEngine
 
             interpreter = ExtensionEngine.SetupInterpreter();
             interpreter.hostData = this;
-            AdditionalSetup();
 
             // The below string isn't a constant so that I can edit + hot reload
             interpreter.Reset(uiModel.Script + @"
@@ -69,7 +231,7 @@ end while
             interpreter.RunUntilDone(0.01);
         }
 
-        private void InitElement(Element elem)
+        internal void InitElement(Element elem)
         {
             var extra = elem.UserData as UiExtraData;
             if (extra.Id != null)
@@ -104,7 +266,7 @@ end while
                         }
 
                         ValMap args = new();
-                        args.map.Add(new ValString("element"), makeElemMap(elem));
+                        args.map.Add(new ValString("element"), ExtensionEngine.makeUiElementMap(elem));
                         ValMap call = new();
                         call.map.Add(new ValString("func"), callFunc);
                         call.map.Add(new ValString("arguments"), args);
@@ -116,152 +278,6 @@ end while
             }
             if (extra.TooltipTitle != null || extra.TooltipText != null)
                 tooltip.Add(elem);
-        }
-
-        // TODO: Change this when I can attach them to just the interpreter
-        static bool didIntrinsics = false;
-        private void AdditionalSetup()
-        {
-            if (didIntrinsics) return;
-            didIntrinsics = true;
-            var cgc = Intrinsic.Create("__containerGetChildren");
-            var cmc = Intrinsic.Create("__containerMakeChild");
-            var egp = Intrinsic.Create("__elementGetParent");
-            makeElemMap = (Element elem) =>
-            {
-                ValMap ret = new();
-                ret.map.Add(new ValString("__elem"), new ValUiElement(elem));
-                ret.map.Add(new ValString("x"), new ValNumber(elem.LocalPosition.X));
-                ret.map.Add(new ValString("y"), new ValNumber(elem.LocalPosition.Y));
-                ret.map.Add(new ValString("getParent"), egp.GetFunc());
-                ret.map.Add(new ValString("scriptData"), (elem.UserData as UiExtraData).ScriptData);
-                
-                if (elem is Container)
-                {
-                    ret.map.Add(new ValString("getChildren"), cgc.GetFunc());
-                    ret.map.Add(new ValString("makeChild"), cmc.GetFunc());
-                }
-                ret.assignOverride = (key, val) =>
-                {
-                    elem = elem;
-                    switch (key.ToString())
-                    {
-                        case "x":
-                            elem.LocalPosition = new(val.FloatValue(), elem.LocalPosition.Y);
-                            return true;
-                        case "y":
-                            elem.LocalPosition = new(elem.LocalPosition.X, val.FloatValue());
-                            return true;
-                        case "scriptData":
-                            (elem.UserData as UiExtraData).ScriptData = val;
-                            return true;
-                    }
-                    return true;
-                };
-                return ret;
-            };
-
-            var i = Intrinsic.Create("getElementsWithId");
-            i.AddParam("id");
-            i.code = (ctx, prevResult) =>
-            {
-                ValList ret = new();
-                string id = ctx.GetVar("id").ToString();
-
-                var menu = ctx.interpreter.hostData as ExtensionMenu;
-                if (!menu.elemsById.ContainsKey(id))
-                    return new Intrinsic.Result(ret);
-
-                foreach (var elem in menu.elemsById[id])
-                {
-                    ret.values.Add(makeElemMap(elem));
-                }
-                return new Intrinsic.Result(ret);
-            };
-
-            cgc.code = (ctx, prevResult) =>
-            {
-                var map = ctx.self as ValMap;
-                var elem = (map.map[new ValString("__elem")] as ValUiElement).Element as Container;
-
-                ValList ret = new();
-                foreach (var child in elem.Children)
-                {
-                    ret.values.Add(makeElemMap(child));
-                }
-
-                return new Intrinsic.Result(ret);
-            };
-
-            cmc.AddParam("type");
-            cmc.AddParam("params");
-            cmc.code = (ctx, prevResult) =>
-            {
-                var map = ctx.self as ValMap;
-                var parent = (map.map[new ValString("__elem")] as ValUiElement).Element as Container;
-
-                var menu = ctx.interpreter.hostData as ExtensionMenu;
-
-                string type = ctx.GetVar("type").ToString();
-                ValMap ps = ctx.GetVar("params") as ValMap;
-
-                // quick hack
-                UiDeserializer ud = new();
-                if (!ud.types.ContainsKey(type))
-                {
-                    Log.Warn($"Script {menu.origModel.ScriptFile} tried to create UI element type {type}, which does not exist");
-                    return Intrinsic.Result.Null;
-                }
-
-                Element elem = (Element) ud.types[type].GetConstructor(new Type[0]).Invoke(new object[0]);
-                elem.UserData = new UiExtraData();
-                foreach (var entry in ps.map)
-                {
-                    if (entry.Value == null)
-                        continue;
-
-                    List<string> extra = new();
-                    ud.LoadPropertyToElement(menu.origModel.ScriptFile.Substring(0, menu.origModel.ScriptFile.IndexOf('/')), elem, entry.Key.ToString(), entry.Value.ToString(), extra);
-                    if (extra.Contains("CenterH"))
-                    {
-                        Vector2 size = new( Game1.viewport.Size.Width, Game1.viewport.Size.Height );
-                        if (parent != null)
-                        {
-                            size = parent.Bounds.Size.ToVector2();
-                        }
-                        elem.LocalPosition += new Vector2( (size - elem.Bounds.Size.ToVector2()).X / 2, 0 );
-                    }
-                    if (extra.Contains("CenterV"))
-                    {
-                        Vector2 size = new(Game1.viewport.Size.Width, Game1.viewport.Size.Height);
-                        if (parent != null)
-                        {
-                            size = parent.Bounds.Size.ToVector2();
-                        }
-                        elem.LocalPosition += new Vector2(0, (size - elem.Bounds.Size.ToVector2()).Y / 2);
-                    }
-                }
-                parent.AddChild(elem);
-                menu.InitElement(elem);
-
-                return new Intrinsic.Result(makeElemMap(elem));
-            };
-
-            egp.code = (ctx, prevResult) =>
-            {
-                var map = ctx.self as ValMap;
-                var elem = (map.map[new ValString("__elem")] as ValUiElement).Element;
-                return elem.Parent == null ? Intrinsic.Result.Null : new Intrinsic.Result(makeElemMap(elem.Parent));
-            };
-
-            i = Intrinsic.Create("getRoot");
-            i.code = (ctx, prevResult) =>
-            {
-                var menu = ctx.interpreter.hostData as ExtensionMenu;
-                var elem = menu.ui;
-
-                return new Intrinsic.Result(makeElemMap(elem));
-            };
         }
 
         private ValMap MakeContext()

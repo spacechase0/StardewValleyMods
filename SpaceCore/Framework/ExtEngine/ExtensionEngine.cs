@@ -9,6 +9,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Miniscript;
 using SpaceCore.Framework.ExtEngine.Models;
+using SpaceCore.Framework.ExtEngine.Script;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -17,7 +18,7 @@ using StardewValley.Menus;
 
 namespace SpaceCore.Framework.ExtEngine
 {
-    internal static class ExtensionEngine
+    internal static partial class ExtensionEngine
     {
         // content patcher stuff
         private static IMod contentPatcher;
@@ -111,7 +112,12 @@ namespace SpaceCore.Framework.ExtEngine
 
         private static void OnExtUi(string cmd, string[] args)
         {
-            if (args.Length != 1) Log.Info("Bad arguments");
+            if (args.Length != 1)
+            {
+                Log.Info("Bad arguments");
+                return;
+            }
+
             var data = Game1.content.Load<Dictionary<string, UiContentModel>>("spacechase0.SpaceCore/UI");
             if (!data.ContainsKey(args[0]))
             {
@@ -120,6 +126,8 @@ namespace SpaceCore.Framework.ExtEngine
             }
             Game1.activeClickableMenu = new ExtensionMenu(data[args[0]]);
         }
+
+        internal static Func<Item, Value> makeItemMap;
 
         public static Interpreter SetupInterpreter()
         {
@@ -202,6 +210,43 @@ namespace SpaceCore.Framework.ExtEngine
                     Game1.activeClickableMenu = newMenu;
                 return Intrinsic.Result.Null;
             };
+
+            makeItemMap = (Item item) =>
+            {
+                ValMap ret = new();
+                ret.map.Add(new ValString("__item"), new ValItem(item));
+                ret.map.Add(new ValString("itemId"), new ValString(item.ItemId));
+                ret.map.Add(new ValString("qualifiedItemId"), new ValString(item.QualifiedItemId));
+                ret.map.Add(new ValString("typeDefinitionId"), new ValString(item.TypeDefinitionId));
+                ret.map.Add(new ValString("stack"), new ValNumber(item.Stack));
+
+                // TODO: Script data? Or just modData?
+
+                // TODO: Stuff based on what it is (quality, etc.)...
+                // Use reflection to do automatically?
+
+                ret.assignOverride = (key, val) =>
+                {
+                    switch (key.ToString())
+                    {
+                        case "itemId":
+                            item.ItemId = val.ToString();
+                            ret["qualifiedItemId"] = new ValString(item.QualifiedItemId);
+                            return true;
+                        case "qualifiedItemId": return false;
+                        case "typeDefinitionId": return false;
+                        case "stack":
+                            item.Stack = val.IntValue();
+                            return true;
+                    }
+
+                    return true;
+                };
+
+                return ret;
+            };
+
+            SetupInterpreter_ExtensionMenu( ret );
 
             return ret;
         }
