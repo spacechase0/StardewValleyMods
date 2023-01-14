@@ -128,6 +128,7 @@ namespace SpaceCore.Framework.ExtEngine
         }
 
         internal static Func<Item, Value> makeItemMap;
+        internal static Func<Farmer, Value> makeFarmerMap;
 
         public static Interpreter SetupInterpreter()
         {
@@ -172,6 +173,14 @@ namespace SpaceCore.Framework.ExtEngine
                 return new Intrinsic.Result(new ValNumber(player.hasOrWillReceiveMail( mail ) ? 1 : 0));
             };
 
+            i = Intrinsic.Create("playSound");
+            i.AddParam("cue");
+            i.code = (ctx, prevResult) =>
+            {
+                Game1.playSound(ctx.GetVar("cue").ToString());
+                return Intrinsic.Result.Null;
+            };
+
             i = Intrinsic.Create("openMenu");
             i.AddParam("id");
             i.AddParam("asChildMenu", new ValNumber(0));
@@ -213,6 +222,9 @@ namespace SpaceCore.Framework.ExtEngine
 
             makeItemMap = (Item item) =>
             {
+                if (item == null)
+                    return ValNull.instance;
+
                 ValMap ret = new();
                 ret.map.Add(new ValString("__item"), new ValItem(item));
                 ret.map.Add(new ValString("itemId"), new ValString(item.ItemId));
@@ -240,6 +252,36 @@ namespace SpaceCore.Framework.ExtEngine
                             return true;
                     }
 
+                    return true;
+                };
+
+                return ret;
+            };
+
+            makeFarmerMap = (Farmer farmer) =>
+            {
+                ValMap ret = new();
+                ret.map.Add(new ValString("__farmer"), new ValFarmer(farmer));
+                ret.map.Add(new ValString("x"), new ValNumber(farmer.Position.X));
+                ret.map.Add(new ValString("y"), new ValNumber(farmer.Position.Y));
+                ret.map.Add(new ValString("name"), new ValString(farmer.Name));
+                ret.map.Add(new ValString("facing"), new ValNumber(farmer.FacingDirection));
+
+                ret.assignOverride = (key, val) =>
+                {
+                    switch (key.ToString())
+                    {
+                        case "x":
+                            farmer.Position = new(val.FloatValue(), farmer.Position.Y);
+                            return true;
+                        case "y":
+                            farmer.Position = new(farmer.Position.X, val.FloatValue());
+                            return true;
+                        case "name": return false;
+                        case "facing":
+                            farmer.FacingDirection = val.IntValue();
+                            return true;
+                    }
                     return true;
                 };
 

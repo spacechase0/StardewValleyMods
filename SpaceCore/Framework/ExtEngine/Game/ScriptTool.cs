@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Miniscript;
 using SpaceCore.Framework.ExtEngine;
+using SpaceCore.Framework.ExtEngine.Script;
 
 namespace SpaceCore.Framework.ExtEngine
 {
@@ -43,7 +44,7 @@ namespace StardewValley.Tools
         {
             if (!scriptDirty || correspondingScript == null)
             {
-                goto doUpdate;
+                //goto doUpdate;
             }
             scriptDirty = false;
 
@@ -72,8 +73,28 @@ end while
             interpreter.RunUntilDone(0.01); // First run
 
         doUpdate:
-            interpreter = interpreter; // placeholder until below has code
-            // update attachments, mod data, etc.
+            ValList attachs = new();
+            for (int i = 0; i < attachmentSlots(); ++i)
+            {
+                attachs.values.Add(ExtensionEngine.makeItemMap(attachments[i]));
+            }
+            interpreter.SetGlobalValue("attachments", attachs);
+        }
+
+        public void SyncScriptToWorld()
+        {
+            ValList attachs = interpreter.GetGlobalValue("attachments") as ValList;
+            if (attachs != null)
+            {
+                for (int i = 0; i < attachmentSlots(); ++i)
+                {
+                    var val = attachs.values[i];
+                    if (val is ValNull)
+                        attachments[0] = null;
+                    else if (val is ValMap vmap && vmap.map[new ValString("__item")] is ValItem vitem)
+                        attachments[0] = vitem.item as StardewValley.Object;
+                }
+            }
         }
 
         public override Item getOne()
@@ -87,76 +108,13 @@ end while
 
         public override bool canThisBeAttached(Object o)
         {
-            DoCheckAndUpdateScript();
-
-            if (o == null)
-                return true;
-
-            Value validateAttachmentFunc = interpreter.GetGlobalValue("validateAttachment");
-            if (validateAttachmentFunc != null)
+            try
             {
-                var events = interpreter.GetGlobalValue("_events") as ValList;
-                if (events != null)
-                {
-                    var item = ExtensionEngine.makeItemMap(o);
+                DoCheckAndUpdateScript();
 
-                    for (int i = 0; i < attachmentSlots(); ++i)
-                    {
-                        ValMap args = new();
-                        args.map.Add(new ValString("slotIndex"), new ValNumber(i));
-                        args.map.Add(new ValString("item"), item);
+                if (o == null)
+                    return true;
 
-                        ValMap call = new();
-                        call.map.Add(new ValString("func"), validateAttachmentFunc);
-                        call.map.Add(new ValString("arguments"), args);
-                        events.values.Add(call);
-
-                        interpreter.RunUntilDone(0.001);
-
-                        bool allowed = interpreter.GetGlobalValue("_lastReturn").BoolValue();
-
-                        if (!allowed)
-                            continue;
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-            else
-            {
-                for (int i = 0; i < attachmentSlots(); ++i)
-                {
-                    if (attachments[i] == null || attachments[i].canStackWith(o) && attachments[i].Stack < attachments[i].maximumStackSize())
-                    {
-                        return true;
-                    }
-                }
-                return base.canThisBeAttached(o);
-            }
-        }
-
-        public override Object attach(Object o)
-        {
-            DoCheckAndUpdateScript();
-
-            if (o == null)
-            {
-                for (int i = 0; i < attachmentSlots(); ++i)
-                {
-                    if (attachments[i] != null)
-                    {
-                        Game1.playSound("dwop");
-                        var ret = attachments[i];
-                        attachments[i] = null;
-                        return ret;
-                    }
-                }
-
-                return o;
-            }
-            else
-            {
                 Value validateAttachmentFunc = interpreter.GetGlobalValue("validateAttachment");
                 if (validateAttachmentFunc != null)
                 {
@@ -180,23 +138,48 @@ end while
 
                             bool allowed = interpreter.GetGlobalValue("_lastReturn").BoolValue();
 
-                            if (!allowed) // Not allowed in this slot
+                            if (!allowed)
                                 continue;
+                            return true;
+                        }
+                    }
 
-                            Game1.playSound("button1");
-                            if (attachments[i] == null)
-                            {
-                                attachments[i] = o;
-                                return null;
-                            }
-                            else if (attachments[i].canStackWith(o) && attachments[i].Stack < attachments[i].maximumStackSize())
-                            {
-                                int leftover = attachments[i].addToStack(o);
-                                o.Stack = leftover;
-                                if (o.Stack == 0)
-                                    return null;
-                                return o;
-                            }
+                    return false;
+                }
+                else
+                {
+                    for (int i = 0; i < attachmentSlots(); ++i)
+                    {
+                        if (attachments[i] == null || attachments[i].canStackWith(o) && attachments[i].Stack < attachments[i].maximumStackSize())
+                        {
+                            return true;
+                        }
+                    }
+                    return base.canThisBeAttached(o);
+                }
+            }
+            finally
+            {
+                SyncScriptToWorld();
+            }
+        }
+
+        public override Object attach(Object o)
+        {
+            try
+            {
+                DoCheckAndUpdateScript();
+
+                if (o == null)
+                {
+                    for (int i = 0; i < attachmentSlots(); ++i)
+                    {
+                        if (attachments[i] != null)
+                        {
+                            Game1.playSound("dwop");
+                            var ret = attachments[i];
+                            attachments[i] = null;
+                            return ret;
                         }
                     }
 
@@ -204,27 +187,79 @@ end while
                 }
                 else
                 {
-                    for (int i = 0; i < attachmentSlots(); ++i)
+                    Value validateAttachmentFunc = interpreter.GetGlobalValue("validateAttachment");
+                    if (validateAttachmentFunc != null)
                     {
-                        if (attachments[i] == null)
+                        var events = interpreter.GetGlobalValue("_events") as ValList;
+                        if (events != null)
                         {
-                            Game1.playSound("button1");
-                            attachments[i] = o;
-                            return null;
-                        }
-                        else if (attachments[i].canStackWith(o))
-                        {
-                            Game1.playSound("button1");
-                            o.Stack = attachments[i].addToStack(o);
-                            if (o.Stack == 0)
-                                return null;
-                            else
-                                return o;
-                        }
-                    }
+                            var item = ExtensionEngine.makeItemMap(o);
 
-                    return o;
+                            for (int i = 0; i < attachmentSlots(); ++i)
+                            {
+                                ValMap args = new();
+                                args.map.Add(new ValString("slotIndex"), new ValNumber(i));
+                                args.map.Add(new ValString("item"), item);
+
+                                ValMap call = new();
+                                call.map.Add(new ValString("func"), validateAttachmentFunc);
+                                call.map.Add(new ValString("arguments"), args);
+                                events.values.Add(call);
+
+                                interpreter.RunUntilDone(0.001);
+
+                                bool allowed = interpreter.GetGlobalValue("_lastReturn").BoolValue();
+
+                                if (!allowed) // Not allowed in this slot
+                                    continue;
+
+                                Game1.playSound("button1");
+                                if (attachments[i] == null)
+                                {
+                                    attachments[i] = o;
+                                    return null;
+                                }
+                                else if (attachments[i].canStackWith(o) && attachments[i].Stack < attachments[i].maximumStackSize())
+                                {
+                                    int leftover = attachments[i].addToStack(o);
+                                    o.Stack = leftover;
+                                    if (o.Stack == 0)
+                                        return null;
+                                    return o;
+                                }
+                            }
+                        }
+
+                        return o;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < attachmentSlots(); ++i)
+                        {
+                            if (attachments[i] == null)
+                            {
+                                Game1.playSound("button1");
+                                attachments[i] = o;
+                                return null;
+                            }
+                            else if (attachments[i].canStackWith(o))
+                            {
+                                Game1.playSound("button1");
+                                o.Stack = attachments[i].addToStack(o);
+                                if (o.Stack == 0)
+                                    return null;
+                                else
+                                    return o;
+                            }
+                        }
+
+                        return o;
+                    }
                 }
+            }
+            finally
+            {
+                SyncScriptToWorld();
             }
         }
 
@@ -236,6 +271,40 @@ end while
                 b.Draw(Game1.menuTexture, new Vector2(ix, iy), new Rectangle(128, 128, 64, 64), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.86f);
                 attachments[i]?.drawInMenu(b, new Vector2(x, y), 1);
                 y += 64 + 4;
+            }
+        }
+
+        public override void DoFunction(GameLocation location, int x, int y, int power, Farmer who)
+        {
+            // TODO: Allow movement again?
+            try
+            {
+                DoCheckAndUpdateScript();
+
+                Value doFunctionFunc = interpreter.GetGlobalValue("doFunction");
+                if (doFunctionFunc != null)
+                {
+                    var events = interpreter.GetGlobalValue("_events") as ValList;
+
+                    ValMap args = new();
+                    //args.map.Add(new ValString("location"), ExtensionEngine.makeLocationMap(who));
+                    args.map.Add(new ValString("farmer"), ExtensionEngine.makeFarmerMap(who));
+                    args.map.Add(new ValString("x"), new ValNumber(x));
+                    args.map.Add(new ValString("y"), new ValNumber(y));
+                    args.map.Add(new ValString("power"), new ValNumber(who.toolPower));
+
+                    ValMap call = new();
+                    call.map.Add(new ValString("func"), doFunctionFunc);
+                    call.map.Add(new ValString("arguments"), args);
+                    events.values.Add(call);
+
+                    interpreter.RunUntilDone(0.01);
+                }
+
+            }
+            finally
+            {
+                SyncScriptToWorld();
             }
         }
     }
