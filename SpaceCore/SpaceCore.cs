@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Spacechase.Shared.Patching;
@@ -112,6 +113,8 @@ namespace SpaceCore
 
             SpaceEvents.ActionActivated += this.SpaceEvents_ActionActivated;
 
+            EventPatcher.CustomCommands.Add("damageFarmer", AccessTools.Method(this.GetType(), "DamageFarmerEventCommand"));
+
             Commands.Register();
             TileSheetExtensions.Init();
 
@@ -165,6 +168,19 @@ namespace SpaceCore
             return new Api();
         }
 
+        private static void DamageFarmerEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        {
+            Game1.eventUp = false;
+            try
+            {
+                evt.farmer.takeDamage(int.Parse(args[1]), false, null);
+            }
+            finally
+            {
+                Game1.eventUp = true;
+                evt.CurrentCommand++;
+            }
+        }
 
         /*********
         ** Private methods
