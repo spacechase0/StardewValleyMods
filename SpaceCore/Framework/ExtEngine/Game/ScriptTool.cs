@@ -274,9 +274,54 @@ end while
             }
         }
 
+        public override bool beginUsing(GameLocation location, int x, int y, Farmer who)
+        {
+            lastUser = who;
+            if (!instantUse)
+            {
+                who.Halt();
+                Update(who.FacingDirection, 0, who);
+                if (upgradeLevel <= 0)
+                {
+                    who.EndUsingTool();
+                    return true;
+                }
+            }
+
+            if (instantUse)
+            {
+                Game1.toolAnimationDone(who);
+                who.canReleaseTool = false;
+                who.UsingTool = false;
+            }
+            else
+            {
+                switch (who.FacingDirection)
+                {
+                    case 0:
+                        who.FarmerSprite.setCurrentFrame(176);
+                        this.Update(0, 0, who);
+                        break;
+                    case 1:
+                        who.FarmerSprite.setCurrentFrame(168);
+                        this.Update(1, 0, who);
+                        break;
+                    case 2:
+                        who.FarmerSprite.setCurrentFrame(160);
+                        this.Update(2, 0, who);
+                        break;
+                    case 3:
+                        who.FarmerSprite.setCurrentFrame(184);
+                        this.Update(3, 0, who);
+                        break;
+                }
+            }
+
+            return false;
+        }
+
         public override void DoFunction(GameLocation location, int x, int y, int power, Farmer who)
         {
-            // TODO: Allow movement again?
             try
             {
                 DoCheckAndUpdateScript();
@@ -287,7 +332,7 @@ end while
                     var events = interpreter.GetGlobalValue("_events") as ValList;
 
                     ValMap args = new();
-                    //args.map.Add(new ValString("location"), ExtensionEngine.makeLocationMap(who));
+                    args.map.Add(new ValString("location"), ExtensionEngine.makeLocationMap(location));
                     args.map.Add(new ValString("farmer"), ExtensionEngine.makeFarmerMap(who));
                     args.map.Add(new ValString("x"), new ValNumber(x));
                     args.map.Add(new ValString("y"), new ValNumber(y));
@@ -300,12 +345,15 @@ end while
 
                     interpreter.RunUntilDone(0.01);
                 }
-
             }
             finally
             {
                 SyncScriptToWorld();
             }
+        }
+
+        public override void draw(SpriteBatch b)
+        {
         }
     }
 }

@@ -129,6 +129,7 @@ namespace SpaceCore.Framework.ExtEngine
 
         internal static Func<Item, Value> makeItemMap;
         internal static Func<Farmer, Value> makeFarmerMap;
+        internal static Func<GameLocation, Value> makeLocationMap;
 
         public static Interpreter SetupInterpreter()
         {
@@ -220,6 +221,149 @@ namespace SpaceCore.Framework.ExtEngine
                 return Intrinsic.Result.Null;
             };
 
+            i = Intrinsic.Create("createTemporarySprite");
+            i.AddParam("position");
+            i.AddParam("texturePath");
+            i.AddParam("sourceRect");
+            i.AddParam("lifetime");
+            i.code = (ctx, prevResult) =>
+            {
+                Vector2 pos = (ctx.GetVar("position") as ValMap).ToVector2();
+                string texPath = ctx.GetVar("texturePath").ToString();
+                Rectangle src = (ctx.GetVar("sourceRect") as ValMap).ToRectangle();
+
+                TemporaryAnimatedSprite tas = null;
+                try
+                {
+                    float animInterval = ctx.GetVar("animationInterval").FloatValue();
+                    int animLength = ctx.GetVar("animationLength").IntValue();
+                    int animLoops = ctx.GetVar("animationLoopCount").IntValue();
+
+                    tas = new TemporaryAnimatedSprite(texPath, src, animInterval, animLength, animLoops, pos, false, false, -1f, 0, Color.White, 1, 0, 0, 0);
+                }
+                catch (UndefinedIdentifierException e)
+                {
+                    float lifetime = ctx.GetVar("lifetime").FloatValue();
+                    tas = new TemporaryAnimatedSprite(texPath, src, pos, false, 0, Color.White);
+                    tas.interval = lifetime;
+                }
+
+                ValMap retMap = new();
+                retMap.map.Add(new ValString("__tas"), new ValTAS(tas));
+
+                retMap.assignOverride = (key, val) =>
+                {
+                    switch (key.ToString())
+                    {
+                        case "depth":
+                            tas.layerDepth = val.FloatValue();
+                            return true;
+                        case "color":
+                            Log.Debug("TODO TAS Color");
+                            return true;
+                        case "alpha":
+                            tas.alpha = val.FloatValue();
+                            return true;
+                        case "alphaFade":
+                            tas.alphaFade = val.FloatValue();
+                            return true;
+                        case "alphaFadeFade":
+                            tas.alphaFadeFade = val.FloatValue();
+                            return true;
+                        case "scale":
+                            tas.scale = val.FloatValue();
+                            return true;
+                        case "scaleChange":
+                            tas.scaleChange = val.FloatValue();
+                            return true;
+                        case "scaleChangeChange":
+                            tas.scaleChangeChange = val.FloatValue();
+                            return true;
+                        case "rotation":
+                            tas.rotation = val.FloatValue();
+                            return true;
+                        case "rotationChange":
+                            tas.rotationChange = val.FloatValue();
+                            return true;
+                        case "delayBeforeStart":
+                            tas.delayBeforeAnimationStart = val.IntValue();
+                            return true;
+                        case "velocity":
+                            tas.motion = (val as ValMap).ToVector2();
+                            return true;
+                        case "acceleration":
+                            tas.acceleration = (val as ValMap).ToVector2();
+                            return true;
+                        case "accelerationChange":
+                            tas.accelerationChange = (val as ValMap).ToVector2();
+                            return true;
+                        case "shakeIntensity":
+                            tas.shakeIntensity = val.FloatValue();
+                            return true;
+                        case "shakeIntensityChange":
+                            tas.shakeIntensityChange = val.FloatValue();
+                            return true;
+                        case "xPeriodicRange":
+                            tas.xPeriodic = true;
+                            tas.xPeriodicRange = val.FloatValue();
+                            return true;
+                        case "xPeriodicLoopTime":
+                            tas.xPeriodic = true;
+                            tas.xPeriodicLoopTime = val.FloatValue();
+                            return true;
+                        case "yPeriodicRange":
+                            tas.yPeriodic = true;
+                            tas.yPeriodicRange = val.FloatValue();
+                            return true;
+                        case "yPeriodicLoopTime":
+                            tas.yPeriodic = true;
+                            tas.yPeriodicLoopTime = val.FloatValue();
+                            return true;
+                        case "pulseTime":
+                            tas.pulse = true;
+                            tas.pulseTime = val.FloatValue();
+                            return true;
+                        case "pulseAmount":
+                            tas.pulse = true;
+                            tas.pulseAmount = val.FloatValue();
+                            return true;
+                        case "xStop":
+                            tas.xStopCoordinate = val.IntValue();
+                            return true;
+                        case "yStop":
+                            tas.yStopCoordinate = val.IntValue();
+                            return true;
+                    }
+
+                    return true;
+                };
+
+                return new Intrinsic.Result(retMap);
+            };
+
+            var makeTs = i.code;
+            i = Intrinsic.Create("createTemporaryAnimatedSprite");
+            i.AddParam("position");
+            i.AddParam("texturePath");
+            i.AddParam("sourceRect");
+            i.AddParam("animationInterval");
+            i.AddParam("animationLength");
+            i.AddParam("animationLoopCount");
+            i.code = makeTs;
+
+            i = Intrinsic.Create("broadcastTemporarySprite");
+            i.AddParam("location");
+            i.AddParam("temporarySprite");
+            i.code = (ctx, prevResult) =>
+            {
+                GameLocation loc = ((ctx.GetVar("location") as ValMap).map[ new ValString( "__location" ) ] as ValGameLocation).location;
+                TemporaryAnimatedSprite tas = ((ctx.GetVar("temporarySprite") as ValMap).map[new ValString("__tas")] as ValTAS).tas;
+
+                Game1.Multiplayer.broadcastSprites(loc, tas);
+
+                return Intrinsic.Result.Null;
+            };
+
             makeItemMap = (Item item) =>
             {
                 if (item == null)
@@ -266,6 +410,7 @@ namespace SpaceCore.Framework.ExtEngine
                 ret.map.Add(new ValString("y"), new ValNumber(farmer.Position.Y));
                 ret.map.Add(new ValString("name"), new ValString(farmer.Name));
                 ret.map.Add(new ValString("facing"), new ValNumber(farmer.FacingDirection));
+                ret.map.Add(new ValString("canMove"), new ValNumber(farmer.CanMove ? 1 : 0));
 
                 ret.assignOverride = (key, val) =>
                 {
@@ -281,12 +426,41 @@ namespace SpaceCore.Framework.ExtEngine
                         case "facing":
                             farmer.FacingDirection = val.IntValue();
                             return true;
+                        case "canMove":
+                            farmer.canMove = val.BoolValue();
+                            return true;
                     }
                     return true;
                 };
 
                 return ret;
             };
+
+            makeLocationMap = (GameLocation location) =>
+            {
+                ValMap ret = new();
+                ret.map.Add(new ValString("__location"), new ValGameLocation(location));
+                ret.map.Add(new ValString("name"), new ValString(location.Name));
+                ret.map.Add(new ValString("uniqueName"), new ValString(location.NameOrUniqueName));
+
+                ret.assignOverride = (key, val) =>
+                {
+                    switch (key.ToString())
+                    {
+                        case "name": return false;
+                        case "uniqueName": return false;
+                    }
+                    return true;
+                };
+
+                return ret;
+            };
+
+            ret.SetGlobalValue("isMasterGame", new ValNumber(Game1.IsMasterGame ? 1 : 0));
+            ret.SetGlobalValue("isMultiplayer", new ValNumber(Context.IsMultiplayer ? 1 : 0));
+
+            ret.SetGlobalValue("player", makeFarmerMap(Game1.player));
+            ret.SetGlobalValue("currentLocation", makeLocationMap(Game1.currentLocation));
 
             SetupInterpreter_ExtensionMenu( ret );
 
