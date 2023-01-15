@@ -226,7 +226,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MercenaryFramework", "Merce
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpennyDeluxe", "SpennyDeluxe\SpennyDeluxe.csproj", "{4FD1E284-556C-426D-90D7-DD9A431CE9B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistentMines", "PersistentMines\PersistentMines.csproj", "{5FB98F6C-15E8-489E-8A87-6E975219B46C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersistentMines", "PersistentMines\PersistentMines.csproj", "{5FB98F6C-15E8-489E-8A87-6E975219B46C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -735,8 +735,6 @@ Global
 		SpaceShared\SpaceShared.projitems*{43ede3d9-2062-4f79-b581-708ffaf9d195}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{4c8538cc-9720-4b94-be88-f9e809b49268}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{4c8538cc-9720-4b94-be88-f9e809b49268}*SharedItemsImports = 5
-		SpaceSharedPatching\SpaceSharedPatching.projitems*{4fd1e284-556c-426d-90d7-dd9a431ce9b2}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{4fd1e284-556c-426d-90d7-dd9a431ce9b2}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{505f7d71-20b2-4010-ac06-79b1229a74c6}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{5ad9a1bf-dc0c-4177-b362-de4706c99780}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{5ad9a1bf-dc0c-4177-b362-de4706c99780}*SharedItemsImports = 5

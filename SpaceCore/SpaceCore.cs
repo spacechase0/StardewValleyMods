@@ -107,7 +107,7 @@ namespace SpaceCore
             helper.Events.GameLoop.Saving += this.OnSaving;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            EventPatcher.CustomCommands.Add("damageFarmer", AccessTools.Method(this.GetType(), "DamageFarmerEventCommand"));
+            Event.RegisterCustomCommand("damageFarmer", DamageFarmerEventCommand);
 
             Commands.Register();
             ExtensionEngine.Init();
@@ -154,7 +154,7 @@ namespace SpaceCore
             return new Api();
         }
 
-        private static void DamageFarmerEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void DamageFarmerEventCommand(Event evt, string[] args, EventContext ctx)
         {
             Game1.eventUp = false;
             try
