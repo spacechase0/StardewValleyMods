@@ -36,6 +36,10 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <summary>Whether to reset the layout on the next update tick.</summary>
         /// <remarks>This defers resetting the layout until the menu is drawn, so the positions take into account UI scaling.</remarks>
         private bool ShouldResetLayout;
+        
+        /// <summary>Whether a button has been pressed since the menu has opened.</summary>
+        /// <remarks>This prevents checking for keybinds before the menu has opened, since the menu is opened with a key press.</remarks>
+        private bool HasPressedButton;
 
 
         /*********
@@ -57,11 +61,20 @@ namespace GenericModConfigMenu.Framework.Overlays
             this.Label = label;
 
             this.ShouldResetLayout = true;
+            this.HasPressedButton = false;
         }
 
         /// <inheritdoc />
         public void OnButtonsChanged(ButtonsChangedEventArgs e)
         {
+            // check if a key has been pressed since opening the menu
+            if (!this.HasPressedButton)
+            {
+                if (e.Pressed.Any())
+                    this.HasPressedButton = true;
+                return;
+            }
+
             // get keys
             SButton[] released = e.Released.Where(this.IsValidKey).ToArray();
             SButton[] held = e.Held.Where(this.IsValidKey).ToArray();
@@ -170,8 +183,9 @@ namespace GenericModConfigMenu.Framework.Overlays
                 SButton.RightThumbstickUp,
             };
 
-            return (button.TryGetKeyboard(out _) || button.TryGetController(out _)) &&
-                   !blacklist.Contains( button );
+            bool pressingButton = this.ClearButton.containsPoint(Game1.getMousePosition().X, Game1.getMousePosition().Y) || this.OkButton.containsPoint(Game1.getMousePosition().X, Game1.getMousePosition().Y);
+
+            return !blacklist.Contains( button ) && !pressingButton;
         }
 
         /// <summary>Handle the pressed buttons, either by assigning the keybind or cancelling the UI.</summary>
