@@ -183,9 +183,7 @@ namespace GenericModConfigMenu.Framework.Overlays
                 SButton.RightThumbstickUp,
             };
 
-            bool pressingButton = this.ClearButton.containsPoint(Game1.getMousePosition().X, Game1.getMousePosition().Y) || this.OkButton.containsPoint(Game1.getMousePosition().X, Game1.getMousePosition().Y);
-
-            return !blacklist.Contains( button ) && !pressingButton;
+            return !blacklist.Contains( button );
         }
 
         /// <summary>Handle the pressed buttons, either by assigning the keybind or cancelling the UI.</summary>
