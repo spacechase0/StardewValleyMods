@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GenericModConfigMenu.Framework.ModOption;
 using Microsoft.Xna.Framework;
@@ -41,6 +42,10 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <remarks>This prevents checking for keybinds before the menu has opened, since the menu is opened with a key press.</remarks>
         private bool HasPressedButton;
 
+        /// <summary>List of buttons currently held.</summary>
+        /// <remarks>This keeps the held buttons in the order they were pressed.</remarks>
+        private List<SButton> PressedButtons;
+
 
         /*********
         ** Accessors
@@ -62,6 +67,7 @@ namespace GenericModConfigMenu.Framework.Overlays
 
             this.ShouldResetLayout = true;
             this.HasPressedButton = false;
+            PressedButtons = new();
         }
 
         /// <inheritdoc />
@@ -71,18 +77,26 @@ namespace GenericModConfigMenu.Framework.Overlays
             if (!this.HasPressedButton)
             {
                 if (e.Pressed.Any())
+                {
                     this.HasPressedButton = true;
+                    PressedButtons.AddRange(e.Pressed.Where(b => this.IsValidKey(b) && !PressedButtons.Contains(b)));
+                }
                 return;
             }
 
-            // get keys
+            // add pressed keys
+            if (e.Pressed.Any())
+            {
+                PressedButtons.AddRange(e.Pressed.Where(b => this.IsValidKey(b) && !PressedButtons.Contains(b)));
+            }
+
+            // get released keys
             SButton[] released = e.Released.Where(this.IsValidKey).ToArray();
-            SButton[] held = e.Held.Where(this.IsValidKey).ToArray();
 
             // apply keybind
             if (released.Any())
             {
-                this.HandleButtons(released.Concat(held).ToArray());
+                this.HandleButtons(PressedButtons.ToArray());
                 this.IsFinished = true;
             }
         }
@@ -135,12 +149,23 @@ namespace GenericModConfigMenu.Framework.Overlays
 
             // instruction text
             {
-                string str = typeof(TKeybind) == typeof(KeybindList)
-                    ? I18n.Config_RebindKey_ComboInstructions()
-                    : I18n.Config_RebindKey_SimpleInstructions();
+                string str;
+                if (!PressedButtons.Any())
+                {
+                    str = typeof(TKeybind) == typeof(KeybindList)
+                        ? I18n.Config_RebindKey_ComboInstructions()
+                        : I18n.Config_RebindKey_SimpleInstructions();
+                }
+                else
+                {
+                    str = typeof(TKeybind) == typeof(KeybindList)
+                        ? string.Join(" + ", PressedButtons)
+                        : PressedButtons.Last() + "";
+                }
                 int strWidth = (int)Game1.dialogueFont.MeasureString(str).X;
                 spriteBatch.DrawString(Game1.dialogueFont, str, new Vector2(this.Bounds.Center.X - (strWidth / 2), this.Bounds.Y + 100), Game1.textColor);
             }
+
 
             // buttons
             this.OkButton.draw(spriteBatch);
@@ -210,7 +235,7 @@ namespace GenericModConfigMenu.Framework.Overlays
             {
                 case SimpleModOption<SButton> opt:
                     opt.Value = buttons.Any()
-                        ? buttons.First()
+                        ? buttons.Last()
                         : SButton.None;
                     this.Label.String = opt.FormatValue();
                     break;
