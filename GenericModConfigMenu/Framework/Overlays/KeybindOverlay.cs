@@ -73,22 +73,17 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <inheritdoc />
         public void OnButtonsChanged(ButtonsChangedEventArgs e)
         {
-            // check if a key has been pressed since opening the menu
-            if (!this.HasPressedButton)
-            {
-                if (e.Pressed.Any())
-                {
-                    this.HasPressedButton = true;
-                    PressedButtons.AddRange(e.Pressed.Where(b => this.IsValidKey(b) && !PressedButtons.Contains(b)));
-                }
-                return;
-            }
 
             // add pressed keys
             if (e.Pressed.Any())
             {
+                HasPressedButton = true;
                 PressedButtons.AddRange(e.Pressed.Where(b => this.IsValidKey(b) && !PressedButtons.Contains(b)));
             }
+
+            // check if a key has been pressed since opening the menu
+            if (!HasPressedButton)
+                return;
 
             // get released keys
             SButton[] released = e.Released.Where(this.IsValidKey).ToArray();
