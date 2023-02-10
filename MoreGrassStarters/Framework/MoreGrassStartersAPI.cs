@@ -12,7 +12,11 @@ public class MoreGrassStartersAPI : IMoreGrassStartersAPI
 {
     public Grass? GetGrass(int which, int numberOfWeeds = 4)
     {
-        if (which > 1 && which < 5 + GrassStarterItem.ExtraGrassTypes)
+        if (which == Grass.springGrass)
+        {
+            return new Grass(Grass.springGrass, numberOfWeeds);
+        }
+        else if (which >= Grass.caveGrass && which < 5 + GrassStarterItem.ExtraGrassTypes)
         {
             return new CustomGrass(which, numberOfWeeds);
         }
@@ -25,7 +29,7 @@ public class MoreGrassStartersAPI : IMoreGrassStartersAPI
         {
             return new SObject(GrassStarterItem.grassID, 1);
         }
-        else if (which > Grass.caveGrass && which < 5 + GrassStarterItem.ExtraGrassTypes)
+        else if (which >= Grass.caveGrass && which < 5 + GrassStarterItem.ExtraGrassTypes)
         {
             return new GrassStarterItem(which);
         }
