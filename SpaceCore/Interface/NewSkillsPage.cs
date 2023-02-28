@@ -76,6 +76,8 @@ namespace SpaceCore.Interface
         private Dictionary<int, int> skillAreaSkillIndexes = new();
         private Dictionary<int, int> skillBarSkillIndexes = new();
 
+        private ClickableComponent lastSnappedComponent = null;
+
         private int GameSkillCount
         {
             [MethodImpl(MethodImplOptions.NoInlining)] // allowing mods to patch this getter if needed (alternative luck skill implementations?)
@@ -483,7 +485,7 @@ namespace SpaceCore.Interface
                 }
 
                 this.skillAreas.Add(textureComponent);
-                this.skillAreaSkillIndexes[textureComponent.myID] = skillIndex;
+                this.skillAreaSkillIndexes[textureComponent.myID] = actualSkillIndex;
             }
 
             // scrollbar
@@ -515,6 +517,35 @@ namespace SpaceCore.Interface
             if (this.currentlySnappedComponent == null || !Game1.options.snappyMenus || !Game1.options.gamepadControls)
                 return;
             this.snapCursorToCurrentSnappedComponent();
+        }
+
+        public override void snapCursorToCurrentSnappedComponent()
+        {
+            // taking scroll into consideration
+            foreach (ClickableTextureComponent skillArea in this.skillAreas)
+                skillArea.bounds = new Rectangle(skillArea.bounds.Left, skillArea.bounds.Top - this.skillScrollOffset * 56, skillArea.bounds.Width, skillArea.bounds.Height);
+
+            base.snapCursorToCurrentSnappedComponent();
+
+            // resetting scroll offset
+            foreach (ClickableTextureComponent skillArea in this.skillAreas)
+                skillArea.bounds = new Rectangle(skillArea.bounds.Left, skillArea.bounds.Top + this.skillScrollOffset * 56, skillArea.bounds.Width, skillArea.bounds.Height);
+        }
+
+        public override bool IsAutomaticSnapValid(int direction, ClickableComponent a, ClickableComponent b)
+        {
+            if (this.skillAreas.Contains(b))
+            {
+                if (this.skillAreaSkillIndexes.TryGetValue(b.myID, out int skillIndex) && (skillIndex < this.skillScrollOffset || skillIndex > this.LastVisibleSkillIndex))
+                    return false;
+            }
+            return base.IsAutomaticSnapValid(direction, a, b);
+        }
+
+        protected override void actionOnRegionChange(int oldRegion, int newRegion)
+        {
+            base.actionOnRegionChange(oldRegion, newRegion);
+            this.ConstrainVisibleSlotsToSelection();
         }
 
         public override void setCurrentlySnappedComponentTo(int id)
@@ -786,6 +817,13 @@ namespace SpaceCore.Interface
 
         public override void draw(SpriteBatch b)
         {
+            // controller support: updating scroll
+            if (this.currentlySnappedComponent != this.lastSnappedComponent)
+            {
+                this.ConstrainVisibleSlotsToSelection();
+                this.lastSnappedComponent = this.currentlySnappedComponent;
+            }
+
             int x = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + this.width - 448 - 48 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 8;
             int y = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 8;
             int indexWithLuckSkill = this.GameSkillCount;
@@ -1174,8 +1212,13 @@ namespace SpaceCore.Interface
         {
             if (this.skillAreas.Contains(this.currentlySnappedComponent))
             {
-                if (!this.skillAreaSkillIndexes.TryGetValue(this.currentlySnappedComponent.myID, out int skillIndex) && (skillIndex < this.skillScrollOffset || skillIndex > this.LastVisibleSkillIndex))
+                if (!this.skillAreaSkillIndexes.TryGetValue(this.currentlySnappedComponent.myID, out int skillIndex))
+                {
+                    if (Game1.options.snappyMenus && Game1.options.gamepadControls)
+                        this.snapCursorToCurrentSnappedComponent();
                     return;
+                }
+
                 if (skillIndex < this.skillScrollOffset)
                 {
                     int skillAreaIDToSnapTo = this.skillAreaSkillIndexes.First(kvp => kvp.Value == this.skillScrollOffset).Key;
@@ -1186,6 +1229,34 @@ namespace SpaceCore.Interface
                     int skillAreaIDToSnapTo = this.skillAreaSkillIndexes.First(kvp => kvp.Value == this.LastVisibleSkillIndex).Key;
                     this.currentlySnappedComponent = this.skillAreas.First(a => a.myID == skillAreaIDToSnapTo);
                 }
+
+                if (Game1.options.snappyMenus && Game1.options.gamepadControls)
+                    this.snapCursorToCurrentSnappedComponent();
+            }
+        }
+
+        private void ConstrainVisibleSlotsToSelection()
+        {
+            if (this.skillAreas.Contains(this.currentlySnappedComponent))
+            {
+                if (!this.skillAreaSkillIndexes.TryGetValue(this.currentlySnappedComponent.myID, out int skillIndex))
+                {
+                    if (Game1.options.snappyMenus && Game1.options.gamepadControls)
+                        this.snapCursorToCurrentSnappedComponent();
+                    return;
+                }
+
+                if (skillIndex < this.skillScrollOffset)
+                {
+                    this.skillScrollOffset = skillIndex;
+                    this.setScrollBarToCurrentIndex();
+                }
+                else if (skillIndex > this.LastVisibleSkillIndex)
+                {
+                    this.skillScrollOffset = skillIndex - this.MaxSkillCountOnScreen + 1;
+                    this.setScrollBarToCurrentIndex();
+                }
+
                 if (Game1.options.snappyMenus && Game1.options.gamepadControls)
                     this.snapCursorToCurrentSnappedComponent();
             }
