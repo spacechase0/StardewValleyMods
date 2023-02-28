@@ -19,7 +19,7 @@ namespace Magic.Framework.Spells
 
         public override int GetManaCost(Farmer player, int level)
         {
-            return 5*level;
+            return 0;
         }
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
@@ -54,7 +54,7 @@ namespace Magic.Framework.Spells
                             Game1.addHUDMessage(new HUDMessage("Hay", HUDMessage.achievement_type, true, Color.LightGoldenrodYellow, new StardewValley.Object(178, 1)));
                     }
 
-                    loc.temporarySprites.Add(new TemporaryAnimatedSprite(13, new Vector2(tileX * (float)Game1.tileSize, tileY * (float)Game1.tileSize), Color.White, 10, Game1.random.NextDouble() < 0.5, 70f, 0, Game1.tileSize, (float)((tileY * (double)Game1.tileSize + Game1.tileSize / 2) / 10000.0 - 0.00999999977648258))
+                    loc.temporarySprites.Add(new TemporaryAnimatedSprite(13, new Vector2(tileX * (float)Game1.tileSize, tileY * (float)Game1.tileSize), Color.Brown, 10, Game1.random.NextDouble() < 0.5, 70f, 0, Game1.tileSize, (float)((tileY * (double)Game1.tileSize + Game1.tileSize / 2) / 10000.0 - 0.00999999977648258))
                     {
                         delayBeforeAnimationStart = num * 10
                     });
@@ -62,7 +62,7 @@ namespace Magic.Framework.Spells
 
                     player.AddMana(-4);
                     player.AddCustomSkillExperience(Magic.Skill, 1*level);
-                    loc.localSoundAt("wateringCan", tile);
+                    loc.localSoundAt("cut", tile);
                 }
             }
 
