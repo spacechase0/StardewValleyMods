@@ -24,7 +24,7 @@ namespace Magic.Framework.Spells
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
-            level += level*2;
+            level += (level+1)*2;
             targetX /= Game1.tileSize;
             targetY /= Game1.tileSize;
 
