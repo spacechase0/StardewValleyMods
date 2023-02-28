@@ -80,6 +80,8 @@
     "spell.toil:water.desc": "Полейте почву вокруг выбранной области.\nПовышение уровня увеличивает область применения.",
     "spell.toil:blink.name": "Скачек",
     "spell.toil:blink.desc": "Телепортируйтесь в выбранную область.",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "Фонарь",
     "spell.nature:lantern.desc": "Вызвать свет в небольшой области подле вас.\nВысшие уровни освещают большую область.",
@@ -142,6 +144,10 @@
     "config.y.name": "Y position",
     "config.y.tooltip": "The Y tile position where it should be placed, as shown by the Debug Mode mod.",
     "config.x-or-y.automatic-position": "automatic",
+
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
+
 
     // controls
     // TODO

@@ -79,6 +79,8 @@
     "spell.toil:water.desc": "Riega el suelo alrededor de la zona objectivo.\nLos niveles más altos indican un área mayor.",
     "spell.toil:blink.name": "Parpadear",
     "spell.toil:blink.desc": "Teletransportarse a la zona objetivo.",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "Linterna",
     "spell.nature:lantern.desc": "Invoca una luz que te sigue.\nLos niveles más altos emiten más luz.",
@@ -140,6 +142,10 @@
     "config.y.name": "Posición Y",
     "config.y.tooltip": "La posición de la baldosa Y donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
     "config.x-or-y.automatic-position": "automático",
+
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
+
 
     // controls
     "config.controls": "Controles",

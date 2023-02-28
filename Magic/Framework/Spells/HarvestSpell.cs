@@ -1,3 +1,4 @@
+using System;
 using Magic.Framework.Schools;
 using Microsoft.Xna.Framework;
 using SpaceCore;
@@ -6,13 +7,15 @@ using StardewValley.TerrainFeatures;
 
 namespace Magic.Framework.Spells
 {
-    internal class WaterSpell : Spell
+    internal class HarvestSpell : Spell
     {
         /*********
         ** Public methods
         *********/
-        public WaterSpell()
-            : base(SchoolId.Toil, "water") { }
+
+
+        public HarvestSpell()
+            : base(SchoolId.Toil, "harvest") { }
 
         public override int GetManaCost(Farmer player, int level)
         {
@@ -21,7 +24,7 @@ namespace Magic.Framework.Spells
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
-            level += 1;
+            level += level*2;
             targetX /= Game1.tileSize;
             targetY /= Game1.tileSize;
 
@@ -37,13 +40,19 @@ namespace Magic.Framework.Spells
 
                     Vector2 tile = new Vector2(tileX, tileY);
 
-                    if (!loc.terrainFeatures.TryGetValue(tile, out TerrainFeature feature) || feature is not HoeDirt dirt)
-                        continue;
-                    
-                    if (dirt.state.Value != HoeDirt.dry)
+                    if (!loc.terrainFeatures.TryGetValue(tile, out TerrainFeature feature) || feature is not Grass)
                         continue;
 
-                    dirt.state.Value = HoeDirt.watered;
+                    loc.terrainFeatures.Remove(tile);
+                    // collect hay
+                    Random random = Game1.IsMultiplayer
+                        ? Game1.recentMultiplayerRandom
+                        : new Random((int)(Game1.uniqueIDForThisGame + tile.X * 1000.0 + tile.Y * 11.0));
+                    if (random.NextDouble() < (0.5))
+                    {
+                        if (Game1.getFarm().tryToAddHay(1) == 0) // returns number left
+                            Game1.addHUDMessage(new HUDMessage("Hay", HUDMessage.achievement_type, true, Color.LightGoldenrodYellow, new StardewValley.Object(178, 1)));
+                    }
 
                     loc.temporarySprites.Add(new TemporaryAnimatedSprite(13, new Vector2(tileX * (float)Game1.tileSize, tileY * (float)Game1.tileSize), Color.White, 10, Game1.random.NextDouble() < 0.5, 70f, 0, Game1.tileSize, (float)((tileY * (double)Game1.tileSize + Game1.tileSize / 2) / 10000.0 - 0.00999999977648258))
                     {

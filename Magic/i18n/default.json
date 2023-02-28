@@ -21,6 +21,7 @@
     ** Wizard learn-magic event
     *********/
     "event.wizard.1": "It is time for you to learn the ways of magic.",
+    "event.wizard.11": "It is time to continue your journey into the ways of magic.",
     "event.wizard.2": "I have... adjusted the Yoba altar in Pierre's shop for you to use.",
     "event.wizard.3": "I will teach you the basics of Arcane magic, but the rest you must discover on your own.",
     "event.wizard.4": "The Arcane 'Analyze' spell can be used to discover most spells. However, certain more powerful spells must be discovered in other ways.",
@@ -65,9 +66,9 @@
     "spell.arcane:magicmissle.name": "Magic Missile",
     "spell.arcane:magicmissle.desc": "A somewhat weak but seeking projectile.",
     "spell.arcane:disenchant.name": "Disenchant",
-    "spell.arcane:disenchant.desc": "Lower the quality of an item.\nSale price difference between old and new quality is refunded into wallet.",
+    "spell.arcane:disenchant.desc": "Lower the quality of an item.\nGet 40%(+20% per level) of the value difference to your wallet.",
     "spell.arcane:enchant.name": "Enchant",
-    "spell.arcane:enchant.desc": "Catalyst: Money\nRaise the quality of an item.\nPrice is sale price difference between old and new quality.",
+    "spell.arcane:enchant.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x4(-1 per level) of the value difference.",
     "spell.arcane:rewind.name": "Rewind",
     "spell.arcane:rewind.desc": "Catalyst: Gold Bar\nTurn back time.",
 
@@ -79,6 +80,8 @@
     "spell.toil:water.desc": "Water soil around the targeted area.\nHigher levels indicate a larger area.",
     "spell.toil:blink.name": "Blink",
     "spell.toil:blink.desc": "Teleport to the targeted area.",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "Lantern",
     "spell.nature:lantern.desc": "Summon a light to follow you.\nHigher levels create more light.",
@@ -140,6 +143,10 @@
     "config.y.name": "Y position",
     "config.y.tooltip": "The Y tile position where it should be placed, as shown by the Debug Mode mod.",
     "config.x-or-y.automatic-position": "automatic",
+
+    // Blink spell
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
 
     // controls
     "config.controls": "Controls",

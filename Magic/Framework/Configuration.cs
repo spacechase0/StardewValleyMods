@@ -36,5 +36,8 @@ namespace Magic.Framework
 
         /// <summary>The Y tile position for the radio, or <c>-1</c> to position it automatically.</summary>
         public int RadioY { get; set; } = -1;
+
+        /// <summary>Control if the blink spell should exist or not with how powerful it is..</summary>
+        public bool BlinkSpell { get; set; } = true;
     }
 }

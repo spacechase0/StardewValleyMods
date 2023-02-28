@@ -79,6 +79,8 @@
     "spell.toil:water.desc": "Поливає ґрунт навколо цільової ділянки.\nЗаклинання вищих рівнів задіює більшу площу",
     "spell.toil:blink.name": "Мерехтіння",
     "spell.toil:blink.desc": "Телепортація в задану точку.",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "Ліхтар",
     "spell.nature:lantern.desc": "Викликає світло, яке слідує за вами.\nЗаклинання вищих рівнів створює більшу кількість світла.",
@@ -140,6 +142,10 @@
     "config.y.name": "Позиція за Y",
     "config.y.tooltip": "Позиція клітинки за Y, де об'єкт має бути розміщеним, як вказано в меню моду Debug Mode.",
     "config.x-or-y.automatic-position": "автоматично",
+
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
+
 
     // controls
     "config.controls": "Керування",

@@ -80,6 +80,8 @@
     "spell.toil:water.desc": "灌溉目标区域周围的土壤。\n更高的技能等级可以灌溉更大面积的土壤。",
     "spell.toil:blink.name": "闪烁",
     "spell.toil:blink.desc": "传送到目标区域。",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "幻光",
     "spell.nature:lantern.desc": "召唤一个光源跟着你。\n更高的技能等级可以唤出更多的光。",
@@ -142,6 +144,10 @@
     "config.y.name": "Y position",
     "config.y.tooltip": "The Y tile position where it should be placed, as shown by the Debug Mode mod.",
     "config.x-or-y.automatic-position": "automatic",
+
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
+
 
     // controls
     // TODO

@@ -38,7 +38,7 @@ namespace Magic.Framework.Skills
             : base(Skill.MagicSkillId)
         {
             this.Icon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magicexpicon.png");
-            this.SkillsPageIcon = null; // TODO: Make an icon for this
+            this.SkillsPageIcon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magicskill.png");
 
             this.ExperienceCurve = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
 
@@ -47,7 +47,7 @@ namespace Magic.Framework.Skills
             // Level 5
             Skill.PotentialProfession = new UpgradePointProfession(this, "UpgradePoints1")
             {
-                Icon = null, // TODO
+                Icon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magic1a.png"),
                 Name = "Potential",
                 Description = "+2 spell upgrade points"
             };
@@ -55,7 +55,7 @@ namespace Magic.Framework.Skills
 
             Skill.ManaRegen1Profession = new GenericProfession(this, "ManaRegen1")
             {
-                Icon = null, // TODO
+                Icon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magic1b.png"),
                 Name = "Mana Regen I",
                 Description = "+0.5 mana regen per level"
             };
@@ -66,7 +66,7 @@ namespace Magic.Framework.Skills
             // Level 10 - track A
             Skill.ProdigyProfession = new UpgradePointProfession(this, "UpgradePoints2")
             {
-                Icon = null, // TODO
+                Icon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magic2a.png"),
                 Name = "Prodigy",
                 Description = "+2 spell upgrade points"
             };
@@ -74,7 +74,7 @@ namespace Magic.Framework.Skills
 
             Skill.MemoryProfession = new GenericProfession(this, "FifthSpellSlot")
             {
-                Icon = null, // TODO
+                Icon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magic2b.png"),
                 Name = "Memory",
                 Description = "Adds a fifth spell per spell set."
             };
@@ -85,7 +85,7 @@ namespace Magic.Framework.Skills
             // Level 10 - track B
             Skill.ManaRegen2Profession = new GenericProfession(this, "ManaRegen2")
             {
-                Icon = null, // TODO
+                Icon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magic3a.png"),
                 Name = "Mana Regen II",
                 Description = "+1 mana regen per level"
             };
@@ -93,7 +93,7 @@ namespace Magic.Framework.Skills
 
             Skill.ManaReserveProfession = new ManaCapProfession(this, "ManaCap")
             {
-                Icon = null, // TODO
+                Icon = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/interface/magic3b.png"),
                 Name = "Mana Reserve",
                 Description = "+500 max mana"
             };
