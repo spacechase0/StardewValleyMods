@@ -103,8 +103,6 @@ namespace SuperHopper
                 Item item = hopperItems[i];
                 if (chestBelow.addItem(item) == null)
                     hopperItems.RemoveAt(i);
-                else
-                    return;
             }
 
             // check for top chest
@@ -119,8 +117,6 @@ namespace SuperHopper
                 Item item = chestAboveItems[i];
                 if (chestBelow.addItem(item) == null)
                     chestAboveItems.RemoveAt(i);
-                else
-                    return;
             }
         }
 
