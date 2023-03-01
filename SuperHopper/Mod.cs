@@ -107,7 +107,7 @@ namespace SuperHopper
                     return;
             }
 
-            // no chests to transfer
+            // check for top chest
             if (!location.objects.TryGetValue(hopper.TileLocation - new Vector2(0, 1), out SObject objAbove) || objAbove is not Chest chestAbove)
                 return;
 
