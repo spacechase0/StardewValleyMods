@@ -42,8 +42,8 @@ namespace Magic.Framework.Spells
                     return null;
             }
 
-            Game1.player.removeBuffAttributes();
-            Game1.player.attack = 0;
+ //           Game1.player.removeBuffAttributes();
+ //           Game1.player.attack = 0;
 
             int l = level + 1;
             int farm = l, fish = l, mine = l, luck = l, forage = l, def = 0 /*1*/, atk = 2;

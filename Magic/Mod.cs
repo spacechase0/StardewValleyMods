@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Magic.Framework;
+using Microsoft.CodeAnalysis.Text;
 using SpaceShared;
 using SpaceShared.APIs;
 using SpaceShared.ConsoleCommands;
@@ -29,6 +30,8 @@ namespace Magic
         public static IJsonAssetsApi Ja;
         public static IManaBarApi Mana;
 
+        public static Func<long> TestChanges;
+
         /// <summary>Whether Stardew Valley Expanded is installed.</summary>
         public static bool HasStardewValleyExpanded => Mod.Instance.Helper.ModRegistry.IsLoaded("FlashShifter.SVECode");
 
@@ -56,7 +59,9 @@ namespace Magic
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.Saving += this.OnSaving;
 
-            Framework.Magic.Init(helper.Events, helper.Input, helper.ModRegistry, helper.Multiplayer.GetNewID);
+            TestChanges = helper.Multiplayer.GetNewID;
+            Framework.Magic.Init(helper.Events, helper.Input, helper.ModRegistry, TestChanges);
+            
             ConsoleCommandHelper.RegisterCommandsInAssembly(this);
         }
 
@@ -209,6 +214,23 @@ namespace Magic
                         getValue: () => Mod.Config.Key_Spell5,
                         setValue: value => Mod.Config.Key_Spell5 = value
                     );
+
+                    //Spell Adjustments
+                    configMenu.AddBoolOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_BlinkSpell,
+                        tooltip: I18n.Config_Blinkspell_Tooltip,
+                        getValue: () => Mod.Config.BlinkSpell,
+                        setValue: value => Mod.Config.BlinkSpell = value
+                    );
+
+                    configMenu.AddBoolOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_EnchantSpell,
+                        tooltip: I18n.Config_Enchantspell_Tooltip,
+                        getValue: () => Mod.Config.EnchantSpell,
+                        setValue: value => Mod.Config.EnchantSpell = value
+                    );
                 }
             }
 
@@ -246,6 +268,10 @@ namespace Magic
         /// <param name="e">The event arguments.</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            //Register Spells that can be turned on/off with configs here
+            SpellManager.EnchantmentSpellManager(Mod.Config.EnchantSpell);
+            SpellManager.BlinkSpellManager(Mod.Config.BlinkSpell);
+
             if (!Context.IsMainPlayer)
                 return;
 
@@ -280,5 +306,7 @@ namespace Magic
 
             this.Helper.Events.GameLoop.Saving -= this.OnSaving;
         }
+
+
     }
 }

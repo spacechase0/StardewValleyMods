@@ -96,13 +96,17 @@ namespace Magic.Framework
         /// <param name="overrideMagicLevel">The magic skill level, or <c>null</c> to get it from the player.</param>
         public static void FixMagicIfNeeded(Farmer player, int? overrideMagicLevel = null)
         {
+
+            Log.Info("FixMagicIfNeeded Fired 1");
             // skip if player hasn't learned magic
             if (!Magic.LearnedMagic && overrideMagicLevel is not > 0)
                 return;
 
+            Log.Info("FixMagicIfNeeded Fired 2");
+
             // get magic info
             int magicLevel = overrideMagicLevel ?? player.GetCustomSkillLevel(Skill.MagicSkillId);
-            SpellBook spellBook = Game1.player.GetSpellBook();
+            SpellBook spellBook = player.GetSpellBook();
 
             // fix mana pool
             {
@@ -124,9 +128,57 @@ namespace Magic.Framework
                 });
             }
 
+            string EnchantSpell = "arcane:enchant";
+            string DisenchantSpell = "arcane:disenchant";
+            if (Mod.Config.EnchantSpell == true) {
+                Log.Error("Using the Balanced Enchantments");
+                EnchantSpell = "arcane:enchant_costly";
+                DisenchantSpell = "arcane:disenchant_costly";
+            } 
             // fix learned spells
-            foreach (string spellId in new[] { "arcane:analyze", "arcane:magicmissle", "arcane:enchant", "arcane:disenchant" })
+            foreach (string spellId in new[] { "arcane:analyze", "arcane:magicmissle", EnchantSpell, DisenchantSpell })
                 spellBook.LearnSpell(spellId, 0, true);
+
+        }
+
+        public static void SpellModConfigFix(SpellBook spellBook, string spellA, string spellB)
+        {
+            //Check to see if the player knows the spell that shouldn't exist
+            Log.DebugOnlyLog("SpellModConfigFix Fired 1: Base layer for spell " + spellA);
+            if (spellBook.KnowsSpell(spellA, 0))
+            {
+                Log.DebugOnlyLog("SpellModConfigFix Fired 2: found the spell to be replaced!");
+                // If so, learn the spell they should know.
+                spellBook.LearnSpell(spellB, 0, true);
+                // Get Both Spellbars
+                foreach (var spellBar in spellBook.Prepared)
+                {
+                    //Count how many spells are in said bar
+                    for (int i = 0; i < spellBar.Spells.Count; ++i)
+                    {
+                        Log.DebugOnlyLog("SpellModConfigFix Fired 3: Inside the Spellbar loop");
+                        //PreparedSpell prep sometimes became null, this prevents that
+                        if (spellBar.GetSlot(i) != null) {
+                            //Get the spell slot
+                            PreparedSpell prep = spellBar.GetSlot(i);
+                            Log.DebugOnlyLog("SpellModConfigFix Fired 4 " + i.ToString() + " " + prep.SpellId);
+                            //If the spell in the  slot is equal to the spell we want to replace, move on
+                            if (prep.SpellId == spellA)
+                            {
+                                //Replace the prepared spell in the spell slot with the new spell
+                                Log.DebugOnlyLog("SpellModConfigFix Fired 5: replaced " + spellA + " with " + spellB);
+                                var spellReplacement = new PreparedSpell(spellB, 0);
+                                spellBook.Mutate(_ => spellBar.SetSlot(i, spellReplacement));
+                            }
+                        }
+                        
+                    }
+                }
+                //Forget the spell that we shouldn't know in the spellbook
+                spellBook.ForgetSpell(spellA, 0);
+                //Subtract 1 point since we learned a spell
+                spellBook.UseSpellPoints(1);
+            }
         }
 
 
@@ -338,22 +390,31 @@ namespace Magic.Framework
             EvacSpell.OnLocationChanged();
 
             // check events
-            if (e.NewLocation.Name == "WizardHouse" && !Magic.LearnedMagic && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
+
+            bool hasSVDE = Mod.HasStardewValleyExpanded;
+            int WizF = hasSVDE ? 1250 : 750;
+            int WizP = hasSVDE ? 17 : 5;
+            string SVDE_Dialogue = hasSVDE ? I18n.Event_Wizard_11() : I18n.Event_Wizard_1();
+
+
+
+            if (e.NewLocation.Name == "WizardHouse" && !Magic.LearnedMagic && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= WizF)
             {
-                string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
+                string eventStr = "WizardSong/0 "+WizP.ToString()+"/Wizard 8 "+WizP.ToString()+ " 0 farmer 8 "+(WizP+ 10).ToString()+" 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
                 eventStr = string.Format(
-                    eventStr,
-                    I18n.Event_Wizard_1(),
-                    I18n.Event_Wizard_2(),
-                    I18n.Event_Wizard_3(),
-                    I18n.Event_Wizard_4(),
-                    I18n.Event_Wizard_5(),
-                    I18n.Event_Wizard_6(),
-                    I18n.Event_Wizard_7(),
-                    I18n.Event_Wizard_8(),
-                    I18n.Event_Wizard_9(),
-                    I18n.Event_Wizard_Abovehead()
-                );
+                                        eventStr,
+                                        SVDE_Dialogue,
+                                        I18n.Event_Wizard_2(),
+                                        I18n.Event_Wizard_3(),
+                                        I18n.Event_Wizard_4(),
+                                        I18n.Event_Wizard_5(),
+                                        I18n.Event_Wizard_6(),
+                                        I18n.Event_Wizard_7(),
+                                        I18n.Event_Wizard_8(),
+                                        I18n.Event_Wizard_9(),
+                                        I18n.Event_Wizard_Abovehead()
+                                    );
+
                 e.NewLocation.currentEvent = new Event(eventStr, MagicConstants.LearnedMagicEventId);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;

@@ -1,3 +1,4 @@
+using System;
 using Magic.Framework.Spells;
 
 namespace Magic.Framework.Schools
@@ -20,9 +21,12 @@ namespace Magic.Framework.Schools
             return new[] { SpellManager.Get("toil:water") };
         }
 
+
         public override Spell[] GetSpellsTier3()
         {
-            return new[] { SpellManager.Get("toil:blink") };
+            if (Mod.Config.BlinkSpell == true)
+                return new[] { SpellManager.Get("toil:blink") };
+            else return new[] { SpellManager.Get("toil:harvest") };
         }
     }
 }

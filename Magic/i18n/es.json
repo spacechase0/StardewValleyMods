@@ -68,6 +68,10 @@
     "spell.arcane:disenchant.desc": "Disminuye la calidad de un objecto.\nLa diferencia de precio de venta entre la calidad vieja y la nueva se devuelve a la cartera.",
     "spell.arcane:enchant.name": "Encantar",
     "spell.arcane:enchant.desc": "Catalizador: Dinero\nAumenta la calidad de un objeto.\nEl precio es la diferencia de precio de venta entre la calidad vieja y la nueva.",
+    "spell.arcane:disenchantcostly.name": "Disenchant",
+    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 40%(+20% per level) of the value difference to your wallet.",
+    "spell.arcane:enchantcostly.name": "Enchant",
+    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x4(-1 per level) of the value difference.",
     "spell.arcane:rewind.name": "Rebobinar",
     "spell.arcane:rewind.desc": "Catalizador: Lingote de Oro\nRetrocede en el tiempo.",
 
@@ -79,6 +83,8 @@
     "spell.toil:water.desc": "Riega el suelo alrededor de la zona objectivo.\nLos niveles más altos indican un área mayor.",
     "spell.toil:blink.name": "Parpadear",
     "spell.toil:blink.desc": "Teletransportarse a la zona objetivo.",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "Linterna",
     "spell.nature:lantern.desc": "Invoca una luz que te sigue.\nLos niveles más altos emiten más luz.",
@@ -140,6 +146,13 @@
     "config.y.name": "Posición Y",
     "config.y.tooltip": "La posición de la baldosa Y donde debe colocarse, como se muestra en el mod 'Debug Mode'.",
     "config.x-or-y.automatic-position": "automático",
+
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
+
+    "config.enchantSpell": "Balance the Enchant Spell Spell",
+    "config.enchantspell.tooltip": "Makes Enchantment and Disenchantment not return/cost the exact gold amount to go up and down in quality. To prevent easy Iridium crops.",
+
 
     // controls
     "config.controls": "Controles",

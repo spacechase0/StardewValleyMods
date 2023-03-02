@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Magic.Framework.Schools;
 using Microsoft.Xna.Framework;
+using SpaceCore;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Menus;
@@ -148,13 +149,14 @@ namespace Magic.Framework.Spells
 
                 if (!learnedAny)
                 {
-                    Game1.playSound("secret1");
+                    Game1.playSound("reward");
                     learnedAny = true;
                 }
 
                 Log.Debug($"Player learnt spell: {spell}");
                 spellBook.LearnSpell(spell, 0, true);
-                Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn(spellName: SpellManager.Get(spell).GetTranslatedName())));
+                Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn(spellName: SpellManager.Get(spell).GetTranslatedName()), 2));
+                player.AddCustomSkillExperience(Magic.Skill, 5);
             }
 
             // learn hidden spell if players knows all of the other spells for a school
@@ -192,7 +194,8 @@ namespace Magic.Framework.Spells
                     {
                         Log.Debug("Player learnt ancient spell: " + ancientSpell);
                         spellBook.LearnSpell(ancientSpell, 0, true);
-                        Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: ancientSpell.GetTranslatedName())));
+                        Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: ancientSpell.GetTranslatedName()), 2));
+                        player.AddCustomSkillExperience(Magic.Skill, 10);
                     }
                 }
 
@@ -201,8 +204,14 @@ namespace Magic.Framework.Spells
                 {
                     Log.Debug("Player learnt ancient spell: " + rewindSpell);
                     spellBook.LearnSpell(rewindSpell, 0, true);
-                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: rewindSpell.GetTranslatedName())));
+                    Game1.addHUDMessage(new HUDMessage(I18n.Spell_Learn_Ancient(spellName: rewindSpell.GetTranslatedName()), 2));
+                    player.AddCustomSkillExperience(Magic.Skill, 20);
                 }
+            }
+
+            if (learnedAny == false)
+            {
+                Game1.playSound("clank");
             }
 
             // raise event

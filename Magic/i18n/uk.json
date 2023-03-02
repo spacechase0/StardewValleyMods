@@ -68,6 +68,10 @@
     "spell.arcane:disenchant.desc": "Знижує якість предмету.\nРізниця в ціні продажу між старою і новою якістю повертається в до ваших коштів.",
     "spell.arcane:enchant.name": "Зачарування",
     "spell.arcane:enchant.desc": "Збурювач: Гроші\nПідвищує якість предмету.\nЦіна - різниця в ціні продажу між старою та новою якістю.",
+    "spell.arcane:disenchantcostly.name": "Disenchant",
+    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 40%(+20% per level) of the value difference to your wallet.",
+    "spell.arcane:enchantcostly.name": "Enchant",
+    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x4(-1 per level) of the value difference.",
     "spell.arcane:rewind.name": "Відмотка",
     "spell.arcane:rewind.desc": "Збурювач: Золотий злиток\nПовертає час назад.",
 
@@ -79,6 +83,8 @@
     "spell.toil:water.desc": "Поливає ґрунт навколо цільової ділянки.\nЗаклинання вищих рівнів задіює більшу площу",
     "spell.toil:blink.name": "Мерехтіння",
     "spell.toil:blink.desc": "Телепортація в задану точку.",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "Ліхтар",
     "spell.nature:lantern.desc": "Викликає світло, яке слідує за вами.\nЗаклинання вищих рівнів створює більшу кількість світла.",
@@ -140,6 +146,13 @@
     "config.y.name": "Позиція за Y",
     "config.y.tooltip": "Позиція клітинки за Y, де об'єкт має бути розміщеним, як вказано в меню моду Debug Mode.",
     "config.x-or-y.automatic-position": "автоматично",
+
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
+
+    "config.enchantSpell": "Balance the Enchant Spell Spell",
+    "config.enchantspell.tooltip": "Makes Enchantment and Disenchantment not return/cost the exact gold amount to go up and down in quality. To prevent easy Iridium crops.",
+
 
     // controls
     "config.controls": "Керування",

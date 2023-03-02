@@ -27,6 +27,8 @@ namespace Magic.Framework.Spells
             return level * 3;
         }
 
+
+
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             if (player != Game1.player)
