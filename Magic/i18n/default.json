@@ -70,9 +70,9 @@
     "spell.arcane:enchant.name": "Enchant",
     "spell.arcane:enchant.desc": "Catalyst: Money\nRaise the quality of an item.\nPrice is sale price difference between old and new quality.",
     "spell.arcane:disenchant_costly.name": "Disenchant",
-    "spell.arcane:disenchant_costly.desc": "Lower the quality of an item.\nGet 40%(+20% per level) of the value difference to your wallet.",
+    "spell.arcane:disenchant_costly.desc": "Lower the quality of an item.\nGet 50% of the value difference to your wallet.",
     "spell.arcane:enchant_costly.name": "Enchant",
-    "spell.arcane:enchant_costly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x4(-1 per level) of the value difference.",
+    "spell.arcane:enchant_costly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x3 of the value difference.",
     "spell.arcane:rewind.name": "Rewind",
     "spell.arcane:rewind.desc": "Catalyst: Gold Bar\nTurn back time.",
 

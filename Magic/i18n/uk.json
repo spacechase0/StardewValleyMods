@@ -69,9 +69,9 @@
     "spell.arcane:enchant.name": "Зачарування",
     "spell.arcane:enchant.desc": "Збурювач: Гроші\nПідвищує якість предмету.\nЦіна - різниця в ціні продажу між старою та новою якістю.",
     "spell.arcane:disenchantcostly.name": "Disenchant",
-    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 40%(+20% per level) of the value difference to your wallet.",
+    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 50% of the value difference to your wallet.",
     "spell.arcane:enchantcostly.name": "Enchant",
-    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x4(-1 per level) of the value difference.",
+    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x3 of the value difference.",
     "spell.arcane:rewind.name": "Відмотка",
     "spell.arcane:rewind.desc": "Збурювач: Золотий злиток\nПовертає час назад.",
 

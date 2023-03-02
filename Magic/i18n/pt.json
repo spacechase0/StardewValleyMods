@@ -70,9 +70,9 @@
     "spell.arcane:enchant.name": "Encantar",
     "spell.arcane:enchant.desc": "Catalizador: Dinhairo\nAumenta a qualidade de um item.\nO preço é retirado da carteira.",
     "spell.arcane:disenchantcostly.name": "Disenchant",
-    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 40%(+20% per level) of the value difference to your wallet.",
+    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 50% of the value difference to your wallet.",
     "spell.arcane:enchantcostly.name": "Enchant",
-    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x4(-1 per level) of the value difference.",
+    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x3 of the value difference.",
     "spell.arcane:rewind.name": "Rebobinar",
     "spell.arcane:rewind.desc": "Catalizador: Barra de ouro\nVolta no tempo.",
 

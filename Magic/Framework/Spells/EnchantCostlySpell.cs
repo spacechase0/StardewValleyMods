@@ -59,10 +59,10 @@ namespace Magic.Framework.Spells
             int newPrice = one.sellToStorePrice();
             int diff = newPrice - oldPrice;
 
-            //Balance the skill out a tiny bit. Enchanting Costs x2 the money it would go up. Disenchanting only gives back half the money.
+            //Balance the skill out a tiny bit. Enchanting Costs x3 the money it would go up. Disenchanting only gives back half the money.
             if (!this.DoesDisenchant)
             {
-                //Make it so upgrading Quality costs x2 the difference in price
+                //Make it so upgrading Quality costs x3 the difference in price
                 diff = diff*2;
             } else
             {

@@ -69,9 +69,9 @@
     "spell.arcane:enchant.name": "마법 부여",
     "spell.arcane:enchant.desc": "촉매제: 돈\n물품의 품질을 올리십시오.\n 비용은 판매가격의 전후 차이입니다.",
     "spell.arcane:disenchantcostly.name": "Disenchant",
-    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 40%(+20% per level) of the value difference to your wallet.",
+    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 50% of the value difference to your wallet.",
     "spell.arcane:enchantcostly.name": "Enchant",
-    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x4(-1 per level) of the value difference.",
+    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x3 of the value difference.",
     "spell.arcane:rewind.name": "되감기",
     "spell.arcane:rewind.desc": "촉매제: 금 주괴\n시간을 돌립니다.",
 

@@ -70,9 +70,9 @@
     "spell.arcane:enchant.name": "升灵",
     "spell.arcane:enchant.desc": "触媒：金钱\n提高物品质量。\n所需价格是新旧产品之间的销售差价。",
     "spell.arcane:disenchantcostly.name": "Disenchant",
-    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 40%(+20% per level) of the value difference to your wallet.",
+    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 50% of the value difference to your wallet.",
     "spell.arcane:enchantcostly.name": "Enchant",
-    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x4(-1 per level) of the value difference.",
+    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x3 of the value difference.",
     "spell.arcane:rewind.name": "时返",
     "spell.arcane:rewind.desc": "触媒：金锭\n返回时间。",
 
