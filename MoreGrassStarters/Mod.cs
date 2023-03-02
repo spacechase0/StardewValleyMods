@@ -1,6 +1,9 @@
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using MoreGrassStarters.Framework;
+
 using SpaceShared;
 using SpaceShared.APIs;
 using SpaceShared.Migrations;
@@ -43,6 +46,8 @@ namespace MoreGrassStarters
                 GrassStarterItem.Tex2 = helper.ModContent.Load<Texture2D>("assets/grass.png");
             }
         }
+
+        public override object GetApi() => new MoreGrassStartersAPI();
 
 
         /*********

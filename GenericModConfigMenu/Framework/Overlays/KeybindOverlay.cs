@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GenericModConfigMenu.Framework.ModOption;
 using Microsoft.Xna.Framework;
@@ -36,6 +37,14 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <summary>Whether to reset the layout on the next update tick.</summary>
         /// <remarks>This defers resetting the layout until the menu is drawn, so the positions take into account UI scaling.</remarks>
         private bool ShouldResetLayout;
+        
+        /// <summary>Whether a button has been pressed since the menu has opened.</summary>
+        /// <remarks>This prevents checking for keybinds before the menu has opened, since the menu is opened with a key press.</remarks>
+        private bool HasPressedButton;
+
+        /// <summary>List of buttons currently held.</summary>
+        /// <remarks>This keeps the held buttons in the order they were pressed.</remarks>
+        private List<SButton> PressedButtons;
 
 
         /*********
@@ -57,19 +66,32 @@ namespace GenericModConfigMenu.Framework.Overlays
             this.Label = label;
 
             this.ShouldResetLayout = true;
+            this.HasPressedButton = false;
+            PressedButtons = new();
         }
 
         /// <inheritdoc />
         public void OnButtonsChanged(ButtonsChangedEventArgs e)
         {
-            // get keys
+
+            // add pressed keys
+            if (e.Pressed.Any())
+            {
+                HasPressedButton = true;
+                PressedButtons.AddRange(e.Pressed.Where(b => this.IsValidKey(b) && !PressedButtons.Contains(b)));
+            }
+
+            // check if a key has been pressed since opening the menu
+            if (!HasPressedButton)
+                return;
+
+            // get released keys
             SButton[] released = e.Released.Where(this.IsValidKey).ToArray();
-            SButton[] held = e.Held.Where(this.IsValidKey).ToArray();
 
             // apply keybind
             if (released.Any())
             {
-                this.HandleButtons(released.Concat(held).ToArray());
+                this.HandleButtons(PressedButtons.ToArray());
                 this.IsFinished = true;
             }
         }
@@ -122,12 +144,23 @@ namespace GenericModConfigMenu.Framework.Overlays
 
             // instruction text
             {
-                string str = typeof(TKeybind) == typeof(KeybindList)
-                    ? I18n.Config_RebindKey_ComboInstructions()
-                    : I18n.Config_RebindKey_SimpleInstructions();
+                string str;
+                if (!PressedButtons.Any())
+                {
+                    str = typeof(TKeybind) == typeof(KeybindList)
+                        ? I18n.Config_RebindKey_ComboInstructions()
+                        : I18n.Config_RebindKey_SimpleInstructions();
+                }
+                else
+                {
+                    str = typeof(TKeybind) == typeof(KeybindList)
+                        ? string.Join(" + ", PressedButtons)
+                        : PressedButtons.Last() + "";
+                }
                 int strWidth = (int)Game1.dialogueFont.MeasureString(str).X;
                 spriteBatch.DrawString(Game1.dialogueFont, str, new Vector2(this.Bounds.Center.X - (strWidth / 2), this.Bounds.Y + 100), Game1.textColor);
             }
+
 
             // buttons
             this.OkButton.draw(spriteBatch);
@@ -170,8 +203,7 @@ namespace GenericModConfigMenu.Framework.Overlays
                 SButton.RightThumbstickUp,
             };
 
-            return (button.TryGetKeyboard(out _) || button.TryGetController(out _)) &&
-                   !blacklist.Contains( button );
+            return !blacklist.Contains( button );
         }
 
         /// <summary>Handle the pressed buttons, either by assigning the keybind or cancelling the UI.</summary>
@@ -198,7 +230,7 @@ namespace GenericModConfigMenu.Framework.Overlays
             {
                 case SimpleModOption<SButton> opt:
                     opt.Value = buttons.Any()
-                        ? buttons.First()
+                        ? buttons.Last()
                         : SButton.None;
                     this.Label.String = opt.FormatValue();
                     break;

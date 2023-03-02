@@ -15,6 +15,7 @@ using HarmonyLib;
 using Pathoschild.Stardew.ChestsAnywhere;
 using static StardewValley.Menus.NumberSelectionMenu;
 using SpaceShared.UI;
+using tlitookilakin.HDPortraits;
 
 namespace BetterShopMenu
 {
@@ -25,6 +26,7 @@ namespace BetterShopMenu
         public static Configuration Config;
         internal bool ChestsAnywhereActive;
         internal IChestsAnywhereApi ChestsAnywhereApi;
+        internal IHDPortraitsAPI HdPortraitsApi;
 
         public override void Entry(IModHelper helper)
         {
@@ -113,6 +115,9 @@ namespace BetterShopMenu
 
             this.ChestsAnywhereActive = false;
             this.ChestsAnywhereApi = this.Helper.ModRegistry.GetApi<IChestsAnywhereApi>("Pathoschild.ChestsAnywhere");
+
+            this.HdPortraitsApi = this.Helper.ModRegistry.GetApi<IHDPortraitsAPI>("tlitookilakin.HDPortraits");
+            //this.HdPortraitsApi = null;
         }
 
         internal ShopMenu Shop;
@@ -632,7 +637,10 @@ namespace BetterShopMenu
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(portrait_draw_position, shop.yPositionOnScreen), new Rectangle(603, 414, 74, 74), Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.91f);
                     if (shop.portraitPerson.Portrait != null)
                     {
-                        b.Draw(shop.portraitPerson.Portrait, new Vector2(portrait_draw_position + 20, shop.yPositionOnScreen + 20), new Rectangle(0, 0, 64, 64), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.92f);
+                        if (this.HdPortraitsApi == null)
+                            b.Draw(shop.portraitPerson.Portrait, new Vector2(portrait_draw_position + 20, shop.yPositionOnScreen + 20), new Rectangle(0, 0, 64, 64), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.92f);
+                        else
+                            this.HdPortraitsApi.DrawPortrait(b, shop.portraitPerson, NPC.portrait_neutral_index, new Point(portrait_draw_position + 20, shop.yPositionOnScreen + 20), Color.White);
                     }
                 }
                 if ((shop.potraitPersonDialogue != null) && !background)
