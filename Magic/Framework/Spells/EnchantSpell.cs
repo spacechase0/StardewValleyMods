@@ -1,5 +1,8 @@
+using System;
 using Magic.Framework.Schools;
+using SpaceCore;
 using StardewValley;
+using Object = StardewValley.Object;
 
 namespace Magic.Framework.Spells
 {
@@ -22,12 +25,12 @@ namespace Magic.Framework.Spells
 
         public override int GetManaCost(Farmer player, int level)
         {
-            return 0;
+            return 10;
         }
 
         public override int GetMaxCastingLevel()
         {
-            return 1;
+            return 3;
         }
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
@@ -56,11 +59,32 @@ namespace Magic.Framework.Spells
             int newPrice = one.sellToStorePrice();
             int diff = newPrice - oldPrice;
 
+            //Balance the skill out a tiny bit. Enchanting Costs x2 the money it would go up. Disenchanting only gives back half the money.
+            if (!this.DoesDisenchant)
+            {
+                //Base level costs the player x4 the difference
+                //level 2 costs the player x3 the difference
+                //level 3 costs the player x2 the difference
+                diff = diff*(5-level);
+            } else
+            {
+                //Base level gives the player 40% the gold when disenchanting
+                //level 2 gives the player 60% of the gold
+                //level 3 gives the player 80% of the gold
+                double multiplier = 0.2 + (level * 0.2);
+                diff = (int)Math.Floor(diff* multiplier);
+            }
+
             if (!this.DoesDisenchant && diff * obj.Stack > Game1.player.Money)
                 return null;
 
             obj.Quality = one.Quality;
             Game1.player.Money -= diff * obj.Stack;
+            if (!this.DoesDisenchant)
+            {
+                // As this costs money and mana to cast, it now gives the player EXP.
+                player.AddCustomSkillExperience(Magic.Skill, 5);
+            }
 
             return null;
         }

@@ -209,6 +209,14 @@ namespace Magic
                         getValue: () => Mod.Config.Key_Spell5,
                         setValue: value => Mod.Config.Key_Spell5 = value
                     );
+
+                    configMenu.AddBoolOption(
+                        mod: this.ModManifest,
+                        name: I18n.Config_BlinkSpell,
+                        tooltip: I18n.Config_Blinkspell_Tooltip,
+                        getValue: () => Mod.Config.BlinkSpell,
+                        setValue: value => Mod.Config.BlinkSpell = value
+                    );
                 }
             }
 

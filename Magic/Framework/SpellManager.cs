@@ -41,7 +41,9 @@ namespace Magic.Framework
             SpellManager.Register(new ClearDebrisSpell());
             SpellManager.Register(new TillSpell());
             SpellManager.Register(new WaterSpell());
-            SpellManager.Register(new BlinkSpell());
+
+            if (Mod.Config.BlinkSpell == true) { SpellManager.Register(new BlinkSpell()); } else
+                { SpellManager.Register(new HarvestSpell()); }
 
             SpellManager.Register(new LanternSpell(getNewId));
             SpellManager.Register(new TendrilsSpell());

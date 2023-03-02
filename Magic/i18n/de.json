@@ -79,6 +79,8 @@
     "spell.toil:water.desc": "Bewässert den Boden um den Zielbereich herum.\nHöhere Level vergrößern den Bereich.",
     "spell.toil:blink.name": "Kurz Teleport",
     "spell.toil:blink.desc": "Teleportiere dich zum Zielgebiet.",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "Laterne",
     "spell.nature:lantern.desc": "Beschwöre ein Licht, das dir folgt.\nHöhere Stufen erzeugen mehr Licht.",
@@ -140,6 +142,9 @@
     "config.y.name": "Y Position",
     "config.y.tooltip": "Die Y-Kachelposition, an der er/es platziert werden soll. Die richtige Position kann man sich von der Debug Mode Mod angezeigen lassen.",
     "config.x-or-y.automatic-position": "automatisch",
+
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
 
     // controls
     "config.controls": "Steuerung",

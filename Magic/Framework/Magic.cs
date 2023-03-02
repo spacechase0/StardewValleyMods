@@ -338,22 +338,31 @@ namespace Magic.Framework
             EvacSpell.OnLocationChanged();
 
             // check events
-            if (e.NewLocation.Name == "WizardHouse" && !Magic.LearnedMagic && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= 750)
+
+            bool hasSVDE = Mod.HasStardewValleyExpanded;
+            int WizF = hasSVDE ? 1250 : 750;
+            int WizP = hasSVDE ? 17 : 5;
+            string SVDE_Dialogue = hasSVDE ? I18n.Event_Wizard_11() : I18n.Event_Wizard_1();
+
+
+
+            if (e.NewLocation.Name == "WizardHouse" && !Magic.LearnedMagic && Game1.player.friendshipData.TryGetValue("Wizard", out Friendship wizardFriendship) && wizardFriendship.Points >= WizF)
             {
-                string eventStr = "WizardSong/0 5/Wizard 8 5 0 farmer 8 15 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
+                string eventStr = "WizardSong/0 "+WizP.ToString()+"/Wizard 8 "+WizP.ToString()+ " 0 farmer 8 "+(WizP+ 10).ToString()+" 0/skippable/ignoreCollisions farmer/move farmer 0 -8 0/speak Wizard \"{0}#$b#{1}#$b#{2}#$b#{3}#$b#{4}#$b#{5}#$b#{6}#$b#{7}#$b#{8}\"/textAboveHead Wizard \"{9}\"/pause 750/fade 750/end";
                 eventStr = string.Format(
-                    eventStr,
-                    I18n.Event_Wizard_1(),
-                    I18n.Event_Wizard_2(),
-                    I18n.Event_Wizard_3(),
-                    I18n.Event_Wizard_4(),
-                    I18n.Event_Wizard_5(),
-                    I18n.Event_Wizard_6(),
-                    I18n.Event_Wizard_7(),
-                    I18n.Event_Wizard_8(),
-                    I18n.Event_Wizard_9(),
-                    I18n.Event_Wizard_Abovehead()
-                );
+                                        eventStr,
+                                        SVDE_Dialogue,
+                                        I18n.Event_Wizard_2(),
+                                        I18n.Event_Wizard_3(),
+                                        I18n.Event_Wizard_4(),
+                                        I18n.Event_Wizard_5(),
+                                        I18n.Event_Wizard_6(),
+                                        I18n.Event_Wizard_7(),
+                                        I18n.Event_Wizard_8(),
+                                        I18n.Event_Wizard_9(),
+                                        I18n.Event_Wizard_Abovehead()
+                                    );
+
                 e.NewLocation.currentEvent = new Event(eventStr, MagicConstants.LearnedMagicEventId);
                 Game1.eventUp = true;
                 Game1.displayHUD = false;

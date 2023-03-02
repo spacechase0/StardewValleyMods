@@ -39,7 +39,7 @@ namespace Magic.Framework.Spells
 
                     if (!loc.terrainFeatures.TryGetValue(tile, out TerrainFeature feature) || feature is not HoeDirt dirt)
                         continue;
-
+                    
                     if (dirt.state.Value != HoeDirt.dry)
                         continue;
 
