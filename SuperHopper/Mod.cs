@@ -91,19 +91,32 @@ namespace SuperHopper
             if (!hopper.modData.ContainsKey(this.ModDataFlag))
                 hopper.modData[this.ModDataFlag] = "1";
 
-            // no chests to transfer
-            if (!location.objects.TryGetValue(hopper.TileLocation - new Vector2(0, 1), out SObject objAbove) || objAbove is not Chest chestAbove)
-                return;
+            // check for bottom chest
             if (!location.objects.TryGetValue(hopper.TileLocation + new Vector2(0, 1), out SObject objBelow) || objBelow is not Chest chestBelow)
+                return;
+
+            // transfer current inventory if any
+            hopper.clearNulls();
+            var hopperItems = hopper.GetItemsForPlayer(hopper.owner.Value);
+            for (int i = hopperItems.Count - 1; i >= 0; i--)
+            {
+                Item item = hopperItems[i];
+                if (chestBelow.addItem(item) == null)
+                    hopperItems.RemoveAt(i);
+            }
+
+            // check for top chest
+            if (!location.objects.TryGetValue(hopper.TileLocation - new Vector2(0, 1), out SObject objAbove) || objAbove is not Chest chestAbove)
                 return;
 
             // transfer items
             chestAbove.clearNulls();
-            for (int i = chestAbove.items.Count - 1; i >= 0; i--)
+            var chestAboveItems = chestAbove.GetItemsForPlayer(hopper.owner.Value);
+            for (int i = chestAboveItems.Count - 1; i >= 0; i--)
             {
-                Item item = chestAbove.items[i];
+                Item item = chestAboveItems[i];
                 if (chestBelow.addItem(item) == null)
-                    chestAbove.items.RemoveAt(i);
+                    chestAboveItems.RemoveAt(i);
             }
         }
 

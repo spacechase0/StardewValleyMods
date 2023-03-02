@@ -1841,7 +1841,7 @@ namespace JsonAssets
             if (translations is null || string.IsNullOrWhiteSpace(item?.TranslationKey))
                 return;
 
-            foreach (var (locale, text) in translations.GetInAllLocales($"{item.TranslationKey}.name"))
+            foreach ((string locale, Translation text) in translations.GetInAllLocales($"{item.TranslationKey}.name"))
             {
                 item.NameLocalization[locale] = text;
             }
@@ -1884,7 +1884,7 @@ namespace JsonAssets
         {
             data.Sort((dni1, dni2) => string.Compare(dni1.Name, dni2.Name, StringComparison.InvariantCulture));
 
-            Log.Trace($"Assiging {type} ids starting at {starting}: {data.Count} items");
+            Log.Trace($"Assigning {type} ids starting at {starting}: {data.Count} items");
 
             Dictionary<string, int> ids = new();
 
@@ -2196,6 +2196,7 @@ namespace JsonAssets
                 this.FixSpecialOrderObjective(objective);
             this.FixItemList(order.donatedItems);
             this.RemoveNulls(order.donatedItems);
+            this.FixStringDictionary(order.preSelectedItems);
         }
 
         private void FixSpecialOrderObjective(OrderObjective objective)
@@ -3042,6 +3043,59 @@ namespace JsonAssets
             foreach (var entry in toRemove)
                 dict.Remove(entry);
             foreach ((var entry, int val) in addOrUpdate)
+                dict[entry] = val;
+        }
+
+        private void FixStringDictionary(NetStringDictionary<int, NetInt> dict)
+        {
+            if (dict.Count() == 0)
+                return;
+
+            var toRemove = new List<string>();
+            var addOrUpdate = new Dictionary<string, int>();
+            foreach ((string loc, int index) in dict.Pairs)
+            {
+
+                if (this.VanillaObjectIds.Contains(index))
+                    continue;
+
+                if (this.ReverseFixing)
+                {
+                    KeyValuePair<string, int> item = this.ObjectIds.FirstOrDefault(x => x.Value == index);
+                    if (item.Key is not null)
+                    {
+                        if (this.OldObjectIds.TryGetValue(item.Key, out int oldindex))
+                        {
+                            if (oldindex != item.Value)
+                                addOrUpdate.Add(loc, oldindex);
+                        }
+                        else
+                        {
+                            toRemove.Add(loc);
+                        }
+                    }
+                }
+                else
+                {
+                    KeyValuePair<string, int> item = this.OldObjectIds.FirstOrDefault(x => x.Value == index);
+                    if (item.Key is not null) // default(kvp(string,int)) is (null,0)
+                    {
+                        if (this.ObjectIds.TryGetValue(item.Key, out int newindex))
+                        {
+                            if (newindex != item.Value)
+                                addOrUpdate.Add(loc, newindex);
+                        }
+                        else
+                        {
+                            toRemove.Add(loc);
+                        }
+                    }
+                }
+            }
+
+            foreach (string entry in toRemove)
+                dict.Remove(entry);
+            foreach ((string entry, int val) in addOrUpdate)
                 dict[entry] = val;
         }
 
