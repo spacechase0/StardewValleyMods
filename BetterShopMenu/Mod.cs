@@ -13,6 +13,9 @@ using StardewValley.Menus;
 using SObject = StardewValley.Object;
 using HarmonyLib;
 using Pathoschild.Stardew.ChestsAnywhere;
+using static StardewValley.Menus.NumberSelectionMenu;
+using SpaceShared.UI;
+using tlitookilakin.HDPortraits;
 
 namespace BetterShopMenu
 {
@@ -24,6 +27,7 @@ namespace BetterShopMenu
         internal bool ChestsAnywhereActive;
         internal IChestsAnywhereApi ChestsAnywhereApi;
         internal bool CustomBackpackFramework;
+        internal IHDPortraitsAPI HdPortraitsApi;
 
         public override void Entry(IModHelper helper)
         {
@@ -44,8 +48,7 @@ namespace BetterShopMenu
             this.GridLayoutActive = Config.GridLayout;
             this.ActiveButton = (this.GridLayoutActive ? this.LinearClickableButton : this.GridClickableButton);
 
-            this.Quantity_OKButton = null;
-            this.Quantity_TextBox = null;
+            this.NumberQuantityMenu = null;
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
@@ -117,6 +120,8 @@ namespace BetterShopMenu
             this.CustomBackpackFramework = this.Helper.ModRegistry.IsLoaded("aedenthorn.CustomBackpack");
             //Log.Debug($"CustomBackpackFramework = {this.CustomBackpackFramework}");
 
+            this.HdPortraitsApi = this.Helper.ModRegistry.GetApi<IHDPortraitsAPI>("tlitookilakin.HDPortraits");
+            //this.HdPortraitsApi = null;
         }
 
         internal ShopMenu Shop;
@@ -150,9 +155,10 @@ namespace BetterShopMenu
         internal ClickableTextureComponent ActiveButton;
         internal bool GridLayoutActive;
 
-        internal ClickableTextureComponent Quantity_OKButton;
-        internal TextBox Quantity_TextBox;
         internal int QuantityIndex;
+        private IClickableMenu NumberQuantityMenu;
+        private int MaxQuantityValue;
+        private int QuantityAmount;
 
         IReflectedField<Rectangle> Reflect_scrollBarRunner;
         IReflectedField<List<TemporaryAnimatedSprite>> Reflect_animations;
@@ -193,8 +199,7 @@ namespace BetterShopMenu
 
             this.ChestsAnywhereActive = (this.ChestsAnywhereApi != null) && this.ChestsAnywhereApi.IsOverlayActive();
 
-            this.Quantity_OKButton = null;
-            this.Quantity_TextBox = null;
+            this.NumberQuantityMenu = null;
             this.QuantityIndex = -1;
         }
 
@@ -413,7 +418,7 @@ namespace BetterShopMenu
                 //}
 
                 bool background = false;
-                if (this.ChestsAnywhereActive && this.ChestsAnywhereApi.IsOverlayModal())
+                if ((this.NumberQuantityMenu != null) || (this.ChestsAnywhereActive && this.ChestsAnywhereApi.IsOverlayModal()))
                     background = true;
 
                 if (this.GridLayoutActive)
@@ -421,11 +426,8 @@ namespace BetterShopMenu
                 else
                     this.DrawNewFields(e.SpriteBatch);
 
-                if (this.Quantity_TextBox != null)
-                {
-                    this.Quantity_TextBox.Draw(e.SpriteBatch);
-                    this.Quantity_OKButton.draw(e.SpriteBatch);
-                }
+                if (this.NumberQuantityMenu != null)
+                    this.NumberQuantityMenu.draw(e.SpriteBatch);
 
                 this.Shop.drawMouse(e.SpriteBatch);
             }
@@ -641,7 +643,10 @@ namespace BetterShopMenu
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(portrait_draw_position, shop.yPositionOnScreen), new Rectangle(603, 414, 74, 74), Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.91f);
                     if (shop.portraitPerson.Portrait != null)
                     {
-                        b.Draw(shop.portraitPerson.Portrait, new Vector2(portrait_draw_position + 20, shop.yPositionOnScreen + 20), new Rectangle(0, 0, 64, 64), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.92f);
+                        if (this.HdPortraitsApi == null)
+                            b.Draw(shop.portraitPerson.Portrait, new Vector2(portrait_draw_position + 20, shop.yPositionOnScreen + 20), new Rectangle(0, 0, 64, 64), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.92f);
+                        else
+                            this.HdPortraitsApi.DrawPortrait(b, shop.portraitPerson, NPC.portrait_neutral_index, new Point(portrait_draw_position + 20, shop.yPositionOnScreen + 20), Color.White);
                     }
                 }
                 if ((shop.potraitPersonDialogue != null) && !background)
@@ -695,23 +700,34 @@ namespace BetterShopMenu
             }
         }
 
-        private void CloseQuantityDialog(TextBox sender)
+        private void CloseQuantityDialog(bool cancel)
         {
-            int amount;
-            bool ok = int.TryParse(this.Quantity_TextBox.Text, out amount);
-            if (amount > 999)
-                amount = 999;
-
+            int amount = 0;
             int idx = this.QuantityIndex;
 
-            this.Quantity_TextBox.Selected = false;
-            this.Quantity_TextBox = null;
-            this.Quantity_OKButton = null;
+            if (!cancel)
+            {
+                var textBox = this.Helper.Reflection.GetField<TextBox>(this.NumberQuantityMenu, "numberSelectedBox").GetValue();
+                if (!int.TryParse(textBox.Text, out amount))
+                    amount = 0;
+
+                if (amount > 999)
+                    amount = 999;
+            }
+
             this.QuantityIndex = -1;
+            this.Shop.SetChildMenu(null);
+            this.NumberQuantityMenu = null;
 
             //call the purchase code here
-            if (ok && (idx >= 0))
+            if ((amount > 0) && (idx >= 0))
                 this.PurchaseItem(amount, idx);
+        }
+
+        private void BehaviorOnNumberSelect(int number, int price, Farmer who)
+        {
+            //unused. should probably dump this.
+            this.QuantityAmount = number;
         }
 
         private void CreateQuantityDialog(Vector2 cursorPos)
@@ -719,23 +735,21 @@ namespace BetterShopMenu
             int X = (int)cursorPos.X + Game1.tileSize;
             int Y = (int)cursorPos.Y;
 
-            this.Quantity_TextBox = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor);
-            this.Quantity_TextBox.X = X;
-            this.Quantity_TextBox.Y = Y;
-            int width = this.Quantity_TextBox.Width;
+            var shop = this.Shop;
+            var forSale = shop.forSale;
+            var itemPriceAndStock = shop.itemPriceAndStock;
 
-            this.Quantity_OKButton = new ClickableTextureComponent(
-                                               new Rectangle(X + width + Game1.pixelZoom, // pixelzoom used to give gap
-                                                             Y,
-                                                             Game1.tileSize, Game1.tileSize),
-                                               Game1.mouseCursors,
-                                               Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1),
-                                               1f,
-                                               false);
+            int idx = this.QuantityIndex;
+            int price = -1;
+            if (itemPriceAndStock[forSale[idx]][0] > 0)
+                price = itemPriceAndStock[forSale[idx]][0];
 
-            this.Quantity_TextBox.OnEnterPressed += this.CloseQuantityDialog;
-            this.Quantity_TextBox.numbersOnly = true;
-            this.Quantity_TextBox.SelectMe();
+            int max = Math.Min(999, ShopMenu.getPlayerCurrencyAmount(Game1.player, shop.currency) / Math.Max(1, itemPriceAndStock[forSale[idx]][0]));
+            this.MaxQuantityValue = max;
+
+            this.NumberQuantityMenu = new NumberSelectionMenu(I18n.Quantity_Name(), this.BehaviorOnNumberSelect, price, minValue: 0, maxValue:max, defaultNumber: 1);
+            this.Shop.SetChildMenu(this.NumberQuantityMenu);
+            this.QuantityAmount = 1;
         }
 
         private bool GetQuantityIndex()
@@ -771,7 +785,39 @@ namespace BetterShopMenu
             else if (this.ChestsAnywhereActive && this.ChestsAnywhereApi.IsOverlayModal())
                 return; // Chests Anywhere's options / dropdown view is handling input
 
-            if (e.Button is SButton.MouseLeft or SButton.MouseRight)
+            else if (this.NumberQuantityMenu != null)
+            {
+                var nmenu = this.NumberQuantityMenu as NumberSelectionMenu;
+
+                var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Cursor.ScreenPixels);
+                int x = (int)uiCursor.X;
+                int y = (int)uiCursor.Y;
+
+                if ((nmenu.okButton.containsPoint(x, y) && (e.Button is SButton.MouseLeft)) || (e.Button is SButton.Enter))
+                {
+                    var currentValue = this.Helper.Reflection.GetField<int>(this.NumberQuantityMenu, "currentValue");
+                    if (currentValue.GetValue() <= this.MaxQuantityValue)
+                    {
+                        Game1.playSound("smallSelect");
+                        this.Helper.Input.Suppress(e.Button);
+                        this.CloseQuantityDialog(false);
+                    }
+                    else
+                    {
+                        var shake = this.Helper.Reflection.GetField<int>(this.NumberQuantityMenu, "priceShake");
+                        shake?.SetValue(2000);
+                        this.Helper.Input.Suppress(e.Button);
+                        Game1.playSound("bigDeSelect");
+                    }
+                }
+                else if ((nmenu.cancelButton.containsPoint(x, y) && (e.Button is SButton.MouseLeft)) || (e.Button is SButton.Escape))
+                {
+                    Game1.playSound("bigDeSelect");
+                    this.Helper.Input.Suppress(e.Button);
+                    this.CloseQuantityDialog(true);
+                }
+            }
+            else if (e.Button is SButton.MouseLeft or SButton.MouseRight)
             {
                 var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Cursor.ScreenPixels);
                 int x = (int)uiCursor.X;
@@ -791,11 +837,6 @@ namespace BetterShopMenu
                     this.GridLayoutActive = !this.GridLayoutActive;
                     this.ActiveButton = (this.GridLayoutActive ? this.LinearClickableButton : this.GridClickableButton);
                     this.Shop.currentItemIndex = 0;
-                }
-                else if ((this.Quantity_OKButton != null) && (e.Button == SButton.MouseLeft) && this.Quantity_OKButton.bounds.Contains(x, y))
-                {
-                    this.Helper.Input.Suppress(e.Button);
-                    this.CloseQuantityDialog(this.Quantity_TextBox);
                 }
                 else if (
                          Config.QuantityDialog &&
@@ -900,12 +941,7 @@ namespace BetterShopMenu
                 }
 
                 this.QuantityIndex = -1;
-                this.Quantity_OKButton = null;
-                if (this.Quantity_TextBox != null)
-                {
-                    this.Quantity_TextBox.Selected = false;
-                    this.Quantity_TextBox = null;
-                }
+                this.NumberQuantityMenu = null;
 
                 this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
                 this.Helper.Events.Display.RenderedActiveMenu -= this.OnRenderedActiveMenu;
