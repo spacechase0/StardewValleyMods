@@ -737,7 +737,7 @@ namespace SpaceCore.Interface
                     }
                 }
                 // Skill page scrolls between skill components
-                else
+                else if (this.currentlySnappedComponent is not null)
                 {
                     int snapTo = this.currentlySnappedComponent.myID + ((direction < 0 ? 1 : -1) * NewSkillsPage.SkillIdIncrement);
                     if (this.getComponentWithID(snapTo) == null)
