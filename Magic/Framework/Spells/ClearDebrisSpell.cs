@@ -46,7 +46,7 @@ namespace Magic.Framework.Spells
             {
                 for (int tileY = targetY - level; tileY <= targetY + level; ++tileY)
                 {
-                    if (player.GetCurrentMana() <= 3)
+                    if (player.GetCurrentMana() <= 0)
                         return null;
 
                     Vector2 tile = new(tileX, tileY);

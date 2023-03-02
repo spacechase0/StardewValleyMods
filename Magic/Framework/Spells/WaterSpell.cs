@@ -16,7 +16,7 @@ namespace Magic.Framework.Spells
 
         public override int GetManaCost(Farmer player, int level)
         {
-            return 0;
+            return 5*level;
         }
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
@@ -52,7 +52,7 @@ namespace Magic.Framework.Spells
                     num++;
 
                     player.AddMana(-4);
-                    player.AddCustomSkillExperience(Magic.Skill, 1);
+                    player.AddCustomSkillExperience(Magic.Skill, 1*level);
                     loc.localSoundAt("wateringCan", tile);
                 }
             }
