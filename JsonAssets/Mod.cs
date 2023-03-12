@@ -53,6 +53,8 @@ namespace JsonAssets
         /// <remarks>This is used to avoid adding items again if the menu was stashed and restored (e.g. by Lookup Anything).</remarks>
         private ShopMenu LastShopMenu;
 
+        private List<CustomForgeRecipe> myForgeRecipes = new();
+
         private readonly Dictionary<string, IManifest> DupObjects = new();
         private readonly Dictionary<string, IManifest> DupCrops = new();
         private readonly Dictionary<string, IManifest> DupFruitTrees = new();
@@ -116,6 +118,9 @@ namespace JsonAssets
         {
             if (this.DidInit)
                 this.ResetAtTitle();
+
+            CustomForgeRecipe.Recipes.RemoveAll(r => myForgeRecipes.Contains(r));
+            myForgeRecipes.Clear();
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -1458,6 +1463,80 @@ namespace JsonAssets
                         if ((big.Recipe.IsDefault || unlockedByLevel) && !Game1.player.knowsRecipe(big.Name))
                             Game1.player.craftingRecipes.Add(big.Name, 0);
                     }
+                }
+
+                foreach (var frecipe in Forge)
+                {
+                    CustomForgeRecipe recipe = new JAForgeRecipe(frecipe);
+                    myForgeRecipes.Add(recipe);
+                    CustomForgeRecipe.Recipes.Add(recipe);
+                }
+            }
+        }
+
+        // Terrible place to put these, TODO move later
+        private class JAForgeRecipe : CustomForgeRecipe
+        {
+            public IngredientMatcher baseItem;
+            public override IngredientMatcher BaseItem => baseItem;
+
+            public IngredientMatcher ingredientItem;
+            public override IngredientMatcher IngredientItem => IngredientItem;
+
+            public int shards;
+            public override int CinderShardCost => shards;
+
+            public override Item CreateResult(Item baseItem, Item ingredItem)
+            {
+                return Utility.fuzzyItemSearch(data.ResultItemName);
+            }
+
+            private ForgeRecipeData data;
+
+            public JAForgeRecipe(ForgeRecipeData frecipe)
+            {
+                data = frecipe;
+                baseItem = new JAForgeIngredientMatcher(frecipe, baseItem: true);
+                ingredientItem = new JAForgeIngredientMatcher(frecipe, baseItem: false);
+                shards = frecipe.CinderShardCost;
+            }
+        }
+        private class JAForgeIngredientMatcher : CustomForgeRecipe.IngredientMatcher
+        {
+            private bool isBaseItem;
+            private ForgeRecipeData recipe;
+
+            public JAForgeIngredientMatcher(ForgeRecipeData data, bool baseItem)
+            {
+                isBaseItem = baseItem;
+                recipe = data;
+            }
+
+            public override void Consume(ref Item item)
+            {
+                if (item.Stack > 1)
+                    item.Stack--;
+                else
+                    item = null;
+            }
+
+            public override bool HasEnoughFor(Item item)
+            {
+                if (recipe.AbleToForgeConditions != null)
+                {
+                    if (JsonAssets.Mod.instance.CheckEpuCondition(recipe.AbleToForgeConditions))
+                    {
+                        return false;
+                    }
+                }
+
+                if (isBaseItem)
+                {
+                    return item.Name == recipe.BaseItemName;
+                }
+                else
+                {
+                    return item.GetContextTags().Contains(recipe.IngredientContextTag);
                 }
             }
         }
