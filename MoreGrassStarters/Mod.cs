@@ -102,6 +102,9 @@ namespace MoreGrassStarters
                         && grass.grassType.Value <= this.MaxGrassType
                         && this.HasNearbyCustomGrass(location, tile, 3);
 
+                    if (grass.modData.ContainsKey("atravita.GrowableGiantCrop.GrassType"))
+                        shouldMigrate = false;
+
                     if (shouldMigrate)
                         location.terrainFeatures[tile] = new CustomGrass(grass.grassType.Value, grass.numberOfWeeds.Value);
                 }
