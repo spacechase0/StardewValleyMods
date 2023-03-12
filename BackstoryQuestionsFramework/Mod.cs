@@ -169,6 +169,11 @@ namespace BackstoryQuestionsFramework
             harmony.PatchAll();
         }
 
+        public override object GetApi()
+        {
+            return new Api();
+        }
+
         private void OnGetQuestionsAskedCommand(string cmd, string[] args)
         {
             if (args.Length == 0)
