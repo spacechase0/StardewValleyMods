@@ -9,7 +9,7 @@ namespace RealtimeMinimap.Framework
         public KeybindList ToggleShowKey { get; set; } = new KeybindList(new Keybind(SButton.M, SButton.LeftControl), new Keybind(SButton.M, SButton.RightControl));
         //public KeybindList MapKey { get; set; } = new KeybindList( new Keybind( SButton.M ) );
 
-        public int UpdateInterval = -1;
+        public int UpdateInterval = 0;
 
         public float MinimapAnchorX { get; set; } = 0;
         public float MinimapAnchorY { get; set; } = 0;

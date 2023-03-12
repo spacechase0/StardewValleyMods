@@ -48,7 +48,7 @@ namespace RealtimeMinimap
             this.Helper.Events.Display.RenderedHud += this.OnRenderedHud;
 
             Mod.timer = new Timer();
-            Mod.timer.Elapsed += (s, e) => { foreach (var state in Mod._state.GetActiveValues()) state.Value.RenderQueue.Add(Game1.currentLocation.NameOrUniqueName); };
+            Mod.timer.Elapsed += (s, e) => { foreach (var state in Mod._state.GetActiveValues()) state.Value.DoRenderThisTick = true; };
             Mod.timer.AutoReset = true;
             this.ResetTimer();
         }
@@ -193,7 +193,7 @@ namespace RealtimeMinimap
         {
             if (!Mod.State.ShowMinimap)
                 return;
-            Mod.State.RenderQueue.Add(e.NewLocation.NameOrUniqueName);
+            Mod.State.DoRenderThisTick = true;
         }
 
         private void OnUpdateTicking(object sender, UpdateTickingEventArgs e)
@@ -215,16 +215,17 @@ namespace RealtimeMinimap
                 Helper.Input.SuppressActiveKeybinds( Config.MapKey );
             }*/
 
-            if (Mod.Config.UpdateInterval == 0 && !Mod.State.RenderQueue.Contains(Game1.currentLocation.NameOrUniqueName))
+            if (Mod.Config.UpdateInterval == 0)
             {
-                Mod.State.RenderQueue.Add(Game1.currentLocation.NameOrUniqueName);
+                Mod.State.DoRenderThisTick = true;
             }
 
-            if (Mod.State.RenderQueue.Count == 0)
+            if (!Mod.State.DoRenderThisTick)
                 return;
-            string mapName = Mod.State.RenderQueue[0];
-            Mod.State.RenderQueue.RemoveAt(0);
-            var map = Game1.getLocationFromName(mapName);
+
+            Mod.State.DoRenderThisTick = false;
+
+            var map = Game1.currentLocation;
 
             if (Mod.State.MinimapTarget == null || Mod.State.MinimapTarget.Width != map.Map.DisplayWidth || Mod.State.MinimapTarget.Height != map.Map.DisplayHeight)
             {
@@ -251,13 +252,6 @@ namespace RealtimeMinimap
             if (!Mod.State.ShowMinimap || Game1.eventUp || !Context.IsPlayerFree)
                 return;
 
-            if (!Mod.State.Locations.ContainsKey(Game1.currentLocation.NameOrUniqueName))
-            {
-                if (!Mod.State.RenderQueue.Contains(Game1.currentLocation.NameOrUniqueName))
-                    Mod.State.RenderQueue.Add(Game1.currentLocation.NameOrUniqueName);
-                return;
-            }
-
             var b = e.SpriteBatch;
 
             int x = (int)(Game1.game1.localMultiplayerWindow.Width * Mod.Config.MinimapAnchorX) + Mod.Config.MinimapOffsetX;
@@ -265,7 +259,9 @@ namespace RealtimeMinimap
 
             IClickableMenu.drawTextureBox(b, x, y, Mod.Config.MinimapSize, Mod.Config.MinimapSize, Color.White);
 
-            Texture2D mapTex = Mod.State.Locations[Game1.currentLocation.NameOrUniqueName];
+            Texture2D mapTex = Mod.State.MinimapTarget;
+            if (mapTex == null)
+                return;
 
             float actualSize = Mod.Config.MinimapSize - Mod.BORDER_WIDTH * 2;
             float scale = actualSize / Math.Max(mapTex.Width, mapTex.Height);
@@ -358,19 +354,6 @@ namespace RealtimeMinimap
             Game1.viewport = old_viewport;
             Game1.currentLocation = oldLoc;
             Game1.game1.GraphicsDevice.SetRenderTarget((RenderTarget2D)oldTarget);
-
-            Texture2D tex = null;
-            if (Mod.State.Locations.ContainsKey(map.NameOrUniqueName))
-                tex = Mod.State.Locations[map.NameOrUniqueName];
-            else
-            {
-                tex = new Texture2D(Game1.graphics.GraphicsDevice, map.Map.DisplayWidth, map.map.DisplayHeight);
-                Mod.State.Locations.Add(map.NameOrUniqueName, tex);
-            }
-
-            var colors = new Color[Mod.State.MinimapTarget.Width * Mod.State.MinimapTarget.Height];
-            Mod.State.MinimapTarget.GetData(colors);
-            tex.SetData(colors);
         }
     }
 }

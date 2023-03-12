@@ -9,7 +9,6 @@ namespace RealtimeMinimap.Framework
         public RenderTarget2D MinimapTarget { get; set; }
         public RenderTarget2D MinimapLightmap { get; set; }
 
-        public Dictionary<string, Texture2D> Locations { get; set; } = new();
-        public List<string> RenderQueue { get; set; } = new();
+        public bool DoRenderThisTick { get; set; } = false;
     }
 }
