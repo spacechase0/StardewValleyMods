@@ -1481,7 +1481,7 @@ namespace JsonAssets
             public override IngredientMatcher BaseItem => baseItem;
 
             public IngredientMatcher ingredientItem;
-            public override IngredientMatcher IngredientItem => IngredientItem;
+            public override IngredientMatcher IngredientItem => ingredientItem;
 
             public int shards;
             public override int CinderShardCost => shards;
@@ -1522,7 +1522,7 @@ namespace JsonAssets
 
             public override bool HasEnoughFor(Item item)
             {
-                if (recipe.AbleToForgeConditions != null)
+                if (recipe.AbleToForgeConditions != null && recipe.AbleToForgeConditions.Length > 0)
                 {
                     if (JsonAssets.Mod.instance.CheckEpuCondition(recipe.AbleToForgeConditions))
                     {
