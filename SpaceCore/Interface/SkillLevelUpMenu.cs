@@ -63,13 +63,15 @@ namespace SpaceCore.Interface
 
         // Constructor changed: int skill -> string skillName
         public SkillLevelUpMenu(string skillName, int level)
-            : base(Game1.viewport.Width / 2 - 384, Game1.viewport.Height / 2 - 256, 768, 512)
+            : base(Game1.uiViewport.Width / 2 - 384, Game1.uiViewport.Height / 2 - 256, 768, 512)
         {
+
+            Game1.player.team.endOfNightStatus.UpdateState("level");
             this.timerBeforeStart = 250;
             this.isActive = true;
             this.width = 960;
             this.height = 512;
-            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
+            this.okButton = new ClickableTextureComponent(new Rectangle(xPositionOnScreen + width + 4, yPositionOnScreen + height - 64 - IClickableMenu.borderWidth, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
             {
                 myID = 101
             };
@@ -226,8 +228,8 @@ namespace SpaceCore.Interface
 
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
-            this.xPositionOnScreen = Game1.viewport.Width / 2 - this.width / 2;
-            this.yPositionOnScreen = Game1.viewport.Height / 2 - this.height / 2;
+            this.xPositionOnScreen = Game1.uiViewport.Width / 2 - this.width / 2;
+            this.yPositionOnScreen = Game1.uiViewport.Height / 2 - this.height / 2;
             this.okButton.bounds = new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64);
             this.RepositionOkButton();
         }
