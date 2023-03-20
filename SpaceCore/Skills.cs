@@ -76,6 +76,17 @@ namespace SpaceCore
 
             public Color ExperienceBarColor { get; set; }
 
+            public virtual IDictionary<int, IList<string>> GetSkillLevelUpCraftingRecipes(int level)
+            {
+                return new Dictionary<int, IList<string>>();
+            }
+
+            public virtual IDictionary<int, IList<string>> GetSkillLevelUpCookingRecipes(int level)
+            {
+                return new Dictionary<int, IList<string>>();
+            }
+
+
             public virtual List<string> GetExtraLevelUpInfo(int level)
             {
                 return new();
