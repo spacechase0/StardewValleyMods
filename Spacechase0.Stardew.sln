@@ -214,9 +214,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersistentMines", "Persiste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConstellationVoyage", "ConstellationVoyage\ConstellationVoyage.csproj", "{5CECF14D-6D61-48DF-9F90-8D931CDFA175}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QiChest", "QiChest\QiChest.csproj", "{D1E07CEB-A67F-4F02-A942-72D851412606}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QiChest", "QiChest\QiChest.csproj", "{D1E07CEB-A67F-4F02-A942-72D851412606}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSeaFishing", "DeepSeaFishing\DeepSeaFishing.csproj", "{17716B42-EF3B-4FAF-9A42-AF54C00B7824}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeepSeaFishing", "DeepSeaFishing\DeepSeaFishing.csproj", "{17716B42-EF3B-4FAF-9A42-AF54C00B7824}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSpenny", "SuperSpenny\SuperSpenny.csproj", "{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -612,6 +614,10 @@ Global
 		{17716B42-EF3B-4FAF-9A42-AF54C00B7824}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17716B42-EF3B-4FAF-9A42-AF54C00B7824}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17716B42-EF3B-4FAF-9A42-AF54C00B7824}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -647,6 +653,7 @@ Global
 		{7245F384-9D72-435E-8FD6-A5749BBBC2D7} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{5CECF14D-6D61-48DF-9F90-8D931CDFA175} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{17716B42-EF3B-4FAF-9A42-AF54C00B7824} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
@@ -715,6 +722,7 @@ Global
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{a20de2a2-91a8-41fd-8cb5-75d0b7ff20f9}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{a20de2a2-91a8-41fd-8cb5-75d0b7ff20f9}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{a534ca13-4195-468f-93a6-c579cca46058}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{a739af53-ea0b-4bd8-a788-bce2e0722c7d}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{a87f5d49-6246-4b14-8363-114dc9335c2c}*SharedItemsImports = 13
 		SpaceShared\SpaceShared.projitems*{aa841829-b357-403e-b185-c57db2c97a52}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{aacf284d-8352-4727-9f9e-9916ba2266af}*SharedItemsImports = 5

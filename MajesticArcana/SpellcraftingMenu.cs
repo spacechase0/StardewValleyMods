@@ -60,6 +60,11 @@ namespace MajesticArcana
 
         private const int ElementScale = 6;
 
+        public void Trash(Spell.Chain chain)
+        {
+            editing.Secondaries.RemoveAll(t => t.Item1 == chain);
+        }
+
         public SpellcraftingMenu( Spell theEditing = null, Spell.Chain theChain = null )
         :   base( Game1.viewport.Width / 2 - 400, Game1.viewport.Height / 2 - 300, 800, 600, true )
         {
@@ -90,11 +95,28 @@ namespace MajesticArcana
             helpButton.LocalPosition = new(800 - helpButton.Width - 32, 32);
             ui.AddChild(helpButton);
 
+            if (editingChain != null)
+            {
+                Image trashButton = new()
+                {
+                    Texture = Game1.toolSpriteSheet,
+                    TexturePixelArea = new( 224, 0, 16, 16 ),
+                    Scale = Game1.pixelZoom,
+                    Callback = (e) =>
+                    {
+                        (GetParentMenu() as SpellcraftingMenu).Trash(editingChain);
+                        GetParentMenu().SetChildMenu(null);
+                    },
+                };
+                trashButton.LocalPosition = new(800 - trashButton.Width - 32, 600 - trashButton.Height - 32);
+                ui.AddChild(trashButton);
+            }
+
             nameBox = new()
             {
                 String = editing.Name,
                 LocalPosition = new( ((spellsButton.LocalPosition.X + spellsButton.Width + 32) + (helpButton.LocalPosition.X - 32)) / 2, 40 ),
-                Callback = (e) => { }, // Required for textbox to function???
+                Callback = (e) => { editing.Name = nameBox.String; },
             };
             nameBox.LocalPosition = new(nameBox.LocalPosition.X - nameBox.Width / 2, nameBox.LocalPosition.Y);
             ui.AddChild(nameBox);
@@ -231,11 +253,27 @@ namespace MajesticArcana
 
             for (int i = 0; i < editing.Secondaries.Count; ++i)
             {
+                int chainY = topY + i * 80 - 32;
+                drawTextureBox(b, threeFourthX - boxSize, chainY, 300, 64, Color.White);
+                b.DrawString(Game1.smallFont, editing.Secondaries[i].Item2.Name, new Vector2(threeFourthX - boxSize + IClickableMenu.spaceToClearSideBorder, chainY + IClickableMenu.spaceToClearSideBorder), Color.Black);
+
+                if (new Rectangle(threeFourthX - boxSize, chainY, 300, 64).Contains(justClickedX, justClickedY))
+                {
+                    SetChildMenu(new SpellcraftingMenu(editing.Secondaries[ i ].Item2, editing.Secondaries[i].Item1));
+                }
             }
 
             int createChainY = topY + editing.Secondaries.Count * 80 - 32;
             drawTextureBox(b, threeFourthX - boxSize, createChainY, 300, 64, Color.White);
             b.DrawString(Game1.smallFont, I18n.Spellcrafting_CreateChain(), new Vector2( threeFourthX - boxSize + IClickableMenu.spaceToClearSideBorder, createChainY + IClickableMenu.spaceToClearSideBorder ), Color.Black);
+            if (new Rectangle(threeFourthX - boxSize, createChainY, 300, 64).Contains(justClickedX, justClickedY))
+            {
+                Spell.Chain newChain = new();
+                Spell newSpell = new();
+                newSpell.Name = "Chain";
+                editing.Secondaries.Add(new(newChain, newSpell));
+                SetChildMenu(new SpellcraftingMenu(newSpell, newChain));
+            }
 
             SpriteText.drawString(b, ">", firstBoxX + boxSize + 56, topY - 24, color: SpriteText.color_White);
             SpriteText.drawString(b, ">", threeFourthX - boxSize - 56, topY - 24, color: SpriteText.color_White);

@@ -12,6 +12,7 @@ using Netcode;
 using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceCore.Framework;
+using SpaceCore.Framework.Schedules;
 using SpaceCore.Interface;
 using SpaceCore.Patches;
 using SpaceShared;
@@ -117,6 +118,7 @@ namespace SpaceCore
 
             Commands.Register();
             TileSheetExtensions.Init();
+            ScheduleExpansion.Init();
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
 
