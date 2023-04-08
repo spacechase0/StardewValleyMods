@@ -48,7 +48,14 @@ namespace MajesticArcana
     {
         private RootElement ui;
 
+        private Image spellsButton;
+        private Label helpButton;
+
         private Textbox nameBox;
+        private Floatbox attrStrengthBox;
+
+        private Image chainTypeImage;
+        private Floatbox chainDelayBox;
 
         private List<Image> uiElementsForMagicElements = new();
         private MagicElement currElem = null;
@@ -74,7 +81,7 @@ namespace MajesticArcana
             ui = new();
             ui.LocalPosition = new(xPositionOnScreen, yPositionOnScreen);
 
-            Image spellsButton = new()
+            spellsButton = new()
             {
                 Texture = Game1.objectSpriteSheet,
                 TexturePixelArea = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 102, 16, 16),
@@ -84,7 +91,7 @@ namespace MajesticArcana
             };
             ui.AddChild(spellsButton);
 
-            Label helpButton = new()
+            helpButton = new()
             {
                 NonBoldShadow = false,
                 IdleTextColor = Color.White,
@@ -92,11 +99,30 @@ namespace MajesticArcana
                 String = "?",
                 Callback = (e) => { }, // TODO
             };
-            helpButton.LocalPosition = new(800 - helpButton.Width - 32, 32);
+            helpButton.LocalPosition = new(width - helpButton.Width - 32, 32);
             ui.AddChild(helpButton);
 
             if (editingChain != null)
             {
+                chainTypeImage = new()
+                {
+                    Texture = Game1.objectSpriteSheet, // temp
+                    TexturePixelArea = new(0, 0, 16, 16),
+                    Scale = Game1.pixelZoom,
+                    Callback = (e) => { }, // TODO
+                };
+                chainTypeImage.LocalPosition = new(width - 184, 32);
+                ui.AddChild(chainTypeImage);
+
+                chainDelayBox = new()
+                {
+                    Value = editingChain.WithDelay,
+                    LocalPosition = new(chainTypeImage.LocalPosition.X + 32, 110),
+                    Callback = (e) => { editingChain.WithDelay = chainDelayBox.Value; },
+                };
+                chainDelayBox.LocalPosition = new(chainDelayBox.LocalPosition.X - chainDelayBox.Width / 2, chainDelayBox.LocalPosition.Y);
+                ui.AddChild(chainDelayBox);
+
                 Image trashButton = new()
                 {
                     Texture = Game1.toolSpriteSheet,
@@ -108,8 +134,21 @@ namespace MajesticArcana
                         GetParentMenu().SetChildMenu(null);
                     },
                 };
-                trashButton.LocalPosition = new(800 - trashButton.Width - 32, 600 - trashButton.Height - 32);
+                trashButton.LocalPosition = new(32, height - trashButton.Height - 32);
                 ui.AddChild(trashButton);
+
+                Image okayButton = new()
+                {
+                    Texture = Game1.mouseCursors,
+                    TexturePixelArea = new(128, 256, 64, 64),
+                    Scale = 1,
+                    Callback = (e) =>
+                    {
+                        GetParentMenu().SetChildMenu(null);
+                    },
+                };
+                okayButton.LocalPosition = new(width - okayButton.Width - 32, height - okayButton.Height - 32);
+                ui.AddChild(okayButton);
             }
 
             nameBox = new()
@@ -120,6 +159,15 @@ namespace MajesticArcana
             };
             nameBox.LocalPosition = new(nameBox.LocalPosition.X - nameBox.Width / 2, nameBox.LocalPosition.Y);
             ui.AddChild(nameBox);
+
+            attrStrengthBox = new()
+            {
+                Value = editing.Primary.AttributeStrength,
+                LocalPosition = new((width / 2) - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder - 40, (height / 3) + -(7 * ElementScale + IClickableMenu.spaceToClearSideBorder * 2) / 2 - 55 ),
+                Callback = (e) => { editing.Primary.AttributeStrength = attrStrengthBox.Value; },
+            };
+            attrStrengthBox.LocalPosition = new(attrStrengthBox.LocalPosition.X - attrStrengthBox.Width / 2, attrStrengthBox.LocalPosition.Y);
+            ui.AddChild(attrStrengthBox);
 
             var elems = MagicElement.Elements;
             StaticContainer elementsContainer = new()
@@ -291,6 +339,27 @@ namespace MajesticArcana
                     var magicElem = uiElem.UserData as MagicElement;
                     drawToolTip(b, magicElem.Description + "\n\n" + I18n.Element_Manifestation(magicElem.Manifestation) + "\n\n" + I18n.Element_Attribute(magicElem.Attribute), magicElem.Name, null);
                 }
+            }
+
+            if (spellsButton.Hover)
+            {
+                drawToolTip(b, I18n.Spellcrafting_Spellbook_Description(), I18n.Spellcrafting_Spellbook(), null);
+            }
+            if (helpButton.Hover)
+            {
+                drawToolTip(b, I18n.Spellcrafting_Help_Description(), I18n.Spellcrafting_Help(), null);
+            }
+            if (attrStrengthBox.Hover)
+            {
+                drawToolTip(b, I18n.Spellcrafting_AttributeStrength_Description(), I18n.Spellcrafting_AttributeStrength(), null);
+            }
+            if (chainTypeImage?.Hover ?? false)
+            {
+                drawToolTip(b, "(TODO current chain type here)", I18n.Spellcrafting_ChainType(), null);
+            }
+            if (chainDelayBox?.Hover ?? false)
+            {
+                drawToolTip(b, I18n.Spellcrafting_ChainDelay_Description(), I18n.Spellcrafting_ChainDelay(), null);
             }
 
             if (justClickedX != -1 && justClickedY != -1)
