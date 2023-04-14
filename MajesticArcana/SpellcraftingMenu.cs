@@ -39,6 +39,7 @@ namespace MajesticArcana
         }
 
         public string Name { get; set; } = "Spell";
+        public string Icon { get; set; } = "fireball-red-1.png";
         public Slot Primary { get; set; } = new();
         public List<Tuple<Chain, Spell>> Secondaries { get; set; } = new();
     }
@@ -73,7 +74,7 @@ namespace MajesticArcana
         }
 
         public SpellcraftingMenu( Spell theEditing = null, Spell.Chain theChain = null )
-        :   base( Game1.viewport.Width / 2 - 400, Game1.viewport.Height / 2 - 300, 800, 600, true )
+        :   base( Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height / 2 - 300, 800, 600, true )
         {
             editing = theEditing ?? new Spell();
             editingChain = theChain;
@@ -86,7 +87,7 @@ namespace MajesticArcana
                 Texture = Game1.objectSpriteSheet,
                 TexturePixelArea = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 102, 16, 16),
                 Scale = Game1.pixelZoom,
-                Callback = (e) => { }, // TODO
+                Callback = (e) => { SetChildMenu(new SpellStashMenu()); },
                 LocalPosition = new(32, 32),
             };
             ui.AddChild(spellsButton);
@@ -199,6 +200,23 @@ namespace MajesticArcana
                 ++ie;
             }
             ui.AddChild(elementsContainer);
+        }
+
+        public void Load(Spell spell)
+        {
+            editing.Name = spell.Name;
+            editing.Icon = spell.Icon;
+            editing.Primary = new()
+            {
+                ManifestationElement = spell.Primary.ManifestationElement,
+                ManifestationModifier = spell.Primary.ManifestationModifier,
+                AttributeElements = new(spell.Primary.AttributeElements),
+                AttributeStrength = spell.Primary.AttributeStrength,
+            };
+            editing.Secondaries = new(spell.Secondaries);
+
+            nameBox.String = editing.Name;
+            attrStrengthBox.Value = editing.Primary.AttributeStrength;
         }
 
         public override void receiveKeyPress(Keys key)

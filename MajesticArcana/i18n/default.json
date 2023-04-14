@@ -11,4 +11,5 @@
     "spellcrafting.chain-type": "Chain Type",
     "spellcrafting.chain-delay": "Chain Delay",
     "spellcrafting.chain-delay.description": "How long to delay after the triggering condition before this part of the chain is activated.",
+    "spell-stash.page": "Page {{current}}/{{maximum}}"
 }
