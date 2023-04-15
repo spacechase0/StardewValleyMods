@@ -24,7 +24,7 @@ namespace MajesticArcana
         : base(Game1.uiViewport.Width / 2 - 300, Game1.uiViewport.Height / 2 - 200, 600, 400, true)
         {
             defaultSpells = GetDefaultSpells();
-            for (int i = 0; i < 15; ++i)
+            //for (int i = 0; i < 15; ++i)
                 spells.AddRange(defaultSpells);
             if (Game1.player.modData.TryGetValue(Mod.SpellStashKey, out string spellStash))
                 spells.AddRange(JsonConvert.DeserializeObject<List<Spell>>(spellStash));
@@ -60,7 +60,7 @@ namespace MajesticArcana
 
                 b.DrawString(Game1.smallFont, spell.Name, new Vector2(x + 50 - Game1.smallFont.MeasureString(spell.Name).X / 2, y + 110), Color.Black);
 
-                if (true || !defaultSpells.Contains(spell))
+                if (!defaultSpells.Contains(spell))
                 {
                     b.Draw(Game1.toolSpriteSheet, new Rectangle(x - 8, y + 76, 32, 32), new(224, 0, 16, 16), Color.White);
 
@@ -128,7 +128,108 @@ namespace MajesticArcana
                 {
                     ManifestationElement = "fire",
                     AttributeElements = new( new[] { "fire" } ),
+                    AttributeStrength = 5,
+                }
+            });
+
+            ret.Add(new()
+            {
+                Name = "Fireballs",
+                Icon = "fire-arrows-2.png",
+                Primary = new()
+                {
+                    ManifestationElement = "fire",
+                    ManifestationModifier = 5,
+                    AttributeElements = new(new[] { "fire" }),
                     AttributeStrength = 3,
+                }
+            });
+
+            ret.Add(new()
+            {
+                Name = "Stream",
+                Icon = "beam-blue-3.png",
+                Primary = new()
+                {
+                    ManifestationElement = "water",
+                    AttributeElements = new(new[] { "fire" }),
+                    AttributeStrength = 2,
+                }
+            });
+
+            ret.Add(new()
+            {
+                Name = "Fireboom",
+                Icon = "fireball-red-3.png",
+                Primary = new()
+                {
+                    ManifestationElement = "fire",
+                    AttributeElements = new(new[] { "fire" }),
+                    AttributeStrength = 1,
+                },
+                Secondaries = new(new[] {
+                    new Tuple<Spell.Chain, Spell>( new()
+                    {
+                        ChainType = Spell.Chain.Type.OnSpellTrigger,
+                    },
+                    new()
+                    {
+                        Name = "Explosion",
+                        Icon = "explosion-orange-3.png",
+                        Primary = new()
+                        {
+                            ManifestationElement = "solar",
+                            ManifestationModifier = 4,
+                            AttributeElements = new( new[] { "fire" } ),
+                            AttributeStrength = 6,
+                        }
+                    } )
+                })
+            });
+
+            ret.Add(new()
+            {
+                Name = "Self-Heal",
+                Icon = "heal-royal-2.png",
+                Primary = new()
+                {
+                    ManifestationElement = "light",
+                    AttributeElements = new(new[] { "healing" }),
+                    AttributeStrength = 5,
+                }
+            });
+
+            ret.Add(new()
+            {
+                Name = "Haste",
+                Icon = "haste-sky-3.png",
+                Primary = new()
+                {
+                    ManifestationElement = "light",
+                    AttributeElements = new(new[] { "air" }),
+                    AttributeStrength = 3,
+                }
+            });
+
+            ret.Add(new()
+            {
+                Name = "Defense",
+                Icon = "protect-sky-1.png",
+                Primary = new()
+                {
+                    ManifestationElement = "light",
+                    AttributeElements = new(new[] { "water" }),
+                    AttributeStrength = 3,
+                }
+            });
+
+            ret.Add(new()
+            {
+                Name = "Blink",
+                Icon = "evil-eye-eerie-1.png",
+                Primary = new()
+                {
+                    ManifestationElement = "space",
                 }
             });
 

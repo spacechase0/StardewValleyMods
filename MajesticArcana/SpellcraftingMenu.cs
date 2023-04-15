@@ -53,6 +53,8 @@ namespace MajesticArcana
         private Label helpButton;
 
         private Textbox nameBox;
+        private Rectangle iconButtonRect; // Can't be an element since Image only accepts integers for scale
+        private Floatbox manifestModBox;
         private Floatbox attrStrengthBox;
 
         private Image chainTypeImage;
@@ -161,6 +163,17 @@ namespace MajesticArcana
             nameBox.LocalPosition = new(nameBox.LocalPosition.X - nameBox.Width / 2, nameBox.LocalPosition.Y);
             ui.AddChild(nameBox);
 
+            iconButtonRect = new( xPositionOnScreen + (int)nameBox.LocalPosition.X - 75, yPositionOnScreen + (int)nameBox.LocalPosition.Y - 5, 50, 50 );
+
+            manifestModBox = new()
+            {
+                Value = editing.Primary.ManifestationModifier,
+                LocalPosition = new(width / 4 - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder - 40, (height / 3) + -(7 * ElementScale + IClickableMenu.spaceToClearSideBorder * 2) / 2 - 55),
+                Callback = (e) => { editing.Primary.ManifestationModifier = manifestModBox.Value; }
+            };
+            manifestModBox.LocalPosition = new(manifestModBox.LocalPosition.X - manifestModBox.Width / 2, manifestModBox.LocalPosition.Y);
+            ui.AddChild(manifestModBox);
+
             attrStrengthBox = new()
             {
                 Value = editing.Primary.AttributeStrength,
@@ -216,7 +229,13 @@ namespace MajesticArcana
             editing.Secondaries = new(spell.Secondaries);
 
             nameBox.String = editing.Name;
+            manifestModBox.Value = editing.Primary.ManifestationModifier;
             attrStrengthBox.Value = editing.Primary.AttributeStrength;
+        }
+
+        public void SetSpellIcon(string filename)
+        {
+            editing.Icon = filename;
         }
 
         public override void receiveKeyPress(Keys key)
@@ -264,10 +283,9 @@ namespace MajesticArcana
             centerX -= moveLeft;
             threeFourthX -= moveLeft;
 
-            if (editingChain != null)
-            {
-                // TODO: draw those fields
-            }
+            Texture2D icon = Mod.SpellIcons[editing.Icon];
+            drawTextureBox(b, iconButtonRect.X - 12, iconButtonRect.Y - 12, iconButtonRect.Width + 24, iconButtonRect.Height + 24, Color.White);
+            b.Draw(icon, iconButtonRect, Color.White);
 
             int firstBoxX = fourthX - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder;
             int firstBoxY = topY - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder;
@@ -281,10 +299,8 @@ namespace MajesticArcana
             {
                 var elem = MagicElement.Elements[editing.Primary.ManifestationElement];
                 b.Draw(elem.Tilesheet, new Vector2( firstBoxX + IClickableMenu.spaceToClearSideBorder, firstBoxY + IClickableMenu.spaceToClearSideBorder ), elem.TextureRect, Color.White, 0, Vector2.Zero, ElementScale, SpriteEffects.None, 1);
-                // TODO: draw manifestation modifier
             }
 
-            // TODO: Draw attribute strength
             for ( int i = 0; i < editing.Primary.AttributeElements.Count; ++i)
             {
                 int boxX = centerX - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder;
@@ -366,6 +382,19 @@ namespace MajesticArcana
             if (helpButton.Hover)
             {
                 drawToolTip(b, I18n.Spellcrafting_Help_Description(), I18n.Spellcrafting_Help(), null);
+            }
+            if (iconButtonRect.Contains(Game1.getMousePosition()))
+            {
+                drawToolTip(b, I18n.Spellcrafting_Icon_Description(), I18n.Spellcrafting_Icon(), null);
+                if (justClickedX != -1 && justClickedY != -1)
+                {
+                    SetChildMenu(new SpellIconMenu());
+                    justClickedX = justClickedY = -1;
+                }
+            }
+            if (manifestModBox.Hover)
+            {
+                drawToolTip(b, I18n.Spellcrafting_ManifestationModifier_Description(), I18n.Spellcrafting_ManifestationModifier(), null);
             }
             if (attrStrengthBox.Hover)
             {
