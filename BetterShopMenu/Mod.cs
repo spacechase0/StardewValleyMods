@@ -13,6 +13,9 @@ using StardewValley.Menus;
 using SObject = StardewValley.Object;
 using HarmonyLib;
 using Pathoschild.Stardew.ChestsAnywhere;
+using static StardewValley.Menus.NumberSelectionMenu;
+using SpaceShared.UI;
+using tlitookilakin.HDPortraits;
 
 namespace BetterShopMenu
 {
@@ -23,6 +26,8 @@ namespace BetterShopMenu
         public static Configuration Config;
         internal bool ChestsAnywhereActive;
         internal IChestsAnywhereApi ChestsAnywhereApi;
+        internal bool CustomBackpackFramework;
+        internal IHDPortraitsAPI HdPortraitsApi;
 
         public override void Entry(IModHelper helper)
         {
@@ -43,8 +48,7 @@ namespace BetterShopMenu
             this.GridLayoutActive = Config.GridLayout;
             this.ActiveButton = (this.GridLayoutActive ? this.LinearClickableButton : this.GridClickableButton);
 
-            this.Quantity_OKButton = null;
-            this.Quantity_TextBox = null;
+            this.NumberQuantityMenu = null;
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
@@ -78,7 +82,7 @@ namespace BetterShopMenu
                                  );
 
             // this patches out ShopMenu.draw.
-            // excluding the grid layout draw, our draw procedure is really just a copy of the Stardew ShopMenu.draw code.
+            // excluding the grid layout draw, our draw procedure is really mostle a copy of much the Stardew ShopMenu.draw code.
             System.Type[] drawParams = new System.Type[] { typeof(SpriteBatch) };
             mInfo = harmony.Patch(original: AccessTools.Method(typeof(StardewValley.Menus.ShopMenu), nameof(StardewValley.Menus.ShopMenu.draw), drawParams),
                                   prefix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopMenuPatches.ShopMenu_draw_Prefix))
@@ -112,6 +116,12 @@ namespace BetterShopMenu
 
             this.ChestsAnywhereActive = false;
             this.ChestsAnywhereApi = this.Helper.ModRegistry.GetApi<IChestsAnywhereApi>("Pathoschild.ChestsAnywhere");
+
+            this.CustomBackpackFramework = this.Helper.ModRegistry.IsLoaded("aedenthorn.CustomBackpack");
+            //Log.Debug($"CustomBackpackFramework = {this.CustomBackpackFramework}");
+
+            this.HdPortraitsApi = this.Helper.ModRegistry.GetApi<IHDPortraitsAPI>("tlitookilakin.HDPortraits");
+            //this.HdPortraitsApi = null;
         }
 
         internal ShopMenu Shop;
@@ -145,9 +155,10 @@ namespace BetterShopMenu
         internal ClickableTextureComponent ActiveButton;
         internal bool GridLayoutActive;
 
-        internal ClickableTextureComponent Quantity_OKButton;
-        internal TextBox Quantity_TextBox;
         internal int QuantityIndex;
+        private IClickableMenu NumberQuantityMenu;
+        private int MaxQuantityValue;
+        private int QuantityAmount;
 
         IReflectedField<Rectangle> Reflect_scrollBarRunner;
         IReflectedField<List<TemporaryAnimatedSprite>> Reflect_animations;
@@ -180,14 +191,15 @@ namespace BetterShopMenu
             this.Reflect_hoverPrice = this.Helper.Reflection.GetField<int>(shopMenu, "hoverPrice");
             this.Reflect_tryToPurchaseItem = this.Helper.Reflection.GetMethod(shopMenu, "tryToPurchaseItem");
 
+            this.GridLayoutActive = Config.GridLayout;
+
             Rectangle bounds = new Rectangle(shopMenu.xPositionOnScreen - 48, shopMenu.yPositionOnScreen + 530, 64, 64);
             this.LinearClickableButton.bounds = bounds;
             this.GridClickableButton.bounds = bounds;
 
             this.ChestsAnywhereActive = (this.ChestsAnywhereApi != null) && this.ChestsAnywhereApi.IsOverlayActive();
 
-            this.Quantity_OKButton = null;
-            this.Quantity_TextBox = null;
+            this.NumberQuantityMenu = null;
             this.QuantityIndex = -1;
         }
 
@@ -406,7 +418,7 @@ namespace BetterShopMenu
                 //}
 
                 bool background = false;
-                if (this.ChestsAnywhereActive && this.ChestsAnywhereApi.IsOverlayModal())
+                if ((this.NumberQuantityMenu != null) || (this.ChestsAnywhereActive && this.ChestsAnywhereApi.IsOverlayModal()))
                     background = true;
 
                 if (this.GridLayoutActive)
@@ -414,11 +426,8 @@ namespace BetterShopMenu
                 else
                     this.DrawNewFields(e.SpriteBatch);
 
-                if (this.Quantity_TextBox != null)
-                {
-                    this.Quantity_TextBox.Draw(e.SpriteBatch);
-                    this.Quantity_OKButton.draw(e.SpriteBatch);
-                }
+                if (this.NumberQuantityMenu != null)
+                    this.NumberQuantityMenu.draw(e.SpriteBatch);
 
                 this.Shop.drawMouse(e.SpriteBatch);
             }
@@ -634,7 +643,10 @@ namespace BetterShopMenu
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(portrait_draw_position, shop.yPositionOnScreen), new Rectangle(603, 414, 74, 74), Color.White, 0f, Vector2.Zero, 4f, flipped: false, 0.91f);
                     if (shop.portraitPerson.Portrait != null)
                     {
-                        b.Draw(shop.portraitPerson.Portrait, new Vector2(portrait_draw_position + 20, shop.yPositionOnScreen + 20), new Rectangle(0, 0, 64, 64), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.92f);
+                        if (this.HdPortraitsApi == null)
+                            b.Draw(shop.portraitPerson.Portrait, new Vector2(portrait_draw_position + 20, shop.yPositionOnScreen + 20), new Rectangle(0, 0, 64, 64), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.92f);
+                        else
+                            this.HdPortraitsApi.DrawPortrait(b, shop.portraitPerson, NPC.portrait_neutral_index, new Point(portrait_draw_position + 20, shop.yPositionOnScreen + 20), Color.White);
                     }
                 }
                 if ((shop.potraitPersonDialogue != null) && !background)
@@ -688,23 +700,34 @@ namespace BetterShopMenu
             }
         }
 
-        private void CloseQuantityDialog(TextBox sender)
+        private void CloseQuantityDialog(bool cancel)
         {
-            int amount;
-            bool ok = int.TryParse(this.Quantity_TextBox.Text, out amount);
-            if (amount > 999)
-                amount = 999;
-
+            int amount = 0;
             int idx = this.QuantityIndex;
 
-            this.Quantity_TextBox.Selected = false;
-            this.Quantity_TextBox = null;
-            this.Quantity_OKButton = null;
+            if (!cancel)
+            {
+                var textBox = this.Helper.Reflection.GetField<TextBox>(this.NumberQuantityMenu, "numberSelectedBox").GetValue();
+                if (!int.TryParse(textBox.Text, out amount))
+                    amount = 0;
+
+                if (amount > 999)
+                    amount = 999;
+            }
+
             this.QuantityIndex = -1;
+            this.Shop.SetChildMenu(null);
+            this.NumberQuantityMenu = null;
 
             //call the purchase code here
-            if (ok && (idx >= 0))
+            if ((amount > 0) && (idx >= 0))
                 this.PurchaseItem(amount, idx);
+        }
+
+        private void BehaviorOnNumberSelect(int number, int price, Farmer who)
+        {
+            //unused. should probably dump this.
+            this.QuantityAmount = number;
         }
 
         private void CreateQuantityDialog(Vector2 cursorPos)
@@ -712,23 +735,21 @@ namespace BetterShopMenu
             int X = (int)cursorPos.X + Game1.tileSize;
             int Y = (int)cursorPos.Y;
 
-            this.Quantity_TextBox = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor);
-            this.Quantity_TextBox.X = X;
-            this.Quantity_TextBox.Y = Y;
-            int width = this.Quantity_TextBox.Width;
+            var shop = this.Shop;
+            var forSale = shop.forSale;
+            var itemPriceAndStock = shop.itemPriceAndStock;
 
-            this.Quantity_OKButton = new ClickableTextureComponent(
-                                               new Rectangle(X + width + Game1.pixelZoom, // pixelzoom used to give gap
-                                                             Y,
-                                                             Game1.tileSize, Game1.tileSize),
-                                               Game1.mouseCursors,
-                                               Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1),
-                                               1f,
-                                               false);
+            int idx = this.QuantityIndex;
+            int price = -1;
+            if (itemPriceAndStock[forSale[idx]][0] > 0)
+                price = itemPriceAndStock[forSale[idx]][0];
 
-            this.Quantity_TextBox.OnEnterPressed += this.CloseQuantityDialog;
-            this.Quantity_TextBox.numbersOnly = true;
-            this.Quantity_TextBox.SelectMe();
+            int max = Math.Min(999, ShopMenu.getPlayerCurrencyAmount(Game1.player, shop.currency) / Math.Max(1, itemPriceAndStock[forSale[idx]][0]));
+            this.MaxQuantityValue = max;
+
+            this.NumberQuantityMenu = new NumberSelectionMenu(I18n.Quantity_Name(), this.BehaviorOnNumberSelect, price, minValue: 0, maxValue:max, defaultNumber: 1);
+            this.Shop.SetChildMenu(this.NumberQuantityMenu);
+            this.QuantityAmount = 1;
         }
 
         private bool GetQuantityIndex()
@@ -756,7 +777,7 @@ namespace BetterShopMenu
 
             if (shop == null)
                 return;
-            else if (Game1.activeClickableMenu != this.Shop)
+            else if (Game1.activeClickableMenu != shop)
             {
                 //Log.Debug($"OnButtonPressed Game1.activeClickableMenu != shop. {Game1.activeClickableMenu}");
                 return;
@@ -764,7 +785,39 @@ namespace BetterShopMenu
             else if (this.ChestsAnywhereActive && this.ChestsAnywhereApi.IsOverlayModal())
                 return; // Chests Anywhere's options / dropdown view is handling input
 
-            if (e.Button is SButton.MouseLeft or SButton.MouseRight)
+            else if (this.NumberQuantityMenu != null)
+            {
+                var nmenu = this.NumberQuantityMenu as NumberSelectionMenu;
+
+                var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Cursor.ScreenPixels);
+                int x = (int)uiCursor.X;
+                int y = (int)uiCursor.Y;
+
+                if ((nmenu.okButton.containsPoint(x, y) && (e.Button is SButton.MouseLeft)) || (e.Button is SButton.Enter))
+                {
+                    var currentValue = this.Helper.Reflection.GetField<int>(this.NumberQuantityMenu, "currentValue");
+                    if (currentValue.GetValue() <= this.MaxQuantityValue)
+                    {
+                        Game1.playSound("smallSelect");
+                        this.Helper.Input.Suppress(e.Button);
+                        this.CloseQuantityDialog(false);
+                    }
+                    else
+                    {
+                        var shake = this.Helper.Reflection.GetField<int>(this.NumberQuantityMenu, "priceShake");
+                        shake?.SetValue(2000);
+                        this.Helper.Input.Suppress(e.Button);
+                        Game1.playSound("bigDeSelect");
+                    }
+                }
+                else if ((nmenu.cancelButton.containsPoint(x, y) && (e.Button is SButton.MouseLeft)) || (e.Button is SButton.Escape))
+                {
+                    Game1.playSound("bigDeSelect");
+                    this.Helper.Input.Suppress(e.Button);
+                    this.CloseQuantityDialog(true);
+                }
+            }
+            else if (e.Button is SButton.MouseLeft or SButton.MouseRight)
             {
                 var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Cursor.ScreenPixels);
                 int x = (int)uiCursor.X;
@@ -784,11 +837,6 @@ namespace BetterShopMenu
                     this.GridLayoutActive = !this.GridLayoutActive;
                     this.ActiveButton = (this.GridLayoutActive ? this.LinearClickableButton : this.GridClickableButton);
                     this.Shop.currentItemIndex = 0;
-                }
-                else if ((this.Quantity_OKButton != null) && (e.Button == SButton.MouseLeft) && this.Quantity_OKButton.bounds.Contains(x, y))
-                {
-                    this.Helper.Input.Suppress(e.Button);
-                    this.CloseQuantityDialog(this.Quantity_TextBox);
                 }
                 else if (
                          Config.QuantityDialog &&
@@ -816,8 +864,8 @@ namespace BetterShopMenu
                     }
                     else
                     {
-                        this.Helper.Input.Suppress(e.Button);
-                        this.DoGridLayoutLeftClick(e, pt);
+                        if (this.DoGridLayoutLeftClick(e, pt))
+                            this.Helper.Input.Suppress(e.Button);
                     }
                 }
             }
@@ -893,12 +941,7 @@ namespace BetterShopMenu
                 }
 
                 this.QuantityIndex = -1;
-                this.Quantity_OKButton = null;
-                if (this.Quantity_TextBox != null)
-                {
-                    this.Quantity_TextBox.Selected = false;
-                    this.Quantity_TextBox = null;
-                }
+                this.NumberQuantityMenu = null;
 
                 this.Helper.Events.GameLoop.UpdateTicked -= this.OnUpdateTicked;
                 this.Helper.Events.Display.RenderedActiveMenu -= this.OnRenderedActiveMenu;
@@ -994,7 +1037,13 @@ namespace BetterShopMenu
         private void OnMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
         {
             if ((this.Shop != null) && this.GridLayoutActive)
-                this.DoScroll(e.Delta);
+            {
+                // we only scroll if the mouse is not over the inventory when the Custom Backpack Framework mod is installed.
+                // it will want to scroll the inventory as necessary.
+                var uiCursor = Utility.ModifyCoordinatesForUIScale(e.Position.ScreenPixels);
+                if (!this.CustomBackpackFramework || !this.Shop.inventory.isWithinBounds((int)uiCursor.X, (int)uiCursor.Y))
+                    this.DoScroll(e.Delta);
+            }
         }
 
         private void PurchaseItem(int numberToBuy, int idx)
@@ -1002,16 +1051,15 @@ namespace BetterShopMenu
             var shop = this.Shop;
             var forSale = shop.forSale;
             var itemPriceAndStock = shop.itemPriceAndStock;
-            int currency = shop.currency;
             if (idx < 0)
                 return;
 
             numberToBuy = Math.Min(
-                                   Math.Min(numberToBuy, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / Math.Max(1, itemPriceAndStock[forSale[idx]][0])),
+                                   Math.Min(numberToBuy, ShopMenu.getPlayerCurrencyAmount(Game1.player, shop.currency) / Math.Max(1, itemPriceAndStock[forSale[idx]][0])),
                                    Math.Max(1, itemPriceAndStock[forSale[idx]][1])
                                   );
-
             numberToBuy = Math.Min(numberToBuy, forSale[idx].maximumStackSize());
+
             if (numberToBuy == -1)
                 numberToBuy = 1;
 
@@ -1039,12 +1087,11 @@ namespace BetterShopMenu
             }
         }
 
-        private void DoGridLayoutLeftClick(ButtonPressedEventArgs e, Point pt)
+        private bool DoGridLayoutLeftClick(ButtonPressedEventArgs e, Point pt)
         {
             var shop = this.Shop;
             var forSale = shop.forSale;
             var itemPriceAndStock = shop.itemPriceAndStock;
-            int currency = shop.currency;
             int currentItemIndex = shop.currentItemIndex;
             var animations = this.Reflect_animations.GetValue();
             float sellPercentage = this.Reflect_sellPercentage.GetValue();
@@ -1063,17 +1110,17 @@ namespace BetterShopMenu
             if (shop.upperRightCloseButton.containsPoint(x, y))
             {
                 shop.exitThisMenu();
-                return;
+                return true;
             }
             else if (downArrow.containsPoint(x, y))
             {
                 this.DoScroll(-1);
-                return;
+                return true;
             }
             else if (upArrow.containsPoint(x, y))
             {
                 this.DoScroll(1);
-                return;
+                return true;
             }
             else if (scrollBarRunner.Contains(x, y))
             {
@@ -1091,9 +1138,9 @@ namespace BetterShopMenu
                 }
                 int y2 = scrollBar.bounds.Y;
                 if (y1 == y2)
-                    return;
+                    return true;
                 Game1.playSound("shiny4");
-                return;
+                return true;
             }
             else
             {
@@ -1108,10 +1155,14 @@ namespace BetterShopMenu
 
                         // the tabs filter but we do have our filter and some items/filters may overlap (dressers), so redo our filter.
                         this.SyncStock();
-                        return;
+                        return true;
                     }
                 }
             }
+
+            // say any click within the grid layout area is handled.
+            var menuRect = new Rectangle(shop.xPositionOnScreen, shop.yPositionOnScreen, shop.width, shop.height - 256 + 32 + 4);
+            bool clickHandled = menuRect.Contains(x, y);
 
             Vector2 clickableComponent = shop.inventory.snapToClickableComponent(x, y);
             if (shop.heldItem == null)
@@ -1119,13 +1170,15 @@ namespace BetterShopMenu
                 Item item = shop.inventory.leftClick(x, y, null, false);
                 if (item != null)
                 {
+                    clickHandled = true;// was null, now not. picked/selected an item in inventory to sell.
+
                     if (shop.onSell != null)
                     {
                         shop.onSell(item);
                     }
                     else
                     {
-                        ShopMenu.chargePlayer(Game1.player, currency, -((item is SObject obj ? (int)(obj.sellToStorePrice() * (double)sellPercentage) : (int)(item.salePrice() / 2 * (double)sellPercentage)) * item.Stack));
+                        ShopMenu.chargePlayer(Game1.player, shop.currency, -((item is SObject obj ? (int)(obj.sellToStorePrice() * (double)sellPercentage) : (int)(item.salePrice() / 2 * (double)sellPercentage)) * item.Stack));
                         int num = item.Stack / 8 + 2;
                         for (int index = 0; index < num; ++index)
                         {
@@ -1160,6 +1213,7 @@ namespace BetterShopMenu
             else
             {
                 shop.heldItem = shop.inventory.leftClick(x, y, (Item)shop.heldItem);
+                clickHandled = clickHandled || (shop.heldItem == null);//placed heldItem into inventory.
             }
 
             for (int i = currentItemIndex * UnitsWide; i < forSale.Count && i < currentItemIndex * UnitsWide + UnitsWide * 3; ++i)
@@ -1171,39 +1225,14 @@ namespace BetterShopMenu
                                                UnitWidth, UnitHeight);
                 if (rect.Contains(x, y) && forSale[i] != null)
                 {
-                    //int numberToBuy = (!e.IsDown(SButton.LeftShift) ? 1 : Math.Min(Math.Min(e.IsDown(SButton.LeftControl) ? 25 : 5, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / Math.Max(1, itemPriceAndStock[forSale[i]][0])), Math.Max(1, itemPriceAndStock[forSale[i]][1])));
                     int numberToBuy = (!e.IsDown(SButton.LeftShift) ? 1 : (e.IsDown(SButton.LeftControl) ? 25 : 5));
 
                     this.PurchaseItem(numberToBuy, i);
-                    //numberToBuy = Math.Min(numberToBuy, forSale[i].maximumStackSize());
-                    //if (numberToBuy == -1)
-                    //    numberToBuy = 1;
-
-                    ////tryToPurchase may change heldItem.
-                    //if (numberToBuy > 0 && this.Reflect_tryToPurchaseItem.Invoke<bool>(forSale[i], shop.heldItem, numberToBuy, x, y, i))
-                    //{
-                    //    itemPriceAndStock.Remove(forSale[i]);
-                    //    forSale.RemoveAt(i);
-                    //}
-                    //else if (numberToBuy <= 0)
-                    //{
-                    //    Game1.dayTimeMoneyBox.moneyShakeTimer = 1000;
-                    //    Game1.playSound("cancel");
-                    //}
-
-                    //if (
-                    //    (shop.heldItem != null) &&
-                    //    (this.Reflect_isStorageShop.GetValue() || Game1.options.SnappyMenus) &&
-                    //    (Game1.activeClickableMenu is ShopMenu) &&
-                    //    Game1.player.addItemToInventoryBool(shop.heldItem as Item)
-                    //   )
-                    //{
-                    //    shop.heldItem = null;
-                    //    DelayedAction.playSoundAfterDelay("coin", 100);
-                    //}
                     break;
                 }
             }
+
+            return clickHandled;
         }
 
         private void DoGridLayoutRightClick(ButtonPressedEventArgs e, Point pt)
@@ -1211,7 +1240,6 @@ namespace BetterShopMenu
             var shop = this.Shop;
             var forSale = shop.forSale;
             var itemPriceAndStock = shop.itemPriceAndStock;
-            int currency = shop.currency;
             var animations = this.Reflect_animations.GetValue();
             int currentItemIndex = shop.currentItemIndex;
             float sellPercentage = this.Reflect_sellPercentage.GetValue();
@@ -1234,14 +1262,30 @@ namespace BetterShopMenu
                     }
                     else
                     {
-                        ShopMenu.chargePlayer(Game1.player, currency, -((item is SObject obj ? (int)(obj.sellToStorePrice() * (double)sellPercentage) : (int)(item.salePrice() / 2 * (double)sellPercentage)) * item.Stack));
+                        ShopMenu.chargePlayer(Game1.player, shop.currency, -((item is SObject obj ? (int)(obj.sellToStorePrice() * (double)sellPercentage) : (int)(item.salePrice() / 2 * (double)sellPercentage)) * item.Stack));
                         Game1.playSound(Game1.mouseClickPolling > 300 ? "purchaseRepeat" : "purchaseClick");
-                        animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 64, 256, 64, 64), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                        int coins = 2;
+                        for (int j = 0; j < coins; j++)
                         {
-                            alphaFade = 0.025f,
-                            motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 12f),
-                            acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 0.5f)
-                        });
+                            animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), flicker: false, flipped: false)
+                            {
+                                alphaFade = 0.025f,
+                                motion = new Vector2(Game1.random.Next(-3, 4), -4f),
+                                acceleration = new Vector2(0f, 0.5f),
+                                delayBeforeAnimationStart = j * 25,
+                                scale = 2f
+                            });
+                            Vector2 moneyBox = new Vector2(shop.xPositionOnScreen - 36, shop.yPositionOnScreen + shop.height - shop.inventory.height - 16);
+                            animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), flicker: false, flipped: false)
+                            {
+                                scale = 4f,
+                                alphaFade = 0.025f,
+                                delayBeforeAnimationStart = j * 50,
+                                motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), moneyBox, 12f),
+                                acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), moneyBox, 0.5f)
+                            });
+                        }
+
                         if (item is SObject o && o.Edibility != -300)
                         {
                             (Game1.getLocationFromName("SeedShop") as StardewValley.Locations.SeedShop).itemsToStartSellingTomorrow.Add(item.getOne());
@@ -1275,7 +1319,11 @@ namespace BetterShopMenu
                 {
                     bool leftShiftDown = e != null ? e.IsDown(SButton.LeftShift) : this.Helper.Input.IsDown(SButton.LeftShift);
                     bool leftCtrlDown = e != null ? e.IsDown(SButton.LeftControl) : this.Helper.Input.IsDown(SButton.LeftControl);
-                    int numberToBuy = (!leftShiftDown ? 1 : Math.Min(Math.Min(leftCtrlDown ? 25 : 5, ShopMenu.getPlayerCurrencyAmount(Game1.player, currency) / Math.Max(1, itemPriceAndStock[forSale[i]][0])), Math.Max(1, itemPriceAndStock[forSale[i]][1])));
+                    int numberToBuy = (!leftShiftDown ? 1 : (leftCtrlDown ? 25 : 5));
+                    numberToBuy = Math.Min(
+                                           Math.Min(numberToBuy, ShopMenu.getPlayerCurrencyAmount(Game1.player, shop.currency) / Math.Max(1, itemPriceAndStock[forSale[i]][0])),
+                                           Math.Max(1, itemPriceAndStock[forSale[i]][1])
+                                          );
                     numberToBuy = Math.Min(numberToBuy, forSale[i].maximumStackSize());
 
                     //tryToPurchase may change heldItem.

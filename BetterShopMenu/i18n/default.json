@@ -11,6 +11,9 @@
     "sort.name": "Name",
     "sort.price": "Price",
 
+    //quantity dialog
+    "quantity.name" :  "Quantity",
+
     // category names
     "categories.everything": "Everything",
     "categories.other": "Other",

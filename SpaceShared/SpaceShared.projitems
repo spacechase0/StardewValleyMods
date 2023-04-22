@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IMoreRingsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ISolidFoundationsAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ISpaceCoreApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ITrainStationApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommonExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommonHelper.cs" />

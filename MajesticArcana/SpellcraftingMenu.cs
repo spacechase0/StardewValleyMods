@@ -39,6 +39,7 @@ namespace MajesticArcana
         }
 
         public string Name { get; set; } = "Spell";
+        public string Icon { get; set; } = "fireball-red-1.png";
         public Slot Primary { get; set; } = new();
         public List<Tuple<Chain, Spell>> Secondaries { get; set; } = new();
     }
@@ -48,7 +49,16 @@ namespace MajesticArcana
     {
         private RootElement ui;
 
+        private Image spellsButton;
+        private Label helpButton;
+
         private Textbox nameBox;
+        private Rectangle iconButtonRect; // Can't be an element since Image only accepts integers for scale
+        private Floatbox manifestModBox;
+        private Floatbox attrStrengthBox;
+
+        private Image chainTypeImage;
+        private Floatbox chainDelayBox;
 
         private List<Image> uiElementsForMagicElements = new();
         private MagicElement currElem = null;
@@ -60,8 +70,13 @@ namespace MajesticArcana
 
         private const int ElementScale = 6;
 
+        public void Trash(Spell.Chain chain)
+        {
+            editing.Secondaries.RemoveAll(t => t.Item1 == chain);
+        }
+
         public SpellcraftingMenu( Spell theEditing = null, Spell.Chain theChain = null )
-        :   base( Game1.viewport.Width / 2 - 400, Game1.viewport.Height / 2 - 300, 800, 600, true )
+        :   base( Game1.uiViewport.Width / 2 - 400, Game1.uiViewport.Height / 2 - 300, 800, 600, true )
         {
             editing = theEditing ?? new Spell();
             editingChain = theChain;
@@ -69,17 +84,17 @@ namespace MajesticArcana
             ui = new();
             ui.LocalPosition = new(xPositionOnScreen, yPositionOnScreen);
 
-            Image spellsButton = new()
+            spellsButton = new()
             {
                 Texture = Game1.objectSpriteSheet,
                 TexturePixelArea = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 102, 16, 16),
                 Scale = Game1.pixelZoom,
-                Callback = (e) => { }, // TODO
+                Callback = (e) => { SetChildMenu(new SpellStashMenu()); },
                 LocalPosition = new(32, 32),
             };
             ui.AddChild(spellsButton);
 
-            Label helpButton = new()
+            helpButton = new()
             {
                 NonBoldShadow = false,
                 IdleTextColor = Color.White,
@@ -87,17 +102,86 @@ namespace MajesticArcana
                 String = "?",
                 Callback = (e) => { }, // TODO
             };
-            helpButton.LocalPosition = new(800 - helpButton.Width - 32, 32);
+            helpButton.LocalPosition = new(width - helpButton.Width - 32, 32);
             ui.AddChild(helpButton);
+
+            if (editingChain != null)
+            {
+                chainTypeImage = new()
+                {
+                    Texture = Game1.objectSpriteSheet, // temp
+                    TexturePixelArea = new(0, 0, 16, 16),
+                    Scale = Game1.pixelZoom,
+                    Callback = (e) => { }, // TODO
+                };
+                chainTypeImage.LocalPosition = new(width - 184, 32);
+                ui.AddChild(chainTypeImage);
+
+                chainDelayBox = new()
+                {
+                    Value = editingChain.WithDelay,
+                    LocalPosition = new(chainTypeImage.LocalPosition.X + 32, 110),
+                    Callback = (e) => { editingChain.WithDelay = chainDelayBox.Value; },
+                };
+                chainDelayBox.LocalPosition = new(chainDelayBox.LocalPosition.X - chainDelayBox.Width / 2, chainDelayBox.LocalPosition.Y);
+                ui.AddChild(chainDelayBox);
+
+                Image trashButton = new()
+                {
+                    Texture = Game1.toolSpriteSheet,
+                    TexturePixelArea = new( 224, 0, 16, 16 ),
+                    Scale = Game1.pixelZoom,
+                    Callback = (e) =>
+                    {
+                        (GetParentMenu() as SpellcraftingMenu).Trash(editingChain);
+                        GetParentMenu().SetChildMenu(null);
+                    },
+                };
+                trashButton.LocalPosition = new(32, height - trashButton.Height - 32);
+                ui.AddChild(trashButton);
+
+                Image okayButton = new()
+                {
+                    Texture = Game1.mouseCursors,
+                    TexturePixelArea = new(128, 256, 64, 64),
+                    Scale = 1,
+                    Callback = (e) =>
+                    {
+                        GetParentMenu().SetChildMenu(null);
+                    },
+                };
+                okayButton.LocalPosition = new(width - okayButton.Width - 32, height - okayButton.Height - 32);
+                ui.AddChild(okayButton);
+            }
 
             nameBox = new()
             {
                 String = editing.Name,
                 LocalPosition = new( ((spellsButton.LocalPosition.X + spellsButton.Width + 32) + (helpButton.LocalPosition.X - 32)) / 2, 40 ),
-                Callback = (e) => { }, // Required for textbox to function???
+                Callback = (e) => { editing.Name = nameBox.String; },
             };
             nameBox.LocalPosition = new(nameBox.LocalPosition.X - nameBox.Width / 2, nameBox.LocalPosition.Y);
             ui.AddChild(nameBox);
+
+            iconButtonRect = new( xPositionOnScreen + (int)nameBox.LocalPosition.X - 75, yPositionOnScreen + (int)nameBox.LocalPosition.Y - 5, 50, 50 );
+
+            manifestModBox = new()
+            {
+                Value = editing.Primary.ManifestationModifier,
+                LocalPosition = new(width / 4 - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder - 40, (height / 3) + -(7 * ElementScale + IClickableMenu.spaceToClearSideBorder * 2) / 2 - 55),
+                Callback = (e) => { editing.Primary.ManifestationModifier = manifestModBox.Value; }
+            };
+            manifestModBox.LocalPosition = new(manifestModBox.LocalPosition.X - manifestModBox.Width / 2, manifestModBox.LocalPosition.Y);
+            ui.AddChild(manifestModBox);
+
+            attrStrengthBox = new()
+            {
+                Value = editing.Primary.AttributeStrength,
+                LocalPosition = new((width / 2) - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder - 40, (height / 3) + -(7 * ElementScale + IClickableMenu.spaceToClearSideBorder * 2) / 2 - 55 ),
+                Callback = (e) => { editing.Primary.AttributeStrength = attrStrengthBox.Value; },
+            };
+            attrStrengthBox.LocalPosition = new(attrStrengthBox.LocalPosition.X - attrStrengthBox.Width / 2, attrStrengthBox.LocalPosition.Y);
+            ui.AddChild(attrStrengthBox);
 
             var elems = MagicElement.Elements;
             StaticContainer elementsContainer = new()
@@ -129,6 +213,29 @@ namespace MajesticArcana
                 ++ie;
             }
             ui.AddChild(elementsContainer);
+        }
+
+        public void Load(Spell spell)
+        {
+            editing.Name = spell.Name;
+            editing.Icon = spell.Icon;
+            editing.Primary = new()
+            {
+                ManifestationElement = spell.Primary.ManifestationElement,
+                ManifestationModifier = spell.Primary.ManifestationModifier,
+                AttributeElements = new(spell.Primary.AttributeElements),
+                AttributeStrength = spell.Primary.AttributeStrength,
+            };
+            editing.Secondaries = new(spell.Secondaries);
+
+            nameBox.String = editing.Name;
+            manifestModBox.Value = editing.Primary.ManifestationModifier;
+            attrStrengthBox.Value = editing.Primary.AttributeStrength;
+        }
+
+        public void SetSpellIcon(string filename)
+        {
+            editing.Icon = filename;
         }
 
         public override void receiveKeyPress(Keys key)
@@ -176,10 +283,9 @@ namespace MajesticArcana
             centerX -= moveLeft;
             threeFourthX -= moveLeft;
 
-            if (editingChain != null)
-            {
-                // TODO: draw those fields
-            }
+            Texture2D icon = Mod.SpellIcons[editing.Icon];
+            drawTextureBox(b, iconButtonRect.X - 12, iconButtonRect.Y - 12, iconButtonRect.Width + 24, iconButtonRect.Height + 24, Color.White);
+            b.Draw(icon, iconButtonRect, Color.White);
 
             int firstBoxX = fourthX - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder;
             int firstBoxY = topY - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder;
@@ -193,10 +299,8 @@ namespace MajesticArcana
             {
                 var elem = MagicElement.Elements[editing.Primary.ManifestationElement];
                 b.Draw(elem.Tilesheet, new Vector2( firstBoxX + IClickableMenu.spaceToClearSideBorder, firstBoxY + IClickableMenu.spaceToClearSideBorder ), elem.TextureRect, Color.White, 0, Vector2.Zero, ElementScale, SpriteEffects.None, 1);
-                // TODO: draw manifestation modifier
             }
 
-            // TODO: Draw attribute strength
             for ( int i = 0; i < editing.Primary.AttributeElements.Count; ++i)
             {
                 int boxX = centerX - 7 * ElementScale / 2 - IClickableMenu.spaceToClearSideBorder;
@@ -231,11 +335,27 @@ namespace MajesticArcana
 
             for (int i = 0; i < editing.Secondaries.Count; ++i)
             {
+                int chainY = topY + i * 80 - 32;
+                drawTextureBox(b, threeFourthX - boxSize, chainY, 300, 64, Color.White);
+                b.DrawString(Game1.smallFont, editing.Secondaries[i].Item2.Name, new Vector2(threeFourthX - boxSize + IClickableMenu.spaceToClearSideBorder, chainY + IClickableMenu.spaceToClearSideBorder), Color.Black);
+
+                if (new Rectangle(threeFourthX - boxSize, chainY, 300, 64).Contains(justClickedX, justClickedY))
+                {
+                    SetChildMenu(new SpellcraftingMenu(editing.Secondaries[ i ].Item2, editing.Secondaries[i].Item1));
+                }
             }
 
             int createChainY = topY + editing.Secondaries.Count * 80 - 32;
             drawTextureBox(b, threeFourthX - boxSize, createChainY, 300, 64, Color.White);
             b.DrawString(Game1.smallFont, I18n.Spellcrafting_CreateChain(), new Vector2( threeFourthX - boxSize + IClickableMenu.spaceToClearSideBorder, createChainY + IClickableMenu.spaceToClearSideBorder ), Color.Black);
+            if (new Rectangle(threeFourthX - boxSize, createChainY, 300, 64).Contains(justClickedX, justClickedY))
+            {
+                Spell.Chain newChain = new();
+                Spell newSpell = new();
+                newSpell.Name = "Chain";
+                editing.Secondaries.Add(new(newChain, newSpell));
+                SetChildMenu(new SpellcraftingMenu(newSpell, newChain));
+            }
 
             SpriteText.drawString(b, ">", firstBoxX + boxSize + 56, topY - 24, color: SpriteText.color_White);
             SpriteText.drawString(b, ">", threeFourthX - boxSize - 56, topY - 24, color: SpriteText.color_White);
@@ -253,6 +373,40 @@ namespace MajesticArcana
                     var magicElem = uiElem.UserData as MagicElement;
                     drawToolTip(b, magicElem.Description + "\n\n" + I18n.Element_Manifestation(magicElem.Manifestation) + "\n\n" + I18n.Element_Attribute(magicElem.Attribute), magicElem.Name, null);
                 }
+            }
+
+            if (spellsButton.Hover)
+            {
+                drawToolTip(b, I18n.Spellcrafting_Spellbook_Description(), I18n.Spellcrafting_Spellbook(), null);
+            }
+            if (helpButton.Hover)
+            {
+                drawToolTip(b, I18n.Spellcrafting_Help_Description(), I18n.Spellcrafting_Help(), null);
+            }
+            if (iconButtonRect.Contains(Game1.getMousePosition()))
+            {
+                drawToolTip(b, I18n.Spellcrafting_Icon_Description(), I18n.Spellcrafting_Icon(), null);
+                if (justClickedX != -1 && justClickedY != -1)
+                {
+                    SetChildMenu(new SpellIconMenu());
+                    justClickedX = justClickedY = -1;
+                }
+            }
+            if (manifestModBox.Hover)
+            {
+                drawToolTip(b, I18n.Spellcrafting_ManifestationModifier_Description(), I18n.Spellcrafting_ManifestationModifier(), null);
+            }
+            if (attrStrengthBox.Hover)
+            {
+                drawToolTip(b, I18n.Spellcrafting_AttributeStrength_Description(), I18n.Spellcrafting_AttributeStrength(), null);
+            }
+            if (chainTypeImage?.Hover ?? false)
+            {
+                drawToolTip(b, "(TODO current chain type here)", I18n.Spellcrafting_ChainType(), null);
+            }
+            if (chainDelayBox?.Hover ?? false)
+            {
+                drawToolTip(b, I18n.Spellcrafting_ChainDelay_Description(), I18n.Spellcrafting_ChainDelay(), null);
             }
 
             if (justClickedX != -1 && justClickedY != -1)

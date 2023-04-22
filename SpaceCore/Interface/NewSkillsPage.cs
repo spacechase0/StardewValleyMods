@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -65,6 +66,38 @@ namespace SpaceCore.Interface
         public const int PlayerPanelRegionId = 10275;
         private int playerPanelIndex;
         private int playerPanelTimer;
+
+        private ClickableTextureComponent upButton;
+        private ClickableTextureComponent downButton;
+        private ClickableTextureComponent scrollBar;
+        private Rectangle scrollBarRunner;
+        private bool scrolling;
+        private int skillScrollOffset;
+        private Dictionary<int, int> skillAreaSkillIndexes = new();
+        private Dictionary<int, int> skillBarSkillIndexes = new();
+
+        private ClickableComponent lastSnappedComponent = null;
+
+        private int GameSkillCount
+        {
+            [MethodImpl(MethodImplOptions.NoInlining)] // allowing mods to patch this getter if needed (alternative luck skill implementations?)
+            get => SpaceCore.Instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+        }
+
+        private int AllSkillCount
+            => this.GameSkillCount + Skills.GetSkillList().Length;
+
+        private int MaxSkillCountOnScreen
+        {
+            [MethodImpl(MethodImplOptions.NoInlining)] // allowing mods to patch this getter if needed
+            get => 9;
+        }
+
+        private int LastVisibleSkillIndex
+            => this.skillScrollOffset + this.MaxSkillCountOnScreen - 1;
+
+        private bool ShowsAllSkillsAtOnce
+            => this.AllSkillCount <= this.MaxSkillCountOnScreen;
 
         public NewSkillsPage(int x, int y, int width, int height)
             : base(x, y, width, height)
@@ -196,7 +229,7 @@ namespace SpaceCore.Interface
             int drawX = 0;
             int addedX = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + width - 448 - 48 + 4 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 4;
             int drawY = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 12;
-            int gameSkillCount = SpaceCore.Instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+            int gameSkillCount = this.GameSkillCount;
             int walletSnapId = this.specialItems.Any() ? NewSkillsPage.WalletRegionStartId : -1;
             int leftSnapId = this.playerPanel.myID;
             int rightSnapId = this.IsLegacyWallet || !this.IsWalletRightSide ? -1 : walletSnapId;
@@ -262,6 +295,7 @@ namespace SpaceCore.Interface
                         textureComponent.rightNeighborID = professionIndex == 2 ? rightSnapId : textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && skills.Length == 0 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
                         this.skillBars.Add(textureComponent);
+                        this.skillBarSkillIndexes[textureComponent.myID] = skillIndex;
                     }
                 }
                 drawX += 24;
@@ -305,6 +339,7 @@ namespace SpaceCore.Interface
                         textureComponent.rightNeighborID = professionIndex == 2 ? rightSnapId : textureComponent.myID + NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.downNeighborID = skillIndex == skills.Length - 1 ? walletSnapId : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
                         skillBars.Add(textureComponent);
+                        this.skillBarSkillIndexes[textureComponent.myID] = totalSkillIndex;
                     }
                 }
                 drawX += 24;
@@ -406,6 +441,7 @@ namespace SpaceCore.Interface
                 }
 
                 this.skillAreas.Add(textureComponent);
+                this.skillAreaSkillIndexes[textureComponent.myID] = skillIndex;
             }
 
             // Icons for custom skills
@@ -449,7 +485,14 @@ namespace SpaceCore.Interface
                 }
 
                 this.skillAreas.Add(textureComponent);
+                this.skillAreaSkillIndexes[textureComponent.myID] = actualSkillIndex;
             }
+
+            // scrollbar
+            this.upButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), 4f);
+            this.downButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + width + 16, this.yPositionOnScreen + height - 64, 44, 48), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), 4f);
+            this.scrollBar = new ClickableTextureComponent(new Rectangle(this.upButton.bounds.X + 12, this.upButton.bounds.Y + this.upButton.bounds.Height + 4, 24, 40), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), 4f);
+            this.scrollBarRunner = new Rectangle(this.scrollBar.bounds.X, this.upButton.bounds.Y + this.upButton.bounds.Height + 4, this.scrollBar.bounds.Width, height - 128 - this.upButton.bounds.Height - 8);
 
             // Add/update navigation
             this.populateClickableComponentList();
@@ -474,6 +517,35 @@ namespace SpaceCore.Interface
             if (this.currentlySnappedComponent == null || !Game1.options.snappyMenus || !Game1.options.gamepadControls)
                 return;
             this.snapCursorToCurrentSnappedComponent();
+        }
+
+        public override void snapCursorToCurrentSnappedComponent()
+        {
+            // taking scroll into consideration
+            foreach (ClickableTextureComponent skillArea in this.skillAreas)
+                skillArea.bounds = new Rectangle(skillArea.bounds.Left, skillArea.bounds.Top - this.skillScrollOffset * 56, skillArea.bounds.Width, skillArea.bounds.Height);
+
+            base.snapCursorToCurrentSnappedComponent();
+
+            // resetting scroll offset
+            foreach (ClickableTextureComponent skillArea in this.skillAreas)
+                skillArea.bounds = new Rectangle(skillArea.bounds.Left, skillArea.bounds.Top + this.skillScrollOffset * 56, skillArea.bounds.Width, skillArea.bounds.Height);
+        }
+
+        public override bool IsAutomaticSnapValid(int direction, ClickableComponent a, ClickableComponent b)
+        {
+            if (this.skillAreas.Contains(b))
+            {
+                if (this.skillAreaSkillIndexes.TryGetValue(b.myID, out int skillIndex) && (skillIndex < this.skillScrollOffset || skillIndex > this.LastVisibleSkillIndex))
+                    return false;
+            }
+            return base.IsAutomaticSnapValid(direction, a, b);
+        }
+
+        protected override void actionOnRegionChange(int oldRegion, int newRegion)
+        {
+            base.actionOnRegionChange(oldRegion, newRegion);
+            this.ConstrainVisibleSlotsToSelection();
         }
 
         public override void setCurrentlySnappedComponentTo(int id)
@@ -502,6 +574,58 @@ namespace SpaceCore.Interface
                         Game1.playSound("Cowboy_gunshot");
                 }
             }
+
+            // scrollbar
+            if (!this.ShowsAllSkillsAtOnce)
+            {
+                if (this.upButton.containsPoint(x, y) && this.skillScrollOffset > 0)
+                {
+                    this.scrollSkillsUp();
+                    Game1.playSound("shwip");
+                    return;
+                }
+                if (this.downButton.containsPoint(x, y) && this.skillScrollOffset < this.AllSkillCount - this.MaxSkillCountOnScreen)
+                {
+                    this.scrollSkillsDown();
+                    Game1.playSound("shwip");
+                    return;
+                }
+                if (this.scrollBar.containsPoint(x, y))
+                {
+                    this.scrolling = true;
+                    return;
+                }
+                if (!this.downButton.containsPoint(x, y) && x > base.xPositionOnScreen + base.width && x < base.xPositionOnScreen + base.width + 128 && y > base.yPositionOnScreen && y < base.yPositionOnScreen + base.height)
+                {
+                    this.scrolling = true;
+                    this.leftClickHeld(x, y);
+                    this.releaseLeftClick(x, y);
+                    return;
+                }
+            }
+        }
+
+        public override void leftClickHeld(int x, int y)
+        {
+            base.leftClickHeld(x, y);
+            if (!this.ShowsAllSkillsAtOnce && this.scrolling)
+            {
+                int y2 = this.scrollBar.bounds.Y;
+                this.scrollBar.bounds.Y = Math.Min(base.yPositionOnScreen + base.height - 64 - 12 - this.scrollBar.bounds.Height, Math.Max(y, base.yPositionOnScreen + this.upButton.bounds.Height + 20));
+                float percentage = (float)(y - this.scrollBarRunner.Y) / (float)this.scrollBarRunner.Height;
+                this.skillScrollOffset = Math.Min(this.AllSkillCount - this.MaxSkillCountOnScreen, Math.Max(0, (int)((float)this.AllSkillCount * percentage)));
+                this.setScrollBarToCurrentIndex();
+                if (y2 != this.scrollBar.bounds.Y)
+                {
+                    Game1.playSound("shiny4");
+                }
+            }
+        }
+
+        public override void releaseLeftClick(int x, int y)
+        {
+            base.releaseLeftClick(x, y);
+            this.scrolling = false;
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
@@ -593,13 +717,33 @@ namespace SpaceCore.Interface
 
         public override void receiveScrollWheelAction(int direction)
         {
-            // Skill page scrolls between skill components
-            if (Game1.options.SnappyMenus && this.currentlySnappedComponent != null && new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+            base.receiveScrollWheelAction(direction);
+            if (new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height).Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
             {
-                int snapTo = this.currentlySnappedComponent.myID + ((direction < 0 ? 1 : -1) * NewSkillsPage.SkillIdIncrement);
-                if (this.getComponentWithID(snapTo) == null)
-                    return;
-                this.setCurrentlySnappedComponentTo(snapTo);
+                if (!this.ShowsAllSkillsAtOnce)
+                {
+                    // skill scrolling
+                    if (direction > 0 && this.skillScrollOffset > 0)
+                    {
+                        this.scrollSkillsUp();
+                        this.ConstrainSelectionToVisibleSlots();
+                        Game1.playSound("shiny4");
+                    }
+                    else if (direction < 0 && this.skillScrollOffset < Math.Max(0, this.AllSkillCount - this.MaxSkillCountOnScreen))
+                    {
+                        this.scrollSkillsDown();
+                        this.ConstrainSelectionToVisibleSlots();
+                        Game1.playSound("shiny4");
+                    }
+                }
+                // Skill page scrolls between skill components
+                else if (this.currentlySnappedComponent is not null)
+                {
+                    int snapTo = this.currentlySnappedComponent.myID + ((direction < 0 ? 1 : -1) * NewSkillsPage.SkillIdIncrement);
+                    if (this.getComponentWithID(snapTo) == null)
+                        return;
+                    this.setCurrentlySnappedComponentTo(snapTo);
+                }
             }
             // Wallet area scrolls list of items without moving cursor
             else if (this.CanScrollWalletItems && this.walletArea.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
@@ -616,6 +760,8 @@ namespace SpaceCore.Interface
             this.hoverText = "";
             this.hoverTitle = "";
             this.professionImage = -1;
+            this.upButton.tryHover(x, y);
+            this.downButton.tryHover(x, y);
 
             if (this.walletIconArea.Contains(x, y))
                 this.hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11610");
@@ -629,8 +775,12 @@ namespace SpaceCore.Interface
             }
             foreach (ClickableTextureComponent skillBar in this.skillBars)
             {
+                if (this.skillBarSkillIndexes.TryGetValue(skillBar.myID, out int skillIndex) && (skillIndex < this.skillScrollOffset || skillIndex > this.LastVisibleSkillIndex))
+                    continue;
+
                 skillBar.scale = 4f;
-                if (skillBar.containsPoint(x, y) && skillBar.hoverText.Length > 0 && !skillBar.name.Equals("-1"))
+                // modified y, taking scroll into consideration
+                if (skillBar.containsPoint(x, y + this.skillScrollOffset * 56) && skillBar.hoverText.Length > 0 && !skillBar.name.Equals("-1"))
                 {
                     this.hoverText = skillBar.hoverText;
                     this.hoverTitle = skillBar.name.StartsWith(NewSkillsPage.CustomSkillPrefix) ? skillBar.name.Substring(1) : LevelUpMenu.getProfessionTitleFromNumber(Convert.ToInt32(skillBar.name));
@@ -640,7 +790,11 @@ namespace SpaceCore.Interface
             }
             foreach (ClickableTextureComponent skillArea in this.skillAreas)
             {
-                if (skillArea.containsPoint(x, y) && skillArea.hoverText.Length > 0)
+                if (this.skillAreaSkillIndexes.TryGetValue(skillArea.myID, out int skillIndex) && (skillIndex < this.skillScrollOffset || skillIndex > this.LastVisibleSkillIndex))
+                    continue;
+
+                // modified y, taking scroll into consideration
+                if (skillArea.containsPoint(x, y + this.skillScrollOffset * 56) && skillArea.hoverText.Length > 0)
                 {
                     this.hoverText = skillArea.hoverText;
                     this.hoverTitle = skillArea.name.StartsWith(NewSkillsPage.CustomSkillPrefix) ? skillArea.name.Substring(1) : Farmer.getSkillDisplayNameFromIndex(Convert.ToInt32(skillArea.name));
@@ -663,9 +817,16 @@ namespace SpaceCore.Interface
 
         public override void draw(SpriteBatch b)
         {
+            // controller support: updating scroll
+            if (this.currentlySnappedComponent != this.lastSnappedComponent)
+            {
+                this.ConstrainVisibleSlotsToSelection();
+                this.lastSnappedComponent = this.currentlySnappedComponent;
+            }
+
             int x = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + this.width - 448 - 48 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 8;
             int y = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 8;
-            int indexWithLuckSkill = SpaceCore.Instance.Helper.ModRegistry.IsLoaded("spacechase0.LuckSkill") ? 6 : 5;
+            int indexWithLuckSkill = this.GameSkillCount;
             int xOffset = 0;
 
             // Menu container
@@ -718,11 +879,17 @@ namespace SpaceCore.Interface
                 b.DrawString(Game1.smallFont, text: Game1.player.getTitle(), position: new Vector2(x1 + 64 - (Game1.smallFont.MeasureString(Game1.player.getTitle()).X / 2f), y1 + 256 - 32), Game1.textColor);
             }
 
+            // taking scroll into consideration
+            y -= this.skillScrollOffset * 56;
+
             // Vanilla skills
             for (int levelIndex = 0; levelIndex < 10; ++levelIndex)
             {
                 for (int skillIndex = 0; skillIndex < indexWithLuckSkill; ++skillIndex)
                 {
+                    if (skillIndex < this.skillScrollOffset || skillIndex > this.LastVisibleSkillIndex)
+                        continue;
+
                     bool drawRed = false;
                     bool addedSkill = false;
                     string skillTitle = "";
@@ -809,6 +976,12 @@ namespace SpaceCore.Interface
             // Custom skills
             foreach (string skillName in Skills.GetSkillList())
             {
+                if (indexWithLuckSkill < this.skillScrollOffset || indexWithLuckSkill > this.LastVisibleSkillIndex)
+                {
+                    ++indexWithLuckSkill;
+                    continue;
+                }
+
                 xOffset = 0;
                 Skills.Skill skill = Skills.GetSkill(skillName);
                 for (int levelIndex = 0; levelIndex < skill.ExperienceCurve.Length; ++levelIndex)
@@ -862,11 +1035,23 @@ namespace SpaceCore.Interface
                 ++indexWithLuckSkill;
             }
 
+            // taking scroll into consideration
+            foreach (ClickableTextureComponent skillBar in this.skillBars)
+                skillBar.bounds = new Rectangle(skillBar.bounds.Left, skillBar.bounds.Top - this.skillScrollOffset * 56, skillBar.bounds.Width, skillBar.bounds.Height);
+
+            y -= this.skillScrollOffset * 56;
+
             // Vanilla and custom skill bars
             foreach (ClickableTextureComponent skillBar in this.skillBars)
+            {
+                if (this.skillBarSkillIndexes.TryGetValue(skillBar.myID, out int skillIndex) && (skillIndex < this.skillScrollOffset || skillIndex > this.LastVisibleSkillIndex))
+                    continue;
                 skillBar.draw(b);
+            }
             foreach (ClickableTextureComponent skillBar in this.skillBars)
             {
+                if (this.skillBarSkillIndexes.TryGetValue(skillBar.myID, out int skillIndex) && (skillIndex < this.skillScrollOffset || skillIndex > this.LastVisibleSkillIndex))
+                    continue;
                 if (skillBar.scale == 0.0)
                 {
                     IClickableMenu.drawTextureBox(b, skillBar.bounds.X - 16 - 8, skillBar.bounds.Y - 16 - 16, 96, 96, Color.White);
@@ -896,6 +1081,10 @@ namespace SpaceCore.Interface
                     }
                 }
             }
+
+            // resetting scroll offset
+            foreach (ClickableTextureComponent skillBar in this.skillBars)
+                skillBar.bounds = new Rectangle(skillBar.bounds.Left, skillBar.bounds.Top + this.skillScrollOffset * 56, skillBar.bounds.Width, skillBar.bounds.Height);
 
             // Stardew Valley 1.5 unique items
             x = this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32 + 16;
@@ -984,9 +1173,93 @@ namespace SpaceCore.Interface
                 }
             }
 
+            // scrollbar
+            if (!this.ShowsAllSkillsAtOnce)
+            {
+                this.upButton.draw(b);
+                this.downButton.draw(b);
+                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollBarRunner.X, this.scrollBarRunner.Y, this.scrollBarRunner.Width, this.scrollBarRunner.Height, Color.White, 4f);
+                this.scrollBar.draw(b);
+            }
+
             // Hover text
             if (this.hoverText.Length > 0)
                 IClickableMenu.drawHoverText(b, text: this.hoverText, Game1.smallFont, xOffset: 0, yOffset: 0, boldTitleText: this.hoverTitle.Length > 0 ? this.hoverTitle : null);
+        }
+
+        private void setScrollBarToCurrentIndex()
+        {
+            this.scrollBar.bounds.Y = this.scrollBarRunner.Height / Math.Max(1, this.AllSkillCount - this.MaxSkillCountOnScreen + 1) * this.skillScrollOffset + this.upButton.bounds.Bottom + 4;
+            if (this.skillScrollOffset == this.AllSkillCount - this.MaxSkillCountOnScreen)
+                this.scrollBar.bounds.Y = this.downButton.bounds.Y - this.scrollBar.bounds.Height - 4;
+        }
+
+        private void scrollSkillsUp()
+        {
+            this.skillScrollOffset--;
+            this.upButton.scale = 3.5f;
+            this.setScrollBarToCurrentIndex();
+        }
+
+        private void scrollSkillsDown()
+        {
+            this.skillScrollOffset++;
+            this.downButton.scale = 3.5f;
+            this.setScrollBarToCurrentIndex();
+        }
+
+        private void ConstrainSelectionToVisibleSlots()
+        {
+            if (this.skillAreas.Contains(this.currentlySnappedComponent))
+            {
+                if (!this.skillAreaSkillIndexes.TryGetValue(this.currentlySnappedComponent.myID, out int skillIndex))
+                {
+                    if (Game1.options.snappyMenus && Game1.options.gamepadControls)
+                        this.snapCursorToCurrentSnappedComponent();
+                    return;
+                }
+
+                if (skillIndex < this.skillScrollOffset)
+                {
+                    int skillAreaIDToSnapTo = this.skillAreaSkillIndexes.First(kvp => kvp.Value == this.skillScrollOffset).Key;
+                    this.currentlySnappedComponent = this.skillAreas.First(a => a.myID == skillAreaIDToSnapTo);
+                }
+                else if (skillIndex > this.LastVisibleSkillIndex)
+                {
+                    int skillAreaIDToSnapTo = this.skillAreaSkillIndexes.First(kvp => kvp.Value == this.LastVisibleSkillIndex).Key;
+                    this.currentlySnappedComponent = this.skillAreas.First(a => a.myID == skillAreaIDToSnapTo);
+                }
+
+                if (Game1.options.snappyMenus && Game1.options.gamepadControls)
+                    this.snapCursorToCurrentSnappedComponent();
+            }
+        }
+
+        private void ConstrainVisibleSlotsToSelection()
+        {
+            if (this.skillAreas.Contains(this.currentlySnappedComponent))
+            {
+                if (!this.skillAreaSkillIndexes.TryGetValue(this.currentlySnappedComponent.myID, out int skillIndex))
+                {
+                    if (Game1.options.snappyMenus && Game1.options.gamepadControls)
+                        this.snapCursorToCurrentSnappedComponent();
+                    return;
+                }
+
+                if (skillIndex < this.skillScrollOffset)
+                {
+                    this.skillScrollOffset = skillIndex;
+                    this.setScrollBarToCurrentIndex();
+                }
+                else if (skillIndex > this.LastVisibleSkillIndex)
+                {
+                    this.skillScrollOffset = skillIndex - this.MaxSkillCountOnScreen + 1;
+                    this.setScrollBarToCurrentIndex();
+                }
+
+                if (Game1.options.snappyMenus && Game1.options.gamepadControls)
+                    this.snapCursorToCurrentSnappedComponent();
+            }
         }
     }
 }

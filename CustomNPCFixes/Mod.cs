@@ -29,8 +29,11 @@ namespace CustomNPCFixes
         // See comments in doNpcFixes. This handles conditional spawning.
         public void OnDayStart(object sender, DayStartedEventArgs e)
         {
-            SpawnNpcs();
-            FixSchedules();
+            if (Context.IsMainPlayer)
+            {
+                SpawnNpcs();
+                FixSchedules();
+            }
         }
 
         [EventPriority(EventPriority.Low)]
@@ -43,8 +46,11 @@ namespace CustomNPCFixes
             // Similarly, this needs to be called again so that pathing works.
             NPC.populateRoutesFromLocationToLocationList();
 
-            // Schedules for new NPCs don't work the first time.
-            this.FixSchedules();
+            if (Context.IsMainPlayer)
+            {
+                // Schedules for new NPCs don't work the first time.
+                this.FixSchedules();
+            }
         }
 
         class NpcEqualityChecker : IEqualityComparer<NPC>
@@ -67,7 +73,16 @@ namespace CustomNPCFixes
             {
                 Utility.getAllCharacters(allCharacters);
 
-                var chars = allCharacters.Where(c => c.isVillager()).Distinct( new NpcEqualityChecker() ).ToDictionary((a) => a.Name, a => a);
+                Dictionary<string, NPC> chars = new();
+
+                foreach (var c in allCharacters) {
+                    if (!c.isVillager())
+                        continue;
+
+                    if (!chars.TryAdd(c.Name, c))
+                        Log.Trace($"Duplicate NPC {c.Name} detected, skipping.");
+                }
+
                 var dispos = Game1.content.Load<Dictionary<string, string>>("Data\\NPCDispositions");
 
                 foreach (var (name, dispo) in dispos)
