@@ -36,7 +36,7 @@ namespace MercenaryFramework
         public void OnLeave()
         {
             NPC npc = Game1.getCharacterFromName(name, true);
-            npc.Schedule = npc.getSchedule(Game1.dayOfMonth);
+            npc.TryLoadSchedule();
             npc.warpToPathControllerDestination();
         }
 
