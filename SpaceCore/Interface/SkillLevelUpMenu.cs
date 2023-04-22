@@ -166,6 +166,46 @@ namespace SpaceCore.Interface
             }
             this.height = num + 256 + this.extraInfoForLevel.Count * 64 * 3 / 4;
             */
+
+            List<CraftingRecipe> levelUpCraftingRecipes =
+                GetCraftingRecipesForLevel(this.currentSkill, this.currentLevel)
+                .ToList()
+                .ConvertAll(name => new CraftingRecipe(name))
+                .Where(recipe => !Game1.player.knowsRecipe(recipe.name))
+                .ToList();
+            if (levelUpCraftingRecipes is not null && levelUpCraftingRecipes.Count > 0)
+            {
+                foreach (CraftingRecipe recipe in levelUpCraftingRecipes.Where(r => !Game1.player.craftingRecipes.ContainsKey(r.name)))
+                {
+                    Game1.player.craftingRecipes[recipe.name] = 0;
+                }
+            }
+
+            List<CraftingRecipe> levelUpCookingRecipes =
+                GetCookingRecipesForLevel(this.currentSkill, this.currentLevel)
+                .ToList()
+                .ConvertAll(name => new CraftingRecipe(name))
+                .Where(recipe => !Game1.player.knowsRecipe(recipe.name))
+                .ToList();
+            if (levelUpCookingRecipes is not null && levelUpCookingRecipes.Count > 0)
+            {
+                foreach (CraftingRecipe recipe in levelUpCookingRecipes.Where(r => !Game1.player.cookingRecipes.ContainsKey(r.name)))
+                {
+                    Game1.player.cookingRecipes[recipe.name] = 0;
+                }
+            }
+
+            levelUpCraftingRecipes.AddRange(levelUpCookingRecipes);
+            this.newCraftingRecipes = levelUpCraftingRecipes;
+            // Adjust menu to fit if necessary
+            const int defaultMenuHeightInRecipes = 4;
+            int menuHeightInRecipes = levelUpCraftingRecipes.Count + levelUpCraftingRecipes.Count(recipe => recipe.bigCraftable);
+            if (menuHeightInRecipes >= defaultMenuHeightInRecipes)
+            {
+                this.height += (menuHeightInRecipes - defaultMenuHeightInRecipes) * StardewValley.Object.spriteSheetTileSize * Game1.pixelZoom;
+            }
+
+
             Game1.player.freezePause = 100;
             this.gameWindowSizeChanged(Rectangle.Empty, Rectangle.Empty);
             if (this.isProfessionChooser)
@@ -274,6 +314,39 @@ namespace SpaceCore.Interface
             }
             return stringList;
             */
+        }
+
+        public static IReadOnlyList<string> GetCraftingRecipesForLevel(string whichSkill, int level)
+        {
+            // Level used for professions, no new recipes added
+            if (level % 5 == 0)
+            {
+                return new List<string>();
+            }
+            var levelUpRecipes = Skills.SkillsByName[whichSkill].GetSkillLevelUpCraftingRecipes(level);
+            // Level undefined
+            if (!levelUpRecipes.ContainsKey(level))
+            {
+                return new List<string>();
+            }
+            return (IReadOnlyList<string>)levelUpRecipes[level];
+        }
+
+        public static IReadOnlyList<string> GetCookingRecipesForLevel(string whichSkill, int level)
+        {
+            // Level used for professions, no new recipes added
+            if (level % 5 == 0)
+            {
+                return new List<string>();
+            }
+            var levelUpRecipes = Skills.SkillsByName[whichSkill].GetSkillLevelUpCookingRecipes(level);
+            // Level undefined
+            if (!levelUpRecipes.ContainsKey(level))
+            {
+                return new List<string>();
+            }
+
+            return (IReadOnlyList<string>)levelUpRecipes[level];
         }
 
         private static void addProfessionDescriptions(List<string> descriptions, string professionName)
