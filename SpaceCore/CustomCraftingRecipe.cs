@@ -30,7 +30,7 @@ namespace SpaceCore
                 List<Item> items = new List<Item>();
                 items.AddRange(Game1.player.Items);
                 foreach (var chest in additionalIngredients)
-                    items.AddRange(chest.items);
+                    items.AddRange(chest.Items);
 
                 return this.GetAmountInList(items) / this.Quantity;
             }
@@ -120,9 +120,9 @@ namespace SpaceCore
                     foreach ( var chest in additionalIngredients )
                     {
                         bool removed = false;
-                        for (int i = chest.items.Count - 1; i >= 0; --i)
+                        for (int i = chest.Items.Count - 1; i >= 0; --i)
                         {
-                            var item = chest.items[i];
+                            var item = chest.Items[i];
                             if (this.ItemMatches( item ) )
                             {
                                 int amt = Math.Min(left, item.Stack);
@@ -132,7 +132,7 @@ namespace SpaceCore
                                 if (item.Stack <= 0)
                                 {
                                     removed = true;
-                                    chest.items[i] = null;
+                                    chest.Items[i] = null;
                                 }
                                 if (left <= 0)
                                     break;

@@ -170,9 +170,9 @@ namespace SpaceCore.Patches
         }
 
         /// <summary>The method to call before <see cref="SaveGame.loadDataToLocations"/>.</summary>
-        private static void Before_LoadDataToLocations(List<GameLocation> gamelocations)
+        private static void Before_LoadDataToLocations(List<GameLocation> fromLocations)
         {
-            foreach (var loc in gamelocations)
+            foreach (var loc in fromLocations)
             {
                 var objs = loc.netObjects.Pairs.ToArray();
                 foreach (var pair in objs)

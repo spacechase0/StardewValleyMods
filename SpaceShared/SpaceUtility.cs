@@ -101,7 +101,7 @@ namespace SpaceShared
                 }
             }
             //Game1.player.team.returnedDonations.Set( list2 );
-            list2 = Game1.player.team.junimoChest;
+            list2 = Game1.player.team.JunimoChest;
             for (int i = list2.Count - 1; i >= 0; --i)
             {
                 if (list2[i] != null)
@@ -149,7 +149,7 @@ namespace SpaceShared
             }
             if (l is IslandFarmHouse)
             {
-                IList<Item> list = (l as IslandFarmHouse).fridge.Value.items;
+                IList<Item> list = (l as IslandFarmHouse).fridge.Value.Items;
                 for (int i = 0; i < list.Count; ++i)
                 {
                     if (list[i] != null)
@@ -161,7 +161,7 @@ namespace SpaceShared
             }
             if (l is FarmHouse)
             {
-                IList<Item> list = (l as FarmHouse).fridge.Value.items;
+                IList<Item> list = (l as FarmHouse).fridge.Value.Items;
                 for (int i = 0; i < list.Count; ++i)
                 {
                     if (list[i] != null)
@@ -188,9 +188,9 @@ namespace SpaceShared
                 {
                     SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
                 }
-                if (b is Mill)
+                if (b is JunimoHut)
                 {
-                    IList<Item> list = (b as Mill).output.Value.items;
+                    IList<Item> list = (b as JunimoHut).output.Value.Items;
                     for (int i = 0; i < list.Count; ++i)
                     {
                         if (list[i] != null)
@@ -201,11 +201,7 @@ namespace SpaceShared
                 }
                 else
                 {
-                    if (b is not JunimoHut)
-                    {
-                        continue;
-                    }
-                    IList<Item> list = (b as JunimoHut).output.Value.items;
+                    IList<Item> list = b.GetBuildingChest( "Output" ).Items;
                     for (int i = 0; i < list.Count; ++i)
                     {
                         if (list[i] != null)
@@ -263,7 +259,7 @@ namespace SpaceShared
                 }
                 if (o is Chest)
                 {
-                    IList<Item> list = (o as Chest).items;
+                    IList<Item> list = (o as Chest).Items;
                     for (int ii = 0; ii < list.Count; ++ii)
                     {
                         if (list[ii] != null)
