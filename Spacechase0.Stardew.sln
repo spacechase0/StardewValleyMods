@@ -218,7 +218,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QiChest", "QiChest\QiChest.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeepSeaFishing", "DeepSeaFishing\DeepSeaFishing.csproj", "{17716B42-EF3B-4FAF-9A42-AF54C00B7824}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSpenny", "SuperSpenny\SuperSpenny.csproj", "{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperSpenny", "SuperSpenny\SuperSpenny.csproj", "{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlourFestival", "FlourFestival\FlourFestival.csproj", "{47AE89F2-87FC-4786-8855-9A2C3B51F943}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -618,6 +620,10 @@ Global
 		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47AE89F2-87FC-4786-8855-9A2C3B51F943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47AE89F2-87FC-4786-8855-9A2C3B51F943}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47AE89F2-87FC-4786-8855-9A2C3B51F943}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47AE89F2-87FC-4786-8855-9A2C3B51F943}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -654,6 +660,7 @@ Global
 		{5CECF14D-6D61-48DF-9F90-8D931CDFA175} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{17716B42-EF3B-4FAF-9A42-AF54C00B7824} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{47AE89F2-87FC-4786-8855-9A2C3B51F943} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
@@ -694,6 +701,8 @@ Global
 		SpaceShared\SpaceShared.projitems*{41bbd68d-b674-4ddc-b0a4-7e189f13873a}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{43ede3d9-2062-4f79-b581-708ffaf9d195}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{43ede3d9-2062-4f79-b581-708ffaf9d195}*SharedItemsImports = 5
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{47ae89f2-87fc-4786-8855-9a2c3b51f943}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{47ae89f2-87fc-4786-8855-9a2c3b51f943}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{49163859-5988-47f6-a6a1-d8753959fa99}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{4c8538cc-9720-4b94-be88-f9e809b49268}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{4c8538cc-9720-4b94-be88-f9e809b49268}*SharedItemsImports = 5
@@ -709,6 +718,8 @@ Global
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{5ecb259a-6e3c-46b7-980c-e71730b34c19}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{5ecb259a-6e3c-46b7-980c-e71730b34c19}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{5fb98f6c-15e8-489e-8a87-6e975219b46c}*SharedItemsImports = 5
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{6258e986-4e80-483e-a0b0-07a6a9789226}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{6258e986-4e80-483e-a0b0-07a6a9789226}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{695cda6a-9398-4d71-9432-9763cc510020}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{6e9ba154-07eb-43c8-8e5a-94247ff28556}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7014c24c-a7b8-446a-8b13-eca54eea1f88}*SharedItemsImports = 5

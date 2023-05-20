@@ -1,0 +1,17 @@
+﻿{
+    "festival.name": "Flour Festival",
+
+    "event.start.question": "Ready for the race?",
+    "event.start.yes": "Yes, let's start.",
+    "event.start.no": "Not yet.",
+    "event.instructions": "Gather flour!^Avoid rice!^Maybe gather or avoid cooked dishes!^(Dishes with flour in them are okay, dishes without are not.)",
+    "event.lewis-start.0": "Ready...",
+    "event.lewis-start.1": "Set.....",
+    "event.lewis-start.2": "Go!",
+
+    // TODO: NPC specific victory dialog?
+    "event.winner": "Congratulations, {{name}}!",
+    "event.winner.": "Congratulations, _!",
+
+    // TODO: Dialogue
+}
