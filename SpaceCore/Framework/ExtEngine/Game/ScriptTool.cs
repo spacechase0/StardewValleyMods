@@ -89,7 +89,7 @@ end while
                 for (int i = 0; i < attachmentSlots(); ++i)
                 {
                     var val = attachs.values[i];
-                    if (val is ValNull)
+                    if (val == null || val is ValNull)
                         attachments[0] = null;
                     else if (val is ValMap vmap && vmap.map[new ValString("__item")] is ValItem vitem)
                         attachments[0] = vitem.item as StardewValley.Object;
@@ -179,6 +179,7 @@ end while
                             Game1.playSound("dwop");
                             var ret = attachments[i];
                             attachments[i] = null;
+                            (interpreter.GetGlobalValue("attachments") as ValList).values[0] = ValNull.instance;
                             return ret;
                         }
                     }
@@ -217,6 +218,7 @@ end while
                                 if (attachments[i] == null)
                                 {
                                     attachments[i] = o;
+                                    (interpreter.GetGlobalValue("attachments") as ValList).values[i] = ExtensionEngine.makeItemMap( o );
                                     return null;
                                 }
                                 else if (attachments[i].canStackWith(o) && attachments[i].Stack < attachments[i].maximumStackSize())
@@ -225,6 +227,7 @@ end while
                                     o.Stack = leftover;
                                     if (o.Stack == 0)
                                         return null;
+                                    ((interpreter.GetGlobalValue("attachments") as ValList).values[i] as ValMap).map[new ValString("stack")] = new ValNumber(o.Stack);
                                     return o;
                                 }
                             }
@@ -259,6 +262,7 @@ end while
             }
             finally
             {
+                SpaceShared.Log.Debug("syncing");
                 SyncScriptToWorld();
             }
         }

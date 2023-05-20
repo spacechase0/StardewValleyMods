@@ -46,12 +46,15 @@ namespace SpaceCore.Framework.ExtEngine
                     {
                         case "x":
                             elem.LocalPosition = new(val.FloatValue(), elem.LocalPosition.Y);
+                            ret.map[key] = val;
                             return true;
                         case "y":
                             elem.LocalPosition = new(elem.LocalPosition.X, val.FloatValue());
+                            ret.map[key] = val;
                             return true;
                         case "scriptData":
                             (elem.UserData as UiExtraData).ScriptData = val;
+                            ret.map[key] = val;
                             return true;
                     }
                     return true;

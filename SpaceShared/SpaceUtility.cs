@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Characters;
+using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
@@ -101,14 +102,17 @@ namespace SpaceShared
                 }
             }
             //Game1.player.team.returnedDonations.Set( list2 );
-            list2 = Game1.player.team.JunimoChest;
-            for (int i = list2.Count - 1; i >= 0; --i)
+            IEnumerable<Inventory> list3 = Game1.player.team.globalInventories.Values;
+            foreach (var inv in list3)
             {
-                if (list2[i] != null)
+                for (int i = inv.Count - 1; i >= 0; --i)
                 {
-                    list2[i] = action(list2[i]);
-                    if (list2[i] == null)
-                        list2.RemoveAt(i);
+                    if (inv[i] != null)
+                    {
+                        inv[i] = action(inv[i]);
+                        if (inv[i] == null)
+                            inv.RemoveAt(i);
+                    }
                 }
             }
             //Game1.player.team.junimoChest.CopyFrom( list2 );

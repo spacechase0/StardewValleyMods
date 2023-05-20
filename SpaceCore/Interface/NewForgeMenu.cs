@@ -1248,7 +1248,7 @@ namespace SpaceCore.Interface
                     {
                         b.Draw(this.forgeTextures, c.bounds, new Rectangle(0, 96, 16, 16), Color.White);
                         float transparency2 = 1f;
-                        if (!this.HighlightItems((Ring)Game1.player.rightRing))
+                        if (!this.HighlightItems((Ring)Game1.player.rightRing.Value))
                         {
                             transparency2 = 0.5f;
                         }
@@ -1267,7 +1267,7 @@ namespace SpaceCore.Interface
                 {
                     b.Draw(this.forgeTextures, c.bounds, new Rectangle(0, 96, 16, 16), Color.White);
                     float transparency = 1f;
-                    if (!this.HighlightItems((Ring)Game1.player.leftRing))
+                    if (!this.HighlightItems((Ring)Game1.player.leftRing.Value))
                     {
                         transparency = 0.5f;
                     }

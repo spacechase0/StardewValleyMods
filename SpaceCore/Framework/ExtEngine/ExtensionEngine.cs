@@ -364,6 +364,15 @@ namespace SpaceCore.Framework.ExtEngine
                 return Intrinsic.Result.Null;
             };
 
+            i = Intrinsic.Create("createItem");
+            i.AddParam("qualifiedItemId");
+            i.AddParam("stack", new ValNumber(1));
+            i.code = (ctx, prevResult) =>
+            {
+                Item item = ItemRegistry.Create((ctx.GetVar("qualifiedItemId") as ValString).value, (ctx.GetVar("stack") as ValNumber).IntValue());
+                return new(makeItemMap(item));
+            };
+
             makeItemMap = (Item item) =>
             {
                 if (item == null)
@@ -387,12 +396,14 @@ namespace SpaceCore.Framework.ExtEngine
                     {
                         case "itemId":
                             item.ItemId = val.ToString();
+                            ret.map[key] = val;
                             ret["qualifiedItemId"] = new ValString(item.QualifiedItemId);
                             return true;
                         case "qualifiedItemId": return false;
                         case "typeDefinitionId": return false;
                         case "stack":
                             item.Stack = val.IntValue();
+                            ret.map[key] = val;
                             return true;
                     }
 
@@ -411,6 +422,7 @@ namespace SpaceCore.Framework.ExtEngine
                 ret.map.Add(new ValString("name"), new ValString(farmer.Name));
                 ret.map.Add(new ValString("facing"), new ValNumber(farmer.FacingDirection));
                 ret.map.Add(new ValString("canMove"), new ValNumber(farmer.CanMove ? 1 : 0));
+                ret.map.Add(new ValString("currentLocation"), makeLocationMap(farmer.currentLocation));
 
                 ret.assignOverride = (key, val) =>
                 {
@@ -418,22 +430,47 @@ namespace SpaceCore.Framework.ExtEngine
                     {
                         case "x":
                             farmer.Position = new(val.FloatValue(), farmer.Position.Y);
+                            ret.map[key] = val;
                             return true;
                         case "y":
                             farmer.Position = new(farmer.Position.X, val.FloatValue());
+                            ret.map[key] = val;
                             return true;
                         case "name": return false;
                         case "facing":
                             farmer.FacingDirection = val.IntValue();
+                            ret.map[key] = val;
                             return true;
                         case "canMove":
                             farmer.canMove = val.BoolValue();
+                            ret.map[key] = val;
                             return true;
+                        case "currentLocation":
+                            Log.Warn("TODO: set farmer current location");
+                            // change the return later too
+                            return false;
                     }
                     return true;
                 };
 
                 return ret;
+            };
+
+            var dropItemFunc = Intrinsic.Create("__dropItem");
+            dropItemFunc.AddParam("item");
+            dropItemFunc.AddParam("x");
+            dropItemFunc.AddParam("y");
+            dropItemFunc.code = (ctx, prevResult) =>
+            {
+                var map = ctx.self as ValMap;
+                var loc = (map.map[new ValString("__location")] as ValGameLocation).location;
+
+                var item = (ctx.GetVar("item") as ValMap).map[new ValString("__item")] as ValItem;
+                var pos = new Vector2((ctx.GetVar("x") as ValNumber).FloatValue(), (ctx.GetVar("y") as ValNumber).FloatValue());
+
+                loc.debris.Add(new Debris(item.item, pos));
+
+                return Intrinsic.Result.Null;
             };
 
             makeLocationMap = (GameLocation location) =>
@@ -442,6 +479,7 @@ namespace SpaceCore.Framework.ExtEngine
                 ret.map.Add(new ValString("__location"), new ValGameLocation(location));
                 ret.map.Add(new ValString("name"), new ValString(location.Name));
                 ret.map.Add(new ValString("uniqueName"), new ValString(location.NameOrUniqueName));
+                ret.map.Add(new ValString("dropItem"), dropItemFunc.GetFunc());
 
                 ret.assignOverride = (key, val) =>
                 {
@@ -449,6 +487,7 @@ namespace SpaceCore.Framework.ExtEngine
                     {
                         case "name": return false;
                         case "uniqueName": return false;
+                        case "dropItem": return false;
                     }
                     return true;
                 };
