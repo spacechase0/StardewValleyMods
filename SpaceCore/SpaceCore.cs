@@ -211,6 +211,25 @@ namespace SpaceCore
                 Log.Info("Telling EntoaroxFramework to let us handle the serializer");
                 entoaroxFramework.HoistSerializerOwnership();
             }
+
+            var cp = Helper.ModRegistry.GetApi<IContentPatcherApi>("Pathoschild.ContentPatcher");
+            if (cp != null)
+            {
+                cp.RegisterToken(ModManifest, "CurrentlyInEvent", () =>
+                {
+                    if (!Context.IsWorldReady )
+                        return null;
+
+                    return new string[] { Game1.CurrentEvent != null ? "true" : "false" };
+                });
+                cp.RegisterToken(ModManifest, "CurrentEventId", () =>
+                {
+                    if (!Context.IsWorldReady || Game1.CurrentEvent == null)
+                        return null;
+
+                    return new string[] { Game1.CurrentEvent.id.ToString() };
+                });
+            }
         }
 
         /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
