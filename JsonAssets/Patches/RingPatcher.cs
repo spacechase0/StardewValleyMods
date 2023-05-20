@@ -38,12 +38,12 @@ namespace JsonAssets.Patches
             //  the game will still run.
             try
             {
-                if (Game1.objectInformation == null || __instance.indexInTileSheet.Value == null)
+                if (Game1.objectInformation == null)
                 {
                     __result = false;
                     return false;
                 }
-                string[] strArray = Game1.objectInformation[__instance.indexInTileSheet.Value].Split('/');
+                string[] strArray = Game1.objectInformation[__instance.ItemId].Split('/');
                 __instance.displayName = strArray[4];
                 __instance.description = strArray[5];
                 __result = true;
@@ -51,7 +51,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.Error($"Failed in {nameof(Before_LoadDisplayFields)} for #{__instance?.indexInTileSheet}:\n{ex}");
+                Log.Error($"Failed in {nameof(Before_LoadDisplayFields)} for #{__instance?.QualifiedItemId}:\n{ex}");
                 return false;
             }
         }

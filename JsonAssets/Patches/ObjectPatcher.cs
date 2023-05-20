@@ -80,7 +80,7 @@ namespace JsonAssets.Patches
         {
             try
             {
-                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemID);
+                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemId);
                 if (!__instance.bigCraftable.Value &&  objData != null)
                 {
                     if (__instance.Category == SObject.SeedsCategory)
@@ -88,7 +88,7 @@ namespace JsonAssets.Patches
                         bool isTree = false;
                         foreach (var tree in Mod.instance.FruitTrees)
                         {
-                            if (tree.Sapling.Name.Replace(' ', '_') == __instance.ItemID)
+                            if (tree.Sapling.Name.Replace(' ', '_') == __instance.ItemId)
                             {
                                 isTree = true;
                                 break;
@@ -129,7 +129,7 @@ namespace JsonAssets.Patches
         {
             try
             {
-                var bigData = Mod.instance.BigCraftables.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemID);
+                var bigData = Mod.instance.BigCraftables.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemId);
                 if (__instance.bigCraftable.Value && bigData != null && __instance.name.Contains("Chair"))
                     return false;
                 return true;
@@ -152,19 +152,19 @@ namespace JsonAssets.Patches
                 if (( Mod.instance.Objects?.Count ?? 0 ) <= 0)
                     return true;
 
-                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace( ' ', '_' ) == __instance.ItemID);
-                var bigData = Mod.instance.BigCraftables.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemID);
+                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace( ' ', '_' ) == __instance.ItemId);
+                var bigData = Mod.instance.BigCraftables.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemId);
 
                 if (!__instance.bigCraftable.Value && objData != null)
                 {
-                    Game1.objectInformation.TryGetValue(__instance.ItemID, out string str);
+                    Game1.objectInformation.TryGetValue(__instance.ItemId, out string str);
                     if (!string.IsNullOrEmpty(str))
                         __result = str.Split('/')[4];
                     return false;
                 }
                 else if (__instance.bigCraftable.Value && bigData != null)
                 {
-                    Game1.bigCraftablesInformation.TryGetValue(__instance.ItemID, out string str);
+                    Game1.bigCraftablesInformation.TryGetValue(__instance.ItemId, out string str);
                     if (!string.IsNullOrEmpty(str))
                     {
                         string[] strArray = str.Split('/');
@@ -190,7 +190,7 @@ namespace JsonAssets.Patches
                 ObjectData objData = null;
                 foreach (var obj in Mod.instance.Objects)
                 {
-                    if (obj.Name.Replace(' ', '_') == __instance.ItemID)
+                    if (obj.Name.Replace(' ', '_') == __instance.ItemId)
                     {
                         objData = obj;
                         break;
@@ -213,7 +213,7 @@ namespace JsonAssets.Patches
         }
 
         /// <summary>The method to call after <see cref="SObject.isIndexOkForBasicShippedCategory"/>.</summary>
-        public static void After_IsIndexOkForBasicShippedCategory(string index, ref bool __result)
+        public static void After_IsIndexOkForBasicShippedCategory(string itemId, ref bool __result)
         {
             try
             {
@@ -227,7 +227,7 @@ namespace JsonAssets.Patches
                     }
                 }
                 */
-                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == index);
+                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == itemId);
                 if (objData != null)
                 {
                     if (objData != null && (!objData.CanSell || objData.HideFromShippingCollection))
@@ -236,7 +236,7 @@ namespace JsonAssets.Patches
             }
             catch (Exception ex)
             {
-                Log.Error($"Failed in {nameof(After_IsIndexOkForBasicShippedCategory)} for #{index}:\n{ex}");
+                Log.Error($"Failed in {nameof(After_IsIndexOkForBasicShippedCategory)} for #{itemId}:\n{ex}");
             }
         }
 
@@ -248,7 +248,7 @@ namespace JsonAssets.Patches
                 ObjectData objData = null;
                 foreach (var obj in Mod.instance.Objects)
                 {
-                    if (obj.Name.Replace(' ', '_') == __instance.ItemID)
+                    if (obj.Name.Replace(' ', '_') == __instance.ItemId)
                     {
                         objData = obj;
                         break;
@@ -275,7 +275,7 @@ namespace JsonAssets.Patches
         {
             try
             {
-                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemID);
+                var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemId);
                 if (!__instance.bigCraftable.Value && objData != null)
                 {
                     if (objData?.CanBeGifted == false)
@@ -294,10 +294,10 @@ namespace JsonAssets.Patches
             if (__instance.bigCraftable.Value)
                 return true;
 
-            var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemID);
+            var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == __instance.ItemId);
             if (__instance.Category == SObject.CraftingCategory && objData != null)
             {
-                if (Mod.instance.Fences.All(f => f.CorrespondingObject.Name != __instance.ItemID))
+                if (Mod.instance.Fences.All(f => f.CorrespondingObject.Name != __instance.ItemId))
                 {
                     __result = false;
                     return false;

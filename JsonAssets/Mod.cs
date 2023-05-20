@@ -135,9 +135,8 @@ namespace JsonAssets
                 }
 
 
-                Helper.Content.AssetEditors.Add(this.Content1 = new ContentInjector1());
-                Helper.Content.AssetLoaders.Add(this.Content1);
-                Helper.Content.AssetEditors.Add(this.Content2 = new ContentInjector2());
+                new ContentInjector1();
+                new ContentInjector2();
 
                 this.Api.InvokeItemsRegistered();
             }
@@ -905,9 +904,9 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    obj.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
+                    obj.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/object.png");
                     if (obj.IsColored)
-                        obj.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
+                        obj.TextureColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/color.png");
 
                     this.RegisterObject(contentPack.Manifest, obj, translations);
                 }
@@ -927,11 +926,11 @@ namespace JsonAssets
                         continue;
 
                     // save crop
-                    crop.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/crop.png");
+                    crop.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/crop.png");
                     if (contentPack.HasFile($"{relativePath}/giant.png"))
-                        crop.GiantTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/giant.png");
+                        crop.GiantTexture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/giant.png");
 
-                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.LoadAsset<Texture2D>($"{relativePath}/seeds.png"), translations);
+                    this.RegisterCrop(contentPack.Manifest, crop, contentPack.ModContent.Load<Texture2D>($"{relativePath}/seeds.png"), translations);
                 }
             }
 
@@ -949,8 +948,8 @@ namespace JsonAssets
                         continue;
 
                     // save fruit tree
-                    tree.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/tree.png");
-                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.LoadAsset<Texture2D>($"{relativePath}/sapling.png"), translations);
+                    tree.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/tree.png");
+                    this.RegisterFruitTree(contentPack.Manifest, tree, contentPack.ModContent.Load<Texture2D>($"{relativePath}/sapling.png"), translations);
                 }
             }
 
@@ -968,14 +967,14 @@ namespace JsonAssets
                         continue;
 
                     // save craftable
-                    craftable.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable.png");
+                    craftable.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/big-craftable.png");
                     if (craftable.ReserveNextIndex && craftable.ReserveExtraIndexCount == 0)
                         craftable.ReserveExtraIndexCount = 1;
                     if (craftable.ReserveExtraIndexCount > 0)
                     {
                         craftable.ExtraTextures = new Texture2D[craftable.ReserveExtraIndexCount];
                         for (int i = 0; i < craftable.ReserveExtraIndexCount; ++i)
-                            craftable.ExtraTextures[i] = contentPack.LoadAsset<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
+                            craftable.ExtraTextures[i] = contentPack.ModContent.Load<Texture2D>($"{relativePath}/big-craftable-{i + 2}.png");
                     }
                     this.RegisterBigCraftable(contentPack.Manifest, craftable, translations);
                 }
@@ -995,7 +994,7 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    hat.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/hat.png");
+                    hat.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/hat.png");
                     this.RegisterHat(contentPack.Manifest, hat, translations);
                 }
             }
@@ -1014,7 +1013,7 @@ namespace JsonAssets
                         continue;
 
                     // save object
-                    weapon.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/weapon.png");
+                    weapon.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/weapon.png");
                     this.RegisterWeapon(contentPack.Manifest, weapon, translations);
                 }
             }
@@ -1033,14 +1032,14 @@ namespace JsonAssets
                         continue;
 
                     // save shirt
-                    shirt.TextureMale = contentPack.LoadAsset<Texture2D>($"{relativePath}/male.png");
+                    shirt.TextureMale = contentPack.ModContent.Load<Texture2D>($"{relativePath}/male.png");
                     if (shirt.Dyeable)
-                        shirt.TextureMaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/male-color.png");
+                        shirt.TextureMaleColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/male-color.png");
                     if (shirt.HasFemaleVariant)
                     {
-                        shirt.TextureFemale = contentPack.LoadAsset<Texture2D>($"{relativePath}/female.png");
+                        shirt.TextureFemale = contentPack.ModContent.Load<Texture2D>($"{relativePath}/female.png");
                         if (shirt.Dyeable)
-                            shirt.TextureFemaleColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/female-color.png");
+                            shirt.TextureFemaleColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/female-color.png");
                     }
                     this.RegisterShirt(contentPack.Manifest, shirt, translations);
                 }
@@ -1060,7 +1059,7 @@ namespace JsonAssets
                         continue;
 
                     // save pants
-                    pants.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/pants.png");
+                    pants.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/pants.png");
                     this.RegisterPants(contentPack.Manifest, pants, translations);
                 }
             }
@@ -1095,8 +1094,8 @@ namespace JsonAssets
                     if (boots == null || (boots.DisableWithMod != null && this.Helper.ModRegistry.IsLoaded(boots.DisableWithMod)) || (boots.EnableWithMod != null && !this.Helper.ModRegistry.IsLoaded(boots.EnableWithMod)))
                         continue;
 
-                    boots.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/boots.png");
-                    boots.TextureColor = contentPack.LoadAsset<Texture2D>($"{relativePath}/color.png");
+                    boots.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/boots.png");
+                    boots.TextureColor = contentPack.ModContent.Load<Texture2D>($"{relativePath}/color.png");
                     this.RegisterBoots(contentPack.Manifest, boots, translations);
                 }
             }
@@ -1114,8 +1113,8 @@ namespace JsonAssets
                     if (fence == null || (fence.DisableWithMod != null && this.Helper.ModRegistry.IsLoaded(fence.DisableWithMod)) || (fence.EnableWithMod != null && !this.Helper.ModRegistry.IsLoaded(fence.EnableWithMod)))
                         continue;
 
-                    fence.Texture = contentPack.LoadAsset<Texture2D>($"{relativePath}/fence.png");
-                    fence.ObjectTexture = contentPack.LoadAsset<Texture2D>($"{relativePath}/object.png");
+                    fence.Texture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/fence.png");
+                    fence.ObjectTexture = contentPack.ModContent.Load<Texture2D>($"{relativePath}/object.png");
                     this.RegisterFence(contentPack.Manifest, fence, translations);
                 }
             }
@@ -1352,20 +1351,17 @@ namespace JsonAssets
                     yield return ShopMenuPatcher.LastShopOwner;
 
                 // portrait name
+                // TODO: How to reproduce this in 1.6?
+                /*
                 string portraitName = !string.IsNullOrWhiteSpace(menu.portraitPerson?.Name) ? menu.portraitPerson.Name : null;
                 if (portraitName != null)
                     yield return portraitName;
+                */
 
                 // shop context
-                string context = !string.IsNullOrWhiteSpace(menu.storeContext) ? menu.storeContext : null;
+                string context = !string.IsNullOrWhiteSpace(menu.ShopId) ? menu.ShopId : null;
                 if (context != null)
                     yield return context;
-
-                // special cases
-                if (ShopMenuPatcher.LastShopOwner == null && portraitName == null && context == "Hospital")
-                    yield return "Harvey";
-                if (ShopMenuPatcher.LastShopOwner == "KrobusGone")
-                    yield return "Krobus";
             }
 
             return new HashSet<string>(GetAll(), StringComparer.OrdinalIgnoreCase);
@@ -1504,16 +1500,8 @@ namespace JsonAssets
             SpaceUtility.iterateAllTerrainFeatures(this.FixTerrainFeature);
             foreach ( var loc in Game1.locations )
             {
-                if ( loc is IAnimalLocation aloc )
-                {
-                    foreach (var animal in aloc.Animals.Values)
-                        FixFarmAnimal(animal);
-                }
-                if ( loc is BuildableGameLocation buildable )
-                {
-                    foreach (var building in buildable.buildings)
-                        FixBuilding(building);
-                }
+                foreach (var building in loc.buildings)
+                    FixBuilding(building);
             }
 
             this.FixIdDict(Game1.player.basicShipped, removeUnshippable: true);
@@ -1610,20 +1598,20 @@ namespace JsonAssets
             switch (item)
             {
                 case Hat hat:
-                    if (this.OldHatIds.ContainsKey(hat.deprecatedWhich.Value.ToString()))
-                        hat.ItemID = this.OldHatIds[hat.deprecatedWhich.Value.ToString()].Replace(' ', '_');
+                    if (this.OldHatIds.ContainsKey(hat.obsolete_which.Value.ToString()))
+                        hat.ItemId = this.OldHatIds[hat.obsolete_which.Value.ToString()].Replace(' ', '_');
                     break;
 
                 case MeleeWeapon weapon:
-                    if (this.OldWeaponIds.ContainsKey(weapon.ItemID))
-                        weapon.ItemID = this.OldWeaponIds[weapon.ItemID].Replace(' ', '_');
+                    if (this.OldWeaponIds.ContainsKey(weapon.ItemId))
+                        weapon.ItemId = this.OldWeaponIds[weapon.ItemId].Replace(' ', '_');
                     if (this.OldWeaponIds.ContainsKey(weapon.appearance.Value))
                         weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value].Replace(' ', '_');
                     break;
 
                 case Ring ring:
-                    if (this.OldObjectIds.ContainsKey(ring.ItemID))
-                        ring.ItemID = this.OldObjectIds[ring.ItemID].Replace(' ', '_');
+                    if (this.OldObjectIds.ContainsKey(ring.ItemId))
+                        ring.ItemId = this.OldObjectIds[ring.ItemId].Replace(' ', '_');
 
                     if (ring is CombinedRing combinedRing)
                     {
@@ -1635,24 +1623,24 @@ namespace JsonAssets
                     break;
 
                 case Clothing clothing:
-                    if (this.OldClothingIds.ContainsKey(clothing.ItemID))
-                        clothing.ItemID = this.OldClothingIds[clothing.ItemID].Replace(' ', '_');
+                    if (this.OldClothingIds.ContainsKey(clothing.ItemId))
+                        clothing.ItemId = this.OldClothingIds[clothing.ItemId].Replace(' ', '_');
                     break;
                     
                 case Boots boots:
-                    if (this.OldBootsIds.ContainsKey(boots.ItemID))
-                        boots.ItemID = this.OldBootsIds[boots.ItemID].Replace(' ', '_');
+                    if (this.OldBootsIds.ContainsKey(boots.ItemId))
+                        boots.ItemId = this.OldBootsIds[boots.ItemId].Replace(' ', '_');
                     // TODO: what to do about tailored boots...
                     break;
 
                 case SObject obj:
                     if (obj is Chest chest)
                     {
-                        if (this.OldBigCraftableIds.ContainsKey(chest.ItemID))
-                            chest.ItemID = this.OldBigCraftableIds[chest.ItemID].Replace(' ', '_');
+                        if (this.OldBigCraftableIds.ContainsKey(chest.ItemId))
+                            chest.ItemId = this.OldBigCraftableIds[chest.ItemId].Replace(' ', '_');
                         else
                             chest.startingLidFrame.Value = chest.ParentSheetIndex + 1;
-                        this.FixItemList(chest.items);
+                        this.FixItemList(chest.Items);
                     }
                     else if (obj is IndoorPot pot)
                     {
@@ -1671,23 +1659,23 @@ namespace JsonAssets
                             if (this.FixId(this.OldObjectIds, this.ObjectIds, obj.preservedParentSheetIndex, this.VanillaObjectIds))
                                 obj.preservedParentSheetIndex.Value = -1;
                             */
-                            if (this.OldObjectIds.ContainsKey(obj.ItemID))
-                                obj.ItemID = this.OldObjectIds[obj.ItemID].Replace(' ', '_');
+                            if (this.OldObjectIds.ContainsKey(obj.ItemId))
+                                obj.ItemId = this.OldObjectIds[obj.ItemId].Replace(' ', '_');
                         }
                         else
                         {
-                            if (this.OldBigCraftableIds.ContainsKey(obj.ItemID))
-                                obj.ItemID = this.OldBigCraftableIds[obj.ItemID].Replace(' ', '_');
+                            if (this.OldBigCraftableIds.ContainsKey(obj.ItemId))
+                                obj.ItemId = this.OldBigCraftableIds[obj.ItemId].Replace(' ', '_');
                         }
                     }
 
                     if (obj.heldObject.Value != null)
                     {
-                        if (this.OldObjectIds.ContainsKey(obj.heldObject.Value.ItemID))
-                            obj.heldObject.Value.ItemID = this.OldObjectIds[obj.heldObject.Value.ItemID].Replace(' ', '_');
+                        if (this.OldObjectIds.ContainsKey(obj.heldObject.Value.ItemId))
+                            obj.heldObject.Value.ItemId = this.OldObjectIds[obj.heldObject.Value.ItemId].Replace(' ', '_');
 
                         if (obj.heldObject.Value is Chest innerChest)
-                            this.FixItemList(innerChest.items);
+                            this.FixItemList(innerChest.Items);
                     }
                     break;
             }
@@ -1732,9 +1720,9 @@ namespace JsonAssets
 
             switch (building)
             {
-                case Mill mill:
-                    this.FixItemList(mill.input.Value.items);
-                    this.FixItemList(mill.output.Value.items);
+                default:
+                    foreach ( var chest in building.buildingChests.ToList() )
+                        this.FixItemList(chest.Items);
                     break;
 
                 case FishPond pond:
@@ -1773,17 +1761,6 @@ namespace JsonAssets
                 crop.netSeedIndex.Value = this.OldObjectIds[crop.netSeedIndex.Value].Replace(' ', '_');
         }
 
-        /// <summary>Fix item IDs contained by a farm animal.</summary>
-        /// <param name="animal">The farm animal to fix.</param>
-        private void FixFarmAnimal(FarmAnimal animal)
-        {
-            foreach (NetString id in new[] { animal.currentProduce, animal.defaultProduceIndex, animal.deluxeProduceIndex })
-            {
-                if (this.OldObjectIds.ContainsKey(id.Value))
-                    id.Value = this.OldObjectIds[id.Value].Replace(' ', '_');
-            }
-        }
-
         /// <summary>Fix item IDs contained by a terrain feature, including the terrain feature itself.</summary>
         /// <param name="feature">The terrain feature to fix.</param>
         /// <returns>Returns whether the item should be removed.</returns>
@@ -1797,23 +1774,22 @@ namespace JsonAssets
 
                 case FruitTree ftree:
                     {
-                        if (this.OldFruitTreeIds.ContainsKey(ftree.treeType.Value))
+                        if (this.OldFruitTreeIds.ContainsKey(ftree.treeId.Value))
                         {
-                            ftree.spriteRowNumber.Value = -1;
-                            ftree.treeType.Value = this.OldFruitTreeIds[ftree.treeType.Value].Replace(' ', '_');
+                            ftree.treeId.Value = this.OldFruitTreeIds[ftree.treeId.Value].Replace(' ', '_');
                         }
-
-                        if (this.OldObjectIds.ContainsKey(ftree.indexOfFruit.Value))
-                            ftree.indexOfFruit.Value = this.OldObjectIds[ftree.indexOfFruit.Value].Replace(' ', '_');
                     }
                     break;
 
+                    // TODO: How to do in 1.6?
+                    /*
                 case ResourceClump rclump:
                     if ( this.OldObjectIds.ContainsKey( rclump.parentSheetIndex.Value.ToString() ) )
                     {
-                        rclump.ItemID = this.OldObjectIds[rclump.parentSheetIndex.Value.ToString()].Replace(' ', '_');
+                        rclump.ItemId = this.OldObjectIds[rclump.parentSheetIndex.Value.ToString()].Replace(' ', '_');
                         rclump.parentSheetIndex.Value = 1720;
                     }
+                    */
 
                     break;
             }

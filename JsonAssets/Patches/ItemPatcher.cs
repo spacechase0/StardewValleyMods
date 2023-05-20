@@ -45,7 +45,7 @@ namespace JsonAssets.Patches
             {
                 if (__instance is SObject obj)
                 {
-                    var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == obj.ItemID);
+                    var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == obj.ItemId);
                     if (!obj.bigCraftable.Value && objData != null)
                     {
                         if (objData?.CanTrash == false)
@@ -66,7 +66,7 @@ namespace JsonAssets.Patches
             {
                 if (__instance is SObject obj)
                 {
-                    var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == obj.ItemID);
+                    var objData = Mod.instance.Objects.FirstOrDefault(od => od.Name.Replace(' ', '_') == obj.ItemId);
                     if (!obj.bigCraftable.Value && objData != null)
                     {
                         if (objData?.CanTrash == false)
@@ -75,7 +75,7 @@ namespace JsonAssets.Patches
                 }
                 else if (__instance is MeleeWeapon weapon)
                 {
-                    var weaponData = Mod.instance.Weapons.FirstOrDefault(wd => wd.Name.Replace(' ', '_') == weapon.ItemID);
+                    var weaponData = Mod.instance.Weapons.FirstOrDefault(wd => wd.Name.Replace(' ', '_') == weapon.ItemId);
                     if (weaponData != null)
                     {
                         if (weaponData?.CanTrash == false)

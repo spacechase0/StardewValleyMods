@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <Version>1.11.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
@@ -16,5 +16,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utilities\" />
   </ItemGroup>
 </Project>

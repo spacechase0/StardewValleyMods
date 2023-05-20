@@ -20,7 +20,7 @@ namespace JsonAssets.Data
         public bool ConsumeSecondItem { get; set; } = true;
 
         public IList<object> CraftedItems { get; set; } = new List<object>();
-        public Color CraftedItemColor { get; set; } = Color.White;
+        //public Color CraftedItemColor { get; set; } = Color.White;
 
 
         /*********
@@ -33,12 +33,12 @@ namespace JsonAssets.Data
                 FirstItemTags = new List<string>(this.FirstItemTags),
                 SecondItemTags = new List<string>(this.SecondItemTags),
                 SpendRightItem = this.ConsumeSecondItem,
-                CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}"
+                //CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}"
             };
 
-            recipe.CraftedItemIDs = new List<string>();
+            recipe.CraftedItemIds = new List<string>();
             foreach (object entry in this.CraftedItems)
-                recipe.CraftedItemIDs.Add(this.CraftedItems[0].ToString()); // TODO: always uses first crafted item?
+                recipe.CraftedItemIds.Add(this.CraftedItems[0].ToString()); // TODO: always uses first crafted item?
 
             return recipe;
         }

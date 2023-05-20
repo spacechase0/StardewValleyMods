@@ -201,12 +201,15 @@ namespace SpaceShared
                 }
                 else
                 {
-                    IList<Item> list = b.GetBuildingChest( "Output" ).Items;
-                    for (int i = 0; i < list.Count; ++i)
+                    foreach (var chest in b.buildingChests)
                     {
-                        if (list[i] != null)
+                        IList<Item> list = chest.Items;
+                        for (int i = 0; i < list.Count; ++i)
                         {
-                            list[i] = SpaceUtility._recursiveIterateItem(list[i], action);
+                            if (list[i] != null)
+                            {
+                                list[i] = SpaceUtility._recursiveIterateItem(list[i], action);
+                            }
                         }
                     }
                 }
