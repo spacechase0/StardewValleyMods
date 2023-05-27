@@ -25,42 +25,9 @@ namespace JsonAssets.Patches
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
             harmony.Patch(
-                original: this.RequireMethod<Crop>(nameof(Crop.isPaddyCrop)),
-                prefix: this.GetHarmonyMethod(nameof(Before_IsPaddyCrop))
-            );
-
-            harmony.Patch(
                 original: this.RequireMethod<Crop>(nameof(Crop.newDay)),
                 transpiler: this.GetHarmonyMethod(nameof(Transpile_NewDay))
             );
-        }
-
-
-        /*********
-        ** Private methods
-        *********/
-        /// <summary>The method to call before <see cref="Crop.isPaddyCrop"/>.</summary>
-        private static bool Before_IsPaddyCrop(Crop __instance, ref bool __result)
-        {
-            try
-            {
-                var cropData = Mod.instance.Crops.FirstOrDefault(c => __instance.overrideTexturePath.Value == "JA\\Crop\\" + c.Name);
-                if (cropData == null)
-                    return true;
-
-                if (cropData.CropType == CropType.Paddy)
-                {
-                    __result = true;
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Failed in {nameof(Before_IsPaddyCrop)}:\n{ex}");
-                return true;
-            }
         }
 
         /// <summary>The method which transpiles <see cref="Crop.newDay"/>.</summary>

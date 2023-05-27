@@ -1,0 +1,9 @@
+﻿{
+    "Name": "Fruit Tree Capacity Growth",
+    "Author": "spacechase0",
+    "Version": "1.0.0",
+    "Description": "...",
+    "UniqueID": "spacechase0.FruitTreeCapacityGrowth",
+    "EntryDll": "FruitTreeCapacityGrowth.dll",
+    "UpdateKeys": [ "Nexus:" ],
+}

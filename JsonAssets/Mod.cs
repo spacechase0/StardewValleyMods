@@ -78,12 +78,9 @@ namespace JsonAssets
             HarmonyPatcher.Apply(this,
                 new CropPatcher(),
                 //new FencePatcher(),
-                new ForgeMenuPatcher(),
                 new Game1Patcher(),
                 new GiantCropPatcher(),
                 new HoeDirtPatcher(),
-                new ItemPatcher(),
-                new ObjectPatcher(),
                 new RingPatcher(),
                 new ShopMenuPatcher()
             );

@@ -44,7 +44,7 @@ namespace StardewValley.Tools
         {
             if (!scriptDirty || correspondingScript == null)
             {
-                //goto doUpdate;
+                goto doUpdate;
             }
             scriptDirty = false;
 

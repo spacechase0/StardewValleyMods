@@ -16,17 +16,13 @@ Provided functionality (this assumes you understand C# and the game code a littl
     * `int GetLevelForCustomSkill(Farmer farmer, string skill)` - Gets the level of the given `skill` for the given `farmer`.
     * `void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt)` - Adds `amt` experience to the given `skill` for the given `farmer`.
     * `int GetProfessionId(string skill, string profession)` - Gets the integer ID of the given `profession` (for `Farmer.professions`) for the given skill.
-    * `void AddEventCommand(string command, MethodInfo info)` - Adds a custom event command `command` that directs to the method `info`.
-        * Note that the method must take the following parameters: `(Event, GameLocation, GameTime, string[])`
-        * (The corresponding event, where it takes place, the delta game time, and the parameters to the command.)
-    * `void RegisterSerializerType(Type type)` - Register a `type` as being valid for the vanilla serializer. Must have the attribute `XmlType` applied, with the parameter starting with `"Mods_"`, ie. `[XmlType("Mods_AuthorName_MyCustomObject")]`.
+        * `void RegisterSerializerType(Type type)` - Register a `type` as being valid for the vanilla serializer. Must have the attribute `XmlType` applied, with the parameter starting with `"Mods_"`, ie. `[XmlType("Mods_AuthorName_MyCustomObject")]`.
     * `void RegisterCustomProperty(Type declaringType, string name, Type propType, MethodInfo getter, MethodInfo setter)` - Register a virtual property, attaching itself to a vanilla object for serialization.
         * `declaringType` is the type to attach to
         * `name` is the name of the property.
         * `propType` is the type of the property you're adding.
         * `getter` is a `MethodInfo` pointing to your static function acting as a getter. It take an instance of the type corresponding to `declaringType`, and return a value of the type corresponding to `propType`.
         * `setter` is a `MethodInfo` pointing to your static function acting as a setter. It take an instance of the type corresponding to `declaringType` and a value of the type corresponding to `propType`.
-    * `void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc)` - Register a custom location context for user with maps. `name` is the name of it, while `getLocationWeatherForTomorrowFunc` is, you guessed it, the function for getting its weather for tomorrow.
 * Events, located in SpaceCore.Events.SpaceEvents:
     * `OnBlankSave` - Occurs before loading starts. Custom locations can be added here so that they retain player data.
     * `ShowNightEndMenus` - Right before the shipping menu, level up menus, etc. pop up so you can add your own.
@@ -36,17 +32,6 @@ Provided functionality (this assumes you understand C# and the game code a littl
             * `FarmEvent NightEvent` - The event that will be used. Can be modified to change which one runs.
     * `OnItemEaten` - Check player.itemToEat for what they just ate.
         * `sender` - The farmer that ate.
-    * `ActionActivated` - When a tile with 'Action' property has been activated.
-        * `sender` - The farmer that activated it.
-        * `EventArgsAction`
-            * `bool Cancel` - Set to true to cancel default behavior.
-            * `bool TouchAction` - false in this case, true for `TouchActionActivated`
-            * `string Action` - the action name
-            * `string ActionString` - the full action string
-            * `Location Position` - the position of the action, only valid for actions, not touch actions.
-    * `TouchActionActivated` - When a tile with 'TouchAction' property has been activated.
-        * `sender` The farmer that activated it.
-        * `EventArgsAction` - see above
     * `BeforeGiftGiven` - Called before a gift is given. Can be used to cancel the default gift given behavior and do your own stuff.
         * `sender` - The farmer that gave the gift.
         * `EventArgsBeforeReceiveObject`
@@ -86,6 +71,7 @@ Provided functionality (this assumes you understand C# and the game code a littl
             * `string GetName()` - returns the localized name of your profession.
             * `string GetDescription()` - returns the localized description of your profession.
             * `void DoImmediateProfessionPerk()` - optional, apply an effect immediately upon being chosen.
+            * `void UndoImmediateProfessionPerk()` - optional, undo an effect from above for when the player uses the sewer statue to change professions.
     * `int[] ExperienceCurve` - The experience curve for levels 1 through 10.
         * You can put more or less, but it might look funny on the skills page.
     * `IList<ProfessionPair> ProfessionsForLevels` - Put profession choices here.
@@ -127,6 +113,20 @@ Provided functionality (this assumes you understand C# and the game code a littl
     * Generally, you create a `RootElement` that you put everything under, and set the `RootElement`s local position to where your window starts.
     * Every element has a local position, which offsets it from its parent's global position.
     * This is the same UI framework that GMCM uses.
+* ExtEngine - scripting in content packs
+    * TODO: Document this once it is more complete
+* Vanilla Asset Expansions
+    * Objects - These are in the asset `spacechase0.SpaceCore/ObjectExtensionData`, which is a dictionary with the key being an object's unqualified item ID, and an object containing the following fields:
+        * `CategoryTextOverride` - string, default null
+        * `CategoryColorOverride` - same format as Json Assets colors, default null
+        * `HideFromShippingCollection` - true/false, default false
+        * `CanBeTrashed` - true/false, also prevents dropping, default true
+        * `CanBeGifted` - true/false, default true
+        * `CanBeShipped` - true/false, default true
+        * `EatenHealthRestoredOverride` - integer, override how much health is restored on eating this item, default null (use vanilla method of calculation)
+        * `EatenStaminaRestoredOverride` - integer, override how much stamina is restored on eating this item, default null (use vanilla method of calculation)
+    * Weapons - Stored in the `CustomFields` on the weapon data asset object:
+        * `CanBeTrashed` - true/false, also prevents dropping, default true
 * Some other things that will remain undocumented because they will be removed soon.
 
 ## Compatibility

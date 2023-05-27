@@ -5,6 +5,7 @@ using JsonAssets.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
+using SpaceCore.Framework.VanillaAssetExpansion;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
@@ -34,6 +35,7 @@ namespace JsonAssets.Framework
                 {"Data\\ClothingInformation", this.InjectDataClothingInformation},
                 {"Data\\TailoringRecipes", this.InjectDataTailoringRecipes},
                 {"Data\\Boots", this.InjectDataBoots},
+                {"spacechase0.SpaceCore/ObjectExtensionData", this.InjectDataObjectExtensionData }
             };
 
             this.ToLoad = new();
@@ -114,6 +116,31 @@ namespace JsonAssets.Framework
                 }
             }
         }
+        private void InjectDataObjectExtensionData(IAssetData asset)
+        {
+            var data = asset.AsDictionary<string, ObjectExtensionData>().Data;
+            foreach (var obj in Mod.instance.Objects)
+            {
+                try
+                {
+                    Log.Verbose($"Injecting to object extension data: {obj.Name}");
+                    data.Add(obj.Name, new()
+                    {
+                        CategoryTextOverride = obj.CategoryTextOverride,
+                        CategoryColorOverride = obj.CategoryColorOverride,
+                        HideFromShippingCollection = obj.HideFromShippingCollection,
+                        CanBeTrashed = obj.CanTrash,
+                        CanBeGifted = obj.CanBeGifted,
+                        CanBeShipped = obj.CanSell,
+                    });
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Exception injecting object information for {obj.Name}: {e}");
+                }
+            }
+        }
+
         private void InjectDataObjectContextTags(IAssetData asset)
         {
             var data = asset.AsDictionary<string, string>().Data;
@@ -129,6 +156,17 @@ namespace JsonAssets.Framework
                 catch (Exception e)
                 {
                     Log.Error($"Exception injecting object context tags for {obj.Name}: {e}");
+                }
+            }
+            foreach (var crop in Mod.instance.Crops)
+            {
+                var obj = crop.Seed;
+                if (crop.CropType == CropType.Paddy)
+                {
+                    if (!data.TryGetValue(obj.Name, out string prevTags) || prevTags == "")
+                        data[obj.Name] = "paddy_crop";
+                    else
+                        data[obj.Name] = prevTags + ", paddy_crop";
                 }
             }
         }
