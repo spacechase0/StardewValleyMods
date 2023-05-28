@@ -243,7 +243,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupObjects.TryGetValue(obj.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate object: {obj.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupObjects[obj.Name] = source;
 
@@ -355,7 +358,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupCrops.TryGetValue(crop.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate crop: {crop.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupCrops[crop.Name] = source;
 
@@ -441,7 +447,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupFruitTrees.TryGetValue(tree.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate fruit tree: {tree.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupFruitTrees[tree.Name] = source;
 
@@ -521,7 +530,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupBigCraftables.TryGetValue(craftable.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate big craftable: {craftable.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupBigCraftables[craftable.Name] = source;
 
@@ -569,7 +581,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupHats.TryGetValue(hat.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate hat: {hat.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupHats[hat.Name] = source;
 
@@ -627,7 +642,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupWeapons.TryGetValue(weapon.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate weapon: {weapon.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupWeapons[weapon.Name] = source;
 
@@ -663,7 +681,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupShirts.TryGetValue(shirt.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate shirt: {shirt.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupShirts[shirt.Name] = source;
 
@@ -699,7 +720,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupPants.TryGetValue(pants.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate pants: {pants.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupPants[pants.Name] = source;
 
@@ -768,7 +792,10 @@ namespace JsonAssets
 
             // check for duplicates
             if (this.DupBoots.TryGetValue(boots.Name, out IManifest prevManifest))
+            {
                 Log.Error($"Duplicate boots: {boots.Name} just added by {source.Name}, already added by {prevManifest.Name}!");
+                return;
+            }
             else
                 this.DupBoots[boots.Name] = source;
 
