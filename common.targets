@@ -1,7 +1,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--common project properties-->
   <PropertyGroup>
-    <Authors>Spacechase0</Authors>
+    <Authors>spacechase0</Authors>
+    <Description>...</Description>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+    
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <LangVersion>latest</LangVersion>
@@ -12,6 +15,7 @@
   <!--import mod build package-->
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.1" />
+    <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.1.0" />
   </ItemGroup>
 
   <!--common mod build package options-->

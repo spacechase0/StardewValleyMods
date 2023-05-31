@@ -1,23 +1,34 @@
-﻿{
-    "Name": "Json Assets",
-    "Author": "spacechase0",
-    "Version": "1.11.0",
-    "MinimumApiVersion": "3.13.0",
-    "Description": "Lets content packs add custom content to the game.",
-    "UniqueID": "spacechase0.JsonAssets",
-    "EntryDll": "JsonAssets.dll",
-    "UpdateKeys": [ "Nexus:1720" ],
-    "Dependencies": [
-        {
-            "UniqueID": "Pathoschild.ContentPatcher",
-            "IsRequired": false
-        },
-        {
-            "UniqueID": "spacechase0.SpaceCore"
-        },
-        {
-            "UniqueID": "Cherry.ExpandedPreconditionsUtility",
-            "IsRequired": false
-        }
-    ]
+{
+  /*
+   | This file is automatically updated by ModManifestBuilder
+   | when the project is compiled.
+   | 
+   | Changes made to this file may be overwritten.
+   | 
+   */
+  "$schema": "https://smapi.io/schemas/manifest.json",
+  "UniqueID": "spacechase0.JsonAssets",
+  "Name": "Json Assets",
+  "Author": "spacechase0",
+  "Version": "1.11.0-Debug",
+  "Description": "Lets content packs add custom content to the game.",
+  "MinimumApiVersion": "3.13.0",
+  "EntryDll": "JsonAssets.dll",
+  "Dependencies": [
+    {
+      "UniqueID": "Cherry.ExpandedPreconditionsUtility",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "Pathoschild.ContentPatcher",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "spacechase0.SpaceCore",
+      "MinimumVersion": "1.13.0"
+    }
+  ],
+  "UpdateKeys": [
+    "Nexus:1720"
+  ]
 }

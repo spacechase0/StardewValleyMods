@@ -4,7 +4,11 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <Name>Json Assets</Name>
+    <Description>Lets content packs add custom content to the game.</Description>
     <Version>1.11.0</Version>
+    <UpdateKeys>Nexus:1720</UpdateKeys>
+    
     <TargetFramework>net6.0</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
@@ -16,6 +20,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
+    <SMAPIDependency Include="Cherry.ExpandedPreconditionsUtility" Required="false" />
   </ItemGroup>
 
   <ItemGroup>
