@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Raft Restoration",
-    "Author": "spacechase0",
-    "Version": "0.1.0",
-    "Description": "Reimplements the game's unimplemented raft feature.",
-    "UniqueID": "spacechase0.RaftRestoration",
-    "EntryDll": "RaftRestoration.dll",
-    "UpdateKeys": []
-}

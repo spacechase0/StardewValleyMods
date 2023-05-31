@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Cave Farm",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "Adds a cave farm type with diggable walls.",
-    "UniqueID": "spacechase0.CaveFarm",
-    "EntryDll": "CaveFarm.dll",
-    "UpdateKeys": []
-}

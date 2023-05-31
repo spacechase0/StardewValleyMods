@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Sizable Fish",
-    "Author": "spacechase0",
-    "Version": "1.0.1",
-    "Description": "...",
-    "UniqueID": "spacechase0.SizableFish",
-    "EntryDll": "SizableFish.dll",
-    "UpdateKeys": [ "Nexus:" ]
-}

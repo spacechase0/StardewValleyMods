@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Advanced Social Interactions",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "...",
-    "UniqueID": "spacechase0.AdvancedSocialInteractions",
-    "EntryDll": "AdvancedSocialInteractions.dll",
-    "UpdateKeys": [ "Nexus:" ]
-}

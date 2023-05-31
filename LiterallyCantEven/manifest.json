@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Literally Cant Even",
-    "Author": "spacechase0",
-    "Version": "1.0.1",
-    "Description": "...",
-    "UniqueID": "spacechase0.LiterallyCantEven",
-    "EntryDll": "LiterallyCantEven.dll",
-    "UpdateKeys": [ "Nexus:" ]
-}
