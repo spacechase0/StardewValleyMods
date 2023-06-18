@@ -25,8 +25,8 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
 
             var mp = Mod.instance.Helper.Reflection.GetField< Multiplayer >( typeof( Game1 ), "multiplayer" ).GetValue();
             long id = mp.getNewID();
-            LunarAnimalType type = rand.Next( 2 ) == 0 ? LunarAnimalType.Cow : LunarAnimalType.Chicken;
-            location.Animals.Add( id, new LunarAnimal( type, new Vector2( x + caveMap.Layers[ 0 ].LayerWidth / 2, y + caveMap.Layers[ 0 ].LayerHeight / 2 ) * Game1.tileSize, id ) );
+            string type = rand.Next( 2 ) == 0 ? "Lunar Cow" : "Lunar Chicken";
+            location.Animals.Add( id, new FarmAnimal(type, id, 0) { Position = new Vector2(x + caveMap.Layers[0].LayerWidth / 2, y + caveMap.Layers[0].LayerHeight / 2) * Game1.tileSize } );
 
             warpFromPrev = new Vector2( x + 6, y + 10 );
             location.warps.Add( new Warp( x + 6, y + 11, "Custom_MM_MoonAsteroidsDungeon" + location.level.Value / 100, 1, location.level.Value % 100, false ) );

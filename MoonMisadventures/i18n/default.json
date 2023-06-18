@@ -9,6 +9,14 @@
     "location.landing-area": "Landing Area",
     "location.asteroids-entrance": "Mysterious Gargoyle",
     "location.asteroids": "Asteroids",
+    "location.mountain-top": "Mountain Top",
+    "location.ufo-interior": "UFO Interior",
+    "location.planet-overlook": "Lonely Mountain",
+    "location.moon-temple": "Moon Temple",
+
+    // Farm animals
+    "farm-animal.lunar-cow": "Lunar Cow",
+    "farm-animal.lunar-chicken": "Lunar Chicken",
 
     /*********
     ** Items

@@ -37,8 +37,8 @@ namespace MajesticArcana
                 CraftingRecipe fake = new("");
                 fake.recipeList.Clear();
                 fake.itemToProduce.Clear();
-                int qtySpot = recipe.Key.IndexOf('x');
-                fake.itemToProduce.Add(int.Parse(qtySpot == -1 ? recipe.Key.Substring(3) : recipe.Key.Substring(3, qtySpot - 3)));
+                int qtySpot = recipe.Key.IndexOf('/');
+                fake.itemToProduce.Add(qtySpot == -1 ? recipe.Key.Substring(3) : recipe.Key.Substring(3, qtySpot - 3));
                 fake.numberProducedPerCraft = qtySpot == -1 ? 1 : int.Parse(recipe.Key.Substring(qtySpot + 1));
                 var tmp = new StardewValley.Object(fake.itemToProduce[0], fake.numberProducedPerCraft);
                 fake.DisplayName = tmp.DisplayName;
@@ -46,7 +46,7 @@ namespace MajesticArcana
 
                 foreach (string item in recipe.Value)
                 {
-                    int itemId = int.Parse(item[0] == '-' ? item : item.Substring(3));
+                    string itemId = item[0] == '-' ? item : item.Substring(3);
                     if (fake.recipeList.ContainsKey(itemId))
                         fake.recipeList[itemId] = fake.recipeList[itemId] + 1;
                     else
@@ -116,8 +116,8 @@ namespace MajesticArcana
         public override void draw(SpriteBatch b)
         {
             var menu = Game1.activeClickableMenu;
-            var check = menu == GetParentMenu();
-            var active = IsActive();
+            bool check = menu == GetParentMenu();
+            bool active = IsActive();
 
             ui.Draw(b);
 

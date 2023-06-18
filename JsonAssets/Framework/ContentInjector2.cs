@@ -74,15 +74,15 @@ namespace JsonAssets.Framework
                         foreach (var obj in Mod.instance.Objects)
                         {
                             if (obj.GiftTastes.Love.Contains(npc.Key))
-                                loveIds.Add(obj.Name.ToString());
+                                loveIds.Add(obj.Name.ToString().FixIdJA());
                             if (obj.GiftTastes.Like.Contains(npc.Key))
-                                likeIds.Add(obj.Name.ToString());
+                                likeIds.Add(obj.Name.ToString().FixIdJA());
                             if (obj.GiftTastes.Neutral.Contains(npc.Key))
-                                neutralIds.Add(obj.Name.ToString());
+                                neutralIds.Add(obj.Name.ToString().FixIdJA());
                             if (obj.GiftTastes.Dislike.Contains(npc.Key))
-                                dislikeIds.Add(obj.Name.ToString());
+                                dislikeIds.Add(obj.Name.ToString().FixIdJA());
                             if (obj.GiftTastes.Hate.Contains(npc.Key))
-                                hateIds.Add(obj.Name.ToString());
+                                hateIds.Add(obj.Name.ToString().FixIdJA());
                         }
 
                         string loveIdStr = string.Join(" ", loveIds);
@@ -95,7 +95,7 @@ namespace JsonAssets.Framework
                         Log.Verbose($"Adding gift tastes for {npc.Key}: {newData[npc.Key]}");
                     }
                     asset.ReplaceWith(newData);
-                });
+                }, StardewModdingAPI.Events.AssetEditPriority.Late);
             }
         }
     }

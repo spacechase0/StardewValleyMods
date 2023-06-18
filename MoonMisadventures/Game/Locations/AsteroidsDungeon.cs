@@ -119,9 +119,6 @@ namespace MoonMisadventures.Game.Locations
             activeLevels.Clear();
         }
 
-        public readonly NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> animals = new();
-        public NetLongDictionary<FarmAnimal, NetRef<FarmAnimal>> Animals => animals;
-
         private bool generated = false;
         private LocalizedContentManager mapContent;
         public readonly NetEnum<LevelType> levelType = new();
@@ -158,7 +155,14 @@ namespace MoonMisadventures.Game.Locations
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( animals, level, genSeed, fixedTeleporters, fixTeleporter, doneSwitches, doSwitch, warpFromPrev, warpFromNext );
+            NetFields.AddField(level, "level");
+            NetFields.AddField(genSeed, "genSeed");
+            NetFields.AddField(fixedTeleporters, "fixedTeleporters");
+            NetFields.AddField(fixTeleporter, "fixTeleporter");
+            NetFields.AddField(doneSwitches, "doneSwitches");
+            NetFields.AddField(doSwitch, "doSwitch");
+            NetFields.AddField(warpFromPrev, "warpFromPrev");
+            NetFields.AddField(warpFromNext, "warpFromNext");
             fixTeleporter.onEvent += OnFixTeleporter;
             doSwitch.onEvent += DoSwitch;
         }
@@ -237,20 +241,20 @@ namespace MoonMisadventures.Game.Locations
                     DoSwitch( point );
             }
 
-            if ( Game1.player.getTileX() == 0 )
+            if ( Game1.player.Tile.X == 0 )
             {
-                if ( Game1.player.getTileY() == 0 )
+                if ( Game1.player.Tile.Y == 0 )
                 {
                     Game1.player.Position = new Vector2( warpFromPrev.X * Game1.tileSize, warpFromPrev.Y * Game1.tileSize );
                 }
-                else if ( Game1.player.getTileY() == 1 )
+                else if ( Game1.player.Tile.Y == 1 )
                 {
                     Game1.player.Position = new Vector2( warpFromNext.X * Game1.tileSize, warpFromNext.Y * Game1.tileSize );
                 }
             }
-            else if ( Game1.player.getTileX() == 1 )
+            else if ( Game1.player.Tile.X == 1 )
             {
-                if ( lunarDoors.TryGetValue( Game1.player.getTileY(), out Vector2 doorPos ) )
+                if ( lunarDoors.TryGetValue( (int)Game1.player.Tile.Y, out Vector2 doorPos ) )
                 {
                     Game1.player.Position = ( doorPos + new Vector2( 0, 1 ) ) * Game1.tileSize;
                 }
@@ -270,7 +274,7 @@ namespace MoonMisadventures.Game.Locations
         protected override bool breakStone( string indexOfStone, int x, int y, Farmer who, Random r )
         {
             if ( objects[ new Vector2( x, y ) ].Name == "Stone" &&
-                 objects[ new Vector2( x, y ) ].ItemID == ItemIds.MythiciteOreMinable )
+                 objects[ new Vector2( x, y ) ].ItemId == ItemIds.MythiciteOreMinable )
             {
                 Game1.createItemDebris( new StardewValley.Object( ItemIds.MythiciteOre, 1 )
                 {
@@ -305,12 +309,12 @@ namespace MoonMisadventures.Game.Locations
                     gen = BossDungeonGenerators[ r.Next( BossDungeonGenerators.Count ) ];
                 }
             }
-            else if ( levelType == LevelType.Room )
+            else if ( levelType.Value == LevelType.Room )
             {
                 Random r = new Random( ( int ) Game1.uniqueIDForThisGame + ( int ) Game1.stats.DaysPlayed / 3+ level.Value  );
                 gen = RoomDungeonGenerators[ r.Next( RoomDungeonGenerators.Count ) ];
             }
-            else if ( levelType == LevelType.Cave )
+            else if ( levelType.Value == LevelType.Cave )
             {
                 Random r = new Random( ( int ) Game1.uniqueIDForThisGame + ( int ) Game1.stats.DaysPlayed / 4 + level.Value );
                 gen = CaveDungeonGenerators[ r.Next( CaveDungeonGenerators.Count ) ];
@@ -371,21 +375,21 @@ namespace MoonMisadventures.Game.Locations
                 if ( level.Value == 1 )
                     prev = "Custom_MM_MoonAsteroidsEntrance";
 
-                performTouchAction( "MagicWarp " + prev + " 0 1", Game1.player.getTileLocation() );
+                performTouchAction( "MagicWarp " + prev + " 0 1", Game1.player.Tile );
             }
             else if ( action == "AsteroidsWarpNext" )
             {
                 if (warpFromPrev == warpFromNext) // boss level
-                    performTouchAction("MagicWarp Custom_MM_MoonFarm 7 11", Game1.player.getTileLocation());
+                    performTouchAction("MagicWarp Custom_MM_MoonFarm 7 11", Game1.player.Tile);
                 else
                 {
                     string next = AsteroidsDungeon.BaseLocationName + (level.Value + 1);
-                    performTouchAction("MagicWarp " + next + " 0 0", Game1.player.getTileLocation());
+                    performTouchAction("MagicWarp " + next + " 0 0", Game1.player.Tile);
                 }
             }
             else if ( action == "LunarTeleporterOffline" )
             {
-                if ( Game1.player.ActiveObject?.ItemID == ItemIds.MythiciteOre )
+                if ( Game1.player.ActiveObject?.ItemId == ItemIds.MythiciteOre )
                 {
                     who.reduceActiveItemByOne();
                     Game1.playSound( "questcomplete" );

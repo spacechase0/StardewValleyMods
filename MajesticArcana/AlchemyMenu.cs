@@ -80,10 +80,8 @@ namespace MajesticArcana
             if (obj == null)
                 return;
 
-            var rect = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, obj.ParentSheetIndex, 16, 16);
-            var target = TileSheetExtensions.GetAdjustedTileSheetTarget(Game1.objectSpriteSheet, rect);
-            rect.Y = target.Y;
-            var tex = TileSheetExtensions.GetTileSheet(Game1.objectSpriteSheet, target.TileSheet);
+            var tex = ItemRegistry.GetData(slot.Item.QualifiedItemId).GetTexture();
+            var rect = ItemRegistry.GetData(slot.Item.QualifiedItemId).GetSourceRect();
 
             var cols = new Color[16 * 16];
             tex.GetData(0, rect, cols, 0, cols.Length);
@@ -128,7 +126,7 @@ namespace MajesticArcana
             {
                 // TODO: Refactor this in 1.6 to allow other object types
                 var recipe = new Tuple<int, bool>[6];
-                int outX = recipeData.Key.IndexOf("x");
+                int outX = recipeData.Key.IndexOf("/");
                 int output = int.Parse(outX == -1 ? recipeData.Key.Substring( 3 ) : recipeData.Key.Substring(3, outX - 3 ));
                 int outputQty = outX == -1 ? 1 : int.Parse(recipeData.Key.Substring(outX + 1));
 

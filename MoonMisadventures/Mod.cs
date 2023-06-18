@@ -13,6 +13,7 @@ using MoonMisadventures.Game.Monsters;
 using MoonMisadventures.Game.Projectiles;
 using MoonMisadventures.VirtualProperties;
 using Netcode;
+using Newtonsoft.Json.Linq;
 using SpaceCore.Events;
 using SpaceCore.Interface;
 using SpaceShared;
@@ -23,8 +24,19 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buffs;
 using StardewValley.GameData;
+using StardewValley.GameData.Buildings;
+using StardewValley.GameData.Crops;
+using StardewValley.GameData.FarmAnimals;
+using StardewValley.GameData.LocationContexts;
+using StardewValley.GameData.Locations;
+using StardewValley.GameData.Machines;
+using StardewValley.GameData.Tools;
+using StardewValley.GameData.Weapons;
+using StardewValley.GameData.WorldMaps;
+using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
 using StardewValley.Menus;
+using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
 /* Art:
@@ -101,37 +113,25 @@ namespace MoonMisadventures
             SpaceEvents.AfterGiftGiven += AfterGiftGiven;
 
             var necklaceDef = new NecklaceDataDefinition();
-            ItemDataDefinition.ItemTypes.Add(necklaceDef);
-            ItemDataDefinition.IdentifierLookup[necklaceDef.Identifier] = necklaceDef;
+            ItemRegistry.ItemTypes.Add(necklaceDef);
+            Helper.Reflection.GetField< Dictionary<string, IItemDataDefinition>>( typeof( ItemRegistry ), "IdentifierLookup" ).GetValue()[necklaceDef.Identifier] = necklaceDef;
 
             var harmony = new Harmony( ModManifest.UniqueID );
             harmony.PatchAll();
-            harmony.Patch( AccessTools.Method( "StardewModdingAPI.Framework.SGame:DrawImpl" ), transpiler: new HarmonyMethod( typeof( Patches.Game1CatchLightingRenderPatch ).GetMethod( "Transpiler" ) ) );
-        }
-
-<<<<<<< HEAD
-        public bool CanLoad<T>( IAssetInfo asset )
-        {
-            if (asset.AssetNameEquals(ModManifest.UniqueID + "/Necklaces"))
-                return true;
-            foreach (string file in Directory.GetFiles(Path.Combine(Helper.DirectoryPath, "assets", "dga")))
-            {
-                string filename = Path.GetFileName(file);
-                if (asset.AssetName.EndsWith( ".png" ) && asset.AssetNameEquals("spacechase0.MoonMisadventures/assets/" + filename))
-                    return true;
-            }
-            if ( Game1.currentLocation is LunarLocation )
-            {
-                return asset.AssetNameEquals( "TerrainFeatures/hoeDirt" );
-            }
-            return false;
+            //harmony.Patch( AccessTools.Method( "StardewValley.Game1:_draw" ), transpiler: new HarmonyMethod( typeof( Patches.Game1CatchLightingRenderPatch ).GetMethod( "Transpiler" ) ) );
         }
 
         public T Load<T>( IAssetInfo asset )
         {
-            if (asset.AssetNameEquals(ModManifest.UniqueID + "/Necklaces"))
+            return default( T );
+        }
+        private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+        {
+            //Assets.ApplyEdits(e);
+
+            if (e.NameWithoutLocale.IsEquivalentTo(ModManifest.UniqueID + "/Necklaces"))
             {
-                return (T)(object)new Dictionary<string, NecklaceData>
+                e.LoadFrom(() => new Dictionary<string, NecklaceData>
                 {
                     { "looting", new NecklaceData()
                     {
@@ -190,301 +190,647 @@ namespace MoonMisadventures
                         Texture = "spacechase0.MoonMisadventures/assets/necklaces.png",
                         TextureIndex = 7,
                     } },
-                };
+                }, AssetLoadPriority.Exclusive);
             }
             foreach (string file in Directory.GetFiles(Path.Combine(Helper.DirectoryPath, "assets", "dga")))
             {
                 string filename = Path.GetFileName(file);
-                if (asset.AssetName.EndsWith(".png") && asset.AssetNameEquals("spacechase0.MoonMisadventures/assets/" + filename))
+                if (e.NameWithoutLocale.Name.EndsWith(".png") && e.NameWithoutLocale.IsEquivalentTo("spacechase0.MoonMisadventures/assets/" + filename))
                 {
-                    return (T)(object)Helper.Content.Load<Texture2D>("assets/dga/" + filename);
+                    e.LoadFrom(() => Helper.ModContent.Load<Texture2D>("assets/dga/" + filename), AssetLoadPriority.Exclusive);
                 }
             }
-            if ( Game1.currentLocation is LunarLocation )
+            if (e.NameWithoutLocale.IsEquivalentTo( "TerrainFeatures/hoeDirt" ) && Game1.currentLocation is LunarLocation)
             {
-                if ( asset.AssetNameEquals( "TerrainFeatures/hoeDirt" ) )
-                    return ( T ) ( object ) Assets.HoeDirt;
+                e.LoadFrom(() => Helper.ModContent.Load<Texture2D>("assets/hoedirt.png"), AssetLoadPriority.High);
             }
-            return default( T );
-        }
-=======
-        private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
-            => Assets.ApplyEdits(e);
->>>>>>> origin/develop
 
-        public bool CanEdit<T>(IAssetInfo asset)
-        {
-            if (asset.AssetNameEquals("Data/BuildingsData"))
-                return true;
-            if (asset.AssetNameEquals("Data/LocationContexts"))
-                return true;
-            if (asset.AssetNameEquals("Data/InGameMap"))
-                return true;
-            if (asset.AssetNameEquals("Data/ObjectContextTags"))
-                return true;
-            if (asset.AssetNameEquals("Data/ObjectInformation"))
-                return true;
-            if (asset.AssetNameEquals("Data/Boots"))
-                return true;
-            if (asset.AssetNameEquals("Data/Crops"))
-                return true;
-            if (asset.AssetNameEquals("Data/weapons"))
-                return true;
-            return false;
-        }
-
-        public void Edit<T>(IAssetData asset)
-        {
-            if (asset.AssetNameEquals("Data/BuildingsData"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/BuildingsData"))
             {
-                var bData = asset.AsDictionary<string, BuildingData>().Data;
-                bData.Add("spacechase0.MoonMisadventures_MoonObelisk", new()
+                e.Edit((asset) =>
                 {
-                    ID = "spacechase0.MoonMisadventures_MoonObelisk",
-                    Name = I18n.Building_Obelisk_Name(),
-                    Description = I18n.Building_Obelisk_Description(),
-                    Texture = "spacechase0.MoonMisadventures/assets/obelisk.png",
-                    BuildMaterials = new[]
+                    var bData = asset.AsDictionary<string, BuildingData>().Data;
+                    bData.Add("spacechase0.MoonMisadventures_MoonObelisk", new()
                     {
-                        new BuildingMaterial()
+                        Name = I18n.Building_Obelisk_Name(),
+                        Description = I18n.Building_Obelisk_Description(),
+                        Texture = "spacechase0.MoonMisadventures/assets/obelisk.png",
+                        BuildMaterials = new[]
                         {
-                            ItemID = ItemIds.MythiciteBar,
-                            Amount = 10,
-                        },
-                        new BuildingMaterial()
-                        {
-                            ItemID = ItemIds.StellarEssence,
-                            Amount = 25,
-                        },
-                        new BuildingMaterial()
-                        {
-                            ItemID = ItemIds.SoulSapphire,
-                            Amount = 3,
-                        },
-                    }.ToList(),
-                    BuildCost = 2000000,
-                    BuildCondition = "PLAYER_HAS_FLAG Any firstUfoTravel",
-                    Size = new( 3, 2 ),
-                    DefaultAction = "ObeliskWarp Custom_MM_MoonFarm 7 11 true",
+                            new BuildingMaterial()
+                            {
+                                ItemId = ItemIds.MythiciteBar,
+                                Amount = 10,
+                            },
+                            new BuildingMaterial()
+                            {
+                                ItemId = ItemIds.StellarEssence,
+                                Amount = 25,
+                            },
+                            new BuildingMaterial()
+                            {
+                                ItemId = ItemIds.SoulSapphire,
+                                Amount = 3,
+                            },
+                        }.ToList(),
+                        BuildCost = 2000000,
+                        BuildCondition = "PLAYER_HAS_FLAG Any firstUfoTravel",
+                        Size = new(3, 2),
+                        DefaultAction = "ObeliskWarp Custom_MM_MoonFarm 7 11 true",
+                    });
                 });
             }
-            if (asset.AssetNameEquals("Data/LocationContexts"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/LocationContexts"))
             {
-                var locData = asset.AsDictionary<string, LocationContextData>().Data;
-                locData.Add("Moon", new()
+                e.Edit((asset) =>
                 {
-                    Name = "Moon",
-                    DefaultValidPlantableLocations = new[] { "Custom_MM_MoonFarm" }.ToList(),
-                    WeatherConditions = new[]
+                    var locData = asset.AsDictionary<string, LocationContextData>().Data;
+                    locData.Add("Moon", new()
                     {
-                        new LocationContextData.WeatherCondition()
+                        DefaultValidPlantableLocations = new[] { "Custom_MM_MoonFarm" }.ToList(),
+                        PlayRandomAmbientSounds = false,
+                        AllowRainTotem = false,
+                        WeatherConditions = new[]
                         {
-                            Condition = "",
-                            Weather = "Sun",
+                            new WeatherCondition()
+                            {
+                                Condition = "",
+                                Weather = "Sun",
+                            }
+                        }.ToList(),
+                        ReviveLocations = new[]
+                        {
+                            new ReviveLocation()
+                            {
+                                Location = "Custom_MM_MoonLandingArea",
+                                Position = new( 9, 31 )
+                            }
+                        }.ToList(),
+                        PassOutLocations = new[]
+                        {
+                            new ReviveLocation()
+                            {
+                                Location = "Custom_MM_MoonFarm",
+                                Position = new(7, 11)
+                            }
+                        }.ToList(),
+                    });
+                });
+            }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/InGameMap"))
+            {
+                e.Edit((asset) =>
+                {
+                    var regionData = new WorldMapRegionData();
+                    regionData.BaseTexture.Add(new()
+                    {
+                        Id = "moon_bg",
+                        Texture = "spacechase0.MoonMisadventures/assets/map.png",
+                        SourceRect = new Rectangle( 0, 0, 300, 180 )
+                    });
+                    var mapData = regionData.MapAreas;
+                    mapData.Add(new WorldMapAreaData()
+                    {
+                        Id = "moon_farm",
+                        PixelArea = new Rectangle(194, 91, 24, 244),
+                        WorldPositions = new(new[] {
+                            new WorldMapAreaPositionData()
+                            {
+                                LocationContext = "Moon",
+                                LocationName = "Custom_MM_MoonFarm",
+                                TileArea = new Rectangle(0, 0, 49, 39),
+                                MapPixelArea = new Rectangle(194, 91, 24, 244),
+                            },
+                            new WorldMapAreaPositionData()
+                            {
+                                LocationContext = "Moon",
+                                LocationName = "Custom_MM_MoonFarmHouse",
+                                TileArea = new Rectangle(0, 0, 19, 11),
+                                MapPixelArea = new Rectangle(199, 97, 1, 1),
+                            },
+                            new WorldMapAreaPositionData()
+                            {
+                                LocationContext = "Moon",
+                                LocationName = "Custom_MM_MoonFarmCave",
+                                TileArea = new Rectangle(0, 0, 19, 11),
+                                MapPixelArea = new Rectangle(220, 106, 1, 1),
+                            },
+                        }),
+                        Tooltips = new(new[] {
+                            new WorldMapTooltipData()
+                            {
+                                Text = I18n.Location_LunarFarm(),
+                            }
+                        }),
+                        ScrollText = I18n.Location_LunarFarm(),
+                    });
+                    mapData.Add(new WorldMapAreaData()
+                    {
+                        Id = "moon_planetview",
+                        PixelArea = new Rectangle(216, 82, 7, 11),
+                        WorldPositions = new(new[] {
+                            new WorldMapAreaPositionData()
+                            {
+                                LocationContext = "Moon",
+                                LocationName = "Custom_MM_MoonPlanetOverlook",
+                                TileArea = new Rectangle(0, 0, 49, 39),
+                                MapPixelArea = new Rectangle(216, 82, 7, 11),
+                            },
+                        }),
+                        ScrollText = I18n.Location_PlanetOverlook(),
+                    });
+                    mapData.Add(new WorldMapAreaData()
+                    {
+                        Id = "moon_temple",
+                        PixelArea = new Rectangle(170, 91, 9, 12),
+                        WorldPositions = new(new[] {
+                            new WorldMapAreaPositionData()
+                            {
+                                LocationContext = "Moon",
+                                LocationName = "Custom_MM_MoonInfuserRoom",
+                                TileArea = new Rectangle(0, 0, 29, 29),
+                                MapPixelArea = new Rectangle(170, 91, 9, 12),
+                            },
+                        }),
+                        ScrollText = I18n.Location_MoonTemple(),
+                    });
+                    mapData.Add(new WorldMapAreaData()
+                    {
+                        Id = "moon_landingarea",
+                        PixelArea = new Rectangle(165, 109, 26, 21),
+                        WorldPositions = new(new[] {
+                            new WorldMapAreaPositionData()
+                            {
+                                LocationContext = "Moon",
+                                LocationName = "Custom_MM_MoonLandingArea",
+                                TileArea = new Rectangle(0, 0, 34, 37),
+                                MapPixelArea = new Rectangle(165, 109, 26, 21),
+                            },
+                        }),
+                        Tooltips = new(new[] {
+                            new WorldMapTooltipData()
+                            {
+                                Text = I18n.Location_LandingArea(),
+                            }
+                        }),
+                        ScrollText = I18n.Location_LandingArea(),
+                    });
+                    mapData.Add(new WorldMapAreaData()
+                    {
+                        Id = "moon_asteroidsentrance",
+                        PixelArea = new Rectangle(147, 89, 13, 17),
+                        WorldPositions = new(new[] {
+                            new WorldMapAreaPositionData()
+                            {
+                                LocationContext = "Moon",
+                                LocationName = "Custom_MM_MoonAsteroidsEntrance",
+                                TileArea = new Rectangle(0, 0, 49, 94),
+                                MapPixelArea = new Rectangle(147, 89, 13, 17),
+                            },
+                        }),
+                        Tooltips = new(new[] {
+                            new WorldMapTooltipData()
+                            {
+                                Text = I18n.Location_AsteroidsEntrance(),
+                            }
+                        }),
+                        ScrollText = I18n.Location_AsteroidsEntrance(),
+                    });
+                    mapData.Add(new WorldMapAreaData()
+                    {
+                        Id = "moon_asteroids",
+                        PixelArea = new Rectangle(64, 40, 1, 1),
+                        WorldPositions = new(new[] {
+                            new WorldMapAreaPositionData()
+                            {
+                                LocationContext = "Moon",
+                                LocationName = "Custom_MM_MoonAsteroidsDungeon",
+                                TileArea = new Rectangle(0, 0, 149, 149),
+                                MapPixelArea = new Rectangle(64, 40, 1, 1),
+                            },
+                        }),
+                        Tooltips = new(new[] {
+                            new WorldMapTooltipData()
+                            {
+                                Text = I18n.Location_Asteroids(),
+                            }
+                        }),
+                        ScrollText = I18n.Location_Asteroids(),
+                    });
+                    // TODO: Mountain top
+                    /*
+                    mapData.Add("mountaintop", new()
+                    {
+                        AreaID = "mountaintop",
+                        Group = "SDV",
+                        Texture = "LooseSprites/map",
+                        Zones = new(new[] {
+                            new WorldMapAreaZone()
+                            {
+                                ValidAreas = new List<string>( new[] { "Custom_MM_MountainTop" } ),
+                                MapTileCorners = "0 0 47 47",
+                                MapImageCorners = "210 1 211 1",
+                                DisplayName = "???",
+                            },
+                        }),
+                    });
+                    */
+                });
+            }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/ObjectContextTags"))
+            {
+                e.Edit((asset) =>
+                {
+                    var tagsData = asset.AsDictionary<string, string>().Data;
+                    tagsData.Add("LunarWheatSeeds", "plantable_context_moon");
+                    tagsData.Add("SunbloomSeeds", "plantable_context_moon");
+                    tagsData.Add("StarPetalSeeds", "plantable_context_moon");
+                    tagsData.Add("VoidBlossomSeeds", "plantable_context_moon");
+                    tagsData.Add("SoulSproutSeeds", "plantable_context_moon");
+                    return;
+                });
+            }
+
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/ObjectInformation") ||
+                e.NameWithoutLocale.IsEquivalentTo("Data/Boots"))
+            {
+                string type = e.NameWithoutLocale.IsEquivalentTo("Data/Boots") ? "Boots" : "Object";
+
+                e.Edit((asset) =>
+                {
+                    var data = Helper.ModContent.Load<Dictionary<string, JToken>>("assets/item-data.json");
+                    foreach (var entry in data)
+                    {
+                        if (entry.Key.StartsWith(type+":"))
+                        {
+                            string key = entry.Key.Substring(type.Length + 1);
+                            string val = entry.Value.ToString();
+                            while (val.Contains("{{i18n:"))
+                            {
+                                int x = val.IndexOf("{{i18n:");
+                                int y = val.IndexOf("}}", x);
+
+                                val = val.Substring(0, x) + Helper.Translation.Get(val.Substring(x + "{{i18n:".Length, y - x - "{{i18n:".Length)) + val.Substring(y + 2);
+                            }
+                            asset.AsDictionary<string, string>().Data.Add(ModManifest.UniqueID + "_" + key, val);
                         }
-                    }.ToList()
+                    }
                 });
             }
-            if (asset.AssetNameEquals("Data/InGameMap"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/FarmAnimals"))
             {
-                var mapData = asset.AsDictionary<string, IngameMapAreaData>().Data;
-                mapData.Add("moon_bg", new IngameMapAreaData()
+                e.Edit((asset) =>
                 {
-                    AreaID = "moon_bg",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    SourceRect = "0 0 300 180",
-                    DestRect = "0 0 300 180",
-                    Zones = new(),
-                });
-                mapData.Add("moon_farm", new IngameMapAreaData()
-                {
-                    AreaID = "moon_farm",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    DestRect = "200 104 64 32",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
+                    var dict = asset.AsDictionary<string, FarmAnimalData>().Data;
+                    dict.Add("Lunar Cow", new()
+                    {
+                        DisplayName = I18n.FarmAnimal_LunarCow(),
+                        House = "Barn",
+                        DaysToMature = 5,
+                        CanGetPregnant = true,
+                        HarvestType = FarmAnimalHarvestType.HarvestWithTool,
+                        HarvestTool = "Milk Pail",
+                        ProduceItemIds = new( new[]
                         {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MoonFarm" } ),
-                            MapTileCorners = "0 0 49 39",
-                            MapImageCorners = "200 104 264 136",
-                        },
-                    } ),
-                    DisplayName = I18n.Location_LunarFarm(),
-                });
-                mapData.Add("moon_farmhouse", new IngameMapAreaData()
-                {
-                    AreaID = "moon_farmhouse",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    DestRect = "210 118 1 1",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
+                            new FarmAnimalProduce()
+                            {
+                                Id = "Default",
+                                ItemId = "spacechase0.MoonMisadventures_GalaxyMilk",
+                            }
+                        } ),
+                        DeluxeProduceItemIds = new(new[]
                         {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MoonFarmHouse" } ),
-                            MapTileCorners = "0 0 19 11",
-                            MapImageCorners = "210 118 211 119",
-                        },
-                    } ),
-                    DisplayName = I18n.Location_LunarFarm(),
-                });
-                mapData.Add("moon_farmcave", new IngameMapAreaData()
-                {
-                    AreaID = "moon_farmcave",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    DestRect = "248 30 1 1",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
+                            new FarmAnimalProduce()
+                            {
+                                Id = "Default",
+                                ItemId = "spacechase0.MoonMisadventures_GalaxyMilk",
+                            }
+                        }),
+                        ProfessionForHappinessBoost = 3,
+                        ProfessionForQualityBoost = 3,
+                        ProfessionForFasterProduce = -1,
+                        Sound = "cow",
+                        Texture = "spacechase0.MoonMisadventures/assets/cow.png",
+                        SpriteWidth = 32,
+                        SpriteHeight = 32,
+                        GrassEatAmount = 4,
+                        HappinessDrain = 10,
+                        UpDownPetHitboxTileSize = new Vector2(1, 1.75f),
+                        LeftRightPetHitboxTileSize = new Vector2(1.75f, 1.25f),
+                        BabyUpDownPetHitboxTileSize = new Vector2(1, 1.75f),
+                        BabyLeftRightPetHitboxTileSize = new Vector2(1.75f, 1),
+                    });
+                    dict.Add("Lunar Chicken", new()
+                    {
+                        DisplayName = I18n.FarmAnimal_LunarChicken(),
+                        House = "Coop",
+                        DaysToMature = 3,
+                        CanGetPregnant = false,
+                        HarvestType = FarmAnimalHarvestType.DropOvernight,
+                        ProduceItemIds = new(new[]
                         {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MoonFarmCave" } ),
-                            MapTileCorners = "0 0 19 11",
-                            MapImageCorners = "248 30 249 31",
-                        },
-                    }),
-                    DisplayName = I18n.Location_LunarFarm(),
-                });
-                mapData.Add("moon_planetoverlook", new IngameMapAreaData()
-                {
-                    AreaID = "moon_planetoverlook",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    DestRect = "235 70 32 32",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
+                            new FarmAnimalProduce()
+                            {
+                                Id = "Default",
+                                ItemId = "spacechase0.MoonMisadventures_GalaxyEgg",
+                            }
+                        }),
+                        DeluxeProduceItemIds = new(new[]
                         {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MoonPlanetOverlook" } ),
-                            MapTileCorners = "0 0 49 49",
-                            MapImageCorners = "235 70 267 102",
-                        },
-                    }),
-                    DisplayName = "???",
-                });
-                mapData.Add("moon_temple", new IngameMapAreaData()
-                {
-                    AreaID = "moon_temple",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    DestRect = "182 105 16 16",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
-                        {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MoonInfuserRoom" } ),
-                            MapTileCorners = "0 0 29 29",
-                            MapImageCorners = "182 105 198 121",
-                        },
-                    }),
-                    DisplayName = "???",
-                });
-                mapData.Add("moon_landingarea", new IngameMapAreaData()
-                {
-                    AreaID = "moon_landingarea",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    DestRect = "152 121 48 16",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
-                        {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MoonLandingArea" } ),
-                            MapTileCorners = "0 0 34 37",
-                            MapImageCorners = "152 121 200 137",
-                        },
-                    }),
-                    DisplayName = I18n.Location_LandingArea(),
-                });
-                mapData.Add("moon_asteroidsentrance", new IngameMapAreaData()
-                {
-                    AreaID = "moon_asteroidsentrance",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    DestRect = "152 113 8 8",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
-                        {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MoonAsteroidsEntrance" } ),
-                            MapTileCorners = "0 0 49 94",
-                            MapImageCorners = "152 113 160 121",
-                        },
-                    }),
-                    DisplayName = I18n.Location_AsteroidsEntrance(),
-                });
-                mapData.Add("moon_asteroids", new IngameMapAreaData()
-                {
-                    AreaID = "moon_asteroids",
-                    Group = "moon",
-                    Texture = "spacechase0.MoonMisadventures/assets/map.png",
-                    DestRect = "20 20 128 80",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
-                        {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MoonAsteroidsDungeon" } ),
-                            MapTileCorners = "0 0 149 149",
-                            MapImageCorners = "20 20 148 100",
-                        },
-                    }),
-                    DisplayName = I18n.Location_Asteroids(),
-                });
-                mapData.Add("mountaintop", new()
-                {
-                    AreaID = "mountaintop",
-                    Group = "SDV",
-                    Texture = "LooseSprites/map",
-                    Zones = new(new[] {
-                        new IngameMapAreaZone()
-                        {
-                            ValidAreas = new List<string>( new[] { "Custom_MM_MountainTop" } ),
-                            MapTileCorners = "0 0 47 47",
-                            MapImageCorners = "210 1 211 1",
-                            DisplayName = "???",
-                        },
-                    }),
+                            new FarmAnimalProduce()
+                            {
+                                Id = "Default",
+                                ItemId = "spacechase0.MoonMisadventures_GalaxyEgg",
+                            }
+                        }),
+                        ProfessionForHappinessBoost = 2,
+                        ProfessionForQualityBoost = 2,
+                        ProfessionForFasterProduce = -1,
+                        Sound = "cluck",
+                        Texture = "spacechase0.MoonMisadventures/assets/chicken.png",
+                        SpriteWidth = 16,
+                        SpriteHeight = 16,
+                        EmoteOffset = new( 0, -16 ),
+                        GrassEatAmount = 2,
+                        HappinessDrain = 14,
+                        UpDownPetHitboxTileSize = new Vector2(1, 1),
+                        LeftRightPetHitboxTileSize = new Vector2(1, 1),
+                        BabyUpDownPetHitboxTileSize = new Vector2(1, 1),
+                        BabyLeftRightPetHitboxTileSize = new Vector2(1, 1),
+                    });
                 });
             }
-            if (asset.AssetNameEquals("Data/ObjectContextTags"))
+
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Machines"))
             {
-                var tagsData = asset.AsDictionary<string, string>().Data;
-                tagsData.Add("LunarWheatSeeds", "plantable_context_moon");
-                tagsData.Add("SunbloomSeeds", "plantable_context_moon");
-                tagsData.Add("StarPetalSeeds", "plantable_context_moon");
-                tagsData.Add("VoidBlossomSeeds", "plantable_context_moon");
-                tagsData.Add("SoulSproutSeeds", "plantable_context_moon");
-                return;
+                e.Edit((asset) =>
+                {
+                    var dict = asset.AsDictionary<string, MachineData>().Data;
+
+                    dict["(BC)13"].OutputRules.Add(new()
+                    {
+                        Id = "spacechase0.MoonMisadventures_SmeltMythiciteOre",
+                        Triggers = new(new[]
+                        {
+                            new MachineOutputTriggerRule()
+                            {
+                                Trigger = MachineOutputTrigger.ItemPlacedInMachine,
+                                RequiredItemId = "(O)spacechase0.MoonMisadventures_MythiciteOre",
+                                RequiredCount = 5,
+                            }
+                        }),
+                        OutputItem = new(new[]
+                        {
+                            new MachineItemOutput()
+                            {
+                                Id = "(O)spacechase0.MoonMisadventures_MythiciteBar",
+                                ItemId = "(O)spacechase0.MoonMisadventures_MythiciteBar",
+                            }
+                        }),
+                        MinutesUntilReady = 720,
+                    });
+                });
             }
+
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Tools"))
+            {
+                e.Edit((asset) =>
+                {
+                    var dict = asset.AsDictionary<string, ToolData>().Data;
+
+                    dict.Add("spacechase0.MoonMisadventures.AnimalGloves",
+                             new()
+                             {
+                                 ClassName = "AnimalGauntlets, MoonMisadventures",
+                                 Name = "AnimalGauntlets",
+                                 DisplayName = I18n.Tool_AnimalGauntlets_Name(),
+                                 Description = I18n.Tool_AnimalGauntlets_Description(),
+                                 Texture = "spacechase0.MoonMisadventures/assets/animal-gauntlets.png",
+                                SpriteIndex = 0,
+                             });
+                    dict.Add("spacechase0.MoonMisadventures.RadioactiveAxe",
+                             new()
+                             {
+                                 ClassName = "Axe",
+                                 Name = "Radioactive Axe",
+                                 SalePrice = 100000,
+                                 DisplayName = "[LocalizedText Strings\\StringsFromCSFiles:Axe.cs.1]",
+                                 Description = "[LocalizedText Strings\\StringsFromCSFiles:Axe.cs.14019]",
+                                 Texture = "spacechase0.MoonMisadventures/assets/tools-radioactive.png",
+                                 SpriteIndex = 238,
+                                 MenuSpriteIndex = 264,
+                                 UpgradeLevel = 5,
+                                 ApplyUpgradeLevelToDisplayName = true,
+                                 ConventionalUpgradeFrom = "(T)IridiumAxe",
+                                 CanBeLostOnDeath = false,
+                             });
+                    dict.Add("spacechase0.MoonMisadventures.MythiciteAxe",
+                             new()
+                             {
+                                 ClassName = "Axe",
+                                 Name = "Mythicite Axe",
+                                 SalePrice = 250000,
+                                 DisplayName = "[LocalizedText Strings\\StringsFromCSFiles:Axe.cs.1]",
+                                 Description = "[LocalizedText Strings\\StringsFromCSFiles:Axe.cs.14019]",
+                                 Texture = "spacechase0.MoonMisadventures/assets/tools-mythicite.png",
+                                 SpriteIndex = 238,
+                                 MenuSpriteIndex = 264,
+                                 UpgradeLevel = 6,
+                                 ApplyUpgradeLevelToDisplayName = true,
+                                 ConventionalUpgradeFrom = "(T)RadioactiveAxe",
+                                 CanBeLostOnDeath = false,
+                             });
+                    dict.Add("spacechase0.MoonMisadventures.RadioactivePickaxe",
+                             new()
+                             {
+                                 ClassName = "Pickaxe",
+                                 Name = "Radioactive Pickaxe",
+                                 SalePrice = 100000,
+                                 DisplayName = "[LocalizedText Strings\\StringsFromCSFiles:Pickaxe.cs.14184]",
+                                 Description = "[LocalizedText Strings\\StringsFromCSFiles:Pickaxe.cs.14185]",
+                                 Texture = "spacechase0.MoonMisadventures/assets/tools-radioactive.png",
+                                 SpriteIndex = 154,
+                                 MenuSpriteIndex = 180,
+                                 UpgradeLevel = 5,
+                                 ApplyUpgradeLevelToDisplayName = true,
+                                 ConventionalUpgradeFrom = "(T)IridiumPickaxe",
+                                 CanBeLostOnDeath = false,
+                             });
+                    dict.Add("spacechase0.MoonMisadventures.MythicitePickaxe",
+                             new()
+                             {
+                                 ClassName = "Pickaxe",
+                                 Name = "Mythicite Pickaxe",
+                                 SalePrice = 250000,
+                                 DisplayName = "[LocalizedText Strings\\StringsFromCSFiles:Pickaxe.cs.14184]",
+                                 Description = "[LocalizedText Strings\\StringsFromCSFiles:Pickaxe.cs.14185]",
+                                 Texture = "spacechase0.MoonMisadventures/assets/tools-mythicite.png",
+                                 SpriteIndex = 154,
+                                 MenuSpriteIndex = 180,
+                                 UpgradeLevel = 6,
+                                 ApplyUpgradeLevelToDisplayName = true,
+                                 ConventionalUpgradeFrom = "(T)RadioactivePickaxe",
+                                 CanBeLostOnDeath = false,
+                             });
+                    dict.Add("spacechase0.MoonMisadventures.RadioactiveWateringCan",
+                             new()
+                             {
+                                 ClassName = "WateringCan",
+                                 Name = "Radioactive Watering Can",
+                                 SalePrice = 100000,
+                                 DisplayName = "[LocalizedText Strings\\StringsFromCSFiles:WateringCan.cs.14324]",
+                                 Description = "[LocalizedText Strings\\StringsFromCSFiles:WateringCan.cs.14325]",
+                                 Texture = "spacechase0.MoonMisadventures/assets/tools-radioactive.png",
+                                 SpriteIndex = 322,
+                                 MenuSpriteIndex = 345,
+                                 UpgradeLevel = 5,
+                                 ApplyUpgradeLevelToDisplayName = true,
+                                 ConventionalUpgradeFrom = "(T)IridiumWateringCan",
+                                 CanBeLostOnDeath = false,
+                             });
+                    dict.Add("spacechase0.MoonMisadventures.MythiciteWateringCan",
+                             new()
+                             {
+                                 ClassName = "WateringCan",
+                                 Name = "Mythicite Watering Can",
+                                 SalePrice = 250000,
+                                 DisplayName = "[LocalizedText Strings\\StringsFromCSFiles:WateringCan.cs.14324]",
+                                 Description = "[LocalizedText Strings\\StringsFromCSFiles:WateringCan.cs.14325]",
+                                 Texture = "spacechase0.MoonMisadventures/assets/tools-mythicite.png",
+                                 SpriteIndex = 322,
+                                 MenuSpriteIndex = 345,
+                                 UpgradeLevel = 6,
+                                 ApplyUpgradeLevelToDisplayName = true,
+                                 ConventionalUpgradeFrom = "(T)RadioactiveWateringCan",
+                                 CanBeLostOnDeath = false,
+                             });
+                    dict.Add("spacechase0.MoonMisadventures.RadioactiveHoe",
+                             new()
+                             {
+                                 ClassName = "Hoe",
+                                 Name = "Radioactive Hoe",
+                                 SalePrice = 100000,
+                                 DisplayName = "[LocalizedText Strings\\StringsFromCSFiles:Hoe.cs.14101]",
+                                 Description = "[LocalizedText Strings\\StringsFromCSFiles:Hoe.cs.14102]",
+                                 Texture = "spacechase0.MoonMisadventures/assets/tools-radioactive.png",
+                                 SpriteIndex = 70,
+                                 MenuSpriteIndex = 96,
+                                 UpgradeLevel = 5,
+                                 ApplyUpgradeLevelToDisplayName = true,
+                                 ConventionalUpgradeFrom = "(T)IridiumHoe",
+                                 CanBeLostOnDeath = false,
+                             });
+                    dict.Add("spacechase0.MoonMisadventures.MythiciteHoe",
+                             new()
+                             {
+                                 ClassName = "Hoe",
+                                 Name = "Mythicite Hoe",
+                                 SalePrice = 250000,
+                                 DisplayName = "[LocalizedText Strings\\StringsFromCSFiles:Hoe.cs.14101]",
+                                 Description = "[LocalizedText Strings\\StringsFromCSFiles:Hoe.cs.14102]",
+                                 Texture = "spacechase0.MoonMisadventures/assets/tools-mythicite.png",
+                                 SpriteIndex = 70,
+                                 MenuSpriteIndex = 96,
+                                 UpgradeLevel = 6,
+                                 ApplyUpgradeLevelToDisplayName = true,
+                                 ConventionalUpgradeFrom = "(T)RadioactiveHoe",
+                                 CanBeLostOnDeath = false,
+                             });
+                });
+            }
+
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Locations"))
+            {
+                e.Edit((asset) =>
+                {
+                    var locs = asset.Data as LocationsData;
+
+                    // TODO: Move over to CreateLocations
+
+                    locs.Locations.Add("Custom_MM_MountainTop", new()
+                    {
+                        DisplayName = I18n.Location_MountainTop(),
+                        DefaultArrivalTile = new(22, 24),
+                    });
+                    locs.Locations.Add("Custom_MM_MoonLandingArea", new()
+                    {
+                        DisplayName = I18n.Location_LandingArea(),
+                        DefaultArrivalTile = new(9, 31),
+                    });
+                    locs.Locations.Add("Custom_MM_MoonAsteroidsEntrance", new()
+                    {
+                        DisplayName = I18n.Location_AsteroidsEntrance(),
+                        DefaultArrivalTile = new(25, 26),
+                    });
+                    locs.Locations.Add("Custom_MM_MoonFarm", new()
+                    {
+                        DisplayName = I18n.Location_LunarFarm(),
+                        DefaultArrivalTile = new(7,11),
+                    });
+                    locs.Locations.Add("Custom_MM_MoonFarmCave", new()
+                    {
+                        DisplayName = I18n.Location_LunarFarm(),
+                        DefaultArrivalTile = new(6, 8),
+                    });
+                    locs.Locations.Add("Custom_MM_MoonFarmHouse", new()
+                    {
+                        DisplayName = I18n.Location_LunarFarm(),
+                        DefaultArrivalTile = new(9, 9),
+                    });
+                    locs.Locations.Add("Custom_MM_MoonPlanetOverlook", new()
+                    {
+                        DisplayName = I18n.Location_PlanetOverlook(),
+                        DefaultArrivalTile = new(24, 31),
+                    });
+                    locs.Locations.Add("Custom_MM_UfoInterior", new()
+                    {
+                        DisplayName = I18n.Location_UfoInterior(),
+                        DefaultArrivalTile = new(12, 15),
+                    });
+                    locs.Locations.Add("Custom_MM_MoonInfuserRoom", new()
+                    {
+                        DisplayName = I18n.Location_MoonTemple(),
+                        DefaultArrivalTile = new(15, 22),
+                    });
+                });
+            }
+
             string currType = null;
-            if (asset.AssetNameEquals("Data/ObjectInformation"))
-                currType = "Object";
-            if (asset.AssetNameEquals("Data/Boots"))
-                currType = "Boots";
-            if (asset.AssetNameEquals("Data/Crops"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Crops"))
                 currType = "Crop";
-            if (asset.AssetNameEquals("Data/weapons"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/weapons"))
                 currType = "Weapon";
             if (currType == null)
                 return;
 
-            var data = Helper.Content.Load<Dictionary<string, string>>("assets/item-data.json");
-            foreach (var entry in data)
+            e.Edit((asset) =>
             {
-                if (entry.Key.StartsWith(currType + ":"))
+                var data = Helper.ModContent.Load<Dictionary<string, JToken>>("assets/item-data.json");
+                foreach (var entry in data)
                 {
-                    string key = entry.Key.Substring(currType.Length + 1);
-                    string val = entry.Value;
-                    while (val.Contains("{{i18n:"))
+                    if (entry.Key.StartsWith(currType + ":") && entry.Value is JObject jobj)
                     {
-                        int x = val.IndexOf("{{i18n:");
-                        int y = val.IndexOf("}}", x);
 
-                        val = val.Substring(0, x) + Helper.Translation.Get( val.Substring( x + "{{i18n:".Length, y - x - "{{i18n:".Length ) ) + val.Substring(y + 2);
+                        string key = entry.Key.Substring(currType.Length + 1);
+
+                        switch (currType)
+                        {
+                            case "Crop":
+                                asset.AsDictionary<string, CropData>().Data.Add(ModManifest.UniqueID + "_" + key, jobj.ToObject<CropData>());
+                                break;
+                            case "Weapon":
+                                asset.AsDictionary<string, WeaponData>().Data.Add(ModManifest.UniqueID + "_" + key, jobj.ToObject<WeaponData>());
+                                break;
+
+                        }
                     }
-                    asset.AsDictionary<string, string>().Data.Add(ModManifest.UniqueID + "_" + key, val);
                 }
-            }
+            });
         }
 
         private void OnKeyCommand( string cmd, string[] args )
         {
-            Game1.player.addItemByMenuIfNecessary(new Necklace("speed"));
+            //Game1.player.addItemByMenuIfNecessary(new Necklace("speed"));
             Game1.player.team.get_hasLunarKey().Value = true;
         }
 
@@ -527,7 +873,6 @@ namespace MoonMisadventures
             sc.RegisterSerializerType( typeof( AsteroidProjectile ) );
             sc.RegisterSerializerType( typeof( LunarFarm ) );
             sc.RegisterSerializerType( typeof( LunarFarmCave ) );
-            sc.RegisterSerializerType( typeof( LunarAnimal ) );
             sc.RegisterSerializerType( typeof( AnimalGauntlets ) );
             sc.RegisterSerializerType( typeof( Necklace ) );
             sc.RegisterSerializerType( typeof( MoonPlanetOverlook ) );
@@ -549,14 +894,14 @@ namespace MoonMisadventures
             var necklace = Game1.player.get_necklaceItem().Value as Necklace;
             if ( necklace != null )
             {
-                switch ( necklace.ItemID )
+                switch ( necklace.ItemId )
                 {
                     case "speed":
                         {
-                            var buff = Game1.player.buffs.appliedBuffs.FirstOrDefault( b => b.Key == "necklace" ).Value;
+                            var buff = Game1.player.buffs.AppliedBuffs.FirstOrDefault( b => b.Key == "necklace" ).Value;
                             if ( buff == null )
                             {
-                                buff = new Buff("necklace", "necklace", I18n.Necklace(), 10 * 7000, buff_effects: new BuffEffects() { speed = { 3 } });
+                                buff = new Buff("necklace", "necklace", I18n.Necklace(), 10 * 7000, buff_effects: new BuffEffects() { Speed = { 3 } });
                                 Game1.player.buffs.Apply( buff );
                             }
                             buff.millisecondsDuration = 1000;
@@ -570,7 +915,7 @@ namespace MoonMisadventures
                                 {
                                     for ( int iy = -1; iy <= 1; ++iy )
                                     {
-                                        var spot = Game1.player.getTileLocation() + new Vector2( ix, iy );
+                                        var spot = Game1.player.Tile + new Vector2( ix, iy );
                                         if ( volcano.isTileOnMap( spot ) && volcano.waterTiles[ ( int ) spot.X, ( int ) spot.Y ] && !volcano.cooledLavaTiles.ContainsKey( spot ) )
                                             volcano.coolLavaEvent.Fire( new Point( ( int ) spot.X, ( int ) spot.Y ) );
                                     }
@@ -705,7 +1050,9 @@ namespace MoonMisadventures
         private void OnWarped( object sender, WarpedEventArgs e )
         {
             if ( e.OldLocation is LunarLocation || e.NewLocation is LunarLocation )
+            {
                 Helper.GameContent.InvalidateCache( "TerrainFeatures/hoeDirt" );
+            }
 
             if ( e.NewLocation?.NameOrUniqueName == "Mine" )
             {
@@ -725,7 +1072,7 @@ namespace MoonMisadventures
 
         private void AfterGiftGiven( object sender, EventArgsGiftGiven e )
         {
-            if ( e.Gift.ItemID == ItemIds.SoulSapphire )
+            if ( e.Gift.ItemId == ItemIds.SoulSapphire )
             {
                 var farmer = sender as Farmer;
                 foreach ( string key in Game1.objectInformation.Keys )

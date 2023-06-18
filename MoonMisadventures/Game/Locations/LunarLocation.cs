@@ -66,7 +66,8 @@ namespace MoonMisadventures.Game.Locations
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( asteroidChance, pickEdgeEvent );
+            NetFields.AddField(asteroidChance, "asteroidChance");
+            NetFields.AddField(pickEdgeEvent, "pickEdgeEvent");
 
             pickEdgeEvent.onEvent += OnPickEdgeEvent;
 
@@ -76,10 +77,6 @@ namespace MoonMisadventures.Game.Locations
                 {
                     grass.grassType.Value = Grass.lavaGrass;
                     grass.loadSprite();
-                }
-                else if ( added is HoeDirt hd )
-                {
-                    Mod.instance.Helper.Reflection.GetField< Texture2D >( hd, "texture" ).SetValue( Assets.HoeDirt );
                 }
             };
         }
@@ -171,15 +168,7 @@ namespace MoonMisadventures.Game.Locations
                 Game1.ambientLight = Game1.outdoorLight = new Color( colValue, colValue, colValue );// new Color( 100, 120, 30 );
             }
 
-            foreach ( var tf in terrainFeatures.Values )
-            {
-                if ( tf is HoeDirt hd )
-                {
-                    Mod.instance.Helper.Reflection.GetField<Texture2D>( hd, "texture" ).SetValue( Assets.HoeDirt );
-                }
-            }
-
-            Game1.background = new SpaceBackground( this.NameOrUniqueName == "Custom_MM_MoonPlanetOverlook" );
+            Game1.background = new SpaceBackground( this, this.NameOrUniqueName == "Custom_MM_MoonPlanetOverlook" );
         }
         public override void cleanupBeforePlayerExit()
         {
@@ -278,7 +267,7 @@ namespace MoonMisadventures.Game.Locations
             return base.performToolAction( t, tileX, tileY );
         }
 
-        public override StardewValley.Object getFish( float millisecondsAfterNibble, string bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null )
+        public override Item getFish( float millisecondsAfterNibble, string bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null )
         {
             return base.getFish( millisecondsAfterNibble, bait, waterDepth, who, baitPotency, bobberTile, locationName );
         }
@@ -310,6 +299,8 @@ namespace MoonMisadventures.Game.Locations
                     }
                 }
             }
+
+            SortLayers(); // get Back1 into the layer index
         }
     }
 }

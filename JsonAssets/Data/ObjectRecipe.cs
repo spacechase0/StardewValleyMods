@@ -31,11 +31,11 @@ namespace JsonAssets.Data
         {
             string str = "";
             foreach (var ingredient in this.Ingredients)
-                str += ingredient.Object.ToString().Replace(' ', '_') + " " + ingredient.Count + " ";
+                str += ingredient.Object.ToString().FixIdJA() + " " + ingredient.Count + " ";
             str = str.Substring(0, str.Length - 1);
             if (parent.Category != ObjectCategory.Cooking)
                 str += "/what is this for?";
-            str += $"/{parent.Name.Replace(' ', '_')} {this.ResultCount}/";
+            str += $"/{parent.Name.FixIdJA()} {this.ResultCount}/";
             if (parent.Category != ObjectCategory.Cooking)
                 str += "false/";
             if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)

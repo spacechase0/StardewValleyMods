@@ -36,7 +36,8 @@ namespace MoonMisadventures.Game.Monsters
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( shootTimer, seenPlayer );
+            NetFields.AddField(shootTimer, "shootTimer");
+            NetFields.AddField(seenPlayer, "seenPlayer");
         }
 
         public override void reloadSprite()

@@ -39,12 +39,12 @@ namespace MajesticArcana
                 "(O)82",
                 "(O)444"
             });
-            ret.Add("(O)768x3", new string[] { "(O)769", "(O)769", "(O)769", moteOfMagicId });
-            ret.Add("(O)769x3", new string[] { "(O)768", "(O)768", "(O)768", moteOfMagicId });
-            ret.Add("(O)771x3", new string[] { "(O)330", "(O)330", "(O)330", moteOfMagicId });
-            ret.Add("(O)766x5", new string[] { "-4", "-4", "-4", "-4", "-4", moteOfMagicId });
-            ret.Add("(O)82x5", new string[] { "(O)80", "(O)80", "(O)80", "(O)80", "(O)80", moteOfMagicId });
-            ret.Add("(O)444x3", new string[] { "(O)442", "(O)442", "(O)442", moteOfMagicId });
+            ret.Add("(O)768/3", new string[] { "(O)769", "(O)769", "(O)769", moteOfMagicId });
+            ret.Add("(O)769/3", new string[] { "(O)768", "(O)768", "(O)768", moteOfMagicId });
+            ret.Add("(O)771/3", new string[] { "(O)330", "(O)330", "(O)330", moteOfMagicId });
+            ret.Add("(O)766/5", new string[] { "-4", "-4", "-4", "-4", "-4", moteOfMagicId });
+            ret.Add("(O)82/5", new string[] { "(O)80", "(O)80", "(O)80", "(O)80", "(O)80", moteOfMagicId });
+            ret.Add("(O)444/3", new string[] { "(O)442", "(O)442", "(O)442", moteOfMagicId });
             ret.Add(manaPotionId, new string[] { "(O)422", moteOfMagicId });
 
             return ret;

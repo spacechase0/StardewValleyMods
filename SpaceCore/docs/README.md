@@ -100,7 +100,7 @@ Provided functionality (this assumes you understand C# and the game code a littl
 * Custom forge recipes
     * Subclass `CustomForgeRecipe` and register it by doing `CustomForgeRecipe.Recipes.Add( new MyCustomForgeRecipeSubclass() )`.
         * `IngredientMatcher` - different from the `CustomCraftingRecipe` on, because it only needs two (slightly different) functions:
-            `bool HasEnoughFor(Item item)` - if the item in the slot is enough for the crat
+            `bool HasEnoughFor(Item item)` - if the item in the slot is enough for the craft
             `void Consume(ref Item item)` - Consume the proper amount from the corresponding slot. Set to null if you use it all up.
     * `IngredientMatcher BaseItem { get; }` - for the left slot
     * `IngredientMatcher IngredientItem { get; }` - for the right slot
@@ -125,8 +125,13 @@ Provided functionality (this assumes you understand C# and the game code a littl
         * `CanBeShipped` - true/false, default true
         * `EatenHealthRestoredOverride` - integer, override how much health is restored on eating this item, default null (use vanilla method of calculation)
         * `EatenStaminaRestoredOverride` - integer, override how much stamina is restored on eating this item, default null (use vanilla method of calculation)
+        * `MaxStackSizeOverride` - integer, override the max stack size of your item, default null (use vanilla amount)
     * Weapons - Stored in the `CustomFields` on the weapon data asset object:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
+    * Wallet items - You can now add items to the player wallet if they have a specified mail flag. Example [here](https://gist.github.com/spacechase0/a8f52196965ff630fc5bbcc6528bd9e5). It's a dictionary with the key being the mail flag, and the value being an object that contains:
+        `HoverText` - The text to show on hover
+        `TexturePath` - The texture to use (you can use Content Patcher's `{{InternalAssetKey}} token`)
+        `SpriteIndex` - The index in the texture to use for the sprite, default 0
 * Some other things that will remain undocumented because they will be removed soon.
 
 ## Compatibility

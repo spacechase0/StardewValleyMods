@@ -37,11 +37,12 @@ namespace MoonMisadventures.Patches
         }
     }
 
+#if false
     [HarmonyPatch( typeof( SpriteBatch ), nameof( SpriteBatch.Begin ) )]
     public static class SpriteBatchForceStencilPatch
     {
         private static AlphaTestEffect ate;
-        public static void Prefix( ref DepthStencilState depthStencilState, ref BlendState blendState, ref Effect effect )
+        public static void Prefix( ref DepthStencilState depthStencilState, ref BlendState blendState, ref Effect effect, ref Matrix? transformMatrix )
         {
             if (Game1.currentLocation is not Game.Locations.LunarLocation)
                 return;
@@ -63,7 +64,7 @@ namespace MoonMisadventures.Patches
                 //SpaceShared.Log.Debug( "darkening" );
             }
 
-            if ( Game1CatchLightingRenderPatch.IsDoingLighting )
+            if ( Game1CatchLightingRenderPatch2.IsApplyingLighting )
             {
 
                 /*
@@ -91,7 +92,15 @@ namespace MoonMisadventures.Patches
                 effect = null;
 
                 //blendState = BlendState.NonPremultiplied;
-                depthStencilState = Mod.StencilRenderOnDark;
+                //depthStencilState = Mod.StencilRenderOnDark;
+                //*
+                float z = Game1.options.lightingQuality / 2;
+                if (Game1.game1.useUnscaledLighting)
+                    z /= Game1.options.zoomLevel;
+                transformMatrix = Matrix.CreateScale(z);
+                //*/
+                //transformMatrix = Matrix.CreateScale(1 / Game1.options.zoomLevel);
+                //transformMatrix = Matrix.CreateTranslation(new(25, 25, 0));
                 //SpaceShared.Log.Debug( "mask:" + depthStencilState.StencilPass+" "+depthStencilState.StencilFail);
                 //depthStencilState = Mod.StencilRenderOnDark;
             }
@@ -103,44 +112,38 @@ namespace MoonMisadventures.Patches
     {
         public static void Postfix()
         {
-            if ( Game1CatchLightingRenderPatch.IsDoingLighting )
+            if ( Game1CatchLightingRenderPatch1.IsDoingLighting )
             {
-                Game1CatchLightingRenderPatch.IsDoingLighting = false;
+                Game1CatchLightingRenderPatch1.IsDoingLighting = false;
+                Mod.DefaultStencilOverride = null;
+            }
+            if (Game1CatchLightingRenderPatch2.IsApplyingLighting)
+            {
+                Game1CatchLightingRenderPatch2.IsApplyingLighting = false;
                 Mod.DefaultStencilOverride = null;
             }
         }
     }
 
-    // Can't [HarmonyPatch] SGame since it is internal
-    public static class Game1CatchLightingRenderPatch
+    [HarmonyPatch(typeof(Game1), nameof( Game1.DrawLighting) )]
+    public static class Game1CatchLightingRenderPatch1
     {
         public static bool IsDoingLighting = false;
 
-        public static void DoStuff()
+        public static void Prefix()
         {
             IsDoingLighting = true;
         }
+    }
 
-        public static IEnumerable<CodeInstruction> Transpiler( IEnumerable<CodeInstruction> insns, ILGenerator ilgen )
+    [HarmonyPatch(typeof(Game1), nameof(Game1.DrawLightmapOnScreen))]
+    public static class Game1CatchLightingRenderPatch2
+    {
+        public static bool IsApplyingLighting = false;
+
+        public static void Prefix()
         {
-            List< CodeInstruction > ret = new();
-
-            int countdown = 0;
-            foreach ( var insn in insns )
-            {
-                if (insn.opcode == OpCodes.Ldsfld && (FieldInfo)insn.operand == typeof( Game1 ).GetField( "drawLighting" ) )
-                {
-                    countdown = 4;
-                }
-                else if ( countdown > 0 && --countdown == 0 )
-                {
-                    ret.Add( new CodeInstruction( OpCodes.Call, typeof( Game1CatchLightingRenderPatch ).GetMethod( "DoStuff" ) ) );
-                }
-                
-                ret.Add( insn );
-            }
-
-            return ret;
+            IsApplyingLighting = true;
         }
     }
 
@@ -174,4 +177,5 @@ namespace MoonMisadventures.Patches
                 __result = true;
         }
     }
+    #endif
 }

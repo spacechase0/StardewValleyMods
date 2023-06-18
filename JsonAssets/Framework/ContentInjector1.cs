@@ -108,7 +108,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to objects: {obj.Name}: {obj.GetObjectInformation()}");
-                    data.Add(obj.Name.Replace(' ', '_'), obj.GetObjectInformation());
+                    data.Add(obj.Name.FixIdJA(), obj.GetObjectInformation());
                 }
                 catch (Exception e)
                 {
@@ -188,7 +188,7 @@ namespace JsonAssets.Framework
                     }
 
                     Log.Verbose($"Injecting to crops: {crop.GetSeedId()}: {crop.GetCropInformation()}");
-                    data.Add(crop.GetSeedId().Replace(' ', '_'), new()
+                    data.Add(crop.GetSeedId().FixIdJA(), new()
                     {
                         Seasons = seasons,
                         DaysInPhase = new(crop.Phases),
@@ -218,7 +218,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to fruit trees: {fruitTree.GetSaplingId()}: {fruitTree.GetFruitTreeInformation()}");
-                    data.Add(fruitTree.GetSaplingId().Replace(' ', '_'), new()
+                    data.Add(fruitTree.GetSaplingId().FixIdJA(), new()
                     {
                         DisplayName = fruitTree.Name,
                         Seasons = new(new[] { Enum.Parse<Season>(fruitTree.Season.Substring(0, 1).ToUpper() + fruitTree.Season.Substring(1)) } ),
@@ -272,7 +272,7 @@ namespace JsonAssets.Framework
                     if (obj.Category == ObjectCategory.Cooking)
                         continue;
                     Log.Verbose($"Injecting to crafting recipes: {obj.Name}: {obj.Recipe.GetRecipeString(obj)}");
-                    data.Add(obj.Name.Replace(' ', '_'), obj.Recipe.GetRecipeString(obj));
+                    data.Add(obj.Name.FixIdJA(), obj.Recipe.GetRecipeString(obj));
                 }
                 catch (Exception e)
                 {
@@ -286,7 +286,7 @@ namespace JsonAssets.Framework
                     if (big.Recipe == null)
                         continue;
                     Log.Verbose($"Injecting to crafting recipes: {big.Name}: {big.Recipe.GetRecipeString(big)}");
-                    data.Add(big.Name.Replace(' ', '_'), big.Recipe.GetRecipeString(big));
+                    data.Add(big.Name.FixIdJA(), big.Recipe.GetRecipeString(big));
                 }
                 catch (Exception e)
                 {
@@ -302,7 +302,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to big craftables: {big.Name}: {big.GetCraftableInformation()}");
-                    data.Add(big.Name.Replace(' ', '_'), big.GetCraftableInformation());
+                    data.Add(big.Name.FixIdJA(), big.GetCraftableInformation());
                 }
                 catch (Exception e)
                 {
@@ -318,7 +318,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to hats: {hat.Name}: {hat.GetHatInformation()}");
-                    data.Add(hat.Name.Replace(' ', '_'), hat.GetHatInformation());
+                    data.Add(hat.Name.FixIdJA(), hat.GetHatInformation());
                 }
                 catch (Exception e)
                 {
@@ -334,7 +334,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to weapons: {weapon.Name}: {weapon.GetWeaponInformation()}");
-                    data.Add(weapon.Name.Replace(' ', '_'), new()
+                    data.Add(weapon.Name.FixIdJA(), new()
                     {
                         Name = weapon.Name,
                         DisplayName = weapon.LocalizedName(),
@@ -369,7 +369,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to clothing information: {shirt.Name}: {shirt.GetClothingInformation()}");
-                    data.Add(shirt.Name.Replace(' ', '_'), shirt.GetClothingInformation());
+                    data.Add(shirt.Name.FixIdJA(), shirt.GetClothingInformation());
                 }
                 catch (Exception e)
                 {
@@ -381,7 +381,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to clothing information: {pants.Name}: {pants.GetClothingInformation()}");
-                    data.Add(pants.Name.Replace(' ', '_'), pants.GetClothingInformation());
+                    data.Add(pants.Name.FixIdJA(), pants.GetClothingInformation());
                 }
                 catch (Exception e)
                 {
@@ -413,7 +413,7 @@ namespace JsonAssets.Framework
                 try
                 {
                     Log.Verbose($"Injecting to boots: {boots.Name}: {boots.GetBootsInformation()}");
-                    data.Add(boots.Name.Replace(' ', '_'), boots.GetBootsInformation());
+                    data.Add(boots.Name.FixIdJA(), boots.GetBootsInformation());
                 }
                 catch (Exception e)
                 {

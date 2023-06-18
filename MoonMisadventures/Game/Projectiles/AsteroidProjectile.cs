@@ -75,14 +75,10 @@ namespace MoonMisadventures.Game.Projectiles
             int spritesheetSize = isBig.Value ? 3 : 5;
             int tileSize = isBig.Value ? 32 : 16;
             Rectangle srcRect = new Rectangle( index.Value % spritesheetSize * tileSize, index.Value / spritesheetSize * tileSize, tileSize, tileSize );
-            Game1.createRadialDebris( location, Mod.instance.Helper.ModContent.GetInternalAssetName(tex).BaseName, srcRect, player.getTileX(), player.getTileY(), isBig.Value ? 18 : 7 );
+            Game1.createRadialDebris( location, Mod.instance.Helper.ModContent.GetInternalAssetName(tex).BaseName, srcRect, (int)player.Tile.X, (int)player.Tile.Y, isBig.Value ? 18 : 7 );
         }
 
         public override void behaviorOnCollisionWithTerrainFeature( TerrainFeature t, Vector2 tileLocation, GameLocation location )
-        {
-        }
-
-        public override void behaviorOnCollisionWithMineWall( int tileX, int tileY )
         {
         }
 

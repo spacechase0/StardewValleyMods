@@ -13,8 +13,8 @@ namespace MoonMisadventures.Game
         private Rectangle starTexRect = new Rectangle(0, 1453, 639, 195);
         private TemporaryAnimatedSprite planet;
 
-        public SpaceBackground( bool planet )
-        :   base(new Color( 0, 0, 12 ), false)
+        public SpaceBackground( GameLocation loc, bool planet )
+        :   base(loc, new Color( 0, 0, 12 ), false)
         {
             if ( planet )
             {

@@ -31,9 +31,9 @@ namespace JsonAssets.Data
         {
             string str = "";
             foreach (var ingredient in this.Ingredients)
-                str += ingredient.Object.ToString().Replace(' ', '_') + " " + ingredient.Count + " ";
+                str += ingredient.Object.ToString().FixIdJA() + " " + ingredient.Count + " ";
             str = str.Substring(0, str.Length - 1);
-            str += $"/what is this for?/{parent.Name.Replace(' ', '_')} {this.ResultCount}/true/";
+            str += $"/what is this for?/{parent.Name.FixIdJA()} {this.ResultCount}/true/";
             if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
                 str += this.SkillUnlockName + " " + this.SkillUnlockLevel;
             else

@@ -19,7 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False">
+      <Version_AppendConfiguration>false</Version_AppendConfiguration>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

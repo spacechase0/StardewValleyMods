@@ -147,8 +147,8 @@ namespace MoonMisadventures.Patches
 
         public static IEnumerable<MethodBase> TargetMethods()
         {
-            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET" ) )
-                             from type in asm.GetTypes()
+            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET") && !a.IsDynamic)
+                             from type in asm.GetExportedTypes()
                              where type.IsSubclassOf( typeof( Monster ) )
                              select type;
 
@@ -223,8 +223,8 @@ namespace MoonMisadventures.Patches
     {
         public static IEnumerable<MethodBase> TargetMethods()
         {
-            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET" ) )
-                             from type in asm.GetTypes()
+            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET" ) && !a.IsDynamic )
+                             from type in asm.GetExportedTypes()
                              where type.IsSubclassOf( typeof( Monster ) )
                              select type;
 
@@ -246,7 +246,7 @@ namespace MoonMisadventures.Patches
             {
                 int shocking = 500 - shocked % 500;
                 var src = new Rectangle( 647, 1103, 16, 16 );
-                b.Draw( Game1.mouseCursors, __instance.getLocalPosition(Game1.viewport) - ( __instance.Position - __instance.GetBoundingBox().Center.ToVector2() ), src, Color.White * (shocking / 250f), ( float )( Game1.ticks * 15 * Math.PI / 180 ), new Vector2( 8, 8 ), Game1.pixelZoom, SpriteEffects.None, (__instance.getStandingY() + 8) / 10000f );
+                b.Draw( Game1.mouseCursors, __instance.getLocalPosition(Game1.viewport) - ( __instance.Position - __instance.GetBoundingBox().Center.ToVector2() ), src, Color.White * (shocking / 250f), ( float )( Game1.ticks * 15 * Math.PI / 180 ), new Vector2( 8, 8 ), Game1.pixelZoom, SpriteEffects.None, (__instance.StandingPixel.Y + 8) / 10000f );
             }
         }
     }

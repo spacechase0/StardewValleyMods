@@ -33,7 +33,7 @@ namespace MoonMisadventures.VirtualProperties
         {
             if ( farmer.get_necklaceItem().Value == null )
                 return false;
-            return ( farmer.get_necklaceItem().Value as Necklace ).ItemID == type;
+            return ( farmer.get_necklaceItem().Value as Necklace ).ItemId == type;
         }
     }
 }

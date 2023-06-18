@@ -31,7 +31,7 @@ namespace MoonMisadventures.Game.Locations
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( Animals, grownCrystal );
+            NetFields.AddField( grownCrystal, "grownCrystal" );
 
             grownCrystal.InterpolationEnabled = false;
             grownCrystal.fieldChangeVisibleEvent += delegate { OpenFarmHouse(); };
@@ -77,7 +77,7 @@ namespace MoonMisadventures.Game.Locations
         {
             if ( action == "FarmHouseCrystalLock" )
             {
-                if ( who.ActiveObject?.ItemID == ItemIds.MythiciteOre )
+                if ( who.ActiveObject?.ItemId == ItemIds.MythiciteOre )
                 {
                     Game1.playSound( "questcomplete" );
                     who.reduceActiveItemByOne();

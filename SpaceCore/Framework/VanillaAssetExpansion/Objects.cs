@@ -23,6 +23,8 @@ namespace SpaceCore.Framework.VanillaAssetExpansion
         public int? EatenHealthRestoredOverride { get; set; } = null;
         public int? EatenStaminaRestoredOverride { get; set; } = null;
 
+        public int? MaxStackSizeOverride { get; set; } = null;
+
         // totem warp?
 
         // might make you able to run arbritrary scripts?
@@ -48,7 +50,7 @@ namespace SpaceCore.Framework.VanillaAssetExpansion
         public static void Postfix(StardewValley.Object __instance, ref Color __result)
         {
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
-            if (dict.ContainsKey(__instance.ItemId))
+            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].CategoryColorOverride.HasValue)
             {
                 __result = dict[__instance.ItemId].CategoryColorOverride.Value;
             }
@@ -140,6 +142,19 @@ namespace SpaceCore.Framework.VanillaAssetExpansion
             if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].EatenStaminaRestoredOverride.HasValue)
             {
                 __result = dict[__instance.ItemId].EatenStaminaRestoredOverride.Value;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.maximumStackSize))]
+    public static class ObjectMaxStackPatch
+    {
+        public static void Postfix(StardewValley.Object __instance, ref int __result )
+        {
+            var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
+            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].MaxStackSizeOverride.HasValue)
+            {
+                __result = dict[__instance.ItemId].MaxStackSizeOverride.Value;
             }
         }
     }

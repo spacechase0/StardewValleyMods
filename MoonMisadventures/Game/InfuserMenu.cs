@@ -68,12 +68,12 @@ namespace MoonMisadventures.Game
                     if (Utility.IsNormalObjectAtParentSheetIndex(i, StardewValley.Object.prismaticShardID))
                         return true;
                     else if (mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64)
-                        return (i is StardewValley.Object dgai && dgai.ItemID == ItemIds.SoulSapphire);
+                        return (i is StardewValley.Object dgai && dgai.ItemId == ItemIds.SoulSapphire);
                 }
                 else if (mainSpot.item is Tool)
                     return Utility.IsNormalObjectAtParentSheetIndex(i, StardewValley.Object.prismaticShardID);
                 else
-                    return (i is StardewValley.Object dgai && dgai.ItemID == ItemIds.PersistiumDust);
+                    return (i is StardewValley.Object dgai && dgai.ItemId == ItemIds.PersistiumDust);
             }
 
             return false;
@@ -105,7 +105,7 @@ namespace MoonMisadventures.Game
                 {
                     if (Utility.IsNormalObjectAtParentSheetIndex(heldItem, StardewValley.Object.prismaticShardID))
                         doIt = true;
-                    else if (heldItem is StardewValley.Object dgai && dgai.ItemID == ItemIds.SoulSapphire && (mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64))
+                    else if (heldItem is StardewValley.Object dgai && dgai.ItemId == ItemIds.SoulSapphire && (mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64))
                         doIt = true;
                 }
                 else if (mainSpot.item is Tool)
@@ -115,7 +115,7 @@ namespace MoonMisadventures.Game
                 }
                 else
                 {
-                    if (heldItem is StardewValley.Object dgai && dgai.ItemID == ItemIds.PersistiumDust)
+                    if (heldItem is StardewValley.Object dgai && dgai.ItemId == ItemIds.PersistiumDust)
                         doIt = true;
                 }
 
@@ -132,7 +132,7 @@ namespace MoonMisadventures.Game
             }
             else if ( okButton.containsPoint( x, y ) )
             {
-                if ( mainSpot.item != null && secondarySpot.item != null && Game1.player.hasItemInInventory( ItemIds.StellarEssence, 25 ) )
+                if ( mainSpot.item != null && secondarySpot.item != null && Game1.player.Items.CountId( ItemIds.StellarEssence ) >= 25 )
                 {
                     doingStars = 0;
                 }
@@ -237,7 +237,7 @@ namespace MoonMisadventures.Game
                 if (--secondarySpot.item.Stack <= 0)
                     secondarySpot.item = null;
             }
-            else if (secondarySpot.item is StardewValley.Object dgai2 && dgai2.ItemID == ItemIds.SoulSapphire && result is MeleeWeapon mw && ( mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64 ) )
+            else if (secondarySpot.item is StardewValley.Object dgai2 && dgai2.ItemId == ItemIds.SoulSapphire && result is MeleeWeapon mw && ( mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64 ) )
             {
                 var oldResult = result;
                 switch ( mw.InitialParentTileIndex)
@@ -260,14 +260,14 @@ namespace MoonMisadventures.Game
                     oldEnch.ApplyTo(result, (result as Tool).getLastFarmerToUse());
 
             }
-            if ( secondarySpot.item is MeleeWeapon dgai && dgai.ItemID == ItemIds.PersistiumDust )
+            if ( secondarySpot.item is MeleeWeapon dgai && dgai.ItemId == ItemIds.PersistiumDust )
             {
                 result.modData.Add("persists", "true");
                 if (--secondarySpot.item.Stack <= 0)
                     secondarySpot.item = null;
             }
 
-            Game1.player.removeItemsFromInventory(ItemIds.StellarEssence, 25);
+            Game1.player.removeFirstOfThisItemFromInventory(ItemIds.StellarEssence, 25);
 
             mainSpot.item = null;
 

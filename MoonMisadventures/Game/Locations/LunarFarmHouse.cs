@@ -32,7 +32,7 @@ namespace MoonMisadventures.Game.Locations
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( visited );
+            NetFields.AddField( visited, "visited" );
 
             visited.InterpolationEnabled = false;
             visited.fieldChangeVisibleEvent += delegate { SpawnBeds(); };
@@ -60,15 +60,15 @@ namespace MoonMisadventures.Game.Locations
             foreach ( var farmer in Game1.getAllFarmers() )
                 ++players;
 
-            furniture.Add( new BedFurniture( 2048, new Vector2( 4, 4 ) ) );
+            furniture.Add( new BedFurniture( "2048", new Vector2( 4, 4 ) ) );
             if ( --players > 0 )
             {
-                furniture.Add( new BedFurniture( 2048, new Vector2( 4, 8 ) ) );
+                furniture.Add( new BedFurniture("2048", new Vector2( 4, 8 ) ) );
                 if ( --players > 0 )
                 {
-                    furniture.Add( new BedFurniture( 2048, new Vector2( 12, 4 ) ) );
+                    furniture.Add( new BedFurniture("2048", new Vector2( 12, 4 ) ) );
                     if ( --players > 0 )
-                        furniture.Add( new BedFurniture( 2048, new Vector2( 12, 8 ) ) );
+                        furniture.Add( new BedFurniture("2048", new Vector2( 12, 8 ) ) );
                 }
             }
         }

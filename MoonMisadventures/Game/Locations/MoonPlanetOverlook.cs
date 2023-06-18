@@ -56,9 +56,9 @@ namespace MoonMisadventures.Game.Locations
                         int necklaceSlot = -1, sapphireSlot = -1;
                         for ( int i = 0; i < Game1.player.Items.Count; ++i )
                         {
-                            if ( necklaceSlot == -1 && Game1.player.Items[ i ] is Necklace necklace && necklace.ItemID == Necklace.Type.Lunar )
+                            if ( necklaceSlot == -1 && Game1.player.Items[ i ] is Necklace necklace && necklace.ItemId == Necklace.Type.Lunar )
                                 necklaceSlot = i;
-                            else if ( sapphireSlot == -1 && Game1.player.Items[ i ]?.ItemID == ItemIds.SoulSapphire )
+                            else if ( sapphireSlot == -1 && Game1.player.Items[ i ]?.ItemId == ItemIds.SoulSapphire )
                                 sapphireSlot = i;
                         }
 

@@ -31,7 +31,7 @@ namespace MoonMisadventures.Patches
     {
         public static void Postfix( GameTime time )
         {
-            if ( Game1.menuUp && !Game1.IsMultiplayer )
+            if ( Game1.activeClickableMenu != null && !Game1.IsMultiplayer )
             {
                 return;
             }
@@ -51,7 +51,7 @@ namespace MoonMisadventures.Patches
         {
             foreach ( var level in AsteroidsDungeon.activeLevels )
             {
-                if ( level.Root.Value is not null )
+                if ( level.Root != null )
                 {
                     level.Root.Clock.InterpolationTicks = __instance.interpolationTicks();
                     __instance.updateRoot( level.Root );

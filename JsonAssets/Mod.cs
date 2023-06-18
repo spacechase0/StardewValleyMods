@@ -33,6 +33,18 @@ using SObject = StardewValley.Object;
 
 namespace JsonAssets
 {
+    public static class Extensions
+    {
+        // Doing this as an extension method isn't more efficient
+        // It just saves me a miniscule amount of time finding/replacing the old code
+
+        private static Regex NameFixer = new("[^a-zA-Z0-9_]", RegexOptions.Compiled);
+        public static string FixIdJA(this string before)
+        {
+            return NameFixer.Replace(before, "_");
+        }
+    }
+
     public class Mod : StardewModdingAPI.Mod
     {
         [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
@@ -1623,19 +1635,19 @@ namespace JsonAssets
             {
                 case Hat hat:
                     if (this.OldHatIds.ContainsKey(hat.obsolete_which.Value.ToString()))
-                        hat.ItemId = this.OldHatIds[hat.obsolete_which.Value.ToString()].Replace(' ', '_');
+                        hat.ItemId = this.OldHatIds[hat.obsolete_which.Value.ToString()].FixIdJA();
                     break;
 
                 case MeleeWeapon weapon:
                     if (this.OldWeaponIds.ContainsKey(weapon.ItemId))
-                        weapon.ItemId = this.OldWeaponIds[weapon.ItemId].Replace(' ', '_');
+                        weapon.ItemId = this.OldWeaponIds[weapon.ItemId].FixIdJA();
                     if (this.OldWeaponIds.ContainsKey(weapon.appearance.Value))
-                        weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value].Replace(' ', '_');
+                        weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value].FixIdJA();
                     break;
 
                 case Ring ring:
                     if (this.OldObjectIds.ContainsKey(ring.ItemId))
-                        ring.ItemId = this.OldObjectIds[ring.ItemId].Replace(' ', '_');
+                        ring.ItemId = this.OldObjectIds[ring.ItemId].FixIdJA();
 
                     if (ring is CombinedRing combinedRing)
                     {
@@ -1648,12 +1660,12 @@ namespace JsonAssets
 
                 case Clothing clothing:
                     if (this.OldClothingIds.ContainsKey(clothing.ItemId))
-                        clothing.ItemId = this.OldClothingIds[clothing.ItemId].Replace(' ', '_');
+                        clothing.ItemId = this.OldClothingIds[clothing.ItemId].FixIdJA();
                     break;
                     
                 case Boots boots:
                     if (this.OldBootsIds.ContainsKey(boots.ItemId))
-                        boots.ItemId = this.OldBootsIds[boots.ItemId].Replace(' ', '_');
+                        boots.ItemId = this.OldBootsIds[boots.ItemId].FixIdJA();
                     // TODO: what to do about tailored boots...
                     break;
 
@@ -1661,7 +1673,7 @@ namespace JsonAssets
                     if (obj is Chest chest)
                     {
                         if (this.OldBigCraftableIds.ContainsKey(chest.ItemId))
-                            chest.ItemId = this.OldBigCraftableIds[chest.ItemId].Replace(' ', '_');
+                            chest.ItemId = this.OldBigCraftableIds[chest.ItemId].FixIdJA();
                         else
                             chest.startingLidFrame.Value = chest.ParentSheetIndex + 1;
                         this.FixItemList(chest.Items);
@@ -1684,12 +1696,12 @@ namespace JsonAssets
                                 obj.preservedParentSheetIndex.Value = -1;
                             */
                             if (this.OldObjectIds.ContainsKey(obj.ItemId))
-                                obj.ItemId = this.OldObjectIds[obj.ItemId].Replace(' ', '_');
+                                obj.ItemId = this.OldObjectIds[obj.ItemId].FixIdJA();
                         }
                         else
                         {
                             if (this.OldBigCraftableIds.ContainsKey(obj.ItemId))
-                                obj.ItemId = this.OldBigCraftableIds[obj.ItemId].Replace(' ', '_');
+                                obj.ItemId = this.OldBigCraftableIds[obj.ItemId].FixIdJA();
                         }
                     }
 
@@ -1757,7 +1769,7 @@ namespace JsonAssets
                     }
 
                     if (this.OldObjectIds.ContainsKey(pond.fishType.Value))
-                        pond.fishType.Value = this.OldObjectIds[pond.fishType.Value].Replace(' ', '_');
+                        pond.fishType.Value = this.OldObjectIds[pond.fishType.Value].FixIdJA();
                     pond.sign.Value = FixItem(pond.sign.Value) as SObject;
                     pond.output.Value = FixItem(pond.output.Value);
                     pond.neededItem.Value = FixItem(pond.neededItem.Value) as SObject;
@@ -1775,14 +1787,14 @@ namespace JsonAssets
 
             if ( this.OldCropIds.ContainsKey( crop.rowInSpriteSheet.Value.ToString() ) )
             {
-                crop.overrideTexturePath.Value = "JA/Crop/" + this.OldCropIds[crop.rowInSpriteSheet.Value.ToString()].Replace(' ', '_');
+                crop.overrideTexturePath.Value = "JA/Crop/" + this.OldCropIds[crop.rowInSpriteSheet.Value.ToString()].FixIdJA();
                 crop.rowInSpriteSheet.Value = 0;
             }
 
             if (this.OldObjectIds.ContainsKey(crop.indexOfHarvest.Value))
-                crop.indexOfHarvest.Value = this.OldObjectIds[crop.indexOfHarvest.Value].Replace(' ', '_');
+                crop.indexOfHarvest.Value = this.OldObjectIds[crop.indexOfHarvest.Value].FixIdJA();
             if (this.OldObjectIds.ContainsKey(crop.netSeedIndex.Value))
-                crop.netSeedIndex.Value = this.OldObjectIds[crop.netSeedIndex.Value].Replace(' ', '_');
+                crop.netSeedIndex.Value = this.OldObjectIds[crop.netSeedIndex.Value].FixIdJA();
         }
 
         /// <summary>Fix item IDs contained by a terrain feature, including the terrain feature itself.</summary>
@@ -1800,7 +1812,7 @@ namespace JsonAssets
                     {
                         if (this.OldFruitTreeIds.ContainsKey(ftree.treeId.Value))
                         {
-                            ftree.treeId.Value = this.OldFruitTreeIds[ftree.treeId.Value].Replace(' ', '_');
+                            ftree.treeId.Value = this.OldFruitTreeIds[ftree.treeId.Value].FixIdJA();
                         }
                     }
                     break;
@@ -1810,7 +1822,7 @@ namespace JsonAssets
                 case ResourceClump rclump:
                     if ( this.OldObjectIds.ContainsKey( rclump.parentSheetIndex.Value.ToString() ) )
                     {
-                        rclump.ItemId = this.OldObjectIds[rclump.parentSheetIndex.Value.ToString()].Replace(' ', '_');
+                        rclump.ItemId = this.OldObjectIds[rclump.parentSheetIndex.Value.ToString()].FixIdJA();
                         rclump.parentSheetIndex.Value = 1720;
                     }
                     */
@@ -1845,7 +1857,7 @@ namespace JsonAssets
                 if (this.OldObjectIds.ContainsKey(entry))
                 {
                     toRemove.Add(entry);
-                    toAdd.Add(this.OldObjectIds[entry].Replace(' ', '_'), dict[entry]);
+                    toAdd.Add(this.OldObjectIds[entry].FixIdJA(), dict[entry]);
                 }
             }
             foreach (string entry in toRemove)
@@ -1857,7 +1869,7 @@ namespace JsonAssets
                     Log.Error("Dict already has value for " + entry.Key + "!");
                     foreach (var obj in this.Objects)
                     {
-                        if (obj.Name.Replace(' ', '_') == entry.Key)
+                        if (obj.Name.FixIdJA() == entry.Key)
                             Log.Error("\tobj = " + obj.Name);
                     }
                 }
@@ -1874,7 +1886,7 @@ namespace JsonAssets
                 if (this.OldObjectIds.ContainsKey(entry))
                 {
                     toRemove.Add(entry);
-                    toAdd.Add(this.OldObjectIds[entry].Replace(' ', '_'), dict[entry]);
+                    toAdd.Add(this.OldObjectIds[entry].FixIdJA(), dict[entry]);
                 }
             }
             foreach (string entry in toRemove)

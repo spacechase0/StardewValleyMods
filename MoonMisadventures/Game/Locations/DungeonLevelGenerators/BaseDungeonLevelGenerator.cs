@@ -9,6 +9,7 @@ using MoonMisadventures.Game.Monsters;
 using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
+using StardewValley.Tools;
 
 namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
 {
@@ -161,7 +162,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                 int ore = ores[ ore_ ];
                 if ( ore == int.MaxValue )
                 {
-                    var obj = new StardewValley.Object( ItemIds.MythiciteOreMinable, 1 );
+                    var obj = new StardewValley.Object(new Vector2(sx, sy), ItemIds.MythiciteOreMinable, 1 );
                     obj.Name = "Stone";
                     obj.MinutesUntilReady = 24;
                     location.netObjects.Add( new Vector2( sx, sy ), obj );
@@ -216,7 +217,7 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             if ( location.netObjects.ContainsKey( position ) )
                 return;
 
-            BreakableContainer bcontainer = new BreakableContainer( position, true );
+            BreakableContainer bcontainer = BreakableContainer.GetBarrelForVolcanoDungeon(position);
             bcontainer.setHealth( 6 );
 
             location.netObjects.Add( position, bcontainer );
@@ -256,10 +257,10 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
                             case 2:
                                 break;
                             case 3:
-                                item.holding.Value = new LunarAnimal( LunarAnimalType.Cow, Vector2.Zero, mp.getNewID() );
+                                item.holding.Value = new FarmAnimal("Lunar Cow", mp.getNewID(), 0);
                                 break;
                             case 4:
-                                item.holding.Value = new LunarAnimal( LunarAnimalType.Chicken, Vector2.Zero, mp.getNewID() );
+                                item.holding.Value = new FarmAnimal("Lunar Chicken", mp.getNewID(), 0);
                                 break;
                         }
                         chest.addItem( item );

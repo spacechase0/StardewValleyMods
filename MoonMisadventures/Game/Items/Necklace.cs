@@ -24,44 +24,40 @@ namespace MoonMisadventures.Game.Items
             public static readonly string Sea = "sea";
         }
 
-        public override string DisplayName { get; set; }
+        public override string DisplayName => GetDisplayName();
         public string Description { get; set; }
-        public override int Stack { get => 1; set { } }
 
-        public override string GetItemQualifier()
-        {
-            return "(SC0_MM_N)";
-        }
+        public override string TypeDefinitionId => "(SC0_MM_N)";
 
         public Necklace() { }
         public Necklace( string type )
         {
-            ItemID = type;
+            ItemId = type;
             ReloadData();
+        }
+
+        private string GetDisplayName()
+        {
+            var data = Game1.content.Load<Dictionary<string, NecklaceData>>("spacechase0.MoonMisadventures/Necklaces");
+            return data[ItemId].DisplayName;
         }
 
         public void ReloadData()
         {
             var data = Game1.content.Load< Dictionary< string, NecklaceData > >( "spacechase0.MoonMisadventures/Necklaces" );
-            Name = "Necklace." + ItemID;
-            DisplayName = data[ItemID].DisplayName;
-            Description = data[ItemID].Description;
+            Name = "Necklace." + ItemId;
+            Description = data[ItemId].Description;
         }
 
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
             //spriteBatch.Draw( Assets.Necklaces, location + new Vector2( 32, 32 ), new Rectangle( ( ( int ) necklaceType.Value ) % 4 * 16, ( ( int ) necklaceType.Value ) / 4 * 16, 16, 16 ), color * transparency, 0, new Vector2( 8, 8 ) * scaleSize, scaleSize * Game1.pixelZoom, SpriteEffects.None, layerDepth );
-            var data = Utility.GetItemDataForItemID(QualifiedItemID);
+            var data = ItemRegistry.GetDataOrErrorItem(QualifiedItemId);
             Rectangle rect = data.GetSourceRect(0);
-            spriteBatch.Draw(data.texture, location + new Vector2(32, 32) * scaleSize, rect, color * transparency, 0, new Vector2(8, 8) * scaleSize, scaleSize * 4, SpriteEffects.None, layerDepth);
+            spriteBatch.Draw(data.GetTexture(), location + new Vector2(32, 32) * scaleSize, rect, color * transparency, 0, new Vector2(8, 8) * scaleSize, scaleSize * 4, SpriteEffects.None, layerDepth);
         }
 
         public override int maximumStackSize()
-        {
-            return 1;
-        }
-
-        public override int addToStack( Item stack )
         {
             return 1;
         }
@@ -78,7 +74,7 @@ namespace MoonMisadventures.Game.Items
 
         public override Item getOne()
         {
-            var ret = new Necklace( ItemID );
+            var ret = new Necklace( ItemId );
             ret._GetOneFrom( this );
             return ret;
         }
@@ -100,7 +96,7 @@ namespace MoonMisadventures.Game.Items
 
         public override void onEquip( Farmer player )
         {
-            if ( ItemID == Type.Health )
+            if ( ItemId == Type.Health )
             {
                 int diff = ( int )( player.maxHealth * 0.5f );
                 player.maxHealth += diff;
@@ -110,7 +106,7 @@ namespace MoonMisadventures.Game.Items
 
         public override void onUnequip( Farmer player )
         {
-            if ( ItemID == Type.Health )
+            if ( ItemId == Type.Health )
             {
                 int oldHealth = player.health;
                 int oldMax = player.maxHealth;
