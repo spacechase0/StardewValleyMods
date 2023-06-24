@@ -35,13 +35,15 @@ namespace JsonAssets.Data
             str = str.Substring(0, str.Length - 1);
             if (parent.Category != ObjectCategory.Cooking)
                 str += "/what is this for?";
+            else
+                str += "/9999 9999";
             str += $"/{parent.Name.FixIdJA()} {this.ResultCount}/";
             if (parent.Category != ObjectCategory.Cooking)
                 str += "false/";
             if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
-                str += "/" + this.SkillUnlockName + " " + this.SkillUnlockLevel;
+                str += "" + this.SkillUnlockName + " " + this.SkillUnlockLevel;
             else
-                str += "/null";
+                str += "null";
             //if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
                 str += "/" + parent.LocalizedName();
             return str;

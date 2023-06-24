@@ -39,7 +39,7 @@ namespace CombatOverhaulMod.Buffs
             buff.Unapply( character );
 
             if (character == Game1.player)
-                Game1.player.buffs.Remove(Game1.player.buffs.appliedBuffs.First(b => b.Value is DummyBuff dummy && dummy.CustomBuff == buff).Key);
+                Game1.player.buffs.Remove(Game1.player.buffs.AppliedBuffs.First(b => b.Value is DummyBuff dummy && dummy.CustomBuff == buff).Key);
         }
     }
 }

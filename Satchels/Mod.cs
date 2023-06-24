@@ -1,24 +1,51 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Inventories;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Menus;
+using StardewValley.Objects;
 
 namespace Satchels
 {
+    // Chest that doesn't clear nulls
+    internal class DummyChest : Chest
+    {
+        public DummyChest(bool playerChest)
+        : base(playerChest)
+        {
+        }
+
+        public override void clearNulls()
+        {
+            Inventory items = this.Items;
+            for (int j = items.Count - 1; j >= 0; j--)
+            {
+                if (items[j]?.Stack <= 0)
+                {
+                    items[j] = null;
+                }
+            }
+        }
+    }
+
     public class Mod : StardewModdingAPI.Mod
     {
+
         public static Mod instance;
 
         // Dictionary of object IDs, unqualified, to base i18n key
         public static Dictionary<string, string> UpgradeList = new Dictionary<string, string>
         {
-            { "spacechase0.Satchels_SatchelUpgrade_test", "satchel-upgrade.test" }
+            { "spacechase0.Satchels_SatchelUpgrade_Crafting", "satchel-upgrade.crafting" },
+            { "spacechase0.Satchels_SatchelUpgrade_Cooking", "satchel-upgrade.cooking" }
         };
 
         private static Satchel toOpen;
@@ -26,6 +53,21 @@ namespace Satchels
         {
             if ( !satchel.isOpen.Value )
                 toOpen = satchel;
+        }
+
+        public static IClickableMenu GetSatchelUpgradeMenu(Satchel satchel, Item upgrade)
+        {
+            if (upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_Crafting" ||
+                upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_Cooking")
+            {
+                var chest = new DummyChest(true);
+                chest.netItems = satchel.netInventory;
+
+                Vector2 pos = Utility.getTopLeftPositionForCenteringOnScreen(800 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2);
+                return new CraftingPage((int)pos.X, (int)pos.Y, 800 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2, cooking: upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_Cooking", true, new Chest[] { chest }.ToList());
+            }
+
+            return null;
         }
 
         public override void Entry(IModHelper helper)
@@ -132,7 +174,7 @@ namespace Satchels
                     int i = 0;
                     foreach (var upgrade in UpgradeList)
                     {
-                        data.Add(upgrade.Key, $"{upgrade.Key}/100/-300/Junk -999/" + I18n.GetByKey($"{upgrade.Value}.name") + "/" + I18n.GetByKey($"{upgrade.Value}.description") + $"////{i++}/{ModManifest.UniqueID}\\upgrades.png");
+                        data.Add(upgrade.Key, $"{upgrade.Value}/100/-300/Junk -999/" + I18n.GetByKey($"{upgrade.Value}.name") + "/" + I18n.GetByKey($"{upgrade.Value}.description") + $"////{i++}/{ModManifest.UniqueID}\\upgrades.png");
                     }
                 });
             }

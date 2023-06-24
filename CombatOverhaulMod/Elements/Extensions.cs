@@ -114,7 +114,7 @@ namespace CombatOverhaulMod.Elements
                 farmer.currentLocation.playSound( "ow" );
                 Game1.hitShakeTimer = 100 * amount;
             }
-            farmer.currentLocation.debris.Add( new Debris( amount, new Vector2( farmer.getStandingX() + 8, farmer.getStandingY() ), elem.Color, 1f, farmer ) );
+            farmer.currentLocation.debris.Add( new Debris( amount, new Vector2( farmer.StandingPixel.X + 8, farmer.StandingPixel.Y ), elem.Color, 1f, farmer ) );
         }
 
         public static void TakeElementalDamage( this Monster monster, string element, int amount, Farmer src )

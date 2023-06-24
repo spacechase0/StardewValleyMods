@@ -59,8 +59,8 @@ namespace CombatOverhaulMod.Elements
     {
         public static IEnumerable<MethodBase> TargetMethods()
         {
-            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET" ) )
-                             from type in asm.GetTypes()
+            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET" ) && !a.IsDynamic )
+                             from type in asm.GetExportedTypes()
                              where type.IsSubclassOf( typeof( Item ) )
                              select type;
 

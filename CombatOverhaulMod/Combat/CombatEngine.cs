@@ -26,14 +26,14 @@ namespace CombatOverhaulMod.Combat
         public static void ResetCombatTimer()
         {
             combatTimer = 5;
-            var buff = Game1.player.buffs.appliedBuffs.FirstOrDefault(b => b.Key == "in_combat").Value;
+            var buff = Game1.player.buffs.AppliedBuffs.FirstOrDefault(b => b.Key == "in_combat").Value;
             if (buff != null)
                 buff.millisecondsDuration = (int)(combatTimer * 1000);
             else
             {
                 var be = new BuffEffects();
-                be.speed.Value = 2;
-                buff = new Buff("in_combat", "In Combat", "In Combat", (int)(combatTimer * 1000), icon_sheet_index: 0, buff_effects: be );
+                be.Speed.Value = 2;
+                buff = new Buff("in_combat", "In Combat", I18n.Buff_InCombat(), (int)(combatTimer * 1000), icon_sheet_index: 0, buff_effects: be );
                 Game1.player.applyBuff(buff);
             }
         }

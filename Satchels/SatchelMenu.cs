@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared.UI;
@@ -23,6 +24,8 @@ namespace Satchels
         private InventoryMenu invMenu;
 
         private ItemSlot slotClicked = null;
+
+        private List<ItemSlot> slots = new();
 
         public SatchelMenu(Satchel satchel)
         : base(Game1.uiViewport.Width / 2 - 64 * 6 - IClickableMenu.borderWidth, Game1.uiViewport.Height / 2 - (64 * (satchel.Inventory.Count / 9 + 3)) / 2 - IClickableMenu.borderWidth, 64 * 12, 72 * (satchel.Inventory.Count / 9 + 3) + IClickableMenu.borderWidth * 2)
@@ -83,6 +86,7 @@ namespace Satchels
                     }
                     };
                     container.AddChild(slot);
+                    slots.Add(slot);
                 }
             }
 
@@ -102,12 +106,14 @@ namespace Satchels
                 };
                 slot.SecondaryCallback = (elem) =>
                 {
+                    slotClicked = (elem as ItemSlot);
+
                     var theMenu = Game1.activeClickableMenu;
                     while (theMenu.GetChildMenu() != null)
                     {
                         theMenu = theMenu.GetChildMenu();
                     }
-                    //theMenu.SetChildMenu(new ConfigureSatchelUpgradeMenu(elem.Item));
+                    theMenu.SetChildMenu(Mod.GetSatchelUpgradeMenu(satchel, (elem as ItemSlot).Item));
                 };
                 slot.UserData = new SlotUserData() { IsMainInventory = false, Slot = i, Filter = ( item ) =>
                 {
@@ -115,6 +121,7 @@ namespace Satchels
                 }
                 };
                 container.AddChild(slot);
+                slots.Add(slot);
             }
         }
 
@@ -166,7 +173,8 @@ namespace Satchels
 
             if (ItemWithBorder.HoveredElement is ItemSlot slot)
             {
-                if (!(slot.UserData as SlotUserData).Filter(Game1.player.CursorSlotItem))
+                if (!(slot.UserData as SlotUserData).Filter(Game1.player.CursorSlotItem) ||
+                    !(slot.UserData as SlotUserData).IsMainInventory)
                 {
                     return;
                 }
@@ -237,6 +245,15 @@ namespace Satchels
                 else
                     satchel.Upgrades[data.Slot] = slotClicked.Item;
                 slotClicked = null;
+            }
+
+            foreach (var slot in slots)
+            {
+                var data = (slot.UserData as SlotUserData);
+                if (data.IsMainInventory)
+                    slot.Item = satchel.Inventory[data.Slot];
+                else
+                    slot.Item = satchel.Upgrades[data.Slot];
             }
 
             ui.Update();

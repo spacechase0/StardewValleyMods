@@ -48,6 +48,6 @@ namespace CombatOverhaulMod.Combat.WeaponTypes
 
         public abstract void DrawDuringUse(int frameOfFarmerAnimation, int facingDirection, SpriteBatch spriteBatch, Vector2 playerPosition, Farmer f, bool isOnSpecial, Texture2D texture, Rectangle sourceRect, float sort_behind_layer, float sort_layer);
 
-        //public abstract Rectangle GetNormalDamageArea(MeleeWeapon weapon, int x, int y, int facingDirection, Rectangle wielderBoundingBox, int indexInCurrentAnimation);
+        public abstract Rectangle GetNormalDamageArea(MeleeWeapon weapon, int x, int y, int facingDirection, Rectangle wielderBoundingBox, int indexInCurrentAnimation);
     }
 }

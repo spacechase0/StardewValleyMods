@@ -79,7 +79,7 @@ namespace CombatOverhaulMod.FightStamina
 
                 Game1.player.AddFightStamina(-0.25f);
                 regenTimer = 1f;
-                Game1.player.currentLocation.playSoundAt("daggerswipe", Game1.player.getTileLocation());
+                Game1.player.currentLocation.playSound("daggerswipe", Game1.player.Tile);
             }
         }
 

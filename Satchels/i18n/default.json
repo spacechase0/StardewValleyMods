@@ -17,4 +17,9 @@
     "satchel.5.description": "A satchel with a capacity of 54, and 5 upgrade slots.",
 
     "upgrade.category-text": "Satchel Upgrade",
+
+    "satchel-upgrade.crafting.name": "Crafting Upgrade",
+    "satchel-upgrade.crafting.description": "Right click when installed to open a crafting menu that will pull from the satchel for ingredients.",
+    "satchel-upgrade.cooking.name": "Cooking Upgrade",
+    "satchel-upgrade.cooking.description": "Right click when installed to open a cooking menu that will pull from the satchel for ingredients."
 }

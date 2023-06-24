@@ -140,11 +140,11 @@ namespace CombatOverhaulMod.Combat
             Rectangle sourceRect = itemDataForItemID.GetSourceRect(0);
             float drawLayer = f.getDrawLayer();
             FarmerRenderer.FarmerSpriteLayers weapon_sort_layer = FarmerRenderer.FarmerSpriteLayers.TOOL_IN_USE_SIDE;
-            if ((int)f.facingDirection == 0)
+            if (f.facingDirection.Value == 0)
             {
                 weapon_sort_layer = FarmerRenderer.FarmerSpriteLayers.ToolUp;
             }
-            else if ((int)f.facingDirection == 2)
+            else if (f.facingDirection.Value == 2)
             {
                 weapon_sort_layer = FarmerRenderer.FarmerSpriteLayers.ToolDown;
             }
@@ -153,6 +153,18 @@ namespace CombatOverhaulMod.Combat
 
             var wtype = WeaponTypeManager.GetWeaponType(type);
             wtype.DrawDuringUse(frameOfFarmerAnimation, facingDirection, spriteBatch, playerPosition, f, isOnSpecial, texture, sourceRect, sort_behind_layer, sort_layer);
+        }
+    }
+
+    [HarmonyPatch(typeof(MeleeWeapon), nameof(MeleeWeapon.getAreaOfEffect))]
+    public static class MeleeWeaponAreaOfEffectPatch
+    {
+        public static void Postfix(MeleeWeapon __instance,
+            int x, int y, int facingDirection, ref Vector2 tileLocation1, ref Vector2 tileLocation2, Rectangle wielderBoundingBox, int indexInCurrentAnimation,
+            ref Rectangle __result)
+        {
+            var wtype = WeaponTypeManager.GetWeaponType(__instance.type.Value);
+            __result = wtype.GetNormalDamageArea(__instance, x, y, facingDirection, wielderBoundingBox, indexInCurrentAnimation);
         }
     }
 

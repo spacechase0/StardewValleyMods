@@ -42,11 +42,11 @@ namespace CombatOverhaulMod.Buffs
     }
 
     [HarmonyPatch( typeof( Character ), "initNetFields" )]
-    public static class FarmerAddManaNetPatch
+    public static class FarmerAddBuffsNetPatch
     {
         public static void Postfix( Character __instance )
         {
-            __instance.NetFields.AddFields( __instance.get_Buffs() );
+            __instance.NetFields.AddField( __instance.get_Buffs(), "spacechase0.CombatOverhaulMod.Buffs" );
         }
     }
 

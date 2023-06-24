@@ -298,5 +298,10 @@ namespace CombatOverhaulMod.Combat.WeaponTypes
                 }
             }
         }
+
+        public override Rectangle GetNormalDamageArea(MeleeWeapon weapon, int x, int y, int facingDirection, Rectangle wielderBoundingBox, int indexInCurrentAnimation)
+        {
+            return default(Rectangle); // TODO
+        }
     }
 }

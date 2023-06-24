@@ -19,13 +19,17 @@ namespace Satchels
 
         public override string TypeDefinitionId => "(SC0_S_S)";
 
-        public Inventory Inventory { get; set; } = new();
-        public Inventory Upgrades { get; set; } = new();
+        public Inventory Inventory => netInventory.Value;
+        public Inventory Upgrades => netUpgrades.Value;
+
+        public NetRef<Inventory> netInventory = new(new());
+        public NetRef<Inventory> netUpgrades = new(new());
         public NetBool isOpen { get; set; } = new(false);
 
         public Satchel()
         {
-            NetFields.AddField(Inventory.NetFields, nameof(this.Inventory));
+            NetFields.AddField(netInventory, nameof(this.netInventory));
+            NetFields.AddField(netUpgrades, nameof(this.netUpgrades));
             NetFields.AddField(isOpen, nameof(this.isOpen));
         }
         public Satchel( string type )

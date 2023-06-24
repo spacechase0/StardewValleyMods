@@ -13,7 +13,7 @@ namespace CombatOverhaulMod.Buffs
     [XmlType( "Mods_spacechase0_COM_CustomBuffInstance" )]
     public class CustomBuffInstance : INetObject< NetFields >
     {
-        public NetFields NetFields => new NetFields();
+        public NetFields NetFields => new NetFields( "CustomBuffInstance");
 
         private readonly NetString buffId = new();
         private readonly NetFloat duration = new();
@@ -25,7 +25,9 @@ namespace CombatOverhaulMod.Buffs
 
         public CustomBuffInstance()
         {
-            NetFields.AddFields( buffId, duration, durationUsed );
+            NetFields.AddField(buffId, nameof(this.buffId) );
+            NetFields.AddField(duration, nameof(this.duration));
+            NetFields.AddField(durationUsed, nameof(this.durationUsed));
         }
 
         public CustomBuffInstance( string buffId, float duration )
