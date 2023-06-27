@@ -115,7 +115,7 @@ namespace SpaceShared.UI
 
             if (topPx != this.ContentHeight) {
                 this.ContentHeight = topPx;
-                this.Scrollbar.Rows = this.ContentHeight / this.RowHeight;
+                this.Scrollbar.Rows = PxToRow(this.ContentHeight);
             }
 
             this.Scrollbar.Update();
@@ -198,7 +198,7 @@ namespace SpaceShared.UI
         {
             this.Scrollbar.LocalPosition = new Vector2(this.Size.X + 48, this.Scrollbar.LocalPosition.Y);
             this.Scrollbar.RequestHeight = (int)this.Size.Y;
-            this.Scrollbar.Rows = this.ContentHeight / this.RowHeight;
+            this.Scrollbar.Rows = PxToRow(this.ContentHeight);
             this.Scrollbar.FrameSize = (int)(this.Size.Y / this.RowHeight);
         }
 
@@ -229,6 +229,11 @@ namespace SpaceShared.UI
 
             // resume previous sprite batch
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+        }
+
+        private int PxToRow(int px)
+        {
+            return (px + this.RowHeight - 1) / this.RowHeight;
         }
     }
 }
