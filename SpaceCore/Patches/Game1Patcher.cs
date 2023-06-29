@@ -45,7 +45,7 @@ namespace SpaceCore.Patches
             harmony.Patch(
                 original: Constants.TargetPlatform != GamePlatform.Android
                     ? this.RequireMethod<Game1>(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int) })
-                    : this.RequireMethod<Game1>(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool) }),
+                    : this.RequireMethod<Game1>(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int), typeof(bool)}),
                 prefix: this.GetHarmonyMethod(nameof(Before_WarpFarmer))
             );
 

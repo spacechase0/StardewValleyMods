@@ -407,6 +407,9 @@ namespace SpaceCore.Patches
             SaveGamePatcher.FindAndRemoveModNodes(doc, modNodes, "/1"); // <?xml ... ?> is /0
 
             doc.WriteContentTo(origWriter);
+            // To fix serialize bug in mobile platform
+            if (Constants.TargetPlatform == GamePlatform.Android)
+                origWriter.Flush();
             string filename = serializer == SaveGame.farmerSerializer
                 ? SaveGamePatcher.SerializerManager.FarmerFilename
                 : SaveGamePatcher.SerializerManager.Filename;
