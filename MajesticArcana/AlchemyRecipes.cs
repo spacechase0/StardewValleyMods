@@ -22,7 +22,7 @@ namespace MajesticArcana
 
         public static Dictionary<string, string[]> Get()
         {
-            return GetDefaultRecipes();// Game1.content.Load<Dictionary<string, string[]>>("spacechase0.MajesticArcana/Alchemy");
+            return Game1.content.Load<Dictionary<string, string[]>>("spacechase0.MajesticArcana/Alchemy");
         }
         internal static Dictionary<string, string[]> GetDefaultRecipes()
         {
