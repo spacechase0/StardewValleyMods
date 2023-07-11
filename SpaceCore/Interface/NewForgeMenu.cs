@@ -1069,7 +1069,7 @@ namespace SpaceCore.Interface
                         }
                         if (weapon.hasEnchantmentOfType<DiamondEnchantment>())
                         {
-                            cost += this.GetForgeCost(this.leftIngredientSpot.item, new StardewValley.Object(72, 1));
+                            cost += this.GetForgeCost(this.leftIngredientSpot.item, new StardewValley.Object("72", 1));
                         }
                         for (int i = weapon.enchantments.Count - 1; i >= 0; i--)
                         {
@@ -1088,7 +1088,7 @@ namespace SpaceCore.Interface
                         Game1.playSound("coin");
                         this.heldItem = weapon;
                     }
-                    Utility.CollectOrDrop(new StardewValley.Object(848, cost / 2));
+                    Utility.CollectOrDrop(new StardewValley.Object("848", cost / 2));
                 }
                 else if (this.leftIngredientSpot.item is CombinedRing)
                 {
@@ -1104,7 +1104,7 @@ namespace SpaceCore.Interface
                         this.leftIngredientSpot.item = null;
                         Game1.playSound("coin");
                     }
-                    Utility.CollectOrDrop(new StardewValley.Object(848, 10));
+                    Utility.CollectOrDrop(new StardewValley.Object("848", 10));
                 }
                 this.unforging = false;
                 this._timeUntilCraft = 0;

@@ -5,7 +5,7 @@ using JsonAssets.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore;
-using SpaceCore.Framework.VanillaAssetExpansion;
+using SpaceCore.VanillaAssetExpansion;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;

@@ -73,7 +73,7 @@ namespace StardewValley.Tools
             }
             else
             {
-                if ( location.isTileLocationTotallyClearAndPlaceableIgnoreFloors( spot.Tile ) )
+                if ( location.isTilePlaceable( spot.Tile ) )
                 {
                     holding.Value.position.Value = spot.AbsolutePixels;
                     location.Animals.Add( holding.Value.myID.Value, holding.Value );
@@ -89,15 +89,22 @@ namespace StardewValley.Tools
         }
         */
 
-        public override Item getOne()
+        protected override Item GetOneNew()
         {
-            var ret = new AnimalGauntlets();
+            return new AnimalGauntlets();
+        }
 
-            if (holding.Value != null)
+        protected override void GetOneCopyFrom(Item source)
+        {
+            base.GetOneCopyFrom(source);
+
+            var gauntlets = source as AnimalGauntlets;
+
+            if (gauntlets.holding.Value != null)
             {
                 var animal = new FarmAnimal();
 
-                var a = holding.Value.NetFields.GetFields().ToList();
+                var a = gauntlets.holding.Value.NetFields.GetFields().ToList();
                 var b = animal.NetFields.GetFields().ToList();
                 for (int i = 0; i < a.Count; ++i)
                 {
@@ -111,11 +118,8 @@ namespace StardewValley.Tools
                     b[i].ReadFull(br, new());
                 }
 
-                ret.holding.Value = animal;
+                holding.Value = animal;
             }
-
-            ret._GetOneFrom( this );
-            return ret;
         }
     }
 }

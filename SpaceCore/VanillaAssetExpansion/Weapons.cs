@@ -7,7 +7,7 @@ using HarmonyLib;
 using StardewValley;
 using StardewValley.Tools;
 
-namespace SpaceCore.Framework.VanillaAssetExpansion
+namespace SpaceCore.VanillaAssetExpansion
 {
     /* Weapons:
      * CanBeTrashed: true/false

@@ -82,7 +82,7 @@ namespace MoonMisadventures.Patches
             if ( r.NextDouble() < 0.2 )
                 return;
             if ( Game1.random.NextDouble() <= 0.075 && Game1.player.team.SpecialOrderRuleActive( "DROP_QI_BEANS" ) )
-                Game1.createMultipleObjectDebris( 890, x, y, r.Next( 1, 3 ), who.UniqueMultiplayerID, location );
+                Game1.createMultipleObjectDebris( "890", x, y, r.Next( 1, 3 ), who.UniqueMultiplayerID, location );
             if ( r.NextDouble() < 0.01 )
             {
                 Game1.createItemDebris( new StardewValley.Object( ItemIds.SoulSapphire, 1 ), __instance.TileLocation * Game1.tileSize, 0, location );

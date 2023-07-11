@@ -148,29 +148,34 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             double r = rand.NextDouble();
             if ( r < 0.65 )
             {
-                location.netObjects.Add( new Vector2( sx, sy ), new StardewValley.Object( new Vector2( sx, sy ), rand.NextDouble() < 0.5 ? 846 : 847, 1 )
+                location.netObjects.Add( new Vector2( sx, sy ), new StardewValley.Object(rand.NextDouble() < 0.5 ? "846" : "847", 1 )
                 {
+                    TileLocation = new Vector2(sx, sy),
                     Name = "Stone",
                     MinutesUntilReady = 12
                 } );
             }
             else if ( r < 0.85 )
             {
-                int[] ores = new int[] { 95, 95, 849, 850, 764, 765, int.MaxValue, int.MaxValue, int.MaxValue };
+                string[] ores = new string[] { "95", "95", "849", "850", "764", "765", null, null, null };
                 int[] breaks = new int[] { 15, 15, 6, 8, 10, 12 };
                 int ore_ = rand.Next( ores.Length );
-                int ore = ores[ ore_ ];
-                if ( ore == int.MaxValue )
+                string ore = ores[ ore_ ];
+                if ( ore == null )
                 {
-                    var obj = new StardewValley.Object(new Vector2(sx, sy), ItemIds.MythiciteOreMinable, 1 );
+                    var obj = new StardewValley.Object(ItemIds.MythiciteOreMinable, 1)
+                    {
+                        TileLocation = new Vector2(sx, sy)
+                    };
                     obj.Name = "Stone";
                     obj.MinutesUntilReady = 24;
                     location.netObjects.Add( new Vector2( sx, sy ), obj );
                 }
                 else
                 {
-                    location.netObjects.Add( new Vector2( sx, sy ), new StardewValley.Object( new Vector2( sx, sy ), ore, 1 )
+                    location.netObjects.Add(new Vector2(sx, sy), new StardewValley.Object(ore, 1 )
                     {
+                        TileLocation = new Vector2(sx, sy),
                         Name = "Stone",
                         MinutesUntilReady = breaks[ ore_ ]
                     } );
@@ -178,19 +183,21 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             }
             else if ( r < 0.95 )
             {
-                int[] gems = new int[] { 2, 4, 6, 8, 10, 12, 14, 44, 44, 44, 46, 46 };
+                string[] gems = new[] { "2", "4", "6", "8", "10", "12", "14", "44", "44", "44", "46", "46" };
                 int gem_ = rand.Next( gems.Length );
-                int gem = gems[ gem_ ];
-                location.netObjects.Add( new Vector2( sx, sy ), new StardewValley.Object( new Vector2( sx, sy ), gem, 1 )
+                string gem = gems[ gem_ ];
+                location.netObjects.Add(new Vector2(sx, sy), new StardewValley.Object(gem, 1 )
                 {
+                    TileLocation = new Vector2(sx, sy),
                     Name = "Stone",
                     MinutesUntilReady = 10
                 } );
             }
             else
             {
-                location.netObjects.Add( new Vector2( sx, sy ), new StardewValley.Object( new Vector2( sx, sy ), 819, 1 )
+                location.netObjects.Add(new Vector2(sx, sy), new StardewValley.Object( "819", 1 )
                 {
+                    TileLocation = new Vector2(sx, sy),
                     Name = "Stone",
                     MinutesUntilReady = 10
                 } );

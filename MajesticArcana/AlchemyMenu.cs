@@ -127,7 +127,7 @@ namespace MajesticArcana
                 // TODO: Refactor this in 1.6 to allow other object types
                 var recipe = new Tuple<int, bool>[6];
                 int outX = recipeData.Key.IndexOf("/");
-                int output = int.Parse(outX == -1 ? recipeData.Key.Substring( 3 ) : recipeData.Key.Substring(3, outX - 3 ));
+                string output = recipeData.Key.Substring(0, outX);
                 int outputQty = outX == -1 ? 1 : int.Parse(recipeData.Key.Substring(outX + 1));
 
                 int ir = 0;
@@ -187,7 +187,7 @@ namespace MajesticArcana
 
                 if (okay)
                 {
-                    this.output.ItemDisplay = new StardewValley.Object(output, outputQty);
+                    this.output.ItemDisplay = ItemRegistry.Create(output, outputQty);
                     return;
                 }
             }

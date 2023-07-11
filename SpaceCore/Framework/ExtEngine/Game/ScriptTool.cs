@@ -97,13 +97,17 @@ end while
             }
         }
 
-        public override Item getOne()
+        protected override Item GetOneNew()
         {
             ScriptTool ret = new();
-            // Should we be doing a LOT more here?
-            ret.CorrespondingScript = CorrespondingScript;
-            ret._GetOneFrom(this);
             return ret;
+        }
+
+        protected override void GetOneCopyFrom(Item source)
+        {
+            base.GetOneCopyFrom(source);
+            // Should we be doing a LOT more here?
+            CorrespondingScript = (source as ScriptTool).CorrespondingScript;
         }
 
         public override bool canThisBeAttached(Object o)

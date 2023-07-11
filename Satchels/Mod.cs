@@ -159,7 +159,7 @@ namespace Satchels
             {
                 e.Edit((asset) =>
                 {
-                    var data = asset.AsDictionary<string, SpaceCore.Framework.VanillaAssetExpansion.ObjectExtensionData>().Data;
+                    var data = asset.AsDictionary<string, SpaceCore.VanillaAssetExpansion.ObjectExtensionData>().Data;
                     foreach (string upgrade in UpgradeList.Keys)
                     {
                         data.Add(upgrade, new() { MaxStackSizeOverride = 1, CategoryTextOverride = I18n.Upgrade_CategoryText() });

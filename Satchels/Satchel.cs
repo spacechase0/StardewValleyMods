@@ -31,6 +31,8 @@ namespace Satchels
             NetFields.AddField(netInventory, nameof(this.netInventory));
             NetFields.AddField(netUpgrades, nameof(this.netUpgrades));
             NetFields.AddField(isOpen, nameof(this.isOpen));
+
+            InstantUse = true;
         }
         public Satchel( string type )
         :   this()
@@ -41,7 +43,6 @@ namespace Satchels
                 Inventory.Add(null);
             while (Upgrades.Count < SatchelDataDefinition.GetSpecificData(ItemId).MaxUpgrades)
                 Upgrades.Add(null);
-            InstantUse = true;
         }
 
         private string GetDisplayName()
@@ -124,11 +125,32 @@ namespace Satchels
             //who.forceCanMove();
         }
 
-        public override Item getOne()
+        protected override Item GetOneNew()
         {
-            var ret = new Satchel( ItemId );
-            ret._GetOneFrom( this );
-            return ret;
+            return new Satchel();
+        }
+
+        protected override void GetOneCopyFrom(Item source)
+        {
+            var satchel = source as Satchel;
+            base.GetOneCopyFrom(source);
+
+            ItemId = source.ItemId;
+            ReloadData();
+
+            while (Inventory.Count < SatchelDataDefinition.GetSpecificData(ItemId).Capacity)
+                Inventory.Add(null);
+            while (Upgrades.Count < SatchelDataDefinition.GetSpecificData(ItemId).MaxUpgrades)
+                Upgrades.Add(null);
+
+            for (int i = 0; i < Inventory.Count; ++i)
+            {
+                Inventory[i] = satchel.Inventory[i]?.getOne();
+            }
+            for (int i = 0; i < Upgrades.Count; ++i)
+            {
+                Upgrades[i] = satchel.Upgrades[i]?.getOne();
+            }
         }
 
         public override bool canBeTrashed()

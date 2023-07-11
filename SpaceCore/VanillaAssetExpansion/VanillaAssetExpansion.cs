@@ -10,7 +10,7 @@ using SpaceCore.Interface;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace SpaceCore.Framework.VanillaAssetExpansion
+namespace SpaceCore.VanillaAssetExpansion
 {
     internal class VanillaAssetExpansion
     {

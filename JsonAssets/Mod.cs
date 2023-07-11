@@ -443,7 +443,7 @@ namespace JsonAssets
                     PurchaseFrom = tree.Sapling.PurchaseFrom,
                     Price = tree.Sapling.PurchasePrice,
                     PurchaseRequirements = this.ParseAndValidateRequirements(source, tree.Sapling.PurchaseRequirements),
-                    Object = () => new SObject(Vector2.Zero, tree.Sapling.Name, int.MaxValue)
+                    Object = () => new SObject(tree.Sapling.Name, int.MaxValue)
                 });
                 foreach (var entry in tree.Sapling.AdditionalPurchaseData)
                 {
@@ -452,7 +452,7 @@ namespace JsonAssets
                         PurchaseFrom = entry.PurchaseFrom,
                         Price = entry.PurchasePrice,
                         PurchaseRequirements = this.ParseAndValidateRequirements(source, entry.PurchaseRequirements),
-                        Object = () => new SObject(Vector2.Zero, tree.Sapling.Name, int.MaxValue)
+                        Object = () => new SObject(tree.Sapling.Name, int.MaxValue)
                     });
                 }
             }

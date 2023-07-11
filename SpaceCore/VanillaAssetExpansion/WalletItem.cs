@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpaceCore.Framework.VanillaAssetExpansion
+namespace SpaceCore.VanillaAssetExpansion
 {
     public class WalletItem
     {

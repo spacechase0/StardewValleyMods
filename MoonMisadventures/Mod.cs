@@ -277,7 +277,7 @@ namespace MoonMisadventures
                     });
                 });
             }
-            if (e.NameWithoutLocale.IsEquivalentTo("Data/InGameMap"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/WorldMap"))
             {
                 e.Edit((asset) =>
                 {
@@ -435,6 +435,7 @@ namespace MoonMisadventures
                         }),
                     });
                     */
+                    asset.AsDictionary<string, WorldMapRegionData>().Data.Add("Moon", regionData);
                 });
             }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/ObjectContextTags"))

@@ -7,7 +7,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewValley;
 
-namespace SpaceCore.Framework.VanillaAssetExpansion
+namespace SpaceCore.VanillaAssetExpansion
 {
     public class ObjectExtensionData
     {
@@ -17,7 +17,7 @@ namespace SpaceCore.Framework.VanillaAssetExpansion
         public bool HideFromShippingCollection { get; set; } = false;
 
         public bool CanBeTrashed { get; set; } = true;
-        public bool CanBeGifted { get; set; } = true;
+        public bool CanBeGifted { get; set; } = true; // can be removed in latest alpha build
         public bool CanBeShipped { get; set; } = true;
 
         public int? EatenHealthRestoredOverride { get; set; } = null;

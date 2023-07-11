@@ -72,11 +72,17 @@ namespace MoonMisadventures.Game.Items
             return false;
         }
 
-        public override Item getOne()
+        protected override Item GetOneNew()
         {
-            var ret = new Necklace( ItemId );
-            ret._GetOneFrom( this );
-            return ret;
+            return new Necklace();
+        }
+
+        protected override void GetOneCopyFrom(Item source)
+        {
+            base.GetOneCopyFrom(source);
+
+            ItemId = source.ItemId;
+            ReloadData();
         }
 
         public override bool canBeTrashed()

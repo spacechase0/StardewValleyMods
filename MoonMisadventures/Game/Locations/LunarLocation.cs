@@ -237,7 +237,7 @@ namespace MoonMisadventures.Game.Locations
             Random r = new Random( xLocation * 3000 + yLocation + ( int ) Game1.uniqueIDForThisGame + ( int ) Game1.stats.DaysPlayed + Name.GetDeterministicHashCode() );
             if ( r.NextDouble() < 0.03 )
             {
-                Game1.createObjectDebris( 424 /* cheese */, xLocation, yLocation, this );
+                Game1.createObjectDebris( "424" /* cheese */, xLocation, yLocation, this );
             }
             return base.checkForBuriedItem( xLocation, yLocation, explosion, detectOnly, who );
         }

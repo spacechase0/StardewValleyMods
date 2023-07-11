@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewValley;
+using StardewValley.Extensions;
 using StardewValley.Menus;
 using StardewValley.Tools;
 
@@ -289,7 +290,7 @@ namespace MoonMisadventures.Game
                     }
                 }
             }
-            var newEnch = Utility.GetRandom(BaseEnchantment.GetAvailableEnchantmentsForItem( item as Tool ), Game1.random);
+            var newEnch = Game1.random.ChooseFrom(BaseEnchantment.GetAvailableEnchantmentsForItem(item as Tool));
             t.enchantments.Add(newEnch);
             newEnch.ApplyTo(t, t.getLastFarmerToUse());
         }
