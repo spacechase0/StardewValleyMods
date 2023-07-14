@@ -1,19 +1,3 @@
 ﻿{
-    "element.manifestation": "Manifestation: {{text}}",
-    "element.attribute": "Attribute: {{text}}",
-    "spellcrafting.spellbook": "Spellbook",
-    "spellcrafting.spellbook.description": "Check your saved spell segments here.\nYour spellbook comes with some pre-made spell segments!",
-    "spellcrafting.help": "Help",
-    "spellcrafting.help.description": "Get an explanation of the interface",
-    "spellcrafting.icon": "Spell Icon",
-    "spellcrafting.icon.description": "The icon for this spell in your spellbook.",
-    "spellcrafting.manifestation-modifier": "Manifestation Modifier",
-    "spellcrafting.manifestation-modifier.description": "A modifier value for the manifestation type.",
-    "spellcrafting.attribute-strength": "Attribute Strength",
-    "spellcrafting.attribute-strength.description": "How strong the attributes of the spell will be.",
-    "spellcrafting.create-chain": "Create Chain Effect",
-    "spellcrafting.chain-type": "Chain Type",
-    "spellcrafting.chain-delay": "Chain Delay",
-    "spellcrafting.chain-delay.description": "How long to delay after the triggering condition before this part of the chain is activated.",
-    "spell-stash.page": "Page {{current}}/{{maximum}}"
+    "meow": "Meow"
 }

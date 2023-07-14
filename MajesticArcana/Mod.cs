@@ -17,18 +17,6 @@ namespace MajesticArcana
             instance = this;
             Log.Monitor = Monitor;
             I18n.Init(Helper.Translation);
-
-            AlchemyRecipes.Init();
-
-            Helper.ConsoleCommands.Add("magik_alchemy", "...", OnAlchemyCommand);
-        }
-
-        private void OnAlchemyCommand(string arg1, string[] arg2)
-        {
-            if (!Context.IsPlayerFree)
-                return;
-
-            Game1.activeClickableMenu = new AlchemyMenu();
         }
     }
 }

@@ -10,7 +10,7 @@ using SpaceShared.UI;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace MajesticArcana
+namespace MageDelve
 {
     public class AlchemyRecipesMenu : IClickableMenu
     {
@@ -33,14 +33,13 @@ namespace MajesticArcana
             var recipes = AlchemyRecipes.Get();
             foreach ( var recipe in recipes )
             {
-                // TODO: Refactor in 1.6 for other object types
                 CraftingRecipe fake = new("");
                 fake.recipeList.Clear();
                 fake.itemToProduce.Clear();
                 int qtySpot = recipe.Key.IndexOf('/');
                 fake.itemToProduce.Add(qtySpot == -1 ? recipe.Key.Substring(3) : recipe.Key.Substring(3, qtySpot - 3));
                 fake.numberProducedPerCraft = qtySpot == -1 ? 1 : int.Parse(recipe.Key.Substring(qtySpot + 1));
-                var tmp = new StardewValley.Object(fake.itemToProduce[0], fake.numberProducedPerCraft);
+                var tmp = ItemRegistry.Create(fake.itemToProduce[0], fake.numberProducedPerCraft);
                 fake.DisplayName = tmp.DisplayName;
                 fake.description = tmp.getDescription();
 
@@ -71,13 +70,16 @@ namespace MajesticArcana
                         for (int i = 0; i < recipe.Value.Length; ++i)
                         {
                             string item = recipe.Value[ i ];
-                            int itemId = int.Parse(item[0] == '-' ? item : item.Substring(3));
+                            int? cat = null;
+                            if (int.TryParse(item, out int cati))
+                                cat = cati;
+
                             for (int j = 0; j < Game1.player.Items.Count; ++j)
                             {
                                 var invItem = Game1.player.Items[j];
                                 if (invItem == null) continue;
 
-                                if (invItem.ParentSheetIndex == itemId || invItem.Category == itemId)
+                                if (invItem.QualifiedItemId == item || cat.HasValue && invItem.Category == cat.Value)
                                 {
                                     parent.ingreds[i].Item = invItem.getOne();
                                     invItem.Stack--;

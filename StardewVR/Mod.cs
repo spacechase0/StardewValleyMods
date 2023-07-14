@@ -80,7 +80,7 @@ namespace StardewVR
             texBounds.vMax = 0;
             var ce = OpenVR.Compositor.Submit(which, ref tex, ref texBounds, EVRSubmitFlags.Submit_Default);
             if (ce != EVRCompositorError.None)
-                Log.Error("Composite error: " + ce);
+                Log.Error("Compositor error: " + ce);
         }
 
         ~Mod()
@@ -120,7 +120,7 @@ namespace StardewVR
         }
     }
 
-    [HarmonyPatch(typeof(Stardew3D.SGameDrawOverride), "Prefix")]
+    [HarmonyPatch(typeof(Stardew3D.Mod.DoRender), "Prefix")]
     public static class DoDrawVRPatch
     {
         public static bool Prefix(GameTime gameTime, RenderTarget2D target_screen,
@@ -133,7 +133,7 @@ namespace StardewVR
             var gamePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
             var ce = OpenVR.Compositor.WaitGetPoses(renderPoses, gamePoses);
             if (ce != EVRCompositorError.None)
-                Log.Error("Compsitor Error: " + ce);
+                Log.Error("Compositor Error: " + ce);
 
             var oldViewport = Game1.viewport;
             var oldUiViewport = Game1.uiViewport;

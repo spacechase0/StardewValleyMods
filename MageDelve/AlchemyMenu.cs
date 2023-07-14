@@ -7,7 +7,7 @@ using SpaceShared.UI;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace MajesticArcana
+namespace MageDelve
 {
     internal class AlchemyMenu : IClickableMenu
     {
@@ -29,6 +29,7 @@ namespace MajesticArcana
 
         private Item held;
         private float? animStart;
+        private bool playedSynthesizeSound = true;
 
         public AlchemyMenu()
         :   base( ( Game1.viewport.Width - 64 * 12 - 32 ) / 2, ( Game1.viewport.Height - 480 - 250) / 2, 64 * 12 + 32, 480 + 250 )
@@ -113,6 +114,8 @@ namespace MajesticArcana
                 {
                     Pixelize(ingred);
                 }
+                Game1.playSound("spacechase0.MageDelve_alchemy_particlize");
+                playedSynthesizeSound = false;
                 animStart = (float)Game1.currentGameTime.TotalGameTime.TotalSeconds;
                 foreach (var ingred in ingreds)
                     ingred.Item = null;
@@ -124,23 +127,19 @@ namespace MajesticArcana
             this.output.ItemDisplay = null;
             foreach (var recipeData in AlchemyRecipes.Get())
             {
-                // TODO: Refactor this in 1.6 to allow other object types
-                var recipe = new Tuple<int, bool>[6];
+                var recipe = new Tuple<string, bool>[6];
                 int outX = recipeData.Key.IndexOf("/");
-                string output = recipeData.Key.Substring(0, outX);
+                string output = outX >= 0 ? recipeData.Key.Substring(0, outX) : recipeData.Key;
                 int outputQty = outX == -1 ? 1 : int.Parse(recipeData.Key.Substring(outX + 1));
-
+                
                 int ir = 0;
                 foreach (string ingredData in recipeData.Value)
                 {
-                    if (ingredData.StartsWith("-"))
-                        recipe[ir] = new(int.Parse(ingredData), false);
-                    else
-                        recipe[ir] = new(int.Parse(ingredData.Substring(3)), false);
+                    recipe[ir] = new(ingredData, false);
                     ++ir;
                 }
                 for (; ir < recipe.Length; ++ir)
-                    recipe[ir] = new(0, true); // Invalid ingredient, but marked as found so it doesn't matter
+                    recipe[ir] = new(null, true); // Invalid ingredient, but marked as found so it doesn't matter
 
                 List<ItemSlot> notUsed = new(ingreds);
                 for (int i = notUsed.Count - 1; i >= 0; --i)
@@ -154,9 +153,15 @@ namespace MajesticArcana
                     {
                         if (!notUsed.Contains(ingreds[i]))
                             continue;
-                        if (recipe[j].Item1 < 0)
+                        if (recipe[j].Item1 == null)
+                            continue;
+
+                        int? cat = null;
+                        if (int.TryParse(recipe[j].Item1, out int cati))
+                            cat = cati;
+                        if (cat.HasValue && cati < 0)
                         {
-                            if (ingreds[i].Item.Category == recipe[j].Item1)
+                            if (ingreds[i].Item.Category == cati)
                             {
                                 recipe[j] = new(recipe[j].Item1, true);
                                 notUsed.Remove(ingreds[i]);
@@ -164,7 +169,7 @@ namespace MajesticArcana
                         }
                         else
                         {
-                            if (ingreds[i].Item is StardewValley.Object obj && obj.ParentSheetIndex == recipe[j].Item1 && !recipe[j].Item2)
+                            if (ingreds[i].Item.QualifiedItemId == recipe[j].Item1 && !recipe[j].Item2)
                             {
                                 recipe[j] = new(recipe[j].Item1, true);
                                 notUsed.Remove(ingreds[i]);
@@ -289,7 +294,12 @@ namespace MajesticArcana
             float ts = (float)(Game1.currentGameTime.TotalGameTime.TotalSeconds - animStart ?? 0);
             if (ts < 0) ts = 0;
             Vector2 center = new(xPositionOnScreen + width / 2, yPositionOnScreen + ( height - 200 )  / 2);
-            float velMult = ts * ts;
+            float velMult = ts * ts * ts * ts * 5;
+            if (ts >= 1.4 && !playedSynthesizeSound)
+            {
+                Game1.playSound("spacechase0.MageDelve_alchemy_synthesize");
+                playedSynthesizeSound = true;
+            }
             List<Pixel> toRemove = new();
             for (int i = 0; i < pixels.Count; ++i)
             {
