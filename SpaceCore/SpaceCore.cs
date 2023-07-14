@@ -21,6 +21,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Network;
+using StardewValley.Objects;
 
 namespace SpaceCore
 {
@@ -115,6 +116,7 @@ namespace SpaceCore
             SpaceEvents.ActionActivated += this.SpaceEvents_ActionActivated;
 
             EventPatcher.CustomCommands.Add("damageFarmer", AccessTools.Method(this.GetType(), "DamageFarmerEventCommand"));
+            EventPatcher.CustomCommands.Add("giveHat", AccessTools.Method(this.GetType(), "GiveHatEventCommand"));
 
             Commands.Register();
             TileSheetExtensions.Init();
@@ -180,6 +182,18 @@ namespace SpaceCore
             finally
             {
                 Game1.eventUp = true;
+                evt.CurrentCommand++;
+            }
+        }
+
+        private static void GiveHatEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        {
+            try
+            {
+                Game1.player.addItemByMenuIfNecessary(new Hat(int.Parse(args[1])));
+            }
+            finally
+            {
                 evt.CurrentCommand++;
             }
         }
