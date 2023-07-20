@@ -53,12 +53,12 @@ namespace SpaceCore.Patches
                 );
 
                 harmony.Patch(
-                    original: AccessTools.Method(typeMember, "GetValue"),
+                    original: AccessTools.Method(typeMember, "GetValue", new Type[] { typeof(object) }),
                     prefix: this.GetHarmonyMethod(nameof(Android_Before_GetValue))
                 );
 
                 harmony.Patch(
-                    original: AccessTools.Method(typeMember, "SetValue"),
+                    original: AccessTools.Method(typeMember, "SetValue", new Type[] { typeof(object), typeof(object) }),
                     prefix: this.GetHarmonyMethod(nameof(Android_Before_SetValue))
                 );
             }
@@ -67,7 +67,7 @@ namespace SpaceCore.Patches
         /*********
          * Android methods
          */
-        public static bool Android_Before_GetValue(object __instance, object ob, object value, string ____name )
+        public static bool Android_Before_SetValue(object __instance, object ob, object value, string ____name )
         {
             if (!SpaceCore.CustomProperties.TryGetValue(ob.GetType(), out var props))
                 return true;
@@ -80,7 +80,7 @@ namespace SpaceCore.Patches
 
             return true;
         }
-        public static bool Android_Before_SetValue(object __instance, object ob, string ____name, ref object __result)
+        public static bool Android_Before_GetValue(object __instance, object ob, string ____name, ref object __result)
         {
             if (!SpaceCore.CustomProperties.TryGetValue(ob.GetType(), out var props))
                 return true;
