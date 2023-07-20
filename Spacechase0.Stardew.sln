@@ -224,7 +224,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlourFestival", "FlourFesti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModJamMod", "ModJamMod\ModJamMod.csproj", "{7025A6BB-629C-43CF-BD25-97EBC1BA0D5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnhingedMayoJar", "UnhingedMayoCode\UnhingedMayoJar.csproj", "{DDCEC28F-BB1F-4350-9785-62EF5DD55B39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnhingedMayoJar", "UnhingedMayoCode\UnhingedMayoJar.csproj", "{DDCEC28F-BB1F-4350-9785-62EF5DD55B39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MayoRain", "MayoRain\MayoRain.csproj", "{942A7169-9AB4-46F6-B535-ABBB3969E86A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -636,6 +638,10 @@ Global
 		{DDCEC28F-BB1F-4350-9785-62EF5DD55B39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDCEC28F-BB1F-4350-9785-62EF5DD55B39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDCEC28F-BB1F-4350-9785-62EF5DD55B39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{942A7169-9AB4-46F6-B535-ABBB3969E86A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{942A7169-9AB4-46F6-B535-ABBB3969E86A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{942A7169-9AB4-46F6-B535-ABBB3969E86A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{942A7169-9AB4-46F6-B535-ABBB3969E86A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -675,6 +681,7 @@ Global
 		{47AE89F2-87FC-4786-8855-9A2C3B51F943} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{7025A6BB-629C-43CF-BD25-97EBC1BA0D5C} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{DDCEC28F-BB1F-4350-9785-62EF5DD55B39} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{942A7169-9AB4-46F6-B535-ABBB3969E86A} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
@@ -742,6 +749,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{7aa1c02e-9099-4c1a-b8af-ac1966b337e5}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7e4024e8-392d-4a65-a659-93e8cb261ffe}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{9002aaed-277d-40f9-a6ac-91698952124c}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{942a7169-9ab4-46f6-b535-abbb3969e86a}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{95e3b0c8-60b2-49cc-91a4-b8ea936681d4}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{992be23f-a878-4788-8009-0aa9b099a707}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{9ae07ea1-4287-4344-aa71-50a4fc7d9567}*SharedItemsImports = 5

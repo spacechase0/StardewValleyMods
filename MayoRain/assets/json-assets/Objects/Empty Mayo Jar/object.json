@@ -1,0 +1,17 @@
+﻿{
+    "Name": "Empty Mayo Jar",
+    "Description": "It could probably hold mayo.",
+    "Category": "Junk",
+    "Edibility": -300,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 330,
+                "Count": 3
+            }
+        ],
+        "IsDefault": true
+    },
+    "TranslationKey": "empty-mayo-jar"
+}
