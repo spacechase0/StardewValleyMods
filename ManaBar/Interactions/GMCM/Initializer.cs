@@ -9,7 +9,7 @@ namespace ManaBar.Interactions.GMCM
 {
     internal static class Initializer
     {
-        public static void InitilizeModMenu(IModHelper helper)
+        public static void InitializeModMenu(IModHelper helper)
         {
             // Get Generic Mod Config Menu's API (if it's installed).
             var configMenu = helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
@@ -92,6 +92,18 @@ namespace ManaBar.Interactions.GMCM
                 interval: 0.5f,
                 min: 5f,
                 max: 35f
+            );
+
+            // Overcharge Max Value.
+            configMenu.AddNumberOption(
+                mod: Mod.Instance.ModManifest,
+                name: () => helper.Translation.Get("overcharge-max-value"),
+                tooltip: () => helper.Translation.Get("overcharge-max-value-des"),
+                getValue: () => Mod.Config.MaxOverchargeValue,
+                setValue: value => Mod.Config.MaxOverchargeValue = value,
+                interval: 0.1f,
+                min: 1f,
+                max: 20f
             );
             #endregion
         }

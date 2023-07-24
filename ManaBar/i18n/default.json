@@ -11,5 +11,7 @@
 
     "additional-settings": "Additional Settings",
     "size-multiplier": "Bar Size Multiplier",
-    "size-multiplier-des": "Sets bar size multiplier, that applies when you extend maximum level of mana."
+    "size-multiplier-des": "Sets bar size multiplier, that applies when you extend maximum level of mana. Default value: 15.",
+    "overcharge-max-value": "Overcharge Max Value",
+    "overcharge-max-value-des": "Defines, how many times mana bar can increase from its based size, depending on your current mana capacity. For example, base bar size is 20. Your mana capacity is 200 (X2 from original value). Further, your final size will be 40 (20 * 2). This setting can set the max value for this multiplier (setting '1' will disable bar growing). Default value: 13."
 }
