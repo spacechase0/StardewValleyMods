@@ -25,15 +25,13 @@ namespace ManaBar
             get
             {
                 Color manaCol;
-
                 if (Context.IsWorldReady)
                 {
                     double offset = GetManaRatio();
-
                     manaCol = ApplyColorOffset(new Color(0, 48, 255), offset);
+
                     manaFg.SetData(new[] { manaCol });
                 }
-
                 else
                 {
                     manaCol = new Color(0, 48, 255);
@@ -43,10 +41,7 @@ namespace ManaBar
                 return manaFg;
             }
 
-            set
-            {
-                manaFg = value;
-            }
+            set => manaFg = value;
         }
 
         private IApi Api;
@@ -89,7 +84,7 @@ namespace ManaBar
         }
 
         private void OnGameLaunch(object sender, GameLaunchedEventArgs e) =>
-                     Initializer.InitilizeModMenu(Helper);
+                     Initializer.InitializeModMenu(Helper);
 
         /// <inheritdoc />
         public override object GetApi() =>
@@ -101,20 +96,13 @@ namespace ManaBar
         [EventPriority(EventPriority.Low)]
         public static void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            // Fetch Info.
-            SpriteBatch spriteBatch = e.SpriteBatch;
-
             // Skip if not applicable.
             if (Game1.activeClickableMenu != null || Game1.eventUp)
                 return;
 
-            // Skip if no Mana to draw or Render is disabled.
-            if (Game1.player.GetMaxMana() <= 0 || !Config.RenderManaBar)
-                return;
-
-            // Else begin to draw ManaBar.
-            else
-                BeginDrawManaBar(spriteBatch);
+            // Begin rendering, if mana is available and rendering is enabled.
+            if (Game1.player.GetMaxMana() > 0 && Config.RenderManaBar)
+                BeginDrawManaBar(e.SpriteBatch);
         }
 
         #region Mana Bar Render Functions.
@@ -141,7 +129,7 @@ namespace ManaBar
 
             // Drawing Bar Layout.
             srcRect = DrawManaBarTop(e, barWidth, barHeaderHeight, ref drawedBarsHeight, topOfBar);
-            srcRect = DrawManaBarMiddle(e, barWidth, barHeaderHeight, ref drawedBarsHeight, overchargeHeight, out srcRect, out Rectangle destRect, topOfBar);
+            srcRect = DrawManaBarBody(e, barWidth, barHeaderHeight, ref drawedBarsHeight, overchargeHeight, out srcRect, out Rectangle destRect, topOfBar);
             srcRect = DrawManaBarBottom(e, barWidth, barBottomPosition, ref drawedBarsHeight, topOfBar);
 
             // Filling Layout with Content.
@@ -168,7 +156,7 @@ namespace ManaBar
             return srcRect;
         }
 
-        private static Rectangle DrawManaBarMiddle(SpriteBatch e, int barWidth, int barHeaderHeight, ref int drawedBarsHeight, int overchargeHeight, out Rectangle srcRect, out Rectangle destRect, Vector2 topOfBar)
+        private static Rectangle DrawManaBarBody(SpriteBatch e, int barWidth, int barHeaderHeight, ref int drawedBarsHeight, int overchargeHeight, out Rectangle srcRect, out Rectangle destRect, Vector2 topOfBar)
         {
             srcRect = new Rectangle(0, barHeaderHeight, barWidth, 20);
             destRect = new Rectangle(Convert.ToInt32(topOfBar.X),
@@ -272,12 +260,12 @@ namespace ManaBar
         private static int CalculateYOffsetToManaBar(int barHeaderHeight, double oversize, int barBottomPosition)
         {
             /** Variable: 'bottomMargin'.
-             *              
+             *
              * After base calculations, we get value, that lies right on game screen border.
              * But we need to make small margin. So we need this variable to this needs.
              * Value set to 24, cause with this value mana bar will have same margin as other bars.
              **/
-            int bottomMargin = 24;
+            const int bottomMargin = 24;
             int height = Mod.ManaBg.Height;
 
             height += barHeaderHeight * 2;
@@ -327,8 +315,10 @@ namespace ManaBar
         private static double GetManaOvercharge()
         {
             double maxMana = Game1.player.GetMaxMana();
+            double overchargeValue = maxMana / ManaBar.Api.BaseMaxMana;
 
-            return maxMana / ManaBar.Api.BaseMaxMana;
+            // This will prevent bar to grow limitless and exceed monitor area.
+            return overchargeValue <= Config.MaxOverchargeValue ? overchargeValue : Config.MaxOverchargeValue;
         }
 
         private static void HandleAddManaCommand(string[] args)
