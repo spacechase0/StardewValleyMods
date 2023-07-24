@@ -10,6 +10,8 @@ namespace ManaBar
 
         public float SizeMultiplier { get; set; }
 
+        public float MaxOverchargeValue { get; set; }
+
         public ModConfig()
         {
             XManaBarOffset = 0;
@@ -18,6 +20,7 @@ namespace ManaBar
             RenderManaBar = true;
 
             SizeMultiplier = 15f;
+            MaxOverchargeValue = 13;
         }
     }
 }
