@@ -226,7 +226,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModJamMod", "ModJamMod\ModJ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnhingedMayoJar", "UnhingedMayoCode\UnhingedMayoJar.csproj", "{DDCEC28F-BB1F-4350-9785-62EF5DD55B39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MayoRain", "MayoRain\MayoRain.csproj", "{942A7169-9AB4-46F6-B535-ABBB3969E86A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MayoRain", "MayoRain\MayoRain.csproj", "{942A7169-9AB4-46F6-B535-ABBB3969E86A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MayoHats", "MayoHats\MayoHats.csproj", "{08E2E2A4-2CE6-4B8B-9BB0-79573808B0D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlahajBlast", "BlahajBlast\BlahajBlast.csproj", "{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -642,6 +646,14 @@ Global
 		{942A7169-9AB4-46F6-B535-ABBB3969E86A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{942A7169-9AB4-46F6-B535-ABBB3969E86A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{942A7169-9AB4-46F6-B535-ABBB3969E86A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08E2E2A4-2CE6-4B8B-9BB0-79573808B0D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08E2E2A4-2CE6-4B8B-9BB0-79573808B0D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08E2E2A4-2CE6-4B8B-9BB0-79573808B0D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08E2E2A4-2CE6-4B8B-9BB0-79573808B0D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -680,8 +692,7 @@ Global
 		{A739AF53-EA0B-4BD8-A788-BCE2E0722C7D} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{47AE89F2-87FC-4786-8855-9A2C3B51F943} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{7025A6BB-629C-43CF-BD25-97EBC1BA0D5C} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
-		{DDCEC28F-BB1F-4350-9785-62EF5DD55B39} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
-		{942A7169-9AB4-46F6-B535-ABBB3969E86A} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
+		{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
@@ -695,6 +706,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{03be86d2-dad8-4f43-aa94-9e27b654f449}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{061610a4-7d02-4f52-a921-f59ed123c2a9}*SharedItemsImports = 13
 		SpaceShared\SpaceShared.projitems*{08a9f3c9-c9f5-40cf-bd16-12b06512ad52}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{08e2e2a4-2ce6-4b8b-9bb0-79573808b0d3}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{100b0e56-6ff4-48ea-97b6-6102cb68931e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{100b0e56-6ff4-48ea-97b6-6102cb68931e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{104fcf4d-7776-4c16-94ce-ede8209d6d9f}*SharedItemsImports = 5
@@ -714,6 +726,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{3762f270-268b-4dcc-8d07-6978304e46ea}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{39ee1a29-bcbd-4ba5-867f-1439a9359b0e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{39ee1a29-bcbd-4ba5-867f-1439a9359b0e}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{3a3aa540-7855-4cd6-bbe1-5afd180f2c11}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3aeb49fd-d27f-410a-8483-8bb6fc8e51c6}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3d194335-89d4-4b5f-82fd-4e326eb2e8bb}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3da3fb18-ac0c-40f4-b45b-5d13916d032a}*SharedItemsImports = 5

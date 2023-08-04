@@ -20,6 +20,7 @@ using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Network;
 using StardewValley.Objects;
 
@@ -113,10 +114,15 @@ namespace SpaceCore
             helper.Events.GameLoop.Saved += this.OnSaved;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
+            helper.Events.Content.AssetRequested += this.Content_AssetRequested;
+
             SpaceEvents.ActionActivated += this.SpaceEvents_ActionActivated;
 
             EventPatcher.CustomCommands.Add("damageFarmer", AccessTools.Method(this.GetType(), "DamageFarmerEventCommand"));
             EventPatcher.CustomCommands.Add("giveHat", AccessTools.Method(this.GetType(), "GiveHatEventCommand"));
+            EventPatcher.CustomCommands.Add("setDating", AccessTools.Method(this.GetType(), "SetDating"));
+
+            SpaceEvents.AfterGiftGiven += this.SpaceEvents_AfterGiftGiven;
 
             Commands.Register();
             TileSheetExtensions.Init();
@@ -195,6 +201,70 @@ namespace SpaceCore
             finally
             {
                 evt.CurrentCommand++;
+            }
+        }
+
+        private static void SetDatingEevntCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        {
+            try
+            {
+                if (!Game1.player.friendshipData.TryGetValue(args[1], out Friendship f))
+                {
+                    Log.Warn("Could not find NPC " + args[1] + " to mark as dating");
+                }
+                else
+                {
+                    f.Status = FriendshipStatus.Dating;
+                }
+            }
+            finally
+            {
+                evt.CurrentCommand++;
+            }
+        }
+
+        // TODO: In 1.6 move to vanilla asset expansion part of the code
+        // Also make it use ItemId instead
+        // Also make it change to use PlayEvent
+        private void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)
+        {
+            var farmer = sender as Farmer;
+            if (farmer != Game1.player) return;
+
+            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
+            if (!dict.TryGetValue(e.Npc.Name, out var npcEntry))
+                return;
+
+            if (!npcEntry.GiftEventTriggers.TryGetValue(e.Gift.ParentSheetIndex.ToString(), out string eventStr))
+                return;
+
+            if (Game1.activeClickableMenu is DialogueBox)
+            {
+                Game1.activeClickableMenu = null;
+            }
+            else return; // In case someone else is doing something unusual
+
+            string[] data = eventStr.Split('/');
+
+            var events = Game1.player.currentLocation.GetLocationEvents();
+            int check = Game1.player.currentLocation.checkEventPrecondition(eventStr);
+            if (check != -1)
+            {
+                Game1.player.eventsSeen.Add(Convert.ToInt32(data[0]));
+                Game1.player.currentLocation.startEvent(new Event(events[eventStr], check));
+            }
+        }
+
+        public class NpcExtensionData
+        {
+            public Dictionary<string, string> GiftEventTriggers = new();
+        }
+
+        private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/NpcExtensionData"))
+            {
+                e.LoadFrom(() => new Dictionary<string, NpcExtensionData>(), AssetLoadPriority.Low);
             }
         }
 
