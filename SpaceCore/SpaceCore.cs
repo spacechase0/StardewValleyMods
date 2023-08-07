@@ -120,7 +120,7 @@ namespace SpaceCore
 
             EventPatcher.CustomCommands.Add("damageFarmer", AccessTools.Method(this.GetType(), "DamageFarmerEventCommand"));
             EventPatcher.CustomCommands.Add("giveHat", AccessTools.Method(this.GetType(), "GiveHatEventCommand"));
-            EventPatcher.CustomCommands.Add("setDating", AccessTools.Method(this.GetType(), "SetDating"));
+            EventPatcher.CustomCommands.Add("setDating", AccessTools.Method(this.GetType(), "SetDatingEventCommand"));
 
             SpaceEvents.AfterGiftGiven += this.SpaceEvents_AfterGiftGiven;
 
@@ -204,7 +204,7 @@ namespace SpaceCore
             }
         }
 
-        private static void SetDatingEevntCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void SetDatingEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
         {
             try
             {
