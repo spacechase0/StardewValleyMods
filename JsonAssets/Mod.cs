@@ -1367,6 +1367,7 @@ namespace JsonAssets
                 || (oldIds.Count == newIds.Count 
                     && oldIds.All((kvp) => newIds.TryGetValue(kvp.Key, out int val) && val == kvp.Value));
 
+        [EventPriority(EventPriority.High)]
         private void OnLoadStageChanged(object sender, LoadStageChangedEventArgs e)
         {
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveParsed)

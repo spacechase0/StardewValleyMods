@@ -16,6 +16,7 @@ namespace Spacechase.Shared.Patching
         public static Harmony Apply(Mod mod, params IPatcher[] patchers)
         {
             Harmony harmony = new(mod.ModManifest.UniqueID);
+            harmony.PatchAll();
 
             foreach (IPatcher patcher in patchers)
             {

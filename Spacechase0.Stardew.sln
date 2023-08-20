@@ -230,7 +230,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MayoRain", "MayoRain\MayoRa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MayoHats", "MayoHats\MayoHats.csproj", "{08E2E2A4-2CE6-4B8B-9BB0-79573808B0D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlahajBlast", "BlahajBlast\BlahajBlast.csproj", "{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlahajBlast", "BlahajBlast\BlahajBlast.csproj", "{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -773,6 +773,8 @@ Global
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{a87f5d49-6246-4b14-8363-114dc9335c2c}*SharedItemsImports = 13
 		SpaceShared\SpaceShared.projitems*{aa841829-b357-403e-b185-c57db2c97a52}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{aacf284d-8352-4727-9f9e-9916ba2266af}*SharedItemsImports = 5
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{b0bb0171-260e-40fe-95dc-4377ce916ff0}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{b0bb0171-260e-40fe-95dc-4377ce916ff0}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{b5127ffb-a748-44ff-882e-5279b0f7b279}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{b6e809a4-263f-4912-905a-00175cfb8074}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}*SharedItemsImports = 5

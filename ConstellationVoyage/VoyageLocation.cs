@@ -213,7 +213,7 @@ namespace ConstellationVoyage
             base.draw(b);
 
             var dreamscape = Game1.content.Load<Texture2D>("Maps/EmilyDreamscapeTiles");
-            currBoatRot = 20 * MathF.PI / 180;
+            //currBoatRot = 20 * MathF.PI / 180;
             foreach (var island in islands)
             {
                 Vector2 pos = new((int)island.tilePos.X * Game1.tileSize, (int)island.tilePos.Y * Game1.tileSize);
