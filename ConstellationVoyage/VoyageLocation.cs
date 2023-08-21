@@ -227,7 +227,7 @@ namespace ConstellationVoyage
                     Vector2 tilePos = new(i / back.LayerWidth, i % back.LayerWidth);
                     tilePos *= Game1.tileSize;
 
-                    /*
+                    //*
                     Matrix m2 = Matrix.Identity;
                     m2 *= (Matrix.CreateTranslation(pos.X, pos.Y, 0));
                     m2 *= Matrix.CreateRotationZ(-currBoatRot);
@@ -235,20 +235,24 @@ namespace ConstellationVoyage
 
                     m2 *= (Matrix.CreateTranslation(boatMapPos.X - currBoatPos.X, boatMapPos.Y - currBoatPos.Y, 0));
 
-                    Vector2 tilePosTmp = Vector2.Transform(Vector2.Zero, m2);
+                    Vector2 tilePosTmp = Vector2.Transform(tilePos, m2);
 
                     // I give up on figuring out this matrix stuff completely
+                    /*
                     Vector2 a = pos + boatMapPos - currBoatPos;
                     Vector2 d = a - tilePosTmp;
                     float angle2 = MathF.Atan2(d.Y, d.X);
                     m2 *= Matrix.CreateTranslation(MathF.Cos(angle2) * d.Length(), MathF.Sin(angle2) * d.Length(), 0);
                     //*/
 
+                    /*
                     Vector2 v0 = (pos + tilePos) - (currBoatPos - boatMapPos);
                     Vector2 v1 = new(MathF.Cos(-currBoatRot) * v0.X + MathF.Sin(-currBoatRot) * v0.Y,
                                      -MathF.Sin(-currBoatRot) * v0.X + MathF.Cos(-currBoatRot) * v0.Y);
 
                     tilePos = (currBoatPos - boatMapPos) + v1;
+                    */
+                    tilePos = tilePosTmp;
 
                     //tilePos += new Vector2(back.LayerWidth * Game1.tileSize / 2 + 16f, back.LayerHeight * Game1.tileSize / 2 + 16f);
                     //tilePos += pos;

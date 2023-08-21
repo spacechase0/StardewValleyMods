@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using HarmonyLib;
 using Microsoft.CodeAnalysis;
@@ -90,7 +92,7 @@ namespace SpaceCore
             if (__instance.Texture != null)
             {
                 var extras = SpaceCore.spriteExtras.GetOrCreateValue(__instance);
-                b.Draw(__instance.Texture, screenPosition, __instance.sourceRect, extras.grad == null ? Color.White : extras.grad[extras.currGradInd], 0f, Vector2.Zero, 4f * extras.scale, (__instance.CurrentAnimation != null && __instance.CurrentAnimation[__instance.currentAnimationIndex].flip) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
+                b.Draw(__instance.Texture, screenPosition, new Rectangle(__instance.sourceRect.X + xOffset, __instance.sourceRect.Y + yOffset, __instance.sourceRect.Width, __instance.sourceRect.Height), Color.Lerp( c, (extras.grad == null ? Color.White : extras.grad[extras.currGradInd]), 0.5f), rotation, characterSourceRectOffset ? new Vector2(__instance.SpriteWidth / 2, (float)__instance.SpriteHeight * 3f / 4f) : Vector2.Zero, scale * extras.scale, (flip || (__instance.CurrentAnimation != null && __instance.CurrentAnimation[__instance.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
             }
             return false;
         }
@@ -226,6 +228,7 @@ namespace SpaceCore
             EventPatcher.CustomCommands.Add("totemWarpEffect", AccessTools.Method(this.GetType(), nameof(TotemWarpEventCommand)));
             EventPatcher.CustomCommands.Add("setActorScale", AccessTools.Method(this.GetType(), nameof(SetActorScale)));
             EventPatcher.CustomCommands.Add("cycleActorColors", AccessTools.Method(this.GetType(), nameof(CycleActorColors)));
+            EventPatcher.CustomCommands.Add("flash", AccessTools.Method(this.GetType(), nameof(FlashEventCommand))); 
             // Remove this one in 1.6
             EventPatcher.CustomCommands.Add("temporaryAnimatedSprite", AccessTools.Method(this.GetType(), nameof(AddTemporarySprite16)));
 
@@ -484,6 +487,19 @@ namespace SpaceCore
                 evt.CurrentCommand++;
             }
         }
+        private static void FlashEventCommand(Event @event, GameLocation loc, GameTime time, string[] args)
+        {
+            try
+            {
+                float duration = float.Parse(args[1]);
+                Game1.flashAlpha = 1 + duration * 60;
+            }
+            finally
+            {
+                @event.CurrentCommand++;
+            }
+        }
+
         [SuppressMessage("Style", "IDE0008", Justification = "copy pasted from vanilla with as few changes as possible")]
         public static void AddTemporarySprite16(Event @event, GameLocation loc, GameTime time, string[] args)
         {
