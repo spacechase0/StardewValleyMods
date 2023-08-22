@@ -185,7 +185,7 @@ namespace MercenaryFramework
     {
         public static void Postfix(GameLocation __instance, SpriteBatch b)
         {
-            if (__instance.shouldHideCharacters())
+            if (__instance.shouldHideCharacters() || __instance.currentEvent != null)
                 return;
 
             foreach (var farmer in __instance.farmers)

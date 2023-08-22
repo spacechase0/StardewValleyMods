@@ -94,6 +94,9 @@ namespace MoonMisadventures
             SoundEffect mainMusic = SoundEffect.FromFile( Path.Combine( Helper.DirectoryPath, "assets", "into-the-spaceship.wav" ) );
             Game1.soundBank.AddCue( new CueDefinition( "into-the-spaceship", mainMusic, 2, loop: true ) );
 
+            SoundEffect laser = SoundEffect.FromFile(Path.Combine(Helper.DirectoryPath, "assets", "laserShoot.wav"));
+            Game1.soundBank.AddCue(new CueDefinition("mm_laser", laser, 3));
+
             Helper.ConsoleCommands.Add( "mm_key", "Gives you the lunar key.", OnKeyCommand );
             Helper.ConsoleCommands.Add( "mm_infuse", "Opens the celestial infuser menu.", OnInfuseCommand );
 
@@ -609,6 +612,16 @@ namespace MoonMisadventures
                                  Texture = "spacechase0.MoonMisadventures/assets/animal-gauntlets.png",
                                 SpriteIndex = 0,
                              });
+                    dict.Add("spacechase0.MoonMisadventures.LaserGun",
+                             new()
+                             {
+                                 ClassName = "LaserGun, MoonMisadventures",
+                                 Name = "LaserGun",
+                                 DisplayName = I18n.Tool_LaserGun_Name(),
+                                 Description = I18n.Tool_LaserGun_Description(),
+                                 Texture = "spacechase0.MoonMisadventures/assets/animal-gauntlets.png",
+                                 SpriteIndex = 0,
+                             });
                     dict.Add("spacechase0.MoonMisadventures.RadioactiveAxe",
                              new()
                              {
@@ -881,6 +894,8 @@ namespace MoonMisadventures
             sc.RegisterSerializerType( typeof( LunarFarmHouse ) );
             sc.RegisterSerializerType( typeof( MoonInfuserRoom ) );
             sc.RegisterSerializerType( typeof( LunarSlime ) );
+            sc.RegisterSerializerType( typeof( UfoInteriorArsenal ) );
+            sc.RegisterSerializerType( typeof( CrystalBehemoth ) );
             sc.RegisterCustomProperty( typeof( FarmerTeam ), "hasLunarKey", typeof( NetBool ), AccessTools.Method( typeof( FarmerTeam_LunarKey ), nameof( FarmerTeam_LunarKey.get_hasLunarKey ) ), AccessTools.Method( typeof( FarmerTeam_LunarKey ), nameof( FarmerTeam_LunarKey.set_hasLunarKey ) ) );
             sc.RegisterCustomProperty( typeof( Farmer ), "necklaceItem", typeof( NetRef< Item > ), AccessTools.Method( typeof( Farmer_Necklace ), nameof( Farmer_Necklace.get_necklaceItem ) ), AccessTools.Method( typeof( Farmer_Necklace ), nameof( Farmer_Necklace.set_necklaceItem ) ) );
         }
@@ -965,6 +980,7 @@ namespace MoonMisadventures
                 Game1.locations.Add( new UfoInterior( Helper.ModContent ) );
                 Game1.locations.Add( new LunarFarmHouse( Helper.ModContent ) );
                 Game1.locations.Add( new MoonInfuserRoom( Helper.ModContent ) );
+                Game1.locations.Add( new UfoInteriorArsenal( Helper.ModContent ) );
             }
         }
 

@@ -24,7 +24,7 @@ namespace MoonMisadventures.Game.Monsters
             this.color.Value = Color.White;
 
             parseMonsterInfo("Tiger Slime");
-            Health = MaxHealth = 650;
+            Health = MaxHealth = 450;
             DamageToFarmer = 32;
             displayName = "Lunar Slime";
             objectsToDrop.Clear();

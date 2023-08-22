@@ -10,7 +10,7 @@ using SpaceShared.UI;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace MageDelve
+namespace MageDelve.Alchemy
 {
     public class AlchemyRecipesMenu : IClickableMenu
     {
@@ -26,12 +26,12 @@ namespace MageDelve
             Table table = new()
             {
                 RowHeight = 110,
-                Size = new( 640, 480 ),
+                Size = new(640, 480),
             };
 
             List<Element> currRow = new();
             var recipes = AlchemyRecipes.Get();
-            foreach ( var recipe in recipes )
+            foreach (var recipe in recipes)
             {
                 CraftingRecipe fake = new("");
                 fake.recipeList.Clear();
@@ -59,7 +59,7 @@ namespace MageDelve
                     UserData = fake,
                     Callback = (e) =>
                     {
-                        var parent = GetParentMenu() as AlchemyMenu;
+                        var parent = GetParentMenu() as FancyAlchemyMenu;
                         if (parent == null) return;
 
                         if (parent.ingreds.Any(slot => slot.Item != null))
@@ -69,7 +69,7 @@ namespace MageDelve
 
                         for (int i = 0; i < recipe.Value.Length; ++i)
                         {
-                            string item = recipe.Value[ i ];
+                            string item = recipe.Value[i];
                             int? cat = null;
                             if (int.TryParse(item, out int cati))
                                 cat = cati;

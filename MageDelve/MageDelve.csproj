@@ -1,20 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Name>MAGEDELVE: Magic, Alchemy, and Grand Expeditions into Labrinthine Va</Name>
+    <Name>MAGEDELVE: Magic, Alchemy, and Grand Expeditions into Labrinthine Vaults</Name>
     <Version>1.0.0</Version>
     <TargetFramework>net6.0</TargetFramework>
     <EnableHarmony>true</EnableHarmony>
+    
+    <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="default.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="default.json" />
+    <Reference Include="SMAPI.Toolkit" HintPath="$(GamePath)\smapi-internal\SMAPI.Toolkit.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,9 +21,6 @@
   
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" PrivateAssets="all" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="i18n\" />
   </ItemGroup>
 
 </Project>

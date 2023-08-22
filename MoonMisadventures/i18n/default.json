@@ -19,6 +19,7 @@
     "farm-animal.lunar-chicken": "Lunar Chicken",
 
     "force-field": "A force field blocks the way.",
+    "moon-artifact-slot": "Moon Artifact Slot",
 
     /*********
     ** Items
@@ -37,7 +38,8 @@
     "tool.animal-gauntlets.name": "Anti-Gravity Gauntlets",
     "tool.animal-gauntlets.description": "Can pick up animals and move them... if on the moon.",
     "tool.animal-gauntlets.holding": "Currently holding:",
-    "tool.animal-gauntlets.moon-requirement": "Must be on the moon.",
+    "tool.laser-gun.name": "Laser Gun",
+    "tool.laser-gun.description": "It shoots lasers.",
 
     // items
     "item.lunar-key.name": "Lunar Key",

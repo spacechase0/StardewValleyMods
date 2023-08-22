@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using StardewValley;
 
-namespace MageDelve
+namespace MageDelve.Alchemy
 {
     internal static class AlchemyRecipes
     {
@@ -37,7 +37,8 @@ namespace MageDelve
             ret.Add("(O)535/1", new string[] { "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_AirEssence", "(O)spacechase0.MageDelve_AirEssence", "(O)spacechase0.MageDelve_AirEssence" });
             ret.Add("(O)536/1", new string[] { "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_WaterEssence", "(O)spacechase0.MageDelve_WaterEssence", "(O)spacechase0.MageDelve_WaterEssence" });
             ret.Add("(O)537/1", new string[] { "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_EarthEssence", "(O)spacechase0.MageDelve_FireEssence", "(O)spacechase0.MageDelve_FireEssence", "(O)spacechase0.MageDelve_FireEssence" });
-            
+            ret.Add("(O)709/3", new string[] { "(O)spacechase0.MageDelve_EarthEssence", "(O)388", "(O)388", "(O)388", "(O)388", "(O)388" });
+
             // TODO: Transmute metal recipes
 
             return ret;

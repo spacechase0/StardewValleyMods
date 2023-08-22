@@ -86,7 +86,7 @@ namespace SpaceCore.Patches
             {
                 if (!isPatched && CodeInstructionExtensions.Is(codes[i + 3], OpCodes.Ldstr, "Strings\\Locations:Sewer_DogStatueCancel"))
                 {
-                    ret.Add(new CodeInstruction(OpCodes.Ldloc_1).WithLabels(codes[i].labels));
+                    ret.Add(new CodeInstruction(OpCodes.Ldloc_3).WithLabels(codes[i].labels));
                     ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Skills>(nameof(Skills.GetRespecCustomResponses))));
                     ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<List<Response>>(nameof(List<Response>.AddRange))));
                     codes[i].labels.Clear();

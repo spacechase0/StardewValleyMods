@@ -30,6 +30,8 @@ namespace MoonMisadventures
 
         public static Texture2D NecklaceBg;
 
+        public static Texture2D Laser;
+
         internal static void Load( IModContentHelper content )
         {
             //Assets.RadioactiveTools = content.Load<Texture2D>( "assets/tools-radioactive.png" );
@@ -50,6 +52,8 @@ namespace MoonMisadventures
             Assets.HoeDirt = content.Load<Texture2D>( "assets/hoedirt.png" );
 
             Assets.NecklaceBg = content.Load<Texture2D>( "assets/necklace-bg.png" );
+
+            Laser = content.Load<Texture2D>("assets/laser.png");
         }
     }
 }

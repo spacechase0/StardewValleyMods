@@ -478,23 +478,31 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
             }
 
             // Place level warps
+            for (int i = 0; i < 10; ++i)
             {
                 int bi = rand.Next( bigIslands.Count );
                 if ( hubIsland )
                     bi = 0;
+                if (bigIslands[bi].spots.Count <= 0) continue;
                 int bis = rand.Next( bigIslands[ bi ].spots.Count );
                 warpFromPrev = bigIslands[ bi ].spots[ bis ];
                 PlacePreviousWarp( location, ( int ) warpFromPrev.X, ( int ) warpFromPrev.Y - 1 );
                 if (bigIslands[bi].spots.Count > 1)
                     bigIslands[ bi ].spots.RemoveAt( bis );
+
+                break;
             }
+            for (int i = 0; i < 10; ++i)
             {
                 int bi = rand.Next( bigIslands.Count );
                 int bis = rand.Next( bigIslands[ bi ].spots.Count );
+                if (bigIslands[bi].spots.Count <= 0) continue;
                 warpFromNext = bigIslands[ bi ].spots[ bis ];
                 PlaceNextWarp( location, ( int ) warpFromNext.X, ( int ) warpFromNext.Y - 1 );
                 if (bigIslands[bi].spots.Count > 1)
                     bigIslands[ bi ].spots.RemoveAt( bis );
+
+                break;
             }
 
             // Place features

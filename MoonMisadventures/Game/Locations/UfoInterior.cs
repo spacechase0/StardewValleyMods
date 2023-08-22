@@ -5,28 +5,101 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.ItemTypeDefinitions;
 using xTile;
+using xTile.Dimensions;
 
 namespace MoonMisadventures.Game.Locations
 {
     [XmlType( "Mods_spacechase0_MoonMisadventures_UfoInterior" )]
     public class UfoInterior : GameLocation
     {
-        public readonly NetArray<bool, NetBool> artifacts = new(6);
+        public readonly NetArray<string, NetString> artifacts = new(6);
+
+        private Vector2[] artifactSpots;
 
         public UfoInterior() { }
         public UfoInterior( IModContentHelper content )
         : base( content.GetInternalAssetName( "assets/maps/UfoInterior.tmx" ).BaseName, "Custom_MM_UfoInterior" )
         {
+            artifactSpots = new Vector2[ artifacts.Length ];
+
+            for (int ix = 0; ix < Map.Layers[0].LayerWidth; ++ix)
+            {
+                for (int iy = 0; iy < Map.Layers[0].LayerHeight; ++iy)
+                {
+                    string[] prop = GetTilePropertySplitBySpaces("Action", "Buildings", ix, iy);
+                    if ((prop?.Length ?? 0) < 2 || prop[0] != "MoonArtifact")
+                        continue;
+
+                    artifactSpots[int.Parse(prop[1])] = new(ix, iy);
+                }
+            }
         }
 
         protected override void initNetFields()
         {
             base.initNetFields();
             NetFields.AddField(artifacts, nameof(this.artifacts));
+        }
+
+        public override bool performAction(string[] action, Farmer who, Location tileLocation)
+        {
+            if (action[0] == "MoonArtifact")
+            {
+                List<string> left = new(new[]
+                {
+                    "(O)spacechase0.MoonMisadventures_MoonArtifact0",
+                    "(O)spacechase0.MoonMisadventures_MoonArtifact1",
+                    "(O)spacechase0.MoonMisadventures_MoonArtifact2",
+                    "(O)spacechase0.MoonMisadventures_MoonArtifact3",
+                    "(O)spacechase0.MoonMisadventures_MoonArtifact4",
+                    "(O)spacechase0.MoonMisadventures_MoonArtifact5"
+                });
+                left.RemoveAll(s => artifacts.ToList().Contains(s));
+
+                int slot = int.Parse(action[1]);
+
+                if (artifacts[slot] == null && left.Contains(who.ActiveObject?.QualifiedItemId))
+                {
+                    artifacts[slot] = who.ActiveObject.QualifiedItemId;
+                    who.reduceActiveItemByOne();
+                    Game1.playSound("questcomplete");
+                    return true;
+                }
+                else
+                {
+                    Game1.drawObjectDialogue(I18n.MoonArtifactSlot());
+                    return true;
+                }
+            }
+            return base.performAction(action, who, tileLocation);
+        }
+
+        public override void draw(SpriteBatch b)
+        {
+            base.draw(b);
+
+            float yoffset = -64 - (float)Math.Sin(Game1.currentGameTime.TotalGameTime.TotalSeconds) * -12;
+
+            for (int i = 0; i < artifactSpots.Length; ++i)
+            {
+                Vector2 tilePos = artifactSpots[i];
+                string artifact = artifacts[i];
+                if (artifact == null)
+                    continue;
+
+                ParsedItemData pid = ItemRegistry.GetDataOrErrorItem(artifact);
+                var tex = pid.GetTexture();
+                var src = pid.GetSourceRect();
+
+                Vector2 pos = tilePos * Game1.tileSize + new Vector2(0, yoffset);
+                b.Draw(tex, Game1.GlobalToLocal( pos ), src, Color.White, 0, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, pos.Y / 10000);
+            }
         }
 
         public override void performTouchAction(string[] action, Vector2 playerStandingPosition)
@@ -41,9 +114,9 @@ namespace MoonMisadventures.Game.Locations
             }
             else if (action[0] == "ArtifactDoor")
             {
-                if (artifacts.ToArray().All(b => b))
+                if (artifacts.ToArray().All(b => b != null))
                 {
-                    // do warp
+                    Game1.warpFarmer("Custom_MM_UfoInteriorArsenal", 7, 11, false);
                     return;
                 }
 

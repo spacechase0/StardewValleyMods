@@ -206,13 +206,20 @@ namespace MoonMisadventures.Game.Locations.DungeonLevelGenerators
 
         protected void PlaceMonsterAt(AsteroidsDungeon location, Random rand, int tx, int ty)
         {
-            switch (rand.Next(3))
+            switch (rand.Next(8))
             {
                 case 0:
-                    location.characters.Add(new BoomEye(new Vector2(tx * Game1.tileSize, ty * Game1.tileSize)));
+                    location.characters.Add(new CrystalBehemoth(new Vector2(tx * Game1.tileSize, ty * Game1.tileSize)));
                     break;
                 case 1:
                 case 2:
+                case 3:
+                    location.characters.Add(new BoomEye(new Vector2(tx * Game1.tileSize, ty * Game1.tileSize)));
+                    break;
+                case 4:
+                case 5:
+                case 6:
+                case 7:
                     location.characters.Add(new LunarSlime(new Vector2(tx * Game1.tileSize, ty * Game1.tileSize)));
                     break;
             }

@@ -7,9 +7,9 @@ using SpaceShared.UI;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace MageDelve
+namespace MageDelve.Alchemy
 {
-    internal class AlchemyMenu : IClickableMenu
+    internal class FancyAlchemyMenu : IClickableMenu
     {
         private RootElement ui;
         internal ItemSlot[] ingreds;
@@ -31,8 +31,8 @@ namespace MageDelve
         private float? animStart;
         private bool playedSynthesizeSound = true;
 
-        public AlchemyMenu()
-        :   base( ( Game1.viewport.Width - 64 * 12 - 32 ) / 2, ( Game1.viewport.Height - 480 - 250) / 2, 64 * 12 + 32, 480 + 250 )
+        public FancyAlchemyMenu()
+        : base((Game1.viewport.Width - 64 * 12 - 32) / 2, (Game1.viewport.Height - 480 - 250) / 2, 64 * 12 + 32, 480 + 250)
         {
             ui = new RootElement();
             ui.LocalPosition = new Vector2(xPositionOnScreen, yPositionOnScreen);
@@ -48,15 +48,15 @@ namespace MageDelve
             output.LocalPosition -= new Vector2(output.Width / 2, output.Height / 2);
             ui.AddChild(output);
 
-            ingreds = new ItemSlot[ 6 ];
+            ingreds = new ItemSlot[6];
             for (int i = 0; i < 6; ++i)
             {
                 ingreds[i] = new ItemSlot()
                 {
                     LocalPosition = basePoint +
-                                    new Vector2( MathF.Cos( 3.14f * 2 / 6 * i ) * 200,
-                                                 MathF.Sin( 3.14f * 2 / 6 * i ) * 200 ) +
-                                    -new Vector2( output.Width / 2, output.Height / 2 ),
+                                    new Vector2(MathF.Cos(3.14f * 2 / 6 * i) * 200,
+                                                 MathF.Sin(3.14f * 2 / 6 * i) * 200) +
+                                    -new Vector2(output.Width / 2, output.Height / 2),
                     Callback = (e) => CheckRecipe(),
                 };
                 ui.AddChild(ingreds[i]);
@@ -68,7 +68,7 @@ namespace MageDelve
                 TexturePixelArea = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 102, 16, 16),
                 Scale = 4,
                 Callback = (e) => SetChildMenu(new AlchemyRecipesMenu()),
-                LocalPosition = new( 32, 32 ),
+                LocalPosition = new(32, 32),
             };
             ui.AddChild(recipesButton);
 
@@ -93,14 +93,14 @@ namespace MageDelve
                 int iy = i / 16;
 
                 float velDir = (float)Game1.random.NextDouble() * 3.14f * 2;
-                Vector2 vel = new Vector2(MathF.Cos(velDir), MathF.Sin(velDir)) * (60 + Game1.random.Next( 70 ) );
+                Vector2 vel = new Vector2(MathF.Cos(velDir), MathF.Sin(velDir)) * (60 + Game1.random.Next(70));
 
                 pixels.Add(new Pixel()
                 {
                     x = slot.Bounds.Location.X + 16 + ix * Game1.pixelZoom,
                     y = slot.Bounds.Location.Y + 16 + iy * Game1.pixelZoom,
                     color = cols[i],
-                    scale = 3 + (float) Game1.random.NextDouble() * 3,
+                    scale = 3 + (float)Game1.random.NextDouble() * 3,
                     velocity = vel,
                 });
             }
@@ -131,7 +131,7 @@ namespace MageDelve
                 int outX = recipeData.Key.IndexOf("/");
                 string output = outX >= 0 ? recipeData.Key.Substring(0, outX) : recipeData.Key;
                 int outputQty = outX == -1 ? 1 : int.Parse(recipeData.Key.Substring(outX + 1));
-                
+
                 int ir = 0;
                 foreach (string ingredData in recipeData.Value)
                 {
@@ -252,7 +252,7 @@ namespace MageDelve
 
                     CheckRecipe();
                 }
-                else if ( output.Item != null )
+                else if (output.Item != null)
                 {
                     if (held == null || held.canStackWith(output.Item))
                     {
@@ -275,7 +275,7 @@ namespace MageDelve
             ui.Update();
             inventory.update(time);
 
-            if ( animStart != null && pixels.Count == 0 && output.ItemDisplay != null && output.Item == null )
+            if (animStart != null && pixels.Count == 0 && output.ItemDisplay != null && output.Item == null)
             {
                 animStart = null;
                 output.Item = output.ItemDisplay;
@@ -285,7 +285,7 @@ namespace MageDelve
 
         public override void draw(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, width, height, Color.White);
+            drawTextureBox(b, xPositionOnScreen, yPositionOnScreen, width, height, Color.White);
 
             ui.Draw(b);
             inventory.draw(b);
@@ -293,7 +293,7 @@ namespace MageDelve
             float delta = (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
             float ts = (float)(Game1.currentGameTime.TotalGameTime.TotalSeconds - animStart ?? 0);
             if (ts < 0) ts = 0;
-            Vector2 center = new(xPositionOnScreen + width / 2, yPositionOnScreen + ( height - 200 )  / 2);
+            Vector2 center = new(xPositionOnScreen + width / 2, yPositionOnScreen + (height - 200) / 2);
             float velMult = ts * ts * ts * ts * 5;
             if (ts >= 1.4 && !playedSynthesizeSound)
             {
@@ -304,7 +304,7 @@ namespace MageDelve
             for (int i = 0; i < pixels.Count; ++i)
             {
                 Pixel pixel = pixels[i];
-                float actualScale = (pixel.scale + MathF.Sin(ts * 3) - 3)%3 + 3;
+                float actualScale = (pixel.scale + MathF.Sin(ts * 3) - 3) % 3 + 3;
 
                 Vector2 ppos = new Vector2(pixel.x, pixel.y) + pixel.velocity * delta;
                 pixel.x = ppos.X;
