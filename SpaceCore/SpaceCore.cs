@@ -492,7 +492,7 @@ namespace SpaceCore
             try
             {
                 float duration = float.Parse(args[1]);
-                Game1.flashAlpha = 1 + duration * 60;
+                Game1.flashAlpha = 1 + duration * 6;
             }
             finally
             {

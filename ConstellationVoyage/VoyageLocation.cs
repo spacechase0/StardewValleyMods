@@ -32,7 +32,7 @@ namespace ConstellationVoyage
         private float currBoatRot = 0;
 
         private Vector2 targetBoatPos;
-        private float targetBoatRot;
+        private float? targetBoatRot;
 
         private List<Island> islands = new();
 
@@ -80,6 +80,10 @@ namespace ConstellationVoyage
         {
             if (xTile == 51 && yTile == 53)
                 return true;
+            if (xTile == 54 && yTile == 53)
+                return true;
+            if (xTile == 54 && yTile == 55)
+                return true;
             return base.isActionableTile(xTile, yTile, who);
         }
 
@@ -87,19 +91,26 @@ namespace ConstellationVoyage
         {
             if (tileLocation.X == 51 && tileLocation.Y == 53) // Pile of rope, true world position
             {
-                targetBoatPos = currBoatPos + new Vector2( 15, 15 ) * Game1.tileSize;
+                targetBoatPos = currBoatPos + Vector2.Transform(new Vector2(15, 0) * Game1.tileSize, Matrix.CreateRotationZ(-currBoatRot));
+                //*
                 islands.Add(new()
                 {
-                    tilePos = new Vector2((int)(targetBoatPos.X / Game1.tileSize), (int)(targetBoatPos.Y / Game1.tileSize)) + new Vector2(-4, 7)
+                    tilePos = new Vector2((int)(targetBoatPos.X / Game1.tileSize), (int)(targetBoatPos.Y / Game1.tileSize)) + new Vector2(-4, 6)
                 }); ;
-                islands.Add(new()
-                {
-                    tilePos = new Vector2((int)(targetBoatPos.X / Game1.tileSize), (int)(targetBoatPos.Y / Game1.tileSize)) + new Vector2(11, -8)
-                }); ;
+                //*/
+            }
+            else if (tileLocation.X == 54 && tileLocation.Y == 53) // Edge of boat wall, true world position
+            {
+                targetBoatRot = 0;
             }
             else if (tileLocation.X == 54 && tileLocation.Y == 55) // Edge of boat wall, true world position
             {
-                targetBoatRot = (float)Math.PI / 8;
+                if (targetBoatRot.HasValue)
+                    targetBoatRot += (float)Math.PI / 8;
+                else
+                {
+                    targetBoatRot = currBoatRot + (float)Math.PI / 8;
+                }
             }
             return base.checkAction(tileLocation, viewport, who);
         }
@@ -146,18 +157,18 @@ namespace ConstellationVoyage
                 }
             }
             // Rotate the boat if needed
-            if ( targetBoatRot != 0 )
+            if ( targetBoatRot.HasValue )
             {
-                if (MathF.Abs(targetBoatRot - currBoatRot) < ROTATE_SPEED)
+                if (MathF.Abs(targetBoatRot.Value - currBoatRot) < ROTATE_SPEED)
                 {
-                    currBoatRot = targetBoatRot;
-                    targetBoatRot = 0;
+                    currBoatRot = targetBoatRot.Value;
+                    targetBoatRot = null;
                 }
                 else
                 {
-                    float dist = angleDist(currBoatRot, targetBoatRot);
+                    float dist = angleDist(currBoatRot, targetBoatRot.Value);
                     currBoatRot += MathF.Sign(dist) * ROTATE_SPEED;
-                    SpaceShared.Log.Debug($"Current boat rotation {currBoatRot}");
+                    SpaceShared.Log.Debug($"Current boat rotation {currBoatRot} -> " + targetBoatRot);
                 }
             }
         }
