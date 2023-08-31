@@ -31,6 +31,7 @@ using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Network;
 using StardewValley.Objects;
+using static SpaceCore.SpaceCore;
 
 namespace SpaceCore
 {
@@ -164,6 +165,76 @@ namespace SpaceCore
                 b.Draw(Game1.emoteSpriteSheet, emotePosition, new Microsoft.Xna.Framework.Rectangle(__instance.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, __instance.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)__instance.getStandingY() / 10000f);
             }
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(NPC), nameof(NPC.isMarried))]
+    public static class NpcIsMarriedNotReallyInSomeCasesPatch
+    {
+        public static void Postfix(NPC __instance, ref bool __result)
+        {
+            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
+            if (!dict.TryGetValue(__instance.Name, out var npcEntry))
+                return;
+
+            if (!npcEntry.IgnoreMarriageSchedule)
+                return;
+
+            MethodBase[] meths = new[]
+            {
+                typeof(NPC).GetMethod(nameof(NPC.reloadData)),
+                typeof(NPC).GetMethod(nameof(NPC.reloadSprite)),
+                typeof(NPC).GetMethod(nameof(NPC.getHome)),
+                typeof(NPC).GetMethod("prepareToDisembarkOnNewSchedulePath"),
+                typeof(NPC).GetMethod(nameof(NPC.parseMasterSchedule)),
+                typeof(NPC).GetMethod(nameof(NPC.getSchedule)),
+                typeof(NPC).GetMethod(nameof(NPC.resetForNewDay)),
+                typeof(NPC).GetMethod(nameof(NPC.dayUpdate)),
+            };
+
+            var st = new System.Diagnostics.StackTrace();
+            for (int i = 0; i < st.FrameCount; ++i) // Originally had 7 instead of FrameCount, but some mods interfere so we need to check further
+            {
+                var meth = st.GetFrame(i).GetMethod();
+                foreach (var checkMeth in meths)
+                {
+                    // When someone patches a method the method name changes due to SMAPI's custom fork of Harmony, and so the methodinfo doesn't match.
+                    // This is a workaround
+                    if (meth?.DeclaringType == checkMeth?.DeclaringType && ( meth?.Name?.Contains( checkMeth?.Name ?? "asdfasdf" ) ?? false ) )
+                    {
+                        __result = false;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(NPC), "loadCurrentDialogue")]
+    public static class NpcLoadCurrentDialogueFakeNotMarriedPatch
+    {
+        public static void Prefix(NPC __instance, ref string __state)
+        {
+            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
+            if (!dict.TryGetValue(__instance.Name, out var npcEntry))
+                return;
+
+            if (!npcEntry.IgnoreMarriageSchedule)
+                return;
+
+            __state = null;
+            if (Game1.player.spouse == __instance.Name)
+            {
+                __state = Game1.player.spouse;
+                Game1.player.spouse = "";
+            }
+        }
+        public static void Postfix(NPC __instance, ref string __state)
+        {
+            if (__state != null)
+            {
+                Game1.player.spouse = __state;
+            }
         }
     }
 
@@ -455,6 +526,7 @@ namespace SpaceCore
                 if (args[2] == "null")
                 {
                     extras.grad = null;
+                    return;
                 }
                 extras.currGradInd = 0;
 
@@ -469,6 +541,7 @@ namespace SpaceCore
                 if (cols.Count == 1)
                 {
                     spriteExtras.GetOrCreateValue(actor.Sprite).grad = cols.ToArray();
+                    return;
                 }
                 cols.Add(cols[0]);
 
@@ -476,9 +549,10 @@ namespace SpaceCore
                 Color[] grad = new Color[(perSection * (cols.Count - 1)) + 1];
                 for (int i = 0; i < cols.Count - 1; ++i)
                 {
-                    Color[] gradpart = Util.GetColorGradient(cols[i], cols[1 + 1], perSection).ToArray();
+                    Color[] gradpart = Util.GetColorGradient(cols[i], cols[i + 1], perSection).ToArray();
                     Array.Copy(gradpart, 0, grad, perSection * i, gradpart.Length);
                 }
+                grad[grad.Length - 1] = cols[0];
 
                 extras.grad = grad;
             }
@@ -730,6 +804,7 @@ namespace SpaceCore
         public class NpcExtensionData
         {
             public Dictionary<string, string> GiftEventTriggers = new();
+            public bool IgnoreMarriageSchedule { get; set; } = false;
         }
 
         private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
