@@ -7,6 +7,7 @@ using StardewValley.Characters;
 using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using StardewValley.SpecialOrders;
 using StardewValley.TerrainFeatures;
 
 namespace SpaceShared
@@ -194,7 +195,7 @@ namespace SpaceShared
                 }
                 if (b is JunimoHut)
                 {
-                    IList<Item> list = (b as JunimoHut).output.Value.Items;
+                    IList<Item> list = (b as JunimoHut).GetOutputChest().Items;
                     for (int i = 0; i < list.Count; ++i)
                     {
                         if (list[i] != null)
