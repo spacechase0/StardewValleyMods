@@ -115,7 +115,7 @@ namespace JsonAssets
         private bool FirstTick = true;
         private void OnTick(object sender, UpdateTickedEventArgs e)
         {
-            // This needs to run after GameLaunched, because of the event 
+            // This needs to run after GameLaunched, because of the event
             if (this.FirstTick)
             {
                 this.FirstTick = false;
@@ -1534,7 +1534,7 @@ namespace JsonAssets
         {
             SpaceUtility.iterateAllItems(this.FixItem);
             SpaceUtility.iterateAllTerrainFeatures(this.FixTerrainFeature);
-            foreach ( var loc in Game1.locations )
+            foreach (var loc in Game1.locations)
             {
                 foreach (var building in loc.buildings)
                     FixBuilding(building);
@@ -1641,6 +1641,12 @@ namespace JsonAssets
                 case MeleeWeapon weapon:
                     if (this.OldWeaponIds.ContainsKey(weapon.ItemId))
                         weapon.ItemId = this.OldWeaponIds[weapon.ItemId].FixIdJA();
+                    // If the weapon appearance is null, break early
+                    if (weapon.appearance.Value is null)
+                    {
+                        Log.Trace($"{weapon.Name} appearance is null");
+                        break;
+                    }
                     if (this.OldWeaponIds.ContainsKey(weapon.appearance.Value))
                         weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value].FixIdJA();
                     break;
@@ -1662,7 +1668,7 @@ namespace JsonAssets
                     if (this.OldClothingIds.ContainsKey(clothing.ItemId))
                         clothing.ItemId = this.OldClothingIds[clothing.ItemId].FixIdJA();
                     break;
-                    
+
                 case Boots boots:
                     if (this.OldBootsIds.ContainsKey(boots.ItemId))
                         boots.ItemId = this.OldBootsIds[boots.ItemId].FixIdJA();
