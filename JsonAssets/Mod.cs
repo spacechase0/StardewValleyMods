@@ -1643,10 +1643,7 @@ namespace JsonAssets
                         weapon.ItemId = this.OldWeaponIds[weapon.ItemId].FixIdJA();
                     // If the weapon appearance is null, break early
                     if (weapon.appearance.Value is null)
-                    {
-                        Log.Trace($"{weapon.Name} appearance is null");
                         break;
-                    }
                     if (this.OldWeaponIds.ContainsKey(weapon.appearance.Value))
                         weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value].FixIdJA();
                     break;
