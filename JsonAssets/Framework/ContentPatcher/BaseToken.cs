@@ -31,7 +31,6 @@ namespace JsonAssets.Framework.ContentPatcher
 
         public virtual bool IsReady()
         {
-            Console.WriteLine("meow is ready? " + TokenName);
             return ContentPatcherIntegration.IdsAssigned;
         }
 
@@ -45,7 +44,6 @@ namespace JsonAssets.Framework.ContentPatcher
                 this.UpdateContextImpl();
                 return true;
             }
-            else Console.WriteLine("not updating meow " + this.TokenName);
             return false;
         }
 

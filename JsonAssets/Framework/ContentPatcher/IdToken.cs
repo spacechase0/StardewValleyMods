@@ -43,7 +43,6 @@ namespace JsonAssets.Framework.ContentPatcher
 
         public override IEnumerable<string> GetValues(string input)
         { 
-            Log.Debug("meow getvalues "+TokenName+" "+input);
             if (!this.IsReady())
                 return new[]{"-12345" };
             Array.Empty<string>();
@@ -58,7 +57,6 @@ namespace JsonAssets.Framework.ContentPatcher
 
         protected override void UpdateContextImpl()
         {
-            Log.Debug("meow updatecontext " + TokenName);
             this.Ids = this.IdsFunc();
         }
     }

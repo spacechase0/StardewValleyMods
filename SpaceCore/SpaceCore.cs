@@ -200,7 +200,8 @@ namespace SpaceCore
                 {
                     // When someone patches a method the method name changes due to SMAPI's custom fork of Harmony, and so the methodinfo doesn't match.
                     // This is a workaround
-                    if (meth?.DeclaringType == checkMeth?.DeclaringType && ( meth?.Name?.Contains( checkMeth?.Name ?? "asdfasdf" ) ?? false ) )
+                    // Excuse the liberal use of ? - I was tired and frustrated
+                    if ((meth?.DeclaringType == checkMeth?.DeclaringType || ( meth?.Name?.Contains( checkMeth?.DeclaringType?.FullName ?? "qwerqwer" ) ?? false ) ) && ( meth?.Name?.Contains( checkMeth?.Name ?? "asdfasdf" ) ?? false ) )
                     {
                         __result = false;
                         return;
