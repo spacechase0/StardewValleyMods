@@ -66,7 +66,7 @@ namespace SpaceCore.Framework
                         required_count -= containers_count;
                     }
                 }
-                string ingredient_name_text = ingred.DispayName;
+                string ingredient_name_text = ingred.DisplayName;
                 Color drawColor = ((required_count <= 0) ? Game1.textColor : Color.Red);
                 b.Draw(ingred.IconTexture, new Vector2(position.X, position.Y + 64f + (float)(i * 64 / 2) + (float)(i * 4)), ingred.IconSubrect, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.86f);
                 Utility.drawTinyDigits(ingred.Quantity, b, new Vector2(position.X + 32f - Game1.tinyFont.MeasureString(ingred.Quantity.ToString() ?? "").X, position.Y + 64f + (float)(i * 64 / 2) + (float)(i * 4) + 21f), 2f, 0.87f, Color.AntiqueWhite);
