@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using StardewValley;
 using StardewValley.Objects;
 
@@ -16,7 +17,7 @@ namespace SpaceCore
 
         public abstract class IngredientMatcher
         {
-            public abstract string DispayName { get; }
+            public abstract string DisplayName { get; }
 
             public abstract Texture2D IconTexture { get; }
             public abstract Rectangle? IconSubrect { get; }
@@ -51,7 +52,7 @@ namespace SpaceCore
                 this.qty = quantity;
             }
 
-            public override string DispayName
+            public override string DisplayName
             {
                 get
                 {
@@ -70,9 +71,9 @@ namespace SpaceCore
                         };
                     }
                     string retString = Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.575");
-                    if (Game1.objectInformation.ContainsKey(this.objectIndex))
+                    if (Game1.objectData.ContainsKey(this.objectIndex))
                     {
-                        retString = Game1.objectInformation[this.objectIndex].Split('/')[4];
+                        retString = Game1.objectData[this.objectIndex].DisplayName;
                     }
                     return retString;
                 }
