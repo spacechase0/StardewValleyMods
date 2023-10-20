@@ -114,6 +114,21 @@ namespace Magic.Framework
                 }
             }
 
+            // fix skill points
+            {
+                int expectedSkillPoints = magicLevel;
+                int totalSpent = 0;
+                foreach (PreparedSpell spell in spellBook.KnownSpells){
+                    if(spell.level > 1){
+                        totalSpent += spell.level - 1;
+                    }
+                }
+                if(expectedSkillPoints > spellBook.FreePoints + totalSpent){
+                        spellBook.UseSpellPoints(-(expectedSkillPoints - spellBook.FreePoints - totalSpent));
+                }
+            }
+
+
             // fix spell bars
             if (spellBook.Prepared.Count < MagicConstants.SpellBarCount)
             {
