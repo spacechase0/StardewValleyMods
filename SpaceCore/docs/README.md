@@ -136,8 +136,6 @@ Provided functionality (this assumes you understand C# and the game code a littl
             * `Id` - a `string` that contains what was in the "Id" attribute of the element (useful with the overload of `LoadFromFile` that gives you a list containing all elements made)
             * `ExtraFields` - a `Dictionary<string, string>` that contains all the attributes you put on the element in the XML that weren't used in deserialition.
             * `UserData` - an `object` field for you to store whatever you want in
-* ExtEngine - scripting in content packs
-    * TODO: Document this once it is more complete
 * Vanilla Asset Expansions
     * Objects - These are in the asset `spacechase0.SpaceCore/ObjectExtensionData`, which is a dictionary with the key being an object's unqualified item ID, and the value being an object containing the following fields:
         * `CategoryTextOverride` - string, default null
