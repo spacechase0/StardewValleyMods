@@ -15,11 +15,11 @@ namespace MageDelve.Alchemy
     [HarmonyPatch(typeof(StardewValley.Object), "cutWeed")]
     public static class DropEarthEssencePatch1
     {
-        public static void Postfix(StardewValley.Object __instance, Farmer who, GameLocation location)
+        public static void Postfix(StardewValley.Object __instance, Farmer who)
         {
             long farmerId = who?.UniqueMultiplayerID ?? 0;
             if (Game1.random.NextDouble() < 0.001 * (who.professions.Contains(ArcanaSkill.MoreEssencesProfession.GetVanillaId()) ? 2 : 1) )
-                Game1.createObjectDebris("(O)spacechase0.MageDelve_EarthEssence", (int)__instance.TileLocation.X, (int)__instance.TileLocation.Y, farmerId, location);
+                Game1.createObjectDebris("(O)spacechase0.MageDelve_EarthEssence", (int)__instance.TileLocation.X, (int)__instance.TileLocation.Y, farmerId, __instance.Location);
         }
     }
 
@@ -29,7 +29,7 @@ namespace MageDelve.Alchemy
         public static void Postfix(GameLocation __instance, int x, int y, Farmer who)
         {
             long farmerId = who?.UniqueMultiplayerID ?? 0;
-            if (Game1.random.NextDouble() < 0.0025 * (who.professions.Contains(ArcanaSkill.MoreEssencesProfession.GetVanillaId()) ? 2 : 1))
+            if (who != null && Game1.random.NextDouble() < 0.0025 * (who.professions.Contains(ArcanaSkill.MoreEssencesProfession.GetVanillaId()) ? 2 : 1))
                 Game1.createObjectDebris("(O)spacechase0.MageDelve_EarthEssence", x, y, farmerId, __instance);
         }
     }

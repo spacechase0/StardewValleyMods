@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewValley;
+using StardewValley.Enchantments;
 using StardewValley.Extensions;
 using StardewValley.Menus;
 using StardewValley.Tools;

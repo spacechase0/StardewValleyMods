@@ -34,10 +34,11 @@ namespace MageDelve.Mercenaries.Actions
         public string MeleeWeaponId { get; set; }
 
         public List<string> WeaponEnchantments { get; set; } = new();
+        public Dictionary<string, string> WeaponModData { get; set; } = new();
         public bool ShowWeapon = true;
 
-        public List<string> MonsterBlacklist { get; set; } = new();
-        public List<string> MonsterWhitelist { get; set; } // null means everything is allowed
+        public List<string> MonsterBlockList { get; set; } = new();
+        public List<string> MonsterAllowList { get; set; } // null means everything is allowed
     }
     public class SingleTargetEffectMercenaryActionParameters
     {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using HarmonyLib;
 using MageDelve.Mercenaries.Actions;
 using MageDelve.Mercenaries.Effects;
@@ -16,6 +17,7 @@ using StardewModdingAPI.Events;
 using StardewModdingAPI.Toolkit;
 using StardewModdingAPI.Toolkit.Serialization;
 using StardewValley;
+using StardewValley.Enchantments;
 using StardewValley.GameData.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
@@ -43,7 +45,7 @@ namespace MageDelve.Mercenaries
             Mod.instance.Helper.Events.Input.ButtonPressed += this.Input_ButtonPressed;
 
             // TODO: Cache this somewhere
-            var score = AccessTools.Property("StardewModdingAPI.Framework.SCore:Instance").GetValue(null);
+            object score = AccessTools.Property("StardewModdingAPI.Framework.SCore:Instance").GetValue(null);
             var tk = score.GetType().GetField("Toolkit", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(score) as ModToolkit;
             var js = tk.JsonHelper.GetSerializer();
 
@@ -100,6 +102,79 @@ namespace MageDelve.Mercenaries
                 }
             });
 
+            MercenaryActionData.ActionTypes.Add("MeleeAttackNearestMonster", (merc, actionData) =>
+            {
+                var actionParams = actionData.Parameters.ToObject<MeleeAttackMercenaryActionParameters>(js);
+
+                if (merc.targeting != null)
+                {
+                    if (Vector2.Distance(merc.targeting.Position, Game1.player.Position) > actionParams.MinIgnoreRadius * Game1.tileSize)
+                        merc.targeting = null;
+                }
+
+                if (merc.targeting == null)
+                {
+                    List<Monster> targets = new List<Monster>();
+                    foreach (var target in Game1.player.currentLocation.characters)
+                    {
+                        if (target is Monster monster)
+                        {
+                            if (Vector2.Distance(monster.Position, Game1.player.Position) > actionParams.MaxEngagementRadius * Game1.tileSize)
+                                continue;
+
+                            if (actionParams.MonsterAllowList != null &&
+                                 !actionParams.MonsterAllowList.Contains(monster.Name) &&
+                                 !actionParams.MonsterAllowList.Contains(monster.GetType().FullName))
+                                continue;
+
+                            if (actionParams.MonsterBlockList != null &&
+                                 (actionParams.MonsterBlockList.Contains(monster.Name) ||
+                                   actionParams.MonsterBlockList.Contains(monster.GetType().FullName)))
+                                continue;
+
+                            targets.Add(monster);
+                        }
+                    }
+
+                    if (targets.Count == 0)
+                        return false;
+
+                    targets.Sort((a, b) => Math.Sign(Vector2.DistanceSquared(a.Position, merc.Position) - (int)Vector2.DistanceSquared(b.Position, merc.Position)));
+                    for (int i = 0; i < targets.Count; ++i)
+                    {
+                        merc.targeting = targets[i];
+                        merc.untilNextPathfind = 0;
+                        if (merc.DoPathfind(Game1.player.currentLocation))
+                            break;
+                    }
+                }
+
+                if (merc.attackId != actionData.Id)
+                {
+                    merc.attackId = actionData.Id;
+                    merc.attackWeapon = new StardewValley.Tools.MeleeWeapon(actionParams.MeleeWeaponId);
+                    foreach (string enchTypeName in actionParams.WeaponEnchantments)
+                    {
+                        var enchType = AccessTools.TypeByName(enchTypeName);
+                        var ench = (BaseEnchantment) enchType.GetConstructor(new Type[0]).Invoke( new object[ 0 ] );
+                        merc.attackWeapon.AddEnchantment(ench);
+                    }
+                    foreach (var data in actionParams.WeaponModData)
+                    {
+                        merc.attackWeapon.modData.Add(data.Key, data.Value);
+                    }
+                    merc.showWeapon = actionParams.ShowWeapon;
+
+                    merc.dummy.CurrentTool = merc.attackWeapon;
+                    merc.dummy.enchantments.Clear();
+                    merc.dummy.ReequipEnchantments();
+                }
+
+                // TODO: Redo once weapon changes are in place
+                merc.swingTime = (400 - merc.attackWeapon.speed.Value * 40) /*/ (merc.attackWeapon.type.Value == 2 ? 5 : 8)*/ / 1000f * 1.75f;
+
+                return merc.targeting != null;
+            });
             MercenaryActionData.ActionTypes.Add("SingleTargetEffect", (merc, actionData) =>
             {
                 var actionParams = actionData.Parameters.ToObject<SingleTargetEffectMercenaryActionParameters>(js);

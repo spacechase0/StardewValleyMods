@@ -295,14 +295,14 @@ namespace MoonMisadventures
                     mapData.Add(new WorldMapAreaData()
                     {
                         Id = "moon_farm",
-                        PixelArea = new Rectangle(194, 91, 24, 244),
+                        PixelArea = new Rectangle(194, 91, 24, 24),
                         WorldPositions = new(new[] {
                             new WorldMapAreaPositionData()
                             {
                                 LocationContext = "Moon",
                                 LocationName = "Custom_MM_MoonFarm",
                                 TileArea = new Rectangle(0, 0, 49, 39),
-                                MapPixelArea = new Rectangle(194, 91, 24, 244),
+                                MapPixelArea = new Rectangle(194, 91, 24, 24),
                             },
                             new WorldMapAreaPositionData()
                             {
@@ -757,51 +757,51 @@ namespace MoonMisadventures
             {
                 e.Edit((asset) =>
                 {
-                    var locs = asset.Data as LocationsData;
+                    var locs = asset.Data as Dictionary<string, LocationData>;
 
                     // TODO: Move over to CreateLocations
 
-                    locs.Locations.Add("Custom_MM_MountainTop", new()
+                    locs.Add("Custom_MM_MountainTop", new()
                     {
                         DisplayName = I18n.Location_MountainTop(),
                         DefaultArrivalTile = new(22, 24),
                     });
-                    locs.Locations.Add("Custom_MM_MoonLandingArea", new()
+                    locs.Add("Custom_MM_MoonLandingArea", new()
                     {
                         DisplayName = I18n.Location_LandingArea(),
                         DefaultArrivalTile = new(9, 31),
                     });
-                    locs.Locations.Add("Custom_MM_MoonAsteroidsEntrance", new()
+                    locs.Add("Custom_MM_MoonAsteroidsEntrance", new()
                     {
                         DisplayName = I18n.Location_AsteroidsEntrance(),
                         DefaultArrivalTile = new(25, 26),
                     });
-                    locs.Locations.Add("Custom_MM_MoonFarm", new()
+                    locs.Add("Custom_MM_MoonFarm", new()
                     {
                         DisplayName = I18n.Location_LunarFarm(),
                         DefaultArrivalTile = new(7,11),
                     });
-                    locs.Locations.Add("Custom_MM_MoonFarmCave", new()
+                    locs.Add("Custom_MM_MoonFarmCave", new()
                     {
                         DisplayName = I18n.Location_LunarFarm(),
                         DefaultArrivalTile = new(6, 8),
                     });
-                    locs.Locations.Add("Custom_MM_MoonFarmHouse", new()
+                    locs.Add("Custom_MM_MoonFarmHouse", new()
                     {
                         DisplayName = I18n.Location_LunarFarm(),
                         DefaultArrivalTile = new(9, 9),
                     });
-                    locs.Locations.Add("Custom_MM_MoonPlanetOverlook", new()
+                    locs.Add("Custom_MM_MoonPlanetOverlook", new()
                     {
                         DisplayName = I18n.Location_PlanetOverlook(),
                         DefaultArrivalTile = new(24, 31),
                     });
-                    locs.Locations.Add("Custom_MM_UfoInterior", new()
+                    locs.Add("Custom_MM_UfoInterior", new()
                     {
                         DisplayName = I18n.Location_UfoInterior(),
                         DefaultArrivalTile = new(12, 15),
                     });
-                    locs.Locations.Add("Custom_MM_MoonInfuserRoom", new()
+                    locs.Add("Custom_MM_MoonInfuserRoom", new()
                     {
                         DisplayName = I18n.Location_MoonTemple(),
                         DefaultArrivalTile = new(15, 22),
@@ -917,7 +917,7 @@ namespace MoonMisadventures
                             var buff = Game1.player.buffs.AppliedBuffs.FirstOrDefault( b => b.Key == "necklace" ).Value;
                             if ( buff == null )
                             {
-                                buff = new Buff("necklace", "necklace", I18n.Necklace(), 10 * 7000, buff_effects: new BuffEffects() { Speed = { 3 } });
+                                buff = new Buff("necklace", "necklace", I18n.Necklace(), 10 * 7000, effects: new BuffEffects() { Speed = { 3 } });
                                 Game1.player.buffs.Apply( buff );
                             }
                             buff.millisecondsDuration = 1000;
@@ -997,7 +997,7 @@ namespace MoonMisadventures
                 {
                     Tool tool = new Axe() { UpgradeLevel = orig.UpgradeLevel + 1 };
                     shop.forSale.Add( tool );
-                    shop.itemPriceAndStock.Add( tool, new ItemStockInformation() { price = tool.UpgradeLevel == 5 ? 100000 : 250000, stock = 1, tradeItem = tool.UpgradeLevel == 5 ? "910" : ItemIds.MythiciteBar } );
+                    shop.itemPriceAndStock.Add( tool, new ItemStockInformation() { Price = tool.UpgradeLevel == 5 ? 100000 : 250000, Stock = 1, TradeItem = tool.UpgradeLevel == 5 ? "910" : ItemIds.MythiciteBar } );
                 }
 
                 orig = Game1.player.getToolFromName( "Watering Can" );
@@ -1005,7 +1005,7 @@ namespace MoonMisadventures
                 {
                     Tool tool = new WateringCan() { UpgradeLevel = orig.UpgradeLevel + 1 };
                     shop.forSale.Add( tool );
-                    shop.itemPriceAndStock.Add( tool, new ItemStockInformation() { price = tool.UpgradeLevel == 5 ? 100000 : 250000, stock = 1, tradeItem = tool.UpgradeLevel == 5 ? "910" : ItemIds.MythiciteBar } );
+                    shop.itemPriceAndStock.Add( tool, new ItemStockInformation() { Price = tool.UpgradeLevel == 5 ? 100000 : 250000, Stock = 1, TradeItem = tool.UpgradeLevel == 5 ? "910" : ItemIds.MythiciteBar } );
                 }
 
                 orig = Game1.player.getToolFromName( "Pickaxe" );
@@ -1013,7 +1013,7 @@ namespace MoonMisadventures
                 {
                     Tool tool = new Pickaxe() { UpgradeLevel = orig.UpgradeLevel + 1 };
                     shop.forSale.Add( tool );
-                    shop.itemPriceAndStock.Add( tool, new ItemStockInformation() { price = tool.UpgradeLevel == 5 ? 100000 : 250000, stock = 1, tradeItem = tool.UpgradeLevel == 5 ? "910" : ItemIds.MythiciteBar } );
+                    shop.itemPriceAndStock.Add( tool, new ItemStockInformation() { Price = tool.UpgradeLevel == 5 ? 100000 : 250000, Stock = 1, TradeItem = tool.UpgradeLevel == 5 ? "910" : ItemIds.MythiciteBar } );
                 }
 
                 orig = Game1.player.getToolFromName( "Hoe" );
@@ -1021,7 +1021,7 @@ namespace MoonMisadventures
                 {
                     Tool tool = new Hoe() { UpgradeLevel = orig.UpgradeLevel + 1 };
                     shop.forSale.Add( tool );
-                    shop.itemPriceAndStock.Add( tool, new ItemStockInformation() { price = tool.UpgradeLevel == 5 ? 100000 : 250000, stock = 1, tradeItem = tool.UpgradeLevel == 5 ? "910" : ItemIds.MythiciteBar } );
+                    shop.itemPriceAndStock.Add( tool, new ItemStockInformation() { Price = tool.UpgradeLevel == 5 ? 100000 : 250000, Stock = 1, TradeItem = tool.UpgradeLevel == 5 ? "910" : ItemIds.MythiciteBar } );
                 }
             }
             else if ( e.NewMenu is AnimalQueryMenu aquery )

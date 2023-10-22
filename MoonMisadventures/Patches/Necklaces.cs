@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MoonMisadventures.Game.Items;
 using MoonMisadventures.VirtualProperties;
 using StardewValley;
+using StardewValley.Enchantments;
 using StardewValley.Menus;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;

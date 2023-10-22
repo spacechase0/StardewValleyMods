@@ -63,18 +63,18 @@ namespace MoonMisadventures.Patches
     [HarmonyPatch( typeof( BreakableContainer ), nameof( BreakableContainer.releaseContents ) )]
     public static class BreakableContainerMoonLootPatch
     {
-        public static bool Prefix( BreakableContainer __instance, GameLocation location, Farmer who )
+        public static bool Prefix( BreakableContainer __instance, Farmer who )
         {
-            if ( location is LunarLocation )
+            if ( __instance.Location is LunarLocation )
             {
-                DoDrops( __instance, location, who );
+                DoDrops( __instance, who );
                 return false;
             }
 
             return true;
         }
 
-        private static void DoDrops( BreakableContainer __instance, GameLocation location, Farmer who )
+        private static void DoDrops( BreakableContainer __instance, Farmer who )
         {
             Random r = new Random((int)__instance.TileLocation.X + (int)__instance.TileLocation.Y * 10000 + (int)Game1.stats.DaysPlayed);
             int x = (int)__instance.TileLocation.X;
@@ -82,10 +82,10 @@ namespace MoonMisadventures.Patches
             if ( r.NextDouble() < 0.2 )
                 return;
             if ( Game1.random.NextDouble() <= 0.075 && Game1.player.team.SpecialOrderRuleActive( "DROP_QI_BEANS" ) )
-                Game1.createMultipleObjectDebris( "890", x, y, r.Next( 1, 3 ), who.UniqueMultiplayerID, location );
+                Game1.createMultipleObjectDebris( "890", x, y, r.Next( 1, 3 ), who.UniqueMultiplayerID, __instance.Location);
             if ( r.NextDouble() < 0.01 )
             {
-                Game1.createItemDebris( new StardewValley.Object( ItemIds.SoulSapphire, 1 ), __instance.TileLocation * Game1.tileSize, 0, location );
+                Game1.createItemDebris( new StardewValley.Object( ItemIds.SoulSapphire, 1 ), __instance.TileLocation * Game1.tileSize, 0, __instance.Location);
             }
             if ( r.NextDouble() < 0.65 )
             {
@@ -115,13 +115,13 @@ namespace MoonMisadventures.Patches
                         break;
                 }
                 if ( item != null )
-                    Game1.createItemDebris( item, __instance.TileLocation * Game1.tileSize, 0, location );
+                    Game1.createItemDebris( item, __instance.TileLocation * Game1.tileSize, 0, __instance.Location);
                 if ( item2 != null && r.NextDouble() < 0.25 )
-                    Game1.createItemDebris( item2, __instance.TileLocation * Game1.tileSize, 0, location );
+                    Game1.createItemDebris( item2, __instance.TileLocation * Game1.tileSize, 0, __instance.Location);
             }
             else if ( r.NextDouble() < 0.75 )
             {
-                Game1.createItemDebris( new StardewValley.Object( ItemIds.MythiciteOre, 1 + r.Next( 4 ) ), __instance.TileLocation * Game1.tileSize, 0, location );
+                Game1.createItemDebris( new StardewValley.Object( ItemIds.MythiciteOre, 1 + r.Next( 4 ) ), __instance.TileLocation * Game1.tileSize, 0, __instance.Location);
             }
         }
     }

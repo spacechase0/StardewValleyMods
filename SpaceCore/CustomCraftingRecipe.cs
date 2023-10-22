@@ -70,9 +70,9 @@ namespace SpaceCore
                         };
                     }
                     string retString = Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.575");
-                    if (Game1.objectInformation.ContainsKey(this.objectIndex))
+                    if (Game1.objectData.ContainsKey(this.objectIndex))
                     {
-                        retString = Game1.objectInformation[this.objectIndex].Split('/')[4];
+                        retString = Game1.objectData[this.objectIndex].DisplayName;
                     }
                     return retString;
                 }

@@ -139,7 +139,7 @@ Provided functionality (this assumes you understand C# and the game code a littl
         * `HoverText` - The text to show on hover
         * `TexturePath` - The texture to use (you can use Content Patcher's `{{InternalAssetKey}}` token)
         * `SpriteIndex` - The index in the texture to use for the sprite, default 0
-    * NPCs - Stored in the asset `"spacechase0.SpaceCore/NpcExtensionData"`, which is a dictionary with the key being an NPC name, and the value being an object containing the followingfields:
+    * NPCs - Stored in the asset `"spacechase0.SpaceCore/NpcExtensionData"`, which is a dictionary with the key being an NPC name, and the value being an object containing the following fields:
         * `GiftEventTriggers` - A dictionary with the keys being an object, and the values being an event to trigger when that item is given to the NPC.
             * The "event to trigger" needs to be the full event key (ID and preconditions) used in the events data file, so that SpaceCore can find the event.
             * The preconditions are ignored.
@@ -147,6 +147,7 @@ Provided functionality (this assumes you understand C# and the game code a littl
                 * For Content Patcher users: You can do this using `"When": { "LocationName": "Town" }, "Update": "OnLocationChange"` on your patch.
             * The event can reoccur if the item is given again.
                 * For Content Patcher users: If you don't want this behavior, make sure to add a `HasSeenEvent` event condition to your `"When"` block for the patch.
+        * `IgnoreMarriageSchedule` - true/false, defaults to false
 * Some other things that will remain undocumented because they will be removed soon.
 
 ## Compatibility
