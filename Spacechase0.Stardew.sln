@@ -248,6 +248,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Satchels", "Satchels\Satchels.csproj", "{B008B8AF-D4D0-485B-95DA-E35A0E7966F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MageDelve", "MageDelve\MageDelve.csproj", "{DDCE02FF-E34C-47E0-B293-B90AC68EF2F4}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MayoRain", "MayoRain\MayoRain.csproj", "{942A7169-9AB4-46F6-B535-ABBB3969E86A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MayoHats", "MayoHats\MayoHats.csproj", "{08E2E2A4-2CE6-4B8B-9BB0-79573808B0D3}"
@@ -786,11 +787,7 @@ Global
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{014b4846-0e6c-4c73-b851-0a560d36aeee}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{014b4846-0e6c-4c73-b851-0a560d36aeee}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{061610a4-7d02-4f52-a921-f59ed123c2a9}*SharedItemsImports = 13
-		SpaceShared\SpaceShared.projitems*{88148bd6-6609-4c27-8dca-4f4d6b01646a}*SharedItemsImports = 5
-		SpaceSharedPatching\SpaceSharedPatching.projitems*{a87f5d49-6246-4b14-8363-114dc9335c2c}*SharedItemsImports = 13
-		SpaceShared\SpaceShared.projitems*{b008b8af-d4d0-485b-95da-e35a0e7966f6}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{08a9f3c9-c9f5-40cf-bd16-12b06512ad52}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{08e2e2a4-2ce6-4b8b-9bb0-79573808b0d3}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{100b0e56-6ff4-48ea-97b6-6102cb68931e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{100b0e56-6ff4-48ea-97b6-6102cb68931e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{104fcf4d-7776-4c16-94ce-ede8209d6d9f}*SharedItemsImports = 5
@@ -810,7 +807,6 @@ Global
 		SpaceShared\SpaceShared.projitems*{3762f270-268b-4dcc-8d07-6978304e46ea}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{39ee1a29-bcbd-4ba5-867f-1439a9359b0e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{39ee1a29-bcbd-4ba5-867f-1439a9359b0e}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{3a3aa540-7855-4cd6-bbe1-5afd180f2c11}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3aeb49fd-d27f-410a-8483-8bb6fc8e51c6}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3d194335-89d4-4b5f-82fd-4e326eb2e8bb}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{3da3fb18-ac0c-40f4-b45b-5d13916d032a}*SharedItemsImports = 5
@@ -842,11 +838,10 @@ Global
 		SpaceShared\SpaceShared.projitems*{6e9ba154-07eb-43c8-8e5a-94247ff28556}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7014c24c-a7b8-446a-8b13-eca54eea1f88}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7025a6bb-629c-43cf-bd25-97ebc1ba0d5c}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{7245f384-9d72-435e-8fd6-a5749bbbc2d7}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7aa1c02e-9099-4c1a-b8af-ac1966b337e5}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{7e4024e8-392d-4a65-a659-93e8cb261ffe}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{88148bd6-6609-4c27-8dca-4f4d6b01646a}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{9002aaed-277d-40f9-a6ac-91698952124c}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{942a7169-9ab4-46f6-b535-abbb3969e86a}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{95e3b0c8-60b2-49cc-91a4-b8ea936681d4}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{992be23f-a878-4788-8009-0aa9b099a707}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{9ae07ea1-4287-4344-aa71-50a4fc7d9567}*SharedItemsImports = 5
@@ -857,6 +852,7 @@ Global
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{a87f5d49-6246-4b14-8363-114dc9335c2c}*SharedItemsImports = 13
 		SpaceShared\SpaceShared.projitems*{aa841829-b357-403e-b185-c57db2c97a52}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{aacf284d-8352-4727-9f9e-9916ba2266af}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{b008b8af-d4d0-485b-95da-e35a0e7966f6}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{b0bb0171-260e-40fe-95dc-4377ce916ff0}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{b0bb0171-260e-40fe-95dc-4377ce916ff0}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{b5127ffb-a748-44ff-882e-5279b0f7b279}*SharedItemsImports = 5

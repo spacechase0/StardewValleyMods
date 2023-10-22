@@ -23,7 +23,7 @@ Provided functionality (this assumes you understand C# and the game code a littl
     * `int GetLevelForCustomSkill(Farmer farmer, string skill)` - Gets the level of the given `skill` for the given `farmer`.
     * `void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt)` - Adds `amt` experience to the given `skill` for the given `farmer`.
     * `int GetProfessionId(string skill, string profession)` - Gets the integer ID of the given `profession` (for `Farmer.professions`) for the given skill.
-        * `void RegisterSerializerType(Type type)` - Register a `type` as being valid for the vanilla serializer. Must have the attribute `XmlType` applied, with the parameter starting with `"Mods_"`, ie. `[XmlType("Mods_AuthorName_MyCustomObject")]`.
+    * `void RegisterSerializerType(Type type)` - Register a `type` as being valid for the vanilla serializer. Must have the attribute `XmlType` applied, with the parameter starting with `"Mods_"`, ie. `[XmlType("Mods_AuthorName_MyCustomObject")]`.
     * `void RegisterCustomProperty(Type declaringType, string name, Type propType, MethodInfo getter, MethodInfo setter)` - Register a virtual property, attaching itself to a vanilla object for serialization.
         * `declaringType` is the type to attach to
         * `name` is the name of the property.
@@ -128,7 +128,6 @@ Provided functionality (this assumes you understand C# and the game code a littl
         * `CategoryColorOverride` - same format as Json Assets colors, default null
         * `HideFromShippingCollection` - true/false, default false
         * `CanBeTrashed` - true/false, also prevents dropping, default true
-        * `CanBeGifted` - true/false, default true
         * `CanBeShipped` - true/false, default true
         * `EatenHealthRestoredOverride` - integer, override how much health is restored on eating this item, default null (use vanilla method of calculation)
         * `EatenStaminaRestoredOverride` - integer, override how much stamina is restored on eating this item, default null (use vanilla method of calculation)

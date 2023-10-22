@@ -36,43 +36,6 @@ using static SpaceCore.SpaceCore;
 
 namespace SpaceCore
 {
-    /*
-    public static class Fix1_5NetCodeBugPatch
-    {
-        public static void Prefix(
-            NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>> __instance,
-            string key,
-            ref object __state
-        )
-        {
-            __state = __instance is ModDataDictionary && __instance.ContainsKey(key);
-        }
-        public static void Postfix(
-            NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>> __instance,
-            string key,
-            string value,
-            object __state,
-            System.Collections.IList ___outgoingChanges,
-            Dictionary<string, NetVersion> ___dictReassigns
-        )
-        {
-            if(__instance is ModDataDictionary)
-            if (__state as bool? == true)
-            {
-                var field = __instance.FieldDict[key];
-                var ogts = __instance.GetType().BaseType.BaseType.BaseType.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-                var ogt = ogts.First(t => t.Name.StartsWith("OutgoingChange"));
-                ogt = ogt.MakeGenericType(new Type[] { typeof( string ), typeof( string ), typeof( NetString ), typeof( SerializableDictionary<string, string> ), typeof( NetStringDictionary<string,NetString> ) });
-                var ogc = ogt.GetConstructors(BindingFlags.Public | BindingFlags.Instance)[0];
-                object og = ogc.Invoke(new object[] { false, key, field, ___dictReassigns[ key ] });
-                ___outgoingChanges.Add(og);
-                if (key.Contains("spacechase0"))
-                    Log.Debug("oc:" + ___outgoingChanges.Count);
-            }
-        }
-    }
-    */
-
     [HarmonyPatch(typeof(AnimatedSprite), "draw", new Type[] { typeof(SpriteBatch), typeof(Vector2), typeof(float) })]
     public static class AnimatedSpriteDrawExtrasPatch1
     {
@@ -107,63 +70,78 @@ namespace SpaceCore
         public static bool Prefix(NPC __instance, SpriteBatch b, float alpha, int ___shakeTimer, NetVector2 ___defaultPosition)
         {
             var extras = SpaceCore.spriteExtras.GetOrCreateValue(__instance.Sprite);
-            if (__instance.Sprite == null || __instance.IsInvisible || (!Utility.isOnScreen(__instance.Position, 128) && (!__instance.eventActor || !(__instance.currentLocation is Summit))))
+            int __instance_shakeTimer = SpaceCore.Instance.Helper.Reflection.GetField<int>(__instance, "shakeTimer").GetValue();
+
+            int standingY = __instance.StandingPixel.Y;
+            float mainLayerDepth = Math.Max(0f, __instance.drawOnTop ? 0.991f : ((float)standingY / 10000f));
+            if (__instance.Sprite.Texture == null)
             {
-                return false;
-            }
-            if ((bool)__instance.swimming)
-            {
-                b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(32f, 80 + __instance.yJumpOffset * 2) + ((___shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero) - new Vector2(0f, __instance.yOffset), new Microsoft.Xna.Framework.Rectangle(__instance.Sprite.SourceRect.X, __instance.Sprite.SourceRect.Y, __instance.Sprite.SourceRect.Width, __instance.Sprite.SourceRect.Height / 2 - (int)(__instance.yOffset / 4f)), Color.White, __instance.rotation, new Vector2(32f, 96f) / 4f, Math.Max(0.2f, __instance.scale) * 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.991f : ((float)__instance.getStandingY() / 10000f)));
-                Vector2 localPosition = __instance.getLocalPosition(Game1.viewport);
-                b.Draw(Game1.staminaRect, new Microsoft.Xna.Framework.Rectangle((int)localPosition.X + (int)__instance.yOffset + 8, (int)localPosition.Y - 128 + __instance.Sprite.SourceRect.Height * 4 + 48 + __instance.yJumpOffset * 2 - (int)__instance.yOffset, __instance.Sprite.SourceRect.Width * 4 - (int)__instance.yOffset * 2 - 16, 4), Game1.staminaRect.Bounds, Color.White * 0.75f, 0f, Vector2.Zero, SpriteEffects.None, (float)__instance.getStandingY() / 10000f + 0.001f);
+                Vector2 position = Game1.GlobalToLocal(Game1.viewport, __instance.Position);
+                Microsoft.Xna.Framework.Rectangle spriteArea = new Microsoft.Xna.Framework.Rectangle((int)position.X, (int)(position.Y - __instance.Sprite.SpriteWidth * 4 * extras.scale.Y), (int)(__instance.Sprite.SpriteWidth * 4 * extras.scale.X), (int)(__instance.Sprite.SpriteHeight * 4 * extras.scale.Y));
+                Utility.DrawErrorTexture(b, spriteArea, mainLayerDepth);
             }
             else
             {
-                b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(__instance.GetSpriteWidthForPositioning() * 4 / 2, __instance.GetBoundingBox().Height / 2) + ((___shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), __instance.Sprite.SourceRect, (extras.grad != null ? extras.grad[extras.currGradInd]:Color.White)* alpha, __instance.rotation, new Vector2(__instance.Sprite.SpriteWidth / 2, (float)__instance.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, __instance.scale) * 4f * extras.scale, (__instance.flip || (__instance.Sprite.CurrentAnimation != null && __instance.Sprite.CurrentAnimation[__instance.Sprite.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.991f : ((float)__instance.getStandingY() / 10000f)));
-            }
-            if (__instance.Breather && ___shakeTimer <= 0 && !__instance.swimming && __instance.Sprite.currentFrame < 16 && !__instance.farmerPassesThrough)
-            {
-                Microsoft.Xna.Framework.Rectangle chestBox = __instance.Sprite.SourceRect;
-                chestBox.Y += __instance.Sprite.SpriteHeight / 2 + __instance.Sprite.SpriteHeight / 32;
-                chestBox.Height = __instance.Sprite.SpriteHeight / 4;
-                chestBox.X += __instance.Sprite.SpriteWidth / 4;
-                chestBox.Width = __instance.Sprite.SpriteWidth / 2;
-                Vector2 chestPosition = new Vector2(__instance.Sprite.SpriteWidth * 4 / 2, 8f);
-                if (__instance.Age == 2)
+                if (__instance.IsInvisible || (!Utility.isOnScreen(__instance.Position, 128) && (!__instance.eventActor || !(__instance.currentLocation is Summit))))
                 {
-                    chestBox.Y += __instance.Sprite.SpriteHeight / 6 + 1;
-                    chestBox.Height /= 2;
-                    chestPosition.Y += __instance.Sprite.SpriteHeight / 8 * 4;
-                    if (__instance is Child)
+                    return false;
+                }
+                if ((bool)__instance.swimming)
+                {
+                    b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(32f, 80 + __instance.yJumpOffset * 2) + ((__instance_shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero) - new Vector2(0f, __instance.yOffset), new Microsoft.Xna.Framework.Rectangle(__instance.Sprite.SourceRect.X, __instance.Sprite.SourceRect.Y, __instance.Sprite.SourceRect.Width, __instance.Sprite.SourceRect.Height / 2 - (int)(__instance.yOffset / 4f)), (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White), __instance.rotation, new Vector2(32f, 96f) / 4f, Math.Max(0.2f, __instance.scale.Value) * 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, mainLayerDepth);
+                    Vector2 localPosition = __instance.getLocalPosition(Game1.viewport);
+                    b.Draw(Game1.staminaRect, new Microsoft.Xna.Framework.Rectangle((int)localPosition.X + (int)__instance.yOffset + 8, (int)localPosition.Y - 128 + __instance.Sprite.SourceRect.Height * 4 + 48 + __instance.yJumpOffset * 2 - (int)__instance.yOffset, __instance.Sprite.SourceRect.Width * 4 - (int)__instance.yOffset * 2 - 16, 4), Game1.staminaRect.Bounds, Color.White * 0.75f, 0f, Vector2.Zero, SpriteEffects.None, (float)standingY / 10000f + 0.001f);
+                }
+                else
+                {
+                    b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(__instance.GetSpriteWidthForPositioning() * 4 / 2, __instance.GetBoundingBox().Height / 2) + ((__instance_shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), __instance.Sprite.SourceRect, (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White) * alpha, __instance.rotation, new Vector2(__instance.Sprite.SpriteWidth / 2, (float)__instance.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, __instance.scale.Value) * extras.scale * 4f, (__instance.flip || (__instance.Sprite.CurrentAnimation != null && __instance.Sprite.CurrentAnimation[__instance.Sprite.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, mainLayerDepth);
+                }
+                if (__instance.Breather && __instance_shakeTimer <= 0 && !__instance.swimming && __instance.Sprite.currentFrame < 16 && !__instance.farmerPassesThrough)
+                {
+                    Microsoft.Xna.Framework.Rectangle chestBox = __instance.Sprite.SourceRect;
+                    chestBox.Y += __instance.Sprite.SpriteHeight / 2 + __instance.Sprite.SpriteHeight / 32;
+                    chestBox.Height = __instance.Sprite.SpriteHeight / 4;
+                    chestBox.X += __instance.Sprite.SpriteWidth / 4;
+                    chestBox.Width = __instance.Sprite.SpriteWidth / 2;
+                    Vector2 chestPosition = new Vector2(__instance.Sprite.SpriteWidth * 4 / 2, 8f);
+                    if (__instance.Age == 2)
                     {
-                        if ((__instance as Child).Age == 0)
+                        chestBox.Y += __instance.Sprite.SpriteHeight / 6 + 1;
+                        chestBox.Height /= 2;
+                        chestPosition.Y += __instance.Sprite.SpriteHeight / 8 * 4;
+                        Child child = __instance as Child;
+                        if (child != null)
                         {
-                            chestPosition.X -= 12f;
-                        }
-                        else if ((__instance as Child).Age == 1)
-                        {
-                            chestPosition.X -= 4f;
+                            switch (child.Age)
+                            {
+                                case 0:
+                                    chestPosition.X -= 12f;
+                                    break;
+                                case 1:
+                                    chestPosition.X -= 4f;
+                                    break;
+                            }
                         }
                     }
+                    else if (__instance.Gender == 1)
+                    {
+                        chestBox.Y++;
+                        chestPosition.Y -= 4f;
+                        chestBox.Height /= 2;
+                    }
+                    float breathScale = Math.Max(0f, (float)Math.Ceiling(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 600.0 + (double)(__instance.DefaultPosition.X * 20f))) / 4f);
+                    b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + chestPosition + ((__instance_shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), chestBox, (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White) * alpha, __instance.rotation, new Vector2(chestBox.Width / 2, chestBox.Height / 2 + 1), Math.Max(0.2f, __instance.scale.Value) * extras.scale * 4f + new Vector2(breathScale, breathScale), __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.992f : (((float)standingY + 0.01f) / 10000f)));
                 }
-                else if (__instance.Gender == 1)
+                if (__instance.isGlowing)
                 {
-                    chestBox.Y++;
-                    chestPosition.Y -= 4f;
-                    chestBox.Height /= 2;
+                    b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(__instance.GetSpriteWidthForPositioning() * 4 / 2, __instance.GetBoundingBox().Height / 2) + ((__instance_shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), __instance.Sprite.SourceRect, __instance.glowingColor * __instance.glowingTransparency, __instance.rotation, new Vector2(__instance.Sprite.SpriteWidth / 2, (float)__instance.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, __instance.scale.Value) * 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.99f : ((float)standingY / 10000f + 0.001f)));
                 }
-                float breathScale = Math.Max(0f, (float)Math.Ceiling(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 600.0 + (double)(___defaultPosition.X * 20f))) / 4f);
-                b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + chestPosition + ((___shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), chestBox, (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White) * alpha, __instance.rotation, new Vector2(chestBox.Width / 2, chestBox.Height / 2 + 1), Math.Max(0.2f, __instance.scale) * 4f * extras.scale + new Vector2(breathScale,breathScale), __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.992f : ((float)__instance.getStandingY() / 10000f + 0.001f)));
-            }
-            if (__instance.isGlowing)
-            {
-                b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(__instance.GetSpriteWidthForPositioning() * 4 / 2, __instance.GetBoundingBox().Height / 2) + ((___shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), __instance.Sprite.SourceRect, __instance.glowingColor * __instance.glowingTransparency, __instance.rotation, new Vector2(__instance.Sprite.SpriteWidth / 2, (float)__instance.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, __instance.scale) * 4f * extras.scale, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.99f : ((float)__instance.getStandingY() / 10000f + 0.001f)));
-            }
-            if (__instance.IsEmoting && !Game1.eventUp && !(__instance is Child) && !(__instance is Pet))
-            {
-                Vector2 emotePosition = __instance.getLocalPosition(Game1.viewport);
-                emotePosition.Y -= 32 + __instance.Sprite.SpriteHeight * 4;
-                b.Draw(Game1.emoteSpriteSheet, emotePosition, new Microsoft.Xna.Framework.Rectangle(__instance.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, __instance.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)__instance.getStandingY() / 10000f);
+                if (__instance.IsEmoting && !Game1.eventUp && !(__instance is Child) && !(__instance is Pet))
+                {
+                    Vector2 emotePosition = __instance.getLocalPosition(Game1.viewport);
+                    emotePosition.Y -= 32 + __instance.Sprite.SpriteHeight * 4;
+                    b.Draw(Game1.emoteSpriteSheet, emotePosition, new Microsoft.Xna.Framework.Rectangle(__instance.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, __instance.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)standingY / 10000f);
+                }
             }
             return false;
         }
@@ -188,7 +166,7 @@ namespace SpaceCore
                 typeof(NPC).GetMethod(nameof(NPC.getHome)),
                 typeof(NPC).GetMethod("prepareToDisembarkOnNewSchedulePath"),
                 typeof(NPC).GetMethod(nameof(NPC.parseMasterSchedule)),
-                typeof(NPC).GetMethod(nameof(NPC.getSchedule)),
+                typeof(NPC).GetMethod(nameof(NPC.TryLoadSchedule)),
                 typeof(NPC).GetMethod(nameof(NPC.resetForNewDay)),
                 typeof(NPC).GetMethod(nameof(NPC.dayUpdate)),
             };
@@ -287,21 +265,12 @@ namespace SpaceCore
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
             Event.RegisterCustomCommand("damageFarmer", DamageFarmerEventCommand);
-
-            helper.Events.Content.AssetRequested += this.Content_AssetRequested;
-
-            SpaceEvents.ActionActivated += this.SpaceEvents_ActionActivated;
-
-            EventPatcher.CustomCommands.Add("giveHat", AccessTools.Method(this.GetType(), "GiveHatEventCommand"));
-            EventPatcher.CustomCommands.Add("setDating", AccessTools.Method(this.GetType(), "SetDatingEventCommand"));
-            EventPatcher.CustomCommands.Add("totemWarpEffect", AccessTools.Method(this.GetType(), nameof(TotemWarpEventCommand)));
-            EventPatcher.CustomCommands.Add("setActorScale", AccessTools.Method(this.GetType(), nameof(SetActorScale)));
-            EventPatcher.CustomCommands.Add("cycleActorColors", AccessTools.Method(this.GetType(), nameof(CycleActorColors)));
-            EventPatcher.CustomCommands.Add("flash", AccessTools.Method(this.GetType(), nameof(FlashEventCommand))); 
-            // Remove this one in 1.6
-            EventPatcher.CustomCommands.Add("temporaryAnimatedSprite", AccessTools.Method(this.GetType(), nameof(AddTemporarySprite16)));
-
-            SpaceEvents.AfterGiftGiven += this.SpaceEvents_AfterGiftGiven;
+            Event.RegisterCustomCommand("giveHat", GiveHatEventCommand);
+            Event.RegisterCustomCommand("setDating", SetDatingEventCommand);
+            Event.RegisterCustomCommand("totemWarpEffect", TotemWarpEventCommand);
+            Event.RegisterCustomCommand("setActorScale", SetActorScale);
+            Event.RegisterCustomCommand("cycleActorColors", CycleActorColors);
+            Event.RegisterCustomCommand("flash", FlashEventCommand); 
 
             Commands.Register();
             ExtensionEngine.Init();
@@ -362,11 +331,11 @@ namespace SpaceCore
             }
         }
 
-        private static void GiveHatEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void GiveHatEventCommand(Event evt, string[] args, EventContext ctx)
         {
             try
             {
-                Game1.player.addItemByMenuIfNecessary(new Hat(int.Parse(args[1])));
+                Game1.player.addItemByMenuIfNecessary(new Hat(args[1]));
             }
             finally
             {
@@ -374,7 +343,7 @@ namespace SpaceCore
             }
         }
 
-        private static void SetDatingEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void SetDatingEventCommand(Event evt, string[] args, EventContext ctx)
         {
             try
             {
@@ -392,8 +361,11 @@ namespace SpaceCore
                 evt.CurrentCommand++;
             }
         }
-        private static void TotemWarpEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void TotemWarpEventCommand(Event evt, string[] args, EventContext ctx)
         {
+            var loc = ctx.Location;
+
+
             try
             {
                 int tx = int.Parse(args[1]);
@@ -491,7 +463,7 @@ namespace SpaceCore
         }
 
         public static ConditionalWeakTable<AnimatedSprite, AnimatedSpriteExtras> spriteExtras = new();
-        private static void SetActorScale(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void SetActorScale(Event evt, string[] args, EventContext ctx)
         {
             try
             {
@@ -506,7 +478,7 @@ namespace SpaceCore
                 evt.CurrentCommand++;
             }
         }
-        private static void CycleActorColors(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void CycleActorColors(Event evt, string[] args, EventContext ctx)
         {
             try
             {
@@ -551,7 +523,7 @@ namespace SpaceCore
                 evt.CurrentCommand++;
             }
         }
-        private static void FlashEventCommand(Event @event, GameLocation loc, GameTime time, string[] args)
+        private static void FlashEventCommand(Event @event, string[] args, EventContext ctx)
         {
             try
             {
@@ -564,245 +536,10 @@ namespace SpaceCore
             }
         }
 
-        [SuppressMessage("Style", "IDE0008", Justification = "copy pasted from vanilla with as few changes as possible")]
-        public static void AddTemporarySprite16(Event @event, GameLocation loc, GameTime time, string[] args)
-        {
-            try
-            {
-                string ArgUtility_GetMissingRequiredIndexError(string[] array, int index)
-                {
-                    switch (array.Length)
-                    {
-                        case 0:
-                            {
-                                return $"required index {index} not found (list is empty)";
-                            }
-                        case 1:
-                            {
-                                return $"required index {index} not found (list has a single value at index 0)";
-                            }
-                        default:
-                            {
-                                return $"required index {index} not found (list has indexes 0 through {array.Length - 1})";
-                            }
-                    }
-                }
-                bool ArgUtility_TryGet(string[] array, int index, out string value, out string error, bool allowBlank = true)
-                {
-                    if (array == null)
-                    {
-                        value = null;
-                        error = "argument list is null";
-                        return false;
-                    }
-                    if (index < 0 || index >= array.Length)
-                    {
-                        value = null;
-                        error = ArgUtility_GetMissingRequiredIndexError(array, index);
-                        return false;
-                    }
-                    value = array[index];
-                    if (!allowBlank && string.IsNullOrWhiteSpace(value))
-                    {
-                        value = null;
-                        error = $"required index {index} has a blank value";
-                        return false;
-                    }
-                    error = null;
-                    return true;
-                }
-                string ArgUtility_GetValueParseError(string[] array, int index, bool required, string typeSummary)
-                {
-                    return required ? "required" : "optional" + $" index {index} has value '{array[index]}', which can't be parsed as {typeSummary}";
-                }
-                bool ArgUtility_TryGetInt(string[] array, int index, out int value, out string error)
-                {
-                    if (!ArgUtility_TryGet(array, index, out string raw, out error, allowBlank: false))
-                    {
-                        value = 0;
-                        return false;
-                    }
-                    if (!int.TryParse(raw, out value))
-                    {
-                        value = 0;
-                        error = ArgUtility_GetValueParseError(array, index, required: true, "an integer");
-                        return false;
-                    }
-                    error = null;
-                    return true;
-                }
-                bool ArgUtility_TryGetRectangle(string[] array, int index, out Rectangle value, out string error)
-                {
-                    if (!ArgUtility_TryGetInt(array, index, out int x, out error) || !ArgUtility_TryGetInt(array, index + 1, out int y, out error) || !ArgUtility_TryGetInt(array, index + 2, out var width, out error) || !ArgUtility_TryGetInt(array, index + 3, out var height, out error))
-                    {
-                        value = Rectangle.Empty;
-                        return false;
-                    }
-                    error = null;
-                    value = new Rectangle(x, y, width, height);
-                    return true;
-                }
-                bool ArgUtility_TryGetFloat(string[] array, int index, out float value, out string error)
-                {
-                    if (!ArgUtility_TryGet(array, index, out var raw, out error, allowBlank: false))
-                    {
-                        value = 0f;
-                        return false;
-                    }
-                    if (!float.TryParse(raw, out value))
-                    {
-                        value = 0f;
-                        error = ArgUtility_GetValueParseError(array, index, required: true, "a number");
-                        return false;
-                    }
-                    error = null;
-                    return true;
-                }
-                bool ArgUtility_TryGetVector2(string[] array, int index, out Vector2 value, out string error, bool integerOnly = false)
-                {
-                    float x;
-                    float y;
-                    if (integerOnly)
-                    {
-                        if (ArgUtility_TryGetInt(array, index, out var x2, out error) && ArgUtility_TryGetInt(array, index + 1, out var y2, out error))
-                        {
-                            value = new Vector2(x2, y2);
-                            return true;
-                        }
-                    }
-                    else if (ArgUtility_TryGetFloat(array, index, out x, out error) && ArgUtility_TryGetFloat(array, index + 1, out y, out error))
-                    {
-                        value = new Vector2(x, y);
-                        return true;
-                    }
-                    value = Vector2.Zero;
-                    return false;
-                }
-                bool ArgUtility_TryGetBool(string[] array, int index, out bool value, out string error)
-                {
-                    if (!ArgUtility_TryGet(array, index, out var raw, out error, allowBlank: false))
-                    {
-                        value = false;
-                        return false;
-                    }
-                    if (!bool.TryParse(raw, out value))
-                    {
-                        value = false;
-                        error = ArgUtility_GetValueParseError(array, index, required: true, "a boolean (should be 'true' or 'false')");
-                        return false;
-                    }
-                    error = null;
-                    return true;
-                }
-                if (!ArgUtility_TryGet(args, 1, out var textureName, out var error) || !ArgUtility_TryGetRectangle(args, 2, out var sourceRect, out error) || !ArgUtility_TryGetFloat(args, 6, out var animationInterval, out error) || !ArgUtility_TryGetInt(args, 7, out var animationLength, out error) || !ArgUtility_TryGetInt(args, 8, out var numberOfLoops, out error) || !ArgUtility_TryGetVector2(args, 9, out var tile, out error, integerOnly: true) || !ArgUtility_TryGetBool(args, 11, out var flicker, out error) || !ArgUtility_TryGetBool(args, 12, out var flip, out error) || !ArgUtility_TryGetFloat(args, 13, out var layerDepth, out error) || !ArgUtility_TryGetFloat(args, 14, out var alphaFade, out error) || !ArgUtility_TryGetInt(args, 15, out var scale, out error) || !ArgUtility_TryGetFloat(args, 16, out var scaleChange, out error) || !ArgUtility_TryGetFloat(args, 17, out var rotation, out error) || !ArgUtility_TryGetFloat(args, 18, out var rotationChange, out error))
-                {
-                    throw new Exception(error);
-                    return;
-                }
-                TemporaryAnimatedSprite tempSprite = new TemporaryAnimatedSprite(textureName, sourceRect, animationInterval, animationLength, numberOfLoops, @event.OffsetPosition(tile * 64f), flicker, flip, @event.OffsetPosition(new Vector2(0f, layerDepth) * 64f).Y / 10000f, alphaFade, Color.White, 4 * scale, scaleChange, rotation, rotationChange);
-                for (int i = 19; i < args.Length; i++)
-                {
-                    switch (args[i])
-                    {
-                        case "hold_last_frame":
-                            tempSprite.holdLastFrame = true;
-                            break;
-                        case "ping_pong":
-                            tempSprite.pingPong = true;
-                            break;
-                        case "motion":
-                            {
-                                if (!ArgUtility_TryGetVector2(args, i + 1, out var value, out error))
-                                {
-                                    throw new Exception(error);
-                                    break;
-                                }
-                                tempSprite.motion = value;
-                                i += 2;
-                                break;
-                            }
-                        case "acceleration":
-                            {
-                                if (!ArgUtility_TryGetVector2(args, i + 1, out var value2, out error))
-                                {
-                                    throw new Exception(error);
-                                    break;
-                                }
-                                tempSprite.acceleration = value2;
-                                i += 2;
-                                break;
-                            }
-                        case "acceleration_change":
-                            {
-                                if (!ArgUtility_TryGetVector2(args, i + 1, out var value3, out error))
-                                {
-                                    throw new Exception(error);
-                                    break;
-                                }
-                                tempSprite.accelerationChange = value3;
-                                i += 2;
-                                break;
-                            }
-                        default:
-                            throw new Exception("unknown option '" + args[i] + "'");
-                            break;
-                    }
-                }
-                loc.TemporarySprites.Add(tempSprite);
-            }
-            finally
-            {
-                @event.CurrentCommand++;
-            }
-        }
-
-        // TODO: In 1.6 move to vanilla asset expansion part of the code
-        // Also make it use ItemId instead
-        // Also make it change to use PlayEvent
-        private void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)
-        {
-            var farmer = sender as Farmer;
-            if (farmer != Game1.player) return;
-
-            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
-            if (!dict.TryGetValue(e.Npc.Name, out var npcEntry))
-                return;
-
-            if (!npcEntry.GiftEventTriggers.TryGetValue(e.Gift.ParentSheetIndex.ToString(), out string eventStr))
-                return;
-
-            string[] data = eventStr.Split('/');
-
-            var events = Game1.player.currentLocation.GetLocationEvents();
-            if (events.ContainsKey(eventStr))
-            {
-                if (Game1.activeClickableMenu is DialogueBox db)
-                {
-                    db.dialogueFinished = true;
-                    db.closeDialogue();
-                    Game1.activeClickableMenu = null;
-                    Game1.dialogueUp = false;
-                }
-                else return; // In case someone else is doing something unusual
-
-                int eid = Convert.ToInt32(data[0]);
-                Game1.player.eventsSeen.Add(eid);
-                Game1.player.currentLocation.startEvent(new Event(events[eventStr], eid));
-            }
-        }
-
         public class NpcExtensionData
         {
             public Dictionary<string, string> GiftEventTriggers = new();
             public bool IgnoreMarriageSchedule { get; set; } = false;
-        }
-
-        private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
-        {
-            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/NpcExtensionData"))
-            {
-                e.LoadFrom(() => new Dictionary<string, NpcExtensionData>(), AssetLoadPriority.Low);
-            }
         }
 
         /*********

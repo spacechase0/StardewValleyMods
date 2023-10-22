@@ -17,7 +17,6 @@ namespace SpaceCore.VanillaAssetExpansion
         public bool HideFromShippingCollection { get; set; } = false;
 
         public bool CanBeTrashed { get; set; } = true;
-        public bool CanBeGifted { get; set; } = true; // can be removed in latest alpha build
         public bool CanBeShipped { get; set; } = true;
 
         public int? EatenHealthRestoredOverride { get; set; } = null;
@@ -93,19 +92,6 @@ namespace SpaceCore.VanillaAssetExpansion
         }
     }
 
-
-    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.canBeGivenAsGift))]
-    public static class ObjectGiftablePatch
-    {
-        public static void Postfix(StardewValley.Object __instance, ref bool __result)
-        {
-            var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
-            if (dict.ContainsKey(__instance.ItemId) && !dict[__instance.ItemId].CanBeGifted)
-            {
-                __result = false;
-            }
-        }
-    }
 
     [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.canBeShipped))]
     public static class ObjectShippablePatch

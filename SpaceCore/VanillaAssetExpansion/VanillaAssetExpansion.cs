@@ -7,8 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.Events;
 using SpaceCore.Interface;
+using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
+using static SpaceCore.SpaceCore;
 
 namespace SpaceCore.VanillaAssetExpansion
 {
@@ -19,6 +21,26 @@ namespace SpaceCore.VanillaAssetExpansion
             SpaceCore.Instance.Helper.Events.Content.AssetRequested += Content_AssetRequested;
 
             SpaceEvents.AddWalletItems += SpaceEvents_AddWalletItems;
+            SpaceEvents.AfterGiftGiven += SpaceEvents_AfterGiftGiven;
+        }
+
+
+        private void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)
+        {
+            var farmer = sender as Farmer;
+            if (farmer != Game1.player) return;
+
+            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
+            if (!dict.TryGetValue(e.Npc.Name, out var npcEntry))
+                return;
+
+            if (!npcEntry.GiftEventTriggers.TryGetValue(e.Gift.ItemId, out string eventStr))
+                return;
+
+            string[] data = eventStr.Split('/');
+            string eid = data[0];
+
+            Game1.PlayEvent(eid, checkPreconditions: false);
         }
 
         private static void SpaceEvents_AddWalletItems(object sender, EventArgs e)
@@ -39,13 +61,14 @@ namespace SpaceCore.VanillaAssetExpansion
             }
         }
 
-        private static void Content_AssetRequested(object sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
+        private static void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
         {
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/ObjectExtensionData"))
-                e.LoadFrom(() => new Dictionary<string, ObjectExtensionData>(), StardewModdingAPI.Events.AssetLoadPriority.Low);
+                e.LoadFrom(() => new Dictionary<string, ObjectExtensionData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/WalletItems"))
-                e.LoadFrom(() => new Dictionary<string, WalletItem>(), StardewModdingAPI.Events.AssetLoadPriority.Low);
-
+                e.LoadFrom(() => new Dictionary<string, WalletItem>(), AssetLoadPriority.Low);
+            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/NpcExtensionData"))
+                e.LoadFrom(() => new Dictionary<string, NpcExtensionData>(), AssetLoadPriority.Low);
         }
     }
 }
