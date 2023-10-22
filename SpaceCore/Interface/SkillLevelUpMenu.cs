@@ -224,6 +224,10 @@ namespace SpaceCore.Interface
             this.populateClickableComponentList();
             this.RepositionOkButton();
         }
+        public override bool overrideSnappyMenuCursorMovementBan()
+        {
+            return true;
+        }
         public virtual void RepositionOkButton()
         {
             this.okButton.bounds = new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64);

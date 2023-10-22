@@ -32,6 +32,7 @@ namespace ConstellationVoyage
         private float currBoatRot = 0;
 
         private Vector2 targetBoatPos;
+        private float? targetBoatRot;
 
         private List<Island> islands = new();
 
@@ -58,6 +59,7 @@ namespace ConstellationVoyage
             currBoatPos = new Vector2(50, 50) * Game1.tileSize;
             currBoatRot = 0;
             targetBoatPos = Vector2.Zero;
+            targetBoatRot = 0;
 
             islands.Clear();
 
@@ -78,18 +80,37 @@ namespace ConstellationVoyage
         {
             if (xTile == 51 && yTile == 53)
                 return true;
+            if (xTile == 54 && yTile == 53)
+                return true;
+            if (xTile == 54 && yTile == 55)
+                return true;
             return base.isActionableTile(xTile, yTile, who);
         }
 
         public override bool checkAction(xTile.Dimensions.Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
         {
-            if (tileLocation.X == 51 && tileLocation.Y == 53)
+            if (tileLocation.X == 51 && tileLocation.Y == 53) // Pile of rope, true world position
             {
-                targetBoatPos = currBoatPos + new Vector2( 15, 15 ) * Game1.tileSize;
+                targetBoatPos = currBoatPos + Vector2.Transform(new Vector2(15, 0) * Game1.tileSize, Matrix.CreateRotationZ(-currBoatRot));
+                //*
                 islands.Add(new()
                 {
-                    tilePos = new Vector2((int)(targetBoatPos.X / Game1.tileSize), (int)(targetBoatPos.Y / Game1.tileSize)) + new Vector2(-4, 7)
+                    tilePos = new Vector2((int)(targetBoatPos.X / Game1.tileSize), (int)(targetBoatPos.Y / Game1.tileSize)) + new Vector2(-4, 6)
                 }); ;
+                //*/
+            }
+            else if (tileLocation.X == 54 && tileLocation.Y == 53) // Edge of boat wall, true world position
+            {
+                targetBoatRot = 0;
+            }
+            else if (tileLocation.X == 54 && tileLocation.Y == 55) // Edge of boat wall, true world position
+            {
+                if (targetBoatRot.HasValue)
+                    targetBoatRot += (float)Math.PI / 8;
+                else
+                {
+                    targetBoatRot = currBoatRot + (float)Math.PI / 8;
+                }
             }
             return base.checkAction(tileLocation, viewport, who);
         }
@@ -116,37 +137,39 @@ namespace ConstellationVoyage
                 island.scaleFactor = new(Math.Min(4, island.scaleFactor.X + 0.025f), Math.Min(4, island.scaleFactor.Y + 0.025f));
             }
 
-            const float ROTATE_SPEED = 0.025f;
+            const float ROTATE_SPEED = 0.0025f; // Roughly radians per tick?
+            const float MOVE_SPEED = 5f; // Roughly pixels per tick?
+
+            // Move the boat position if needed
             if (targetBoatPos != Vector2.Zero)
             {
-                float targetBoatRot = MathF.Atan2(targetBoatPos.Y - currBoatPos.Y, targetBoatPos.X - currBoatPos.X);
-                if (currBoatRot != targetBoatRot)
+                if (Vector2.Distance(targetBoatPos, currBoatPos) <= MOVE_SPEED)
                 {
-                    float dist = angleDist(currBoatRot, targetBoatRot);
-                    currBoatRot += MathF.Sign(dist) * ROTATE_SPEED;
-                    if (MathF.Abs(currBoatRot - targetBoatRot) < ROTATE_SPEED)
-                        currBoatRot = targetBoatRot;
+                    currBoatPos = targetBoatPos;
+                    targetBoatPos = Vector2.Zero;
                 }
                 else
                 {
-                    const float MOVE_SPEED = 5;
-                    var oldBoatPos = currBoatPos;
-                    if (Vector2.Distance(targetBoatPos, currBoatPos) <= MOVE_SPEED)
-                    {
-                        currBoatPos = targetBoatPos;
-                        targetBoatPos = Vector2.Zero;
-                    }
-                    else
-                        currBoatPos += new Vector2(MathF.Cos(targetBoatRot) * MOVE_SPEED, MathF.Sin(targetBoatRot) * MOVE_SPEED);
-                    (Game1.background as SpaceBackground).offset += new Vector2(MOVE_SPEED, 0);
+                    Vector2 vecToTarget = Vector2.Normalize(targetBoatPos - currBoatPos);
+                    currBoatPos += Vector2.Multiply(vecToTarget, MOVE_SPEED);
+                    (Game1.background as SpaceBackground).offset += Vector2.Multiply(vecToTarget, MOVE_SPEED);
+                    SpaceShared.Log.Debug($"Current boat position {currBoatPos}");
                 }
             }
-            else if ( currBoatRot != 0 )
+            // Rotate the boat if needed
+            if ( targetBoatRot.HasValue )
             {
-                float dist = angleDist(currBoatRot, 0);
-                currBoatRot += MathF.Sign(dist) * ROTATE_SPEED;
-                if (MathF.Abs(currBoatRot - 0) < ROTATE_SPEED)
-                    currBoatRot = 0;
+                if (MathF.Abs(targetBoatRot.Value - currBoatRot) < ROTATE_SPEED)
+                {
+                    currBoatRot = targetBoatRot.Value;
+                    targetBoatRot = null;
+                }
+                else
+                {
+                    float dist = angleDist(currBoatRot, targetBoatRot.Value);
+                    currBoatRot += MathF.Sign(dist) * ROTATE_SPEED;
+                    SpaceShared.Log.Debug($"Current boat rotation {currBoatRot} -> " + targetBoatRot);
+                }
             }
         }
 
@@ -213,11 +236,10 @@ namespace ConstellationVoyage
             base.draw(b);
 
             var dreamscape = Game1.content.Load<Texture2D>("Maps/EmilyDreamscapeTiles");
-            currBoatRot = 20 * MathF.PI / 180;
             foreach (var island in islands)
             {
                 Vector2 pos = new((int)island.tilePos.X * Game1.tileSize, (int)island.tilePos.Y * Game1.tileSize);
-                //pos = Game1.GlobalToLocal(pos);
+                Vector2 islandRelativePos = pos - currBoatPos;
 
                 var back = islandMap.GetLayer("Back");
 
@@ -227,32 +249,19 @@ namespace ConstellationVoyage
                     Vector2 tilePos = new(i / back.LayerWidth, i % back.LayerWidth);
                     tilePos *= Game1.tileSize;
 
-                    /*
+                    Vector2 relativeDist = islandRelativePos + tilePos; // Relative vector to boat
+
+                    // Apply rotation matrix on this vector
                     Matrix m2 = Matrix.Identity;
-                    m2 *= (Matrix.CreateTranslation(pos.X, pos.Y, 0));
-                    m2 *= Matrix.CreateRotationZ(-currBoatRot);
-                    //m2 *= (Matrix.CreateScale(island.scaleFactor.X / 4, island.scaleFactor.Y / 4, 1));
+                    m2 *= Matrix.CreateRotationZ(currBoatRot);
 
-                    m2 *= (Matrix.CreateTranslation(boatMapPos.X - currBoatPos.X, boatMapPos.Y - currBoatPos.Y, 0));
+                    // Add rotated vector back to boat location
+                    Vector2 tilePosTmp = Vector2.Transform(relativeDist, m2) + boatMapPos;
 
-                    Vector2 tilePosTmp = Vector2.Transform(Vector2.Zero, m2);
-
-                    // I give up on figuring out this matrix stuff completely
-                    Vector2 a = pos + boatMapPos - currBoatPos;
-                    Vector2 d = a - tilePosTmp;
-                    float angle2 = MathF.Atan2(d.Y, d.X);
-                    m2 *= Matrix.CreateTranslation(MathF.Cos(angle2) * d.Length(), MathF.Sin(angle2) * d.Length(), 0);
-                    //*/
-
-                    Vector2 v0 = (pos + tilePos) - (currBoatPos - boatMapPos);
-                    Vector2 v1 = new(MathF.Cos(-currBoatRot) * v0.X + MathF.Sin(-currBoatRot) * v0.Y,
-                                     -MathF.Sin(-currBoatRot) * v0.X + MathF.Cos(-currBoatRot) * v0.Y);
-
-                    tilePos = (currBoatPos - boatMapPos) + v1;
-
-                    //tilePos += new Vector2(back.LayerWidth * Game1.tileSize / 2 + 16f, back.LayerHeight * Game1.tileSize / 2 + 16f);
-                    //tilePos += pos;
+                    // Set tile position
+                    tilePos = tilePosTmp;
                     tilePos = Game1.GlobalToLocal(tilePos);
+                    // Draw with rotation
                     b.Draw(dreamscape, tilePos, new Rectangle(tile.TileIndex % 8 * 16, tile.TileIndex / 8 * 16, 16, 16), Color.White, currBoatRot, Vector2.Zero, island.scaleFactor, SpriteEffects.None, 0);
                     ++i;
                 }

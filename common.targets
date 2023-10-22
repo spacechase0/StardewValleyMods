@@ -21,5 +21,6 @@
   <!--common mod build package options-->
   <PropertyGroup>
     <ModZipPath>$(SolutionDir)\_releases</ModZipPath>
+    <EnableModZip Condition="$(Configuration) != 'Release'">False</EnableModZip>
   </PropertyGroup>
 </Project>

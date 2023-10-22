@@ -584,7 +584,7 @@ namespace JsonAssets
             {
                 this.shopData.Add(new ShopDataEntry
                 {
-                    PurchaseFrom = "HatMouse",
+                    PurchaseFrom = hat.PurchaseFrom,
                     Price = hat.PurchasePrice,
                     PurchaseRequirements = ParsedConditions.AlwaysTrue,
                     Object = () => new Hat(hat.Name)
@@ -1182,6 +1182,7 @@ namespace JsonAssets
             }
         }
 
+        [EventPriority(EventPriority.High)]
         private void OnLoadStageChanged(object sender, LoadStageChangedEventArgs e)
         {
             if (e.NewStage == StardewModdingAPI.Enums.LoadStage.SaveParsed)

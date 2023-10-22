@@ -15,6 +15,7 @@ namespace JsonAssets.Data
         *********/
         /// <inheritdoc />
         public string Description { get; set; }
+        public string PurchaseFrom { get; set; } = "HatMouse";
         public int PurchasePrice { get; set; }
         public bool ShowHair { get; set; }
         public bool IgnoreHairstyleOffset { get; set; }

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using SpaceShared;
 
 namespace JsonAssets.Framework.ContentPatcher
 {
@@ -37,12 +39,16 @@ namespace JsonAssets.Framework.ContentPatcher
 
         public virtual bool UpdateContext()
         {
-            if (this.OldGen != ContentPatcherIntegration.IdsAssignedGen)
+            try
             {
-                this.OldGen = ContentPatcherIntegration.IdsAssignedGen;
-                this.UpdateContextImpl();
-                return true;
+                if (this.OldGen != ContentPatcherIntegration.IdsAssignedGen)
+                {
+                    this.OldGen = ContentPatcherIntegration.IdsAssignedGen;
+                    this.UpdateContextImpl();
+                    return true;
+                }
             }
+            catch (Exception e) { Log.Error("exception:"+e); throw e; }
             return false;
         }
 

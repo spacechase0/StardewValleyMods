@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 
@@ -77,14 +78,29 @@ namespace SpaceShared.UI
             if (this.Dropped)
             {
                 //if (Mouse.GetState().LeftButton == ButtonState.Released)
-                if ((Mouse.GetState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released ||
-                     Game1.input.GetGamePadState().Buttons.A == ButtonState.Pressed && Game1.oldPadState.Buttons.A == ButtonState.Released)
-                    && !justClicked)
+                if (Constants.TargetPlatform != GamePlatform.Android)
                 {
-                    Game1.playSound("drumkit6");
-                    this.Dropped = false;
-                    if (this.Parent.RenderLast == this)
-                        this.Parent.RenderLast = null;
+                    if ((Mouse.GetState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released ||
+                         Game1.input.GetGamePadState().Buttons.A == ButtonState.Pressed && Game1.oldPadState.Buttons.A == ButtonState.Released)
+                        && !justClicked)
+                    {
+                        Game1.playSound("drumkit6");
+                        this.Dropped = false;
+                        if (this.Parent.RenderLast == this)
+                            this.Parent.RenderLast = null;
+                    }
+                }
+                else
+                {
+                    if ((Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released ||
+                         Game1.input.GetGamePadState().Buttons.A == ButtonState.Pressed && Game1.oldPadState.Buttons.A == ButtonState.Released)
+                        && !justClicked)
+                    {
+                        Game1.playSound("drumkit6");
+                        this.Dropped = false;
+                        if (this.Parent.RenderLast == this)
+                            this.Parent.RenderLast = null;
+                    }
                 }
 
                 int tall = Math.Min(this.MaxValuesAtOnce, this.Choices.Length - this.ActivePosition) * this.Height;

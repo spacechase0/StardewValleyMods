@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 
@@ -72,8 +73,17 @@ namespace SpaceShared.UI
 
             if (this.Clicked)
                 this.DragScroll = true;
-            if (this.DragScroll && Mouse.GetState().LeftButton == ButtonState.Released)
-                this.DragScroll = false;
+            if (Constants.TargetPlatform != GamePlatform.Android)
+            {
+                if (this.DragScroll && Mouse.GetState().LeftButton == ButtonState.Released)
+                    this.DragScroll = false;
+            }
+            else
+            {
+                if (this.DragScroll && Game1.input.GetMouseState().LeftButton == ButtonState.Released)
+                    this.DragScroll = false;
+            }
+
 
             if (this.DragScroll)
             {
@@ -91,7 +101,7 @@ namespace SpaceShared.UI
 
             // Don't draw a scrollbar if scrolling is (currently) not possible.
             if (this.MaxTopRow == 0)
-                return; 
+                return;
 
             Rectangle back = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
             Vector2 front = new Vector2(back.X, back.Y + (this.Height - 40) * this.ScrollPercent);

@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Tools;
 
 namespace SpaceShared
 {
@@ -166,6 +167,45 @@ namespace SpaceShared
                 return new Color(t, p, v);
             else
                 return new Color(v, p, q);
+        }
+
+        // https://stackoverflow.com/a/57385008
+        public static IEnumerable<Color> GetColorGradient(Color from, Color to, int totalNumberOfColors)
+        {
+            if (totalNumberOfColors< 2)
+            {
+                throw new ArgumentException("Gradient cannot have less than two colors.", nameof(totalNumberOfColors));
+            }
+
+            double diffA = to.A - from.A;
+            double diffR = to.R - from.R;
+            double diffG = to.G - from.G;
+            double diffB = to.B - from.B;
+
+            var steps = totalNumberOfColors - 1;
+
+            var stepA = diffA / steps;
+            var stepR = diffR / steps;
+            var stepG = diffG / steps;
+            var stepB = diffB / steps;
+
+            yield return from;
+
+            for (var i = 1; i<steps; ++i)
+            {
+                yield return new Color(
+                    c(from.R, stepR),
+                    c(from.G, stepG),
+                    c(from.B, stepB),
+                    c(from.A, stepA));
+
+                    int c(int fromC, double stepC)
+                {
+                    return (int)Math.Round(fromC + stepC * i);
+                }
+            }
+
+            yield return to;
         }
 
         // Stolen from SMAPI

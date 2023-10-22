@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpaceShared;
 
 namespace JsonAssets.Framework.ContentPatcher
 {
@@ -23,7 +24,7 @@ namespace JsonAssets.Framework.ContentPatcher
         }
 
         public override IEnumerable<string> GetValues(string input)
-        {
+        { 
             if (!this.IsReady())
                 return Array.Empty<string>();
 

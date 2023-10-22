@@ -30,11 +30,22 @@ namespace SpaceCore.Patches
                 transpiler: this.GetHarmonyMethod(nameof(Transpile_PerformAction), after: "DaLion.ImmersiveProfessions")
             );
 
-            harmony.Patch(
-                original: this.RequireMethod<GameLocation>(nameof(GameLocation.answerDialogueAction)),
-                postfix: this.GetHarmonyMethod(nameof(After_AnswerDialogueAction)),
-                transpiler: this.GetHarmonyMethod(nameof(Transpile_AnswerDialogueAction), after: "DaLion.ImmersiveProfessions")
-            );
+            if (Constants.TargetPlatform != GamePlatform.Android)
+            {
+                harmony.Patch(
+                    original: this.RequireMethod<GameLocation>(nameof(GameLocation.answerDialogueAction)),
+                    postfix: this.GetHarmonyMethod(nameof(After_AnswerDialogueAction)),
+                    transpiler: this.GetHarmonyMethod(nameof(Transpile_AnswerDialogueAction), after: "DaLion.ImmersiveProfessions")
+                );
+            }
+            else
+            {
+                harmony.Patch(
+                    original: this.RequireMethod<GameLocation>(nameof(GameLocation.answerDialogueAction)),
+                    postfix: this.GetHarmonyMethod(nameof(After_AnswerDialogueAction)),
+                    transpiler: this.GetHarmonyMethod(nameof(GameLocationPatcher.Transpile_AnswerDialogueActionMobile), after: "DaLion.ImmersiveProfessions")
+                );
+            }
 
             harmony.Patch(
                 original: this.RequireMethod<GameLocation>(nameof(GameLocation.explode)),
@@ -98,6 +109,34 @@ namespace SpaceCore.Patches
 
             if (!isPatched)
                 Log.Warn("Failed to patch GameLocation.answerDialogueAction!");
+
+            return ret;
+        }
+
+
+        private static IEnumerable<CodeInstruction> Transpile_AnswerDialogueActionMobile(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            List<CodeInstruction> ret = new List<CodeInstruction>();
+            var codes = new List<CodeInstruction>(insns);
+            LocalBuilder listLocal = null;
+            bool isPatched = false;
+            for (int i = 0; i < codes.Count; i++)
+            {
+                if (listLocal == null && codes[i].opcode == OpCodes.Ldloc_S && (codes[i].operand as LocalBuilder).LocalType == typeof(List<Response>))
+                {
+                    listLocal = codes[i].operand as LocalBuilder;
+                }
+                if (!isPatched && CodeInstructionExtensions.Is(codes[i + 3], OpCodes.Ldstr, "Strings\\Locations:Sewer_DogStatueCancel"))
+                {
+                    ret.Add(new CodeInstruction(OpCodes.Ldloc_S, listLocal).WithLabels(codes[i].labels));
+                    ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Skills>(nameof(Skills.GetRespecCustomResponses))));
+                    ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<List<Response>>(nameof(List<Response>.AddRange))));
+                    codes[i].labels.Clear();
+
+                    isPatched = true;
+                }
+                ret.Add(codes[i]);
+            }
 
             return ret;
         }
