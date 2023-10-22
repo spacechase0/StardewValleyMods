@@ -28,7 +28,8 @@ namespace GiantOmelet
 
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
             Helper.Events.Player.Warped += OnWarped;
-            SpaceEvents.ActionActivated += OnActionActivated;
+
+            GameLocation.RegisterTileAction("GiantOmelet", OnActionActivated);
         }
 
         private void OnDayStarted(object sender, DayStartedEventArgs e)
@@ -64,11 +65,8 @@ namespace GiantOmelet
             e.NewLocation.map.LoadTileSheets(Game1.mapDisplayDevice);
         }
 
-        private void OnActionActivated(object sender, EventArgsAction e)
+        private bool OnActionActivated(GameLocation loc, string[] args, Farmer farmer, Point tile )
         {
-            if (e.Action != "GiantOmelet")
-                return;
-
             if (got)
                 WrathOfGus();
             else
@@ -77,10 +75,12 @@ namespace GiantOmelet
 
                 int qual = Game1.random.Next(4);
                 if (qual == 3) qual = 4;
-                var yum = new StardewValley.Object(195, Game1.random.Next(3) + 1, quality: qual);
+                var yum = new StardewValley.Object("195", Game1.random.Next(3) + 1, quality: qual);
                 Game1.player.addItemByMenuIfNecessary( yum );
                 Game1.player.holdUpItemThenMessage(yum, true);
             }
+
+            return true;
         }
 
         private void WrathOfGus()
