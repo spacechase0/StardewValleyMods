@@ -31,10 +31,4 @@
   <ItemGroup>
     <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="MiniscriptLib">
-      <HintPath>..\..\..\Miniscript\MiniscriptLib\bin\Debug\net5.0\MiniscriptLib.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 </Project>
