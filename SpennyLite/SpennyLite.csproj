@@ -3,7 +3,11 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <Name>Spenny Lite</Name>
+    <Description>Spenny - Lite edition</Description>
     <Version>1.0.4</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <UpdateKeys>Nexus:14249</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 </Project>

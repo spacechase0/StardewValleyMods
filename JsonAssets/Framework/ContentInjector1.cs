@@ -130,7 +130,6 @@ namespace JsonAssets.Framework
                         CategoryColorOverride = obj.CategoryColorOverride,
                         HideFromShippingCollection = obj.HideFromShippingCollection,
                         CanBeTrashed = obj.CanTrash,
-                        CanBeGifted = obj.CanBeGifted,
                         CanBeShipped = obj.CanSell,
                     });
                 }
@@ -148,25 +147,17 @@ namespace JsonAssets.Framework
             {
                 try
                 {
-                    string tags = string.Join(", ", obj.ContextTags);
+                    var tags = obj.ContextTags;
+                    if (!obj.CanBeGifted)
+                        tags.Add("not_giftable");
+                    string tagstr = string.Join(", ", tags);
                     Log.Verbose($"Injecting to object context tags: {obj.Name}: {tags}");
                     if (!data.TryGetValue(obj.Name, out string prevTags) || prevTags == "")
-                        data[obj.Name] = tags;
+                        data[obj.Name] = tagstr;
                 }
                 catch (Exception e)
                 {
                     Log.Error($"Exception injecting object context tags for {obj.Name}: {e}");
-                }
-            }
-            foreach (var crop in Mod.instance.Crops)
-            {
-                var obj = crop.Seed;
-                if (crop.CropType == CropType.Paddy)
-                {
-                    if (!data.TryGetValue(obj.Name, out string prevTags) || prevTags == "")
-                        data[obj.Name] = "paddy_crop";
-                    else
-                        data[obj.Name] = prevTags + ", paddy_crop";
                 }
             }
         }
@@ -194,6 +185,7 @@ namespace JsonAssets.Framework
                         DaysInPhase = new(crop.Phases),
                         RegrowDays = crop.RegrowthPhase,
                         IsRaised = crop.TrellisCrop,
+                        IsPaddyCrop = crop.CropType == CropType.Paddy,
                         HarvestItemId = "(O)" + crop.Product,
                         HarvestMinStack = crop.Bonus.MinimumPerHarvest,
                         HarvestMaxStack = crop.Bonus.MaximumPerHarvest,

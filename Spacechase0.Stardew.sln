@@ -818,8 +818,6 @@ Global
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{47ae89f2-87fc-4786-8855-9a2c3b51f943}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{47ae89f2-87fc-4786-8855-9a2c3b51f943}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{49163859-5988-47f6-a6a1-d8753959fa99}*SharedItemsImports = 5
-		SpaceSharedPatching\SpaceSharedPatching.projitems*{4c8538cc-9720-4b94-be88-f9e809b49268}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{4c8538cc-9720-4b94-be88-f9e809b49268}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{4fd1e284-556c-426d-90d7-dd9a431ce9b2}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{4fd1e284-556c-426d-90d7-dd9a431ce9b2}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{505f7d71-20b2-4010-ac06-79b1229a74c6}*SharedItemsImports = 5
@@ -842,7 +840,6 @@ Global
 		SpaceShared\SpaceShared.projitems*{7e4024e8-392d-4a65-a659-93e8cb261ffe}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{88148bd6-6609-4c27-8dca-4f4d6b01646a}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{9002aaed-277d-40f9-a6ac-91698952124c}*SharedItemsImports = 5
-		SpaceShared\SpaceShared.projitems*{95e3b0c8-60b2-49cc-91a4-b8ea936681d4}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{992be23f-a878-4788-8009-0aa9b099a707}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{9ae07ea1-4287-4344-aa71-50a4fc7d9567}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{a20de2a2-91a8-41fd-8cb5-75d0b7ff20f9}*SharedItemsImports = 5
@@ -864,6 +861,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{d73cf13c-3f6e-408d-ba11-49c4ea036514}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{daae6853-63d4-40b1-9318-800291b1aa66}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{ddce02ff-e34c-47e0-b293-b90ac68ef2f4}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{ee57d478-4069-4d4c-9b7c-337d51914c54}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
 	EndGlobalSection
