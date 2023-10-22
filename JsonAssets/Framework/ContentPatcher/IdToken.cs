@@ -44,8 +44,7 @@ namespace JsonAssets.Framework.ContentPatcher
         public override IEnumerable<string> GetValues(string input)
         { 
             if (!this.IsReady())
-                return new[]{"-12345" };
-            Array.Empty<string>();
+                return Array.Empty<string>();
 
             if (input == "")
                 return this.Ids.Values.Select(p => p.ToString()).ToArray();
