@@ -93,7 +93,6 @@ namespace JsonAssets
                 new Game1Patcher(),
                 new GiantCropPatcher(),
                 new HoeDirtPatcher(),
-                new RingPatcher(),
                 new ShopMenuPatcher()
             );
         }
