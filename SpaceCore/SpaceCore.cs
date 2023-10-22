@@ -18,7 +18,6 @@ using Newtonsoft.Json;
 using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceCore.Framework;
-using SpaceCore.Framework.ExtEngine;
 using SpaceCore.VanillaAssetExpansion;
 using SpaceCore.Interface;
 using SpaceCore.Patches;
@@ -273,11 +272,10 @@ namespace SpaceCore
             Event.RegisterCustomCommand("flash", FlashEventCommand); 
 
             Commands.Register();
-            ExtensionEngine.Init();
             VanillaAssetExpansion.VanillaAssetExpansion.Init();
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
-
+            
             this.Harmony = HarmonyPatcher.Apply(this,
                 new CraftingRecipePatcher(),
                 new FarmerPatcher(),

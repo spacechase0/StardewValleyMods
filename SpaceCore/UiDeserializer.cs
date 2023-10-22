@@ -10,17 +10,37 @@ using Microsoft.Xna.Framework.Graphics;
 using Miniscript;
 using SpaceCore.UI;
 using SpaceShared;
+using StardewModdingAPI;
 using StardewValley;
 
-namespace SpaceCore.Framework.ExtEngine
+namespace SpaceCore
 {
-
-    internal class UiDeserializer
+    public class UiExtraData
     {
-        internal Dictionary<string, Type> types = new();
+        public string Id { get; set; }
 
-        public UiDeserializer()
+        public Dictionary<string, string> ExtraFields { get; set; }
+
+        public object UserData { get; set; }
+    }
+
+    public class UiDeserializer
+    {
+        private Func<string, string> textLoader;
+        private Func<string, Texture2D> textureLoader;
+        private Func<string, string> tokenSubstituter;
+        private Func<string, bool> conditionChecker;
+
+        public Dictionary<string, Type> Types { get; } = new();
+
+
+        public UiDeserializer(Func<string, string> textLoader, Func<string, Texture2D> textureLoader, Func<string, string> tokenSubstituter = null, Func<string, bool> conditionChecker = null)
         {
+            this.textLoader = textLoader;
+            this.textureLoader = textureLoader;
+            this.tokenSubstituter = tokenSubstituter ?? ((s) => s);
+            this.conditionChecker = conditionChecker ?? ((s) => true);
+
             Type[] theTypes = new Type[]
             {
                 typeof( Button ),
@@ -42,19 +62,27 @@ namespace SpaceCore.Framework.ExtEngine
                 typeof( Textbox )
             };
             foreach (var type in theTypes)
-                types.Add(type.Name, type);
+                Types.Add(type.Name, type);
         }
 
-        public Element Deserialize(string pack, XmlReader reader, out List<Element> allElements, out List<string> extra)
+        public Element LoadFromFile(string path, out List<Element> allElements)
+        {
+            string markup = tokenSubstituter(textLoader(path));
+            using TextReader tr = new StringReader(markup);
+            using var xr = XmlReader.Create(tr);
+            xr.Read();
+            return Deserialize(xr, out allElements);
+        }
+
+        public Element Deserialize(XmlReader reader, out List<Element> allElements)
         {
             allElements = new();
-            return ReadElement(pack, reader, allElements, out extra);
+            return ReadElement(reader, allElements);
         }
 
-        private Element ReadElement(string pack, XmlReader reader, List<Element> allElements, out List<string> extra)
+        private Element ReadElement(XmlReader reader, List<Element> allElements)
         {
             Element elem;
-            extra = new();
 
             if (reader.Name == "Include")
             {
@@ -69,30 +97,30 @@ namespace SpaceCore.Framework.ExtEngine
                 }
 
                 bool doStuff = true;
-                if (attrs.ContainsKey("when") && !ExtensionEngine.CheckWhen(pack, attrs["when"]))
+                if (attrs.ContainsKey("when") && !conditionChecker(attrs["when"]))
                 {
                     reader.MoveToElement();
                     reader.ReadOuterXml();
                     return null;
                 }
 
-                string markup = ExtensionEngine.SubstituteTokens(pack, File.ReadAllText(Util.FetchFullPath(SpaceCore.Instance.Helper.ModRegistry, attrs[ "file" ])));
+                string markup = tokenSubstituter(textLoader(attrs["file"]));
                 using TextReader tr = new StringReader(markup);
                 using var xr = XmlReader.Create(tr);
                 xr.Read();
-                elem = new UiDeserializer().Deserialize(pack, xr, out List<Element> allElements2, out extra);
+                elem = Deserialize(xr, out List<Element> allElements2);
                 allElements.AddRange(allElements2);
 
                 goto AfterParsingAttributes;
             }
 
-            if (!types.ContainsKey(reader.Name))
+            if (!Types.ContainsKey(reader.Name))
             {
                 return null;
             }
 
-            Type t = types[reader.Name];
-            elem = ( Element ) t.GetConstructor(new Type[0]).Invoke( new object[ 0 ] );
+            Type t = Types[reader.Name];
+            elem = (Element)t.GetConstructor(new Type[0]).Invoke(new object[0]);
             elem.UserData = new UiExtraData();
             reader.MoveToFirstAttribute();
             for (int i = 0; i < reader.AttributeCount; ++i, reader.MoveToNextAttribute())
@@ -101,7 +129,7 @@ namespace SpaceCore.Framework.ExtEngine
                 reader.ReadAttributeValue();
                 string val = reader.Value;
 
-                if (!LoadPropertyToElement(pack, elem, name, val, extra))
+                if (!LoadPropertyToElement(elem, name, val))
                 {
                     elem = null;
                     goto AfterParsingAttributes;
@@ -109,7 +137,7 @@ namespace SpaceCore.Framework.ExtEngine
             }
 
         AfterParsingAttributes:
-            if ( elem != null )
+            if (elem != null)
                 allElements.Add(elem);
             reader.MoveToElement();
             //var children = reader.ReadSubtree();
@@ -123,13 +151,13 @@ namespace SpaceCore.Framework.ExtEngine
 
                 while (reader.NodeType != XmlNodeType.EndElement)
                 {
-                    var child = ReadElement(pack, reader, allElements, out List<string> extraTmp);
+                    var child = ReadElement(reader, allElements);
                     if (child != null && elem is Container container)
                     {
                         container.AddChild(child);
-                        if (extraTmp.Contains("CenterH"))
+                        if ((child.UserData as UiExtraData).ExtraFields.ContainsKey("CenterH"))
                             child.LocalPosition += new Vector2((container.Bounds.Size.ToVector2() - child.Bounds.Size.ToVector2()).X / 2, 0);
-                        if (extraTmp.Contains("CenterV"))
+                        if ((child.UserData as UiExtraData).ExtraFields.ContainsKey("CenterV"))
                             child.LocalPosition += new Vector2(0, (container.Bounds.Size.ToVector2() - child.Bounds.Size.ToVector2()).Y / 2);
                     }
                     reader.MoveToContent();
@@ -141,7 +169,7 @@ namespace SpaceCore.Framework.ExtEngine
             return elem;
         }
 
-        internal bool LoadPropertyToElement(string pack, Element elem, string name, string val, List<string> extra)
+        internal bool LoadPropertyToElement(Element elem, string name, string val)
         {
             var prop = elem.GetType().GetProperty(name);
             if (prop != null && name != "UserData")
@@ -175,7 +203,7 @@ namespace SpaceCore.Framework.ExtEngine
                 }
                 else if (name.Equals("when", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!ExtensionEngine.CheckWhen(pack, val))
+                    if (!conditionChecker(val))
                     {
                         elem = null;
                         return false;
@@ -184,35 +212,15 @@ namespace SpaceCore.Framework.ExtEngine
                 // TODO - abstract into functions section or something
                 else if (name == "LoadFromImage" && elem is Image image1)
                 {
-                    image1.Texture = Util.FetchTexture(SpaceCore.Instance.Helper.ModRegistry, val);
+                    image1.Texture = textureLoader(val);
                 }
                 else if (name == "LoadFromGame" && elem is Image image2)
                 {
-                    image2.Texture = Game1.content.Load< Texture2D >(val);
+                    image2.Texture = Game1.content.Load<Texture2D>(val);
                 }
-                else if (name == "OnClickFunction")
+                else
                 {
-                    (elem.UserData as UiExtraData).OnClickFunction = val;
-                }
-                else if (name == "ScriptData")
-                {
-                    (elem.UserData as UiExtraData).ScriptData = new ValString(val);
-                }
-                else if (name == "TooltipTitle")
-                {
-                    (elem.UserData as UiExtraData).TooltipTitle = val;
-                }
-                else if (name == "TooltipText")
-                {
-                    (elem.UserData as UiExtraData).TooltipText = val;
-                }
-                else if (name == "CenterH" && !val.Equals("false", StringComparison.OrdinalIgnoreCase))
-                {
-                    extra.Add("CenterH");
-                }
-                else if (name == "CenterV" && !val.Equals("false", StringComparison.OrdinalIgnoreCase))
-                {
-                    extra.Add("CenterV");
+                    (elem.UserData as UiExtraData).ExtraFields.Add(name, val);
                 }
             }
 

@@ -25,7 +25,7 @@ namespace SpaceCore.VanillaAssetExpansion
         }
 
 
-        private void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)
+        private static void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)
         {
             var farmer = sender as Farmer;
             if (farmer != Game1.player) return;
