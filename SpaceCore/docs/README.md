@@ -120,6 +120,22 @@ Provided functionality (this assumes you understand C# and the game code a littl
     * Generally, you create a `RootElement` that you put everything under, and set the `RootElement`s local position to where your window starts.
     * Every element has a local position, which offsets it from its parent's global position.
     * This is the same UI framework that GMCM uses.
+    * SpaceCore also includes a way to load these from an XML file, using the `UiDeserializer` class.
+        * It takes four functions in the constructor:
+            * `Func<string, string>` - loads text files, example: `(path) => File.ReadAllText( Path.Combine( Helper.DirectoryPath, path ) )`
+            * `Func<string, Texture2D>` - loads image files, example: `(path) => Helper.ModContent.Load<Texture2D>( path )`
+            * `Func<string, string>` - optional, preprocesses the loaded text file before deserializing, example that loads from your i18n file like Content Patcher's `i18n` token (with no arguments): `(s) => Regex.Replace( s, @"\{\{i18n:([a-zA-Z0-9_\-]+)\}\}", (m) => Helper.Translation.Get( m.Groups[0].Value.Trim() ) )`
+            * `Func<string, bool>` - optional, processes a conditon string, used for "When" as an attribute on an element.
+        * You then call the `LoadFromFile` function with the path to the XML file.
+            * There is an overload of this function that contains an additional `out List<Element>` parameter which contains all elements created during deserialization.
+        * It supports any type in the UI framework, and custom ones that you add to your `UiDeserializer` instance's `Types` property.
+        * It supports a special element called "Include", which will include elements from another file in its place, example: `<Include File="assets/container-of-cats.xml">`
+        * It supports two special attributes "CenterH" and "CenterV", which will center the element horizontally or vertically in its parent container when set, example: `<Label LocalPosition="0, 50" String="Meow?" CenterH="true" />`
+        * Another special attribute is "When", which will call your condition processor (fourth argument in the constructor) and exclude the element when it returns false.
+        * Every `Element` made will have its `UserData` field filled with an instance of the `UiExtraData` class, which contains the following:
+            * `Id` - a `string` that contains what was in the "Id" attribute of the element (useful with the overload of `LoadFromFile` that gives you a list containing all elements made)
+            * `ExtraFields` - a `Dictionary<string, string>` that contains all the attributes you put on the element in the XML that weren't used in deserialition.
+            * `UserData` - an `object` field for you to store whatever you want in
 * ExtEngine - scripting in content packs
     * TODO: Document this once it is more complete
 * Vanilla Asset Expansions

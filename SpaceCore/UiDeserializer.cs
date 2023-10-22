@@ -65,6 +65,11 @@ namespace SpaceCore
                 Types.Add(type.Name, type);
         }
 
+        public Element LoadFromFile(string path)
+        {
+            return LoadFromFile(path, out var _);
+        }
+
         public Element LoadFromFile(string path, out List<Element> allElements)
         {
             string markup = tokenSubstituter(textLoader(path));
