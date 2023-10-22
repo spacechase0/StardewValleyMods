@@ -96,7 +96,7 @@ Provided functionality (this assumes you understand C# and the game code a littl
     * `Texture2D IconTexture { get; }` - the texture of the icon for the recipe
     * `Rectangle? IconSubrect { get; }` - the subrect of the texture for the recipe icon, if any
     * `IngredientMatcher[] Ingredients`
-        * Use `ObjectIngredientMatcher(int index, int quantity)` if you want to match `StardewValley.Object` instances.
+        * Use `ObjectIngredientMatcher(string index, int quantity)` if you want to match `StardewValley.Object` instances.
         * Implement `IngredientMatcher` for other things:
             * `string DisplayName { get; }` - Display name of this ingredient.
             * `Texture2D IconTexture { get; }` - the texture of the icon for the ingredient
