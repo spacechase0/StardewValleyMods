@@ -1,14 +1,25 @@
-﻿{
-    "Name": "Mayo Rain",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "...",
-    "UniqueID": "spacechase0.MayoRain",
-    "EntryDll": "MayoRain.dll",
-    "UpdateKeys": [ "Nexus:" ],
-    "Dependencies": [
-        {
-            "UniqueID": "spacechase0.JsonAssets"
-        }
-    ]
+{
+  /*
+   | This file is automatically updated by ModManifestBuilder
+   | when the project is compiled.
+   | 
+   | Changes made to this file may be overwritten.
+   | 
+   */
+  "$schema": "https://smapi.io/schemas/manifest.json",
+  "UniqueID": "spacechase0.MayoRain",
+  "Name": "Mayo Rain",
+  "Author": "spacechase0",
+  "Version": "1.0.0-Debug",
+  "Description": "...",
+  "EntryDll": "MayoRain.dll",
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.JsonAssets"
+    }
+  ],
+  "UpdateKeys": [
+    "Nexus:17436",
+    "Nexus:"
+  ]
 }

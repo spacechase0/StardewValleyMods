@@ -239,7 +239,7 @@ namespace MoreRings
             if (this.HasRingEquipped(this.RingDiamondBooze))
             {
                 Buff tipsyBuff = null;
-                foreach (var buff in Game1.player.buffs.appliedBuffs)
+                foreach (var buff in Game1.player.buffs.AppliedBuffs)
                     if (buff.Key == Buff.tipsy)
                     {
                         tipsyBuff = buff.Value;

@@ -3,8 +3,11 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <Name>Junimos Accept Cash</Name>
+    <Description>Purchase community center bundles with gold.</Description>
     <Version>1.1.5</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <UpdateKeys>Nexus:7437</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

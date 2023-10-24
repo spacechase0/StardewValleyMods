@@ -44,7 +44,7 @@ namespace PyromancersJourney.Framework
 
             this.InitLevel("0");
 
-            Game1.changeMusicTrack("VolcanoMines", track_interruptable: false, Game1.MusicContext.MiniGame);
+            Game1.changeMusicTrack("VolcanoMines", track_interruptable: false, music_context: StardewValley.GameData.MusicContext.MiniGame);
         }
 
         public void Quit()
@@ -193,7 +193,7 @@ namespace PyromancersJourney.Framework
                     if (!Game1.player.hasOrWillReceiveMail("BeatPyromancersJourney"))
                     {
                         Game1.player.mailReceived.Add("BeatPyromancersJourney");
-                        Game1.player.addItemByMenuIfNecessaryElseHoldUp(new SObject(848, 25));
+                        Game1.player.addItemByMenuIfNecessaryElseHoldUp(new SObject("848", 25));
                     }
                     break;
             }

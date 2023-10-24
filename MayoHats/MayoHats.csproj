@@ -3,8 +3,14 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <Name>Mayo Hats</Name>
     <Version>1.0.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <UpdateKeys>Nexus:17514</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
+
+  <ItemGroup>
+    <SMAPIDependency Include="spacechase0.JsonAssets" />
+  </ItemGroup>
 </Project>
