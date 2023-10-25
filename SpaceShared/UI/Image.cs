@@ -11,7 +11,7 @@ namespace SpaceShared.UI
 {
     internal
 #endif
-         class Image : Element
+         class Image : Element, ISingleTexture
     {
         /*********
         ** Accessors

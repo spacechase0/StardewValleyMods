@@ -18,7 +18,7 @@ namespace SpaceCore
     {
         public string Id { get; set; }
 
-        public Dictionary<string, string> ExtraFields { get; set; }
+        public Dictionary<string, string> ExtraFields { get; set; } = new();
 
         public object UserData { get; set; }
     }
@@ -203,6 +203,7 @@ namespace SpaceCore
             {
                 if (name.Equals("id", StringComparison.OrdinalIgnoreCase))
                 {
+                    elem.UserData ??= new UiExtraData();
                     (elem.UserData as UiExtraData).Id = val;
                 }
                 else if (name.Equals("when", StringComparison.OrdinalIgnoreCase))
@@ -214,16 +215,17 @@ namespace SpaceCore
                     }
                 }
                 // TODO - abstract into functions section or something
-                else if (name == "LoadFromImage" && elem is Image image1)
+                else if (name == "LoadFromImage" && elem is ISingleTexture image1)
                 {
                     image1.Texture = textureLoader(val);
                 }
-                else if (name == "LoadFromGame" && elem is Image image2)
+                else if (name == "LoadFromGame" && elem is ISingleTexture image2)
                 {
                     image2.Texture = Game1.content.Load<Texture2D>(val);
                 }
                 else
                 {
+                    elem.UserData ??= new UiExtraData();
                     (elem.UserData as UiExtraData).ExtraFields.Add(name, val);
                 }
             }
