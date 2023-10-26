@@ -36,7 +36,7 @@ namespace SharingIsCaring
                 return;
 
             List<NPC> npcs = new();
-            foreach (var npc in Game1.currentLocation.getCharacters())
+            foreach (var npc in Game1.currentLocation.characters)
             {
                 if (!npc.isVillager() || alreadyShared.Contains(npc.Name))
                     continue;
@@ -80,7 +80,7 @@ namespace SharingIsCaring
                     choice.Stack--;
 
 
-                Game1.activeClickableMenu = new DialogueBox(new Dialogue("Wow, a " + clone.DisplayName + "! Thanks!", npc));
+                Game1.activeClickableMenu = new DialogueBox(new Dialogue(npc, "share", "Wow, a " + clone.DisplayName + "! Thanks!"));
 
                 return;
             }

@@ -3,8 +3,12 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <Name>Hybrid Crop Engine</Name>
+    <Description>Lets content packs add hybrid crops, which have a chance of appearing between two fully-grown parent crops.</Description>
     <Version>1.1.4</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <UpdateKeys>Nexus:6577</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

@@ -31,7 +31,8 @@ namespace SpaceShared.Migrations
                 for (int i = 0; i < location.buildings.Count; i++)
                 {
                     // get PyTK data
-                    if (location.buildings[i] is not Mill building || !PyTkMigrator.TryParseSerializedString(building.GetBuildingChest( "Input" )?.Name, out string actualType, out IDictionary<string, string> customData))
+                    var building = location.buildings[i];
+                    if (/*location.buildings[i] is not Mill building ||*/ !PyTkMigrator.TryParseSerializedString(building.GetBuildingChest( "Input" )?.Name, out string actualType, out IDictionary<string, string> customData))
                         continue;
 
                     // get replacement

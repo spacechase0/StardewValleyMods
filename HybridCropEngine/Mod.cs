@@ -6,6 +6,7 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.GameData.Crops;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 
@@ -29,7 +30,7 @@ namespace HybridCropEngine
             helper.Events.Content.AssetRequested += (_, e) =>
             {
                 if (e.NameWithoutLocale.IsEquivalentTo("Data/HybridCrops"))
-                    e.LoadFrom(() => new Dictionary<int, HybridCropData>(), AssetLoadPriority.Exclusive);
+                    e.LoadFrom(() => new Dictionary<string, HybridCropData>(), AssetLoadPriority.Exclusive);
             };
         }
 
@@ -60,7 +61,6 @@ namespace HybridCropEngine
 
             var hybrids = Game1.content.Load<Dictionary<string, HybridCropData>>("Data/HybridCrops");
             var hybridIndexByCrop = this.MakeHybridIndex(hybrids);
-            var cropsByIndex = this.MakeCropIndex();
 
             //*
             foreach (var hybrid in hybrids)
@@ -71,10 +71,6 @@ namespace HybridCropEngine
             {
                 Log.Trace("Hybrid Index: " + index.Key + " " + index.Value);
             }
-            foreach (var index in cropsByIndex)
-            {
-                Log.Trace("Crop Index: " + index.Key + " " + index.Value);
-            }
             //*/
 
             if (Mod.Config.ScanEverywhere)
@@ -83,25 +79,22 @@ namespace HybridCropEngine
                 var moreLocs = new List<GameLocation>();
                 foreach (var loc in locs)
                 {
-                    if (loc is BuildableGameLocation buildLoc)
+                    foreach (var building in loc.buildings)
                     {
-                        foreach (var building in buildLoc.buildings)
-                        {
-                            if (building.indoors.Value != null)
-                                moreLocs.Add(building.indoors.Value);
-                        }
+                        if (building.indoors.Value != null)
+                            moreLocs.Add(building.indoors.Value);
                     }
 
-                    this.GrowHybrids(loc, hybrids, hybridIndexByCrop, cropsByIndex);
+                    this.GrowHybrids(loc, hybrids, hybridIndexByCrop);
                 }
                 foreach (var loc in moreLocs)
-                    this.GrowHybrids(loc, hybrids, hybridIndexByCrop, cropsByIndex);
+                    this.GrowHybrids(loc, hybrids, hybridIndexByCrop);
             }
             else
             {
-                this.GrowHybrids(Game1.getFarm(), hybrids, hybridIndexByCrop, cropsByIndex);
-                this.GrowHybrids(Game1.getLocationFromName("Greenhouse"), hybrids, hybridIndexByCrop, cropsByIndex);
-                this.GrowHybrids(Game1.getLocationFromName("IslandWest"), hybrids, hybridIndexByCrop, cropsByIndex);
+                this.GrowHybrids(Game1.getFarm(), hybrids, hybridIndexByCrop);
+                this.GrowHybrids(Game1.getLocationFromName("Greenhouse"), hybrids, hybridIndexByCrop);
+                this.GrowHybrids(Game1.getLocationFromName("IslandWest"), hybrids, hybridIndexByCrop);
             }
         }
 
@@ -122,22 +115,7 @@ namespace HybridCropEngine
             return ret;
         }
 
-        private Dictionary<string, string> MakeCropIndex()
-        {
-            var ret = new Dictionary<string, string>();
-            var crops = Game1.content.Load<Dictionary<string, string>>("Data/Crops");
-            foreach (var crop in crops)
-            {
-                if (int.TryParse( crop.Key, out int iid ) && iid is >= 495 and <= 498)
-                    continue;
-
-                string[] fields = crop.Value.Split('/');
-                ret.Add(fields[2], crop.Key);
-            }
-            return ret;
-        }
-
-        private void GrowHybrids(GameLocation loc, Dictionary<string, HybridCropData> hybrids, Dictionary<ulong, string> hybridIndexes, Dictionary<string, string> cropSeedIndex)
+        private void GrowHybrids(GameLocation loc, Dictionary<string, HybridCropData> hybrids, Dictionary<ulong, string> hybridIndexes)
         {
             int baseSeed = loc.NameOrUniqueName.GetHashCode();
             baseSeed ^= (int)Game1.uniqueIDForThisGame;
@@ -185,7 +163,7 @@ namespace HybridCropEngine
                     string d = "";
                     foreach (var dirt in dirts)
                         d += (dirt == null) ? "null" : dirt.ToString();
-                    Log.Trace("dirts:" + d);
+                    //Log.Trace("dirts:" + d);
                     //*/
 
                     var combos = new List<HoeDirt[]>();
@@ -213,8 +191,8 @@ namespace HybridCropEngine
                     Random r = new Random(baseSeed + ix * loc.Map.Layers[0].LayerSize.Height + iy);
                     foreach (var combo in combos)
                     {
-                        ulong ca = (ulong)combo[0].crop.rowInSpriteSheet.Value;
-                        ulong cb = (ulong)combo[1].crop.rowInSpriteSheet.Value;
+                        ulong ca = (ulong)combo[0].crop.netSeedIndex.Value.GetDeterministicHashCode();
+                        ulong cb = (ulong)combo[1].crop.netSeedIndex.Value.GetDeterministicHashCode();
                         ulong code = (ca << 32) | cb;
 
                         if (!hybridIndexes.TryGetValue(code, out string index))
@@ -227,7 +205,7 @@ namespace HybridCropEngine
                         if (r.NextDouble() < hybridData.Chance)
                         {
                             //Log.trace( "Making hybrid @ " + ix + " " + iy );
-                            dirts[4].crop = new Crop(cropSeedIndex[index], ix, iy);
+                            dirts[4].crop = new Crop(index, ix, iy, loc);
                             break;
                         }
                     }

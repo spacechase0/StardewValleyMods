@@ -3,8 +3,10 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <Name>Realtime Minimap</Name>
     <Version>1.3.4</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <UpdateKeys>Nexus:9386</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
