@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SpaceShared.UI;
 using StardewValley;
 using StardewValley.Menus;
@@ -45,7 +46,7 @@ namespace Satchels
                 if (Game1.player.Items[ii] is Satchel s && s.isOpen.Value)
                 {
                     // TODO: Gamepad support
-                    invMenu.inventory.RemoveAt(ic--);
+                    invMenu.inventory[ic].visible = false;
                 }
             }
 
@@ -72,7 +73,7 @@ namespace Satchels
                     };
                     slot.Callback = (elem) =>
                     {
-                        slotClicked = (elem as ItemSlot);
+                        //slotClicked = (elem as ItemSlot);
                     };
                     slot.SecondaryCallback = slot.Callback;
                     slot.UserData = new SlotUserData() { Slot = i, Filter = (item) =>
@@ -123,12 +124,80 @@ namespace Satchels
                 container.AddChild(slot);
                 slots.Add(slot);
             }
+
+            {
+                var buttonTex = Mod.instance.Helper.ModContent.Load<Texture2D>("assets/buttons.png");
+                var depositAllButton = new Button()
+                {
+                    Texture = buttonTex,
+                    IdleTextureRect = new Rectangle(60, 0, 60, 60),
+                    HoverTextureRect = new Rectangle(60, 0, 60, 60),
+                    LocalPosition = new Vector2(width - 60 - 4, 16),
+                };
+                depositAllButton.Callback = (elem) =>
+                {
+                    Game1.playSound("stoneStep");
+                    for (int i = Farmer.hotbarSize; i < Game1.player.Items.Count; ++i)
+                    {
+                        var item = Game1.player.Items[i];
+                        if (item != null)
+                        {
+                            Game1.player.Items[i] = satchel.Inventory.DepositItem(item);
+                        }
+                    }
+                };
+                container.AddChild(depositAllButton);
+
+                var withdrawAllButton = new Button()
+                {
+                    Texture = buttonTex,
+                    IdleTextureRect = new Rectangle(0, 0, 60, 60),
+                    HoverTextureRect = new Rectangle(0, 0, 60, 60),
+                    LocalPosition = new Vector2(width - 60 - 4, 16 + 60 + 4),
+                };
+                withdrawAllButton.Callback = (elem) =>
+                {
+                    Game1.playSound("stoneStep");
+                    for (int i = 0; i < satchel.Inventory.Count; ++i)
+                    {
+                        var item = satchel.Inventory[i];
+                        if (item != null)
+                        {
+                            satchel.Inventory[i] = Game1.player.Items.DepositItem(item);
+                        }
+                    }
+                };
+                container.AddChild(withdrawAllButton);
+            }
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
             base.receiveLeftClick(x, y, playSound);
-            Game1.player.CursorSlotItem = invMenu.leftClick(x, y, Game1.player.CursorSlotItem, playSound);
+
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift))
+            {
+                foreach (var item in invMenu.inventory)
+                {
+                    if (!item.containsPoint(x, y))
+                        continue;
+                    int slotNum = Convert.ToInt32(item.name);
+                    if (invMenu.actualInventory.Count <= slotNum)
+                        continue;
+                    if (invMenu.actualInventory[slotNum] == null)
+                        break;
+                    if (invMenu.actualInventory[slotNum] is Satchel && !allowNestedSatchels)
+                        break;
+
+                    invMenu.actualInventory[slotNum] = satchel.Inventory.DepositItem(invMenu.actualInventory[slotNum]);
+                    Game1.playSound("dwop");
+                    break;
+                }
+            }
+            else
+            {
+                Game1.player.CursorSlotItem = invMenu.leftClick(x, y, Game1.player.CursorSlotItem, playSound);
+            }
 
             if (ItemWithBorder.HoveredElement is ItemSlot slot)
             {
@@ -136,19 +205,30 @@ namespace Satchels
                 {
                     return;
                 }
+                slotClicked = slot;
 
                 if (slot.Item == null && Game1.player.CursorSlotItem != null)
                 {
+                    Game1.playSound("stoneStep");
                     slot.Item = Game1.player.CursorSlotItem;
                     Game1.player.CursorSlotItem = null;
                 }
                 else if (slot.Item != null && Game1.player.CursorSlotItem == null)
                 {
-                    Game1.player.CursorSlotItem = slot.Item;
-                    slot.Item = null;
+                    Game1.playSound("dwop");
+                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift))
+                    {
+                        slot.Item = Game1.player.Items.DepositItem(slot.Item);
+                    }
+                    else
+                    {
+                        Game1.player.CursorSlotItem = slot.Item;
+                        slot.Item = null;
+                    }
                 }
                 else if (slot.Item != null && Game1.player.CursorSlotItem != null)
                 {
+                    Game1.playSound("stoneStep");
                     if (slot.Item.canStackWith(Game1.player.CursorSlotItem))
                     {
                         int left = slot.Item.addToStack(Game1.player.CursorSlotItem);
@@ -169,7 +249,73 @@ namespace Satchels
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
             base.receiveRightClick(x, y, playSound);
-            Game1.player.CursorSlotItem = invMenu.rightClick(x, y, Game1.player.CursorSlotItem, playSound);
+
+            foreach (var item in invMenu.inventory)
+            {
+                if (!item.containsPoint(x, y))
+                    continue;
+                int slotNum = Convert.ToInt32(item.name);
+                if (invMenu.actualInventory.Count <= slotNum)
+                    continue;
+                if (invMenu.actualInventory[slotNum] == null)
+                {
+                    Game1.playSound("stoneStep");
+                    if (Game1.player.CursorSlotItem.Stack > 1)
+                    {
+                        invMenu.actualInventory[slotNum] = Game1.player.CursorSlotItem.getOne();
+                        invMenu.actualInventory[slotNum].Stack = 1;
+                        Game1.player.CursorSlotItem.Stack -= 1;
+                    }
+                    else
+                    {
+                        invMenu.actualInventory[slotNum] = Game1.player.CursorSlotItem;
+                        Game1.player.CursorSlotItem = null;
+                    }
+                    break;
+                }
+
+                if (Game1.player.CursorSlotItem == null)
+                {
+                    Game1.playSound("dwop");
+                    if (invMenu.actualInventory[slotNum].Stack > 1)
+                    {
+                        Game1.player.CursorSlotItem = invMenu.actualInventory[slotNum].getOne();
+                        Game1.player.CursorSlotItem.Stack = invMenu.actualInventory[slotNum].Stack / 2;
+                        invMenu.actualInventory[slotNum].Stack = (int)Math.Ceiling(invMenu.actualInventory[slotNum].Stack / 2f);
+                    }
+                    else
+                    {
+                        Game1.player.CursorSlotItem = invMenu.actualInventory[slotNum];
+                        invMenu.actualInventory[slotNum] = null;
+                    }
+                }
+                else
+                {
+                    Game1.playSound("stoneStep");
+                    if (invMenu.actualInventory[slotNum].canStackWith(Game1.player.CursorSlotItem))
+                    {
+                        var one = Game1.player.CursorSlotItem.getOne();
+                        one.Stack = 1;
+                        int left = invMenu.actualInventory[slotNum].addToStack(one);
+                        if (left <= 0)
+                        {
+                            Game1.player.CursorSlotItem.Stack--;
+                            if (Game1.player.CursorSlotItem.Stack <= 0)
+                            {
+                                Game1.player.CursorSlotItem = null;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var tmp = Game1.player.CursorSlotItem;
+                        Game1.player.CursorSlotItem = invMenu.actualInventory[slotNum];
+                        invMenu.actualInventory[slotNum] = tmp;
+                    }
+                }
+
+                break;
+            }
 
             if (ItemWithBorder.HoveredElement is ItemSlot slot)
             {
@@ -178,9 +324,11 @@ namespace Satchels
                 {
                     return;
                 }
+                slotClicked = slot;
 
                 if (slot.Item == null && Game1.player.CursorSlotItem != null)
                 {
+                    Game1.playSound("stoneStep");
                     if (Game1.player.CursorSlotItem.Stack > 1)
                     {
                         slot.Item = Game1.player.CursorSlotItem.getOne();
@@ -195,6 +343,7 @@ namespace Satchels
                 }
                 else if (slot.Item != null && Game1.player.CursorSlotItem == null)
                 {
+                    Game1.playSound("dwop");
                     if (slot.Item.Stack > 1)
                     {
                         Game1.player.CursorSlotItem = slot.Item.getOne();
@@ -209,6 +358,7 @@ namespace Satchels
                 }
                 else if (slot.Item != null && Game1.player.CursorSlotItem != null)
                 {
+                    Game1.playSound("stoneStep");
                     if (slot.Item.canStackWith(Game1.player.CursorSlotItem))
                     {
                         var one = Game1.player.CursorSlotItem.getOne();
@@ -257,6 +407,7 @@ namespace Satchels
             }
 
             ui.Update();
+
             invMenu.update(time);
         }
 

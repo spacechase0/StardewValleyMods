@@ -165,7 +165,7 @@ namespace SpaceCore
                 typeof(NPC).GetMethod(nameof(NPC.getHome)),
                 typeof(NPC).GetMethod("prepareToDisembarkOnNewSchedulePath"),
                 typeof(NPC).GetMethod(nameof(NPC.parseMasterSchedule)),
-                typeof(NPC).GetMethod(nameof(NPC.TryLoadSchedule)),
+                typeof(NPC).GetMethod(nameof(NPC.TryLoadSchedule), new Type[ 0 ]),
                 typeof(NPC).GetMethod(nameof(NPC.resetForNewDay)),
                 typeof(NPC).GetMethod(nameof(NPC.dayUpdate)),
             };

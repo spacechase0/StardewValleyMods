@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using StardewValley;
+using StardewValley.Enchantments;
 
 namespace Satchels
 {

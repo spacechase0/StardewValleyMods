@@ -23,8 +23,7 @@ namespace JsonAssets.Framework
             //normalize with 
             this.Files = new Dictionary<string, Injector>
             {
-                {"Data\\ObjectInformation", this.InjectDataObjectInformation},
-                {"Data\\ObjectContextTags", this.InjectDataObjectContextTags},
+                {"Data\\Objects", this.InjectDataObjectInformation},
                 {"Data\\Crops", this.InjectDataCrops},
                 {"Data\\FruitTrees", this.InjectDataFruitTrees},
                 {"Data\\CookingRecipes", this.InjectDataCookingRecipes},
@@ -102,7 +101,7 @@ namespace JsonAssets.Framework
 
         private void InjectDataObjectInformation(IAssetData asset)
         {
-            var data = asset.AsDictionary<string, string>().Data;
+            var data = asset.AsDictionary<string, StardewValley.GameData.Objects.ObjectData>().Data;
             foreach (var obj in Mod.instance.Objects)
             {
                 try
@@ -140,27 +139,6 @@ namespace JsonAssets.Framework
             }
         }
 
-        private void InjectDataObjectContextTags(IAssetData asset)
-        {
-            var data = asset.AsDictionary<string, string>().Data;
-            foreach (var obj in Mod.instance.Objects)
-            {
-                try
-                {
-                    var tags = obj.ContextTags;
-                    if (!obj.CanBeGifted)
-                        tags.Add("not_giftable");
-                    string tagstr = string.Join(", ", tags);
-                    Log.Verbose($"Injecting to object context tags: {obj.Name}: {tags}");
-                    if (!data.TryGetValue(obj.Name, out string prevTags) || prevTags == "")
-                        data[obj.Name] = tagstr;
-                }
-                catch (Exception e)
-                {
-                    Log.Error($"Exception injecting object context tags for {obj.Name}: {e}");
-                }
-            }
-        }
         private void InjectDataCrops(IAssetData asset)
         {
             var data = asset.AsDictionary<string, StardewValley.GameData.Crops.CropData>().Data;
@@ -186,7 +164,7 @@ namespace JsonAssets.Framework
                         RegrowDays = crop.RegrowthPhase,
                         IsRaised = crop.TrellisCrop,
                         IsPaddyCrop = crop.CropType == CropType.Paddy,
-                        HarvestItemId = "(O)" + crop.Product,
+                        HarvestItemId = "(O)" + crop.Product.ToString().FixIdJA(),
                         HarvestMinStack = crop.Bonus.MinimumPerHarvest,
                         HarvestMaxStack = crop.Bonus.MaximumPerHarvest,
                         HarvestMaxIncreasePerFarmingLevel = crop.Bonus.MaxIncreasePerFarmLevel,

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewValley;
+using StardewValley.Enchantments;
 using StardewValley.Inventories;
 using StardewValley.Menus;
 using StardewValley.Tools;

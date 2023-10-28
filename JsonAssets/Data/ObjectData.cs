@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
 using Microsoft.Xna.Framework;
@@ -64,17 +65,44 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        internal string GetObjectInformation()
+        internal StardewValley.GameData.Objects.ObjectData GetObjectInformation()
         {
-            int itype = (int)this.Category;
-            string catStr = (this.Category == ObjectCategory.Artifact ? "Arch" : $"{this.Category} {itype}");
-            if (this.Category == ObjectCategory.Ring)
-                catStr = "Ring";
-            string str = $"{this.Name}/{this.Price}/{this.Edibility}/" + catStr + $"/{this.LocalizedName()}/{this.LocalizedDescription()}/";
-            str += (this.EdibleIsDrink ? "drink" : "food") + "/";
-            str += $"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}";
-            str += $"/0/JA\\Object\\{Name}";
-            return str;
+            var ctx = ContextTags.ToList();
+            if ( !CanBeGifted )
+                ctx.Add("not_giftable");
+            var ret = new StardewValley.GameData.Objects.ObjectData()
+            {
+                Name = this.Name,
+                DisplayName = this.LocalizedName(),
+                Description = this.LocalizedDescription(),
+                Type = Category == ObjectCategory.Artifact ? "Arch" : (Category == ObjectCategory.Ring ? "Ring" : "Basic"),
+                Category = (int)this.Category,
+                Price = Price,
+                Texture = $"JA\\Object\\{Name}",
+                SpriteIndex = 0,
+                Edibility = Edibility,
+                IsDrink = EdibleIsDrink,
+                Buff = new()
+                {
+                    CustomAttributes = new()
+                    {
+                        FarmingLevel = EdibleBuffs.Farming,
+                        FishingLevel = EdibleBuffs.Fishing,
+                        MiningLevel = EdibleBuffs.Mining,
+                        LuckLevel = EdibleBuffs.Luck,
+                        ForagingLevel = EdibleBuffs.Foraging,
+                        MaxStamina = EdibleBuffs.MaxStamina,
+                        MagneticRadius = EdibleBuffs.MagnetRadius,
+                        Speed = EdibleBuffs.Speed,
+                        Defense = EdibleBuffs.Defense,
+                        Attack = EdibleBuffs.Attack,
+                    },
+                    Duration = EdibleBuffs.Duration,
+                },
+                ContextTags = ContextTags,
+            };
+
+            return ret;
         }
 
 

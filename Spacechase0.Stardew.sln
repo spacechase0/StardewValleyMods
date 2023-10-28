@@ -722,6 +722,7 @@ Global
 		{157AD988-F4F3-4945-BC7E-F28181B39576} = {8FEFBE16-BBBC-4EA0-829E-E5DCF15F0DFA}
 		{CB66640E-62E0-4EFE-B2F2-5C06720275F3} = {88541912-D5C2-4322-8079-4A949DF04384}
 		{505F7D71-20B2-4010-AC06-79B1229A74C6} = {88541912-D5C2-4322-8079-4A949DF04384}
+		{023C7F23-485A-4EFC-BC0B-37F0C0DEA930} = {D0B0ADAC-8978-404A-88DE-BDF4F70C5F6F}
 		{9002AAED-277D-40F9-A6AC-91698952124C} = {D0B0ADAC-8978-404A-88DE-BDF4F70C5F6F}
 		{16C65E62-E346-4AEA-809A-36EBC0442607} = {D0B0ADAC-8978-404A-88DE-BDF4F70C5F6F}
 		{B0EF91AB-2DD6-4240-98D9-E965ACF79F7C} = {D0B0ADAC-8978-404A-88DE-BDF4F70C5F6F}
@@ -860,6 +861,7 @@ Global
 		SpaceShared\SpaceShared.projitems*{be08ea2b-9860-4d20-b5b4-f3b2ff9da8ea}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{c3d5972f-cb65-4c85-8e1c-55c78a99940a}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{cb66640e-62e0-4efe-b2f2-5c06720275f3}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{d1e07ceb-a67f-4f02-a942-72d851412606}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{d73cf13c-3f6e-408d-ba11-49c4ea036514}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{daae6853-63d4-40b1-9318-800291b1aa66}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{db4253b3-b91a-4afa-9cf1-158b0bf332da}*SharedItemsImports = 5

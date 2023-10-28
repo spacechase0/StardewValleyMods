@@ -8,6 +8,9 @@ using SpaceShared;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Enchantments;
+using StardewValley.GameData.Objects;
+using StardewValley.GameData.Shops;
 using StardewValley.Inventories;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Menus;
@@ -132,10 +135,9 @@ namespace Satchels
                         ret.Add($"Satchel.T{i}",
                             new SatchelData()
                             {
-                                BaseTextureIndex = i, // TODO: tmp
+                                TextureIndex = i, // TODO: tmp
                                 DisplayName = I18n.GetByKey($"satchel.{i}.name"),
                                 Description = I18n.GetByKey($"satchel.{i}.description"),
-                                InlayTextureIndex = i,
                                 Capacity = 9 * (i + 1),
                                 MaxUpgrades = i,
                             });
@@ -162,20 +164,82 @@ namespace Satchels
                     var data = asset.AsDictionary<string, SpaceCore.VanillaAssetExpansion.ObjectExtensionData>().Data;
                     foreach (string upgrade in UpgradeList.Keys)
                     {
-                        data.Add(upgrade, new() { MaxStackSizeOverride = 1, CategoryTextOverride = I18n.Upgrade_CategoryText() });
+                        data.Add(upgrade, new()
+                        {
+                            MaxStackSizeOverride = 1,
+                            CategoryTextOverride = I18n.Upgrade_CategoryText(),
+                            HideFromShippingCollection = true,
+                        });
                     }
                 });
             }
-            else if (e.NameWithoutLocale.IsEquivalentTo("Data/ObjectInformation"))
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data/Objects"))
             {
                 e.Edit((asset) =>
                 {
-                    var data = asset.AsDictionary<string, string>().Data;
+                    var data = asset.AsDictionary<string, ObjectData>().Data;
                     int i = 0;
                     foreach (var upgrade in UpgradeList)
                     {
-                        data.Add(upgrade.Key, $"{upgrade.Value}/100/-300/Junk -999/" + I18n.GetByKey($"{upgrade.Value}.name") + "/" + I18n.GetByKey($"{upgrade.Value}.description") + $"////{i++}/{ModManifest.UniqueID}\\upgrades.png");
+                        data.Add(upgrade.Key, new ObjectData()
+                        {
+                            Name = upgrade.Key,
+                            DisplayName = I18n.GetByKey($"{upgrade.Value}.name"),
+                            Description = I18n.GetByKey($"{upgrade.Value}.description"),
+                            Texture = $"{ModManifest.UniqueID}\\upgrades.png",
+                            SpriteIndex = i,
+                            Type = "Junk",
+                            Category = StardewValley.Object.junkCategory,
+                            Price = 100,
+                        });
                     }
+                });
+            }
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data/Shops"))
+            {
+                e.Edit((asset) =>
+                {
+                    var data = asset.AsDictionary<string, ShopData>().Data;
+                    data["Blacksmith"].Items.Add(new()
+                    {
+                        Id = "Satchel 0",
+                        Price = 10000,
+                        TradeItemId = null,
+                        TradeItemAmount = 0,
+                        ItemId = "(SC0_S_S)Satchel.T0",
+                    });
+                    data["Blacksmith"].Items.Add(new()
+                    {
+                        Id = "Satchel 1",
+                        Price = 20000,
+                        TradeItemId = "334",
+                        TradeItemAmount = 15,
+                        ItemId = "(SC0_S_S)Satchel.T1",
+                    });
+                    data["Blacksmith"].Items.Add(new()
+                    {
+                        Id = "Satchel 2",
+                        Price = 30000,
+                        TradeItemId = "335",
+                        TradeItemAmount = 15,
+                        ItemId = "(SC0_S_S)Satchel.T2",
+                    });
+                    data["Blacksmith"].Items.Add(new()
+                    {
+                        Id = "Satchel 3",
+                        Price = 40000,
+                        TradeItemId = "336",
+                        TradeItemAmount = 15,
+                        ItemId = "(SC0_S_S)Satchel.T3",
+                    });
+                    data["Blacksmith"].Items.Add(new()
+                    {
+                        Id = "Satchel 4",
+                        Price = 50000,
+                        TradeItemId = "337",
+                        TradeItemAmount = 15,
+                        ItemId = "(SC0_S_S)Satchel.T4",
+                    });
                 });
             }
         }

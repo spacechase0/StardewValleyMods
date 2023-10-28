@@ -1641,7 +1641,7 @@ namespace JsonAssets
                 case MeleeWeapon weapon:
                     if (this.OldWeaponIds.ContainsKey(weapon.ItemId))
                         weapon.ItemId = this.OldWeaponIds[weapon.ItemId].FixIdJA();
-                    if (this.OldWeaponIds.ContainsKey(weapon.appearance.Value))
+                    if (weapon.appearance.Value != null && this.OldWeaponIds.ContainsKey(weapon.appearance.Value))
                         weapon.appearance.Value = this.OldWeaponIds[weapon.appearance.Value].FixIdJA();
                     break;
 

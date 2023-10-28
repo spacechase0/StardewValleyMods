@@ -35,7 +35,7 @@ namespace Satchels
         public override ParsedItemData GetData(string itemId)
         {
             var data = GetSpecificData(itemId);
-            return new ParsedItemData(this, itemId, data.BaseTextureIndex, data.BaseTexture, "Satchel." + itemId, data.DisplayName, data.Description, StardewValley.Object.equipmentCategory, null, data, false);
+            return new ParsedItemData(this, itemId, data.TextureIndex, data.Texture, "Satchel." + itemId, data.DisplayName, data.Description, StardewValley.Object.equipmentCategory, null, data, false);
         }
 
         public override Item CreateItem(ParsedItemData data)
