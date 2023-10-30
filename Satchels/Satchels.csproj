@@ -28,6 +28,6 @@
   <ItemGroup></ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
   </ItemGroup>
 </Project>

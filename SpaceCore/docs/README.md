@@ -146,6 +146,10 @@ Provided functionality (this assumes you understand C# and the game code a littl
         * `EatenHealthRestoredOverride` - integer, override how much health is restored on eating this item, default null (use vanilla method of calculation)
         * `EatenStaminaRestoredOverride` - integer, override how much stamina is restored on eating this item, default null (use vanilla method of calculation)
         * `MaxStackSizeOverride` - integer, override the max stack size of your item, default null (use vanilla amount)
+        * `TotemWarp` - allow a custom object to act as a warp totem, an object containing the following properties:
+            * `Location` - string, the location to warp to - ex. `"CommunityCenter"`
+            * `Position` - Vector2, the tile to warp to - ex. `"25, 15"`
+            * `Color` - Color, the color the screen should flash - ex. `{ "R": 0, "G": 0, "B": 255, "A": 255 }`
     * Weapons - Stored in the `CustomFields` on the weapon data asset object:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
     * Wallet items - You can now add items to the player wallet if they have a specified mail flag. Example [here](https://gist.github.com/spacechase0/a8f52196965ff630fc5bbcc6528bd9e5). It's a dictionary with the key being the mail flag, and the value being an object that contains:

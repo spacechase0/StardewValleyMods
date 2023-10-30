@@ -1449,6 +1449,60 @@ namespace JsonAssets
                 foreach (var id in this.OldBootsIds)
                     Log.Verbose("\tBoots " + id.Key + " = " + id.Value);
                 Log.Verbose("OLD IDS END");
+
+                Log.Verbose("(Removing ones that aren't loaded)");
+
+                // We need to remove IDs they aren't loaded so they don't get "fixed" so that
+                // other mods can migrate their own items if they migrate away from JA.
+                // The Dup* containers weren't originally intended for this, but hey, it works
+                var objs = LoadDictionary<string, int>("ids-objects.json");
+                foreach (string key in objs.Keys)
+                {
+                    if (!DupObjects.ContainsKey(key))
+                        OldObjectIds.Remove(objs[key].ToString());
+                }
+                var crops = LoadDictionary<string, int>("ids-crops.json");
+                foreach (string key in crops.Keys)
+                {
+                    if (!DupCrops.ContainsKey(key))
+                        OldCropIds.Remove(crops[key].ToString());
+                }
+                var ftrees = LoadDictionary<string, int>("ids-fruittrees.json");
+                foreach (string key in ftrees.Keys)
+                {
+                    if (!DupFruitTrees.ContainsKey(key))
+                        OldFruitTreeIds.Remove(ftrees[key].ToString());
+                }
+                var bigs = LoadDictionary<string, int>("ids-big-craftables.json");
+                foreach (string key in bigs.Keys)
+                {
+                    if (!DupBigCraftables.ContainsKey(key))
+                        OldBigCraftableIds.Remove(bigs[key].ToString());
+                }
+                var hats = LoadDictionary<string, int>("ids-hats.json");
+                foreach (string key in hats.Keys)
+                {
+                    if (!DupHats.ContainsKey(key))
+                        OldHatIds.Remove(hats[key].ToString());
+                }
+                var weapons = LoadDictionary<string, int>("ids-weapons.json");
+                foreach (string key in weapons.Keys)
+                {
+                    if (!DupWeapons.ContainsKey(key))
+                        OldWeaponIds.Remove(weapons[key].ToString());
+                }
+                var clothing = LoadDictionary<string, int>("ids-clothing.json");
+                foreach (string key in clothing.Keys)
+                {
+                    if (!DupShirts.ContainsKey(key) && !DupPants.ContainsKey(key))
+                        OldClothingIds.Remove(clothing[key].ToString());
+                }
+                var boots = LoadDictionary<string, int>("ids-boots.json");
+                foreach (string key in boots.Keys)
+                {
+                    if (!DupBoots.ContainsKey(key))
+                        OldBootsIds.Remove(boots[key].ToString());
+                }
             }
         }
 
@@ -1716,6 +1770,7 @@ namespace JsonAssets
                     break;
             }
 
+            item.ResetParentSheetIndex();
             return item;
         }
 
@@ -1785,16 +1840,27 @@ namespace JsonAssets
             if (crop is null || crop.indexOfHarvest.Value == null)
                 return;
 
-            if ( this.OldCropIds.ContainsKey( crop.rowInSpriteSheet.Value.ToString() ) )
+            if (this.OldObjectIds.ContainsKey(crop.indexOfHarvest.Value))
+                crop.indexOfHarvest.Value = this.OldObjectIds[crop.indexOfHarvest.Value].FixIdJA();
+            if (crop.netSeedIndex.Value != null && this.OldObjectIds.ContainsKey(crop.netSeedIndex.Value))
+                crop.netSeedIndex.Value = this.OldObjectIds[crop.netSeedIndex.Value].FixIdJA();
+            if (crop.netSeedIndex.Value == null)
+            {
+                foreach (var data in Game1.cropData)
+                {
+                    if (data.Value.HarvestItemId == crop.indexOfHarvest.Value)
+                    {
+                        crop.netSeedIndex.Value = data.Key;
+                        break;
+                    }
+                }
+            }
+
+            if (this.OldCropIds.ContainsKey(crop.rowInSpriteSheet.Value.ToString()))
             {
                 crop.overrideTexturePath.Value = "JA/Crop/" + this.OldCropIds[crop.rowInSpriteSheet.Value.ToString()].FixIdJA();
                 crop.rowInSpriteSheet.Value = 0;
             }
-
-            if (this.OldObjectIds.ContainsKey(crop.indexOfHarvest.Value))
-                crop.indexOfHarvest.Value = this.OldObjectIds[crop.indexOfHarvest.Value].FixIdJA();
-            if (this.OldObjectIds.ContainsKey(crop.netSeedIndex.Value))
-                crop.netSeedIndex.Value = this.OldObjectIds[crop.netSeedIndex.Value].FixIdJA();
         }
 
         /// <summary>Fix item IDs contained by a terrain feature, including the terrain feature itself.</summary>
