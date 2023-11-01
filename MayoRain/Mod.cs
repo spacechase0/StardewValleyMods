@@ -36,7 +36,7 @@ namespace MayoRain
                 return;
 
 
-            if (Game1.player.ActiveObject.ItemId == "Empty Mayo Jar")
+            if (Game1.player.ActiveObject?.ItemId == "Empty Mayo Jar")
             {
                 int id = 306;
                 if (Game1.random.NextDouble() < 0.1)

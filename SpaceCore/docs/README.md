@@ -18,6 +18,7 @@ Provided functionality (this assumes you understand C# and the game code a littl
     * `setActorScale actor factorX factorY` - reset with factorX/Y = 1 - this will probably not be positioned right after scaling and will need a position offset afterwards
     * `cycleActorColors actor durationInSeconds color [color...]` color=`R,G,B` - specify 1 or more. Specifying 1 will just mean it stays that color instead of cycling
     * `flash durationInSeconds`
+    * `setRaining locationContext true/false` - Sets a location context as raining (or not). In vanilla, valid location contexts are "Default", "Island", and "Desert" (case sensitive).
 * In the API provided through SMAPI's mod registry (see mod source for interface you can copy):
     * `string[] GetCustomSkills()` - Returns an array of skill IDs, one for each registered skill.
     * `int GetLevelForCustomSkill(Farmer farmer, string skill)` - Gets the level of the given `skill` for the given `farmer`.
@@ -138,8 +139,8 @@ Provided functionality (this assumes you understand C# and the game code a littl
             * `UserData` - an `object` field for you to store whatever you want in
 * Vanilla Asset Expansions
     * Objects - These are in the asset `spacechase0.SpaceCore/ObjectExtensionData`, which is a dictionary with the key being an object's unqualified item ID, and the value being an object containing the following fields:
-        * `CategoryTextOverride` - string, default null
-        * `CategoryColorOverride` - same format as Json Assets colors, default null
+        * `CategoryTextOverride` - string, default null (no override)
+        * `CategoryColorOverride` - same format as Json Assets colors, default null (no override)
         * `HideFromShippingCollection` - true/false, default false
         * `CanBeTrashed` - true/false, also prevents dropping, default true
         * `CanBeShipped` - true/false, default true

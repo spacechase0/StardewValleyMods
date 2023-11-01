@@ -269,7 +269,8 @@ namespace SpaceCore
             Event.RegisterCustomCommand("totemWarpEffect", TotemWarpEventCommand);
             Event.RegisterCustomCommand("setActorScale", SetActorScale);
             Event.RegisterCustomCommand("cycleActorColors", CycleActorColors);
-            Event.RegisterCustomCommand("flash", FlashEventCommand); 
+            Event.RegisterCustomCommand("flash", FlashEventCommand);
+            Event.RegisterCustomCommand("setRaining", SetRainingEventCommand);
 
             Commands.Register();
             VanillaAssetExpansion.VanillaAssetExpansion.Init();
@@ -532,6 +533,15 @@ namespace SpaceCore
             {
                 @event.CurrentCommand++;
             }
+        }
+
+        private void SetRainingEventCommand(Event @event, string[] args, EventContext context)
+        {
+            Game1.netWorldState.Value.GetWeatherForLocation(args[1]).IsRaining = Convert.ToBoolean(args[2]);
+            if (args[1] == "Default")
+                Game1.isRaining = true;
+
+            @event.CurrentCommand++;
         }
 
         public class NpcExtensionData
