@@ -1,0 +1,31 @@
+﻿{
+	/*********
+	** Generic config UI
+	*********/
+	// button text at the bottom of the in-game options menu
+	"button.mod-options": "Mod Seçenekleri",
+
+	// mod list UI
+	"list.editable-heading": "Modları Yapılandır",
+	"list.not-editable-heading": "Başlık ekranından düzenlenebilir:",
+	"list.keybindings": "Tuş Atamaları",
+
+	// mod config pages
+	"config.buttons.cancel": "İptal",
+	"config.buttons.reset-to-default": "Varsayılan",
+	"config.buttons.save": "Kaydet",
+	"config.buttons.save-and-close": "Kaydet ve Kapat",
+
+	"config.rebind-key.title": "Yeniden bağlama tuşu: {{optionName}}",
+	"config.rebind-key.simple-instructions": "Yeniden bağlamak için bir tuşa basın",
+	"config.rebind-key.combo-instructions": "Yeniden bağlamak için bir tuş kombinasyonuna basın",
+	"config.rebind-key.no-key": "(Yok)",
+
+	/*********
+	** Config options for Generic Mod Config Menu itself
+	*********/
+	"options.open-menu-key.name": "Menü tuşunu aç",
+	"options.open-menu-key.desc": "Menüyü açan bir tuş ataması.",
+	"options.scroll-speed.name": "Kaydırma hızı",
+	"options.scroll-speed.desc": "Yapılandırma menüsünü kaydırırken kaydırılacak alan satırlarının sayısı."
+}
