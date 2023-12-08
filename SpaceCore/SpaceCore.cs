@@ -82,11 +82,8 @@ namespace SpaceCore
             LocalBuilder scaleY = generator.DeclareLocal(typeof(float));
             LocalBuilder gradColor = generator.DeclareLocal(typeof(Color));
 
-            var funcIL = new List<CodeInstruction>(instructions);
-
-            // add the call to GetOrCreateValue to the start of the function
-            // and save the values to locals
-            var preload = new List<CodeInstruction>(){
+            var orig = new List<CodeInstruction>(instructions);
+            var ret = new List<CodeInstruction>(){
                 new(OpCodes.Ldarg_0),
                 new(OpCodes.Ldloca, scale),
                 new(OpCodes.Ldloca, scaleX),
@@ -94,90 +91,69 @@ namespace SpaceCore
                 new(OpCodes.Ldloca, gradColor),
                 new(OpCodes.Call, typeof(AnimatedSpriteDrawExtrasPatch3).GetMethod("getExtraValues", BindingFlags.Public | BindingFlags.Static)),
             };
-            funcIL.InsertRange(0, preload);
 
-            int ptr;
-            int num = 0;
-            bool complete = false;
-
-            // from the start, the first three *4 operations all need to mul
-            // by the scale values. Y, X, Y, in that order.
-            for (ptr = 0; ptr < funcIL.Count - 1; ++ptr) {
-                if (funcIL[ptr].opcode == OpCodes.Ldc_I4_4 && funcIL[ptr+1].opcode == OpCodes.Mul) {
-                    Log.Trace($"NPC.draw: inserting mul at {ptr}");
-                    funcIL.InsertRange(ptr+2, new List<CodeInstruction>(){
-                        new(OpCodes.Ldloc, (num == 2 ? scaleX : scaleY)),
+            int scaleCount = 0;
+            int whiteCount = 0;
+            int whiteSkip = 0;
+            int vecCount = 0;
+            int vecSkip = 1;
+            int drawCount = 0;
+            int drawSkip = 2;
+            for (int i = 0; i < orig.Count; ++i) {
+                if (whiteCount < 3 && orig[i].opcode == OpCodes.Call && orig[i].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
+                    ++whiteCount;
+                    if (whiteSkip > 0) {
+                        --whiteSkip;
+                        ret.Add(orig[i]);
+                    }
+                    else {
+                        whiteSkip = 1;
+                        Log.Trace($"NPC.draw: replacing Color.White at {i}");
+                        ret.Add(new CodeInstruction(OpCodes.Ldloc, gradColor));
+                    }
+                    continue;
+                }
+                if (drawCount < 3 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw")) {
+                    ++drawCount;
+                    if (drawSkip > 0) {
+                        --drawSkip;
+                        ret.Add(orig[i]);
+                    }
+                    else {
+                        Log.Trace($"NPC.draw: replacing SpriteBatch.Draw at {i}");
+                        ret.Add(new CodeInstruction(OpCodes.Callvirt, typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch).GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(Microsoft.Xna.Framework.Graphics.Texture2D), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Rectangle), typeof(Microsoft.Xna.Framework.Color), typeof(float), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Graphics.SpriteEffects), typeof(float)}, null)));
+                    }
+                    continue;
+                }
+                ret.Add(orig[i]);
+                if (i > 0 && scaleCount < 3 && orig[i-1].opcode == OpCodes.Ldc_I4_4 && orig[i].opcode == OpCodes.Mul ) {
+                    ++scaleCount;
+                    Log.Trace($"NPC.draw: inserting mul at {i}");
+                    ret.AddRange(new List<CodeInstruction>(){
+                        new(OpCodes.Ldloc, (scaleCount == 2 ? scaleX : scaleY)),
                         new(OpCodes.Mul),
                     });
-                    if (++num == 3) {
-                        complete = true;
-                        break;
-                    }
-                    ptr += 4;
                 }
-            }
-            if (!complete) {
-                Log.Error($"Aborting NPC.draw transpiler: expected 3 multiply instructions but found {num}");
-                return instructions;
-            }
-
-            num = 0;
-            complete = false;
-            // replace uses of Color.White with gradColor. there are three, but
-            // only the first and third ones are edited
-            for (; ptr < funcIL.Count; ++ptr) {
-                if (funcIL[ptr].opcode == OpCodes.Call && funcIL[ptr].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
-                    if (++num == 2) {
-                        continue;
+                if (i > 0 && vecCount < 2 && orig[i-1].opcode == OpCodes.Ldc_R4 && orig[i-1].operand.Equals(4f) && orig[i].opcode == OpCodes.Mul) {
+                    ++vecCount;
+                    if (vecSkip > 0) {
+                        --vecSkip;
                     }
-                    Log.Trace($"NPC.draw: replacing White at {ptr}");
-                    funcIL[ptr] = new CodeInstruction(OpCodes.Ldloc, gradColor);
-                    if (num == 3) {
-                        complete = true;
-                        break;
+                    else {
+                        Log.Trace($"NPC.draw: inserting vec2 mul at {i}");
+                        ret.AddRange(new List<CodeInstruction>(){
+                            new(OpCodes.Ldloc, scale),
+                            new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Multiply", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(float), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
+                        });
                     }
                 }
             }
-            if (!complete) {
-                Log.Error($"Aborting NPC.draw transpiler: expected 3 uses of Color.White but found {num}");
-                return instructions;
-            }
 
-            complete = false;
-            // inject one multiply by the vector2 scale. this also requires
-            // calling a different overload of SpriteBatch.Draw
-            for (; ptr < funcIL.Count - 1; ++ptr) {
-                if (funcIL[ptr].opcode == OpCodes.Ldc_R4 && funcIL[ptr].operand.Equals(4f) && funcIL[ptr+1].opcode == OpCodes.Mul) {
-                    Log.Trace($"NPC.draw: vector mul at {ptr}");
-                    funcIL.InsertRange(ptr+2, new List<CodeInstruction>(){
-                        new(OpCodes.Ldloc, scale),
-                        new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Multiply", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(float), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
-                    });
-                    ptr += 4;
-                    complete = true;
-                    break;
-                }
+            if (scaleCount < 3 || whiteCount < 3 || vecCount < 2 || drawCount < 3) {
+                Log.Error($"NPC.draw: some transpiler targets were not found. Aborting edit.");
+                return orig;
             }
-            if (!complete) {
-                Log.Error($"Aborting NPC.draw transpiler: failed to find expected scale multiply");
-                return instructions;
-            }
-            complete = false;
-            // (change the call)
-            for (; ptr < funcIL.Count; ++ptr) {
-                if (funcIL[ptr].opcode == OpCodes.Callvirt && ((MethodInfo)funcIL[ptr].operand).Name.Equals("Draw")) {
-                    Log.Trace($"NPC.draw: replacing Draw at {ptr}");
-                    funcIL[ptr] = new CodeInstruction(OpCodes.Callvirt, typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch).GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(Microsoft.Xna.Framework.Graphics.Texture2D), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Rectangle), typeof(Microsoft.Xna.Framework.Color), typeof(float), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Graphics.SpriteEffects), typeof(float)}, null));
-                    complete = true;
-                    break;
-                }
-            }
-            if (!complete) {
-                Log.Error($"Aborting NPC.draw transpiler: failed to find expected call to SpriteBatch.Draw");
-                return instructions;
-            }
-
-            return funcIL;
+            return ret;
         }
 
     }
