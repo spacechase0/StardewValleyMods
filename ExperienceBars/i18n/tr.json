@@ -1,0 +1,11 @@
+{
+	/*********
+	** Generic Mod Config Menu UI
+	*********/
+	"config.position-x.name": "X Konumu",
+	"config.position-x.tooltip": "Ekranın sol üst köşesine göre deneyim çubuklarının çizileceği piksel X konumu.",
+	"config.position-y.name": "Y Konumu",
+	"config.position-y.tooltip": "Ekranın sol üst köşesine göre deneyim çubuklarının çizileceği piksel Y konumu.",
+	"config.toggle-key.name": "Geçiş Düğmesi",
+	"config.toggle-key.tooltip": "Deneyim çubukları ekranını gösteren veya gizleyen düğme. Ekranı hareket ettirmek için Shift tuşuna ve bu düğmeye basın."
+}

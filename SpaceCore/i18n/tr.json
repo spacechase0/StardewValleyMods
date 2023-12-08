@@ -1,0 +1,7 @@
+﻿{
+    // Generic Mod Config Menu UI
+	"config.custom-skill-page.name": "Özel Beceri Sayfası",
+	"config.custom-skill-page.tooltip": "Özel beceri sayfasının gösterilip gösterilmeyeceği.\nBu, daha fazla beceri için yer olması için cüzdanın yerini değiştirecektir.",
+	"config.support-all-professions-mod.name": "Tüm Meslekler Modunu Destekle",
+	"config.support-all-professions-mod.tooltip": "Tüm Meslekler yüklendiğinde, SpaceCore aracılığıyla kaydedilen özel mesleklerin seviyelerine ulaşıldığında otomatik olarak uygulanıp uygulanmayacağı."
+}
