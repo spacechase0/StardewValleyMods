@@ -100,6 +100,8 @@ namespace SpaceCore
             int drawCount = 0;
             int drawSkip = 2;
             for (int i = 0; i < orig.Count; ++i) {
+                // replace uses of Color.White with extras.grad
+                // but only the first and third ones; skip #2
                 if (whiteCount < 3 && orig[i].opcode == OpCodes.Call && orig[i].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
                     ++whiteCount;
                     if (whiteSkip > 0) {
@@ -113,6 +115,8 @@ namespace SpaceCore
                     }
                     continue;
                 }
+                // replace a call to SpriteBatch.Draw (use a different overload).
+                // it's the third one
                 if (drawCount < 3 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw")) {
                     ++drawCount;
                     if (drawSkip > 0) {
@@ -125,7 +129,10 @@ namespace SpaceCore
                     }
                     continue;
                 }
+
                 ret.Add(orig[i]);
+                // append an extra scale multiplier to the first three *4
+                // operations we find. Y, X, Y, in that order.
                 if (i > 0 && scaleCount < 3 && orig[i-1].opcode == OpCodes.Ldc_I4_4 && orig[i].opcode == OpCodes.Mul ) {
                     ++scaleCount;
                     Log.Trace($"NPC.draw: inserting mul at {i}");
@@ -134,6 +141,8 @@ namespace SpaceCore
                         new(OpCodes.Mul),
                     });
                 }
+                // append a multiply by the vector2 extras.scale. this is why
+                // we had to change the Draw overload
                 if (i > 0 && vecCount < 2 && orig[i-1].opcode == OpCodes.Ldc_R4 && orig[i-1].operand.Equals(4f) && orig[i].opcode == OpCodes.Mul) {
                     ++vecCount;
                     if (vecSkip > 0) {
@@ -185,11 +194,14 @@ namespace SpaceCore
             int scaleCount = 0;
             int drawCount = 0;
             for (int i = 0; i < orig.Count; ++i) {
+                // replace one use of Color.White with extras.grad
                 if (whiteCount < 1 && orig[i].opcode == OpCodes.Call && orig[i].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
                     ++whiteCount;
                     Log.Trace($"NPC.DrawBreathing: replacing Color.White at {i}");
                     ret.Add(new CodeInstruction(OpCodes.Ldloc, gradColor));
                 }
+                // add an extra vec2 multiply and vec2 add after applying
+                // breathScale
                 else if (i > 1 && scaleCount < 1 && orig[i-2].opcode == OpCodes.Ldc_R4 && orig[i-2].operand.Equals(4f) && orig[i-1].opcode == OpCodes.Mul && orig[i].opcode == OpCodes.Ldloc_2) {
                     ++scaleCount;
                     Log.Trace($"NPC.DrawBreathing: inserting vec2 mul/add at {i}");
@@ -203,6 +215,8 @@ namespace SpaceCore
                     });
                     ++i; // also omit following add instruction
                 }
+                // scale param is a vec2 now, so use a different overload for
+                // SpriteBatch.Draw
                 else if (drawCount < 1 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw")) {
                     ++drawCount;
                     Log.Trace($"NPC.DrawBreathing: replacing Draw at {i}");
