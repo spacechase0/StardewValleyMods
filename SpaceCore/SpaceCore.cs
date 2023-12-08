@@ -378,7 +378,8 @@ namespace SpaceCore
                 new SaveGamePatcher(serializerManager),
                 new SerializationPatcher(),
                 new UtilityPatcher(),
-                new HoeDirtPatcher()
+                new HoeDirtPatcher(),
+                new SkillBuffPatcher()
             );
             /*
             var ps = typeof(NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>>).GetProperties();
