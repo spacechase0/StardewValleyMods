@@ -173,42 +173,27 @@ namespace SpaceCore
             LocalBuilder scale = generator.DeclareLocal(typeof(Vector2));
             LocalBuilder gradColor = generator.DeclareLocal(typeof(Color));
 
-            var funcIL = new List<CodeInstruction>(instructions);
-
-            // add the call to GetOrCreateValue to the start of the function
-            // and save the values to locals
-            var preload = new List<CodeInstruction>(){
+            var orig = new List<CodeInstruction>(instructions);
+            var ret = new List<CodeInstruction>(){
                 new(OpCodes.Ldarg_0),
                 new(OpCodes.Ldloca, scale),
                 new(OpCodes.Ldloca, gradColor),
                 new(OpCodes.Call, typeof(AnimatedSpriteDrawExtrasPatch4).GetMethod("getExtraValues", BindingFlags.Public | BindingFlags.Static)),
             };
-            funcIL.InsertRange(0, preload);
 
-            int ptr;
-            bool complete = false;
-            // find the one use of Color.White and replace with gradColor
-            for (ptr = 4; ptr < funcIL.Count; ++ptr) {
-                if (funcIL[ptr].opcode == OpCodes.Call && funcIL[ptr].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
-                    Log.Trace($"NPC.DrawBreathing: replacing White at {ptr}");
-                    funcIL[ptr] = new CodeInstruction(OpCodes.Ldloc, gradColor);
-                    complete = true;
-                    break;
+            int whiteCount = 0;
+            int scaleCount = 0;
+            int drawCount = 0;
+            for (int i = 0; i < orig.Count; ++i) {
+                if (whiteCount < 1 && orig[i].opcode == OpCodes.Call && orig[i].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
+                    ++whiteCount;
+                    Log.Trace($"NPC.DrawBreathing: replacing Color.White at {i}");
+                    ret.Add(new CodeInstruction(OpCodes.Ldloc, gradColor));
                 }
-            }
-            if (!complete) {
-                Log.Error($"Aborting NPC.DrawBreathing transpiler: failed to find expected use of Color.White");
-                return instructions;
-            }
-
-            complete = false;
-            // inject scale multiply. also have to add a vector instead of just
-            // the single float
-            for (; ptr < funcIL.Count - 2; ++ptr) {
-                if (funcIL[ptr].opcode == OpCodes.Ldc_R4 && funcIL[ptr].operand.Equals(4f) && funcIL[ptr+1].opcode == OpCodes.Mul && funcIL[ptr+2].opcode == OpCodes.Ldloc_2) {
-                    Log.Trace($"NPC.DrawBreathing: vector mul/add at {ptr}");
-                    funcIL.RemoveRange(ptr+2, 2);
-                    funcIL.InsertRange(ptr+2, new List<CodeInstruction>(){
+                else if (i > 1 && scaleCount < 1 && orig[i-2].opcode == OpCodes.Ldc_R4 && orig[i-2].operand.Equals(4f) && orig[i-1].opcode == OpCodes.Mul && orig[i].opcode == OpCodes.Ldloc_2) {
+                    ++scaleCount;
+                    Log.Trace($"NPC.DrawBreathing: inserting vec2 mul/add at {i}");
+                    ret.AddRange(new List<CodeInstruction>(){
                         new(OpCodes.Ldloc, scale),
                         new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Multiply", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(float), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
                         new(OpCodes.Ldloc_2),
@@ -216,32 +201,23 @@ namespace SpaceCore
                         new(OpCodes.Newobj, typeof(Microsoft.Xna.Framework.Vector2).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, CallingConventions.HasThis, new Type[]{typeof(float), typeof(float)}, null)),
                         new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Addition", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
                     });
-                    ptr += 8;
-                    complete = true;
-                    break;
+                    ++i; // also omit following add instruction
+                }
+                else if (drawCount < 1 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw")) {
+                    ++drawCount;
+                    Log.Trace($"NPC.DrawBreathing: replacing Draw at {i}");
+                    ret.Add(new CodeInstruction(OpCodes.Callvirt, typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch).GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(Microsoft.Xna.Framework.Graphics.Texture2D), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Rectangle), typeof(Microsoft.Xna.Framework.Color), typeof(float), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Graphics.SpriteEffects), typeof(float)}, null)));
+                }
+                else {
+                    ret.Add(orig[i]);
                 }
             }
-            if (!complete) {
-                Log.Error($"Aborting NPC.DrawBreathing transpiler: failed to find expected scale multiply");
-                return instructions;
-            }
 
-            complete = false;
-            // change the call
-            for (; ptr < funcIL.Count; ++ptr) {
-                if (funcIL[ptr].opcode == OpCodes.Callvirt && ((MethodInfo)funcIL[ptr].operand).Name.Equals("Draw")) {
-                    Log.Trace($"NPC.DrawBreathing: replacing Draw at {ptr}");
-                    funcIL[ptr] = new CodeInstruction(OpCodes.Callvirt, typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch).GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(Microsoft.Xna.Framework.Graphics.Texture2D), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Rectangle), typeof(Microsoft.Xna.Framework.Color), typeof(float), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Graphics.SpriteEffects), typeof(float)}, null));
-                    complete = true;
-                    break;
-                }
+            if (whiteCount < 1 || scaleCount < 1 || drawCount < 1) {
+                Log.Error($"NPC.DrawBreathing: some transpiler targets were not found. Aborting edit.");
+                return orig;
             }
-            if (!complete) {
-                Log.Error($"Aborting NPC.DrawBreathing transpiler: failed to find expected call to SpriteBatch.Draw");
-                return instructions;
-            }
-
-            return funcIL;
+            return ret;
         }
     }
 
