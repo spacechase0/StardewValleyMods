@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -62,87 +63,175 @@ namespace SpaceCore
         }
     }
 
-    // TODO Transpiler
     [HarmonyPatch(typeof(NPC), "draw", new Type[] { typeof(SpriteBatch), typeof(float) })]
     public static class AnimatedSpriteDrawExtrasPatch3
     {
-        public static bool Prefix(NPC __instance, SpriteBatch b, float alpha, int ___shakeTimer, NetVector2 ___defaultPosition)
+        public static void getExtraValues(NPC who, ref Vector2 both, ref float x, ref float y, ref Color grad)
         {
-            var extras = SpaceCore.spriteExtras.GetOrCreateValue(__instance.Sprite);
-            int __instance_shakeTimer = SpaceCore.Instance.Helper.Reflection.GetField<int>(__instance, "shakeTimer").GetValue();
+            var extras = SpaceCore.spriteExtras.GetOrCreateValue(who.Sprite);
+            both = extras.scale;
+            x = extras.scale.X;
+            y = extras.scale.Y;
+            grad = (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White);
+        }
 
-            int standingY = __instance.StandingPixel.Y;
-            float mainLayerDepth = Math.Max(0f, __instance.drawOnTop ? 0.991f : ((float)standingY / 10000f));
-            if (__instance.Sprite.Texture == null)
-            {
-                Vector2 position = Game1.GlobalToLocal(Game1.viewport, __instance.Position);
-                Microsoft.Xna.Framework.Rectangle spriteArea = new Microsoft.Xna.Framework.Rectangle((int)position.X, (int)(position.Y - __instance.Sprite.SpriteWidth * 4 * extras.scale.Y), (int)(__instance.Sprite.SpriteWidth * 4 * extras.scale.X), (int)(__instance.Sprite.SpriteHeight * 4 * extras.scale.Y));
-                Utility.DrawErrorTexture(b, spriteArea, mainLayerDepth);
-            }
-            else
-            {
-                if (__instance.IsInvisible || (!Utility.isOnScreen(__instance.Position, 128) && (!__instance.eventActor || !(__instance.currentLocation is Summit))))
-                {
-                    return false;
-                }
-                if ((bool)__instance.swimming)
-                {
-                    b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(32f, 80 + __instance.yJumpOffset * 2) + ((__instance_shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero) - new Vector2(0f, __instance.yOffset), new Microsoft.Xna.Framework.Rectangle(__instance.Sprite.SourceRect.X, __instance.Sprite.SourceRect.Y, __instance.Sprite.SourceRect.Width, __instance.Sprite.SourceRect.Height / 2 - (int)(__instance.yOffset / 4f)), (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White), __instance.rotation, new Vector2(32f, 96f) / 4f, Math.Max(0.2f, __instance.scale.Value) * 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, mainLayerDepth);
-                    Vector2 localPosition = __instance.getLocalPosition(Game1.viewport);
-                    b.Draw(Game1.staminaRect, new Microsoft.Xna.Framework.Rectangle((int)localPosition.X + (int)__instance.yOffset + 8, (int)localPosition.Y - 128 + __instance.Sprite.SourceRect.Height * 4 + 48 + __instance.yJumpOffset * 2 - (int)__instance.yOffset, __instance.Sprite.SourceRect.Width * 4 - (int)__instance.yOffset * 2 - 16, 4), Game1.staminaRect.Bounds, Color.White * 0.75f, 0f, Vector2.Zero, SpriteEffects.None, (float)standingY / 10000f + 0.001f);
-                }
-                else
-                {
-                    b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(__instance.GetSpriteWidthForPositioning() * 4 / 2, __instance.GetBoundingBox().Height / 2) + ((__instance_shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), __instance.Sprite.SourceRect, (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White) * alpha, __instance.rotation, new Vector2(__instance.Sprite.SpriteWidth / 2, (float)__instance.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, __instance.scale.Value) * extras.scale * 4f, (__instance.flip || (__instance.Sprite.CurrentAnimation != null && __instance.Sprite.CurrentAnimation[__instance.Sprite.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, mainLayerDepth);
-                }
-                if (__instance.Breather && __instance_shakeTimer <= 0 && !__instance.swimming && __instance.Sprite.currentFrame < 16 && !__instance.farmerPassesThrough)
-                {
-                    Microsoft.Xna.Framework.Rectangle chestBox = __instance.Sprite.SourceRect;
-                    chestBox.Y += __instance.Sprite.SpriteHeight / 2 + __instance.Sprite.SpriteHeight / 32;
-                    chestBox.Height = __instance.Sprite.SpriteHeight / 4;
-                    chestBox.X += __instance.Sprite.SpriteWidth / 4;
-                    chestBox.Width = __instance.Sprite.SpriteWidth / 2;
-                    Vector2 chestPosition = new Vector2(__instance.Sprite.SpriteWidth * 4 / 2, 8f);
-                    if (__instance.Age == 2)
-                    {
-                        chestBox.Y += __instance.Sprite.SpriteHeight / 6 + 1;
-                        chestBox.Height /= 2;
-                        chestPosition.Y += __instance.Sprite.SpriteHeight / 8 * 4;
-                        Child child = __instance as Child;
-                        if (child != null)
-                        {
-                            switch (child.Age)
-                            {
-                                case 0:
-                                    chestPosition.X -= 12f;
-                                    break;
-                                case 1:
-                                    chestPosition.X -= 4f;
-                                    break;
-                            }
-                        }
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
+        {
+            LocalBuilder scale = generator.DeclareLocal(typeof(Vector2));
+            LocalBuilder scaleX = generator.DeclareLocal(typeof(float));
+            LocalBuilder scaleY = generator.DeclareLocal(typeof(float));
+            LocalBuilder gradColor = generator.DeclareLocal(typeof(Color));
+
+            var orig = new List<CodeInstruction>(instructions);
+            var ret = new List<CodeInstruction>(){
+                new(OpCodes.Ldarg_0),
+                new(OpCodes.Ldloca, scale),
+                new(OpCodes.Ldloca, scaleX),
+                new(OpCodes.Ldloca, scaleY),
+                new(OpCodes.Ldloca, gradColor),
+                new(OpCodes.Call, typeof(AnimatedSpriteDrawExtrasPatch3).GetMethod("getExtraValues", BindingFlags.Public | BindingFlags.Static)),
+            };
+
+            int scaleCount = 0;
+            int whiteCount = 0;
+            int whiteSkip = 0;
+            int vecCount = 0;
+            int vecSkip = 1;
+            int drawCount = 0;
+            int drawSkip = 2;
+            for (int i = 0; i < orig.Count; ++i) {
+                // replace uses of Color.White with extras.grad
+                // but only the first and third ones; skip #2
+                if (whiteCount < 3 && orig[i].opcode == OpCodes.Call && orig[i].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
+                    ++whiteCount;
+                    if (whiteSkip > 0) {
+                        --whiteSkip;
+                        ret.Add(orig[i]);
                     }
-                    else if (__instance.Gender == 1)
-                    {
-                        chestBox.Y++;
-                        chestPosition.Y -= 4f;
-                        chestBox.Height /= 2;
+                    else {
+                        whiteSkip = 1;
+                        Log.Trace($"NPC.draw: replacing Color.White at {i}");
+                        ret.Add(new CodeInstruction(OpCodes.Ldloc, gradColor));
                     }
-                    float breathScale = Math.Max(0f, (float)Math.Ceiling(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 600.0 + (double)(__instance.DefaultPosition.X * 20f))) / 4f);
-                    b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + chestPosition + ((__instance_shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), chestBox, (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White) * alpha, __instance.rotation, new Vector2(chestBox.Width / 2, chestBox.Height / 2 + 1), Math.Max(0.2f, __instance.scale.Value) * extras.scale * 4f + new Vector2(breathScale, breathScale), __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.992f : (((float)standingY + 0.01f) / 10000f)));
+                    continue;
                 }
-                if (__instance.isGlowing)
-                {
-                    b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(__instance.GetSpriteWidthForPositioning() * 4 / 2, __instance.GetBoundingBox().Height / 2) + ((__instance_shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), __instance.Sprite.SourceRect, __instance.glowingColor * __instance.glowingTransparency, __instance.rotation, new Vector2(__instance.Sprite.SpriteWidth / 2, (float)__instance.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, __instance.scale.Value) * 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.99f : ((float)standingY / 10000f + 0.001f)));
+                // replace a call to SpriteBatch.Draw (use a different overload).
+                // it's the third one
+                if (drawCount < 3 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw")) {
+                    ++drawCount;
+                    if (drawSkip > 0) {
+                        --drawSkip;
+                        ret.Add(orig[i]);
+                    }
+                    else {
+                        Log.Trace($"NPC.draw: replacing SpriteBatch.Draw at {i}");
+                        ret.Add(new CodeInstruction(OpCodes.Callvirt, typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch).GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(Microsoft.Xna.Framework.Graphics.Texture2D), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Rectangle), typeof(Microsoft.Xna.Framework.Color), typeof(float), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Graphics.SpriteEffects), typeof(float)}, null)));
+                    }
+                    continue;
                 }
-                if (__instance.IsEmoting && !Game1.eventUp && !(__instance is Child) && !(__instance is Pet))
-                {
-                    Vector2 emotePosition = __instance.getLocalPosition(Game1.viewport);
-                    emotePosition.Y -= 32 + __instance.Sprite.SpriteHeight * 4;
-                    b.Draw(Game1.emoteSpriteSheet, emotePosition, new Microsoft.Xna.Framework.Rectangle(__instance.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, __instance.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)standingY / 10000f);
+
+                ret.Add(orig[i]);
+                // append an extra scale multiplier to the first three *4
+                // operations we find. Y, X, Y, in that order.
+                if (i > 0 && scaleCount < 3 && orig[i-1].opcode == OpCodes.Ldc_I4_4 && orig[i].opcode == OpCodes.Mul ) {
+                    ++scaleCount;
+                    Log.Trace($"NPC.draw: inserting mul at {i}");
+                    ret.AddRange(new List<CodeInstruction>(){
+                        new(OpCodes.Ldloc, (scaleCount == 2 ? scaleX : scaleY)),
+                        new(OpCodes.Mul),
+                    });
+                }
+                // append a multiply by the vector2 extras.scale. this is why
+                // we had to change the Draw overload
+                if (i > 0 && vecCount < 2 && orig[i-1].opcode == OpCodes.Ldc_R4 && orig[i-1].operand.Equals(4f) && orig[i].opcode == OpCodes.Mul) {
+                    ++vecCount;
+                    if (vecSkip > 0) {
+                        --vecSkip;
+                    }
+                    else {
+                        Log.Trace($"NPC.draw: inserting vec2 mul at {i}");
+                        ret.AddRange(new List<CodeInstruction>(){
+                            new(OpCodes.Ldloc, scale),
+                            new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Multiply", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(float), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
+                        });
+                    }
                 }
             }
-            return false;
+
+            if (scaleCount < 3 || whiteCount < 3 || vecCount < 2 || drawCount < 3) {
+                Log.Error($"NPC.draw: some transpiler targets were not found. Aborting edit.");
+                return orig;
+            }
+            return ret;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(NPC), "DrawBreathing", new Type[] { typeof(SpriteBatch), typeof(float) })]
+    public static class AnimatedSpriteDrawExtrasPatch4
+    {
+        public static void getExtraValues(NPC who, ref Vector2 scale, ref Color grad)
+        {
+            var extras = SpaceCore.spriteExtras.GetOrCreateValue(who.Sprite);
+            scale = extras.scale;
+            grad = (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White);
+        }
+
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
+        {
+            LocalBuilder scale = generator.DeclareLocal(typeof(Vector2));
+            LocalBuilder gradColor = generator.DeclareLocal(typeof(Color));
+
+            var orig = new List<CodeInstruction>(instructions);
+            var ret = new List<CodeInstruction>(){
+                new(OpCodes.Ldarg_0),
+                new(OpCodes.Ldloca, scale),
+                new(OpCodes.Ldloca, gradColor),
+                new(OpCodes.Call, typeof(AnimatedSpriteDrawExtrasPatch4).GetMethod("getExtraValues", BindingFlags.Public | BindingFlags.Static)),
+            };
+
+            int whiteCount = 0;
+            int scaleCount = 0;
+            int drawCount = 0;
+            for (int i = 0; i < orig.Count; ++i) {
+                // replace one use of Color.White with extras.grad
+                if (whiteCount < 1 && orig[i].opcode == OpCodes.Call && orig[i].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
+                    ++whiteCount;
+                    Log.Trace($"NPC.DrawBreathing: replacing Color.White at {i}");
+                    ret.Add(new CodeInstruction(OpCodes.Ldloc, gradColor));
+                }
+                // add an extra vec2 multiply and vec2 add after applying
+                // breathScale
+                else if (i > 1 && scaleCount < 1 && orig[i-2].opcode == OpCodes.Ldc_R4 && orig[i-2].operand.Equals(4f) && orig[i-1].opcode == OpCodes.Mul && orig[i].opcode == OpCodes.Ldloc_2) {
+                    ++scaleCount;
+                    Log.Trace($"NPC.DrawBreathing: inserting vec2 mul/add at {i}");
+                    ret.AddRange(new List<CodeInstruction>(){
+                        new(OpCodes.Ldloc, scale),
+                        new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Multiply", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(float), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
+                        new(OpCodes.Ldloc_2),
+                        new(OpCodes.Ldloc_2),
+                        new(OpCodes.Newobj, typeof(Microsoft.Xna.Framework.Vector2).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, CallingConventions.HasThis, new Type[]{typeof(float), typeof(float)}, null)),
+                        new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Addition", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
+                    });
+                    ++i; // also omit following add instruction
+                }
+                // scale param is a vec2 now, so use a different overload for
+                // SpriteBatch.Draw
+                else if (drawCount < 1 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw")) {
+                    ++drawCount;
+                    Log.Trace($"NPC.DrawBreathing: replacing Draw at {i}");
+                    ret.Add(new CodeInstruction(OpCodes.Callvirt, typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch).GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(Microsoft.Xna.Framework.Graphics.Texture2D), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Rectangle), typeof(Microsoft.Xna.Framework.Color), typeof(float), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Graphics.SpriteEffects), typeof(float)}, null)));
+                }
+                else {
+                    ret.Add(orig[i]);
+                }
+            }
+
+            if (whiteCount < 1 || scaleCount < 1 || drawCount < 1) {
+                Log.Error($"NPC.DrawBreathing: some transpiler targets were not found. Aborting edit.");
+                return orig;
+            }
+            return ret;
         }
     }
 
@@ -290,7 +379,8 @@ namespace SpaceCore
                 new SaveGamePatcher(serializerManager),
                 new SerializationPatcher(),
                 new UtilityPatcher(),
-                new HoeDirtPatcher()
+                new HoeDirtPatcher(),
+                new SkillBuffPatcher()
             );
             /*
             var ps = typeof(NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>>).GetProperties();

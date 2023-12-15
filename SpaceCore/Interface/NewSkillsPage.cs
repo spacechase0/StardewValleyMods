@@ -311,7 +311,7 @@ namespace SpaceCore.Interface
                     int professionLevel = professionIndex - 1 + (professionIndex * 4);
                     Skills.Skill skill = Skills.GetSkill(skills[skillIndex]);
                     Skills.Skill.Profession profession = Skills.GetProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
-                    bool drawRed = Game1.player.GetCustomSkillLevel(skill) > professionLevel;
+                    bool drawRed = Game1.player.GetCustomBuffedSkillLevel(skill) > professionLevel;
                     List<string> professionLines = new List<string>();
                     string professionBlurb = "";
                     string professionTitle = "";
@@ -450,8 +450,8 @@ namespace SpaceCore.Interface
                 Skills.Skill skill = Skills.GetSkill(skills[skillIndex]);
                 int actualSkillIndex = gameSkillCount + skillIndex;
                 string hoverText = "";
-                if (Game1.player.GetCustomSkillLevel(skill) > 0)
-                    hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomSkillLevel(skill));
+                if (Game1.player.GetCustomBuffedSkillLevel(skill) > 0)
+                    hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomBuffedSkillLevel(skill));
                 ClickableTextureComponent textureComponent = new ClickableTextureComponent(
                     name: NewSkillsPage.CustomSkillPrefix + skill.GetName(),
                     bounds: new Rectangle(addedX - 128 - 48, drawY + (actualSkillIndex * 56), 148, 36),
@@ -991,10 +991,10 @@ namespace SpaceCore.Interface
                     bool addedSkill = false;
                     string skillTitle = "";
 
-                    drawRed = Game1.player.GetCustomSkillLevel(skill) > levelIndex;
+                    drawRed = Game1.player.GetCustomBuffedSkillLevel(skill) > levelIndex;
                     if (levelIndex == 0)
                         skillTitle = skill.GetName();
-                    skillLevel = Game1.player.GetCustomSkillLevel(skill);
+                    skillLevel = Game1.player.GetCustomBuffedSkillLevel(skill);
                     // TODO: Detect skill buffs? Is that even possible?
                     addedSkill = false; // (int)((NetFieldBase<int, NetInt>)Game1.player.addedFarmingLevel) > 0;
                     if (skillTitle.Length > 0)
