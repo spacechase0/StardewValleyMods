@@ -147,13 +147,13 @@ namespace QiChest
         {
             if (migrated)
             {
-                SpaceUtility.iterateAllItems((item) =>
+                Utility.ForEachItem((item) =>
                 {
                     if ( item is Chest c && c.SpecialChestType == Chest.SpecialChestTypes.JunimoChest && c.modData.ContainsKey(ModDataKey) )
                     {
                         c.GlobalInventoryId = $"QiChest_{c.modData[ModDataKey]}";
                     }
-                    return item;
+                    return true;
                 });
                 migrated = false;
             }

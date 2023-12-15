@@ -41,6 +41,7 @@ namespace Satchels
 
     public class Mod : StardewModdingAPI.Mod
     {
+        public const string AutoPickupDataKey = "spacechase0.Satchels/AutoPickupData";
 
         public static Mod instance;
 
@@ -48,7 +49,8 @@ namespace Satchels
         public static Dictionary<string, string> UpgradeList = new Dictionary<string, string>
         {
             { "spacechase0.Satchels_SatchelUpgrade_Crafting", "satchel-upgrade.crafting" },
-            { "spacechase0.Satchels_SatchelUpgrade_Cooking", "satchel-upgrade.cooking" }
+            { "spacechase0.Satchels_SatchelUpgrade_Cooking", "satchel-upgrade.cooking" },
+            { "spacechase0.Satchels_SatchelUpgrade_AutoPickup", "satchel-upgrade.auto-pickup" }
         };
 
         private static Satchel toOpen;
@@ -68,6 +70,10 @@ namespace Satchels
 
                 Vector2 pos = Utility.getTopLeftPositionForCenteringOnScreen(800 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2);
                 return new CraftingPage((int)pos.X, (int)pos.Y, 800 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2, cooking: upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_Cooking", true, new Chest[] { chest }.ToList());
+            }
+            else if (upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_AutoPickup")
+            {
+                return new SatchelFilterMenu(upgrade);
             }
 
             return null;
@@ -127,6 +133,17 @@ namespace Satchels
         {
             if (e.NameWithoutLocale.IsEquivalentTo($"{ModManifest.UniqueID}/Satchels"))
             {
+                int UpgradesForTier(int tier)
+                {
+                    switch (tier)
+                    {
+                        case 0: case 1: return 0;
+                        case 2: case 3: return 1;
+                        case 4: case 5: return 2;
+                        default: return 0;
+                    }
+                }
+
                 e.LoadFrom(() =>
                 {
                     Dictionary<string, SatchelData> ret = new();
@@ -139,7 +156,7 @@ namespace Satchels
                                 DisplayName = I18n.GetByKey($"satchel.{i}.name"),
                                 Description = I18n.GetByKey($"satchel.{i}.description"),
                                 Capacity = 9 * (i + 1),
-                                MaxUpgrades = i,
+                                MaxUpgrades = UpgradesForTier( i ),
                             });
                     }
                     return ret;
@@ -187,7 +204,7 @@ namespace Satchels
                             DisplayName = I18n.GetByKey($"{upgrade.Value}.name"),
                             Description = I18n.GetByKey($"{upgrade.Value}.description"),
                             Texture = $"{ModManifest.UniqueID}\\upgrades.png",
-                            SpriteIndex = i,
+                            SpriteIndex = i++,
                             Type = "Junk",
                             Category = StardewValley.Object.junkCategory,
                             Price = 100,
@@ -239,6 +256,24 @@ namespace Satchels
                         TradeItemId = "337",
                         TradeItemAmount = 15,
                         ItemId = "(SC0_S_S)Satchel.T4",
+                    });
+                    data["Carpenter"].Items.Add(new()
+                    {
+                        Id = "Satchel Crafting Upgrade",
+                        Price = 2500,
+                        ItemId = "(O)spacechase0.Satchels_SatchelUpgrade_Crafting",
+                    });
+                    data["Saloon"].Items.Add(new()
+                    {
+                        Id = "Satchel Cooking Upgrade",
+                        Price = 2500,
+                        ItemId = "(O)spacechase0.Satchels_SatchelUpgrade_Cooking",
+                    });
+                    data["ShadowShop"].Items.Add(new()
+                    {
+                        Id = "Satchel AutoPickup Upgrade",
+                        Price = 2500,
+                        ItemId = "(O)spacechase0.Satchels_SatchelUpgrade_AutoPickup",
                     });
                 });
             }

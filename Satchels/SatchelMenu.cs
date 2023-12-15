@@ -28,6 +28,9 @@ namespace Satchels
 
         private List<ItemSlot> slots = new();
 
+        private ClickableTextureComponent trashCan;
+        public float trashCanLidRotation;
+
         public SatchelMenu(Satchel satchel)
         : base(Game1.uiViewport.Width / 2 - 64 * 6 - IClickableMenu.borderWidth, Game1.uiViewport.Height / 2 - (64 * (satchel.Inventory.Count / 9 + 3)) / 2 - IClickableMenu.borderWidth, 64 * 12, 72 * (satchel.Inventory.Count / 9 + 3) + IClickableMenu.borderWidth * 2)
         {
@@ -169,6 +172,8 @@ namespace Satchels
                 };
                 container.AddChild(withdrawAllButton);
             }
+
+            this.trashCan = new ClickableTextureComponent(new Rectangle(xPositionOnScreen + width + 4, yPositionOnScreen + height - Game1.tileSize * 3 - Game1.tileSize / 2 - borderWidth - 104, Game1.tileSize, 104), Game1.mouseCursors, new Rectangle(564 + Game1.player.trashCanLevel * 18, 102, 18, 26), Game1.pixelZoom);
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
@@ -243,6 +248,12 @@ namespace Satchels
                         slot.Item = tmp;
                     }
                 }
+            }
+
+            if (trashCan != null && trashCan.containsPoint(x, y) && Game1.player.CursorSlotItem != null && Game1.player.CursorSlotItem.canBeTrashed())
+            {
+                Utility.trashItem(Game1.player.CursorSlotItem);
+                Game1.player.CursorSlotItem = null;
             }
         }
 
@@ -383,6 +394,32 @@ namespace Satchels
             }
         }
 
+        public override void performHoverAction(int x, int y)
+        {
+            base.performHoverAction(x, y);
+
+            if (trashCan != null)
+            {
+                if (trashCan.containsPoint(x, y))
+                {
+                    if (trashCanLidRotation <= 0f) Game1.playSound("trashcanlid");
+                    trashCanLidRotation = Math.Min(trashCanLidRotation + (float)(Math.PI / 48f), (float)Math.PI / 2f);
+
+                    /*
+                    if (Game1.player.CursorSlotItem != null && Utility.getTrashReclamationPrice(Game1.player.CursorSlotItem, Game1.player) > 0)
+                    {
+                        hoverText = Game1.content.LoadString("Strings\\UI:TrashCanSale");
+                        hoverAmount = Utility.getTrashReclamationPrice(Game1.player.CursorSlotItem, Game1.player);
+                    }
+                    */
+                }
+                else
+                {
+                    trashCanLidRotation = Math.Max(trashCanLidRotation - (float)(Math.PI / 48f), 0f);
+                }
+            }
+        }
+
         public override void update(GameTime time)
         {
             base.update(time);
@@ -417,6 +454,13 @@ namespace Satchels
 
             ui.Draw(b);
             invMenu.draw(b);
+
+
+            if (trashCan != null)
+            {
+                trashCan.draw(b);
+                b.Draw(Game1.mouseCursors, new Vector2(trashCan.bounds.X + 60, trashCan.bounds.Y + 40), new Rectangle(564 + Game1.player.trashCanLevel * 18, 129, 18, 10), Color.White, trashCanLidRotation, new Vector2(16, 10), Game1.pixelZoom, SpriteEffects.None, .86f);
+            }
 
             Game1.player.CursorSlotItem?.drawInMenu(b, Game1.getMousePosition().ToVector2(), 1);
 

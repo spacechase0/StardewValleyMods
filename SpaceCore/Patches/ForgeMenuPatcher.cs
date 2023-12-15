@@ -248,9 +248,6 @@ namespace SpaceCore.Patches
                 ret.Add(insn);
             }
 
-            foreach (var insn in ret)
-                Log.Debug($"{insn} {insn.labels.Count}");
-
             return ret;
         }
 

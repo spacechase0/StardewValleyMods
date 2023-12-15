@@ -5,7 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewValley;
+using StardewValley.Delegates;
 using StardewValley.Enchantments;
+using StardewValley.Internal;
 using StardewValley.Inventories;
 using StardewValley.Menus;
 using StardewValley.Tools;
@@ -23,15 +25,17 @@ namespace Satchels
         public Inventory Inventory => netInventory.Value;
         public Inventory Upgrades => netUpgrades.Value;
 
-        public NetRef<Inventory> netInventory = new(new());
-        public NetRef<Inventory> netUpgrades = new(new());
-        public NetBool isOpen { get; set; } = new(false);
+        public readonly NetString satchelName = new();
+        public readonly NetRef<Inventory> netInventory = new(new());
+        public readonly NetRef<Inventory> netUpgrades = new(new());
+        public readonly NetBool isOpen = new(false);
 
         public Satchel()
         {
-            NetFields.AddField(netInventory, nameof(this.netInventory));
-            NetFields.AddField(netUpgrades, nameof(this.netUpgrades));
-            NetFields.AddField(isOpen, nameof(this.isOpen));
+            NetFields.AddField(satchelName)
+                .AddField(netInventory)
+                .AddField(netUpgrades)
+                .AddField(isOpen);
 
             InstantUse = true;
         }
@@ -50,6 +54,9 @@ namespace Satchels
         {
             try
             {
+                if (!string.IsNullOrEmpty(satchelName.Value))
+                    return satchelName.Value;
+
                 var data = Game1.content.Load<Dictionary<string, SatchelData>>("spacechase0.Satchels/Satchels");
                 return data[ItemId].DisplayName;
             }
@@ -174,21 +181,16 @@ namespace Satchels
             return (enchantment is SatchelInceptionEnchantment);
         }
 
-        public override bool ForEachItem(Func<Item, bool> action, bool includeSelf = true)
+        public override bool ForEachItem(ForEachItemDelegate handler)
         {
-            if (!base.ForEachItem(action, includeSelf))
+            if (!base.ForEachItem(handler))
                 return false;
 
-            foreach (var item in Inventory)
-            {
-                if ( item?.ForEachItem( action ) == false )
-                    return false;
-            }
-            foreach (var item in Upgrades)
-            {
-                if (item?.ForEachItem(action) == false)
-                    return false;
-            }
+            if (!ForEachItemHelper.ApplyToList(Inventory, handler, true))
+                return false;
+
+            if (!ForEachItemHelper.ApplyToList(Upgrades, handler, true))
+                return false;
 
             return true;
         }
