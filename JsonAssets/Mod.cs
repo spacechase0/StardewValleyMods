@@ -1770,7 +1770,7 @@ namespace JsonAssets
                     break;
             }
 
-            item.ResetParentSheetIndex();
+            item?.ResetParentSheetIndex();
             return item;
         }
 
@@ -1823,7 +1823,7 @@ namespace JsonAssets
                         break;
                     }
 
-                    if (this.OldObjectIds.ContainsKey(pond.fishType.Value))
+                    if (pond.fishType.Value != null && this.OldObjectIds.ContainsKey(pond.fishType.Value))
                         pond.fishType.Value = this.OldObjectIds[pond.fishType.Value].FixIdJA();
                     pond.sign.Value = FixItem(pond.sign.Value) as SObject;
                     pond.output.Value = FixItem(pond.output.Value);

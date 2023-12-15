@@ -99,7 +99,7 @@ namespace JsonAssets.Data
                     },
                     Duration = EdibleBuffs.Duration,
                 },
-                ContextTags = ContextTags,
+                ContextTags = ctx,
             };
 
             return ret;

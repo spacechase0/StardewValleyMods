@@ -686,8 +686,10 @@ namespace SpaceCore
         /// <param name="e">The event arguments.</param>
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
+            /*
             if (e.NewMenu is StardewValley.Menus.ForgeMenu)
                 Game1.activeClickableMenu = new NewForgeMenu();
+            */
         }
     }
 }

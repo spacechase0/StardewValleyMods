@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,8 +16,6 @@ using StardewValley.Tools;
 
 namespace SpaceCore.Interface
 {
-    // Edited version of ForgeMenu
-    // Patching what we needed was getting tricky (and I was getting lazy, so TODO: port PATCH_NEEDS_PORTING as transpiler)
     public class NewForgeMenu : MenuWithInventory
     {
         //<MINE>

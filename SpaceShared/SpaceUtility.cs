@@ -63,6 +63,8 @@ namespace SpaceShared
             }
         }
 
+        // Base game not has a function for this
+        /*
         public static void iterateAllItems(Func<Item, Item> action)
         {
             foreach (GameLocation location in Game1.locations)
@@ -295,5 +297,6 @@ namespace SpaceShared
             }
             return action(i);
         }
+        */
     }
 }

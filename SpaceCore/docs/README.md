@@ -153,10 +153,6 @@ Provided functionality (this assumes you understand C# and the game code a littl
             * `Color` - Color, the color the screen should flash - ex. `{ "R": 0, "G": 0, "B": 255, "A": 255 }`
     * Weapons - Stored in the `CustomFields` on the weapon data asset object:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
-    * Wallet items - You can now add items to the player wallet if they have a specified mail flag. Example [here](https://gist.github.com/spacechase0/a8f52196965ff630fc5bbcc6528bd9e5). It's a dictionary with the key being the mail flag, and the value being an object that contains:
-        * `HoverText` - The text to show on hover
-        * `TexturePath` - The texture to use (you can use Content Patcher's `{{InternalAssetKey}}` token)
-        * `SpriteIndex` - The index in the texture to use for the sprite, default 0
     * NPCs - Stored in the asset `"spacechase0.SpaceCore/NpcExtensionData"`, which is a dictionary with the key being an NPC name, and the value being an object containing the following fields:
         * `GiftEventTriggers` - A dictionary with the keys being an object, and the values being an event to trigger when that item is given to the NPC.
             * The "event to trigger" needs to be the full event key (ID and preconditions) used in the events data file, so that SpaceCore can find the event.

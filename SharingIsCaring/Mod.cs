@@ -55,6 +55,7 @@ namespace SharingIsCaring
                 List<Item> choices = new();
                 foreach (var item in Game1.player.Items)
                 {
+                    if (item == null) continue;
                     int taste = npc.getGiftTasteForThisItem(item);
                     if (taste == NPC.gift_taste_love || taste == NPC.gift_taste_like)
                         choices.Add(item);
