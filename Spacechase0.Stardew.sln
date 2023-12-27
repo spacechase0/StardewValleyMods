@@ -210,8 +210,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SizableFish", "SizableFish\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LewisNightmare", "LewisNightmare\LewisNightmare.csproj", "{AA841829-B357-403E-B185-C57DB2C97A52}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedSocialInteractions", "AdvancedSocialMenu\AdvancedSocialInteractions.csproj", "{08A9F3C9-C9F5-40CF-BD16-12B06512AD52}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkillTraining", "SkillTraining\SkillTraining.csproj", "{5932C333-624B-44B3-AA0D-8955EDB8463E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MajesticArcana", "MajesticArcana\MajesticArcana.csproj", "{D73CF13C-3F6E-408D-BA11-49C4EA036514}"
@@ -220,8 +218,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MajesticArcana", "MajesticA
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNuance", "SocialNuance\SocialNuance.csproj", "{3831A331-9612-47F0-923C-BE7157E087DB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackstoryQuestionsFramework", "BackstoryQuestionsFramework\BackstoryQuestionsFramework.csproj", "{024D422A-0474-4D0D-BC23-E2E019791B15}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CavernMadness", "CavernMadness\CavernMadness.csproj", "{9AE07EA1-4287-4344-AA71-50A4FC7D9567}"
 EndProject
@@ -629,10 +625,6 @@ Global
 		{AA841829-B357-403E-B185-C57DB2C97A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA841829-B357-403E-B185-C57DB2C97A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA841829-B357-403E-B185-C57DB2C97A52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{08A9F3C9-C9F5-40CF-BD16-12B06512AD52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08A9F3C9-C9F5-40CF-BD16-12B06512AD52}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08A9F3C9-C9F5-40CF-BD16-12B06512AD52}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08A9F3C9-C9F5-40CF-BD16-12B06512AD52}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5932C333-624B-44B3-AA0D-8955EDB8463E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5932C333-624B-44B3-AA0D-8955EDB8463E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5932C333-624B-44B3-AA0D-8955EDB8463E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -645,10 +637,6 @@ Global
 		{3831A331-9612-47F0-923C-BE7157E087DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3831A331-9612-47F0-923C-BE7157E087DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3831A331-9612-47F0-923C-BE7157E087DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{024D422A-0474-4D0D-BC23-E2E019791B15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{024D422A-0474-4D0D-BC23-E2E019791B15}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{024D422A-0474-4D0D-BC23-E2E019791B15}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{024D422A-0474-4D0D-BC23-E2E019791B15}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9AE07EA1-4287-4344-AA71-50A4FC7D9567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9AE07EA1-4287-4344-AA71-50A4FC7D9567}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AE07EA1-4287-4344-AA71-50A4FC7D9567}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -783,7 +771,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SpaceShared\SpaceShared.projitems*{061610a4-7d02-4f52-a921-f59ed123c2a9}*SharedItemsImports = 13
-		SpaceShared\SpaceShared.projitems*{08a9f3c9-c9f5-40cf-bd16-12b06512ad52}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{08e2e2a4-2ce6-4b8b-9bb0-79573808b0d3}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{100b0e56-6ff4-48ea-97b6-6102cb68931e}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{100b0e56-6ff4-48ea-97b6-6102cb68931e}*SharedItemsImports = 5

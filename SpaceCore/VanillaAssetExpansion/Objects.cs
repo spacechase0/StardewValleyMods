@@ -8,7 +8,9 @@ using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Extensions;
+using StardewValley.GameData;
 using StardewValley.Menus;
+using StardewValley.Triggers;
 
 namespace SpaceCore.VanillaAssetExpansion
 {
@@ -35,8 +37,7 @@ namespace SpaceCore.VanillaAssetExpansion
         }
         public TotemWarpData TotemWarp { get; set; }
 
-        // might make you able to run arbritrary scripts?
-        //public string UsageScriptPath { get; set; } = null;
+        public bool UseForTriggerAction { get; set; } = false;
     }
 
     [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.getCategoryName))]
@@ -160,6 +161,19 @@ namespace SpaceCore.VanillaAssetExpansion
         public static bool Prefix(StardewValley.Object __instance, GameLocation location, ref bool __result)
         {
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
+            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].UseForTriggerAction)
+            {
+                if (!Game1.player.canMove || __instance.isTemporarilyInvisible)
+                {
+                    __result = false;
+                    return false;
+                }
+
+                TriggerActionManager.Raise("spacechase0.SpaceCore_OnItemUsed", new object[] { new KeyValuePair<string, object>("Location", Game1.player.currentLocation), new KeyValuePair<string, object>("Farmer", Game1.player), new KeyValuePair<string, object>("ItemId", __instance.QualifiedItemId) });
+
+                __result = true;
+                return true;
+            }
             if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].TotemWarp != null)
             {
                 if (!Game1.player.canMove || __instance.isTemporarilyInvisible)

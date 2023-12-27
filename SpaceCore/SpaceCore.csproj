@@ -31,4 +31,10 @@
   <ItemGroup>
     <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="docs\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

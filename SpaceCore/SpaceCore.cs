@@ -32,280 +32,11 @@ using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Network;
 using StardewValley.Objects;
-using static SpaceCore.SpaceCore;
+using StardewValley.Triggers;
+using SpaceCore.UI;
 
 namespace SpaceCore
 {
-    [HarmonyPatch(typeof(AnimatedSprite), "draw", new Type[] { typeof(SpriteBatch), typeof(Vector2), typeof(float) })]
-    public static class AnimatedSpriteDrawExtrasPatch1
-    {
-        public static bool Prefix(AnimatedSprite __instance, SpriteBatch b, Vector2 screenPosition, float layerDepth)
-        {
-            if (__instance.Texture != null)
-            {
-                var extras = SpaceCore.spriteExtras.GetOrCreateValue(__instance);
-                b.Draw(__instance.Texture, screenPosition, __instance.sourceRect, extras.grad == null ? Color.White : extras.grad[ extras.currGradInd ], 0f, Vector2.Zero, 4f * extras.scale, (__instance.CurrentAnimation != null && __instance.CurrentAnimation[__instance.currentAnimationIndex].flip) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
-            }
-            return false;
-        }
-    }
-    [HarmonyPatch(typeof(AnimatedSprite), "draw", new Type[] { typeof(SpriteBatch), typeof(Vector2), typeof(float), typeof( int ), typeof( int ), typeof( Color ), typeof( bool ), typeof( float), typeof( float ), typeof( bool ) })]
-    public static class AnimatedSpriteDrawExtrasPatch2
-    {
-        public static bool Prefix(AnimatedSprite __instance, SpriteBatch b, Vector2 screenPosition, float layerDepth, int xOffset, int yOffset, Color c, bool flip = false, float scale = 1f, float rotation = 0f, bool characterSourceRectOffset = false)
-        {
-            if (__instance.Texture != null)
-            {
-                var extras = SpaceCore.spriteExtras.GetOrCreateValue(__instance);
-                b.Draw(__instance.Texture, screenPosition, new Rectangle(__instance.sourceRect.X + xOffset, __instance.sourceRect.Y + yOffset, __instance.sourceRect.Width, __instance.sourceRect.Height), Color.Lerp( c, (extras.grad == null ? Color.White : extras.grad[extras.currGradInd]), 0.5f), rotation, characterSourceRectOffset ? new Vector2(__instance.SpriteWidth / 2, (float)__instance.SpriteHeight * 3f / 4f) : Vector2.Zero, scale * extras.scale, (flip || (__instance.CurrentAnimation != null && __instance.CurrentAnimation[__instance.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
-            }
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(NPC), "draw", new Type[] { typeof(SpriteBatch), typeof(float) })]
-    public static class AnimatedSpriteDrawExtrasPatch3
-    {
-        public static void getExtraValues(NPC who, ref Vector2 both, ref float x, ref float y, ref Color grad)
-        {
-            var extras = SpaceCore.spriteExtras.GetOrCreateValue(who.Sprite);
-            both = extras.scale;
-            x = extras.scale.X;
-            y = extras.scale.Y;
-            grad = (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White);
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
-        {
-            LocalBuilder scale = generator.DeclareLocal(typeof(Vector2));
-            LocalBuilder scaleX = generator.DeclareLocal(typeof(float));
-            LocalBuilder scaleY = generator.DeclareLocal(typeof(float));
-            LocalBuilder gradColor = generator.DeclareLocal(typeof(Color));
-
-            var orig = new List<CodeInstruction>(instructions);
-            var ret = new List<CodeInstruction>(){
-                new(OpCodes.Ldarg_0),
-                new(OpCodes.Ldloca, scale),
-                new(OpCodes.Ldloca, scaleX),
-                new(OpCodes.Ldloca, scaleY),
-                new(OpCodes.Ldloca, gradColor),
-                new(OpCodes.Call, typeof(AnimatedSpriteDrawExtrasPatch3).GetMethod("getExtraValues", BindingFlags.Public | BindingFlags.Static)),
-            };
-
-            int scaleCount = 0;
-            int whiteCount = 0;
-            int whiteSkip = 0;
-            int vecCount = 0;
-            int vecSkip = 1;
-            int drawCount = 0;
-            int drawSkip = 2;
-            for (int i = 0; i < orig.Count; ++i) {
-                // replace uses of Color.White with extras.grad
-                // but only the first and third ones; skip #2
-                if (whiteCount < 3 && orig[i].opcode == OpCodes.Call && orig[i].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
-                    ++whiteCount;
-                    if (whiteSkip > 0) {
-                        --whiteSkip;
-                        ret.Add(orig[i]);
-                    }
-                    else {
-                        whiteSkip = 1;
-                        Log.Trace($"NPC.draw: replacing Color.White at {i}");
-                        ret.Add(new CodeInstruction(OpCodes.Ldloc, gradColor));
-                    }
-                    continue;
-                }
-                // replace a call to SpriteBatch.Draw (use a different overload).
-                // it's the third one
-                if (drawCount < 3 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw")) {
-                    ++drawCount;
-                    if (drawSkip > 0) {
-                        --drawSkip;
-                        ret.Add(orig[i]);
-                    }
-                    else {
-                        Log.Trace($"NPC.draw: replacing SpriteBatch.Draw at {i}");
-                        ret.Add(new CodeInstruction(OpCodes.Callvirt, typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch).GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(Microsoft.Xna.Framework.Graphics.Texture2D), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Rectangle), typeof(Microsoft.Xna.Framework.Color), typeof(float), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Graphics.SpriteEffects), typeof(float)}, null)));
-                    }
-                    continue;
-                }
-
-                ret.Add(orig[i]);
-                // append an extra scale multiplier to the first three *4
-                // operations we find. Y, X, Y, in that order.
-                if (i > 0 && scaleCount < 3 && orig[i-1].opcode == OpCodes.Ldc_I4_4 && orig[i].opcode == OpCodes.Mul ) {
-                    ++scaleCount;
-                    Log.Trace($"NPC.draw: inserting mul at {i}");
-                    ret.AddRange(new List<CodeInstruction>(){
-                        new(OpCodes.Ldloc, (scaleCount == 2 ? scaleX : scaleY)),
-                        new(OpCodes.Mul),
-                    });
-                }
-                // append a multiply by the vector2 extras.scale. this is why
-                // we had to change the Draw overload
-                if (i > 0 && vecCount < 2 && orig[i-1].opcode == OpCodes.Ldc_R4 && orig[i-1].operand.Equals(4f) && orig[i].opcode == OpCodes.Mul) {
-                    ++vecCount;
-                    if (vecSkip > 0) {
-                        --vecSkip;
-                    }
-                    else {
-                        Log.Trace($"NPC.draw: inserting vec2 mul at {i}");
-                        ret.AddRange(new List<CodeInstruction>(){
-                            new(OpCodes.Ldloc, scale),
-                            new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Multiply", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(float), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
-                        });
-                    }
-                }
-            }
-
-            if (scaleCount < 3 || whiteCount < 3 || vecCount < 2 || drawCount < 3) {
-                Log.Error($"NPC.draw: some transpiler targets were not found. Aborting edit.");
-                return orig;
-            }
-            return ret;
-        }
-
-    }
-
-    [HarmonyPatch(typeof(NPC), "DrawBreathing", new Type[] { typeof(SpriteBatch), typeof(float) })]
-    public static class AnimatedSpriteDrawExtrasPatch4
-    {
-        public static void getExtraValues(NPC who, ref Vector2 scale, ref Color grad)
-        {
-            var extras = SpaceCore.spriteExtras.GetOrCreateValue(who.Sprite);
-            scale = extras.scale;
-            grad = (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White);
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
-        {
-            LocalBuilder scale = generator.DeclareLocal(typeof(Vector2));
-            LocalBuilder gradColor = generator.DeclareLocal(typeof(Color));
-
-            var orig = new List<CodeInstruction>(instructions);
-            var ret = new List<CodeInstruction>(){
-                new(OpCodes.Ldarg_0),
-                new(OpCodes.Ldloca, scale),
-                new(OpCodes.Ldloca, gradColor),
-                new(OpCodes.Call, typeof(AnimatedSpriteDrawExtrasPatch4).GetMethod("getExtraValues", BindingFlags.Public | BindingFlags.Static)),
-            };
-
-            int whiteCount = 0;
-            int scaleCount = 0;
-            int drawCount = 0;
-            for (int i = 0; i < orig.Count; ++i) {
-                // replace one use of Color.White with extras.grad
-                if (whiteCount < 1 && orig[i].opcode == OpCodes.Call && orig[i].operand.Equals(typeof(Microsoft.Xna.Framework.Color).GetMethod("get_White", BindingFlags.Public | BindingFlags.Static))) {
-                    ++whiteCount;
-                    Log.Trace($"NPC.DrawBreathing: replacing Color.White at {i}");
-                    ret.Add(new CodeInstruction(OpCodes.Ldloc, gradColor));
-                }
-                // add an extra vec2 multiply and vec2 add after applying
-                // breathScale
-                else if (i > 1 && scaleCount < 1 && orig[i-2].opcode == OpCodes.Ldc_R4 && orig[i-2].operand.Equals(4f) && orig[i-1].opcode == OpCodes.Mul && orig[i].opcode == OpCodes.Ldloc_2) {
-                    ++scaleCount;
-                    Log.Trace($"NPC.DrawBreathing: inserting vec2 mul/add at {i}");
-                    ret.AddRange(new List<CodeInstruction>(){
-                        new(OpCodes.Ldloc, scale),
-                        new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Multiply", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(float), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
-                        new(OpCodes.Ldloc_2),
-                        new(OpCodes.Ldloc_2),
-                        new(OpCodes.Newobj, typeof(Microsoft.Xna.Framework.Vector2).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, CallingConventions.HasThis, new Type[]{typeof(float), typeof(float)}, null)),
-                        new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Addition", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
-                    });
-                    ++i; // also omit following add instruction
-                }
-                // scale param is a vec2 now, so use a different overload for
-                // SpriteBatch.Draw
-                else if (drawCount < 1 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw")) {
-                    ++drawCount;
-                    Log.Trace($"NPC.DrawBreathing: replacing Draw at {i}");
-                    ret.Add(new CodeInstruction(OpCodes.Callvirt, typeof(Microsoft.Xna.Framework.Graphics.SpriteBatch).GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance, null, new Type[]{typeof(Microsoft.Xna.Framework.Graphics.Texture2D), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Rectangle), typeof(Microsoft.Xna.Framework.Color), typeof(float), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Graphics.SpriteEffects), typeof(float)}, null)));
-                }
-                else {
-                    ret.Add(orig[i]);
-                }
-            }
-
-            if (whiteCount < 1 || scaleCount < 1 || drawCount < 1) {
-                Log.Error($"NPC.DrawBreathing: some transpiler targets were not found. Aborting edit.");
-                return orig;
-            }
-            return ret;
-        }
-    }
-
-    [HarmonyPatch(typeof(NPC), nameof(NPC.isMarried))]
-    public static class NpcIsMarriedNotReallyInSomeCasesPatch
-    {
-        public static void Postfix(NPC __instance, ref bool __result)
-        {
-            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
-            if (!dict.TryGetValue(__instance.Name, out var npcEntry))
-                return;
-
-            if (!npcEntry.IgnoreMarriageSchedule)
-                return;
-
-            MethodBase[] meths = new[]
-            {
-                typeof(NPC).GetMethod(nameof(NPC.reloadData)),
-                typeof(NPC).GetMethod(nameof(NPC.reloadSprite)),
-                typeof(NPC).GetMethod(nameof(NPC.getHome)),
-                typeof(NPC).GetMethod("prepareToDisembarkOnNewSchedulePath"),
-                typeof(NPC).GetMethod(nameof(NPC.parseMasterSchedule)),
-                typeof(NPC).GetMethod(nameof(NPC.TryLoadSchedule), new Type[ 0 ]),
-                typeof(NPC).GetMethod(nameof(NPC.resetForNewDay)),
-                typeof(NPC).GetMethod(nameof(NPC.dayUpdate)),
-            };
-
-            var st = new System.Diagnostics.StackTrace();
-            for (int i = 0; i < st.FrameCount; ++i) // Originally had 7 instead of FrameCount, but some mods interfere so we need to check further
-            {
-                var meth = st.GetFrame(i).GetMethod();
-                foreach (var checkMeth in meths)
-                {
-                    // When someone patches a method the method name changes due to SMAPI's custom fork of Harmony, and so the methodinfo doesn't match.
-                    // This is a workaround
-                    // Excuse the liberal use of ? - I was tired and frustrated
-                    if ((meth?.DeclaringType == checkMeth?.DeclaringType || ( meth?.Name?.Contains( checkMeth?.DeclaringType?.FullName ?? "qwerqwer" ) ?? false ) ) && ( meth?.Name?.Contains( checkMeth?.Name ?? "asdfasdf" ) ?? false ) )
-                    {
-                        __result = false;
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(NPC), "loadCurrentDialogue")]
-    public static class NpcLoadCurrentDialogueFakeNotMarriedPatch
-    {
-        public static void Prefix(NPC __instance, ref string __state)
-        {
-            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
-            if (!dict.TryGetValue(__instance.Name, out var npcEntry))
-                return;
-
-            if (!npcEntry.IgnoreMarriageSchedule)
-                return;
-
-            __state = null;
-            if (Game1.player.spouse == __instance.Name)
-            {
-                __state = Game1.player.spouse;
-                Game1.player.spouse = "";
-            }
-        }
-        public static void Postfix(NPC __instance, ref string __state)
-        {
-            if (__state != null)
-            {
-                Game1.player.spouse = __state;
-            }
-        }
-    }
-
     /// <summary>The mod entry class.</summary>
     internal class SpaceCore : Mod
     {
@@ -347,22 +78,40 @@ namespace SpaceCore
             this.Config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Input.ButtonPressed += this.Input_ButtonPressed;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
-            helper.Events.GameLoop.Saving += this.OnSaving;
-            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            Event.RegisterCustomCommand("damageFarmer", DamageFarmerEventCommand);
-            Event.RegisterCustomCommand("giveHat", GiveHatEventCommand);
-            Event.RegisterCustomCommand("setDating", SetDatingEventCommand);
-            Event.RegisterCustomCommand("totemWarpEffect", TotemWarpEventCommand);
-            Event.RegisterCustomCommand("setActorScale", SetActorScale);
-            Event.RegisterCustomCommand("cycleActorColors", CycleActorColors);
-            Event.RegisterCustomCommand("flash", FlashEventCommand);
-            Event.RegisterCustomCommand("setRaining", SetRainingEventCommand);
+            GameLocation.RegisterTileAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
+            {
+                TriggerActionManager.Raise("spacechase0.SpaceCore_TileAction", new object[] { new KeyValuePair<string, object>("Location", loc), new KeyValuePair<string, object>("Farmer", farmer), new KeyValuePair<string, object>("TileAction", args[0]) });
+                return true;
+            });
+            GameLocation.RegisterTouchAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
+            {
+                TriggerActionManager.Raise("spacechase0.SpaceCore_TileTouchAction", new object[] { new KeyValuePair<string, object>("Location", loc), new KeyValuePair<string, object>("Farmer", farmer), new KeyValuePair<string, object>("TileTouchAction", args[0]) });
+            });
+
+            Event.RegisterCommand("damageFarmer", DamageFarmerEventCommand);
+            Event.RegisterCommand("giveHat", GiveHatEventCommand);
+            Event.RegisterCommand("setDating", SetDatingEventCommand);
+            Event.RegisterCommand("totemWarpEffect", TotemWarpEventCommand);
+            Event.RegisterCommand("setActorScale", SetActorScale);
+            Event.RegisterCommand("cycleActorColors", CycleActorColors);
+            Event.RegisterCommand("flash", FlashEventCommand);
+            Event.RegisterCommand("setRaining", SetRainingEventCommand);
+
+            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_TileAction");
+            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_TileTouchAction");
+            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_OnItemUsed");
+            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_OnItemConsumed");
+
+            GameStateQuery.Register("spacechase0.SpaceCore_StringEquals", StringEqualsGSQ);
 
             Commands.Register();
             VanillaAssetExpansion.VanillaAssetExpansion.Init();
+
+            new NpcQuestions().Entry(ModManifest, Helper);
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
             
@@ -380,30 +129,95 @@ namespace SpaceCore
                 new SerializationPatcher(),
                 new UtilityPatcher(),
                 new HoeDirtPatcher(),
-                new SkillBuffPatcher()
+                new SkillBuffPatcher(),
+                new SpriteBatchPatcher()
             );
-            /*
-            var ps = typeof(NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>>).GetProperties();
-            MethodBase m = null;
-            foreach (var p in ps)
-            {
-                if (p.GetIndexParameters() == null || p.GetIndexParameters().Length == 0)
-                    continue;
-                if (p.GetSetMethod() == null)
-                    continue;
-                m = p.GetSetMethod();
-                break;
-            }
-            Harmony.Patch(m,
-                prefix: new HarmonyMethod(typeof(Fix1_5NetCodeBugPatch).GetMethod("Prefix", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)),
-                postfix: new HarmonyMethod(typeof(Fix1_5NetCodeBugPatch).GetMethod("Postfix", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)));
-            */
         }
 
+        internal NPC lastInteraction = null;
+        internal Dictionary<string, Action> lastChoices = null;
+        private void Input_ButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            if (!Context.IsPlayerFree)
+                return;
+
+            if (e.Button.IsActionButton() && (Config.SocialInteractions_AlwaysTrigger || Config.SocialInteractions_TriggerModifier.IsDown()))
+            {
+                Rectangle tileRect = new Rectangle((int)e.Cursor.GrabTile.X * 64, (int)e.Cursor.GrabTile.Y * 64, 64, 64);
+                NPC npc = null;
+                foreach (var character in Game1.currentLocation.characters)
+                {
+                    if (!character.IsMonster && character.GetBoundingBox().Intersects(tileRect))
+                    {
+                        npc = character;
+                        break;
+                    }
+                }
+                if (npc == null)
+                    npc = Game1.currentLocation.isCharacterAtTile(e.Cursor.Tile + new Vector2(0f, 1f));
+                if (npc == null)
+                    npc = Game1.currentLocation.isCharacterAtTile(e.Cursor.GrabTile + new Vector2(0f, 1f));
+
+                if (npc == null || //!Utility.withinRadiusOfPlayer( npc.getStandingX(), npc.getStandingY(), 1, Game1.player ) ||
+                    !Game1.NPCGiftTastes.ContainsKey(npc.Name) || !Game1.player.friendshipData.ContainsKey(npc.Name))
+                    return;
+                Helper.Input.Suppress(e.Button);
+
+                lastChoices = new();
+                lastChoices.Add(I18n.Interaction_Chat(), () =>
+                {
+                    bool stowed = Game1.player.netItemStowed.Value;
+                    Game1.player.netItemStowed.Value = true;
+                    Game1.player.UpdateItemStow();
+                    npc.checkAction(Game1.player, Game1.player.currentLocation);
+                    Game1.player.netItemStowed.Value = stowed;
+                    Game1.player.UpdateItemStow();
+                });
+                if (Game1.player.ActiveObject != null && Game1.player.ActiveObject.canBeGivenAsGift())
+                {
+                    lastChoices.Add(I18n.Interaction_GiftHeld(), () => npc.tryToReceiveActiveObject(Game1.player));
+                }
+                (GetApi() as Api).InvokeASI(npc, (s, a) => lastChoices.Add(s, a));
+
+                List<Response> responses = new();
+                foreach (var entry in lastChoices)
+                {
+                    responses.Add(new(entry.Key, entry.Key));
+                }
+                responses.Add(new("Cancel", I18n.Interaction_Cancel()));
+
+                Game1.currentLocation.afterQuestion = (farmer, answer) =>
+                {
+                    //Log.Debug("hi");
+                    Game1.activeClickableMenu = null;
+                    Game1.player.CanMove = true;
+                    if (lastChoices.ContainsKey(answer))
+                        lastChoices[answer]();
+                    else
+                        ;// Log.Debug("wat");
+                };
+                Game1.currentLocation.createQuestionDialogue(I18n.InteractionWith(npc.displayName), responses.ToArray(), "advanced-social-interaction");
+            }
+        }
+
+        private bool StringEqualsGSQ(string[] query, GameLocation location, Farmer player, Item targetItem, Item inputItem, Random random)
+        {
+            if (!ArgUtility.TryGet(query, 0, out string str1, out string error, allowBlank: false) ||
+                 !ArgUtility.TryGet(query, 1, out string str2, out error, allowBlank: false) ||
+                 !ArgUtility.TryGetOptionalBool(query, 2, out bool caseSensitive, out error, defaultValue: true))
+            {
+
+                return false;
+            }
+
+            return string.Equals( str1, str2, caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase );
+        }
+
+        private Api api;
         /// <inheritdoc />
         public override object GetApi()
         {
-            return new Api();
+            return api ??= new Api();
         }
 
         private static void DamageFarmerEventCommand(Event evt, string[] args, EventContext ctx)
@@ -673,6 +487,10 @@ namespace SpaceCore
                     getValue: () => this.Config.SupportAllProfessionsMod,
                     setValue: value => this.Config.SupportAllProfessionsMod = value
                 );
+
+                configMenu.AddSectionTitle(ModManifest, () => I18n.Config_AdvancedSocialInteractions());
+                configMenu.AddBoolOption(ModManifest, () => Config.SocialInteractions_AlwaysTrigger, (val) => Config.SocialInteractions_AlwaysTrigger = val, () => I18n.Config_AlwaysTrigger_Name(), () => I18n.Config_AlwaysTrigger_Description());
+                configMenu.AddKeybindList(ModManifest, () => Config.SocialInteractions_TriggerModifier, (val) => Config.SocialInteractions_TriggerModifier = val, () => I18n.Config_TriggerModifier_Name(), () => I18n.Config_TriggerModifier_Description());
             }
 
             var entoaroxFramework = this.Helper.ModRegistry.GetApi<IEntoaroxFrameworkApi>("Entoarox.EntoaroxFramework");
@@ -744,42 +562,6 @@ namespace SpaceCore
             {
                 Log.Warn($"Exception migrating legacy save data: {ex}");
             }
-        }
-
-        private void OnSaving( object sender, SavingEventArgs e )
-        {
-            // This had to be moved to a harmony patch to fix an issue from saving in a custom location context location
-            /*
-            if ( Game1.IsMasterGame )
-            {
-                var lws = SaveGame.GetSerializer( typeof( LocationWeather ) );
-                Dictionary<int, string> customLocWeathers = new();
-                foreach ( int context in Game1.netWorldState.Value.LocationWeather.Keys )
-                {
-                    if ( !Enum.IsDefined( ( GameLocation.LocationContext ) context ) )
-                    {
-                        SpaceShared.Log.Debug( "doing ctx " + context );
-                        using MemoryStream ms = new();
-                        lws.Serialize( ms, Game1.netWorldState.Value.LocationWeather[ context ] );
-                        customLocWeathers.Add( context, Encoding.ASCII.GetString( ms.ToArray() ) );
-                    }
-                }
-                foreach ( int key in customLocWeathers.Keys )
-                    Game1.netWorldState.Value.LocationWeather.Remove( key );
-                Helper.Data.WriteSaveData( "CustomLocationWeathers", customLocWeathers );
-            }
-            */
-        }
-
-        /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
-        {
-            /*
-            if (e.NewMenu is StardewValley.Menus.ForgeMenu)
-                Game1.activeClickableMenu = new NewForgeMenu();
-            */
         }
     }
 }

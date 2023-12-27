@@ -10,8 +10,13 @@ other mods.
 * **For players:** just install the mod normally, and it'll work for the mods that need it.
 * **For mod authors:** SpaceCore's functionality may change without warning (but probably won't).
 
-Provided functionality (this assumes you understand C# and the game code a little bit):
-* Some new event commands:
+Provided functionality for players:
+* Hold left control when right clicking an NPC to open a dialogue box with choices for interactions.
+    * By default this only includes chatting (and gifting if you are holding something), but mods can add new entries.
+    * Content pack authors can let you ask an NPC questions by editing an asset from Content Patcher (see "NPC Questions" in the content pack authors). You can ask one question per day.
+    * You can set this menu to always show up when interacting with an NPC in the config, in case you want to (for example) prevent accidentally gifting an item to somebody.
+
+Provided functionality for content pack authors:
     * `damageFarmer amount`
     * `setDating npc`
     * `totemWarpEffect tileX tileY totemSpriteSheetPatch sourceRectX,SourceRectY,sourceRectWidth,sourceRectHeight` - will need to delay after this command if you want to wait for the animation to be done
@@ -19,6 +24,77 @@ Provided functionality (this assumes you understand C# and the game code a littl
     * `cycleActorColors actor durationInSeconds color [color...]` color=`R,G,B` - specify 1 or more. Specifying 1 will just mean it stays that color instead of cycling
     * `flash durationInSeconds`
     * `setRaining locationContext true/false` - Sets a location context as raining (or not). In vanilla, valid location contexts are "Default", "Island", and "Desert" (case sensitive).
+* A new [Game State Query](https://stardewvalleywiki.com/Modding:Game_state_queries) condition:
+    * `spacechase0.SpaceCore_StringEquals "string 1" "string 2" [true/false]` - Returns true if the strings are equal, false if not. The last argument is optional (default true), which determines if the match is checked for case sensitivity (if true) or not (if false).
+* New [trigger actions](https://stardewvalleywiki.com/Modding:Trigger_actions):
+    * `spacechase0.SpaceCore_TileAction` - When a tile with the Building tile property "Action": "spacechase0.SpaceCore_TriggerAction ..." is activated.
+        * TODO document how to distinguish between actions when trigger arguments are more implemented by the game
+    * `spacechase0.SpaceCore_TileTouchAction` - When a tile with the Back tile property "TouchAction": "spacechase0.SpaceCore_TriggerAction ..." is activated.
+        * TODO document how to distinguish between actions when trigger arguments are more implemented by the game
+    * `spacechase0.SpaceCore_OnItemUsed` - When an item with extension data `UseForTriggerAction` set to true is used. (See "Vanilla Asset Expansions" > "Objects" for more information.)
+        * TODO document how to distinguish between items when trigger arguments are more implemented by the game
+    * `spacechase0.SpaceCore_OnItemConsumed` - When an item is consumed (via eating or drinking).
+        * TODO document how to distinguish between items when trigger arguments are more implemented by the game
+* Vanilla Asset Expansions
+    * Objects - These are in the asset `spacechase0.SpaceCore/ObjectExtensionData`, which is a dictionary with the key being an object's unqualified item ID, and the value being an object containing the following fields:
+        * `CategoryTextOverride` - string, default null (no override)
+        * `CategoryColorOverride` - same format as Json Assets colors, default null (no override)
+        * `HideFromShippingCollection` - true/false, default false
+        * `CanBeTrashed` - true/false, also prevents dropping, default true
+        * `CanBeShipped` - true/false, default true
+        * `EatenHealthRestoredOverride` - integer, override how much health is restored on eating this item, default null (use vanilla method of calculation)
+        * `EatenStaminaRestoredOverride` - integer, override how much stamina is restored on eating this item, default null (use vanilla method of calculation)
+        * `MaxStackSizeOverride` - integer, override the max stack size of your item, default null (use vanilla amount)
+        * `TotemWarp` - allow a custom object to act as a warp totem, an object containing the following properties:
+            * `Location` - string, the location to warp to - ex. `"CommunityCenter"`
+            * `Position` - Vector2, the tile to warp to - ex. `"25, 15"`
+            * `Color` - Color, the color the screen should flash - ex. `{ "R": 0, "G": 0, "B": 255, "A": 255 }`
+        * `UseForTriggerAction` - If the item will be usable and trigger a [Trigger Action](https://stardewvalleywiki.com/Modding:Trigger_actions) with appropriate context set. See the section on new trigger actions for usage.
+    * Weapons - Stored in the `CustomFields` on the weapon data asset object:
+        * `CanBeTrashed` - true/false, also prevents dropping, default true
+    * NPCs - Stored in the asset `"spacechase0.SpaceCore/NpcExtensionData"`, which is a dictionary with the key being an NPC name, and the value being an object containing the following fields:
+        * `GiftEventTriggers` - A dictionary with the keys being an object, and the values being an event to trigger when that item is given to the NPC.
+            * The "event to trigger" needs to be the full event key (ID and preconditions) used in the events data file, so that SpaceCore can find the event.
+            * The preconditions are ignored.
+            * It will only check the current location, so make sure to only have the event in this data file when in the right location.
+                * For Content Patcher users: You can do this using `"When": { "LocationName": "Town" }, "Update": "OnLocationChange"` on your patch.
+            * The event can reoccur if the item is given again.
+                * For Content Patcher users: If you don't want this behavior, make sure to add a `HasSeenEvent` event condition to your `"When"` block for the patch.
+        * `IgnoreMarriageSchedule` - true/false, defaults to false
+    * Crafting/Cooking Recipes - Stored in `spacechase0.SpaceCore/CraftingRecipeOverrides` and `spacechase0.SpaceCore/CookingRecipeOverrides`, these assets are both a dictionary, with the key being the ID of the corresponding recipe, and the value being an object with the following:
+        * `ProductQualifiedId` - The qualified ID of the product
+        * `ProductAmount` - How many of the product should be made
+        * `Ingredients` - an array of objects containing the following
+            * `Type` - either `"Item"` or `"ContextTag"`.
+            * `Value` - Different depending on `Type`:
+                * For `Item` type ingredients, the qualified ID of the ingredient
+                * For `ContextTag` type ingredients, the context tags. Multiple can be specified separated by commas, which will mean any context tag in the list means the item works as this ingredient.
+            * `Amount` - The amount of this ingredient should be required.
+            * `OverrideText` - You can override the text shown for the ingredient by specifying this. Required for `Type`=`"ContextTag"`
+            * `OverrideTexturePath` - The path to texture to use for this ingredient. You can use a vanilla texture path, or one from your mod using the `{{InternalAssetKey}}` token. Required for `Type`=`"ContextTag"`
+            * `OVerrideTextureRect` - If using `OverrideTexturePath`, where on the texture should be displayed for this ingredient. Required for `Type`=`"ContextTag"`
+* Animations - You can animate textures by editing `"spacechase0.SpaceCore/TextureOverrides"`, which is a dictionary with the key being the ID of your animation, and the following information:
+    * `TargetTexture` - The path to the file you want to animate.
+    * `TargetRect` - The rectangle in the target file you want to animate. Example: `{ "X": 32, "Y": 48, "Width": 16, "Height": 16 }`
+    * `SourceTexture` - The texture and frames you want to pull from for the animation, in the old DGA format. (The texture name followed by a colon, followed by a comma separated list of frame indices. Frame indices can optionally include a frame duration with @.)
+        * Example (for Content Patcher): `"{{InternalAssetKey: assets/prismatic.png}}:0@5,1@5,2@5,3@5,4@5,5@5`
+        * Another way of doing the above is using `..` to specify a sequence of frames that all get the same duration: `{{InternalAssetKey: assets/prismatic.png}}:0..5@5`
+* NPC Questions - Previously part of [Backstory Questions Framework](https://www.nexusmods.com/stardewvalley/mods/14451):
+    * To edit the questions you can ask someone, edit the `spacechase0.SpaceCore/Questions` asset, which is a dictionary with the NPC name for the key, and the value being a list of objects with the following values:
+        * `ID` - Required, must be unique, doesn't show to end users
+        * `Weight` - How likely the question will show up compared to other questions. Higher values means more likely likely. Default 1.
+        * `QuestionText` - The text for the question.
+        * `AnswerText` - The text for the answer.
+        * `CanRepeatQuestion` - If the question can be repeated. Default false.
+        * `FriendshipModifier` - How much friendship the player gets from asking this question. Default 10.
+        * If this seems confusing, see the example pack on Backstory Questions Framework's mod page.
+            * The asset name in there is different, since it was made when the feature was in the separate mod.
+* New CP tokens -
+    * `spacechase0.SpaceCore/CurrentlyInEvent` - true or false
+    * `spacechase0.SpaceCore/CurrentEventId` - the current event ID, if in an event
+    * `spacechase0.SpaceCore/QuestionsAsked` - a token which takes in an NPC name, and returns the questions asked (not including repeatable questions). (For use with the Backstory Questions feature.)
+
+The rest of the features assume you understand C# and the game code a little bit (and are only accessible via C#):
 * In the API provided through SMAPI's mod registry (see mod source for interface you can copy):
     * `string[] GetCustomSkills()` - Returns an array of skill IDs, one for each registered skill.
     * `int GetLevelForCustomSkill(Farmer farmer, string skill)` - Gets the level of the given `skill` for the given `farmer`.
@@ -31,6 +107,7 @@ Provided functionality (this assumes you understand C# and the game code a littl
         * `propType` is the type of the property you're adding.
         * `getter` is a `MethodInfo` pointing to your static function acting as a getter. It take an instance of the type corresponding to `declaringType`, and return a value of the type corresponding to `propType`.
         * `setter` is a `MethodInfo` pointing to your static function acting as a setter. It take an instance of the type corresponding to `declaringType` and a value of the type corresponding to `propType`.
+    * An event: `AdvancedInteractionStarted`, which passes the NPC as the `object sender` and an `Action<string, Action>` as the event argument, which you call with a string for what string to show for you choice, and an Action for what to happen when it is chosen. (See [Backstory Questions Framework](https://www.nexusmods.com/stardewvalley/mods/14451), a mod now integrated into SpaceCore, for an example on usage).
 * Events, located in SpaceCore.Events.SpaceEvents:
     * `OnBlankSave` - Occurs before loading starts. Custom locations can be added here so that they retain player data.
     * `ShowNightEndMenus` - Right before the shipping menu, level up menus, etc. pop up so you can add your own.
@@ -137,35 +214,10 @@ Provided functionality (this assumes you understand C# and the game code a littl
             * `Id` - a `string` that contains what was in the "Id" attribute of the element (useful with the overload of `LoadFromFile` that gives you a list containing all elements made)
             * `ExtraFields` - a `Dictionary<string, string>` that contains all the attributes you put on the element in the XML that weren't used in deserialition.
             * `UserData` - an `object` field for you to store whatever you want in
-* Vanilla Asset Expansions
-    * Objects - These are in the asset `spacechase0.SpaceCore/ObjectExtensionData`, which is a dictionary with the key being an object's unqualified item ID, and the value being an object containing the following fields:
-        * `CategoryTextOverride` - string, default null (no override)
-        * `CategoryColorOverride` - same format as Json Assets colors, default null (no override)
-        * `HideFromShippingCollection` - true/false, default false
-        * `CanBeTrashed` - true/false, also prevents dropping, default true
-        * `CanBeShipped` - true/false, default true
-        * `EatenHealthRestoredOverride` - integer, override how much health is restored on eating this item, default null (use vanilla method of calculation)
-        * `EatenStaminaRestoredOverride` - integer, override how much stamina is restored on eating this item, default null (use vanilla method of calculation)
-        * `MaxStackSizeOverride` - integer, override the max stack size of your item, default null (use vanilla amount)
-        * `TotemWarp` - allow a custom object to act as a warp totem, an object containing the following properties:
-            * `Location` - string, the location to warp to - ex. `"CommunityCenter"`
-            * `Position` - Vector2, the tile to warp to - ex. `"25, 15"`
-            * `Color` - Color, the color the screen should flash - ex. `{ "R": 0, "G": 0, "B": 255, "A": 255 }`
-    * Weapons - Stored in the `CustomFields` on the weapon data asset object:
-        * `CanBeTrashed` - true/false, also prevents dropping, default true
-    * NPCs - Stored in the asset `"spacechase0.SpaceCore/NpcExtensionData"`, which is a dictionary with the key being an NPC name, and the value being an object containing the following fields:
-        * `GiftEventTriggers` - A dictionary with the keys being an object, and the values being an event to trigger when that item is given to the NPC.
-            * The "event to trigger" needs to be the full event key (ID and preconditions) used in the events data file, so that SpaceCore can find the event.
-            * The preconditions are ignored.
-            * It will only check the current location, so make sure to only have the event in this data file when in the right location.
-                * For Content Patcher users: You can do this using `"When": { "LocationName": "Town" }, "Update": "OnLocationChange"` on your patch.
-            * The event can reoccur if the item is given again.
-                * For Content Patcher users: If you don't want this behavior, make sure to add a `HasSeenEvent` event condition to your `"When"` block for the patch.
-        * `IgnoreMarriageSchedule` - true/false, defaults to false
 * Some other things that will remain undocumented because they will be removed soon.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.6.0+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)

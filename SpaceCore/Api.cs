@@ -20,6 +20,8 @@ namespace SpaceCore
         void RegisterSerializerType(Type type);
 
         void RegisterCustomProperty( Type declaringType, string name, Type propType, MethodInfo getter, MethodInfo setter );
+
+        public event EventHandler<Action<string, Action>> AdvancedInteractionStarted;
     }
 
     public class Api : IApi
@@ -66,6 +68,13 @@ namespace SpaceCore
                 Getter = getter,
                 Setter = setter,
             } );
+        }
+
+        public event EventHandler<Action<string, Action>> AdvancedInteractionStarted;
+
+        internal void InvokeASI(NPC npc, Action<string, Action> addCallback)
+        {
+            AdvancedInteractionStarted?.Invoke(npc, addCallback);
         }
     }
 }
