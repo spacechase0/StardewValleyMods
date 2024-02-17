@@ -19,8 +19,6 @@ namespace SpaceCore.VanillaAssetExpansion
         public string CategoryTextOverride { get; set; } = null;
         public Color? CategoryColorOverride { get; set; } = null;
 
-        public bool HideFromShippingCollection { get; set; } = false;
-
         public bool CanBeTrashed { get; set; } = true;
         public bool CanBeShipped { get; set; } = true;
 
@@ -37,7 +35,7 @@ namespace SpaceCore.VanillaAssetExpansion
         }
         public TotemWarpData TotemWarp { get; set; }
 
-        public bool UseForTriggerAction { get; set; } = false;
+        public string UseForTriggerAction { get; set; } = null;
     }
 
     [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.getCategoryName))]
@@ -66,13 +64,13 @@ namespace SpaceCore.VanillaAssetExpansion
         }
     }
 
-    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.isIndexOkForBasicShippedCategory))]
+    [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.countsForShippedCollection))]
     public static class ObjectHiddenInShippingCollectionPatch
     {
-        public static void Postfix(string itemId, ref bool __result)
+        public static void Postfix(StardewValley.Object __instance, ref bool __result)
         {
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
-            if (dict.ContainsKey(itemId) && ( !dict[itemId].CanBeShipped || !dict[itemId].HideFromShippingCollection ) )
+            if (dict.ContainsKey(__instance.ItemId) && !dict[__instance.ItemId].CanBeShipped )
             {
                 __result = false;
             }
@@ -161,7 +159,7 @@ namespace SpaceCore.VanillaAssetExpansion
         public static bool Prefix(StardewValley.Object __instance, GameLocation location, ref bool __result)
         {
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
-            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].UseForTriggerAction)
+            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].UseForTriggerAction != null)
             {
                 if (!Game1.player.canMove || __instance.isTemporarilyInvisible)
                 {
@@ -169,7 +167,7 @@ namespace SpaceCore.VanillaAssetExpansion
                     return false;
                 }
 
-                TriggerActionManager.Raise("spacechase0.SpaceCore_OnItemUsed", new object[] { new KeyValuePair<string, object>("Location", Game1.player.currentLocation), new KeyValuePair<string, object>("Farmer", Game1.player), new KeyValuePair<string, object>("ItemId", __instance.QualifiedItemId) });
+                TriggerActionManager.TryRunAction(dict[__instance.ItemId].UseForTriggerAction, out string error, out Exception e);
 
                 __result = true;
                 return true;

@@ -20,7 +20,7 @@ namespace JsonAssets.Framework
         private readonly Dictionary<string, object> ToLoad;
         public ContentInjector1()
         {
-            //normalize with 
+            //normalize with
             this.Files = new Dictionary<string, Injector>
             {
                 {"Data\\Objects", this.InjectDataObjectInformation},
@@ -127,7 +127,6 @@ namespace JsonAssets.Framework
                     {
                         CategoryTextOverride = obj.CategoryTextOverride,
                         CategoryColorOverride = obj.CategoryColorOverride,
-                        HideFromShippingCollection = obj.HideFromShippingCollection,
                         CanBeTrashed = obj.CanTrash,
                         CanBeShipped = obj.CanSell,
                     });

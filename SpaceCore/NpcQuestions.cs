@@ -73,6 +73,7 @@ namespace SpaceCore
         public string AnswerText { get; set; }
         public bool CanRepeatQuestion { get; set; } = false;
         public int FriendshipModifier { get; set; } = 10;
+        public string Condition { get; set; }
     }
     internal class QuestionsAskedToken
     {
@@ -272,6 +273,7 @@ namespace SpaceCore
 
             List<QuestionContentModel> qs = data[npc.Name].ToList();
             qs.RemoveAll((q) => friendship.get_questionsAsked().Contains(q.ID));
+            qs.RemoveAll( q => q.Condition != null && !GameStateQuery.CheckConditions( q.Condition, location: npc.currentLocation, player: Game1.player ) );
             qs.Sort((q1, q2) => Math.Sign(q1.Weight - q2.Weight));
             float total = qs.Sum(q => q.Weight);
 
@@ -319,7 +321,9 @@ namespace SpaceCore
                             friendship.get_askedQuestionToday().Value = true;
 
                             Game1.player.changeFriendship(q.FriendshipModifier, npc);
-                            Game1.activeClickableMenu = new DialogueBox(new Dialogue(npc, $"question.{q.ID}.answer", q.AnswerText));
+                            var fakeNpc = new NPC(npc.Sprite, npc.Position, npc.DefaultMap, npc.FacingDirection,
+                                npc.Name, npc.Portrait, eventActor: true);
+                            Game1.activeClickableMenu = new DialogueBox(new Dialogue(fakeNpc, $"question.{q.ID}.answer", q.AnswerText));
                         };
                     }));
                     Game1.currentLocation.createQuestionDialogue(I18n.Question_Ask(), responses.ToArray(), "backstory-questions-framework");

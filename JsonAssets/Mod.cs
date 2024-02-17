@@ -114,7 +114,7 @@ namespace JsonAssets
         private bool FirstTick = true;
         private void OnTick(object sender, UpdateTickedEventArgs e)
         {
-            // This needs to run after GameLaunched, because of the event 
+            // This needs to run after GameLaunched, because of the event
             if (this.FirstTick)
             {
                 this.FirstTick = false;
@@ -1586,7 +1586,7 @@ namespace JsonAssets
         private readonly HashSet<string> LocationsFixedAlready = new();
         private void FixIdsEverywhere(bool reverse = false)
         {
-            SpaceUtility.iterateAllItems(this.FixItem);
+            Utility.ForEachItem(i => { FixItem(i); return true; });
             SpaceUtility.iterateAllTerrainFeatures(this.FixTerrainFeature);
             foreach ( var loc in Game1.locations )
             {
@@ -1688,7 +1688,7 @@ namespace JsonAssets
             switch (item)
             {
                 case Hat hat:
-                    if (this.OldHatIds.ContainsKey(hat.obsolete_which.Value.ToString()))
+                    if (hat.obsolete_which.Value != null && this.OldHatIds.ContainsKey(hat.obsolete_which.Value.ToString()))
                         hat.ItemId = this.OldHatIds[hat.obsolete_which.Value.ToString()].FixIdJA();
                     break;
 
@@ -1716,7 +1716,7 @@ namespace JsonAssets
                     if (this.OldClothingIds.ContainsKey(clothing.ItemId))
                         clothing.ItemId = this.OldClothingIds[clothing.ItemId].FixIdJA();
                     break;
-                    
+
                 case Boots boots:
                     if (this.OldBootsIds.ContainsKey(boots.ItemId))
                         boots.ItemId = this.OldBootsIds[boots.ItemId].FixIdJA();

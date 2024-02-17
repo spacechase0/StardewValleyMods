@@ -3,7 +3,10 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <Name>Console Code</Name>
+    <Description>Run C# code in the SMAPI console.</Description>
     <Version>1.0.4</Version>
+    <UpdateKeys>Nexus:3101</UpdateKeys>
     <TargetFramework>net6.0</TargetFramework>
 
     <BundleExtraAssemblies>System,ThirdParty</BundleExtraAssemblies>

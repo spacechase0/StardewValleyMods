@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
+using StardewValley.Inventories;
 using StardewValley.Objects;
 
 namespace SpaceCore
@@ -35,7 +36,7 @@ namespace SpaceCore
                 return this.GetAmountInList(items) / this.Quantity;
             }
 
-            public abstract void Consume(IList<Chest> additionalIngredients);
+            public abstract void Consume(IList<IInventory> additionalIngredients);
         }
 
         public class ObjectIngredientMatcher : IngredientMatcher
@@ -96,7 +97,7 @@ namespace SpaceCore
                 return ret;
             }
 
-            public override void Consume(IList<Chest> additionalIngredients)
+            public override void Consume(IList<IInventory> additionalIngredients)
             {
                 int left = this.qty;
                 for ( int i = Game1.player.Items.Count - 1; i >= 0; --i )
@@ -120,9 +121,9 @@ namespace SpaceCore
                     foreach ( var chest in additionalIngredients )
                     {
                         bool removed = false;
-                        for (int i = chest.Items.Count - 1; i >= 0; --i)
+                        for (int i = chest.Count - 1; i >= 0; --i)
                         {
-                            var item = chest.Items[i];
+                            var item = chest[i];
                             if (this.ItemMatches( item ) )
                             {
                                 int amt = Math.Min(left, item.Stack);
@@ -132,7 +133,7 @@ namespace SpaceCore
                                 if (item.Stack <= 0)
                                 {
                                     removed = true;
-                                    chest.Items[i] = null;
+                                    chest[i] = null;
                                 }
                                 if (left <= 0)
                                     break;
@@ -140,7 +141,7 @@ namespace SpaceCore
                         }
 
                         if (removed)
-                            chest.clearNulls();
+                            chest.RemoveEmptySlots();
                         if (left <= 0)
                             break;
                     }

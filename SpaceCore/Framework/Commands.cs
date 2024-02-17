@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace SpaceCore.Framework
             Command.Register("asset_invalidate", Commands.InvalidateCommand);
             Command.Register("dump_spacecore_skills", Commands.DumpSkills);
             Command.Register("harmony_invalidate", Commands.HarmonyInvalidate);
+            Command.Register("screenshake", Commands.ScreenShake);
             //Command.register( "test", ( args ) => Game1.player.addItemByMenuIfNecessary( new TestObject() ) );
             //SpaceCore.modTypes.Add( typeof( TestObject ) );
         }
@@ -147,6 +149,15 @@ namespace SpaceCore.Framework
             }
 
             SpaceCore.Instance.Harmony.Patch(meth);
+        }
+
+        private static void ScreenShake(string[] args)
+        {
+            float intensity = Convert.ToSingle(args[0]);
+            float duration = Convert.ToSingle(args[1]);
+            SpaceCore.Instance.screenShakeIntensity = intensity;
+            SpaceCore.Instance.pendingScreenShake = duration;
+            SpaceCore.Instance.preShakeViewportPos = SpaceCore.Instance.shakeViewportPos = Game1.currentViewportTarget;
         }
     }
 }

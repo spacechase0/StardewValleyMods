@@ -100,6 +100,7 @@ namespace JsonAssets.Data
                     Duration = EdibleBuffs.Duration,
                 },
                 ContextTags = ctx,
+                ExcludeFromShippingCollection = HideFromShippingCollection,
             };
 
             return ret;

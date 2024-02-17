@@ -34,6 +34,9 @@ using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.Triggers;
 using SpaceCore.UI;
+using StardewValley.BellsAndWhistles;
+using StardewValley.Delegates;
+using Location = xTile.Dimensions.Location;
 
 namespace SpaceCore
 {
@@ -84,12 +87,12 @@ namespace SpaceCore
 
             GameLocation.RegisterTileAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
             {
-                TriggerActionManager.Raise("spacechase0.SpaceCore_TileAction", new object[] { new KeyValuePair<string, object>("Location", loc), new KeyValuePair<string, object>("Farmer", farmer), new KeyValuePair<string, object>("TileAction", args[0]) });
+                TriggerActionManager.TryRunAction(args[0], out string error, out Exception e);
                 return true;
             });
             GameLocation.RegisterTouchAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
             {
-                TriggerActionManager.Raise("spacechase0.SpaceCore_TileTouchAction", new object[] { new KeyValuePair<string, object>("Location", loc), new KeyValuePair<string, object>("Farmer", farmer), new KeyValuePair<string, object>("TileTouchAction", args[0]) });
+                TriggerActionManager.TryRunAction(args[0], out string error, out Exception e);
             });
 
             Event.RegisterCommand("damageFarmer", DamageFarmerEventCommand);
@@ -100,13 +103,7 @@ namespace SpaceCore
             Event.RegisterCommand("cycleActorColors", CycleActorColors);
             Event.RegisterCommand("flash", FlashEventCommand);
             Event.RegisterCommand("setRaining", SetRainingEventCommand);
-
-            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_TileAction");
-            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_TileTouchAction");
-            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_OnItemUsed");
-            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_OnItemConsumed");
-
-            GameStateQuery.Register("spacechase0.SpaceCore_StringEquals", StringEqualsGSQ);
+            Event.RegisterCommand("screenShake", ScreenShakeEventCommand);
 
             Commands.Register();
             VanillaAssetExpansion.VanillaAssetExpansion.Init();
@@ -114,7 +111,7 @@ namespace SpaceCore
             new NpcQuestions().Entry(ModManifest, Helper);
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
-            
+
             this.Harmony = HarmonyPatcher.Apply(this,
                 new CraftingRecipePatcher(),
                 new FarmerPatcher(),
@@ -200,7 +197,7 @@ namespace SpaceCore
             }
         }
 
-        private bool StringEqualsGSQ(string[] query, GameLocation location, Farmer player, Item targetItem, Item inputItem, Random random)
+        private bool StringEqualsGSQ(string[] query, GameStateQueryContext ctx)
         {
             if (!ArgUtility.TryGet(query, 0, out string str1, out string error, allowBlank: false) ||
                  !ArgUtility.TryGet(query, 1, out string str2, out error, allowBlank: false) ||
@@ -448,6 +445,22 @@ namespace SpaceCore
             @event.CurrentCommand++;
         }
 
+        internal float screenShakeIntensity = 0;
+        internal float pendingScreenShake = 0;
+        internal Vector2 preShakeViewportPos = default(Vector2);
+        internal Vector2 shakeViewportPos = default(Vector2);
+        internal Vector2 shakeAmount = Vector2.Zero;
+        private void ScreenShakeEventCommand(Event @event, string[] args, EventContext context)
+        {
+            float intensity = Convert.ToSingle(args[1]);
+            float duration = Convert.ToSingle(args[2]);
+            this.screenShakeIntensity = intensity;
+            this.pendingScreenShake = duration;
+            this.preShakeViewportPos = this.shakeViewportPos = Game1.currentViewportTarget;
+
+            @event.CurrentCommand++;
+        }
+
         public class NpcExtensionData
         {
             public Dictionary<string, string> GiftEventTriggers = new();
@@ -533,6 +546,29 @@ namespace SpaceCore
                     var extra = spriteExtras.GetOrCreateValue(spr);
                     if ( extra.grad != null )
                         extra.currGradInd = (extra.currGradInd + 1) % extra.grad.Length;
+                }
+            }
+
+            if (this.pendingScreenShake > 0)
+            {
+                this.pendingScreenShake -= (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+                if (this.pendingScreenShake <= 0)
+                {
+                    Game1.currentViewportTarget = this.preShakeViewportPos;
+                }
+                else
+                {
+                    // If the camera moved otherwise we need to update things
+                    var vp = new Vector2(Game1.viewport.Location.X, Game1.viewport.Location.Y);
+                    if (vp != this.shakeViewportPos)
+                        this.preShakeViewportPos += (vp - this.shakeViewportPos);
+
+                    float angle = (float) Game1.random.NextDouble();
+                    shakeAmount = new Vector2( (int)(MathF.Cos(angle) * this.screenShakeIntensity), (int)(MathF.Sin(angle) * this.screenShakeIntensity));
+                    this.shakeViewportPos = this.preShakeViewportPos + this.shakeAmount;
+                    Game1.viewport.X = (int)this.shakeViewportPos.X;
+                    Game1.viewport.Y = (int)this.shakeViewportPos.Y;
+                    Console.WriteLine("hello?");
                 }
             }
 

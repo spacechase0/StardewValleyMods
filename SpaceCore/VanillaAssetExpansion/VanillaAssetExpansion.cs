@@ -42,16 +42,16 @@ namespace SpaceCore.VanillaAssetExpansion
 
         private static void Content_AssetInvalidated(object sender, AssetsInvalidatedEventArgs e)
         {
-            Console.WriteLine("meow:" + string.Concat(e.NamesWithoutLocale.Select(an => an.ToString())));
+            //Console.WriteLine("meow:" + string.Concat(e.NamesWithoutLocale.Select(an => an.ToString())));
             if (e.NamesWithoutLocale.Any(an => an.IsEquivalentTo("spacechase0.SpaceCore/TextureOverrides")))
             {
-                Console.WriteLine("meow! 1");
+                //Console.WriteLine("meow! 1");
                 SetupTextureOverrides();
             }
             if (e.NamesWithoutLocale.Any(an => an.IsEquivalentTo("spacechase0.SpaceCore/CraftingRecipeOverrides")) ||
                 e.NamesWithoutLocale.Any(an => an.IsEquivalentTo("spacechase0.SpaceCore/CookingRecipeOverrides")))
             {
-                Console.WriteLine("meow! 2");
+                //Console.WriteLine("meow! 2");
                 SetupRecipes();
             }
         }
@@ -157,7 +157,7 @@ namespace SpaceCore.VanillaAssetExpansion
             if (farmer != Game1.player)
                 return;
 
-            TriggerActionManager.Raise("spacechase0.SpaceCore_OnItemConsumed", new object[] { new KeyValuePair<string, object>("Location", farmer.currentLocation), new KeyValuePair<string, object>( "Farmer", sender ), new KeyValuePair<string, object>("ItemId", farmer.itemToEat.QualifiedItemId) });
+            //TriggerActionManager.Raise("spacechase0.SpaceCore_OnItemConsumed", new object[] { new KeyValuePair<string, object>("Location", farmer.currentLocation), new KeyValuePair<string, object>( "Farmer", sender ), new KeyValuePair<string, object>("ItemId", farmer.itemToEat.QualifiedItemId) });
         }
 
         private static void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)

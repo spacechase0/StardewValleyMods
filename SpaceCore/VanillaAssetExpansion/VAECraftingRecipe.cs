@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
+using StardewValley.Inventories;
 using StardewValley.Objects;
 
 namespace SpaceCore.VanillaAssetExpansion
@@ -52,7 +53,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
         public override int Quantity => data.Amount;
 
-        public override void Consume(IList<Chest> additionalIngredients)
+        public override void Consume(IList<IInventory> additionalIngredients)
         {
             int left = Quantity;
             for (int i = Game1.player.MaxItems - 1; i >= 0; --i)
@@ -77,15 +78,15 @@ namespace SpaceCore.VanillaAssetExpansion
                 foreach (var chest in additionalIngredients)
                 {
                     bool removed = false;
-                    for (int i = chest.Items.Count - 1; i >= 0; --i )
+                    for (int i = chest.Count - 1; i >= 0; --i )
                     {
-                        var item = chest.Items[i];
+                        var item = chest[i];
                         if (Matches(item))
                         {
                             if (item.Stack <= left)
                             {
                                 removed = true;
-                                chest.Items[i] = null;
+                                chest[i] = null;
                             }
                             else
                                 item.Stack -= left;
@@ -93,7 +94,7 @@ namespace SpaceCore.VanillaAssetExpansion
                             left -= item.Stack;
 
                             if (removed)
-                                chest.clearNulls();
+                                chest.RemoveEmptySlots();
                             if (left <= 0)
                                 return;
                         }

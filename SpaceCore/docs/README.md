@@ -24,22 +24,11 @@ Provided functionality for content pack authors:
     * `cycleActorColors actor durationInSeconds color [color...]` color=`R,G,B` - specify 1 or more. Specifying 1 will just mean it stays that color instead of cycling
     * `flash durationInSeconds`
     * `setRaining locationContext true/false` - Sets a location context as raining (or not). In vanilla, valid location contexts are "Default", "Island", and "Desert" (case sensitive).
-* A new [Game State Query](https://stardewvalleywiki.com/Modding:Game_state_queries) condition:
-    * `spacechase0.SpaceCore_StringEquals "string 1" "string 2" [true/false]` - Returns true if the strings are equal, false if not. The last argument is optional (default true), which determines if the match is checked for case sensitivity (if true) or not (if false).
-* New [trigger actions](https://stardewvalleywiki.com/Modding:Trigger_actions):
-    * `spacechase0.SpaceCore_TileAction` - When a tile with the Building tile property "Action": "spacechase0.SpaceCore_TriggerAction ..." is activated.
-        * TODO document how to distinguish between actions when trigger arguments are more implemented by the game
-    * `spacechase0.SpaceCore_TileTouchAction` - When a tile with the Back tile property "TouchAction": "spacechase0.SpaceCore_TriggerAction ..." is activated.
-        * TODO document how to distinguish between actions when trigger arguments are more implemented by the game
-    * `spacechase0.SpaceCore_OnItemUsed` - When an item with extension data `UseForTriggerAction` set to true is used. (See "Vanilla Asset Expansions" > "Objects" for more information.)
-        * TODO document how to distinguish between items when trigger arguments are more implemented by the game
-    * `spacechase0.SpaceCore_OnItemConsumed` - When an item is consumed (via eating or drinking).
-        * TODO document how to distinguish between items when trigger arguments are more implemented by the game
+    * `screenshake intensity durationInSeconds` - Shake the screen for a certain amount of time. For intensity, `1` will be basically nothing. It's in pixels difference from the base screen position, so try something like 5 or 10 to start with.
 * Vanilla Asset Expansions
     * Objects - These are in the asset `spacechase0.SpaceCore/ObjectExtensionData`, which is a dictionary with the key being an object's unqualified item ID, and the value being an object containing the following fields:
         * `CategoryTextOverride` - string, default null (no override)
         * `CategoryColorOverride` - same format as Json Assets colors, default null (no override)
-        * `HideFromShippingCollection` - true/false, default false
         * `CanBeTrashed` - true/false, also prevents dropping, default true
         * `CanBeShipped` - true/false, default true
         * `EatenHealthRestoredOverride` - integer, override how much health is restored on eating this item, default null (use vanilla method of calculation)
@@ -49,7 +38,7 @@ Provided functionality for content pack authors:
             * `Location` - string, the location to warp to - ex. `"CommunityCenter"`
             * `Position` - Vector2, the tile to warp to - ex. `"25, 15"`
             * `Color` - Color, the color the screen should flash - ex. `{ "R": 0, "G": 0, "B": 255, "A": 255 }`
-        * `UseForTriggerAction` - If the item will be usable and trigger a [Trigger Action](https://stardewvalleywiki.com/Modding:Trigger_actions) with appropriate context set. See the section on new trigger actions for usage.
+        * `UseForTriggerAction` - The [Trigger Action](https://stardewvalleywiki.com/Modding:Trigger_actions) to run, if any.
     * Weapons - Stored in the `CustomFields` on the weapon data asset object:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
     * NPCs - Stored in the asset `"spacechase0.SpaceCore/NpcExtensionData"`, which is a dictionary with the key being an NPC name, and the value being an object containing the following fields:
@@ -72,7 +61,7 @@ Provided functionality for content pack authors:
             * `Amount` - The amount of this ingredient should be required.
             * `OverrideText` - You can override the text shown for the ingredient by specifying this. Required for `Type`=`"ContextTag"`
             * `OverrideTexturePath` - The path to texture to use for this ingredient. You can use a vanilla texture path, or one from your mod using the `{{InternalAssetKey}}` token. Required for `Type`=`"ContextTag"`
-            * `OVerrideTextureRect` - If using `OverrideTexturePath`, where on the texture should be displayed for this ingredient. Required for `Type`=`"ContextTag"`
+            * `OverrideTextureRect` - If using `OverrideTexturePath`, where on the texture should be displayed for this ingredient. Required for `Type`=`"ContextTag"`
 * Animations - You can animate textures by editing `"spacechase0.SpaceCore/TextureOverrides"`, which is a dictionary with the key being the ID of your animation, and the following information:
     * `TargetTexture` - The path to the file you want to animate.
     * `TargetRect` - The rectangle in the target file you want to animate. Example: `{ "X": 32, "Y": 48, "Width": 16, "Height": 16 }`
@@ -87,6 +76,7 @@ Provided functionality for content pack authors:
         * `AnswerText` - The text for the answer.
         * `CanRepeatQuestion` - If the question can be repeated. Default false.
         * `FriendshipModifier` - How much friendship the player gets from asking this question. Default 10.
+        * `Condition` - The GameStateQuery condition for if this question will be a valid choice.
         * If this seems confusing, see the example pack on Backstory Questions Framework's mod page.
             * The asset name in there is different, since it was made when the feature was in the separate mod.
 * New CP tokens -
