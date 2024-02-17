@@ -1688,7 +1688,7 @@ namespace JsonAssets
             switch (item)
             {
                 case Hat hat:
-                    if (this.OldHatIds.ContainsKey(hat.obsolete_which.Value.ToString()))
+                    if (hat.obsolete_which != null && this.OldHatIds.ContainsKey(hat.obsolete_which.Value.ToString()))
                         hat.ItemId = this.OldHatIds[hat.obsolete_which.Value.ToString()].FixIdJA();
                     break;
 
