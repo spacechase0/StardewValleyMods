@@ -83,6 +83,18 @@ namespace GenericModConfigMenu
         /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
         void AddNumberOption(IManifest mod, Func<float> getValue, Action<float> setValue, Func<string> name, Func<string> tooltip = null, float? min = null, float? max = null, float? interval = null, Func<float, string> formatValue = null, string fieldId = null);
 
+        /// <summary>Add a time picker option, input/output values are in stardew valley time format HHMM integers. Example: 1340 means 1:40 pm.</summary>
+        /// <param name="mod">The mod's manifest.</param>
+        /// <param name="getValue">Get the current value from the mod config.</param>
+        /// <param name="setValue">Set a new value in the mod config.</param>
+        /// <param name="name">The label text to show in the form.</param>
+        /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
+        /// <param name="min">The minimum allowed value (default: 600 meaning 6:00 am).</param>
+        /// <param name="max">The maximum allowed value (default: 2600 meaning 2:00 am next day).</param>
+        /// <param name="interval">The interval of time values that can be selected (default: 10 meaning 10 minute interval).</param>
+        /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
+        void AddTimePickerOption(IManifest mod, Func<int> getValue, Action<int> setValue, Func<string> name, Func<string> tooltip = null, int min = 600, int max = 2600, int interval = 10, string fieldId = null);
+        
         /// <summary>Add a string option at the current position in the form.</summary>
         /// <param name="mod">The mod's manifest.</param>
         /// <param name="getValue">Get the current value from the mod config.</param>
