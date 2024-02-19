@@ -26,6 +26,9 @@ namespace ContentPatcherAnimations
         /// </summary>
         internal static Mod instance;
 
+        /// <summary>The mod's config.</summary>
+        public static ModConfig Config;
+
         /// <summary>The Content Patcher mod instance.</summary>
         private StardewModdingAPI.Mod ContentPatcher;
 
@@ -54,6 +57,7 @@ namespace ContentPatcherAnimations
         {
             instance = this;
             Log.Monitor = this.Monitor;
+            Config = helper.ReadConfig<ModConfig>();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
@@ -110,6 +114,27 @@ namespace ContentPatcherAnimations
         {
             IModInfo modData = this.Helper.ModRegistry.Get("Pathoschild.ContentPatcher");
             this.ContentPatcher = this.GetPropertyValueManually<StardewModdingAPI.Mod>(modData, "Mod");
+
+            // get Generic Mod Config Menu's API (if it's installed)
+            var configMenu = Helper.ModRegistry.GetApi<Api.IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+                return;
+
+            // register mod
+            configMenu.Register(
+                mod: ModManifest,
+                reset: () => Config = new ModConfig(),
+                save: () => Helper.WriteConfig(Config)
+            );
+
+            // add some config options
+            configMenu.AddNumberOption(
+                mod: ModManifest,
+                name: () => "Chance to Animate",
+                tooltip: () => "The chance per tick, from 0-1, for each asset to play its animation.",
+                getValue: () => Config.DefaultAnimationChance,
+                setValue: value => Config.DefaultAnimationChance = value
+            );
         }
 
         /// <summary>Raised after the game's selected language changes.</summary>
@@ -163,7 +188,7 @@ namespace ContentPatcherAnimations
             {
                 patch.RefreshIfNeeded();
 
-                if (state.FrameCounter % config.AnimationFrameTime == 0 && this.ShouldAnimate(state, patch))
+                if (state.FrameCounter % config.AnimationFrameTime == 0 && this.ShouldAnimate(state, config, patch))
                 {
                     if (++patch.CurrentFrame >= config.AnimationFrameCount)
                         patch.CurrentFrame = 0;
@@ -176,13 +201,14 @@ namespace ContentPatcherAnimations
         /// <summary>Get whether a patch should be animated.</summary>
         /// <param name="state">The screen state to check.</param>
         /// <param name="patch">The patch to check.</param>
-        private bool ShouldAnimate(ScreenState state, PatchData patch)
+        private bool ShouldAnimate(ScreenState state, Patch config, PatchData patch)
         {
             return
                 patch.IsActive
                 && patch.Source != null
                 && patch.Target != null
-                && state.AssetDrawTracker.WasDrawnWithin(patch.TargetName, patch.ToArea, Mod.MaxTicksSinceDrawn);
+                && state.AssetDrawTracker.WasDrawnWithin(patch.TargetName, patch.ToArea, Mod.MaxTicksSinceDrawn)
+                && (patch.CurrentFrame != 0 || new Random().NextDouble() < config.AnimationChance);
         }
 
         /// <summary>Get a human-readable reason a patch isn't being automated.</summary>
@@ -263,7 +289,7 @@ namespace ContentPatcherAnimations
             StringBuilder report = new();
 
             var patches = state.AnimatedPatches;
-            var animating = patches.ToLookup(p => this.ShouldAnimate(state, p.Value));
+            var animating = patches.ToLookup(p => this.ShouldAnimate(state, p.Key, p.Value));
 
             // general data
             report.AppendLine();

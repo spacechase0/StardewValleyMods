@@ -74,7 +74,7 @@ namespace ContentPatcherAnimations.Framework
         {
             this.CurrentLanguageSuffix = (code == LocalizedContentManager.LanguageCode.en)
                 ? null
-                : $".{Game1.content.LanguageCodeString(Game1.content.GetCurrentLanguage())}";
+                : $".{LocalizedContentManager.CurrentLanguageString}";
         }
     }
 }

@@ -24,5 +24,8 @@ namespace ContentPatcherAnimations.Framework
 
         /// <summary>The number of animation frames, defined by the content pack author.</summary>
         public int AnimationFrameCount { get; set; } = -1;
+
+        /// <summary>The chance per game tick to begin an animation, defined by the content pack author.</summary>
+        public float AnimationChance { get; set; } = Mod.Config.DefaultAnimationChance;
     }
 }
