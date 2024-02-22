@@ -20,7 +20,7 @@ namespace SpaceCore.VanillaAssetExpansion
         {
             if (__instance is MeleeWeapon weapon)
             {
-                if (weapon.GetData().CustomFields.TryGetValue("CanBeTrashed", out string str) &&
+                if ((weapon.GetData().CustomFields?.TryGetValue("CanBeTrashed", out string str) ?? false) &&
                      bool.TryParse(str, out bool val) && !val)
                 {
                     __result = false;
