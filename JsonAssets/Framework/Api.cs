@@ -51,6 +51,36 @@ namespace JsonAssets
             this.LoadFolder(path, translations);
         }
 
+        public string GetObjectId(string name)
+        {
+            return name.FixIdJA();
+        }
+
+        public string GetCropId(string name)
+        {
+            return name.FixIdJA();
+        }
+        public string GetFruitTreeId(string name)
+        {
+            return name.FixIdJA();
+        }
+        public string GetBigCraftableId(string name)
+        {
+            return name.FixIdJA();
+        }
+        public string GetHatId(string name)
+        {
+            return name.FixIdJA();
+        }
+        public string GetWeaponId(string name)
+        {
+            return name.FixIdJA();
+        }
+        public string GetClothingId(string name)
+        {
+            return name.FixIdJA();
+        }
+
         public List<string> GetAllObjectsFromContentPack(string cp)
         {
             return this.GetAllFromContentPack(Mod.instance.ObjectsByContentPack, cp);
