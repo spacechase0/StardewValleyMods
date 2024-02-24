@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -65,11 +66,8 @@ namespace Satchels
             if (upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_Crafting" ||
                 upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_Cooking")
             {
-                var chest = new DummyChest(true);
-                chest.netItems = satchel.netInventory;
-
                 Vector2 pos = Utility.getTopLeftPositionForCenteringOnScreen(800 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2);
-                return new CraftingPage((int)pos.X, (int)pos.Y, 800 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2, cooking: upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_Cooking", true, new Chest[] { chest }.ToList());
+                return new CraftingPage((int)pos.X, (int)pos.Y, 800 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2, cooking: upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_Cooking", true, new IInventory[] { satchel.Inventory }.ToList());
             }
             else if (upgrade.QualifiedItemId == "(O)spacechase0.Satchels_SatchelUpgrade_AutoPickup")
             {
@@ -97,7 +95,7 @@ namespace Satchels
             BaseEnchantment.GetAvailableEnchantments().Add(new SatchelInceptionEnchantment());
 
             var harmony = new Harmony(ModManifest.UniqueID);
-            harmony.PatchAll();
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
         private void GameLoop_UpdateTicked(object sender, StardewModdingAPI.Events.UpdateTickedEventArgs e)
@@ -185,7 +183,6 @@ namespace Satchels
                         {
                             MaxStackSizeOverride = 1,
                             CategoryTextOverride = I18n.Upgrade_CategoryText(),
-                            HideFromShippingCollection = true,
                         });
                     }
                 });
@@ -208,6 +205,7 @@ namespace Satchels
                             Type = "Junk",
                             Category = StardewValley.Object.junkCategory,
                             Price = 100,
+                            ExcludeFromShippingCollection = true,
                         });
                     }
                 });
