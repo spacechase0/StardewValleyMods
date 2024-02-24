@@ -28,6 +28,8 @@ namespace Satchels
         public readonly NetString satchelName = new();
         public readonly NetRef<Inventory> netInventory = new(new());
         public readonly NetRef<Inventory> netUpgrades = new(new());
+
+        [XmlIgnore]
         public readonly NetBool isOpen = new(false);
 
         public Satchel()
