@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Satchels</Name>
+    <Description>An item that lets you hold more items.</Description>
     <Version>1.0.0</Version>
 
     <TargetFramework>net6.0</TargetFramework>

@@ -85,25 +85,72 @@ namespace SpaceCore
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
 
+            var manualContext = new TriggerActionContext("Manual", Array.Empty<object>(), null); ;
             GameLocation.RegisterTileAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
             {
-                TriggerActionManager.TryRunAction(args[0], out string error, out Exception e);
+                var triggers = TriggerActionManager.GetActionsForTrigger("Manual");
+                var trigger = triggers.FirstOrDefault(t => t.Data.Id == args[0]);
+                if (trigger != null)
+                {
+                    foreach (var action in trigger.Actions)
+                    {
+                        if ( !TriggerActionManager.TryRunAction(action, manualContext, out string error, out Exception e) )
+                        {
+                            Log.Error($"Trigger action {trigger.Data.Id} failed: {error} {e}");
+                        }
+                    }
+
+                    if (trigger.Data.MarkActionApplied)
+                        farmer.triggerActionsRun.Add(trigger.Data.Id);
+                }
                 return true;
             });
             GameLocation.RegisterTouchAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
             {
-                TriggerActionManager.TryRunAction(args[0], out string error, out Exception e);
+                var triggers = TriggerActionManager.GetActionsForTrigger("Manual");
+                var trigger = triggers.FirstOrDefault(t => t.Data.Id == args[0]);
+                if (trigger != null)
+                {
+                    foreach (var action in trigger.Actions)
+                    {
+                        if (!TriggerActionManager.TryRunAction(action, manualContext, out string error, out Exception e))
+                        {
+                            Log.Error($"Trigger action {trigger.Data.Id} failed: {error} {e}");
+                        }
+                    }
+
+                    if (trigger.Data.MarkActionApplied)
+                        farmer.triggerActionsRun.Add(trigger.Data.Id);
+                }
+            });
+
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_PlaySound", (string[] args, TriggerActionContext ctx, out string error) =>
+            {
+                if ( args.Length < 2 )
+                {
+                    error = "Not enough arguments";
+                    return false;
+                }
+                error = "";
+                if (args.Length >= 3 && bool.TryParse(args[2], out bool local) && local)
+                    Game1.player.playNearbySoundAll(args[1]);
+                else
+                    Game1.playSound(args[1]);
+                return true;
             });
 
             Event.RegisterCommand("damageFarmer", DamageFarmerEventCommand);
             Event.RegisterCommand("giveHat", GiveHatEventCommand);
             Event.RegisterCommand("setDating", SetDatingEventCommand);
+            Event.RegisterCommand("setEngaged", SetEngagedEventCommand);
             Event.RegisterCommand("totemWarpEffect", TotemWarpEventCommand);
             Event.RegisterCommand("setActorScale", SetActorScale);
             Event.RegisterCommand("cycleActorColors", CycleActorColors);
             Event.RegisterCommand("flash", FlashEventCommand);
             Event.RegisterCommand("setRaining", SetRainingEventCommand);
             Event.RegisterCommand("screenShake", ScreenShakeEventCommand);
+            Event.RegisterCommand("setZoom", SetZoomEventCommand);
+            Event.RegisterCommand("smoothZoom", SmoothZoomEventCommand);
 
             Commands.Register();
             VanillaAssetExpansion.VanillaAssetExpansion.Init();
@@ -254,6 +301,46 @@ namespace SpaceCore
                 else
                 {
                     f.Status = FriendshipStatus.Dating;
+                    Game1.Multiplayer.globalChatInfoMessage("Dating", Game1.player.Name, Game1.getCharacterFromName(args[1]).GetTokenizedDisplayName());
+                }
+            }
+            finally
+            {
+                evt.CurrentCommand++;
+            }
+        }
+        private static void SetEngagedEventCommand(Event evt, string[] args, EventContext ctx)
+        {
+            try
+            {
+                if ( args.Length < 4 )
+                {
+                    Log.Warn("Not enough arguments for setEngaged event command");
+                }
+                else if (!Game1.player.friendshipData.TryGetValue(args[1], out Friendship f))
+                {
+                    Log.Warn("Could not find NPC " + args[1] + " to mark as engagement");
+                }
+                else if (!bool.TryParse(args[2], out bool asRoomate))
+                {
+                    Log.Warn("Could not parse asRoommate as boolean");
+                }
+                else if (!int.TryParse(args[2], out int weddingOffset) || weddingOffset < 1)
+                {
+                    Log.Warn("Could not parse weddingOffset as positive integer");
+                }
+                else
+                {
+                    WorldDate weddingDate = new WorldDate(Game1.Date);
+                    weddingDate.TotalDays += weddingOffset;
+                    while (!Game1.canHaveWeddingOnDay(weddingDate.DayOfMonth, weddingDate.Season))
+                        ++weddingDate.TotalDays;
+
+                    f.Status = FriendshipStatus.Engaged;
+                    f.RoommateMarriage = asRoomate;
+                    f.WeddingDate = weddingDate;
+
+                    Game1.Multiplayer.globalChatInfoMessage("Engaged", Game1.player.Name, Game1.getCharacterFromName(args[1]).GetTokenizedDisplayName());
                 }
             }
             finally
@@ -461,6 +548,26 @@ namespace SpaceCore
             @event.CurrentCommand++;
         }
 
+        internal float currZoom = 1;
+        internal float targetZoom = 1;
+        internal float zoomTimeRemaining = -1;
+
+        private void SetZoomEventCommand(Event @event, string[] args, EventContext context)
+        {
+            targetZoom = Convert.ToSingle(args[1]);
+            zoomTimeRemaining = -1;
+
+            @event.CurrentCommand++;
+        }
+
+        private void SmoothZoomEventCommand(Event @event, string[] args, EventContext context)
+        {
+            targetZoom = Convert.ToSingle(args[1]);
+            zoomTimeRemaining = Convert.ToSingle(args[2]);
+
+            @event.CurrentCommand++;
+        }
+
         public class NpcExtensionData
         {
             public Dictionary<string, string> GiftEventTriggers = new();
@@ -549,6 +656,37 @@ namespace SpaceCore
                 }
             }
 
+            if ( Game1.CurrentEvent == null && (currZoom != 1 || targetZoom != 1) )
+            {
+                currZoom = targetZoom = 1;
+                zoomTimeRemaining = -1;
+                Game1.updateViewportForScreenSizeChange(false, Game1.game1.Window.ClientBounds.Width, Game1.game1.Window.ClientBounds.Height);
+            }
+            if (currZoom != targetZoom && Game1.CurrentEvent != null)
+            {
+                float newZoom = currZoom;
+                if (zoomTimeRemaining > 0.01)
+                {
+                    float sec = (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+
+                    newZoom = MathF.Exp(Utility.Lerp(MathF.Log(currZoom), MathF.Log(targetZoom), sec / zoomTimeRemaining));
+                    newZoom += (targetZoom - currZoom) * (sec / zoomTimeRemaining);
+                    zoomTimeRemaining -= sec;
+                }
+                else
+                    newZoom = targetZoom;
+
+                int newW = (int)(Game1.game1.Window.ClientBounds.Width / Game1.options.zoomLevel);
+                int newH = (int)(Game1.game1.Window.ClientBounds.Height / Game1.options.zoomLevel);
+                Point center = new(Game1.viewport.X + Game1.viewport.Width / 2, Game1.viewport.Y + Game1.viewport.Height / 2);
+                Game1.viewport.X = center.X - newW / 2;
+                Game1.viewport.Y = center.Y - newH / 2;
+                Game1.viewport.Width = newW;
+                Game1.viewport.Height = newH;
+
+                currZoom = newZoom;
+            }
+
             if (this.pendingScreenShake > 0)
             {
                 this.pendingScreenShake -= (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
@@ -568,7 +706,6 @@ namespace SpaceCore
                     this.shakeViewportPos = this.preShakeViewportPos + this.shakeAmount;
                     Game1.viewport.X = (int)this.shakeViewportPos.X;
                     Game1.viewport.Y = (int)this.shakeViewportPos.Y;
-                    Console.WriteLine("hello?");
                 }
             }
 
@@ -597,6 +734,18 @@ namespace SpaceCore
             catch (Exception ex)
             {
                 Log.Warn($"Exception migrating legacy save data: {ex}");
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Options), "get_zoomLevel")]
+    public static class OptionsZoomPatch
+    {
+        public static void Postfix(ref float __result)
+        {
+            if (Game1.CurrentEvent != null)
+            {
+                __result *= SpaceCore.Instance.currZoom;
             }
         }
     }

@@ -32,6 +32,9 @@ namespace SpaceCore.VanillaAssetExpansion
 
             SpaceEvents.AfterGiftGiven += SpaceEvents_AfterGiftGiven;
             SpaceEvents.OnItemEaten += SpaceEvents_OnItemEaten;
+
+            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_OnItemUsed");
+            TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_OnItemEaten");
         }
 
         private static void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
@@ -157,7 +160,8 @@ namespace SpaceCore.VanillaAssetExpansion
             if (farmer != Game1.player)
                 return;
 
-            //TriggerActionManager.Raise("spacechase0.SpaceCore_OnItemConsumed", new object[] { new KeyValuePair<string, object>("Location", farmer.currentLocation), new KeyValuePair<string, object>( "Farmer", sender ), new KeyValuePair<string, object>("ItemId", farmer.itemToEat.QualifiedItemId) });
+            var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
+            TriggerActionManager.Raise("spacechase0.SpaceCore_OnItemEaten", location: Game1.player.currentLocation, player: Game1.player, inputItem: Game1.player.itemToEat);
         }
 
         private static void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)

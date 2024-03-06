@@ -17,6 +17,14 @@ Provided functionality for players:
     * You can set this menu to always show up when interacting with an NPC in the config, in case you want to (for example) prevent accidentally gifting an item to somebody.
 
 Provided functionality for content pack authors:
+* New tile action - `spacechase0.SpaceCore_TriggerAction triggerActionId` - for running a trigger action, set the Trigger to "Manual"
+* New touch action - `spacechase0.SpaceCore_TriggerAction triggerActionId` - for running a trigger action, set the Trigger to "Manual"
+* New trigger actions
+    * `spacechase0.SpaceCore_OnItemUsed` - use item GSQ conditions to check the right item
+    * `spacechase0.SpaceCore_OnItemEaten` - use item GSQ conditions to check the right item
+* New trigger action actions
+    * `spacechase0.SpaceCore_PlaySound sound local` - `sound` = the cue ID, `local` = `true` if everyone near the player should hear it, `false` otherwise
+* Custom event commands
     * `damageFarmer amount`
     * `setDating npc`
     * `totemWarpEffect tileX tileY totemSpriteSheetPatch sourceRectX,SourceRectY,sourceRectWidth,sourceRectHeight` - will need to delay after this command if you want to wait for the animation to be done
@@ -25,6 +33,9 @@ Provided functionality for content pack authors:
     * `flash durationInSeconds`
     * `setRaining locationContext true/false` - Sets a location context as raining (or not). In vanilla, valid location contexts are "Default", "Island", and "Desert" (case sensitive).
     * `screenshake intensity durationInSeconds` - Shake the screen for a certain amount of time. For intensity, `1` will be basically nothing. It's in pixels difference from the base screen position, so try something like 5 or 10 to start with.
+    * `setZoom factor` (factor of 4 is zoomed in 400% - don't zoom out (ie. less than 1), the game doesn't like it)
+    * `smoothZoom targetZoomFactor durationInSeconds`
+    * `setEngaged npc asRoommate weddingOffset` - `npc` = NPC internal ID, `asRoommate` = true if this is a roommate, false otherwise, `weddingOffset` = how many days away the wedding should be, minimum of one (pushed back for invalid wedding dates like festivals).
 * Vanilla Asset Expansions
     * Objects - These are in the asset `spacechase0.SpaceCore/ObjectExtensionData`, which is a dictionary with the key being an object's unqualified item ID, and the value being an object containing the following fields:
         * `CategoryTextOverride` - string, default null (no override)
@@ -38,7 +49,7 @@ Provided functionality for content pack authors:
             * `Location` - string, the location to warp to - ex. `"CommunityCenter"`
             * `Position` - Vector2, the tile to warp to - ex. `"25, 15"`
             * `Color` - Color, the color the screen should flash - ex. `{ "R": 0, "G": 0, "B": 255, "A": 255 }`
-        * `UseForTriggerAction` - The [Trigger Action](https://stardewvalleywiki.com/Modding:Trigger_actions) to run, if any.
+        * `UseForTriggerAction` - True to run a trigger action upon use, false otherwise. Default false.
     * Weapons - Stored in the `CustomFields` on the weapon data asset object:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
     * NPCs - Stored in the asset `"spacechase0.SpaceCore/NpcExtensionData"`, which is a dictionary with the key being an NPC name, and the value being an object containing the following fields:

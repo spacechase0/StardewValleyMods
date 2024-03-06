@@ -35,7 +35,7 @@ namespace SpaceCore.VanillaAssetExpansion
         }
         public TotemWarpData TotemWarp { get; set; }
 
-        public string UseForTriggerAction { get; set; } = null;
+        public bool UseForTriggerAction { get; set; } = false;
     }
 
     [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.getCategoryName))]
@@ -159,15 +159,14 @@ namespace SpaceCore.VanillaAssetExpansion
         public static bool Prefix(StardewValley.Object __instance, GameLocation location, ref bool __result)
         {
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
-            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].UseForTriggerAction != null)
+            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].UseForTriggerAction)
             {
                 if (!Game1.player.canMove || __instance.isTemporarilyInvisible)
                 {
                     __result = false;
                     return false;
                 }
-
-                TriggerActionManager.TryRunAction(dict[__instance.ItemId].UseForTriggerAction, out string error, out Exception e);
+                TriggerActionManager.Raise("spacechase0.SpaceCore_OnItemUsed", location: Game1.player.currentLocation, player: Game1.player, inputItem: __instance);
 
                 __result = true;
                 return true;
