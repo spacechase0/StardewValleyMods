@@ -52,6 +52,15 @@ Provided functionality for content pack authors:
         * `UseForTriggerAction` - True to run a trigger action upon use, false otherwise. Default false.
     * Weapons - Stored in the `CustomFields` on the weapon data asset object:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
+    * Furniture - Stored in the asset `"spacechase0.SpaceCore/FurnitureExtensionData"`, which is a dictionary with the key being the furniture ID, and the value being an object containing the following fields:
+        * `TileProperties` - A dictionary of tile coordinates to a dictionary of layers to a dictionary of tile properties. Just look at [this example](https://gist.github.com/spacechase0/ea6db01284157d408d9f359f141a0d65).
+    * Shops - Stored in the asset `"spacechase0.SpaceCore/ShopExtensionData"`, which is a dictionary with the key being the shop ID, and the value being an object containing the following fields:
+        * `Tabs` - The options are `"None"`, `"Catalogue"`, `"FurnitureCatalogue"`, and `"Custom"`. For custom, see the next field.
+        * `CustomTabs` - A list consisting of the following object (see [this example](https://gist.github.com/spacechase0/8a80b22655f624d9854486bfbe5abc7e)):
+            * `Id` - The ID of this tab, must be unique (used by Content Patcher)
+            * `IconTexture` - The path to the texture to use for the tab. Use the `{{InternalAssetKey: }}` token for your own assets.
+            * `IconRect` - The subrect of the texture to use for the tab. An object containing `X`, `Y`, `Width`, `Height` (all in pixels).
+            * `FilterCondition` - A GameStateQuery condition used for filtering the items. Use `TRUE` to just get everything (useful for your first tab). Example to get all seeds: `"ITEM_CATEGORY Input -74"`
     * NPCs - Stored in the asset `"spacechase0.SpaceCore/NpcExtensionData"`, which is a dictionary with the key being an NPC name, and the value being an object containing the following fields:
         * `GiftEventTriggers` - A dictionary with the keys being an object, and the values being an event to trigger when that item is given to the NPC.
             * The "event to trigger" needs to be the full event key (ID and preconditions) used in the events data file, so that SpaceCore can find the event.

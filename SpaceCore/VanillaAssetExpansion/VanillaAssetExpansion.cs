@@ -186,8 +186,12 @@ namespace SpaceCore.VanillaAssetExpansion
         {
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/ObjectExtensionData"))
                 e.LoadFrom(() => new Dictionary<string, ObjectExtensionData>(), AssetLoadPriority.Low);
+            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/FurnitureExtensionData"))
+                e.LoadFrom(() => new Dictionary<string, FurnitureExtensionData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/NpcExtensionData"))
                 e.LoadFrom(() => new Dictionary<string, NpcExtensionData>(), AssetLoadPriority.Low);
+            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/ShopExtensionData"))
+                e.LoadFrom(() => new Dictionary<string, ShopExtensionData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/TextureOverrides"))
                 e.LoadFrom(() => new Dictionary<string, TextureOverridePackData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/CraftingRecipeOverrides"))
