@@ -17,6 +17,8 @@ Provided functionality for players:
     * You can set this menu to always show up when interacting with an NPC in the config, in case you want to (for example) prevent accidentally gifting an item to somebody.
 
 Provided functionality for content pack authors:
+* New GameStateQuery queries:
+    * Every custom skill registered through the C# API automatically registers a `PLAYER_<SKILLID_IN_CAPS>_LEVEL` query matching the vanilla ones (such as PLAYER_FARMING_LEVEL).
 * New tile action - `spacechase0.SpaceCore_TriggerAction triggerActionId` - for running a trigger action, set the Trigger to "Manual"
 * New touch action - `spacechase0.SpaceCore_TriggerAction triggerActionId` - for running a trigger action, set the Trigger to "Manual"
 * New trigger actions

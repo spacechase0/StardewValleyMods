@@ -217,6 +217,11 @@ namespace SpaceCore
         public static void RegisterSkill(Skill skill)
         {
             Skills.SkillsByName.Add(skill.Id, skill);
+
+            GameStateQuery.Register("PLAYER_" + skill.Id.ToUpper() + "_LEVEL", (args, ctx) =>
+            {
+                return GameStateQuery.Helpers.PlayerSkillLevelImpl(args, ctx.Player, (f) => f.GetCustomSkillLevel(skill));
+            });
         }
 
         public static Skill GetSkill(string name)

@@ -82,7 +82,7 @@ namespace JsonAssets.Data
                 SpriteIndex = 0,
                 Edibility = Edibility,
                 IsDrink = EdibleIsDrink,
-                Buff = new()
+                Buffs = [ new()
                 {
                     CustomAttributes = new()
                     {
@@ -98,7 +98,7 @@ namespace JsonAssets.Data
                         Attack = EdibleBuffs.Attack,
                     },
                     Duration = EdibleBuffs.Duration,
-                },
+                } ],
                 ContextTags = ctx,
                 ExcludeFromShippingCollection = HideFromShippingCollection,
             };

@@ -50,10 +50,19 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        internal string GetCraftableInformation()
+        internal StardewValley.GameData.BigCraftables.BigCraftableData GetCraftableInformation()
         {
-            string str = $"{this.Name}/{this.Price}/-300/Crafting -9/{this.LocalizedDescription()}/true/true/0/{ProvidesLight}/{this.LocalizedName()}/0/JA\\BigCraftable0\\{Name}";
-            return str;
+            return new StardewValley.GameData.BigCraftables.BigCraftableData()
+            {
+                Name = this.Name,
+                DisplayName = this.LocalizedName(),
+                Description = this.LocalizedDescription(),
+                Price = this.Price,
+                Fragility = 0,
+                IsLamp = ProvidesLight,
+                Texture = $"JA\\BigCraftables\\{Name}",
+                SpriteIndex = 0,
+            };
         }
 
 

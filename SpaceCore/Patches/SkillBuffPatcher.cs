@@ -37,9 +37,9 @@ internal class SkillBuffPatcher : BasePatcher
     {
         // If there is no custom data, return normal buffs.
         if (!Game1.objectData.TryGetValue(__instance.ItemId, out ObjectData data) ||
-            data.Buff is null ||
-            data.Buff.CustomFields is null ||
-            data.Buff.CustomFields.Count == 0)
+            data.Buffs is null ||
+            data.Buffs.All(b => b.CustomFields is null) ||
+            data.Buffs.All(b =>b.CustomFields.Count == 0))
         {
             foreach (Buff buff in values)
             {
@@ -49,37 +49,25 @@ internal class SkillBuffPatcher : BasePatcher
         }
 
         // If there is custom data, find the matching buff to wrap.
-        Buff matchingBuff = null;
-        string id = data.Buff.BuffId;
-        if (string.IsNullOrWhiteSpace(id))
+        foreach ( var buffData in data.Buffs )
         {
-            id = data.IsDrink ? "drink" : "food";
-        }
-        foreach (Buff buff in values)
-        {
-            if (buff.id != id)
+            if (buffData.CustomFields.Any( b => b.Key.StartsWith("spacechase.SpaceCore.SkillBuff.")))
             {
-                yield return buff;
-            }
-            else
-            {
-                matchingBuff = buff;
+                Buff matchingBuff = null;
+                string id = buffData.BuffId;
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    id = data.IsDrink ? "drink" : "food";
+                }
+                foreach (Buff buff in values)
+                {
+                    matchingBuff = buff;
+                }
+
+                if (matchingBuff != null)
+                    yield return new Skills.SkillBuff(matchingBuff, id, buffData.CustomFields);
             }
         }
-
-        // If there is no matching buff, we need to create one.
-        // Just using a different ID is enough to trick TryCreateBuffFromData into creating a non-null buff.
-        if (matchingBuff is null)
-        {
-            float durationMultiplier = ((__instance.Quality != 0) ? 1.5f : 1f);
-            string buffId = data.Buff.BuffId;
-            data.Buff.BuffId = "fake";
-            matchingBuff = StardewValley.Object.TryCreateBuffFromData(data, __instance.Name, __instance.DisplayName, durationMultiplier, __instance.ModifyItemBuffs);
-            data.Buff.BuffId = buffId;
-        }
-
-        // Replace matching buff with new CustomBuff, which copies customFields to player.modData
-        yield return new Skills.SkillBuff(matchingBuff, id, data.Buff.CustomFields);
     }
 
     private static IEnumerable<ClickableTextureComponent> After_BuffsDisplay_GetClickableComponents(IEnumerable<ClickableTextureComponent> values, Buff buff)
@@ -170,18 +158,21 @@ internal class SkillBuffPatcher : BasePatcher
     {
         if (hoveredItem is null ||
             !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
-            data.Buff is null ||
-            data.Buff.CustomFields is null ||
-            data.Buff.CustomFields.Count == 0)
+            data.Buffs is null ||
+            data.Buffs.All(b => b.CustomFields is null) ||
+            data.Buffs.All(b => b.CustomFields.Count == 0))
         {
             return height;
         }
 
         bool addedAny = false;
-        foreach (var entry in Skills.SkillBuff.ParseCustomFields(data.Buff.CustomFields))
+        foreach (var buffData in data.Buffs)
         {
-            addedAny = true;
-            height += 34;
+            foreach (var entry in Skills.SkillBuff.ParseCustomFields(buffData.CustomFields))
+            {
+                addedAny = true;
+                height += 34;
+            }
         }
 
         if (buffIconsToDisplay is null && addedAny)
@@ -196,23 +187,26 @@ internal class SkillBuffPatcher : BasePatcher
     {
         if (hoveredItem is null ||
             !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
-            data.Buff is null ||
-            data.Buff.CustomFields is null ||
-            data.Buff.CustomFields.Count == 0)
+            data.Buffs is null ||
+            data.Buffs.All(b => b.CustomFields is null) ||
+            data.Buffs.All(b => b.CustomFields.Count == 0))
         {
             return width;
         }
 
-        foreach (var entry in Skills.SkillBuff.ParseCustomFields(data.Buff.CustomFields))
+        foreach ( var buffData in data.Buffs )
         {
-            Skills.Skill skill = Skills.GetSkill(entry.Key);
-
-            if (skill is null)
+            foreach (var entry in Skills.SkillBuff.ParseCustomFields(buffData.CustomFields))
             {
-                continue;
-            }
+                Skills.Skill skill = Skills.GetSkill(entry.Key);
 
-            width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X) + 92;
+                if (skill is null)
+                {
+                    continue;
+                }
+
+                width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X) + 92;
+            }
         }
 
         return width;
@@ -222,26 +216,29 @@ internal class SkillBuffPatcher : BasePatcher
     {
         if (hoveredItem is null ||
             !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
-            data.Buff is null ||
-            data.Buff.CustomFields is null ||
-            data.Buff.CustomFields.Count == 0)
+            data.Buffs is null ||
+            data.Buffs.All(b => b.CustomFields is null) ||
+            data.Buffs.All(b => b.CustomFields.Count == 0))
         {
             return y;
         }
 
-        foreach (var entry in Skills.SkillBuff.ParseCustomFields(data.Buff.CustomFields))
+        foreach (var buffData in data.Buffs)
         {
-            Skills.Skill skill = Skills.GetSkill(entry.Key);
-
-            if (skill is null)
+            foreach (var entry in Skills.SkillBuff.ParseCustomFields(buffData.CustomFields))
             {
-                continue;
-            }
-            string text = $"+{entry.Value}  {skill.GetName()}";
+                Skills.Skill skill = Skills.GetSkill(entry.Key);
 
-            Utility.drawWithShadow(b, skill.SkillsPageIcon, new Vector2(x + 16 + 4, y + 16), new Rectangle(0, 0, 10, 10), Color.White, 0f, Vector2.Zero, 3f, flipped: false, 0.95f);
-            Utility.drawTextWithShadow(b, text, font, new Vector2(x + 16 + 34 + 4, y + 16), Game1.textColor);
-            y += 34;
+                if (skill is null)
+                {
+                    continue;
+                }
+                string text = $"+{entry.Value}  {skill.GetName()}";
+
+                Utility.drawWithShadow(b, skill.SkillsPageIcon, new Vector2(x + 16 + 4, y + 16), new Rectangle(0, 0, 10, 10), Color.White, 0f, Vector2.Zero, 3f, flipped: false, 0.95f);
+                Utility.drawTextWithShadow(b, text, font, new Vector2(x + 16 + 34 + 4, y + 16), Game1.textColor);
+                y += 34;
+            }
         }
 
         return y;

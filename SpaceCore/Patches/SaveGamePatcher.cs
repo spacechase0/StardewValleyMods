@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -16,6 +17,7 @@ using SpaceCore.Framework.Serialization;
 using SpaceShared;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Inventories;
 using StardewValley.Menus;
 
 namespace SpaceCore.Patches
@@ -28,7 +30,7 @@ namespace SpaceCore.Patches
         ** Fields
         *********/
         /// <summary>Manages the custom save serialization.</summary>
-        private static SerializerManager SerializerManager;
+        internal static SerializerManager SerializerManager;
 
 
         /*********
@@ -401,6 +403,40 @@ namespace SpaceCore.Patches
             );
             //Log.trace( "Mid serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
             //Log.trace( "End serialize\t" + System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 );
+        }
+    }
+
+    [HarmonyPatch(typeof(Inventory), nameof(Inventory.WriteXml))]
+    // *grumbles something about inlining and MacOS*
+    public static class RedirectGetSerializerForNonWindowsPatch1
+    {
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            List<CodeInstruction> ret = new();
+
+            foreach (var insn in insns)
+            {
+                if ( insn.operand is MethodInfo meth && meth == AccessTools.Method( typeof(SaveGame), nameof(SaveGame.GetSerializer ) ) )
+                {
+                    insn.operand = AccessTools.Method(typeof(RedirectGetSerializerForNonWindowsPatch1), nameof(RedirectGetSerializerForNonWindowsPatch1.GetSerializerProxy));
+                }
+                ret.Add(insn);
+            }
+
+            return ret;
+        }
+
+        public static XmlSerializer GetSerializerProxy(Type type)
+        {
+            return SaveGamePatcher.SerializerManager.InitializeSerializer(type);
+        }
+    }
+    [HarmonyPatch(typeof(Inventory), nameof(Inventory.ReadXml))]
+    public static class RedirectGetSerializerForNonWindowsPatch2
+    {
+        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> insns)
+        {
+            return RedirectGetSerializerForNonWindowsPatch1.Transpiler(gen, original, insns);
         }
     }
 }

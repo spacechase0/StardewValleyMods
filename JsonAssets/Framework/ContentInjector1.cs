@@ -265,7 +265,7 @@ namespace JsonAssets.Framework
         }
         private void InjectDataBigCraftablesInformation(IAssetData asset)
         {
-            var data = asset.AsDictionary<string, string>().Data;
+            var data = asset.AsDictionary<string, StardewValley.GameData.BigCraftables.BigCraftableData>().Data;
             foreach (var big in Mod.instance.BigCraftables)
             {
                 try

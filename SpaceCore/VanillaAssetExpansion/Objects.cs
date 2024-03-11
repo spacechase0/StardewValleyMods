@@ -17,7 +17,7 @@ namespace SpaceCore.VanillaAssetExpansion
     public class ObjectExtensionData
     {
         public string CategoryTextOverride { get; set; } = null;
-        public Color? CategoryColorOverride { get; set; } = null;
+        public Color CategoryColorOverride { get; set; } = new Color( 0, 0, 0, 0);
 
         public bool CanBeTrashed { get; set; } = true;
         public bool CanBeShipped { get; set; } = true;
@@ -57,9 +57,9 @@ namespace SpaceCore.VanillaAssetExpansion
         public static void Postfix(StardewValley.Object __instance, ref Color __result)
         {
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
-            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].CategoryColorOverride.HasValue)
+            if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].CategoryColorOverride.A != 0)
             {
-                __result = dict[__instance.ItemId].CategoryColorOverride.Value;
+                __result = dict[__instance.ItemId].CategoryColorOverride;
             }
         }
     }
