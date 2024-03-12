@@ -131,11 +131,24 @@ namespace SpaceCore
                     error = "Not enough arguments";
                     return false;
                 }
-                error = "";
+                error = null;
                 if (args.Length >= 3 && bool.TryParse(args[2], out bool local) && local)
                     Game1.player.playNearbySoundAll(args[1]);
                 else
                     Game1.playSound(args[1]);
+                return true;
+            });
+
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_ShowHudMessage", (string[] args, TriggerActionContext ctx, out string error) =>
+            {
+                if ( args.Length < 2 )
+                {
+                    error = "Not enough arguments";
+                    return false;
+                }
+
+                error = null;
+                Game1.addHUDMessage(new HUDMessage(args[0]));
                 return true;
             });
 

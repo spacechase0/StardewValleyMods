@@ -26,6 +26,7 @@ Provided functionality for content pack authors:
     * `spacechase0.SpaceCore_OnItemEaten` - use item GSQ conditions to check the right item
 * New trigger action actions
     * `spacechase0.SpaceCore_PlaySound sound local` - `sound` = the cue ID, `local` = `true` if everyone near the player should hear it, `false` otherwise
+    * `spacechase0.SpaceCore_ShowHudMessage "message goes here"`
 * Custom event commands
     * `damageFarmer amount`
     * `setDating npc`
