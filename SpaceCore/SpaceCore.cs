@@ -313,9 +313,17 @@ namespace SpaceCore
                 }
                 else
                 {
-                    f.Status = FriendshipStatus.Dating;
-                    Game1.Multiplayer.globalChatInfoMessage("Dating", Game1.player.Name, Game1.getCharacterFromName(args[1]).GetTokenizedDisplayName());
-                }
+                    if (args.Length >= 3 && args[2].ToLower().Equals("false"))
+                    {
+                        if (f.Status == FriendshipStatus.Dating)
+                            f.Status = FriendshipStatus.Friendly;
+                    }
+                    else
+                    {
+                        f.Status = FriendshipStatus.Dating;
+                        Game1.Multiplayer.globalChatInfoMessage("Dating", Game1.player.Name, Game1.getCharacterFromName(args[1]).GetTokenizedDisplayName());
+                    }
+                    }
             }
             finally
             {

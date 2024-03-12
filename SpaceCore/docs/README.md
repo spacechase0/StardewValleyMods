@@ -29,7 +29,7 @@ Provided functionality for content pack authors:
     * `spacechase0.SpaceCore_ShowHudMessage "message goes here"`
 * Custom event commands
     * `damageFarmer amount`
-    * `setDating npc`
+    * `setDating npc [true/false]` - default true
     * `totemWarpEffect tileX tileY totemSpriteSheetPatch sourceRectX,SourceRectY,sourceRectWidth,sourceRectHeight` - will need to delay after this command if you want to wait for the animation to be done
     * `setActorScale actor factorX factorY` - reset with factorX/Y = 1 - this will probably not be positioned right after scaling and will need a position offset afterwards
     * `cycleActorColors actor durationInSeconds color [color...]` color=`R,G,B` - specify 1 or more. Specifying 1 will just mean it stays that color instead of cycling
