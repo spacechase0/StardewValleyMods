@@ -11,6 +11,9 @@
     "sort.name": "назвою",
     "sort.price": "ціною",
 
+    //quantity dialog
+    "quantity.name" :  "Кількість",
+
     // category names
     "categories.everything": "Все",
     "categories.other": "Інше",
