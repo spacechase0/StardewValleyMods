@@ -1,25 +1,25 @@
-﻿{
+{
     // skill
     "skill.name": "행운",
     "skill.level-up": "행운 증가",
 
     // professions
-    "fortunate.name": "행운",
-    "fortunate.desc": "더 나은 매일의 행운을 빕니다.",
+    "fortunate.name": "길운",
+    "fortunate.desc": "하루 운세가 약간 더 좋아집니다.",
     "lucky.name": "럭키",
-    "lucky.desc": "20% 확률로 최대 일일 운.",
+    "lucky.desc": "20% 확률로 가장 좋은 운세가 나옵니다.",
     "popular-helper.name": "인기 도우미",
-    "popular-helper.desc": "일일 퀘스트가 3배 더 자주 발생합니다.",
-    "shooting-star.name": "슈팅 스타",
-    "shooting-star.desc": "야간 이벤트가 2배 더 자주 발생합니다.",
+    "popular-helper.desc": "잡화점의 구인 광고가 더욱 자주 발생합니다.",
+    "shooting-star.name": "별똥별",
+    "shooting-star.desc": "작물 요정, 마녀, 운석 이벤트 등장 확률이 약간 증가합니다.",
     "spirit-child.name": "영혼의 아이",
-    "spirit-child.desc": "선물을 주는 것은 주니모를 행복하게 만듭니다. 주니모들은 당신의 농장에 도움이 될 것입니다. \n (15% 확률로 농장 발전 도움).)",
-    "un-unlucky.name": "불운",
-    "un-unlucky.desc": "운이 좋지 않습니다.",
+    "spirit-child.desc": "주니모들이 당신의 농장 일을 도와줍니다. \n (매일 15% 확률로 발생).)",
+    "un-unlucky.name": "천운",
+    "un-unlucky.desc": "나쁜 운세가 절대 나오지 않습니다.",
 
     // Spirit Child reward messages
-    "junimo-rewards.animal-friendship": "주니모가 당신의 동물 중 일부를 당신을 더 좋아하게 만들었습니다!",
-    "junimo-rewards.grow-crops": "주니모가 작물을 발전시켰습니다!",
+    "junimo-rewards.animal-friendship": "주니모가 몇몇 동물들의 우정도를 높여 주었습니다!",
+    "junimo-rewards.grow-crops": "주니모가 작물을 성장시켰습니다!",
     "junimo-rewards.grow-grass": "주니모가 잔디를 키우고 울타리를 수리했습니다!",
-    "junimo-rewards.prismatic-shard": "주니모가 프리즘 조각을 주었습니다!"
+    "junimo-rewards.prismatic-shard": "주니모가 무지갯빛 파편을 주었습니다!"
 }
