@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -13,6 +14,8 @@ namespace SpaceCore
     {
         string[] GetCustomSkills();
         int GetLevelForCustomSkill(Farmer farmer, string skill);
+        int GetExperienceForCustomSkill(Farmer farmer, string skill);
+        List<Tuple<string, int, int>> GetExperienceAndLevelsForCustomSkill(Farmer farmer);
         void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt);
         int GetProfessionId(string skill, string profession);
 
@@ -34,6 +37,16 @@ namespace SpaceCore
         public int GetLevelForCustomSkill(Farmer farmer, string skill)
         {
             return Skills.GetSkillLevel(farmer, skill);
+        }
+
+        public int GetExperienceForCustomSkill(Farmer farmer, string skill)
+        {
+            return farmer.GetCustomSkillExperience(skill);
+        }
+
+        public List<Tuple<string, int, int>> GetExperienceAndLevelsForCustomSkill(Farmer farmer)
+        {
+            return farmer.GetCustomSkillExperienceAndLevels();
         }
 
         public void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt)
