@@ -96,7 +96,7 @@ namespace JunimosAcceptCash
                         this.PurchaseButton.scale = this.PurchaseButton.baseScale * 0.75f;
                     for (int i = 0; i < currentPageBundle.numberOfIngredientSlots; ++i)
                     {
-                        this.ActiveMenu.ingredientSlots[i].item = new Object(currentPageBundle.ingredients[i].index, currentPageBundle.ingredients[i].stack, false, -1, currentPageBundle.ingredients[i].quality);
+                        this.ActiveMenu.ingredientSlots[i].item = new Object(currentPageBundle.ingredients[i].id, currentPageBundle.ingredients[i].stack, false, -1, currentPageBundle.ingredients[i].quality);
                     }
                     this.Helper.Reflection.GetMethod(this.ActiveMenu, "checkIfBundleIsComplete").Invoke();
 
@@ -142,13 +142,13 @@ namespace JunimosAcceptCash
                     continue;
 
                 int mostExpensiveSlot = 0;
-                int mostExpensiveCost = new SObject(bundle.ingredients[0].index, bundle.ingredients[0].stack, false, -1, bundle.ingredients[0].quality).sellToStorePrice() * bundle.ingredients[0].stack;
+                int mostExpensiveCost = new SObject(bundle.ingredients[0].id, bundle.ingredients[0].stack, false, -1, bundle.ingredients[0].quality).sellToStorePrice() * bundle.ingredients[0].stack;
                 for (int j = 1; j < bundle.ingredients.Count; ++j)
                 {
                     if (used.Contains(j))
                         continue;
 
-                    int itemCost = new SObject(bundle.ingredients[j].index, bundle.ingredients[j].stack, false, -1, bundle.ingredients[j].quality).sellToStorePrice() * bundle.ingredients[j].stack;
+                    int itemCost = new SObject(bundle.ingredients[j].id, bundle.ingredients[j].stack, false, -1, bundle.ingredients[j].quality).sellToStorePrice() * bundle.ingredients[j].stack;
                     if (cost > mostExpensiveCost)
                     {
                         mostExpensiveSlot = j;

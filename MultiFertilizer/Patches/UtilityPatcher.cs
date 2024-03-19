@@ -92,13 +92,13 @@ namespace MultiFertilizer.Patches
 
         private static bool TryToPlaceItemLogic(GameLocation location, Item item, int x, int y)
         {
-            DirtHelper.TryGetFertilizer(item.ParentSheetIndex, out FertilizerData fertilizer);
+            DirtHelper.TryGetFertilizer(item.ItemID, out FertilizerData fertilizer);
 
             Vector2 tileLocation = new Vector2(x / 64, y / 64);
             if (!location.TryGetDirt(tileLocation, out HoeDirt dirt, includePots: false))
                 return true;
 
-            if (dirt.fertilizer.Value != 0)
+            if (dirt.fertilizer.Value != "0")
             {
                 if (dirt.HasFertilizer(fertilizer))
                     Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HoeDirt.cs.13916-2"));

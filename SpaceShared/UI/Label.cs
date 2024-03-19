@@ -68,7 +68,7 @@ namespace SpaceShared.UI
 
             bool altColor = this.Hover && this.Callback != null;
             if (this.Bold)
-                SpriteText.drawString(b, this.String, (int)this.Position.X, (int)this.Position.Y, layerDepth: 1, color: altColor ? SpriteText.color_Gray : -1);
+                SpriteText.drawString(b, this.String, (int)this.Position.X, (int)this.Position.Y, layerDepth: 1, color: altColor ? SpriteText.color_Gray : null);
             else
             {
                 Color col = altColor ? this.HoverTextColor : this.IdleTextColor;

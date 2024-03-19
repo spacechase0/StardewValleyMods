@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
-using JsonAssets.Utilities;
-
 using Microsoft.Xna.Framework;
 using StardewValley.GameData.Crafting;
 
@@ -22,7 +20,7 @@ namespace JsonAssets.Data
         public bool ConsumeSecondItem { get; set; } = true;
 
         public IList<object> CraftedItems { get; set; } = new List<object>();
-        public Color CraftedItemColor { get; set; } = Color.White;
+        //public Color CraftedItemColor { get; set; } = Color.White;
 
 
         /*********
@@ -35,18 +33,12 @@ namespace JsonAssets.Data
                 FirstItemTags = new List<string>(this.FirstItemTags),
                 SecondItemTags = new List<string>(this.SecondItemTags),
                 SpendRightItem = this.ConsumeSecondItem,
-                CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}"
+                //CraftedItemColor = $"{this.CraftedItemColor.R} {this.CraftedItemColor.G} {this.CraftedItemColor.B}"
             };
 
-            if (this.CraftedItems.Count > 1)
-            {
-                recipe.CraftedItemIDs = new List<string>();
-                foreach (object entry in this.CraftedItems)
-                    recipe.CraftedItemIDs.Add(ItemResolver.GetClothingID(this.CraftedItems[0]).ToString()); // TODO: always uses first crafted item?
-                                                                                                                      // atra is confused here too.
-            }
-            else
-                recipe.CraftedItemID = ItemResolver.GetClothingID(this.CraftedItems[0]);
+            recipe.CraftedItemIds = new List<string>();
+            foreach (object entry in this.CraftedItems)
+                recipe.CraftedItemIds.Add(this.CraftedItems[0].ToString()); // TODO: always uses first crafted item?
 
             return recipe;
         }

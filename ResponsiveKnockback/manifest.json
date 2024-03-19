@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Responsive Knockback",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "...",
-    "UniqueID": "spacechase0.ResponsiveKnockback",
-    "EntryDll": "ResponsiveKnockback.dll",
-    "UpdateKeys": [ "Nexus:" ]
-}

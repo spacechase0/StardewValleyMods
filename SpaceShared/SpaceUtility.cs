@@ -4,8 +4,10 @@ using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Characters;
+using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using StardewValley.SpecialOrders;
 using StardewValley.TerrainFeatures;
 
 namespace SpaceShared
@@ -22,14 +24,11 @@ namespace SpaceShared
 
         protected static void _recursiveIterateLocation(GameLocation l, Func<TerrainFeature, TerrainFeature> action)
         {
-            if (l is BuildableGameLocation)
+            foreach (Building b in l.buildings)
             {
-                foreach (Building b in (l as BuildableGameLocation).buildings)
+                if (b.indoors.Value != null)
                 {
-                    if (b.indoors.Value != null)
-                    {
-                        SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
-                    }
+                    SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
                 }
             }
 
@@ -64,6 +63,8 @@ namespace SpaceShared
             }
         }
 
+        // Base game not has a function for this
+        /*
         public static void iterateAllItems(Func<Item, Item> action)
         {
             foreach (GameLocation location in Game1.locations)
@@ -104,14 +105,17 @@ namespace SpaceShared
                 }
             }
             //Game1.player.team.returnedDonations.Set( list2 );
-            list2 = Game1.player.team.junimoChest;
-            for (int i = list2.Count - 1; i >= 0; --i)
+            IEnumerable<Inventory> list3 = Game1.player.team.globalInventories.Values;
+            foreach (var inv in list3)
             {
-                if (list2[i] != null)
+                for (int i = inv.Count - 1; i >= 0; --i)
                 {
-                    list2[i] = action(list2[i]);
-                    if (list2[i] == null)
-                        list2.RemoveAt(i);
+                    if (inv[i] != null)
+                    {
+                        inv[i] = action(inv[i]);
+                        if (inv[i] == null)
+                            inv.RemoveAt(i);
+                    }
                 }
             }
             //Game1.player.team.junimoChest.CopyFrom( list2 );
@@ -152,7 +156,7 @@ namespace SpaceShared
             }
             if (l is IslandFarmHouse)
             {
-                IList<Item> list = (l as IslandFarmHouse).fridge.Value.items;
+                IList<Item> list = (l as IslandFarmHouse).fridge.Value.Items;
                 for (int i = 0; i < list.Count; ++i)
                 {
                     if (list[i] != null)
@@ -164,7 +168,7 @@ namespace SpaceShared
             }
             if (l is FarmHouse)
             {
-                IList<Item> list = (l as FarmHouse).fridge.Value.items;
+                IList<Item> list = (l as FarmHouse).fridge.Value.Items;
                 for (int i = 0; i < list.Count; ++i)
                 {
                     if (list[i] != null)
@@ -185,32 +189,28 @@ namespace SpaceShared
                     (character as Horse).hat.Value = (Hat)SpaceUtility._recursiveIterateItem((character as Horse).hat.Value, action);
                 }
             }
-            if (l is BuildableGameLocation)
+            foreach (Building b in l.buildings)
             {
-                foreach (Building b in (l as BuildableGameLocation).buildings)
+                if (b.indoors.Value != null)
                 {
-                    if (b.indoors.Value != null)
+                    SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
+                }
+                if (b is JunimoHut)
+                {
+                    IList<Item> list = (b as JunimoHut).GetOutputChest().Items;
+                    for (int i = 0; i < list.Count; ++i)
                     {
-                        SpaceUtility._recursiveIterateLocation(b.indoors.Value, action);
-                    }
-                    if (b is Mill)
-                    {
-                        IList<Item> list = (b as Mill).output.Value.items;
-                        for (int i = 0; i < list.Count; ++i)
+                        if (list[i] != null)
                         {
-                            if (list[i] != null)
-                            {
-                                list[i] = SpaceUtility._recursiveIterateItem(list[i], action);
-                            }
+                            list[i] = SpaceUtility._recursiveIterateItem(list[i], action);
                         }
                     }
-                    else
+                }
+                else
+                {
+                    foreach (var chest in b.buildingChests)
                     {
-                        if (b is not JunimoHut)
-                        {
-                            continue;
-                        }
-                        IList<Item> list = (b as JunimoHut).output.Value.items;
+                        IList<Item> list = chest.Items;
                         for (int i = 0; i < list.Count; ++i)
                         {
                             if (list[i] != null)
@@ -269,7 +269,7 @@ namespace SpaceShared
                 }
                 if (o is Chest)
                 {
-                    IList<Item> list = (o as Chest).items;
+                    IList<Item> list = (o as Chest).Items;
                     for (int ii = 0; ii < list.Count; ++ii)
                     {
                         if (list[ii] != null)
@@ -297,5 +297,6 @@ namespace SpaceShared
             }
             return action(i);
         }
+        */
     }
 }

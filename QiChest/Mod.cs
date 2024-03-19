@@ -23,28 +23,30 @@ namespace QiChest
     [XmlType( "Mods_spacechase0_QiChest_Contents" )]
     public class QiChestContents : INetObject<NetFields>
     {
-        public NetFields NetFields { get; }  = new();
+        public NetFields NetFields { get; }  = new(nameof(QiChestContents));
 
         public readonly NetInt Code = new();
         public readonly NetObjectList<Item> Items = new();
 
         public QiChestContents()
         {
-            NetFields.AddFields(Code, Items);
+            NetFields.SetOwner( this )
+                .AddField(Code)
+                .AddField(Items);
         }
     }
 
     [HarmonyPatch(typeof(NetWorldState), MethodType.Constructor)]
     public static class NetWorldStateFieldPatch
     {
-        internal static ConditionalWeakTable<IWorldState, NetObjectList<QiChestContents>> values = new();
+        internal static ConditionalWeakTable<NetWorldState, NetObjectList<QiChestContents>> values = new();
 
-        public static void Postfix(IWorldState __instance)
+        public static void Postfix(NetWorldState __instance)
         {
             __instance.NetFields.AddField(values.GetOrCreateValue(__instance));
         }
 
-        public static NetObjectList<QiChestContents> GetQiChests(this IWorldState team)
+        public static NetObjectList<QiChestContents> GetQiChests(this NetWorldState team)
         {
             return values.GetOrCreateValue(team);
         }
@@ -89,6 +91,22 @@ namespace QiChest
                 return;
 
             Game1.netWorldState.Value.GetQiChests().CopyFrom(SaveGame.loaded.get_qiChests());
+            foreach (var chest in Game1.netWorldState.Value.GetQiChests())
+            {
+                string key = "QiChest_" + chest.Code.ToString();
+
+                if (!SaveGame.loaded.globalInventories.ContainsKey(key))
+                {
+                    List<Item> inv = new();
+                    foreach (var item in chest.Items)
+                    {
+                        inv.Add(item);
+                    }
+                    SaveGame.loaded.globalInventories.Add(key, inv);
+
+                    Mod.migrated = true;
+                }
+            }
         }
     }
 
@@ -101,6 +119,8 @@ namespace QiChest
         public static Texture2D TextureChestCode0;
         public static Texture2D TextureChestCode1;
         public static Texture2D TextureChestCode2;
+
+        public static bool migrated = false;
 
         public override void Entry(IModHelper helper)
         {
@@ -117,9 +137,26 @@ namespace QiChest
             Helper.Events.Display.RenderedActiveMenu += this.Display_RenderedActiveMenu;
             Helper.Events.GameLoop.UpdateTicked += this.GameLoop_UpdateTicked;
             Helper.Events.Input.ButtonPressed += this.Input_ButtonPressed;
+            Helper.Events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
 
             Harmony harmony = new(ModManifest.UniqueID);
             harmony.PatchAll();
+        }
+
+        private void GameLoop_SaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            if (migrated)
+            {
+                Utility.ForEachItem((item) =>
+                {
+                    if ( item is Chest c && c.SpecialChestType == Chest.SpecialChestTypes.JunimoChest && c.modData.ContainsKey(ModDataKey) )
+                    {
+                        c.GlobalInventoryId = $"QiChest_{c.modData[ModDataKey]}";
+                    }
+                    return true;
+                });
+                migrated = false;
+            }
         }
 
         private void Input_ButtonPressed(object sender, ButtonPressedEventArgs e)
@@ -160,6 +197,7 @@ namespace QiChest
             {
                 if (c.SpecialChestType != Chest.SpecialChestTypes.JunimoChest || !c.modData.ContainsKey(ModDataKey))
                     return;
+                c.GlobalInventoryId = $"QiChest_{c.modData[ModDataKey]}";
 
                 Vector2 size = Game1.dialogueFont.MeasureString(I18n.Ui_ChangeCode());
                 Rectangle spot = new( igm.xPositionOnScreen, igm.yPositionOnScreen - (int)size.Y - IClickableMenu.borderWidth * 2, (int)size.X + IClickableMenu.borderWidth * 2, (int)size.Y + IClickableMenu.borderWidth * 2 );
@@ -171,7 +209,6 @@ namespace QiChest
                     if (oldMouseState2.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released &&
                         Game1.input.GetMouseState().LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                     {
-                        Log.Debug("meow2");
                         Game1.activeClickableMenu = new QiCodeMenu( igm.context as Chest );
                     }
                 }
@@ -185,9 +222,10 @@ namespace QiChest
             if (!Context.IsPlayerFree)
                 return;
 
-            Chest item = new(true, Vector2.Zero, 256);
+            Chest item = new(true, Vector2.Zero, "256");
             item.SpecialChestType = Chest.SpecialChestTypes.JunimoChest;
             item.modData.Add(ModDataKey, Extensions.MakeQiCode(0, 0, 0).ToString());
+            item.GlobalInventoryId = "QiChest_" + Extensions.MakeQiCode(0, 0, 0).ToString();
             Game1.player.addItemByMenuIfNecessary(item);
         }
     }
@@ -212,7 +250,8 @@ namespace QiChest
         {
             return 0.AdjustQiCode(0, a).AdjustQiCode(1, b).AdjustQiCode(2, c);
         }
-        public static QiChestContents GetChestFor(this IWorldState team, int code)
+        /*
+        public static QiChestContents GetChestFor(this NetWorldState team, int code)
         {
             var chest = team.GetQiChests().FirstOrDefault(qc => qc.Code == code);
             if (chest == null)
@@ -222,27 +261,7 @@ namespace QiChest
             }
             return chest;
         }
-    }
-
-    [HarmonyPatch( typeof( Chest ), nameof( Chest.GetItemsForPlayer ) )]
-    public static class ChestGetItemsForPlayerPatch
-    {
-        public static bool Prefix(Chest __instance, ref NetObjectList<Item> __result)
-        {
-            if (!__instance.modData.TryGetValue(Mod.ModDataKey, out string val))
-                return true;
-
-            try
-            {
-                __result = Game1.netWorldState.Value.GetChestFor(int.Parse(val)).Items;
-                return false;
-            }
-            catch (Exception e)
-            {
-                Log.Error("Exception: " + e);
-                return true;
-            }
-        }
+        */
     }
 
     [HarmonyPatch(typeof(Chest), nameof(Chest.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) })]

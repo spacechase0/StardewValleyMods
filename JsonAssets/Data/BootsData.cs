@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
@@ -11,7 +10,6 @@ namespace JsonAssets.Data
 {
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
-    [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class BootsData : DataSeparateTextureIndex, ITranslatableItem
     {
         /*********
@@ -50,11 +48,6 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public int GetObjectId()
-        {
-            return this.Id;
-        }
-
         public int GetTextureIndex()
         {
             return this.TextureIndex;
@@ -62,7 +55,7 @@ namespace JsonAssets.Data
 
         internal string GetBootsInformation()
         {
-            return $"{this.Name}/{this.LocalizedDescription()}/{this.Price}/{this.Defense}/{this.Immunity}/{this.TextureIndex}/{this.LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/{this.Price}/{this.Defense}/{this.Immunity}/0/{this.LocalizedName()}/JA\\BootsColor\\{Name}/0/JA\\Boots\\{Name}";
         }
 
 

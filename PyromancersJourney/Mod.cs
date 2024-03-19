@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.Xna.Framework;
 using PyromancersJourney.Framework;
 using SpaceCore.Events;
 using SpaceShared;
@@ -21,15 +22,15 @@ namespace PyromancersJourney
 
             helper.Events.Player.Warped += this.OnWarped;
 
-            SpaceEvents.ActionActivated += this.OnActionActivated;
+            GameLocation.RegisterTileAction("FireArcadeGame", OnActionActivated);
 
             helper.ConsoleCommands.Add("pyrojourney", "Start the minigame!", this.DoCommands);
         }
 
-        private void OnActionActivated(object sender, EventArgsAction e)
+        private bool OnActionActivated(GameLocation loc, string[] args, Farmer farmer, Point pos)
         {
-            if (e.Action == "FireArcadeGame")
-                Game1.currentMinigame = new PyromancerMinigame();
+            Game1.currentMinigame = new PyromancerMinigame();
+            return true;
         }
 
         private void OnWarped(object sender, WarpedEventArgs e)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -105,13 +106,91 @@ namespace SpaceCore
             }
         }
 
+        public class SkillBuff : Buff
+        {
+            public Dictionary<string, int> SkillLevelIncreases { get; set; } = new Dictionary<string, int>();
+
+            private const string SkillBuffField = "spacechase.SpaceCore.SkillBuff.";
+
+            public SkillBuff(Buff buff, string id, Dictionary<string, string> customFields) : base(id, buff.source, buff.displaySource, buff.millisecondsDuration, buff.iconTexture, buff.iconSheetIndex, buff.effects, false, buff.displayName, buff.description)
+            {
+                foreach (var entry in ParseCustomFields(customFields))
+                {
+                    SkillLevelIncreases[entry.Key] = entry.Value;
+                }
+            }
+
+            public static IEnumerable<KeyValuePair<string, int>> ParseCustomFields(Dictionary<string, string> customFields)
+            {
+                foreach (KeyValuePair<string, string> entry in customFields)
+                {
+                    if (!entry.Key.StartsWith(SkillBuffField))
+                    {
+                        continue;
+                    }
+
+                    string skillId = entry.Key.Substring(SkillBuffField.Length);
+                    if (!int.TryParse(entry.Value, out int level))
+                    {
+                        Log.Error($"Could not parse int {entry.Value} from buff custom field {entry.Key}");
+                        continue;
+                    }
+
+                    yield return KeyValuePair.Create(skillId, level);
+                }
+            }
+
+            public override void OnAdded()
+            {
+                base.OnAdded();
+
+                using var stream = new MemoryStream();
+                using var writer = new BinaryWriter(stream);
+                writer.Write(this.id);
+                writer.Write(this.SkillLevelIncreases.Count);
+                foreach (var skill in this.SkillLevelIncreases)
+                {
+                    ValidateSkill(Game1.player, skill.Key);
+                    writer.Write(skill.Key);
+                    writer.Write(skill.Value);
+                    Skills.Buffs[Game1.player.UniqueMultiplayerID][skill.Key][this.id] = skill.Value;
+                    Log.Info($"Adding buff for skill {skill.Key} from source {this.id} at level {skill.Value}");
+                }
+
+                Networking.BroadcastMessage(Skills.MsgExperience, stream.ToArray());
+            }
+
+            public override void OnRemoved()
+            {
+                base.OnRemoved();
+
+                using var stream = new MemoryStream();
+                using var writer = new BinaryWriter(stream);
+                writer.Write(this.id);
+                writer.Write(this.SkillLevelIncreases.Count);
+                foreach (var skill in this.SkillLevelIncreases)
+                {
+                    ValidateSkill(Game1.player, skill.Key);
+                    writer.Write(skill.Key);
+                    writer.Write(0);
+                    Skills.Buffs[Game1.player.UniqueMultiplayerID][skill.Key].Remove(this.id);
+                    Log.Info($"Removing buff for skill {skill.Key} from source {this.id} at level {skill.Value}");
+                }
+
+                Networking.BroadcastMessage(Skills.MsgExperience, stream.ToArray());
+            }
+        }
+
         private static readonly string DataKey = "skills";
         private static string LegacyFilePath => Path.Combine(Constants.CurrentSavePath, "spacecore-skills.json");
         private const string MsgData = "spacechase0.SpaceCore.SkillData";
         private const string MsgExperience = "spacechase0.SpaceCore.SkillExperience";
+        private const string MsgBuffs = "spacechase0.SpaceCore.SkillBuffs";
 
         internal static Dictionary<string, Skill> SkillsByName = new(StringComparer.OrdinalIgnoreCase);
         private static Dictionary<long, Dictionary<string, int>> Exp = new();
+        // MultiplayerID => SkillID => BuffID => Level
+        private static Dictionary<long, Dictionary<string, Dictionary<string, int>>> Buffs = new();
         internal static List<KeyValuePair<string, int>> NewLevels = new();
 
         private static IExperienceBarsApi? BarsApi;
@@ -126,6 +205,7 @@ namespace SpaceCore
             SpaceEvents.ServerGotClient += Skills.ClientJoined;
             Networking.RegisterMessageHandler(Skills.MsgData, Skills.OnDataMessage);
             Networking.RegisterMessageHandler(Skills.MsgExperience, Skills.OnExpMessage);
+            Networking.RegisterMessageHandler(Skills.MsgBuffs, Skills.OnBuffsMessage);
 
             if (SpaceCore.Instance.Helper.ModRegistry.IsLoaded("cantorsdust.AllProfessions"))
                 events.Player.Warped += Skills.OnWarped;
@@ -138,6 +218,11 @@ namespace SpaceCore
         public static void RegisterSkill(Skill skill)
         {
             Skills.SkillsByName.Add(skill.Id, skill);
+
+            GameStateQuery.Register("PLAYER_" + skill.Id.ToUpper() + "_LEVEL", (args, ctx) =>
+            {
+                return GameStateQuery.Helpers.PlayerSkillLevelImpl(args, ctx.Player, (f) => f.GetCustomSkillLevel(skill));
+            });
         }
 
         public static Skill GetSkill(string name)
@@ -158,6 +243,22 @@ namespace SpaceCore
         public static string[] GetSkillList()
         {
             return Skills.SkillsByName.Keys.ToArray();
+        }
+
+        public static List<Tuple<string, int, int>> GetExperienceAndLevels(Farmer farmer)
+        {
+            List<Tuple<string, int, int>> forFarmer = new();
+            if (!Skills.Exp.ContainsKey(farmer.UniqueMultiplayerID))
+                return forFarmer;
+
+            forFarmer.AddRange(
+                from skillName in Skills.Exp[farmer.UniqueMultiplayerID].Keys
+                let xp = Skills.GetExperienceFor(farmer, skillName)
+                let level = Skills.GetSkillLevel(farmer, skillName)
+                select new Tuple<string, int, int>(skillName, xp, level)
+                );
+
+            return forFarmer;
         }
 
         public static int GetExperienceFor(Farmer farmer, string skillName)
@@ -188,6 +289,31 @@ namespace SpaceCore
             return 0;
         }
 
+        public static int GetSkillBuffLevel(Farmer farmer, string skillName, string? buffName = null)
+        {
+            if (!Skills.SkillsByName.ContainsKey(skillName))
+            {
+                return 0;
+            }
+            Skills.ValidateSkill(farmer, skillName);
+
+            if (buffName is not null)
+            {
+                if (!Skills.Buffs[farmer.UniqueMultiplayerID][skillName].TryGetValue(buffName, out int level))
+                {
+                    level = 0;
+                }
+                return level;
+            }
+
+            int totalLevel = 0;
+            foreach (var buff in Skills.Buffs[farmer.UniqueMultiplayerID][skillName])
+            {
+                totalLevel += buff.Value;
+            }
+            return totalLevel;
+        }
+
         public static void AddExperience(Farmer farmer, string skillName, int amt)
         {
             if (!Skills.SkillsByName.ContainsKey(skillName))
@@ -209,26 +335,31 @@ namespace SpaceCore
 
         private static void ValidateSkill(Farmer farmer, string skillName)
         {
-            if (!Skills.Exp.TryGetValue(farmer.UniqueMultiplayerID, out var skillExp))
+            ValidateSkill(farmer.UniqueMultiplayerID, skillName);
+        }
+
+        private static void ValidateSkill(long uniqueMultiplayerId, string skillName)
+        {
+            if (!Skills.Exp.TryGetValue(uniqueMultiplayerId, out var skillExp))
             {
                 skillExp = new();
-                Skills.Exp.Add(farmer.UniqueMultiplayerID, skillExp);
+                Skills.Exp.Add(uniqueMultiplayerId, skillExp);
+            }
+            if (!Skills.Buffs.TryGetValue(uniqueMultiplayerId, out var skillBuffs))
+            {
+                skillBuffs = new();
+                Skills.Buffs.Add(uniqueMultiplayerId, skillBuffs);
             }
 
             _ = skillExp.TryAdd(skillName, 0);
+            _ = skillBuffs.TryAdd(skillName, new());
         }
 
         private static void ClientJoined(object sender, EventArgsServerGotClient args)
         {
-            if (!Skills.Exp.TryGetValue(args.FarmerID, out var skillExp))
-            {
-                skillExp = new();
-                Skills.Exp.Add(args.FarmerID, skillExp);
-            }
-
             foreach (var skill in Skills.SkillsByName)
             {
-                _ = skillExp.TryAdd(skill.Key, 0);
+                ValidateSkill(args.FarmerID, skill.Key);
             }
 
             using var stream = new MemoryStream();
@@ -245,8 +376,45 @@ namespace SpaceCore
                 }
             }
 
+            writer.Write(Skills.Buffs.Count);
+            foreach (var data in Skills.Buffs)
+            {
+                writer.Write(data.Key);
+                writer.Write(data.Value.Count);
+                foreach (var skill in data.Value)
+                {
+                    writer.Write(skill.Key);
+                    writer.Write(skill.Value.Count);
+                    foreach (var buff in skill.Value)
+                    {
+                        writer.Write(buff.Key);
+                        writer.Write(buff.Value);
+                    }
+                }
+            }
+
             Log.Trace("Sending skill data to " + args.FarmerID);
             Networking.ServerSendTo(args.FarmerID, Skills.MsgData, stream.ToArray());
+        }
+
+        private static void OnBuffsMessage(IncomingMessage msg)
+        {
+            string buffId = msg.Reader.ReadString();
+            int count = msg.Reader.ReadInt32();
+            for (int i = 0; i < count; ++i)
+            {
+                string skill = msg.Reader.ReadString();
+                int level = msg.Reader.ReadInt32();
+
+                if (level == 0)
+                {
+                    Skills.Buffs[msg.FarmerID][skill].Remove(buffId);
+                }
+                else
+                {
+                    Skills.Buffs[msg.FarmerID][skill][buffId] = level;
+                }
+            }
         }
 
         private static void OnExpMessage(IncomingMessage msg)
@@ -275,6 +443,41 @@ namespace SpaceCore
                     }
                     skillExp[skill] = amt;
                     Log.Trace($"\t{skill}={amt}");
+                }
+            }
+
+            Log.Trace("Got buff data!");
+            int playerCount = msg.Reader.ReadInt32();
+            for (int playerIndex = 0; playerIndex < playerCount; ++playerIndex)
+            {
+                long playerId = msg.Reader.ReadInt64();
+                Log.Trace($"\t{playerId}:");
+                int skillCount = msg.Reader.ReadInt32();
+                for (int skillIndex = 0; skillIndex < skillCount; ++skillIndex)
+                {
+                    if (!Skills.Buffs.TryGetValue(playerId, out var playerSkills))
+                    {
+                        playerSkills = new();
+                        Skills.Buffs.Add(playerId, playerSkills);
+                    }
+
+                    string skillId = msg.Reader.ReadString();
+                    Log.Trace($"\t\t{skillId}:");
+                    int buffCount = msg.Reader.ReadInt32();
+
+                    for (int buffIndex = 0; buffIndex < buffCount; ++buffIndex)
+                    {
+                        if (!playerSkills.TryGetValue(skillId, out var playerSkillBuffs))
+                        {
+                            playerSkillBuffs = new();
+                            playerSkills.Add(skillId, playerSkillBuffs);
+                        }
+
+                        string buffId = msg.Reader.ReadString();
+                        int level = msg.Reader.ReadInt32();
+                        playerSkillBuffs[buffId] = level;
+                        Log.Trace($"\t\t{buffId}={level}");
+                    }
                 }
             }
         }
@@ -498,6 +701,31 @@ namespace SpaceCore
         public static int GetCustomSkillLevel(this Farmer farmer, string skill)
         {
             return Skills.GetSkillLevel(farmer, skill);
+        }
+
+        public static List<Tuple<string, int, int>> GetCustomSkillExperienceAndLevels(this Farmer farmer)
+        {
+            return Skills.GetExperienceAndLevels(farmer);
+        }
+
+        public static int GetCustomBuffedSkillLevel(this Farmer farmer, Skills.Skill skill)
+        {
+            return Skills.GetSkillLevel(farmer, skill.Id) + Skills.GetSkillBuffLevel(farmer, skill.Id);
+        }
+
+        public static int GetCustomBuffedSkillLevel(this Farmer farmer, string skill)
+        {
+            return Skills.GetSkillLevel(farmer, skill) + Skills.GetSkillBuffLevel(farmer, skill);
+        }
+
+        public static int GetCustomSkillBuffAmount(this Farmer farmer, Skills.Skill skill, string buffId = null)
+        {
+            return Skills.GetSkillBuffLevel(farmer, skill.Id, buffId);
+        }
+
+        public static int GetCustomSkillBuffAmount(this Farmer farmer, string skill, string buffId = null)
+        {
+            return Skills.GetSkillBuffLevel(farmer, skill, buffId);
         }
 
         public static void AddCustomSkillExperience(this Farmer farmer, Skills.Skill skill, int amt)

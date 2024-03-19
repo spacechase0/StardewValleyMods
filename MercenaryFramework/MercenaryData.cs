@@ -10,6 +10,8 @@ namespace MercenaryFramework
     {
         public string ID { get; set; }
 
+        public string CanRecruit { get; set; } = "TRUE";
 
+        public int RecruitCost { get; set; } = 0;
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MoonMisadventures.Game.Items;
 using MoonMisadventures.VirtualProperties;
 using StardewValley;
+using StardewValley.Enchantments;
 using StardewValley.Menus;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
@@ -72,7 +73,7 @@ namespace MoonMisadventures.Patches
                     Item tmp = Mod.instance.Helper.Reflection.GetMethod( __instance, "takeHeldItem" ).Invoke<Item>();
                     Item held = necklaceItem.Value;
                     if ( held != null )
-                        ( held as Necklace ).OnUnequip( Game1.player );
+                        ( held as Necklace ).onUnequip( Game1.player );
                     held = Utility.PerformSpecialItemGrabReplacement( held );
                     Mod.instance.Helper.Reflection.GetMethod( __instance, "setHeldItem" ).Invoke( held );
                     necklaceItem.Value = tmp;
@@ -81,7 +82,7 @@ namespace MoonMisadventures.Patches
 
                     if ( necklaceItem.Value != null )
                     {
-                        ( necklaceItem.Value as Necklace ).OnEquip( Game1.player );
+                        ( necklaceItem.Value as Necklace ).onEquip( Game1.player );
                         Game1.playSound( "crit" );
                     }
                     else if ( Game1.player.CursorSlotItem != null )
@@ -147,8 +148,8 @@ namespace MoonMisadventures.Patches
 
         public static IEnumerable<MethodBase> TargetMethods()
         {
-            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET" ) )
-                             from type in asm.GetTypes()
+            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET") && !a.IsDynamic)
+                             from type in asm.GetExportedTypes()
                              where type.IsSubclassOf( typeof( Monster ) )
                              select type;
 
@@ -223,8 +224,8 @@ namespace MoonMisadventures.Patches
     {
         public static IEnumerable<MethodBase> TargetMethods()
         {
-            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET" ) )
-                             from type in asm.GetTypes()
+            var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where( a => !a.FullName.Contains( "Steamworks.NET" ) && !a.IsDynamic )
+                             from type in asm.GetExportedTypes()
                              where type.IsSubclassOf( typeof( Monster ) )
                              select type;
 
@@ -246,7 +247,7 @@ namespace MoonMisadventures.Patches
             {
                 int shocking = 500 - shocked % 500;
                 var src = new Rectangle( 647, 1103, 16, 16 );
-                b.Draw( Game1.mouseCursors, __instance.getLocalPosition(Game1.viewport) - ( __instance.Position - __instance.GetBoundingBox().Center.ToVector2() ), src, Color.White * (shocking / 250f), ( float )( Game1.ticks * 15 * Math.PI / 180 ), new Vector2( 8, 8 ), Game1.pixelZoom, SpriteEffects.None, (__instance.getStandingY() + 8) / 10000f );
+                b.Draw( Game1.mouseCursors, __instance.getLocalPosition(Game1.viewport) - ( __instance.Position - __instance.GetBoundingBox().Center.ToVector2() ), src, Color.White * (shocking / 250f), ( float )( Game1.ticks * 15 * Math.PI / 180 ), new Vector2( 8, 8 ), Game1.pixelZoom, SpriteEffects.None, (__instance.StandingPixel.Y + 8) / 10000f );
             }
         }
     }

@@ -41,6 +41,6 @@ namespace SpaceCore.Patches
         }
 
         /// <summary>An implementation of <see cref="HoeDirt.destroyCrop"/> that does nothing.</summary>
-        public void DestroyCrop(Vector2 tileLocation, bool showAnimation, GameLocation location) { }
+        public void DestroyCrop(bool showAnimation) { }
     }
 }

@@ -1,12 +1,6 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
-using System.Text;
-
 using JsonAssets.Framework;
-using JsonAssets.Framework.Internal;
-using JsonAssets.Utilities;
-
 using StardewValley;
 
 namespace JsonAssets.Data
@@ -35,34 +29,26 @@ namespace JsonAssets.Data
         *********/
         internal string GetRecipeString(ObjectData parent)
         {
-            StringBuilder str = StringBuilderCache.Acquire();
+            string str = "";
             foreach (var ingredient in this.Ingredients)
-            {
-                int id = ItemResolver.GetObjectID(ingredient.Object);
-                if (id == 0)
-                    continue;
-                str.Append(id).Append(' ').Append(ingredient.Count).Append(' ');
-            }
-
-            if (str.Length == 0)
-                throw new InvalidDataException("No valid ingredients could be found, skipping this recipe.");
-
-            str.Remove(str.Length - 1, 1); // remove excess space at the end.
-            str.Append("/what is this for?/")
-                .Append(parent.Id).Append(' ').Append(this.ResultCount).Append('/');
-
+                str += ingredient.Object.ToString().FixIdJA() + " " + ingredient.Count + " ";
+            str = str.Substring(0, str.Length - 1);
             if (parent.Category != ObjectCategory.Cooking)
-                str.Append("false/");
-
-            if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
-                str.Append('/').Append(this.SkillUnlockName).Append(' ').Append(this.SkillUnlockLevel);
+                str += "/what is this for?";
             else
-                str.Append("/null");
-
-            str.Append('/').Append(parent.LocalizedName());
-
-            return StringBuilderCache.GetStringAndRelease(str);
+                str += "/9999 9999";
+            str += $"/{parent.Name.FixIdJA()} {this.ResultCount}/";
+            if (parent.Category != ObjectCategory.Cooking)
+                str += "false/";
+            if (this.SkillUnlockName?.Length > 0 && this.SkillUnlockLevel > 0)
+                str += "" + this.SkillUnlockName + " " + this.SkillUnlockLevel;
+            else
+                str += "null";
+            //if (LocalizedContentManager.CurrentLanguageCode != LocalizedContentManager.LanguageCode.en)
+                str += "/" + parent.LocalizedName();
+            return str;
         }
+
 
         /*********
         ** Private methods

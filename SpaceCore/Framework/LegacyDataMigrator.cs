@@ -57,7 +57,7 @@ namespace SpaceCore.Framework
 
                 foreach (Farmer player in Game1.getAllFarmers())
                 {
-                    IList<int> professions = player.professions;
+                    IList<int> professions = player.professions.ToList();
 
                     for (int i = 0; i < professions.Count; i++)
                     {
@@ -68,6 +68,8 @@ namespace SpaceCore.Framework
                             this.Monitor.LogOnce($"Migrating professions for {player.Name}...", LogLevel.Info);
                             this.Monitor.Log($"    - '{profession.SkillId}.{profession.ProfessionId}': changed from {id} to {profession.NewVanillaId}", LogLevel.Info);
                             professions[i] = profession.NewVanillaId;
+                            player.professions.Remove(i);
+                            player.professions.Add(profession.NewVanillaId);
                         }
                     }
                 }

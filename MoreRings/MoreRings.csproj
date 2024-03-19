@@ -4,8 +4,12 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.2.3</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>More Rings</Name>
+    <Description>Adds new rings with special effects.</Description>
+    <Authors>spacechase0, ParadigmNomad (sprites)</Authors>
+    <Version>1.2.4</Version>
+    <UpdateKeys>Nexus:2054</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>

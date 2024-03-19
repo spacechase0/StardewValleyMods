@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -18,7 +19,7 @@ using Newtonsoft.Json;
 using Spacechase.Shared.Patching;
 using SpaceCore.Events;
 using SpaceCore.Framework;
-using SpaceCore.Framework.Schedules;
+using SpaceCore.VanillaAssetExpansion;
 using SpaceCore.Interface;
 using SpaceCore.Patches;
 using SpaceShared;
@@ -31,214 +32,14 @@ using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Network;
 using StardewValley.Objects;
-using static SpaceCore.SpaceCore;
+using StardewValley.Triggers;
+using SpaceCore.UI;
+using StardewValley.BellsAndWhistles;
+using StardewValley.Delegates;
+using Location = xTile.Dimensions.Location;
 
 namespace SpaceCore
 {
-    /*
-    public static class Fix1_5NetCodeBugPatch
-    {
-        public static void Prefix(
-            NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>> __instance,
-            string key,
-            ref object __state
-        )
-        {
-            __state = __instance is ModDataDictionary && __instance.ContainsKey(key);
-        }
-        public static void Postfix(
-            NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>> __instance,
-            string key,
-            string value,
-            object __state,
-            System.Collections.IList ___outgoingChanges,
-            Dictionary<string, NetVersion> ___dictReassigns
-        )
-        {
-            if(__instance is ModDataDictionary)
-            if (__state as bool? == true)
-            {
-                var field = __instance.FieldDict[key];
-                var ogts = __instance.GetType().BaseType.BaseType.BaseType.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-                var ogt = ogts.First(t => t.Name.StartsWith("OutgoingChange"));
-                ogt = ogt.MakeGenericType(new Type[] { typeof( string ), typeof( string ), typeof( NetString ), typeof( SerializableDictionary<string, string> ), typeof( NetStringDictionary<string,NetString> ) });
-                var ogc = ogt.GetConstructors(BindingFlags.Public | BindingFlags.Instance)[0];
-                object og = ogc.Invoke(new object[] { false, key, field, ___dictReassigns[ key ] });
-                ___outgoingChanges.Add(og);
-                if (key.Contains("spacechase0"))
-                    Log.Debug("oc:" + ___outgoingChanges.Count);
-            }
-        }
-    }
-    */
-
-    [HarmonyPatch(typeof(AnimatedSprite), "draw", new Type[] { typeof(SpriteBatch), typeof(Vector2), typeof(float) })]
-    public static class AnimatedSpriteDrawExtrasPatch1
-    {
-        public static bool Prefix(AnimatedSprite __instance, SpriteBatch b, Vector2 screenPosition, float layerDepth)
-        {
-            if (__instance.Texture != null)
-            {
-                var extras = SpaceCore.spriteExtras.GetOrCreateValue(__instance);
-                b.Draw(__instance.Texture, screenPosition, __instance.sourceRect, extras.grad == null ? Color.White : extras.grad[ extras.currGradInd ], 0f, Vector2.Zero, 4f * extras.scale, (__instance.CurrentAnimation != null && __instance.CurrentAnimation[__instance.currentAnimationIndex].flip) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
-            }
-            return false;
-        }
-    }
-    [HarmonyPatch(typeof(AnimatedSprite), "draw", new Type[] { typeof(SpriteBatch), typeof(Vector2), typeof(float), typeof( int ), typeof( int ), typeof( Color ), typeof( bool ), typeof( float), typeof( float ), typeof( bool ) })]
-    public static class AnimatedSpriteDrawExtrasPatch2
-    {
-        public static bool Prefix(AnimatedSprite __instance, SpriteBatch b, Vector2 screenPosition, float layerDepth, int xOffset, int yOffset, Color c, bool flip = false, float scale = 1f, float rotation = 0f, bool characterSourceRectOffset = false)
-        {
-            if (__instance.Texture != null)
-            {
-                var extras = SpaceCore.spriteExtras.GetOrCreateValue(__instance);
-                b.Draw(__instance.Texture, screenPosition, new Rectangle(__instance.sourceRect.X + xOffset, __instance.sourceRect.Y + yOffset, __instance.sourceRect.Width, __instance.sourceRect.Height), Color.Lerp( c, (extras.grad == null ? Color.White : extras.grad[extras.currGradInd]), 0.5f), rotation, characterSourceRectOffset ? new Vector2(__instance.SpriteWidth / 2, (float)__instance.SpriteHeight * 3f / 4f) : Vector2.Zero, scale * extras.scale, (flip || (__instance.CurrentAnimation != null && __instance.CurrentAnimation[__instance.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, layerDepth);
-            }
-            return false;
-        }
-    }
-
-    // TODO Transpiler
-    [HarmonyPatch(typeof(NPC), "draw", new Type[] { typeof(SpriteBatch), typeof(float) })]
-    public static class AnimatedSpriteDrawExtrasPatch3
-    {
-        public static bool Prefix(NPC __instance, SpriteBatch b, float alpha, int ___shakeTimer, NetVector2 ___defaultPosition)
-        {
-            var extras = SpaceCore.spriteExtras.GetOrCreateValue(__instance.Sprite);
-            if (__instance.Sprite == null || __instance.IsInvisible || (!Utility.isOnScreen(__instance.Position, 128) && (!__instance.eventActor || !(__instance.currentLocation is Summit))))
-            {
-                return false;
-            }
-            if ((bool)__instance.swimming)
-            {
-                b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(32f, 80 + __instance.yJumpOffset * 2) + ((___shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero) - new Vector2(0f, __instance.yOffset), new Microsoft.Xna.Framework.Rectangle(__instance.Sprite.SourceRect.X, __instance.Sprite.SourceRect.Y, __instance.Sprite.SourceRect.Width, __instance.Sprite.SourceRect.Height / 2 - (int)(__instance.yOffset / 4f)), Color.White, __instance.rotation, new Vector2(32f, 96f) / 4f, Math.Max(0.2f, __instance.scale) * 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.991f : ((float)__instance.getStandingY() / 10000f)));
-                Vector2 localPosition = __instance.getLocalPosition(Game1.viewport);
-                b.Draw(Game1.staminaRect, new Microsoft.Xna.Framework.Rectangle((int)localPosition.X + (int)__instance.yOffset + 8, (int)localPosition.Y - 128 + __instance.Sprite.SourceRect.Height * 4 + 48 + __instance.yJumpOffset * 2 - (int)__instance.yOffset, __instance.Sprite.SourceRect.Width * 4 - (int)__instance.yOffset * 2 - 16, 4), Game1.staminaRect.Bounds, Color.White * 0.75f, 0f, Vector2.Zero, SpriteEffects.None, (float)__instance.getStandingY() / 10000f + 0.001f);
-            }
-            else
-            {
-                b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(__instance.GetSpriteWidthForPositioning() * 4 / 2, __instance.GetBoundingBox().Height / 2) + ((___shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), __instance.Sprite.SourceRect, (extras.grad != null ? extras.grad[extras.currGradInd]:Color.White)* alpha, __instance.rotation, new Vector2(__instance.Sprite.SpriteWidth / 2, (float)__instance.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, __instance.scale) * 4f * extras.scale, (__instance.flip || (__instance.Sprite.CurrentAnimation != null && __instance.Sprite.CurrentAnimation[__instance.Sprite.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.991f : ((float)__instance.getStandingY() / 10000f)));
-            }
-            if (__instance.Breather && ___shakeTimer <= 0 && !__instance.swimming && __instance.Sprite.currentFrame < 16 && !__instance.farmerPassesThrough)
-            {
-                Microsoft.Xna.Framework.Rectangle chestBox = __instance.Sprite.SourceRect;
-                chestBox.Y += __instance.Sprite.SpriteHeight / 2 + __instance.Sprite.SpriteHeight / 32;
-                chestBox.Height = __instance.Sprite.SpriteHeight / 4;
-                chestBox.X += __instance.Sprite.SpriteWidth / 4;
-                chestBox.Width = __instance.Sprite.SpriteWidth / 2;
-                Vector2 chestPosition = new Vector2(__instance.Sprite.SpriteWidth * 4 / 2, 8f);
-                if (__instance.Age == 2)
-                {
-                    chestBox.Y += __instance.Sprite.SpriteHeight / 6 + 1;
-                    chestBox.Height /= 2;
-                    chestPosition.Y += __instance.Sprite.SpriteHeight / 8 * 4;
-                    if (__instance is Child)
-                    {
-                        if ((__instance as Child).Age == 0)
-                        {
-                            chestPosition.X -= 12f;
-                        }
-                        else if ((__instance as Child).Age == 1)
-                        {
-                            chestPosition.X -= 4f;
-                        }
-                    }
-                }
-                else if (__instance.Gender == 1)
-                {
-                    chestBox.Y++;
-                    chestPosition.Y -= 4f;
-                    chestBox.Height /= 2;
-                }
-                float breathScale = Math.Max(0f, (float)Math.Ceiling(Math.Sin(Game1.currentGameTime.TotalGameTime.TotalMilliseconds / 600.0 + (double)(___defaultPosition.X * 20f))) / 4f);
-                b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + chestPosition + ((___shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), chestBox, (extras.grad != null ? extras.grad[extras.currGradInd] : Color.White) * alpha, __instance.rotation, new Vector2(chestBox.Width / 2, chestBox.Height / 2 + 1), Math.Max(0.2f, __instance.scale) * 4f * extras.scale + new Vector2(breathScale,breathScale), __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.992f : ((float)__instance.getStandingY() / 10000f + 0.001f)));
-            }
-            if (__instance.isGlowing)
-            {
-                b.Draw(__instance.Sprite.Texture, __instance.getLocalPosition(Game1.viewport) + new Vector2(__instance.GetSpriteWidthForPositioning() * 4 / 2, __instance.GetBoundingBox().Height / 2) + ((___shakeTimer > 0) ? new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2)) : Vector2.Zero), __instance.Sprite.SourceRect, __instance.glowingColor * __instance.glowingTransparency, __instance.rotation, new Vector2(__instance.Sprite.SpriteWidth / 2, (float)__instance.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, __instance.scale) * 4f * extras.scale, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, __instance.drawOnTop ? 0.99f : ((float)__instance.getStandingY() / 10000f + 0.001f)));
-            }
-            if (__instance.IsEmoting && !Game1.eventUp && !(__instance is Child) && !(__instance is Pet))
-            {
-                Vector2 emotePosition = __instance.getLocalPosition(Game1.viewport);
-                emotePosition.Y -= 32 + __instance.Sprite.SpriteHeight * 4;
-                b.Draw(Game1.emoteSpriteSheet, emotePosition, new Microsoft.Xna.Framework.Rectangle(__instance.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, __instance.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)__instance.getStandingY() / 10000f);
-            }
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(NPC), nameof(NPC.isMarried))]
-    public static class NpcIsMarriedNotReallyInSomeCasesPatch
-    {
-        public static void Postfix(NPC __instance, ref bool __result)
-        {
-            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
-            if (!dict.TryGetValue(__instance.Name, out var npcEntry))
-                return;
-
-            if (!npcEntry.IgnoreMarriageSchedule)
-                return;
-
-            MethodBase[] meths = new[]
-            {
-                typeof(NPC).GetMethod(nameof(NPC.reloadData)),
-                typeof(NPC).GetMethod(nameof(NPC.reloadSprite)),
-                typeof(NPC).GetMethod(nameof(NPC.getHome)),
-                typeof(NPC).GetMethod("prepareToDisembarkOnNewSchedulePath"),
-                typeof(NPC).GetMethod(nameof(NPC.parseMasterSchedule)),
-                typeof(NPC).GetMethod(nameof(NPC.getSchedule)),
-                typeof(NPC).GetMethod(nameof(NPC.resetForNewDay)),
-                typeof(NPC).GetMethod(nameof(NPC.dayUpdate)),
-            };
-
-            var st = new System.Diagnostics.StackTrace();
-            for (int i = 0; i < st.FrameCount; ++i) // Originally had 7 instead of FrameCount, but some mods interfere so we need to check further
-            {
-                var meth = st.GetFrame(i).GetMethod();
-                foreach (var checkMeth in meths)
-                {
-                    // When someone patches a method the method name changes due to SMAPI's custom fork of Harmony, and so the methodinfo doesn't match.
-                    // This is a workaround
-                    // Excuse the liberal use of ? - I was tired and frustrated
-                    if ((meth?.DeclaringType == checkMeth?.DeclaringType || ( meth?.Name?.Contains( checkMeth?.DeclaringType?.FullName ?? "qwerqwer" ) ?? false ) ) && ( meth?.Name?.Contains( checkMeth?.Name ?? "asdfasdf" ) ?? false ) )
-                    {
-                        __result = false;
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(NPC), "loadCurrentDialogue")]
-    public static class NpcLoadCurrentDialogueFakeNotMarriedPatch
-    {
-        public static void Prefix(NPC __instance, ref string __state)
-        {
-            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
-            if (!dict.TryGetValue(__instance.Name, out var npcEntry))
-                return;
-
-            if (!npcEntry.IgnoreMarriageSchedule)
-                return;
-
-            __state = null;
-            if (Game1.player.spouse == __instance.Name)
-            {
-                __state = Game1.player.spouse;
-                Game1.player.spouse = "";
-            }
-        }
-        public static void Postfix(NPC __instance, ref string __state)
-        {
-            if (__state != null)
-            {
-                Game1.player.spouse = __state;
-            }
-        }
-    }
-
     /// <summary>The mod entry class.</summary>
     internal class SpaceCore : Mod
     {
@@ -253,9 +54,6 @@ namespace SpaceCore
         /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
         private bool IsFirstTick;
 
-        /// <summary>A queue of textures to dispose, with the <see cref="Game1.ticks"/> value when they were queued.</summary>
-        private readonly Queue<KeyValuePair<Texture2D, int>> TextureDisposalQueue = new();
-
 
         /*********
         ** Accessors
@@ -265,7 +63,6 @@ namespace SpaceCore
         internal static IReflectionHelper Reflection;
         internal static List<Type> ModTypes = new();
         internal static Dictionary<Type, Dictionary<string, CustomPropertyInfo>> CustomProperties = new();
-        internal static Dictionary<GameLocation.LocationContext, CustomLocationContext> CustomLocationContexts = new();
 
 
         /*********
@@ -284,82 +81,203 @@ namespace SpaceCore
             this.Config = helper.ReadConfig<Configuration>();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
+            helper.Events.Input.ButtonPressed += this.Input_ButtonPressed;
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
-            helper.Events.GameLoop.Saving += this.OnSaving;
-            helper.Events.GameLoop.Saved += this.OnSaved;
-            helper.Events.Display.MenuChanged += this.OnMenuChanged;
 
-            helper.Events.Content.AssetRequested += this.Content_AssetRequested;
+            var manualContext = new TriggerActionContext("Manual", Array.Empty<object>(), null); ;
+            GameLocation.RegisterTileAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
+            {
+                var triggers = TriggerActionManager.GetActionsForTrigger("Manual");
+                var trigger = triggers.FirstOrDefault(t => t.Data.Id == args[0]);
+                if (trigger != null)
+                {
+                    foreach (var action in trigger.Actions)
+                    {
+                        if ( !TriggerActionManager.TryRunAction(action, manualContext, out string error, out Exception e) )
+                        {
+                            Log.Error($"Trigger action {trigger.Data.Id} failed: {error} {e}");
+                        }
+                    }
 
-            SpaceEvents.ActionActivated += this.SpaceEvents_ActionActivated;
+                    if (trigger.Data.MarkActionApplied)
+                        farmer.triggerActionsRun.Add(trigger.Data.Id);
+                }
+                return true;
+            });
+            GameLocation.RegisterTouchAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
+            {
+                var triggers = TriggerActionManager.GetActionsForTrigger("Manual");
+                var trigger = triggers.FirstOrDefault(t => t.Data.Id == args[0]);
+                if (trigger != null)
+                {
+                    foreach (var action in trigger.Actions)
+                    {
+                        if (!TriggerActionManager.TryRunAction(action, manualContext, out string error, out Exception e))
+                        {
+                            Log.Error($"Trigger action {trigger.Data.Id} failed: {error} {e}");
+                        }
+                    }
 
-            EventPatcher.CustomCommands.Add("damageFarmer", AccessTools.Method(this.GetType(), "DamageFarmerEventCommand"));
-            EventPatcher.CustomCommands.Add("giveHat", AccessTools.Method(this.GetType(), "GiveHatEventCommand"));
-            EventPatcher.CustomCommands.Add("setDating", AccessTools.Method(this.GetType(), "SetDatingEventCommand"));
-            EventPatcher.CustomCommands.Add("totemWarpEffect", AccessTools.Method(this.GetType(), nameof(TotemWarpEventCommand)));
-            EventPatcher.CustomCommands.Add("setActorScale", AccessTools.Method(this.GetType(), nameof(SetActorScale)));
-            EventPatcher.CustomCommands.Add("cycleActorColors", AccessTools.Method(this.GetType(), nameof(CycleActorColors)));
-            EventPatcher.CustomCommands.Add("flash", AccessTools.Method(this.GetType(), nameof(FlashEventCommand))); 
-            // Remove this one in 1.6
-            EventPatcher.CustomCommands.Add("temporaryAnimatedSprite", AccessTools.Method(this.GetType(), nameof(AddTemporarySprite16)));
+                    if (trigger.Data.MarkActionApplied)
+                        farmer.triggerActionsRun.Add(trigger.Data.Id);
+                }
+            });
 
-            SpaceEvents.AfterGiftGiven += this.SpaceEvents_AfterGiftGiven;
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_PlaySound", (string[] args, TriggerActionContext ctx, out string error) =>
+            {
+                if ( args.Length < 2 )
+                {
+                    error = "Not enough arguments";
+                    return false;
+                }
+                error = null;
+                if (args.Length >= 3 && bool.TryParse(args[2], out bool local) && local)
+                    Game1.player.playNearbySoundAll(args[1]);
+                else
+                    Game1.playSound(args[1]);
+                return true;
+            });
+
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_ShowHudMessage", (string[] args, TriggerActionContext ctx, out string error) =>
+            {
+                if ( args.Length < 2 )
+                {
+                    error = "Not enough arguments";
+                    return false;
+                }
+
+                error = null;
+                Game1.addHUDMessage(new HUDMessage(args[0]));
+                return true;
+            });
+
+            Event.RegisterCommand("damageFarmer", DamageFarmerEventCommand);
+            Event.RegisterCommand("giveHat", GiveHatEventCommand);
+            Event.RegisterCommand("setDating", SetDatingEventCommand);
+            Event.RegisterCommand("setEngaged", SetEngagedEventCommand);
+            Event.RegisterCommand("totemWarpEffect", TotemWarpEventCommand);
+            Event.RegisterCommand("setActorScale", SetActorScale);
+            Event.RegisterCommand("cycleActorColors", CycleActorColors);
+            Event.RegisterCommand("flash", FlashEventCommand);
+            Event.RegisterCommand("setRaining", SetRainingEventCommand);
+            Event.RegisterCommand("screenShake", ScreenShakeEventCommand);
+            Event.RegisterCommand("setZoom", SetZoomEventCommand);
+            Event.RegisterCommand("smoothZoom", SmoothZoomEventCommand);
 
             Commands.Register();
-            TileSheetExtensions.Init();
-            ScheduleExpansion.Init();
+            VanillaAssetExpansion.VanillaAssetExpansion.Init();
+
+            new NpcQuestions().Entry(ModManifest, Helper);
 
             var serializerManager = new SerializerManager(helper.ModRegistry);
 
             this.Harmony = HarmonyPatcher.Apply(this,
-                new EnumPatcher(),
-                new EventPatcher(),
                 new CraftingRecipePatcher(),
                 new FarmerPatcher(),
                 new ForgeMenuPatcher(),
                 new Game1Patcher(),
                 new GameLocationPatcher(),
-                new GameMenuPatcher(),
                 new GameServerPatcher(),
                 new LoadGameMenuPatcher(serializerManager),
-                new MeleeWeaponPatcher(),
                 new MultiplayerPatcher(),
                 new NpcPatcher(),
                 new SaveGamePatcher(serializerManager),
                 new SerializationPatcher(),
-                new SpriteBatchPatcher(),
                 new UtilityPatcher(),
                 new HoeDirtPatcher(),
-
-                // I've started organizing by purpose instead of class patched
-                new PortableCarpenterPatcher()
+                new SkillBuffPatcher(),
+                new SpriteBatchPatcher()
             );
-            /*
-            var ps = typeof(NetDictionary<string, string, NetString, SerializableDictionary<string, string>, NetStringDictionary<string, NetString>>).GetProperties();
-            MethodBase m = null;
-            foreach (var p in ps)
-            {
-                if (p.GetIndexParameters() == null || p.GetIndexParameters().Length == 0)
-                    continue;
-                if (p.GetSetMethod() == null)
-                    continue;
-                m = p.GetSetMethod();
-                break;
-            }
-            Harmony.Patch(m,
-                prefix: new HarmonyMethod(typeof(Fix1_5NetCodeBugPatch).GetMethod("Prefix", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)),
-                postfix: new HarmonyMethod(typeof(Fix1_5NetCodeBugPatch).GetMethod("Postfix", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)));
-            */
         }
 
+        internal NPC lastInteraction = null;
+        internal Dictionary<string, Action> lastChoices = null;
+        private void Input_ButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            if (!Context.IsPlayerFree)
+                return;
+
+            if (e.Button.IsActionButton() && (Config.SocialInteractions_AlwaysTrigger || Config.SocialInteractions_TriggerModifier.IsDown()))
+            {
+                Rectangle tileRect = new Rectangle((int)e.Cursor.GrabTile.X * 64, (int)e.Cursor.GrabTile.Y * 64, 64, 64);
+                NPC npc = null;
+                foreach (var character in Game1.currentLocation.characters)
+                {
+                    if (!character.IsMonster && character.GetBoundingBox().Intersects(tileRect))
+                    {
+                        npc = character;
+                        break;
+                    }
+                }
+                if (npc == null)
+                    npc = Game1.currentLocation.isCharacterAtTile(e.Cursor.Tile + new Vector2(0f, 1f));
+                if (npc == null)
+                    npc = Game1.currentLocation.isCharacterAtTile(e.Cursor.GrabTile + new Vector2(0f, 1f));
+
+                if (npc == null || //!Utility.withinRadiusOfPlayer( npc.getStandingX(), npc.getStandingY(), 1, Game1.player ) ||
+                    !Game1.NPCGiftTastes.ContainsKey(npc.Name) || !Game1.player.friendshipData.ContainsKey(npc.Name))
+                    return;
+                Helper.Input.Suppress(e.Button);
+
+                lastChoices = new();
+                lastChoices.Add(I18n.Interaction_Chat(), () =>
+                {
+                    bool stowed = Game1.player.netItemStowed.Value;
+                    Game1.player.netItemStowed.Value = true;
+                    Game1.player.UpdateItemStow();
+                    npc.checkAction(Game1.player, Game1.player.currentLocation);
+                    Game1.player.netItemStowed.Value = stowed;
+                    Game1.player.UpdateItemStow();
+                });
+                if (Game1.player.ActiveObject != null && Game1.player.ActiveObject.canBeGivenAsGift())
+                {
+                    lastChoices.Add(I18n.Interaction_GiftHeld(), () => npc.tryToReceiveActiveObject(Game1.player));
+                }
+                (GetApi() as Api).InvokeASI(npc, (s, a) => lastChoices.Add(s, a));
+
+                List<Response> responses = new();
+                foreach (var entry in lastChoices)
+                {
+                    responses.Add(new(entry.Key, entry.Key));
+                }
+                responses.Add(new("Cancel", I18n.Interaction_Cancel()));
+
+                Game1.currentLocation.afterQuestion = (farmer, answer) =>
+                {
+                    //Log.Debug("hi");
+                    Game1.activeClickableMenu = null;
+                    Game1.player.CanMove = true;
+                    if (lastChoices.ContainsKey(answer))
+                        lastChoices[answer]();
+                    else
+                        ;// Log.Debug("wat");
+                };
+                Game1.currentLocation.createQuestionDialogue(I18n.InteractionWith(npc.displayName), responses.ToArray(), "advanced-social-interaction");
+            }
+        }
+
+        private bool StringEqualsGSQ(string[] query, GameStateQueryContext ctx)
+        {
+            if (!ArgUtility.TryGet(query, 0, out string str1, out string error, allowBlank: false) ||
+                 !ArgUtility.TryGet(query, 1, out string str2, out error, allowBlank: false) ||
+                 !ArgUtility.TryGetOptionalBool(query, 2, out bool caseSensitive, out error, defaultValue: true))
+            {
+
+                return false;
+            }
+
+            return string.Equals( str1, str2, caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase );
+        }
+
+        private Api api;
         /// <inheritdoc />
         public override object GetApi()
         {
-            return new Api();
+            return api ??= new Api();
         }
 
-        private static void DamageFarmerEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void DamageFarmerEventCommand(Event evt, string[] args, EventContext ctx)
         {
             Game1.eventUp = false;
             try
@@ -373,11 +291,11 @@ namespace SpaceCore
             }
         }
 
-        private static void GiveHatEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void GiveHatEventCommand(Event evt, string[] args, EventContext ctx)
         {
             try
             {
-                Game1.player.addItemByMenuIfNecessary(new Hat(int.Parse(args[1])));
+                Game1.player.addItemByMenuIfNecessary(new Hat(args[1]));
             }
             finally
             {
@@ -385,7 +303,7 @@ namespace SpaceCore
             }
         }
 
-        private static void SetDatingEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void SetDatingEventCommand(Event evt, string[] args, EventContext ctx)
         {
             try
             {
@@ -395,7 +313,55 @@ namespace SpaceCore
                 }
                 else
                 {
-                    f.Status = FriendshipStatus.Dating;
+                    if (args.Length >= 3 && args[2].ToLower().Equals("false"))
+                    {
+                        if (f.Status == FriendshipStatus.Dating)
+                            f.Status = FriendshipStatus.Friendly;
+                    }
+                    else
+                    {
+                        f.Status = FriendshipStatus.Dating;
+                        Game1.Multiplayer.globalChatInfoMessage("Dating", Game1.player.Name, Game1.getCharacterFromName(args[1]).GetTokenizedDisplayName());
+                    }
+                    }
+            }
+            finally
+            {
+                evt.CurrentCommand++;
+            }
+        }
+        private static void SetEngagedEventCommand(Event evt, string[] args, EventContext ctx)
+        {
+            try
+            {
+                if ( args.Length < 4 )
+                {
+                    Log.Warn("Not enough arguments for setEngaged event command");
+                }
+                else if (!Game1.player.friendshipData.TryGetValue(args[1], out Friendship f))
+                {
+                    Log.Warn("Could not find NPC " + args[1] + " to mark as engagement");
+                }
+                else if (!bool.TryParse(args[2], out bool asRoomate))
+                {
+                    Log.Warn("Could not parse asRoommate as boolean");
+                }
+                else if (!int.TryParse(args[2], out int weddingOffset) || weddingOffset < 1)
+                {
+                    Log.Warn("Could not parse weddingOffset as positive integer");
+                }
+                else
+                {
+                    WorldDate weddingDate = new WorldDate(Game1.Date);
+                    weddingDate.TotalDays += weddingOffset;
+                    while (!Game1.canHaveWeddingOnDay(weddingDate.DayOfMonth, weddingDate.Season))
+                        ++weddingDate.TotalDays;
+
+                    f.Status = FriendshipStatus.Engaged;
+                    f.RoommateMarriage = asRoomate;
+                    f.WeddingDate = weddingDate;
+
+                    Game1.Multiplayer.globalChatInfoMessage("Engaged", Game1.player.Name, Game1.getCharacterFromName(args[1]).GetTokenizedDisplayName());
                 }
             }
             finally
@@ -403,8 +369,11 @@ namespace SpaceCore
                 evt.CurrentCommand++;
             }
         }
-        private static void TotemWarpEventCommand(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void TotemWarpEventCommand(Event evt, string[] args, EventContext ctx)
         {
+            var loc = ctx.Location;
+
+
             try
             {
                 int tx = int.Parse(args[1]);
@@ -502,7 +471,7 @@ namespace SpaceCore
         }
 
         public static ConditionalWeakTable<AnimatedSprite, AnimatedSpriteExtras> spriteExtras = new();
-        private static void SetActorScale(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void SetActorScale(Event evt, string[] args, EventContext ctx)
         {
             try
             {
@@ -517,7 +486,7 @@ namespace SpaceCore
                 evt.CurrentCommand++;
             }
         }
-        private static void CycleActorColors(Event evt, GameLocation loc, GameTime time, string[] args)
+        private static void CycleActorColors(Event evt, string[] args, EventContext ctx)
         {
             try
             {
@@ -562,7 +531,7 @@ namespace SpaceCore
                 evt.CurrentCommand++;
             }
         }
-        private static void FlashEventCommand(Event @event, GameLocation loc, GameTime time, string[] args)
+        private static void FlashEventCommand(Event @event, string[] args, EventContext ctx)
         {
             try
             {
@@ -575,245 +544,55 @@ namespace SpaceCore
             }
         }
 
-        [SuppressMessage("Style", "IDE0008", Justification = "copy pasted from vanilla with as few changes as possible")]
-        public static void AddTemporarySprite16(Event @event, GameLocation loc, GameTime time, string[] args)
+        private void SetRainingEventCommand(Event @event, string[] args, EventContext context)
         {
-            try
-            {
-                string ArgUtility_GetMissingRequiredIndexError(string[] array, int index)
-                {
-                    switch (array.Length)
-                    {
-                        case 0:
-                            {
-                                return $"required index {index} not found (list is empty)";
-                            }
-                        case 1:
-                            {
-                                return $"required index {index} not found (list has a single value at index 0)";
-                            }
-                        default:
-                            {
-                                return $"required index {index} not found (list has indexes 0 through {array.Length - 1})";
-                            }
-                    }
-                }
-                bool ArgUtility_TryGet(string[] array, int index, out string value, out string error, bool allowBlank = true)
-                {
-                    if (array == null)
-                    {
-                        value = null;
-                        error = "argument list is null";
-                        return false;
-                    }
-                    if (index < 0 || index >= array.Length)
-                    {
-                        value = null;
-                        error = ArgUtility_GetMissingRequiredIndexError(array, index);
-                        return false;
-                    }
-                    value = array[index];
-                    if (!allowBlank && string.IsNullOrWhiteSpace(value))
-                    {
-                        value = null;
-                        error = $"required index {index} has a blank value";
-                        return false;
-                    }
-                    error = null;
-                    return true;
-                }
-                string ArgUtility_GetValueParseError(string[] array, int index, bool required, string typeSummary)
-                {
-                    return required ? "required" : "optional" + $" index {index} has value '{array[index]}', which can't be parsed as {typeSummary}";
-                }
-                bool ArgUtility_TryGetInt(string[] array, int index, out int value, out string error)
-                {
-                    if (!ArgUtility_TryGet(array, index, out string raw, out error, allowBlank: false))
-                    {
-                        value = 0;
-                        return false;
-                    }
-                    if (!int.TryParse(raw, out value))
-                    {
-                        value = 0;
-                        error = ArgUtility_GetValueParseError(array, index, required: true, "an integer");
-                        return false;
-                    }
-                    error = null;
-                    return true;
-                }
-                bool ArgUtility_TryGetRectangle(string[] array, int index, out Rectangle value, out string error)
-                {
-                    if (!ArgUtility_TryGetInt(array, index, out int x, out error) || !ArgUtility_TryGetInt(array, index + 1, out int y, out error) || !ArgUtility_TryGetInt(array, index + 2, out var width, out error) || !ArgUtility_TryGetInt(array, index + 3, out var height, out error))
-                    {
-                        value = Rectangle.Empty;
-                        return false;
-                    }
-                    error = null;
-                    value = new Rectangle(x, y, width, height);
-                    return true;
-                }
-                bool ArgUtility_TryGetFloat(string[] array, int index, out float value, out string error)
-                {
-                    if (!ArgUtility_TryGet(array, index, out var raw, out error, allowBlank: false))
-                    {
-                        value = 0f;
-                        return false;
-                    }
-                    if (!float.TryParse(raw, out value))
-                    {
-                        value = 0f;
-                        error = ArgUtility_GetValueParseError(array, index, required: true, "a number");
-                        return false;
-                    }
-                    error = null;
-                    return true;
-                }
-                bool ArgUtility_TryGetVector2(string[] array, int index, out Vector2 value, out string error, bool integerOnly = false)
-                {
-                    float x;
-                    float y;
-                    if (integerOnly)
-                    {
-                        if (ArgUtility_TryGetInt(array, index, out var x2, out error) && ArgUtility_TryGetInt(array, index + 1, out var y2, out error))
-                        {
-                            value = new Vector2(x2, y2);
-                            return true;
-                        }
-                    }
-                    else if (ArgUtility_TryGetFloat(array, index, out x, out error) && ArgUtility_TryGetFloat(array, index + 1, out y, out error))
-                    {
-                        value = new Vector2(x, y);
-                        return true;
-                    }
-                    value = Vector2.Zero;
-                    return false;
-                }
-                bool ArgUtility_TryGetBool(string[] array, int index, out bool value, out string error)
-                {
-                    if (!ArgUtility_TryGet(array, index, out var raw, out error, allowBlank: false))
-                    {
-                        value = false;
-                        return false;
-                    }
-                    if (!bool.TryParse(raw, out value))
-                    {
-                        value = false;
-                        error = ArgUtility_GetValueParseError(array, index, required: true, "a boolean (should be 'true' or 'false')");
-                        return false;
-                    }
-                    error = null;
-                    return true;
-                }
-                if (!ArgUtility_TryGet(args, 1, out var textureName, out var error) || !ArgUtility_TryGetRectangle(args, 2, out var sourceRect, out error) || !ArgUtility_TryGetFloat(args, 6, out var animationInterval, out error) || !ArgUtility_TryGetInt(args, 7, out var animationLength, out error) || !ArgUtility_TryGetInt(args, 8, out var numberOfLoops, out error) || !ArgUtility_TryGetVector2(args, 9, out var tile, out error, integerOnly: true) || !ArgUtility_TryGetBool(args, 11, out var flicker, out error) || !ArgUtility_TryGetBool(args, 12, out var flip, out error) || !ArgUtility_TryGetFloat(args, 13, out var layerDepth, out error) || !ArgUtility_TryGetFloat(args, 14, out var alphaFade, out error) || !ArgUtility_TryGetInt(args, 15, out var scale, out error) || !ArgUtility_TryGetFloat(args, 16, out var scaleChange, out error) || !ArgUtility_TryGetFloat(args, 17, out var rotation, out error) || !ArgUtility_TryGetFloat(args, 18, out var rotationChange, out error))
-                {
-                    throw new Exception(error);
-                    return;
-                }
-                TemporaryAnimatedSprite tempSprite = new TemporaryAnimatedSprite(textureName, sourceRect, animationInterval, animationLength, numberOfLoops, @event.OffsetPosition(tile * 64f), flicker, flip, @event.OffsetPosition(new Vector2(0f, layerDepth) * 64f).Y / 10000f, alphaFade, Color.White, 4 * scale, scaleChange, rotation, rotationChange);
-                for (int i = 19; i < args.Length; i++)
-                {
-                    switch (args[i])
-                    {
-                        case "hold_last_frame":
-                            tempSprite.holdLastFrame = true;
-                            break;
-                        case "ping_pong":
-                            tempSprite.pingPong = true;
-                            break;
-                        case "motion":
-                            {
-                                if (!ArgUtility_TryGetVector2(args, i + 1, out var value, out error))
-                                {
-                                    throw new Exception(error);
-                                    break;
-                                }
-                                tempSprite.motion = value;
-                                i += 2;
-                                break;
-                            }
-                        case "acceleration":
-                            {
-                                if (!ArgUtility_TryGetVector2(args, i + 1, out var value2, out error))
-                                {
-                                    throw new Exception(error);
-                                    break;
-                                }
-                                tempSprite.acceleration = value2;
-                                i += 2;
-                                break;
-                            }
-                        case "acceleration_change":
-                            {
-                                if (!ArgUtility_TryGetVector2(args, i + 1, out var value3, out error))
-                                {
-                                    throw new Exception(error);
-                                    break;
-                                }
-                                tempSprite.accelerationChange = value3;
-                                i += 2;
-                                break;
-                            }
-                        default:
-                            throw new Exception("unknown option '" + args[i] + "'");
-                            break;
-                    }
-                }
-                loc.TemporarySprites.Add(tempSprite);
-            }
-            finally
-            {
-                @event.CurrentCommand++;
-            }
+            Game1.netWorldState.Value.GetWeatherForLocation(args[1]).IsRaining = Convert.ToBoolean(args[2]);
+            if (args[1] == "Default")
+                Game1.isRaining = true;
+
+            @event.CurrentCommand++;
         }
 
-        // TODO: In 1.6 move to vanilla asset expansion part of the code
-        // Also make it use ItemId instead
-        // Also make it change to use PlayEvent
-        private void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)
+        internal float screenShakeIntensity = 0;
+        internal float pendingScreenShake = 0;
+        internal Vector2 preShakeViewportPos = default(Vector2);
+        internal Vector2 shakeViewportPos = default(Vector2);
+        internal Vector2 shakeAmount = Vector2.Zero;
+        private void ScreenShakeEventCommand(Event @event, string[] args, EventContext context)
         {
-            var farmer = sender as Farmer;
-            if (farmer != Game1.player) return;
+            float intensity = Convert.ToSingle(args[1]);
+            float duration = Convert.ToSingle(args[2]);
+            this.screenShakeIntensity = intensity;
+            this.pendingScreenShake = duration;
+            this.preShakeViewportPos = this.shakeViewportPos = Game1.currentViewportTarget;
 
-            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
-            if (!dict.TryGetValue(e.Npc.Name, out var npcEntry))
-                return;
+            @event.CurrentCommand++;
+        }
 
-            if (!npcEntry.GiftEventTriggers.TryGetValue(e.Gift.ParentSheetIndex.ToString(), out string eventStr))
-                return;
+        internal float currZoom = 1;
+        internal float targetZoom = 1;
+        internal float zoomTimeRemaining = -1;
 
-            string[] data = eventStr.Split('/');
+        private void SetZoomEventCommand(Event @event, string[] args, EventContext context)
+        {
+            targetZoom = Convert.ToSingle(args[1]);
+            zoomTimeRemaining = -1;
 
-            var events = Game1.player.currentLocation.GetLocationEvents();
-            if (events.ContainsKey(eventStr))
-            {
-                if (Game1.activeClickableMenu is DialogueBox db)
-                {
-                    db.dialogueFinished = true;
-                    db.closeDialogue();
-                    Game1.activeClickableMenu = null;
-                    Game1.dialogueUp = false;
-                }
-                else return; // In case someone else is doing something unusual
+            @event.CurrentCommand++;
+        }
 
-                int eid = Convert.ToInt32(data[0]);
-                Game1.player.eventsSeen.Add(eid);
-                Game1.player.currentLocation.startEvent(new Event(events[eventStr], eid));
-            }
+        private void SmoothZoomEventCommand(Event @event, string[] args, EventContext context)
+        {
+            targetZoom = Convert.ToSingle(args[1]);
+            zoomTimeRemaining = Convert.ToSingle(args[2]);
+
+            @event.CurrentCommand++;
         }
 
         public class NpcExtensionData
         {
             public Dictionary<string, string> GiftEventTriggers = new();
             public bool IgnoreMarriageSchedule { get; set; } = false;
-        }
-
-        private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
-        {
-            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/NpcExtensionData"))
-            {
-                e.LoadFrom(() => new Dictionary<string, NpcExtensionData>(), AssetLoadPriority.Low);
-            }
         }
 
         /*********
@@ -849,6 +628,10 @@ namespace SpaceCore
                     getValue: () => this.Config.SupportAllProfessionsMod,
                     setValue: value => this.Config.SupportAllProfessionsMod = value
                 );
+
+                configMenu.AddSectionTitle(ModManifest, () => I18n.Config_AdvancedSocialInteractions());
+                configMenu.AddBoolOption(ModManifest, () => Config.SocialInteractions_AlwaysTrigger, (val) => Config.SocialInteractions_AlwaysTrigger = val, () => I18n.Config_AlwaysTrigger_Name(), () => I18n.Config_AlwaysTrigger_Description());
+                configMenu.AddKeybindList(ModManifest, () => Config.SocialInteractions_TriggerModifier, (val) => Config.SocialInteractions_TriggerModifier = val, () => I18n.Config_TriggerModifier_Name(), () => I18n.Config_TriggerModifier_Description());
             }
 
             var entoaroxFramework = this.Helper.ModRegistry.GetApi<IEntoaroxFrameworkApi>("Entoarox.EntoaroxFramework");
@@ -894,11 +677,57 @@ namespace SpaceCore
                 }
             }
 
-            // update tilesheet references
-            foreach (Texture2D oldTexture in TileSheetExtensions.UpdateReferences())
+            if ( Game1.CurrentEvent == null && (currZoom != 1 || targetZoom != 1) )
             {
-                if (this.Config.DisposeOldTextures)
-                    this.TextureDisposalQueue.Enqueue(new(oldTexture, Game1.ticks));
+                currZoom = targetZoom = 1;
+                zoomTimeRemaining = -1;
+                Game1.updateViewportForScreenSizeChange(false, Game1.game1.Window.ClientBounds.Width, Game1.game1.Window.ClientBounds.Height);
+            }
+            if (currZoom != targetZoom && Game1.CurrentEvent != null)
+            {
+                float newZoom = currZoom;
+                if (zoomTimeRemaining > 0.01)
+                {
+                    float sec = (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+
+                    newZoom = MathF.Exp(Utility.Lerp(MathF.Log(currZoom), MathF.Log(targetZoom), sec / zoomTimeRemaining));
+                    newZoom += (targetZoom - currZoom) * (sec / zoomTimeRemaining);
+                    zoomTimeRemaining -= sec;
+                }
+                else
+                    newZoom = targetZoom;
+
+                int newW = (int)(Game1.game1.Window.ClientBounds.Width / Game1.options.zoomLevel);
+                int newH = (int)(Game1.game1.Window.ClientBounds.Height / Game1.options.zoomLevel);
+                Point center = new(Game1.viewport.X + Game1.viewport.Width / 2, Game1.viewport.Y + Game1.viewport.Height / 2);
+                Game1.viewport.X = center.X - newW / 2;
+                Game1.viewport.Y = center.Y - newH / 2;
+                Game1.viewport.Width = newW;
+                Game1.viewport.Height = newH;
+
+                currZoom = newZoom;
+            }
+
+            if (this.pendingScreenShake > 0)
+            {
+                this.pendingScreenShake -= (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
+                if (this.pendingScreenShake <= 0)
+                {
+                    Game1.currentViewportTarget = this.preShakeViewportPos;
+                }
+                else
+                {
+                    // If the camera moved otherwise we need to update things
+                    var vp = new Vector2(Game1.viewport.Location.X, Game1.viewport.Location.Y);
+                    if (vp != this.shakeViewportPos)
+                        this.preShakeViewportPos += (vp - this.shakeViewportPos);
+
+                    float angle = (float) Game1.random.NextDouble();
+                    shakeAmount = new Vector2( (int)(MathF.Cos(angle) * this.screenShakeIntensity), (int)(MathF.Sin(angle) * this.screenShakeIntensity));
+                    this.shakeViewportPos = this.preShakeViewportPos + this.shakeAmount;
+                    Game1.viewport.X = (int)this.shakeViewportPos.X;
+                    Game1.viewport.Y = (int)this.shakeViewportPos.Y;
+                }
             }
 
             // disable serializer if not used
@@ -911,26 +740,6 @@ namespace SpaceCore
                     this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
                 foreach (var method in SaveGamePatcher.GetLoadEnumeratorMethods())
                     this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
-            }
-
-            // dispose old textures
-            if (e.IsOneSecond)
-            {
-                while (this.TextureDisposalQueue.Count != 0)
-                {
-                    const int delayTicks = 60; // sixty ticks per second
-
-                    var next = this.TextureDisposalQueue.Peek();
-                    Texture2D asset = next.Key;
-                    int queuedTicks = next.Value;
-
-                    if (Game1.ticks - queuedTicks <= delayTicks)
-                        break;
-
-                    this.TextureDisposalQueue.Dequeue();
-                    if (!asset.IsDisposed)
-                        asset.Dispose();
-                }
             }
         }
 
@@ -947,77 +756,17 @@ namespace SpaceCore
             {
                 Log.Warn($"Exception migrating legacy save data: {ex}");
             }
-
-            if ( Game1.IsMasterGame )
-            {
-                DoLoadCustomLocationWeather();
-            }
         }
+    }
 
-        private void OnSaving( object sender, SavingEventArgs e )
+    [HarmonyPatch(typeof(Options), "get_zoomLevel")]
+    public static class OptionsZoomPatch
+    {
+        public static void Postfix(ref float __result)
         {
-            // This had to be moved to a harmony patch to fix an issue from saving in a custom location context location
-            /*
-            if ( Game1.IsMasterGame )
+            if (Game1.CurrentEvent != null)
             {
-                var lws = SaveGame.GetSerializer( typeof( LocationWeather ) );
-                Dictionary<int, string> customLocWeathers = new();
-                foreach ( int context in Game1.netWorldState.Value.LocationWeather.Keys )
-                {
-                    if ( !Enum.IsDefined( ( GameLocation.LocationContext ) context ) )
-                    {
-                        SpaceShared.Log.Debug( "doing ctx " + context );
-                        using MemoryStream ms = new();
-                        lws.Serialize( ms, Game1.netWorldState.Value.LocationWeather[ context ] );
-                        customLocWeathers.Add( context, Encoding.ASCII.GetString( ms.ToArray() ) );
-                    }
-                }
-                foreach ( int key in customLocWeathers.Keys )
-                    Game1.netWorldState.Value.LocationWeather.Remove( key );
-                Helper.Data.WriteSaveData( "CustomLocationWeathers", customLocWeathers );
-            }
-            */
-        }
-
-        private void OnSaved( object sender, SavedEventArgs e )
-        {
-            if ( Game1.IsMasterGame )
-            {
-                DoLoadCustomLocationWeather();
-            }
-        }
-
-        /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
-        {
-            if (e.NewMenu is StardewValley.Menus.ForgeMenu)
-                Game1.activeClickableMenu = new NewForgeMenu();
-        }
-
-        private void SpaceEvents_ActionActivated(object sender, EventArgsAction e)
-        {
-            if (e.Action == "CarpenterMenu")
-            {
-                bool magic = e.ActionString.Split(' ')[1] == "true";
-                Game1.activeClickableMenu = new StardewValley.Menus.CarpenterMenu(magic);
-            }
-        }
-
-        private void DoLoadCustomLocationWeather()
-        {
-            var lws = SaveGame.GetSerializer( typeof( LocationWeather ) );
-            var customLocWeathers = Helper.Data.ReadSaveData< Dictionary<int, string> >( "CustomLocationWeathers" );
-            if ( customLocWeathers == null )
-                return;
-            foreach ( var kvp in customLocWeathers )
-            {
-                using MemoryStream ms = new( Encoding.Unicode.GetBytes( kvp.Value ) );
-                LocationWeather lw = ( LocationWeather )lws.Deserialize( ms );
-                if ( Game1.netWorldState.Value.LocationWeather.ContainsKey( kvp.Key ) )
-                    Game1.netWorldState.Value.LocationWeather.Remove( kvp.Key );
-                Game1.netWorldState.Value.LocationWeather.Add( kvp.Key, lw );
+                __result *= SpaceCore.Instance.currZoom;
             }
         }
     }

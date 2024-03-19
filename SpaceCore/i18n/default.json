@@ -3,5 +3,17 @@
     "config.custom-skill-page.name": "Custom Skill Page",
     "config.custom-skill-page.tooltip": "Whether to show the custom skill page.\nThis will move the wallet so that there is room for more skills.",
     "config.support-all-professions-mod.name": "Support All Professions Mod",
-    "config.support-all-professions-mod.tooltip": "When All Professions is installed, whether to automatically apply custom professions registered through SpaceCore when their level is reached."
+    "config.support-all-professions-mod.tooltip": "When All Professions is installed, whether to automatically apply custom professions registered through SpaceCore when their level is reached.",
+    "config.advanced-social-interactions": "Advanced Social Interactions",
+    "config.always-trigger.name": "Always Trigger",
+    "config.always-trigger.description": "If the menu should always trigger when interacting with an NPC.",
+    "config.trigger-modifier.name": "Trigger Modifier",
+    "config.trigger-modifier.description": "The key to hold when interacting with someone to trigger the advanced interaction menu.",
+
+    "interaction-with": "Interaction with {{npc}}",
+    "interaction.chat": "Chat",
+    "interaction.gift-held": "Gift Held Item",
+    "interaction.cancel": "Cancel",
+
+    "question.ask": "Ask a Question"
 }

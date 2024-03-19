@@ -3,8 +3,11 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.4.4</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>Experience Bars</Name>
+    <Description>Shows experience bars in the top-left corner.</Description>
+    <Version>1.4.5</Version>
+    <UpdateKeys>Nexus:509</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

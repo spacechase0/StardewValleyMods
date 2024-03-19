@@ -50,7 +50,7 @@ namespace JsonAssets.Framework.ContentPatcher
                 return this.Coordinates.Values.Select(p => p.ToString()).ToArray();
 
             return this.Coordinates.TryGetValue(input, out int value)
-                ? new[] { value.ToString() }
+                ? new[] { "0" }
                 : Array.Empty<string>();
         }
 

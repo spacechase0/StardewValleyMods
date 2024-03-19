@@ -29,6 +29,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommonExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommonHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\ContentParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\ContentEngine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\PatchContentEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\ConsoleCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\ConsoleCommandHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\IConsoleCommand.cs" />
@@ -47,6 +50,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\ISingleTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ItemSlot.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ItemWithBorder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Label.cs" />
@@ -57,5 +61,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Table.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Textbox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Weighted.cs" />
   </ItemGroup>
 </Project>

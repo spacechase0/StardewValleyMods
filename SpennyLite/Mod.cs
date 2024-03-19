@@ -23,9 +23,9 @@ namespace SpennyLite
 
         private void Display_MenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (e.OldMenu == null && e.NewMenu is DialogueBox db && db.characterDialogue.speaker.Name == "Penny")
+            if (e.OldMenu == null && e.NewMenu is DialogueBox db && db.characterDialogue?.speaker?.Name == "Penny")
             {
-                startingSpin = db.characterDialogue.speaker.facingDirection;
+                startingSpin = db.characterDialogue.speaker.facingDirection.Value;
                 db.characterDialogue.speaker.jump();
             }
         }

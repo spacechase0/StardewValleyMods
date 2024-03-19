@@ -1,13 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-
-using JsonAssets.Framework.Internal;
-
 using SpaceShared;
-
-using StardewModdingAPI.Events;
-using StardewModdingAPI.Utilities;
+using StardewModdingAPI;
 
 namespace JsonAssets.Framework
 {
@@ -15,197 +8,94 @@ namespace JsonAssets.Framework
     // Content Patcher.
     // For gift tastes, this is so that if someone replaces the whole field
     // with vanilla + stuff, our stuff will still get added.
-    internal static class ContentInjector2
+    internal class ContentInjector2
     {
-        /// <summary>
-        /// Enum to match gift tastes to indexes.
-        /// 2*n = the response. 2*n + 1 = the actual gift tastes.
-        /// </summary>
-        private enum GiftTasteIndex : int
+        private readonly List<string> Files;
+        public ContentInjector2()
         {
-            Love = 0,
-            Like = 1,
-            Dislike = 2,
-            Hate = 3,
-            Neutral = 4,
-        }
+            Mod.instance.Helper.Events.Content.AssetRequested += this.Content_AssetRequested;
 
-        // Using a Lazy to build the list of gift tastes only when first requested.
-        internal static Lazy<Dictionary<string, HashSet<string>[]>> Gifts = new(GenerateGiftTastes);
-
-        internal static Dictionary<string, HashSet<string>[]> GenerateGiftTastes()
-        {
-            Log.Trace("Generating gift taste dictionary.");
-            Dictionary<string, HashSet<string>[]> friendship = new(StringComparer.OrdinalIgnoreCase);
-
-            foreach (Data.ObjectData obj in Mod.instance.Objects)
+            this.Files = new List<string>(new[]
             {
-                foreach (string key in obj.GiftTastes.Love)
-                {
-                    if (!friendship.TryGetValue(key, out HashSet<string>[] tastes))
-                    {
-                        tastes = new[] { new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>() };
-                        friendship[key] = tastes;
-                    }
-                    tastes[(int)GiftTasteIndex.Love].Add(obj.GetObjectId().ToString());
-                }
-                foreach (string key in obj.GiftTastes.Like)
-                {
-                    if (!friendship.TryGetValue(key, out HashSet<string>[] tastes))
-                    {
-                        tastes = new[] { new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>() };
-                        friendship[key] = tastes;
-                    }
-                    tastes[(int)GiftTasteIndex.Like].Add(obj.GetObjectId().ToString());
-                }
-                foreach (string key in obj.GiftTastes.Dislike)
-                {
-                    if (!friendship.TryGetValue(key, out HashSet<string>[] tastes))
-                    {
-                        tastes = new[] { new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>() };
-                        friendship[key] = tastes;
-                    }
-                    tastes[(int)GiftTasteIndex.Dislike].Add(obj.GetObjectId().ToString());
-                }
-                foreach (string key in obj.GiftTastes.Hate)
-                {
-                    if (!friendship.TryGetValue(key, out HashSet<string>[] tastes))
-                    {
-                        tastes = new[] { new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>() };
-                        friendship[key] = tastes;
-                    }
-                    tastes[(int)GiftTasteIndex.Hate].Add(obj.GetObjectId().ToString());
-                }
-                foreach (string key in obj.GiftTastes.Neutral)
-                {
-                    if (!friendship.TryGetValue(key, out HashSet<string>[] tastes))
-                    {
-                        tastes = new[] { new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>(), new HashSet<string>() };
-                        friendship[key] = tastes;
-                    }
-                    tastes[(int)GiftTasteIndex.Neutral].Add(obj.GetObjectId().ToString());
-                }
-            }
-            return friendship;
+                "Data\\NPCGiftTastes"
+            });
         }
 
-        private static readonly string GIFTTASTES = PathUtilities.NormalizeAssetName(@"Data\NPCGiftTastes");
-
-        internal static void ResetGiftTastes()
+        private void Content_AssetRequested(object sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
         {
-            if (Gifts.IsValueCreated)
-                Gifts = new(GenerateGiftTastes);
-        }
-
-        internal static void OnAssetRequested(AssetRequestedEventArgs e)
-        {
-            if (Mod.instance.DidInit && e.NameWithoutLocale.IsEquivalentTo(GIFTTASTES))
+            if (e.Name.BaseName == "Data\\NPCGiftTastes")
             {
-                e.Edit(
-                    static (asset) =>
+                e.Edit((asset) =>
+                {
+                    var data = asset.AsDictionary<string, string>().Data;
+                    // TODO: This could be optimized from mn to... m + n?
+                    // Basically, iterate through objects and create Dictionary<NPC name, GiftData[]>
+                    // Iterate through objects, each section and add to dict[npc][approp. section]
+                    // Point is, I'm doing this the lazy way right now
+                    var newData = new Dictionary<string, string>(data);
+                    foreach (var npc in data)
                     {
-                        var data = asset.AsDictionary<string, string>().Data;
-                        foreach (var (key, tastes) in Gifts.Value)
+                        if (npc.Key.StartsWith("Universal_"))
                         {
-                            if (key == "Universal")
+                            foreach (var obj in Mod.instance.Objects)
                             {
-                                HashSet<string> loves = new(tastes[(int)GiftTasteIndex.Love]);
-                                if (data.TryGetValue("Universal_Love", out string oldLoves))
-                                    loves.UnionWith(oldLoves.Split(' '));
-                                data["Universal_Love"] = string.Join(' ', loves);
-
-                                HashSet<string> likes = new(tastes[(int)GiftTasteIndex.Like]);
-                                if (data.TryGetValue("Universal_Like", out string oldLikes))
-                                    likes.UnionWith(oldLikes.Split(' '));
-                                data["Universal_Like"] = string.Join(' ', likes);
-
-                                HashSet<string> neutrals = new(tastes[(int)GiftTasteIndex.Neutral]);
-                                if (data.TryGetValue("Universal_Neutral", out string oldNeutrals))
-                                    neutrals.UnionWith(oldNeutrals.Split(' '));
-                                data["Universal_Neutral"] = string.Join(' ', neutrals);
-
-                                HashSet<string> dislikes = new(tastes[(int)GiftTasteIndex.Dislike]);
-                                if (data.TryGetValue("Universal_Dislike", out string oldDislikes))
-                                    dislikes.UnionWith(oldDislikes.Split(' '));
-                                data["Universal_Dislike"] = string.Join(' ', dislikes);
-
-                                HashSet<string> hates = new(tastes[(int)GiftTasteIndex.Hate]);
-                                if (data.TryGetValue("Universal_Hate", out string oldHates))
-                                    hates.UnionWith(oldHates.Split(' '));
-                                data["Universal_Hate"] = string.Join(' ', hates);
+                                if (npc.Key == "Universal_Love" && obj.GiftTastes.Love.Contains("Universal"))
+                                    newData[npc.Key] = npc.Value + " " + obj.Name;
+                                if (npc.Key == "Universal_Like" && obj.GiftTastes.Like.Contains("Universal"))
+                                    newData[npc.Key] = npc.Value + " " + obj.Name;
+                                if (npc.Key == "Universal_Neutral" && obj.GiftTastes.Neutral.Contains("Universal"))
+                                    newData[npc.Key] = npc.Value + " " + obj.Name;
+                                if (npc.Key == "Universal_Dislike" && obj.GiftTastes.Dislike.Contains("Universal"))
+                                    newData[npc.Key] = npc.Value + " " + obj.Name;
+                                if (npc.Key == "Universal_Hate" && obj.GiftTastes.Hate.Contains("Universal"))
+                                    newData[npc.Key] = npc.Value + " " + obj.Name;
                             }
-                            else
-                            {
-                                if (!data.TryGetValue(key, out string oldTastes))
-                                {
-                                    if (Log.IsVerbose)
-                                        Log.Verbose($"NPC {key} doesn't seem to have gift tastes, skipping.");
-                                    continue;
-                                }
-
-                                HashSet<string> loves = new(tastes[(int)GiftTasteIndex.Love]);
-                                HashSet<string> likes = new(tastes[(int)GiftTasteIndex.Like]);
-                                HashSet<string> neutrals = new(tastes[(int)GiftTasteIndex.Neutral]);
-                                HashSet<string> dislikes = new(tastes[(int)GiftTasteIndex.Dislike]);
-                                HashSet<string> hates = new(tastes[(int)GiftTasteIndex.Hate]);
-
-                                string[] tastearray = oldTastes.Split('/');
-
-                                if (tastearray.Length < 10)
-                                    Log.Warn($"NPC {key} seems to have a malformed gift taste string. This may cause issues.");
-
-                                int loveindex = ((int)GiftTasteIndex.Love) * 2 + 1;
-                                int likeindex = ((int)GiftTasteIndex.Like) * 2 + 1;
-                                int dislikeindex = ((int)GiftTasteIndex.Dislike) * 2 + 1;
-                                int hateindex = ((int)GiftTasteIndex.Hate) * 2 + 1;
-                                int neutralindex = ((int)GiftTasteIndex.Neutral) * 2 + 1;
-
-                                if (tastearray.Length > loveindex)
-                                    loves.UnionWith(tastearray[loveindex].Split(' '));
-                                if (tastearray.Length > likeindex)
-                                    likes.UnionWith(tastearray[likeindex].Split(' '));
-                                if (tastearray.Length > dislikeindex)
-                                    dislikes.UnionWith(tastearray[dislikeindex].Split(' '));
-                                if (tastearray.Length > hateindex)
-                                    hates.UnionWith(tastearray[hateindex].Split(' '));
-                                if (tastearray.Length > neutralindex)
-                                    neutrals.UnionWith(tastearray[neutralindex].Split(' '));
-
-                                // string interpolation for some stupid reason sucks if you give it more than four
-                                // inputs in NET 5.0
-                                StringBuilder sb = StringBuilderCache.Acquire();
-                                if (tastearray.Length > 0)
-                                    sb.Append(tastearray[0]);
-                                sb.Append('/');
-                                sb.AppendJoin(' ', loves);
-                                sb.Append('/');
-                                if (tastearray.Length > 2)
-                                    sb.Append(tastearray[2]);
-                                sb.Append('/');
-                                sb.AppendJoin(' ', likes);
-                                sb.Append('/');
-                                if (tastearray.Length > 4)
-                                    sb.Append(tastearray[4]);
-                                sb.Append('/');
-                                sb.AppendJoin(' ', dislikes);
-                                sb.Append('/');
-                                if (tastearray.Length > 6)
-                                    sb.Append(tastearray[6]);
-                                sb.Append('/');
-                                sb.AppendJoin(' ', hates);
-                                sb.Append('/');
-                                if (tastearray.Length > 8)
-                                    sb.Append(tastearray[8]);
-                                sb.Append('/');
-                                sb.AppendJoin(' ', neutrals);
-                                sb.Append('/');
-
-                                data[key] = StringBuilderCache.GetStringAndRelease(sb);
-                            }
+                            continue;
                         }
-                    },
-                    (AssetEditPriority)1200); // using a custom asset edit priority here because CP packs will get the ability to
-                                              // do late edits later.
+
+                        string[] sections = npc.Value.Split('/');
+                        if (sections.Length != 11)
+                        {
+                            Log.Warn($"Bad gift taste data for {npc.Key}!");
+                            continue;
+                        }
+
+                        string loveStr = sections[0];
+                        List<string> loveIds = new List<string>(sections[1].Split(' '));
+                        string likeStr = sections[2];
+                        List<string> likeIds = new List<string>(sections[3].Split(' '));
+                        string dislikeStr = sections[4];
+                        List<string> dislikeIds = new List<string>(sections[5].Split(' '));
+                        string hateStr = sections[6];
+                        List<string> hateIds = new List<string>(sections[7].Split(' '));
+                        string neutralStr = sections[8];
+                        List<string> neutralIds = new List<string>(sections[9].Split(' '));
+
+                        foreach (var obj in Mod.instance.Objects)
+                        {
+                            if (obj.GiftTastes.Love.Contains(npc.Key))
+                                loveIds.Add(obj.Name.ToString().FixIdJA());
+                            if (obj.GiftTastes.Like.Contains(npc.Key))
+                                likeIds.Add(obj.Name.ToString().FixIdJA());
+                            if (obj.GiftTastes.Neutral.Contains(npc.Key))
+                                neutralIds.Add(obj.Name.ToString().FixIdJA());
+                            if (obj.GiftTastes.Dislike.Contains(npc.Key))
+                                dislikeIds.Add(obj.Name.ToString().FixIdJA());
+                            if (obj.GiftTastes.Hate.Contains(npc.Key))
+                                hateIds.Add(obj.Name.ToString().FixIdJA());
+                        }
+
+                        string loveIdStr = string.Join(" ", loveIds);
+                        string likeIdStr = string.Join(" ", likeIds);
+                        string dislikeIdStr = string.Join(" ", dislikeIds);
+                        string hateIdStr = string.Join(" ", hateIds);
+                        string neutralIdStr = string.Join(" ", neutralIds);
+                        newData[npc.Key] = $"{loveStr}/{loveIdStr}/{likeStr}/{likeIdStr}/{dislikeStr}/{dislikeIdStr}/{hateStr}/{hateIdStr}/{neutralStr}/{neutralIdStr}/ ";
+
+                        Log.Verbose($"Adding gift tastes for {npc.Key}: {newData[npc.Key]}");
+                    }
+                    asset.ReplaceWith(newData);
+                }, StardewModdingAPI.Events.AssetEditPriority.Late);
             }
         }
     }

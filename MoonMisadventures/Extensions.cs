@@ -27,7 +27,7 @@ namespace MoonMisadventures
             {
                 loc.damageMonster( areaOfEffect, radius * 6, radius * 8, isBomb: true, who );
             }
-            List<TemporaryAnimatedSprite> sprites = new List<TemporaryAnimatedSprite>();
+            TemporaryAnimatedSpriteList sprites = new();
             sprites.Add( new TemporaryAnimatedSprite( 23, 9999f, 6, 1, new Vector2( currentTile.X * 64f, currentTile.Y * 64f ), flicker: false, ( Game1.random.NextDouble() < 0.5 ) ? true : false )
             {
                 light = true,

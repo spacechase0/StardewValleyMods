@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -5,9 +6,14 @@ using StardewValley.Minigames;
 
 namespace PyromancersJourney.Framework
 {
-    internal class PyromancerMinigame : IMinigame
+    internal class PyromancerMinigame : IMinigame, IDisposable
     {
         private World World = new();
+
+        public void Dispose()
+        {
+            World.Dispose();
+        }
 
         public void changeScreenSize() { }
 

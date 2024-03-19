@@ -11,7 +11,7 @@ namespace SpaceShared.UI
 {
     internal
 #endif
-         class Image : Element
+         class Image : Element, ISingleTexture
     {
         /*********
         ** Accessors
@@ -36,6 +36,7 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override string HoveredSound => (this.Callback != null) ? "shiny4" : null;
 
+        public Color DrawColor { get; set; } = Color.White;
 
         /*********
         ** Public methods
@@ -55,7 +56,7 @@ namespace SpaceShared.UI
             if (this.IsHidden())
                 return;
 
-            b.Draw(this.Texture, this.Position, this.TexturePixelArea, Color.White, 0, Vector2.Zero, this.Scale, SpriteEffects.None, 1);
+            b.Draw(this.Texture, this.Position, this.TexturePixelArea, DrawColor, 0, Vector2.Zero, this.Scale, SpriteEffects.None, 1);
         }
 
 

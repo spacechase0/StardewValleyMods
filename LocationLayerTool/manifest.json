@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Location Layer Tool",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "Lets you layer one map under another, so the 'lower' map shows through transparent areas in the 'upper' map.",
-    "UniqueID": "spacechase0.LocationLayerTool",
-    "EntryDll": "LocationLayerTool.dll",
-    "UpdateKeys": []
-}

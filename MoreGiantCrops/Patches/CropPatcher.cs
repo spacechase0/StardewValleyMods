@@ -67,10 +67,10 @@ namespace MoreGiantCrops.Patches
                     }
 
                     // The only reference to 276 is the index of the pumpkin for checking for giant crops growing
-                    if (instr.opcode == OpCodes.Ldc_I4 && (int)instr.operand == 276)
+                    if (instr.opcode == OpCodes.Ldstr && (string)instr.operand == "276")
                     {
                         // In two instructions (after this and the next), we want our check
-                        hookCountdown = 2;
+                        hookCountdown = 3;
                         justHooked = true;
                     }
                     // If this is the instruction after the previous check, we want to borrow the label for our own use

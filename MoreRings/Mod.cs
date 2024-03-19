@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using MoreRings.Framework;
 using MoreRings.Patches;
 using Spacechase.Shared.Patching;
@@ -43,25 +44,25 @@ namespace MoreRings
         public ModConfig Config { get; private set; }
 
         /// <summary>The item ID for the Ring of Wide Nets.</summary>
-        public int RingFishingLargeBar => this.JsonAssets.GetObjectId("Ring of Wide Nets");
+        public string RingFishingLargeBar => ("Ring of Wide Nets").Replace(' ', '_');
 
         /// <summary>The item ID for the Ring of Regeneration.</summary>
-        public int RingCombatRegen => this.JsonAssets.GetObjectId("Ring of Regeneration");
+        public string RingCombatRegen => ("Ring of Regeneration").Replace(' ', '_');
 
         /// <summary>The item ID for the Ring of Diamond Booze.</summary>
-        public int RingDiamondBooze => this.JsonAssets.GetObjectId("Ring of Diamond Booze");
+        public string RingDiamondBooze => ("Ring of Diamond Booze").Replace(' ', '_');
 
         /// <summary>The item ID for the Refreshing Ring.</summary>
-        public int RingRefresh => this.JsonAssets.GetObjectId("Refreshing Ring");
+        public string RingRefresh => ("Refreshing Ring").Replace(' ', '_');
 
         /// <summary>The item ID for the Quality+ Ring.</summary>
-        public int RingQuality => this.JsonAssets.GetObjectId("Quality+ Ring");
+        public string RingQuality => ("Quality+ Ring").Replace(' ', '_');
 
         /// <summary>The item ID for the Ring of Far Reaching.</summary>
-        public int RingMageHand => this.JsonAssets.GetObjectId("Ring of Far Reaching");
+        public string RingMageHand => ("Ring of Far Reaching").Replace(' ', '_');
 
         /// <summary>The item ID for the Ring of True Sight.</summary>
-        public int RingTrueSight => this.JsonAssets.GetObjectId("Ring of True Sight");
+        public string RingTrueSight => ("Ring of True Sight").Replace(' ', '_');
 
         /// <summary>Whether the player has Wear More Rings installed.</summary>
         public bool HasWearMoreRings => this.WearMoreRings != null;
@@ -238,62 +239,38 @@ namespace MoreRings
             if (this.HasRingEquipped(this.RingDiamondBooze))
             {
                 Buff tipsyBuff = null;
-                foreach (var buff in Game1.buffsDisplay.otherBuffs)
-                    if (buff.which == Buff.tipsy)
+                foreach (var buff in Game1.player.buffs.AppliedBuffs)
+                    if (buff.Key == Buff.tipsy)
                     {
-                        tipsyBuff = buff;
+                        tipsyBuff = buff.Value;
                         break;
                     }
                 if (tipsyBuff != null)
                 {
-                    tipsyBuff.removeBuff();
-                    Game1.buffsDisplay.otherBuffs.Remove(tipsyBuff);
+                    Game1.player.buffs.Remove(tipsyBuff.id);
                 }
-
-                if (Game1.buffsDisplay.drink != null)
-                {
-                    if (Game1.buffsDisplay.drink.which == Buff.tipsy)
-                    {
-                        Game1.buffsDisplay.drink.removeBuff();
-                        Game1.buffsDisplay.drink = null;
-                    }
-                    else
-                    {
-                        int[] attrs = Game1.buffsDisplay.drink.buffAttributes;
-                        if (attrs[Buff.speed] == -1)
-                        {
-                            Game1.buffsDisplay.drink.removeBuff();
-                            Game1.buffsDisplay.drink = null;
-                        }
-                        else if (attrs[Buff.speed] < 0)
-                        {
-                            Game1.buffsDisplay.drink.removeBuff();
-                            attrs[Buff.speed]++;
-                            Game1.buffsDisplay.drink.addBuff();
-                        }
-                    }
-                }
-                Game1.buffsDisplay.syncIcons();
             }
         }
 
         /// <summary>Get whether the player has any ring with the given ID equipped.</summary>
         /// <param name="id">The ring ID to match.</param>
-        public bool HasRingEquipped(int id)
+        public bool HasRingEquipped(string id)
         {
             return this.CountRingsEquipped(id) > 0;
         }
 
         /// <summary>Count the number of rings with the given ID equipped by the player.</summary>
         /// <param name="id">The ring ID to match.</param>
-        public int CountRingsEquipped(int id)
+        public int CountRingsEquipped(string id)
         {
             int count =
                 (Game1.player.leftRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0)
                 + (Game1.player.rightRing.Value?.GetEffectsOfRingMultiplier(id) ?? 0);
 
+            /*
             if (this.WearMoreRings != null)
                 count = Math.Max(count, this.WearMoreRings.CountEquippedRings(Game1.player, id));
+            */
 
             return count;
         }

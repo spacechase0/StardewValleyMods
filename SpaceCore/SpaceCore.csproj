@@ -4,8 +4,13 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.8.1</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>SpaceCore</Name>
+    <Description>A framework mod used by some of my other mods.</Description>
+    <Version>1.18.0</Version>
+    <UpdateKeys>Nexus:1348</UpdateKeys>
+    <Version_AppendConfiguration>false</Version_AppendConfiguration> <!-- Otherwise mods get confused about having 1.13.0-Debug, but needing 1.13.0 or newer -->
+
+    <TargetFramework>net6.0</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -17,9 +22,19 @@
   <PropertyGroup>
     <DefineConstants>IS_SPACECORE</DefineConstants>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="docs\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

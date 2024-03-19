@@ -301,20 +301,20 @@ namespace Displays.Framework
                 // shirt
                 farmer.shirtItem.Value = this.Shirt.Value;
                 if (this.Shirt.Value != null)
-                    farmer.shirt.Value = this.MannGender.Value == MannequinGender.Male ? this.Shirt.Value.indexInTileSheetMale.Value : this.Shirt.Value.indexInTileSheetFemale.Value;
+                    farmer.shirt.Value = this.Shirt.Value.ItemID;
 
                 // paints
                 farmer.pantsItem.Value = this.Pants.Value;
                 if (this.Pants.Value != null)
                 {
-                    farmer.pants.Value = this.MannGender.Value == MannequinGender.Male ? this.Pants.Value.indexInTileSheetMale.Value : this.Pants.Value.indexInTileSheetFemale.Value;
+                    farmer.pants.Value = this.Pants.Value.ItemID;
                     farmer.pantsColor.Value = this.Pants.Value.clothesColor.Value;
                 }
 
                 // boots
                 farmer.boots.Value = this.Boots.Value;
                 if (this.Boots.Value != null)
-                    farmer.changeShoeColor(this.Boots.Value.indexInColorSheet.Value);
+                    farmer.changeShoeColor(this.Boots.Value.appliedBootSheetIndex);
 
                 return farmer;
             }
@@ -371,11 +371,11 @@ namespace Displays.Framework
             switch (item)
             {
                 case Boots boots:
-                    boots.onUnequip();
+                    boots.onUnequip(player);
                     break;
 
                 case Ring ring:
-                    ring.onUnequip(player, player.currentLocation);
+                    ring.onUnequip(player);
                     break;
             }
         }
@@ -390,11 +390,11 @@ namespace Displays.Framework
             switch (item)
             {
                 case Boots boots:
-                    boots.onEquip();
+                    boots.onEquip(player);
                     break;
 
                 case Ring ring:
-                    ring.onEquip(player, player.currentLocation);
+                    ring.onEquip(player);
                     break;
             }
         }

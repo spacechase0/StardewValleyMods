@@ -29,11 +29,11 @@ namespace MoonMisadventures.VirtualProperties
             return holder.Value;
         }
 
-        public static bool HasNecklace( this Farmer farmer, Necklace.Type type )
+        public static bool HasNecklace( this Farmer farmer, string type )
         {
             if ( farmer.get_necklaceItem().Value == null )
                 return false;
-            return ( farmer.get_necklaceItem().Value as Necklace ).necklaceType.Value == type;
+            return ( farmer.get_necklaceItem().Value as Necklace ).ItemId == type;
         }
     }
 }

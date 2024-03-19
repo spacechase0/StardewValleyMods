@@ -1,3 +1,6 @@
+using StardewModdingAPI.Utilities;
+using StardewModdingAPI;
+
 namespace SpaceCore.Framework
 {
     internal class Configuration
@@ -10,8 +13,7 @@ namespace SpaceCore.Framework
         /// <summary>When All Professions is installed, whether to automatically apply custom professions registered through SpaceCore when their level is reached.</summary>
         public bool SupportAllProfessionsMod { get; set; } = true;
 
-        /// <summary>Whether to dispose extended tilesheet textures when they're no longer used by SpaceCore.</summary>
-        /// <remarks>This can reduce memory usage, but can cause crashes if other mods don't handle disposal correctly.</remarks>
-        public bool DisposeOldTextures { get; set; }
+        public bool SocialInteractions_AlwaysTrigger { get; set; } = false;
+        public KeybindList SocialInteractions_TriggerModifier { get; set; } = new KeybindList(SButton.LeftControl);
     }
 }

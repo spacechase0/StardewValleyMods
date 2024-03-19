@@ -22,6 +22,8 @@ namespace MercenaryFramework
 
         public static int TrailingDistance = 10;
 
+        private bool timeJustChanged = false;
+
         public override void Entry(IModHelper helper)
         {
             instance = this;
@@ -35,6 +37,7 @@ namespace MercenaryFramework
             Helper.Events.GameLoop.UpdateTicked += this.GameLoop_UpdateTicked;
             Helper.Events.Multiplayer.PeerDisconnected += this.Multiplayer_PeerDisconnected;
             Helper.Events.GameLoop.DayEnding += this.GameLoop_DayEnding;
+            Helper.Events.GameLoop.TimeChanged += this.GameLoop_TimeChanged;
 
             Harmony harmony = new(ModManifest.UniqueID);
             harmony.PatchAll();
@@ -65,9 +68,14 @@ namespace MercenaryFramework
             if (npc.IsAlreadyMercenary() || !mercData.ContainsKey( npc.Name ))
                 return;
 
-            e(I18n.RecruitFree(), () =>
+            var data = mercData[npc.Name];
+
+            if (!GameStateQuery.CheckConditions(data.CanRecruit, player: Game1.player))
+                return;
+
+            e(data.RecruitCost == 0 ? I18n.RecruitFree() : I18n.RecruitCost( data.RecruitCost ), () =>
             {
-                npc.clearSchedule();
+                npc.ClearSchedule();
                 npc.currentLocation.characters.Remove(npc);
                 Game1.getLocationFromName("Custom_MercenaryWaitingArea").characters.Add(npc);
 
@@ -97,19 +105,39 @@ namespace MercenaryFramework
             }
         }
 
+        private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e)
+        {
+            timeJustChanged = true;
+        }
+
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
             if (!Context.IsWorldReady)
                 return;
+            var mercData = Game1.content.Load<Dictionary<string, MercenaryData>>("spacechase0.MercenaryFramework/Mercenaries");
 
             foreach (var player in Game1.getOnlineFarmers())
             {
                 int i = 0;
+                List<int> toRemove = new();
                 foreach (var merc in player.GetCurrentMercenaries())
                 {
+                    if (timeJustChanged)
+                    {
+                        if (player == Game1.player &&
+                            !GameStateQuery.CheckConditions(mercData[merc.CorrespondingNpc].CanRecruit, player: player))
+                        {
+                            merc.OnLeave();
+                            toRemove.Add(i);
+                        }
+                    }
+
                     merc.UpdateForFarmer(player, i, Game1.currentGameTime);
                     ++i;
                 }
+
+                foreach ( int index in toRemove )
+                    player.GetCurrentMercenaries().RemoveAt(index);
 
                 var trail = trails.GetOrCreateValue(player);
                 if (trail.Count == 0 || trail[0] != player.Position)
@@ -119,6 +147,8 @@ namespace MercenaryFramework
                         trail.RemoveAt(trail.Count - 1);
                 }
             }
+
+            timeJustChanged = false;
         }
 
         private void Multiplayer_PeerDisconnected(object sender, PeerDisconnectedEventArgs e)
@@ -155,7 +185,7 @@ namespace MercenaryFramework
     {
         public static void Postfix(GameLocation __instance, SpriteBatch b)
         {
-            if (__instance.shouldHideCharacters())
+            if (__instance.shouldHideCharacters() || __instance.currentEvent != null)
                 return;
 
             foreach (var farmer in __instance.farmers)

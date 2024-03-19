@@ -18,21 +18,13 @@ namespace JsonAssets
         /// <param name="translations">The translations to use for <c>TranslationKey</c> fields, or <c>null</c> to load the content pack's <c>i18n</c> folder if present.</param>
         void LoadAssets(string path, ITranslationHelper translations);
 
-        int GetObjectId(string name);
-        int GetCropId(string name);
-        int GetFruitTreeId(string name);
-        int GetBigCraftableId(string name);
-        int GetHatId(string name);
-        int GetWeaponId(string name);
-        int GetClothingId(string name);
-
-        IDictionary<string, int> GetAllObjectIds();
-        IDictionary<string, int> GetAllCropIds();
-        IDictionary<string, int> GetAllFruitTreeIds();
-        IDictionary<string, int> GetAllBigCraftableIds();
-        IDictionary<string, int> GetAllHatIds();
-        IDictionary<string, int> GetAllWeaponIds();
-        IDictionary<string, int> GetAllClothingIds();
+        string GetObjectId(string name);
+        string GetCropId(string name);
+        string GetFruitTreeId(string name);
+        string GetBigCraftableId(string name);
+        string GetHatId(string name);
+        string GetWeaponId(string name);
+        string GetClothingId(string name);
 
         List<string> GetAllObjectsFromContentPack(string cp);
         List<string> GetAllCropsFromContentPack(string cp);
@@ -44,19 +36,6 @@ namespace JsonAssets
         List<string> GetAllBootsFromContentPack(string cp);
 
         event EventHandler ItemsRegistered;
-        event EventHandler IdsAssigned;
         event EventHandler AddedItemsToShop;
-        event EventHandler IdsFixed;
-
-        bool FixIdsInItem(Item item);
-        void FixIdsInItemList(List<Item> items);
-        void FixIdsInLocation(GameLocation location);
-
-        bool TryGetCustomSprite(object entity, out Texture2D texture, out Rectangle sourceRect);
-        bool TryGetCustomSpriteSheet(object entity, out Texture2D texture, out Rectangle sourceRect);
-
-        bool TryGetGiantCropSprite(int productID, out Lazy<Texture2D> texture);
-
-        int[] GetGiantCropIndexes();
     }
 }

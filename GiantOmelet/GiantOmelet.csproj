@@ -3,8 +3,12 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <Name>Giant Omelet</Name>
+    <Description>Giant omelet! Free food! (Once a day only)</Description>
     <Version>1.0.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <UpdateKeys>Nexus:13852</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

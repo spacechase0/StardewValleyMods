@@ -48,10 +48,6 @@ namespace SpaceCore.Patches
                     : this.RequireMethod<Game1>(nameof(Game1.warpFarmer), new[] { typeof(LocationRequest), typeof(int), typeof(int), typeof(int), typeof(bool)}),
                 prefix: this.GetHarmonyMethod(nameof(Before_WarpFarmer))
             );
-
-            harmony.Patch(
-                original: this.RequireMethod<Game1>( nameof( Game1.SetOtherLocationWeatherForTomorrow ) ),
-                postfix: this.GetHarmonyMethod( nameof( After_SetOtherLocationWeatherForTomorrow ) ) );
         }
 
 
@@ -93,14 +89,6 @@ namespace SpaceCore.Patches
         private static bool Before_WarpFarmer(ref LocationRequest locationRequest, ref int tileX, ref int tileY, ref int facingDirectionAfterWarp)
         {
             return !SpaceEvents.InvokeBeforeWarp(ref locationRequest, ref tileX, ref tileY, ref facingDirectionAfterWarp);
-        }
-
-        private static void After_SetOtherLocationWeatherForTomorrow( Random random )
-        {
-            foreach ( var kvp in SpaceCore.CustomLocationContexts )
-            {
-                Game1.netWorldState.Value.GetWeatherForLocation( kvp.Key ).CopyFrom( kvp.Value.GetLocationWeatherForTomorrow.Invoke( random ) );
-            }
         }
 
         private static void ShowEndOfNightStuffLogic()

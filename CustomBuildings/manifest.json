@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Custom Buildings",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "Lets content packs create custom buildings with interior maps.",
-    "UniqueID": "spacechase0.CustomBuildings",
-    "EntryDll": "CustomBuildings.dll",
-    "UpdateKeys": []
-}

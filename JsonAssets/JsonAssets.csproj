@@ -4,22 +4,32 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.10.3</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>Json Assets</Name>
+    <Description>Lets content packs add custom content to the game.</Description>
+    <Version>1.11.0</Version>
+    <UpdateKeys>Nexus:1720</UpdateKeys>
+
+    <TargetFramework>net6.0</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <Reference Include="Newtonsoft.Json" HintPath="$(GamePath)\smapi-internal\Newtonsoft.Json.dll" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False">
+      <Version_AppendConfiguration>false</Version_AppendConfiguration>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="assets\" />
+    <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
+    <SMAPIDependency Include="Cherry.ExpandedPreconditionsUtility" Required="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utilities\" />
   </ItemGroup>
 </Project>

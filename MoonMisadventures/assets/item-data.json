@@ -1,0 +1,94 @@
+﻿{
+    "Object:MythiciteOre": "MythiciteOre/500/-300/Metal -15/{{i18n:object.MythiciteOre.name}}/{{i18n:object.MythiciteOre.description}}////4/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:MythiciteBar": "MythiciteBar/5000/-300/Metal -15/{{i18n:object.MythiciteBar.name}}/{{i18n:object.MythiciteBar.description}}////0/spacechase0.MoonMisadventures\\assets\\mythicite-bar.png",
+    "Object:MythiciteOreMinable": "MythiciteOreMinable/500/-300/Junk -999/{{i18n:object.MythiciteOreMinable.name}}/{{i18n:object.MythiciteOreMinable.description}}////5/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:StellarEssence": "StellarEssence/500/-300/MonsterLoot -28/{{i18n:object.StellarEssence.name}}/{{i18n:object.StellarEssence.description}}////8/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:PersistiumDust": "PersistiumDust/750/-300/Gem -2/{{i18n:object.PersistiumDust.name}}/{{i18n:object.PersistiumDust.description}}////3/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:SoulSapphire": "SoulSapphire/10000/-300/Gem -2/{{i18n:object.SoulSapphire.name}}/{{i18n:object.SoulSapphire.description}}////2/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:LunarWheatSeeds": "LunarWheatSeeds/15/-300/Seeds -74/{{i18n:object.LunarWheatSeeds.name}}/{{i18n:object.LunarWheatSeeds.description}}////12/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:SunbloomSeeds": "SunbloomSeeds/20/-300/Seeds -74/{{i18n:object.SunbloomSeeds.name}}/{{i18n:object.SunbloomSeeds.description}}////12/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:StarPetalSeeds": "StarPetalSeeds/10/-300/Seeds -74/{{i18n:object.StarPetalSeeds.name}}/{{i18n:object.StarPetalSeeds.description}}////12/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:VoidBlossomSeeds": "VoidBlossomSeeds/250/-300/Seeds -74/{{i18n:object.VoidBlossomSeeds.name}}/{{i18n:object.VoidBlossomSeeds.description}}////12/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:SoulSproutSeeds": "SoulSproutSeeds/35/-300/Seeds -74/{{i18n:object.SoulSproutSeeds.name}}/{{i18n:object.SoulSproutSeeds.description}}////12/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Crop:LunarWheatSeeds": {
+        "Seasons": [ "spring", "summer", "fall", "winter" ],
+        "DaysInPhase": [ 2, 2, 2, 2 ],
+        "HarvestItemID": "spacechase0.MoonMisadventures_LunarWheat",
+        "Texture": "spacechase0.MoonMisadventures\\assets\\wheat.png",
+        "SpriteIndex": 0
+    },
+    "Crop:SunbloomSeeds": {
+        "Seasons": [ "spring", "summer", "fall", "winter" ],
+        "DaysInPhase": [ 1, 2, 3, 2, 2 ],
+        "HarvestItemID": "spacechase0.MoonMisadventures_Sunbloom",
+        "Texture": "spacechase0.MoonMisadventures\\assets\\crops.png",
+        "SpriteIndex": 0
+    },
+    "Crop:StarPetalSeeds": {
+        "Seasons": [ "spring", "summer", "fall", "winter" ],
+        "DaysInPhase": [ 1, 1, 1, 1, 1 ],
+        "HarvestItemID": "spacechase0.MoonMisadventures_StarPetal",
+        "Texture": "spacechase0.MoonMisadventures\\assets\\crops.png",
+        "SpriteIndex": 1
+    },
+    "Crop:VoidBlossomSeeds": {
+        "Seasons": [ "spring", "summer", "fall", "winter" ],
+        "DaysInPhase": [ 1, 28, 28, 28, 28 ],
+        "HarvestItemID": "spacechase0.MoonMisadventures_VoidBlossom",
+        "Texture": "spacechase0.MoonMisadventures\\assets\\crops.png",
+        "SpriteIndex": 2
+    },
+    "Crop:SoulSproutSeeds": {
+        "Seasons": [ "spring", "summer", "fall", "winter" ],
+        "DaysInPhase": [ 3, 3, 3, 3, 3 ],
+        "HarvestItemID": "spacechase0.MoonMisadventures_SoulSprout",
+        "Texture": "spacechase0.MoonMisadventures\\assets\\crops.png",
+        "SpriteIndex": 3
+    },
+    "Object:LunarWheat": "LunarWheat/225/-300/Flower -80/{{i18n:object.LunarWheat.name}}/{{i18n:object.LunarWheat.description}}////0/spacechase0.MoonMisadventures\\assets\\crop-products.png",
+    "Object:Sunbloom": "Sunbloom/225/-300/Flower -80/{{i18n:object.Sunbloom.name}}/{{i18n:object.Sunbloom.description}}////0/spacechase0.MoonMisadventures\\assets\\crop-products.png",
+    "Object:StarPetal": "StarPetal/105/-300/Flower -80/{{i18n:object.StarPetal.name}}/{{i18n:object.StarPetal.description}}////1/spacechase0.MoonMisadventures\\assets\\crop-products.png",
+    "Object:VoidBlossom": "VoidBlossom/810/-300/Flower -80/{{i18n:object.VoidBlossom.name}}/{{i18n:object.VoidBlossom.description}}////2/spacechase0.MoonMisadventures\\assets\\crop-products.png",
+    "Object:SoulSprout": "SoulSprout/315/-300/Flower -80/{{i18n:object.SoulSprout.name}}/{{i18n:object.SoulSprout.description}}////3/spacechase0.MoonMisadventures\\assets\\crop-products.png",
+    "Object:GalaxyEgg": "GalaxyEgg/200/-300/Egg -5/{{i18n:object.GalaxyEgg.name}}/{{i18n:object.GalaxyEgg.description}}////6/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Object:GalaxyMilk": "GalaxyMilk/250/-300/Milk -6/{{i18n:object.GalaxyMilk.name}}/{{i18n:object.GalaxyMilk.description}}////7/spacechase0.MoonMisadventures\\assets\\objects.png",
+    "Boots:BootsOfTheCosmos": "BootsOfTheCosmos/{{i18n:boots.BootsOfTheCosmos.description}}/800/10/8/0/{{i18n:boots.BootsOfTheCosmos.name}}/spacechase0.MoonMisadventures\\assets\\boots-color.png/0/spacechase0.MoonMisadventures\\assets\\boots.png",
+    "Weapon:BladeOfTheCosmos": {
+        "Name": "Blade of the Cosmos",
+        "DisplayName": "{{i18n:weapon.BladeOfTheCosmos.name}}",
+        "Description": "{{i18n:weapon.BladeOfTheCosmos.description}}",
+        "MinDamage": 130,
+        "MaxDamage": 170,
+        "Defense": 5,
+        "Type": 3,
+        "Texture": "spacechase0.MoonMisadventures/assets/weapons.png",
+        "SpriteIndex": 1
+    },
+    "Weapon:KnifeOfTheCosmos": {
+        "Name": "Knife of the Cosmos",
+        "DisplayName": "{{i18n:weapon.KnifeOfTheCosmos.name}}",
+        "Description": "{{i18n:weapon.KnifeOfTheCosmos.description}}",
+        "MinDamage": 80,
+        "MaxDamage": 110,
+        "Knockback": 0.4,
+        "Speed": 2,
+        "CritChance": 0.1,
+        "Defense": 4,
+        "Type": 1,
+        "Texture": "spacechase0.MoonMisadventures/assets/weapons.png",
+        "SpriteIndex": 2
+    },
+    "Weapon:HammerOfTheCosmos": {
+        "Name": "Hammer of the Cosmos",
+        "DisplayName": "{{i18n:weapon.HammerOfTheCosmos.name}}",
+        "Description": "{{i18n:weapon.HammerOfTheCosmos.description}}",
+        "MinDamage": 160,
+        "MaxDamage": 210,
+        "Defense": 2,
+        "Speed": 3,
+        "Knockback": 0.6,
+        "Type": 2,
+        "Texture": "spacechase0.MoonMisadventures/assets/weapons.png",
+        "SpriteIndex": 0
+    }
+}

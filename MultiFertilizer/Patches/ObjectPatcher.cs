@@ -95,7 +95,7 @@ namespace MultiFertilizer.Patches
                 if (__instance.ParentSheetIndex == 805)
                     return true;
 
-                if (DirtHelper.TryGetFertilizer(__instance.ParentSheetIndex, out FertilizerData fertilizer) && dirt.HasFertilizer(fertilizer))
+                if (DirtHelper.TryGetFertilizer(__instance.ItemID, out FertilizerData fertilizer) && dirt.HasFertilizer(fertilizer))
                     return true;
             }
             return false;

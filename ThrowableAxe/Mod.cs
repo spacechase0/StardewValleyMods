@@ -1,4 +1,6 @@
+using System;
 using SpaceShared;
+using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -19,6 +21,7 @@ namespace ThrowableAxe
 
             helper.Events.Input.ButtonPressed += this.OnButtonPress;
             helper.Events.Input.ButtonReleased += this.OnButtonRelease;
+            helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.GameLoop.UpdateTicking += this.OnUpdateTicking;
             helper.Events.Player.Warped += this.OnWarped;
         }
@@ -30,13 +33,13 @@ namespace ThrowableAxe
 
             if (e.Button == SButton.MouseRight && Game1.player.CurrentTool is Axe axe && this.Thrown == null)
             {
-                int dmg = new[] { 8, 15, 30, 45, 60, 80 }[axe.UpgradeLevel]; // 6 for support for prismatic tools
-                float speed = new float[] { 10, 12, 14, 16, 18, 20 }[axe.UpgradeLevel]; // 6 for support for prismatic tools
+                int dmg = new[] { 8, 15, 30, 45, 60, 80, 100 }[axe.UpgradeLevel]; // 7 for support for mythicite tools
+                float speed = new float[] { 10, 12, 14, 16, 18, 20, 22 }[axe.UpgradeLevel]; // 7 for support for mythicite tools
 
                 this.Thrown = new ThrownAxe(Game1.player, axe.UpgradeLevel, dmg, e.Cursor.AbsolutePixels, speed);
                 Game1.currentLocation.projectiles.Add(this.Thrown);
 
-                Log.Trace("Throwing axe");
+                //Log.Trace("Throwing axe");
                 this.Clicking = true;
             }
         }
@@ -47,6 +50,12 @@ namespace ThrowableAxe
             {
                 this.Clicking = false;
             }
+        }
+
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var sc = Helper.ModRegistry.GetApi< ISpaceCoreApi >( "spacechase0.SpaceCore" );
+            sc.RegisterSerializerType(typeof(ThrownAxe)); // Needed for MP
         }
 
         private void OnUpdateTicking(object sender, UpdateTickingEventArgs e)
@@ -73,7 +82,7 @@ namespace ThrowableAxe
 
                 if (this.Thrown.Dead)
                 {
-                    Log.Trace("Axe destroyed");
+                    //Log.Trace("Axe destroyed");
                     this.Thrown = null;
                 }
             }

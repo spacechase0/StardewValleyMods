@@ -11,11 +11,11 @@ namespace MoonMisadventures
 {
     internal static class Assets
     {
-        public static Texture2D RadioactiveTools;
-        public static Texture2D MythiciteTools;
-        public static Texture2D AnimalGauntlets;
+        //public static Texture2D RadioactiveTools;
+        //public static Texture2D MythiciteTools;
+        //public static Texture2D AnimalGauntlets;
         public static Texture2D LunarKey;
-        public static Texture2D Necklaces;
+        //public static Texture2D Necklaces;
 
         public static Texture2D LaunchBackground;
         public static Texture2D LaunchUfo;
@@ -30,13 +30,15 @@ namespace MoonMisadventures
 
         public static Texture2D NecklaceBg;
 
+        public static Texture2D Laser;
+
         internal static void Load( IModContentHelper content )
         {
-            Assets.RadioactiveTools = content.Load<Texture2D>( "assets/tools-radioactive.png" );
-            Assets.MythiciteTools = content.Load<Texture2D>( "assets/tools-mythicite.png" );
-            Assets.AnimalGauntlets = content.Load<Texture2D>( "assets/animal-gauntlets.png" );
+            //Assets.RadioactiveTools = content.Load<Texture2D>( "assets/tools-radioactive.png" );
+            //Assets.MythiciteTools = content.Load<Texture2D>( "assets/tools-mythicite.png" );
+            //Assets.AnimalGauntlets = content.Load<Texture2D>( "assets/animal-gauntlets.png" );
             Assets.LunarKey = content.Load<Texture2D>( "assets/key.png" );
-            Assets.Necklaces = content.Load<Texture2D>( "assets/necklaces.png" );
+            //Assets.Necklaces = content.Load<Texture2D>( "assets/dga/necklaces.png" );
 
             Assets.LaunchBackground = content.Load<Texture2D>( "assets/launch.png" );
             Assets.LaunchUfo = content.Load<Texture2D>( "assets/ufo-small.png" );
@@ -50,14 +52,8 @@ namespace MoonMisadventures
             Assets.HoeDirt = content.Load<Texture2D>( "assets/hoedirt.png" );
 
             Assets.NecklaceBg = content.Load<Texture2D>( "assets/necklace-bg.png" );
-        }
 
-        internal static void ApplyEdits(AssetRequestedEventArgs e)
-        {
-            if (Game1.currentLocation is LunarLocation &&  e.NameWithoutLocale.IsEquivalentTo("TerrainFeatures/hoeDirt"))
-            {
-                e.LoadFrom(static () => Assets.HoeDirt, AssetLoadPriority.Exclusive);
-            }
+            Laser = content.Load<Texture2D>("assets/laser.png");
         }
     }
 }

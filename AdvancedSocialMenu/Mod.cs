@@ -115,13 +115,13 @@ namespace AdvancedSocialInteractions
 
                 Game1.currentLocation.afterQuestion = (farmer, answer) =>
                 {
-                    Log.Debug("hi");
+                    //Log.Debug("hi");
                     Game1.activeClickableMenu = null;
                     Game1.player.CanMove = true;
                     if (lastChoices.ContainsKey(answer))
                         lastChoices[answer]();
                     else
-                        Log.Debug("wat");
+                        ;// Log.Debug("wat");
                 };
                 Game1.currentLocation.createQuestionDialogue(I18n.InteractionWith(npc.displayName), responses.ToArray(), "advanced-social-interaction");
             }

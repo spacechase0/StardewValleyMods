@@ -22,7 +22,8 @@ namespace MoonMisadventures.Game.Projectiles
         public BoomProjectile() { }
         public BoomProjectile( Vector2 pos, Vector2 targetPos )
         {
-            NetFields.AddFields( target, prevTile );
+            NetFields.AddField(target, "target");
+            NetFields.AddField(prevTile, "prevTile");
 
             ignoreMeleeAttacks.Value = true;
             ignoreLocationCollision.Value = true;
@@ -39,7 +40,7 @@ namespace MoonMisadventures.Game.Projectiles
         private void GoBoom( GameLocation loc )
         {
             var dummy = new Farmer();
-            loc.falseExplode( prevTile, 2, dummy, damage_amount: 15 );
+            loc.falseExplode( prevTile.Value, 2, dummy, damage_amount: 15 );
         }
 
         public override void behaviorOnCollisionWithPlayer( GameLocation location, Farmer player )
@@ -49,7 +50,7 @@ namespace MoonMisadventures.Game.Projectiles
 
         public override bool update( GameTime time, GameLocation location )
         {
-            if ( Vector2.Distance( target, position.Value ) < new Vector2( xVelocity.Value, yVelocity.Value ).Length() )
+            if ( Vector2.Distance( target.Value, position.Value ) < new Vector2( xVelocity.Value, yVelocity.Value ).Length() )
             {
                 GoBoom( location );
                 return true;
@@ -73,10 +74,6 @@ namespace MoonMisadventures.Game.Projectiles
         }
 
         public override void behaviorOnCollisionWithTerrainFeature( TerrainFeature t, Vector2 tileLocation, GameLocation location )
-        {
-        }
-
-        public override void behaviorOnCollisionWithMineWall( int tileX, int tileY )
         {
         }
 

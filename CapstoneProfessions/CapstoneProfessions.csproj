@@ -4,8 +4,12 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.0.10</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>Capstone Professions</Name>
+    <Description>Once you max out all your skills, a new profession choice arrives...</Description>
+    <Version>1.0.11</Version>
+    <UpdateKeys>Nexus:7636</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
 
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>

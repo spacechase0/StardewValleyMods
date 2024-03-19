@@ -26,12 +26,13 @@ namespace SpaceShared.Migrations
         /// <param name="getReplacements">The migration logic indexed by PyTK type identifier.</param>
         public static void MigrateBuildings(SaveGame loaded, Dictionary<string, Func<Building, IDictionary<string, string>, Building>> getReplacements)
         {
-            foreach (BuildableGameLocation location in loaded.locations.OfType<BuildableGameLocation>())
+            foreach (GameLocation location in loaded.locations.OfType<GameLocation>())
             {
                 for (int i = 0; i < location.buildings.Count; i++)
                 {
                     // get PyTK data
-                    if (location.buildings[i] is not Mill building || !PyTkMigrator.TryParseSerializedString(building.input.Value?.Name, out string actualType, out IDictionary<string, string> customData))
+                    var building = location.buildings[i];
+                    if (/*location.buildings[i] is not Mill building ||*/ !PyTkMigrator.TryParseSerializedString(building.GetBuildingChest( "Input" )?.Name, out string actualType, out IDictionary<string, string> customData))
                         continue;
 
                     // get replacement
@@ -68,6 +69,8 @@ namespace SpaceShared.Migrations
             }
         }
 
+        // TODO: Figure this out
+        /*
         /// <summary>Migrate all terrain features in the world which match the custom type.</summary>
         /// <param name="type">The custom type identifier.</param>
         /// <param name="getReplacement">Get the replacement for the given PyTK fields.</param>
@@ -84,6 +87,7 @@ namespace SpaceShared.Migrations
                 }
             }
         }
+        */
 
 
         /*********
@@ -117,7 +121,7 @@ namespace SpaceShared.Migrations
             }
 
             if (item is Chest chest)
-                PyTkMigrator.TryMigrate(chest.items, type, getReplacement);
+                PyTkMigrator.TryMigrate(chest.Items, type, getReplacement);
 
             replaceWith = null;
             return false;

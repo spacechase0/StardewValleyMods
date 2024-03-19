@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using StardewValley;
+using StardewValley.Mods;
 
 namespace SpaceShared
 {

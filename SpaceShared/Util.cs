@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -26,7 +27,7 @@ namespace SpaceShared
 
             // This is really bad. Pathos don't kill me.
             var modInfo = modRegistry.Get( packId );
-            
+
             if (modInfo is null)
                 return Game1.staminaRect;
 
@@ -61,6 +62,27 @@ namespace SpaceShared
 
         public static string? FetchTexturePath( IModRegistry modRegistry, string modIdAndPath )
             => FetchTextureLocation(modRegistry, modIdAndPath)?.BaseName;
+
+        public static string FetchFullPath(IModRegistry modRegistry, string modIdAndPath)
+        {
+            if (modIdAndPath == null || modIdAndPath.IndexOf('/') == -1)
+                return null;
+
+            string packId = modIdAndPath.Substring(0, modIdAndPath.IndexOf('/'));
+            string path = modIdAndPath.Substring(modIdAndPath.IndexOf('/') + 1);
+
+            // This is really bad. Pathos don't kill me.
+            var modInfo = modRegistry.Get(packId);
+            if (modInfo is null)
+                return null;
+
+            if (modInfo.GetType().GetProperty("Mod")?.GetValue(modInfo) is IMod mod)
+                return Path.Combine(mod.Helper.DirectoryPath, path);
+            else if (modInfo.GetType().GetProperty("ContentPack")?.GetValue(modInfo) is IContentPack pack)
+                return Path.Combine(pack.DirectoryPath, path);
+
+            return null;
+        }
 
 #nullable restore
 
@@ -160,16 +182,16 @@ namespace SpaceShared
             double diffG = to.G - from.G;
             double diffB = to.B - from.B;
 
-            var steps = totalNumberOfColors - 1;
+            int steps = totalNumberOfColors - 1;
 
-            var stepA = diffA / steps;
-            var stepR = diffR / steps;
-            var stepG = diffG / steps;
-            var stepB = diffB / steps;
+            double stepA = diffA / steps;
+            double stepR = diffR / steps;
+            double stepG = diffG / steps;
+            double stepB = diffB / steps;
 
             yield return from;
 
-            for (var i = 1; i<steps; ++i)
+            for (int i = 1; i<steps; ++i)
             {
                 yield return new Color(
                     c(from.R, stepR),

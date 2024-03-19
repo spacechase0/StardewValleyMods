@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
-using DynamicGameAssets.Game;
 using MoonMisadventures.Game.Items;
 using StardewModdingAPI;
 using StardewValley;
@@ -56,9 +56,9 @@ namespace MoonMisadventures.Game.Locations
                         int necklaceSlot = -1, sapphireSlot = -1;
                         for ( int i = 0; i < Game1.player.Items.Count; ++i )
                         {
-                            if ( necklaceSlot == -1 && Game1.player.Items[ i ] is Necklace necklace && necklace.necklaceType.Value == Necklace.Type.Lunar )
+                            if ( necklaceSlot == -1 && Game1.player.Items[ i ] is Necklace necklace && necklace.ItemId == Necklace.Type.Lunar )
                                 necklaceSlot = i;
-                            else if ( sapphireSlot == -1 && Game1.player.Items[ i ] is CustomObject cobj && cobj.FullId == ItemIds.SoulSapphire )
+                            else if ( sapphireSlot == -1 && Game1.player.Items[ i ]?.ItemId == ItemIds.SoulSapphire )
                                 sapphireSlot = i;
                         }
 
@@ -90,20 +90,16 @@ namespace MoonMisadventures.Game.Locations
             return base.answerDialogue( answer );
         }
 
-        private static Necklace.Type PickCombatNecklace()
+        private static string PickCombatNecklace()
         {
-            // Basically everything except another lunar necklace
-            switch ( Game1.random.Next( 7 ) )
+            List<string> choices = new();
+            foreach (var choice in Game1.content.Load<Dictionary<string, NecklaceData>>("spacechase0.MoonMisadventures/Necklaces"))
             {
-                case 0: return Necklace.Type.Looting;
-                case 1: return Necklace.Type.Shocking;
-                case 2: return Necklace.Type.Speed;
-                case 3: return Necklace.Type.Health;
-                case 4: return Necklace.Type.Cooling;
-                case 5: return Necklace.Type.Water;
-                case 6: return Necklace.Type.Sea;
+                if (choice.Value.CanBeSelectedAtAltar)
+                    choices.Add(choice.Key);
             }
-            throw new Exception( "This should never happen" );
+
+            return choices[Game1.random.Next(choices.Count)];
         }
     }
 }

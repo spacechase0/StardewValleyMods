@@ -115,8 +115,8 @@ namespace Displays
                     var mf = new Mannequin(MannequinType.Plain, MannequinGender.Female, Vector2.Zero);
                     shop.forSale.Add(mm);
                     shop.forSale.Add(mf);
-                    shop.itemPriceAndStock.Add(mm, new[] { 100, int.MaxValue });
-                    shop.itemPriceAndStock.Add(mf, new[] { 100, int.MaxValue });
+                    shop.itemPriceAndStock.Add(mm, new ItemStockInformation() { price = 100, stock = int.MaxValue });
+                    shop.itemPriceAndStock.Add(mf, new ItemStockInformation() { price = 100, stock = int.MaxValue });
                 }
             }
         }

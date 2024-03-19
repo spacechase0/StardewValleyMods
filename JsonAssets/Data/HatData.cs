@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using JsonAssets.Framework;
@@ -9,7 +8,6 @@ namespace JsonAssets.Data
 {
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
-    [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class HatData : DataNeedsIdWithTexture, ITranslatableItem
     {
         /*********
@@ -39,14 +37,9 @@ namespace JsonAssets.Data
         /*********
         ** Public methods
         *********/
-        public int GetHatId()
-        {
-            return this.Id;
-        }
-
         internal string GetHatInformation()
         {
-            return $"{this.Name}/{this.LocalizedDescription()}/" + (this.ShowHair ? "true" : "false") + "/" + (this.IgnoreHairstyleOffset ? "true" : "false") + $"/{this.Metadata}/{this.LocalizedName()}";
+            return $"{this.Name}/{this.LocalizedDescription()}/" + (this.ShowHair ? "true" : "false") + "/" + (this.IgnoreHairstyleOffset ? "true" : "false") + $"/{this.Metadata}/{this.LocalizedName()}/0/JA\\Hat\\{Name}";
         }
 
 

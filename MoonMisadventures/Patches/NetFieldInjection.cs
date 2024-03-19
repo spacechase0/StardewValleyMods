@@ -17,7 +17,7 @@ namespace MoonMisadventures.Patches
     {
         public static void Postfix( Farmer __instance )
         {
-            __instance.NetFields.AddFields( __instance.get_necklaceItem() );
+            __instance.NetFields.AddField( __instance.get_necklaceItem(), "necklaceItem" );
         }
     }
 
@@ -26,7 +26,7 @@ namespace MoonMisadventures.Patches
     {
         public static void Postfix( FarmerTeam __instance )
         {
-            __instance.NetFields.AddFields( __instance.get_hasLunarKey() );
+            __instance.NetFields.AddField( __instance.get_hasLunarKey(), "hasLunarKey" );
         }
     }
 
@@ -35,7 +35,7 @@ namespace MoonMisadventures.Patches
     {
         public static void Postfix( Monster __instance )
         {
-            __instance.NetFields.AddFields( __instance.get_shocked() );
+            __instance.NetFields.AddField( __instance.get_shocked(), "shocked" );
         }
     }
 }

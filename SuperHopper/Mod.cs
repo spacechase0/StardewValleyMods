@@ -51,7 +51,7 @@ namespace SuperHopper
             {
                 if (chest.heldObject.Value == null)
                 {
-                    if (Utility.IsNormalObjectAtParentSheetIndex(Game1.player.ActiveObject, SObject.iridiumBar))
+                    if (Utility.IsNormalObjectAtParentSheetIndex(Game1.player.ActiveObject, SObject.iridiumBarID))
                     {
                         chest.Tint = Color.DarkViolet;
                         chest.heldObject.Value = (SObject)Game1.player.ActiveObject.getOne();
@@ -84,7 +84,7 @@ namespace SuperHopper
         private void OnMachineMinutesElapsed(SObject machine, GameLocation location)
         {
             // not super hopper
-            if (!this.TryGetHopper(machine, out Chest hopper) || hopper.heldObject.Value == null || !Utility.IsNormalObjectAtParentSheetIndex(hopper.heldObject.Value, SObject.iridiumBar))
+            if (!this.TryGetHopper(machine, out Chest hopper) || hopper.heldObject.Value == null || !Utility.IsNormalObjectAtParentSheetIndex(hopper.heldObject.Value, SObject.iridiumBarID))
                 return;
 
             // fix flag if needed

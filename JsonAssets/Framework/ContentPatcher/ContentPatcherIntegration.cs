@@ -22,19 +22,17 @@ namespace JsonAssets.Framework.ContentPatcher
             if (ContentPatcherIntegration.Cp == null)
                 return;
 
-            ContentPatcherIntegration.Ja.IdsAssigned += (s, e) => ContentPatcherIntegration.IdsAssigned = true;
-            ContentPatcherIntegration.Ja.IdsAssigned += (s, e) => ContentPatcherIntegration.IdsAssignedGen++;
             Mod.instance.Helper.Events.GameLoop.ReturnedToTitle += (s, e) => ContentPatcherIntegration.IdsAssigned = false;
 
             ContentPatcherIntegration.Tokens = new List<BaseToken>
             {
-                new IdToken("Object", Mod.StartingObjectId, ContentPatcherIntegration.Ja.GetAllObjectIds),
-                new IdToken("Crop", Mod.StartingCropId, ContentPatcherIntegration.Ja.GetAllCropIds),
-                new IdToken("FruitTree", Mod.StartingFruitTreeId, ContentPatcherIntegration.Ja.GetAllFruitTreeIds),
-                new IdToken("BigCraftable", Mod.StartingBigCraftableId, ContentPatcherIntegration.Ja.GetAllBigCraftableIds),
-                new IdToken("Hat", Mod.StartingHatId, ContentPatcherIntegration.Ja.GetAllHatIds),
-                new IdToken("Weapon", Mod.StartingWeaponId, ContentPatcherIntegration.Ja.GetAllWeaponIds),
-                new IdToken("Clothing", Mod.StartingClothingId, ContentPatcherIntegration.Ja.GetAllClothingIds),
+                new IdToken("Object"),
+                new IdToken("Crop"),
+                new IdToken("FruitTree"),
+                new IdToken("BigCraftable"),
+                new IdToken("Hat"),
+                new IdToken("Weapon"),
+                new IdToken("Clothing"),
                 new SpriteTilesheetToken("Object", () => Mod.instance.Objects.ToList<DataNeedsIdWithTexture>()),
                 new SpriteCoordinateToken("Object", true, () => Mod.instance.Objects.ToList<DataNeedsIdWithTexture>()),
                 new SpriteCoordinateToken("Object", false, () => Mod.instance.Objects.ToList<DataNeedsIdWithTexture>()),

@@ -1,7 +1,31 @@
 ﻿{
+    // Buildings
+    "building.obelisk.name": "Lunar Obelisk",
+    "building.obelisk.description": "Warps you to the moon.",
+
+    // Locations
+    "location.moon": "Moon",
+    "location.lunar-farm": "Lunar Farm",
+    "location.landing-area": "Landing Area",
+    "location.asteroids-entrance": "Mysterious Gargoyle",
+    "location.asteroids": "Asteroids",
+    "location.mountain-top": "Mountain Top",
+    "location.ufo-interior": "UFO Interior",
+    "location.planet-overlook": "Lonely Mountain",
+    "location.moon-temple": "Moon Temple",
+
+    // Farm animals
+    "farm-animal.lunar-cow": "Lunar Cow",
+    "farm-animal.lunar-chicken": "Lunar Chicken",
+
+    "force-field": "A force field blocks the way.",
+    "moon-artifact-slot": "Moon Artifact Slot",
+
     /*********
     ** Items
     *********/
+    "necklace": "necklace",
+
     // tools
     "tool.axe.radioactive": "Radioactive Axe",
     "tool.axe.mythicite": "Mythicite Axe",
@@ -14,7 +38,8 @@
     "tool.animal-gauntlets.name": "Anti-Gravity Gauntlets",
     "tool.animal-gauntlets.description": "Can pick up animals and move them... if on the moon.",
     "tool.animal-gauntlets.holding": "Currently holding:",
-    "tool.animal-gauntlets.moon-requirement": "Must be on the moon.",
+    "tool.laser-gun.name": "Laser Gun",
+    "tool.laser-gun.description": "It shoots lasers.",
 
     // items
     "item.lunar-key.name": "Lunar Key",
@@ -34,6 +59,54 @@
     "item.necklace.Water.description": "Waters soil as you till it.",
     "item.necklace.Sea.name": "Necklace of the Sea",
     "item.necklace.Sea.description": "Greatly increases fishing efficiency.",
+
+
+    "object.MythiciteOre.name": "Mythicite Ore",
+    "object.MythiciteOre.description": "Ore for a mythical metal.",
+    "object.MythiciteBar.name": "Mythicite Bar",
+    "object.MythiciteBar.description": "A mythical metal in bar form.",
+    "object.MythiciteOre Minable.name": "Mythicite Ore (Minable)",
+    "object.MythiciteOre Minable.description": "You shouldn't have this.",
+    "object.SoulSapphire.name": "Soul Sapphire",
+    "object.SoulSapphire.description": "A mystical sapphire, capable of revealing ones innermost desires.",
+    "object.PersistiumDust.name": "Persistium Dust",
+    "object.PersistiumDust.description": "An esoteric pile of dust.",
+    "object.PersistiumDust.category": "Dust",
+    "object.StellarEssence.name": "Stellar Essence",
+    "object.StellarEssence.description": "Comes from deep within a star. What's it doing here?",
+    "object.GalaxyEgg.name": "Galaxy Egg",
+    "object.GalaxyEgg.description": "It would taste out of this world... if it was cooked.",
+    "object.GalaxyMilk.name": "Galaxy Milk",
+    "object.GalaxyMilk.description": "It tastes out of this world.",
+    "object.LunarWheatSeeds.name": "Lunar Wheat Seeds",
+    "object.LunarWheatSeeds.description": "Takes 8 days to grow. Only grows on the moon.",
+    "object.SunbloomSeeds.name": "Sunbloom Seeds",
+    "object.SunbloomSeeds.description": "Takes 10 days to grow. Only grows on the moon. Only harvestable when the moon is bright.",
+    "object.StarPetalSeeds.name": "Star Petal Seeds",
+    "object.StarPetalSeeds.description": "Takes 5 days to grow. Only grows on the moon. Speeds up the growth of adjacent Void Blossoms.",
+    "object.VoidBlossomSeeds.name": "Void Blossom Seeds",
+    "object.VoidBlossomSeeds.description": "Takes about a year to grow, at least under normal circumstances. Only grows on the moon.",
+    "object.SoulSproutSeeds.name": "Soul Sprout Seeds",
+    "object.SoulSproutSeeds.description": "Takes 15 days to grow. Only grows on the moon. Hurts to plant.",
+    "object.LunarWheat.name": "Lunar Wheat",
+    "object.LunarWheat.description": "Like wheat. But from the moon.",
+    "object.Sunbloom.name": "Sunbloom",
+    "object.Sunbloom.description": "Bright like the sun.",
+    "object.StarPetal.name": "Star Petal",
+    "object.StarPetal.description": "Has a short lifespan but shines brightly.",
+    "object.VoidBlossom.name": "Void Blossom",
+    "object.VoidBlossom.description": "Normally found in the depths of space.",
+    "object.SoulSprout.name": "Soul Sprout",
+    "object.SoulSprout.description": "Holding this, you hear faint voices.",
+    "boots.BootsOfTheCosmos.name": "Boots of the Cosmos",
+    "boots.BootsOfTheCosmos.description": "A pair of boots forged from the depths of outer space.",
+    "weapon.BladeOfTheCosmos.name": "Blade of the Cosmos",
+    "weapon.BladeOfTheCosmos.description": "A blade forged from the depths of outer space.",
+    "weapon.KnifeOfTheCosmos.name": "Knife of the Cosmos",
+    "weapon.KnifeOfTheCosmos.description": "A knife forged from the depths of outer space.",
+    "weapon.HammerOfTheCosmos.name": "Hammer of the Cosmos",
+    "weapon.HammerOfTheCosmos.description": "A hammer forged from the depths of outer space.",
+
 
     // item enchantments
     "tooltip.persists": "Can't lose upon death.",
@@ -66,7 +139,6 @@
     "message.infuser.1": "The Celestial Infuser, part 1.^It can enchant tools, allowing them to store up to 2 primary enchantments.^(If two are already present, only the second is changed.)",
     "message.infuser.2": "The Celestial Infuser, part 2.^It can transform a weapon of infinite potential into its true form with the energy of a Soul Sapphire.",
     "message.infuser.3": "The Celestial Infuser, part 3.^It can augment any item with a certain dust, allowing it to stay with you even in death.",
-
 
     /*********
     ** Generic Mod Config Menu UI

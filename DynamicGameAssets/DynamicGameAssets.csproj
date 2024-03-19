@@ -4,8 +4,11 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.4.1</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>Dynamic Game Assets</Name>
+    <Description>Lets content packs add custom content to the game.</Description>
+    <UpdateKeys>Nexus:9365</UpdateKeys>
+    <Version>1.4.4</Version>
+    <TargetFramework>net6.0</TargetFramework>
     <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
 

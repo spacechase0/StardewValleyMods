@@ -11,6 +11,19 @@ namespace SpaceShared
         /*********
         ** Public methods
         *********/
+        public static void Shuffle<T>(this List<T> list)
+        {
+            Random r = new();
+            for (int i = 0; i < list.Count; ++i)
+            {
+                int ri = r.Next(list.Count);
+
+                var tmp = list[i];
+                list[i] = list[ri];
+                list[ri] = tmp;
+            }
+        }
+
         /****
         ** Objects
         ****/

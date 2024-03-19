@@ -15,7 +15,7 @@ namespace MultiFertilizer.Framework
         ** Fields
         *********/
         /// <summary>The supported fertilizer types.</summary>
-        private static readonly Dictionary<int, FertilizerData> FertilizersById;
+        private static readonly Dictionary<string, FertilizerData> FertilizersById;
 
         /// <summary>The supported fertilizer types indexed by key and level.</summary>
         private static readonly Dictionary<string, FertilizerData> FertilizersByKeyAndLevel;
@@ -32,15 +32,15 @@ namespace MultiFertilizer.Framework
         {
             var fertilizers = new FertilizerData[]
             {
-                new(id: 368, key: Mod.KeyFert, level: 1, spriteIndex: 0),
-                new(id: 369, key: Mod.KeyFert, level: 2, spriteIndex: 1),
-                new(id: 919, key: Mod.KeyFert, level: 3, spriteIndex: 2),
-                new(id: 370, key: Mod.KeyRetain, level: 1, spriteIndex: 3),
-                new(id: 371, key: Mod.KeyRetain, level: 2, spriteIndex: 4),
-                new(id: 920, key: Mod.KeyRetain, level: 3, spriteIndex: 5),
-                new(id: 465, key: Mod.KeySpeed, level: 1, spriteIndex: 6),
-                new(id: 466, key: Mod.KeySpeed, level: 2, spriteIndex: 7),
-                new(id: 918, key: Mod.KeySpeed, level: 3, spriteIndex: 8)
+                new(id: "368", key: Mod.KeyFert, level: 1, spriteIndex: 0),
+                new(id: "369", key: Mod.KeyFert, level: 2, spriteIndex: 1),
+                new(id: "919", key: Mod.KeyFert, level: 3, spriteIndex: 2),
+                new(id: "370", key: Mod.KeyRetain, level: 1, spriteIndex: 3),
+                new(id: "371", key: Mod.KeyRetain, level: 2, spriteIndex: 4),
+                new(id: "920", key: Mod.KeyRetain, level: 3, spriteIndex: 5),
+                new(id: "465", key: Mod.KeySpeed, level: 1, spriteIndex: 6),
+                new(id: "466", key: Mod.KeySpeed, level: 2, spriteIndex: 7),
+                new(id: "918", key: Mod.KeySpeed, level: 3, spriteIndex: 8)
             };
 
             DirtHelper.FertilizersById = fertilizers.ToDictionary(p => p.Id);
@@ -58,7 +58,7 @@ namespace MultiFertilizer.Framework
         /// <param name="itemId">The item ID.</param>
         /// <param name="fertilizer">The fertilizer data.</param>
         /// <returns>Returns whether the item is a recognized fertilizer.</returns>
-        public static bool TryGetFertilizer(int itemId, out FertilizerData fertilizer)
+        public static bool TryGetFertilizer(string itemId, out FertilizerData fertilizer)
         {
             return DirtHelper.FertilizersById.TryGetValue(itemId, out fertilizer);
         }

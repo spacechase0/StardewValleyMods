@@ -1,12 +1,8 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-
 using JsonAssets.Framework;
-using JsonAssets.Framework.Internal;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -17,12 +13,8 @@ namespace JsonAssets.Data
 {
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
-    [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class ObjectData : DataNeedsIdWithTexture, ITranslatableItem
     {
-        [JsonIgnore]
-        internal static HashSet<int> HasHoneyInName { get; } = new();
-
         /*********
         ** Accessors
         *********/
@@ -69,33 +61,51 @@ namespace JsonAssets.Data
 
         public List<string> ContextTags { get; set; } = new();
 
-        // A list of IDs that match rings for JA.
-        [JsonIgnore]
-        internal readonly static HashSet<int> TrackedRings = new();
-
 
         /*********
         ** Public methods
         *********/
-        public int GetObjectId()
+        internal StardewValley.GameData.Objects.ObjectData GetObjectInformation()
         {
-            return this.Id;
-        }
-
-        internal string GetObjectInformation()
-        {
-            StringBuilder sb = StringBuilderCache.Acquire();
-            sb.Append(this.Name).Append('/').Append(this.Price).Append('/').Append(this.Edibility).Append('/')
-            .Append(this.Category == ObjectCategory.Artifact ? "Arch" : $"{(this.Edibility != -300 ? this.Category : "Basic")} {this.Category:D}").Append('/')
-            .Append(this.LocalizedName()).Append('/').Append(this.LocalizedDescription());
-
-            if (this.Edibility != SObject.inedible)
+            var ctx = ContextTags.ToList();
+            if ( !CanBeGifted )
+                ctx.Add("not_giftable");
+            var ret = new StardewValley.GameData.Objects.ObjectData()
             {
-                sb.Append('/').Append(this.EdibleIsDrink ? "drink" : "food").Append('/')
-                    .Append($"{this.EdibleBuffs.Farming} {this.EdibleBuffs.Fishing} {this.EdibleBuffs.Mining} 0 {this.EdibleBuffs.Luck} {this.EdibleBuffs.Foraging} 0 {this.EdibleBuffs.MaxStamina} {this.EdibleBuffs.MagnetRadius} {this.EdibleBuffs.Speed} {this.EdibleBuffs.Defense} {this.EdibleBuffs.Attack}/{this.EdibleBuffs.Duration}");
-            }
-            return StringBuilderCache.GetStringAndRelease(sb);
+                Name = this.Name,
+                DisplayName = this.LocalizedName(),
+                Description = this.LocalizedDescription(),
+                Type = Category == ObjectCategory.Artifact ? "Arch" : (Category == ObjectCategory.Ring ? "Ring" : "Basic"),
+                Category = (int)this.Category,
+                Price = Price,
+                Texture = $"JA\\Object\\{Name}",
+                SpriteIndex = 0,
+                Edibility = Edibility,
+                IsDrink = EdibleIsDrink,
+                Buffs = [ new()
+                {
+                    CustomAttributes = new()
+                    {
+                        FarmingLevel = EdibleBuffs.Farming,
+                        FishingLevel = EdibleBuffs.Fishing,
+                        MiningLevel = EdibleBuffs.Mining,
+                        LuckLevel = EdibleBuffs.Luck,
+                        ForagingLevel = EdibleBuffs.Foraging,
+                        MaxStamina = EdibleBuffs.MaxStamina,
+                        MagneticRadius = EdibleBuffs.MagnetRadius,
+                        Speed = EdibleBuffs.Speed,
+                        Defense = EdibleBuffs.Defense,
+                        Attack = EdibleBuffs.Attack,
+                    },
+                    Duration = EdibleBuffs.Duration,
+                } ],
+                ContextTags = ctx,
+                ExcludeFromShippingCollection = HideFromShippingCollection,
+            };
+
+            return ret;
         }
+
 
         /*********
         ** Private methods

@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Terraforming",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "Lets you change maps directly in-game.",
-    "UniqueID": "spacechase0.Terraforming",
-    "EntryDll": "Terraforming.dll",
-    "UpdateKeys": []
-}

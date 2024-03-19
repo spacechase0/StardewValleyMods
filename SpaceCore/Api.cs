@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -13,18 +14,17 @@ namespace SpaceCore
     {
         string[] GetCustomSkills();
         int GetLevelForCustomSkill(Farmer farmer, string skill);
+        int GetExperienceForCustomSkill(Farmer farmer, string skill);
+        List<Tuple<string, int, int>> GetExperienceAndLevelsForCustomSkill(Farmer farmer);
         void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt);
         int GetProfessionId(string skill, string profession);
-
-        /// Must take (Event, GameLocation, GameTime, string[])
-        void AddEventCommand(string command, MethodInfo info);
 
         /// Must have [XmlType("Mods_SOMETHINGHERE")] attribute (required to start with "Mods_")
         void RegisterSerializerType(Type type);
 
         void RegisterCustomProperty( Type declaringType, string name, Type propType, MethodInfo getter, MethodInfo setter );
 
-        void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc/*, Func<Farmer, string> passoutWakeupLocationFunc, Func<Farmer, Point?> passoutWakeupPointFunc*/ );
+        public event EventHandler<Action<string, Action>> AdvancedInteractionStarted;
     }
 
     public class Api : IApi
@@ -39,6 +39,16 @@ namespace SpaceCore
             return Skills.GetSkillLevel(farmer, skill);
         }
 
+        public int GetExperienceForCustomSkill(Farmer farmer, string skill)
+        {
+            return farmer.GetCustomSkillExperience(skill);
+        }
+
+        public List<Tuple<string, int, int>> GetExperienceAndLevelsForCustomSkill(Farmer farmer)
+        {
+            return farmer.GetCustomSkillExperienceAndLevels();
+        }
+
         public void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt)
         {
             farmer.AddCustomSkillExperience(skill, amt);
@@ -47,20 +57,6 @@ namespace SpaceCore
         public int GetProfessionId(string skill, string profession)
         {
             return Skills.GetSkill(skill).Professions.Single(p => p.Id == profession).GetVanillaId();
-        }
-
-        public void AddEventCommand(string command, MethodInfo info)
-        {
-            if (info.GetParameters().Length != 4)
-                throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
-            if (info.GetParameters()[0].ParameterType != typeof(Event) ||
-                 info.GetParameters()[1].ParameterType != typeof(GameLocation) ||
-                 info.GetParameters()[2].ParameterType != typeof(GameTime) ||
-                 info.GetParameters()[3].ParameterType != typeof(string[]))
-                throw new ArgumentException("Custom event method must take Must take (Event, GameLocation, GameTime, string[])");
-
-            Log.Debug("Adding event command: " + command + " = " + info);
-            EventPatcher.CustomCommands.Add(command, info);
         }
 
         public void RegisterSerializerType(Type type)
@@ -87,15 +83,11 @@ namespace SpaceCore
             } );
         }
 
-        public void RegisterCustomLocationContext( string name, Func<Random, LocationWeather> getLocationWeatherForTomorrowFunc/*, Func<Farmer, string> passoutWakeupLocationFunc, Func<Farmer, Point?> passoutWakeupPointFunc*/ )
+        public event EventHandler<Action<string, Action>> AdvancedInteractionStarted;
+
+        internal void InvokeASI(NPC npc, Action<string, Action> addCallback)
         {
-            SpaceCore.CustomLocationContexts.Add( ( GameLocation.LocationContext ) name.GetDeterministicHashCode(), new CustomLocationContext()
-            {
-                Name = name,
-                GetLocationWeatherForTomorrow = getLocationWeatherForTomorrowFunc,
-                //PassoutWakeupLocation = passoutWakeupLocationFunc,
-                //PassoutWakeupPoint = passoutWakeupPointFunc,
-            } );
+            AdvancedInteractionStarted?.Invoke(npc, addCallback);
         }
     }
 }

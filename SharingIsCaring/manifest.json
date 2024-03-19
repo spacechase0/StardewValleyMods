@@ -1,9 +1,0 @@
-﻿{
-    "Name": "Sharing is Caring",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "...",
-    "UniqueID": "spacechase0.SharingIsCaring",
-    "EntryDll": "SharingIsCaring.dll",
-    "UpdateKeys": [ "Nexus:" ]
-}

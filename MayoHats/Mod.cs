@@ -48,13 +48,13 @@ namespace MayoHats
             if (Game1.player.CursorSlotItem is StardewValley.Object obj && obj.Stack == 1)
             {
                 if (obj.ParentSheetIndex == 306)
-                    Game1.player.CursorSlotItem = new Hat(Mod.ja.GetHatId("Mayo"));
+                    Game1.player.CursorSlotItem = new Hat("Mayo");
                 if (obj.ParentSheetIndex == 307)
-                    Game1.player.CursorSlotItem = new Hat(Mod.ja.GetHatId("Duck Mayo"));
+                    Game1.player.CursorSlotItem = new Hat("Duck Mayo");
                 if (obj.ParentSheetIndex == 308)
-                    Game1.player.CursorSlotItem = new Hat(Mod.ja.GetHatId("Void Mayo"));
+                    Game1.player.CursorSlotItem = new Hat("Void Mayo");
                 if (obj.ParentSheetIndex == 807)
-                    Game1.player.CursorSlotItem = new Hat(Mod.ja.GetHatId("Dino Mayo"));
+                    Game1.player.CursorSlotItem = new Hat("Dino Mayo");
             }
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
+using StardewValley.Inventories;
 using StardewValley.Objects;
 
 namespace SpaceCore
@@ -30,21 +31,23 @@ namespace SpaceCore
                 List<Item> items = new List<Item>();
                 items.AddRange(Game1.player.Items);
                 foreach (var chest in additionalIngredients)
-                    items.AddRange(chest.items);
+                    items.AddRange(chest.Items);
 
                 return this.GetAmountInList(items) / this.Quantity;
             }
 
-            public abstract void Consume(IList<Chest> additionalIngredients);
+            public abstract void Consume(IList<IInventory> additionalIngredients);
         }
 
         public class ObjectIngredientMatcher : IngredientMatcher
         {
-            private readonly int objectIndex;
+            private readonly StardewValley.Object dummyObj;
+            private readonly string objectIndex;
             private readonly int qty;
 
-            public ObjectIngredientMatcher(int index, int quantity )
+            public ObjectIngredientMatcher( string index, int quantity )
             {
+                this.dummyObj = new StardewValley.Object(index, quantity);
                 this.objectIndex = index;
                 this.qty = quantity;
             }
@@ -53,9 +56,9 @@ namespace SpaceCore
             {
                 get
                 {
-                    if (this.objectIndex < 0)
+                    if (int.TryParse( this.objectIndex, out int i ) && i < 0)
                     {
-                        return this.objectIndex switch
+                        return i switch
                         {
                             -1 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.568"),
                             -2 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.569"),
@@ -68,17 +71,17 @@ namespace SpaceCore
                         };
                     }
                     string retString = Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.575");
-                    if (Game1.objectInformation.ContainsKey(this.objectIndex))
+                    if (Game1.objectData.ContainsKey(this.objectIndex))
                     {
-                        retString = Game1.objectInformation[this.objectIndex].Split('/')[4];
+                        retString = Game1.objectData[this.objectIndex].DisplayName;
                     }
                     return retString;
                 }
             }
 
-            public override Texture2D IconTexture => Game1.objectSpriteSheet;
+            public override Texture2D IconTexture => ItemRegistry.GetDataOrErrorItem( dummyObj.QualifiedItemId ).GetTexture();
 
-            public override Rectangle? IconSubrect => Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.objectIndex, 16, 16);
+            public override Rectangle? IconSubrect => ItemRegistry.GetDataOrErrorItem(dummyObj.QualifiedItemId).GetSourceRect(0, dummyObj.ParentSheetIndex);
 
             public override int Quantity => this.Quantity;
 
@@ -94,7 +97,7 @@ namespace SpaceCore
                 return ret;
             }
 
-            public override void Consume(IList<Chest> additionalIngredients)
+            public override void Consume(IList<IInventory> additionalIngredients)
             {
                 int left = this.qty;
                 for ( int i = Game1.player.Items.Count - 1; i >= 0; --i )
@@ -107,7 +110,7 @@ namespace SpaceCore
                         item.Stack -= amt;
 
                         if ( item.Stack <= 0 )
-                            Game1.player.items[i] = null;
+                            Game1.player.Items[i] = null;
                         if (left <= 0)
                             break;
                     }
@@ -118,9 +121,9 @@ namespace SpaceCore
                     foreach ( var chest in additionalIngredients )
                     {
                         bool removed = false;
-                        for (int i = chest.items.Count - 1; i >= 0; --i)
+                        for (int i = chest.Count - 1; i >= 0; --i)
                         {
-                            var item = chest.items[i];
+                            var item = chest[i];
                             if (this.ItemMatches( item ) )
                             {
                                 int amt = Math.Min(left, item.Stack);
@@ -130,7 +133,7 @@ namespace SpaceCore
                                 if (item.Stack <= 0)
                                 {
                                     removed = true;
-                                    chest.items[i] = null;
+                                    chest[i] = null;
                                 }
                                 if (left <= 0)
                                     break;
@@ -138,7 +141,7 @@ namespace SpaceCore
                         }
 
                         if (removed)
-                            chest.clearNulls();
+                            chest.RemoveEmptySlots();
                         if (left <= 0)
                             break;
                     }
@@ -147,7 +150,7 @@ namespace SpaceCore
 
             private bool ItemMatches(Item item)
             {
-                return item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.ParentSheetIndex == this.objectIndex || obj.Category == this.objectIndex);
+                return item is StardewValley.Object obj && !obj.bigCraftable.Value && (obj.ItemId == this.objectIndex || obj.Category.ToString() == this.objectIndex);
             }
         }
 

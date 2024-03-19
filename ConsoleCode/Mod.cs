@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Text;
 using System.Runtime.Loader;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ConsoleCode
 {
@@ -68,12 +69,14 @@ namespace ConsoleCode
 
         private MethodInfo MakeFunc(string userCode)
         {
+            List<string> asms = new();
             List<MetadataReference> refs = new();
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
                     refs.Add( MetadataReference.CreateFromFile( asm.Location ) );
+                    asms.Add(asm.GetName().Name);
                 }
                 catch ( Exception e )
                 {
@@ -81,6 +84,14 @@ namespace ConsoleCode
                 }
             }
 
+            int i_ = 0;
+            string attrs = "";
+            foreach ( var r in refs )
+            {
+                string str = "\"" + asms[i_] + "\"";
+                attrs += $"[assembly: IgnoresAccessChecksTo({str})]\n";
+                ++i_;
+            }
             string code = $@"
                 using System;
                 using System.Collections.Generic;
@@ -91,7 +102,9 @@ namespace ConsoleCode
                 using Microsoft.Xna.Framework.Graphics;
                 using StardewValley;
                 using xTile;
+                using System.Runtime.CompilerServices;
 
+                {attrs}
                 namespace ConsoleCode
                 {{
                     public class UserCode{iter}
@@ -104,8 +117,14 @@ namespace ConsoleCode
                     }}
                 }}
             ";
+            var opts = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithMetadataImportOptions(MetadataImportOptions.All);
 
-            CSharpCompilation compilation = CSharpCompilation.Create( Path.GetRandomFileName(), new[] { CSharpSyntaxTree.ParseText( code ) }, refs, new CSharpCompilationOptions( OutputKind.DynamicallyLinkedLibrary ) );
+            // https://stackoverflow.com/a/72653299
+            var topLevelBinderFlagsProperty = opts.GetType().GetProperty("TopLevelBinderFlags", BindingFlags.Instance | BindingFlags.NonPublic);
+            object obj = Enum.ToObject(opts.GetType().Assembly.GetType("Microsoft.CodeAnalysis.CSharp.BinderFlags"), (uint)(1 << 22));
+            topLevelBinderFlagsProperty.SetValue(opts, obj);
+
+            CSharpCompilation compilation = CSharpCompilation.Create(Path.GetRandomFileName(), new[] { CSharpSyntaxTree.ParseText(code) }, refs, opts);
 
             using MemoryStream ms = new();
             var result = compilation.Emit( ms );

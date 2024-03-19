@@ -1,7 +1,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--common project properties-->
   <PropertyGroup>
-    <Authors>Spacechase0</Authors>
+    <Authors>spacechase0</Authors>
+    <Description>...</Description>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <LangVersion>latest</LangVersion>
@@ -11,12 +14,20 @@
 
   <!--import mod build package-->
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.1" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
+    <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.1.0" />
   </ItemGroup>
 
   <!--common mod build package options-->
   <PropertyGroup>
     <ModZipPath>$(SolutionDir)\_releases</ModZipPath>
     <EnableModZip Condition="$(Configuration) != 'Release'">False</EnableModZip>
+  </PropertyGroup>
+
+  <!-- mac workaround, remove when updating mod build config -->
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+    <StartAction>Program</StartAction>
+    <StartProgram>/Users/spacechase0/Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS\StardewModdingAPI</StartProgram>
+    <StartWorkingDirectory>/Users/spacechase0/Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS</StartWorkingDirectory>
   </PropertyGroup>
 </Project>

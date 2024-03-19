@@ -28,3 +28,5 @@ _ReSharper*/
 
 # release zips
 _releases/
+
+manifest.json

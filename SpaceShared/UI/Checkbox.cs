@@ -13,7 +13,7 @@ namespace SpaceShared.UI
 {
     internal
 #endif
-        class Checkbox : Element
+        class Checkbox : Element, ISingleTexture
     {
         /*********
         ** Accessors

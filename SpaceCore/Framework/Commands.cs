@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,9 +16,9 @@ namespace SpaceCore.Framework
         {
             Command.Register("player_giveexp", Commands.ExpCommand);
             Command.Register("asset_invalidate", Commands.InvalidateCommand);
-            Command.Register("exttilesheets_dump", Commands.DumpTilesheetsCommand);
             Command.Register("dump_spacecore_skills", Commands.DumpSkills);
             Command.Register("harmony_invalidate", Commands.HarmonyInvalidate);
+            Command.Register("screenshake", Commands.ScreenShake);
             //Command.register( "test", ( args ) => Game1.player.addItemByMenuIfNecessary( new TestObject() ) );
             //SpaceCore.modTypes.Add( typeof( TestObject ) );
         }
@@ -132,27 +133,6 @@ namespace SpaceCore.Framework
             }
         }
 
-        private static void DumpTilesheetsCommand(string[] args)
-        {
-            foreach (var asset in TileSheetExtensions.ExtendedTextureAssets)
-            {
-                Log.Info($"Dumping for asset {asset.Key} (has {asset.Value.Extensions.Count} extensions)");
-                Stream stream = File.OpenWrite(Path.GetFileNameWithoutExtension(asset.Key) + "-0.png");
-                var tex = Game1.content.Load<Texture2D>(asset.Key);
-                tex.SaveAsPng(stream, tex.Width, tex.Height);
-                stream.Close();
-
-                for (int i = 0; i < asset.Value.Extensions.Count; ++i)
-                {
-                    Log.Info("\tDumping extended " + (i + 1));
-                    stream = File.OpenWrite(Path.GetFileNameWithoutExtension(asset.Key) + $"-{i + 1}.png");
-                    tex = asset.Value.Extensions[i];
-                    tex.SaveAsPng(stream, tex.Width, tex.Height);
-                    stream.Close();
-                }
-            }
-        }
-
         private static void HarmonyInvalidate(string[] args)
         {
             if (args.Length == 0)
@@ -169,6 +149,15 @@ namespace SpaceCore.Framework
             }
 
             SpaceCore.Instance.Harmony.Patch(meth);
+        }
+
+        private static void ScreenShake(string[] args)
+        {
+            float intensity = Convert.ToSingle(args[0]);
+            float duration = Convert.ToSingle(args[1]);
+            SpaceCore.Instance.screenShakeIntensity = intensity;
+            SpaceCore.Instance.pendingScreenShake = duration;
+            SpaceCore.Instance.preShakeViewportPos = SpaceCore.Instance.shakeViewportPos = Game1.currentViewportTarget;
         }
     }
 }

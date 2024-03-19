@@ -1,14 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-
 using JsonAssets.Framework;
-using JsonAssets.Framework.Internal;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -18,14 +12,13 @@ namespace JsonAssets.Data
 {
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = DiagnosticMessages.IsPublicApi)]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = DiagnosticMessages.IsPublicApi)]
-    [DebuggerDisplay("name = {Name}, id = {Id}")]
     public class CropData : DataNeedsIdWithTexture
     {
         /*********
         ** Accessors
         *********/
         [JsonIgnore]
-        public Lazy<Texture2D>? GiantTexture { get; set; } = null;
+        public Texture2D GiantTexture { get; set; }
 
         public object Product { get; set; }
         public string SeedName { get; set; }
@@ -53,54 +46,45 @@ namespace JsonAssets.Data
 
         internal ObjectData Seed { get; set; }
 
-        [JsonIgnore]
-        internal int ProductId { get; set; } = -1;
-
-        [JsonIgnore]
-        internal static Dictionary<int, Lazy<Texture2D>> giantCropMap = new();
 
         /*********
         ** Public methods
         *********/
-        public int GetSeedId()
+        public string GetSeedId()
         {
-            return this.Seed.Id;
-        }
-
-        public int GetCropSpriteIndex()
-        {
-            return this.Id;
+            return this.Seed.Name;
         }
 
         internal string GetCropInformation()
         {
-            StringBuilder str = StringBuilderCache.Acquire();
-            str.AppendJoin(' ', this.Phases).Append('/')
-               .AppendJoin(' ', this.Seasons).Append('/')
-               .Append(this.GetCropSpriteIndex()).Append('/')
-               .Append(this.ProductId).Append('/')
-               .Append(this.RegrowthPhase).Append('/')
-               .Append(this.HarvestWithScythe ? "1" : "0").Append('/');
-
-            if (this.Bonus is not null)
+            string str = "";
+            //str += GetProductId() + "/";
+            foreach (int phase in this.Phases)
             {
-                str.Append("true ")
-                    .Append(this.Bonus.MinimumPerHarvest).Append(' ')
-                    .Append(this.Bonus.MaximumPerHarvest).Append(' ')
-                    .Append(this.Bonus.MaxIncreasePerFarmLevel).Append(' ')
-                    .Append(this.Bonus.ExtraChance).Append('/');
+                str += phase + " ";
+            }
+            str = str.Substring(0, str.Length - 1) + "/";
+            foreach (string season in this.Seasons)
+            {
+                str += season + " ";
+            }
+            str = str.Substring(0, str.Length - 1) + "/";
+            str += $"0/{this.Product}/{this.RegrowthPhase}/";
+            str += (this.HarvestWithScythe ? "1" : "0") + "/";
+            if (this.Bonus != null)
+                str += $"true {this.Bonus.MinimumPerHarvest} {this.Bonus.MaximumPerHarvest} {this.Bonus.MaxIncreasePerFarmLevel} {this.Bonus.ExtraChance}/";
+            else str += "false/";
+            str += (this.TrellisCrop ? "true" : "false") + "/";
+            if (this.Colors.Any())
+            {
+                str += "true";
+                foreach (var color in this.Colors)
+                    str += $" {color.R} {color.G} {color.B}";
             }
             else
-                str.Append("false/");
-
-            str.Append(this.TrellisCrop ? "true" : "false").Append('/');
-
-            if (this.Colors.Count > 0)
-                str.Append("true ").AppendJoin(' ', this.Colors.Select(color => $"{color.R} {color.G} {color.B}"));
-            else
-                str.Append("false");
-
-            return StringBuilderCache.GetStringAndRelease(str);
+                str += "false";
+            str += $"/JA\\Crop\\{this.Name}";
+            return str;
         }
 
 

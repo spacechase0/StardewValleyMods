@@ -21,7 +21,7 @@ namespace StatueOfGenerosity
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
 
             HarmonyPatcher.Apply(this,
-                new ObjectPatcher(getStatueId: () => Mod.Ja.GetBigCraftableId("Statue of Generosity"))
+                new ObjectPatcher()
             );
         }
 

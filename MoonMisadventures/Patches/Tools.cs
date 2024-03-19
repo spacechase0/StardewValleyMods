@@ -5,6 +5,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
+using StardewValley.Enchantments;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
@@ -118,121 +119,6 @@ namespace MoonMisadventures.Patches
             }
 
             return true;
-        }
-    }
-
-    [HarmonyPatch( typeof( Tool ), "get_" + nameof( Tool.Name ) )]
-    public static class ToolNamePatch
-    {
-        public static bool Prefix( Tool __instance, ref string __result )
-        {
-            if ( __instance.UpgradeLevel >= 5 )
-            {
-                string tier = __instance.UpgradeLevel == 5 ? "radioactive" : "mythicite";
-                string tool = "";
-                switch ( __instance.BaseName )
-                {
-                    case "Axe": tool = "axe"; break;
-                    case "Watering Can": tool = "wcan"; break;
-                    case "Pickaxe": tool = "pick"; break;
-                    case "Hoe": tool = "hoe"; break;
-                }
-
-                __result = I18n.GetByKey($"tool.{tool}.{tier}");
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    [HarmonyPatch( typeof( Tool ), "get_" + nameof( Tool.DisplayName ) )]
-    public static class ToolDisplayNamePatch
-    {
-        public static bool Prefix( Tool __instance, ref string __result )
-        {
-            if ( __instance.UpgradeLevel >= 5 )
-            {
-                __result = __instance.Name;
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    [HarmonyPatch( typeof( Tool ), nameof( Tool.setNewTileIndexForUpgradeLevel ) )]
-    public static class ToolSetUpgradeTileIndexPatch
-    {
-        public static void Prefix( Tool __instance, ref object __state )
-        {
-            if ( __instance.UpgradeLevel >= 5 )
-            {
-                __state = __instance.UpgradeLevel;
-                __instance.UpgradeLevel = 4;
-            }
-        }
-
-        public static void Postfix( Tool __instance, ref object __state )
-        {
-            if ( __state != null )
-            {
-                __instance.upgradeLevel.Value = ( int ) __state;
-            }
-        }
-    }
-
-    internal class ToolTextureState
-    {
-        public int upgrade;
-        public Texture2D oldSpritesheet;
-    }
-
-    [HarmonyPatch( typeof( Tool ), nameof( Tool.drawInMenu ) )]
-    public static class ToolDrawMenuPatch
-    {
-        public static void Prefix( Tool __instance, ref object __state )
-        {
-            if ( __instance.UpgradeLevel >= 5 )
-            {
-                __state = new ToolTextureState() { upgrade = __instance.UpgradeLevel, oldSpritesheet = Game1.toolSpriteSheet };
-                Mod.instance.Helper.Reflection.GetField<Texture2D>( typeof( Game1 ), "_toolSpriteSheet" ).SetValue( __instance.UpgradeLevel == 5 ? Assets.RadioactiveTools : Assets.MythiciteTools );
-                __instance.upgradeLevel.Value = 4;
-            }
-        }
-
-        public static void Postfix( Tool __instance, ref object __state )
-        {
-            if ( __state != null )
-            {
-                Mod.instance.Helper.Reflection.GetField<Texture2D>( typeof( Game1 ), "_toolSpriteSheet" ).SetValue( ( __state as ToolTextureState ).oldSpritesheet );
-                __instance.upgradeLevel.Value = ( __state as ToolTextureState ).upgrade;
-            }
-        }
-    }
-
-    [HarmonyPatch( typeof( Game1 ), nameof( Game1.drawTool ), new Type[] { typeof( Farmer ), typeof( int ) } )]
-    public static class Game1DrawToolPatch
-    {
-        public static void Prefix( Farmer f, ref object __state )
-        {
-            var tool = f.CurrentTool;
-            if ( tool.UpgradeLevel >= 5 )
-            {
-                __state = new ToolTextureState() { upgrade = tool.UpgradeLevel, oldSpritesheet = Game1.toolSpriteSheet };
-                Mod.instance.Helper.Reflection.GetField<Texture2D>( typeof( Game1 ), "_toolSpriteSheet" ).SetValue( tool.UpgradeLevel == 5 ? Assets.RadioactiveTools : Assets.MythiciteTools );
-                tool.upgradeLevel.Value = 4;
-            }
-        }
-
-        public static void Postfix( Farmer f, ref object __state )
-        {
-            var tool = f.CurrentTool;
-            if ( __state != null )
-            {
-                Mod.instance.Helper.Reflection.GetField<Texture2D>( typeof( Game1 ), "_toolSpriteSheet" ).SetValue( ( __state as ToolTextureState ).oldSpritesheet );
-                tool.upgradeLevel.Value = ( __state as ToolTextureState ).upgrade;
-            }
         }
     }
 

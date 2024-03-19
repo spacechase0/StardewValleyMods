@@ -35,9 +35,8 @@ namespace MayoRain
             if (!Game1.player.currentLocation.IsOutdoors || !Game1.IsRainingHere())
                 return;
 
-            Log.Info("meow?"+" "+( Game1.player.ActiveObject.ParentSheetIndex == ja.GetObjectId("Empty Mayo Jar")));
 
-            if (Game1.player.ActiveObject.ParentSheetIndex == ja.GetObjectId("Empty Mayo Jar"))
+            if (Game1.player.ActiveObject?.ItemId == "Empty Mayo Jar")
             {
                 int id = 306;
                 if (Game1.random.NextDouble() < 0.1)
@@ -47,7 +46,7 @@ namespace MayoRain
                 else if (Game1.random.NextDouble() < 0.01)
                     id = 807;
 
-                if (Game1.player.addItemToInventoryBool(new StardewValley.Object(id, 1)))
+                if (Game1.player.addItemToInventoryBool(new StardewValley.Object(id.ToString(), 1)))
                     Game1.player.reduceActiveItemByOne();
             }
         }

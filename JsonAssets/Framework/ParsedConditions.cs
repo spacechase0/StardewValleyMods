@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using SpaceShared.APIs;
 using StardewValley;
 
@@ -38,7 +39,7 @@ namespace JsonAssets.Framework
         /// <param name="expandedPreconditionsUtility">The Expanded Preconditions Utility API, if that mod is loaded.</param>
         public ParsedConditions(IList<string> rawConditions, IExpandedPreconditionsUtilityApi expandedPreconditionsUtility)
         {
-            this.RawConditions = rawConditions is null ? string.Empty : string.Join('/', rawConditions);
+            this.RawConditions = string.Join("/", rawConditions ?? Enumerable.Empty<string>());
             this.HasConditions = !string.IsNullOrWhiteSpace(this.RawConditions);
             this.NeedsExpandedPreconditionsUtility = !this.IsVanillaOnly(this.RawConditions);
             this.ExpandedPreconditionsUtility = expandedPreconditionsUtility;
@@ -74,7 +75,7 @@ namespace JsonAssets.Framework
         /// <summary>Get whether the conditions match using the vanilla game logic.</summary>
         private bool CurrentlyMatchVanilla()
         {
-            const int eventId = int.MinValue + 1720;
+            string eventId = (int.MinValue + 1720).ToString();
             bool wasSeen = false;
 
             try
@@ -102,8 +103,8 @@ namespace JsonAssets.Framework
                 //   2. EPU uses readable flags like 'HasCookingRecipe', compared to the game's 1-2 character flags like 'x' or 'Hn'.
                 foreach (string condition in conditions.Split('/'))
                 {
-                    int index = condition.IndexOf(' ');
-                    if (condition.StartsWith('!') || index > 3)
+                    string flag = condition.Trim().Split(' ')[0];
+                    if (flag.StartsWith("!") || flag.Length > 3)
                         return false;
                 }
             }

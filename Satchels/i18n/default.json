@@ -1,0 +1,27 @@
+﻿{
+    "satchel.description": "Use to open.^Right click in a menu with an item on your cursor to quick deposit.",
+    "error.nested": "Nested satchels are not allowed without the satchel inception enchantment.",
+    "enchantment.satchel-inception": "Satchel Inception",
+
+    "satchel.0.name": "Basic Satchel",
+    "satchel.0.description": "A satchel with a capacity of 9, and 0 upgrade slots.",
+    "satchel.1.name": "Copper-Inlayed Satchel",
+    "satchel.1.description": "A satchel with a capacity of 18, and 0 upgrade slots.",
+    "satchel.2.name": "Iron-Inlayed Satchel",
+    "satchel.2.description": "A satchel with a capacity of 27, and 1 upgrade slots.",
+    "satchel.3.name": "Gold-Inlayed Satchel",
+    "satchel.3.description": "A satchel with a capacity of 36, and 1 upgrade slots.",
+    "satchel.4.name": "Iridium-Inlayed Satchel",
+    "satchel.4.description": "A satchel with a capacity of 45, and 2 upgrade slots.",
+    "satchel.5.name": "Radioactive Satchel",
+    "satchel.5.description": "A satchel with a capacity of 54, and 2 upgrade slots.",
+
+    "upgrade.category-text": "Satchel Upgrade",
+
+    "satchel-upgrade.crafting.name": "Crafting Upgrade",
+    "satchel-upgrade.crafting.description": "Right click when installed to open a crafting menu that will pull from the satchel for ingredients.",
+    "satchel-upgrade.cooking.name": "Cooking Upgrade",
+    "satchel-upgrade.cooking.description": "Right click when installed to open a cooking menu that will pull from the satchel for ingredients.",
+    "satchel-upgrade.auto-pickup.name": "Auto-Pickup Upgrade",
+    "satchel-upgrade.auto-pickup.description": "Right click when installed to configure what items this satchel should automatically pickup from the world",
+}

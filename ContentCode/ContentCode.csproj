@@ -3,9 +3,9 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <TargetFramework>net5.0</TargetFramework>
-    
+
     <BundleExtraAssemblies>System,ThirdParty</BundleExtraAssemblies>
     <IgnoreModFilePatterns>System.*.dll$, ^Microsoft.(?!.*(CodeAnalysis.dll|CodeAnalysis.CSharp.dll)), ^runtimes/.*, Microsoft.CodeAnalysis.resources.dll$, Microsoft.CodeAnalysis.CSharp.resources.dll$</IgnoreModFilePatterns>
   </PropertyGroup>

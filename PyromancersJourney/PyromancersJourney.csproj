@@ -3,8 +3,11 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.0.3</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>Pyromancer's Journey</Name>
+    <Description>Adds a new Doom-style arcade game.</Description>
+    <Version>1.0.4</Version>
+    <UpdateKeys>Nexus:7455</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

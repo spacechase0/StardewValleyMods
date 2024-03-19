@@ -66,7 +66,8 @@ namespace MoonMisadventures.Game.Locations
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( asteroidChance, pickEdgeEvent );
+            NetFields.AddField(asteroidChance, "asteroidChance");
+            NetFields.AddField(pickEdgeEvent, "pickEdgeEvent");
 
             pickEdgeEvent.onEvent += OnPickEdgeEvent;
 
@@ -76,10 +77,6 @@ namespace MoonMisadventures.Game.Locations
                 {
                     grass.grassType.Value = Grass.lavaGrass;
                     grass.loadSprite();
-                }
-                else if ( added is HoeDirt hd )
-                {
-                    Mod.instance.Helper.Reflection.GetField< Texture2D >( hd, "texture" ).SetValue( Assets.HoeDirt );
                 }
             };
         }
@@ -171,15 +168,7 @@ namespace MoonMisadventures.Game.Locations
                 Game1.ambientLight = Game1.outdoorLight = new Color( colValue, colValue, colValue );// new Color( 100, 120, 30 );
             }
 
-            foreach ( var tf in terrainFeatures.Values )
-            {
-                if ( tf is HoeDirt hd )
-                {
-                    Mod.instance.Helper.Reflection.GetField<Texture2D>( hd, "texture" ).SetValue( Assets.HoeDirt );
-                }
-            }
-
-            Game1.background = new SpaceBackground( this.NameOrUniqueName == "Custom_MM_MoonPlanetOverlook" );
+            Game1.background = new SpaceBackground( this, this.NameOrUniqueName == "Custom_MM_MoonPlanetOverlook" );
         }
         public override void cleanupBeforePlayerExit()
         {
@@ -196,17 +185,6 @@ namespace MoonMisadventures.Game.Locations
         public override bool SeedsIgnoreSeasonsHere()
         {
             return true;
-        }
-
-        public override bool CanPlantSeedsHere( int crop_index, int tile_x, int tile_y )
-        {
-            // No normal crops - note that moon crops get an override with a harmony patch anyways
-            return false;
-        }
-
-        public override bool CanPlantTreesHere( int sapling_index, int tile_x, int tile_y )
-        {
-            return false;
         }
 
         public override void UpdateWhenCurrentLocation( GameTime time )
@@ -259,7 +237,7 @@ namespace MoonMisadventures.Game.Locations
             Random r = new Random( xLocation * 3000 + yLocation + ( int ) Game1.uniqueIDForThisGame + ( int ) Game1.stats.DaysPlayed + Name.GetDeterministicHashCode() );
             if ( r.NextDouble() < 0.03 )
             {
-                Game1.createObjectDebris( 424 /* cheese */, xLocation, yLocation, this );
+                Game1.createObjectDebris( "424" /* cheese */, xLocation, yLocation, this );
             }
             return base.checkForBuriedItem( xLocation, yLocation, explosion, detectOnly, who );
         }
@@ -289,7 +267,7 @@ namespace MoonMisadventures.Game.Locations
             return base.performToolAction( t, tileX, tileY );
         }
 
-        public override StardewValley.Object getFish( float millisecondsAfterNibble, int bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null )
+        public override Item getFish( float millisecondsAfterNibble, string bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null )
         {
             return base.getFish( millisecondsAfterNibble, bait, waterDepth, who, baitPotency, bobberTile, locationName );
         }
@@ -321,6 +299,8 @@ namespace MoonMisadventures.Game.Locations
                     }
                 }
             }
+
+            SortLayers(); // get Back1 into the layer index
         }
     }
 }

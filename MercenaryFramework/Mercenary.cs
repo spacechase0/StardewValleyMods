@@ -30,13 +30,13 @@ namespace MercenaryFramework
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields(correspondingNpc);
+            NetFields.AddField(correspondingNpc, "CorrespondingNPC");
         }
 
         public void OnLeave()
         {
             NPC npc = Game1.getCharacterFromName(name, true);
-            npc.Schedule = npc.getSchedule(Game1.dayOfMonth);
+            npc.TryLoadSchedule();
             npc.warpToPathControllerDestination();
         }
 
@@ -93,12 +93,12 @@ namespace MercenaryFramework
 
         public override void draw(SpriteBatch b, float alpha = 1)
         {
-            b.Draw(this.Sprite.Texture, base.getLocalPosition(Game1.viewport) + new Vector2(this.GetSpriteWidthForPositioning() * 4 / 2, this.GetBoundingBox().Height / 2), this.Sprite.SourceRect, Color.White * alpha, 0, new Vector2(this.Sprite.SpriteWidth / 2, (float)this.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, base.scale) * 4f, (base.flip || (this.Sprite.CurrentAnimation != null && this.Sprite.CurrentAnimation[this.Sprite.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, base.drawOnTop ? 0.991f : ((float)base.getStandingY() / 10000f)));
+            b.Draw(this.Sprite.Texture, base.getLocalPosition(Game1.viewport) + new Vector2(this.GetSpriteWidthForPositioning() * 4 / 2, this.GetBoundingBox().Height / 2), this.Sprite.SourceRect, Color.White * alpha, 0, new Vector2(this.Sprite.SpriteWidth / 2, (float)this.Sprite.SpriteHeight * 3f / 4f), Math.Max(0.2f, base.Scale) * 4f, (base.flip || (this.Sprite.CurrentAnimation != null && this.Sprite.CurrentAnimation[this.Sprite.currentAnimationIndex].flip)) ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, base.drawOnTop ? 0.991f : ((float)base.StandingPixel.Y / 10000f)));
             if (this.IsEmoting)
             {
                 Vector2 emotePosition = this.getLocalPosition(Game1.viewport);
                 emotePosition.Y -= 96f;
-                b.Draw(Game1.emoteSpriteSheet, emotePosition, new Microsoft.Xna.Framework.Rectangle(this.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, this.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)this.getStandingY() / 10000f);
+                b.Draw(Game1.emoteSpriteSheet, emotePosition, new Microsoft.Xna.Framework.Rectangle(this.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, this.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)this.StandingPixel.Y / 10000f);
             }
         }
     }

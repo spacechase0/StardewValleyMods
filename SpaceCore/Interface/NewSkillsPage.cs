@@ -138,8 +138,8 @@ namespace SpaceCore.Interface
                     new("StringsFromCSFiles:SkillsPage.cs.magnifyingglass", Game1.player.hasMagnifyingGlass),
                     new("Objects:DarkTalisman", Game1.player.hasDarkTalisman),
                     new("Objects:MagicInk", Game1.player.hasMagicInk),
-                    new("Objects:BearPaw", Game1.player.eventsSeen.Contains(2120303)),
-                    new("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains(3910979))
+                    new("Objects:BearPaw", Game1.player.eventsSeen.Contains("2120303")),
+                    new("Objects:SpringOnionBugs", Game1.player.eventsSeen.Contains("3910979"))
                 };
 
                 const int padTop = 16;
@@ -311,7 +311,7 @@ namespace SpaceCore.Interface
                     int professionLevel = professionIndex - 1 + (professionIndex * 4);
                     Skills.Skill skill = Skills.GetSkill(skills[skillIndex]);
                     Skills.Skill.Profession profession = Skills.GetProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
-                    bool drawRed = Game1.player.GetCustomSkillLevel(skill) > professionLevel;
+                    bool drawRed = Game1.player.GetCustomBuffedSkillLevel(skill) > professionLevel;
                     List<string> professionLines = new List<string>();
                     string professionBlurb = "";
                     string professionTitle = "";
@@ -450,8 +450,8 @@ namespace SpaceCore.Interface
                 Skills.Skill skill = Skills.GetSkill(skills[skillIndex]);
                 int actualSkillIndex = gameSkillCount + skillIndex;
                 string hoverText = "";
-                if (Game1.player.GetCustomSkillLevel(skill) > 0)
-                    hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomSkillLevel(skill));
+                if (Game1.player.GetCustomBuffedSkillLevel(skill) > 0)
+                    hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomBuffedSkillLevel(skill));
                 ClickableTextureComponent textureComponent = new ClickableTextureComponent(
                     name: NewSkillsPage.CustomSkillPrefix + skill.GetName(),
                     bounds: new Rectangle(addedX - 128 - 48, drawY + (actualSkillIndex * 56), 148, 36),
@@ -903,7 +903,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11604");
                             skillLevel = Game1.player.FarmingLevel;
-                            addedSkill = Game1.player.addedFarmingLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.FarmingLevel > 0;
                             iconSource = new Rectangle(10, 428, 10, 10);
                             break;
                         case 1:
@@ -911,7 +911,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11605");
                             skillLevel = Game1.player.MiningLevel;
-                            addedSkill = Game1.player.addedMiningLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.MiningLevel > 0;
                             iconSource = new Rectangle(30, 428, 10, 10);
                             break;
                         case 2:
@@ -919,7 +919,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11606");
                             skillLevel = Game1.player.ForagingLevel;
-                            addedSkill = Game1.player.addedForagingLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.ForagingLevel > 0;
                             iconSource = new Rectangle(60, 428, 10, 10);
                             break;
                         case 3:
@@ -927,7 +927,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11607");
                             skillLevel = Game1.player.FishingLevel;
-                            addedSkill = Game1.player.addedFishingLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.FishingLevel > 0;
                             iconSource = new Rectangle(20, 428, 10, 10);
                             break;
                         case 4:
@@ -935,7 +935,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11608");
                             skillLevel = Game1.player.CombatLevel;
-                            addedSkill = Game1.player.addedCombatLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.CombatLevel > 0;
                             iconSource = new Rectangle(120, 428, 10, 10);
                             break;
                         case 5:
@@ -943,7 +943,7 @@ namespace SpaceCore.Interface
                             if (levelIndex == 0)
                                 skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11609");
                             skillLevel = Game1.player.LuckLevel;
-                            addedSkill = Game1.player.addedLuckLevel.Value > 0;
+                            addedSkill = Game1.player.buffs.LuckLevel > 0;
                             iconSource = new Rectangle(50, 428, 10, 10);
                             break;
                     }
@@ -991,10 +991,10 @@ namespace SpaceCore.Interface
                     bool addedSkill = false;
                     string skillTitle = "";
 
-                    drawRed = Game1.player.GetCustomSkillLevel(skill) > levelIndex;
+                    drawRed = Game1.player.GetCustomBuffedSkillLevel(skill) > levelIndex;
                     if (levelIndex == 0)
                         skillTitle = skill.GetName();
-                    skillLevel = Game1.player.GetCustomSkillLevel(skill);
+                    skillLevel = Game1.player.GetCustomBuffedSkillLevel(skill);
                     // TODO: Detect skill buffs? Is that even possible?
                     addedSkill = false; // (int)((NetFieldBase<int, NetInt>)Game1.player.addedFarmingLevel) > 0;
                     if (skillTitle.Length > 0)
@@ -1092,14 +1092,14 @@ namespace SpaceCore.Interface
             {
                 int addedX = 48;
                 int addedY = 48;
-                if (Game1.netWorldState.Value.GoldenWalnuts.Value > 0)
+                if (Game1.netWorldState.Value.GoldenWalnuts > 0)
                 {
                     b.Draw(texture: Game1.objectSpriteSheet,
                         position: new Vector2(x, y),
                         sourceRectangle: Game1.getSourceRectForStandardTileSheet(tileSheet: Game1.objectSpriteSheet, tilePosition: 73, 16, 16),
                         Color.White, rotation: 0f, origin: Vector2.Zero, scale: 2f, SpriteEffects.None, layerDepth: 0f);
                     x += addedX;
-                    b.DrawString(Game1.smallFont, text: string.Concat(Game1.netWorldState.Value.GoldenWalnuts.Value), position: new Vector2(x, y), Game1.textColor);
+                    b.DrawString(Game1.smallFont, text: string.Concat(Game1.netWorldState.Value.GoldenWalnuts), position: new Vector2(x, y), Game1.textColor);
                     x -= addedX;
                 }
                 if (Game1.player.QiGems > 0)

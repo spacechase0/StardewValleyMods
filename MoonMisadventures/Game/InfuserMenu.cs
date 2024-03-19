@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DynamicGameAssets.Game;
-using DynamicGameAssets.PackData;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using StardewValley;
+using StardewValley.Enchantments;
+using StardewValley.Extensions;
 using StardewValley.Menus;
 using StardewValley.Tools;
 
@@ -52,7 +52,7 @@ namespace MoonMisadventures.Game
 
             mainSpot.scale = secondarySpot.scale = 4;
 
-            essenceItem = ( Item ) Mod.dga.SpawnDGAItem(ItemIds.StellarEssence);
+            essenceItem = ( Item ) new StardewValley.Object(ItemIds.StellarEssence, 1);
 
             // todo - gamepad controls
         }
@@ -67,15 +67,15 @@ namespace MoonMisadventures.Game
             {
                 if (mainSpot.item is MeleeWeapon mw)
                 {
-                    if (Utility.IsNormalObjectAtParentSheetIndex(i, StardewValley.Object.prismaticShardIndex))
+                    if (Utility.IsNormalObjectAtParentSheetIndex(i, StardewValley.Object.prismaticShardID))
                         return true;
                     else if (mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64)
-                        return (i is IDGAItem dgai && dgai.FullId == ItemIds.SoulSapphire);
+                        return (i is StardewValley.Object dgai && dgai.ItemId == ItemIds.SoulSapphire);
                 }
                 else if (mainSpot.item is Tool)
-                    return Utility.IsNormalObjectAtParentSheetIndex(i, StardewValley.Object.prismaticShardIndex);
+                    return Utility.IsNormalObjectAtParentSheetIndex(i, StardewValley.Object.prismaticShardID);
                 else
-                    return (i is IDGAItem dgai && dgai.FullId == ItemIds.PersistiumDust);
+                    return (i is StardewValley.Object dgai && dgai.ItemId == ItemIds.PersistiumDust);
             }
 
             return false;
@@ -105,19 +105,19 @@ namespace MoonMisadventures.Game
                 bool doIt = false;
                 if (mainSpot.item is MeleeWeapon mw)
                 {
-                    if (Utility.IsNormalObjectAtParentSheetIndex(heldItem, StardewValley.Object.prismaticShardIndex))
+                    if (Utility.IsNormalObjectAtParentSheetIndex(heldItem, StardewValley.Object.prismaticShardID))
                         doIt = true;
-                    else if (heldItem is IDGAItem dgai && dgai.FullId == ItemIds.SoulSapphire && (mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64))
+                    else if (heldItem is StardewValley.Object dgai && dgai.ItemId == ItemIds.SoulSapphire && (mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64))
                         doIt = true;
                 }
                 else if (mainSpot.item is Tool)
                 {
-                    if (Utility.IsNormalObjectAtParentSheetIndex(heldItem, StardewValley.Object.prismaticShardIndex))
+                    if (Utility.IsNormalObjectAtParentSheetIndex(heldItem, StardewValley.Object.prismaticShardID))
                         doIt = true;
                 }
                 else
                 {
-                    if (heldItem is IDGAItem dgai && dgai.FullId == ItemIds.PersistiumDust)
+                    if (heldItem is StardewValley.Object dgai && dgai.ItemId == ItemIds.PersistiumDust)
                         doIt = true;
                 }
 
@@ -134,7 +134,7 @@ namespace MoonMisadventures.Game
             }
             else if ( okButton.containsPoint( x, y ) )
             {
-                if ( mainSpot.item != null && secondarySpot.item != null && Game1.player.hasItemInInventory( ItemIds.StellarEssence.GetDeterministicHashCode(), 25 ) )
+                if ( mainSpot.item != null && secondarySpot.item != null && Game1.player.Items.CountId( ItemIds.StellarEssence ) >= 25 )
                 {
                     doingStars = 0;
                 }
@@ -233,25 +233,25 @@ namespace MoonMisadventures.Game
         private Item DoCraft()
         {
             var result = mainSpot.item;
-            if ( Utility.IsNormalObjectAtParentSheetIndex( secondarySpot.item, StardewValley.Object.prismaticShardIndex ) )
+            if ( Utility.IsNormalObjectAtParentSheetIndex( secondarySpot.item, StardewValley.Object.prismaticShardID) )
             {
                 EnchantAgain(result);
                 if (--secondarySpot.item.Stack <= 0)
                     secondarySpot.item = null;
             }
-            else if (secondarySpot.item is IDGAItem dgai2 && dgai2.FullId == ItemIds.SoulSapphire && result is MeleeWeapon mw && ( mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64 ) )
+            else if (secondarySpot.item is StardewValley.Object dgai2 && dgai2.ItemId == ItemIds.SoulSapphire && result is MeleeWeapon mw && ( mw.InitialParentTileIndex == 62 || mw.InitialParentTileIndex == 63 || mw.InitialParentTileIndex == 64 ) )
             {
                 var oldResult = result;
                 switch ( mw.InitialParentTileIndex)
                 {
                     case 62:
-                        result = new CustomMeleeWeapon(DynamicGameAssets.Mod.Find(ItemIds.CosmosSword) as MeleeWeaponPackData);
+                        result = new MeleeWeapon(ItemIds.CosmosSword);
                         break;
                     case 63:
-                        result = new CustomMeleeWeapon(DynamicGameAssets.Mod.Find(ItemIds.CosmosClub) as MeleeWeaponPackData);
+                        result = new MeleeWeapon(ItemIds.CosmosClub);
                         break;
                     case 64:
-                        result = new CustomMeleeWeapon(DynamicGameAssets.Mod.Find(ItemIds.CosmosDagger) as MeleeWeaponPackData);
+                        result = new MeleeWeapon(ItemIds.CosmosDagger);
                         break;
                 }
 
@@ -262,14 +262,14 @@ namespace MoonMisadventures.Game
                     oldEnch.ApplyTo(result, (result as Tool).getLastFarmerToUse());
 
             }
-            if ( secondarySpot.item is IDGAItem dgai && dgai.FullId == ItemIds.PersistiumDust )
+            if ( secondarySpot.item is MeleeWeapon dgai && dgai.ItemId == ItemIds.PersistiumDust )
             {
                 result.modData.Add("persists", "true");
                 if (--secondarySpot.item.Stack <= 0)
                     secondarySpot.item = null;
             }
 
-            Game1.player.removeItemsFromInventory(ItemIds.StellarEssence.GetDeterministicHashCode(), 25);
+            Game1.player.removeFirstOfThisItemFromInventory(ItemIds.StellarEssence, 25);
 
             mainSpot.item = null;
 
@@ -291,7 +291,7 @@ namespace MoonMisadventures.Game
                     }
                 }
             }
-            var newEnch = Utility.GetRandom(BaseEnchantment.GetAvailableEnchantmentsForItem( item as Tool ), Game1.random);
+            var newEnch = Game1.random.ChooseFrom(BaseEnchantment.GetAvailableEnchantmentsForItem(item as Tool));
             t.enchantments.Add(newEnch);
             newEnch.ApplyTo(t, t.getLastFarmerToUse());
         }

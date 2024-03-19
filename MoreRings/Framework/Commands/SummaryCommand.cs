@@ -38,7 +38,7 @@ namespace MoreRings.Framework.Commands
             var mod = Mod.Instance;
 
             // collect rings
-            var rings = new Dictionary<int, string>
+            var rings = new Dictionary<string, string>
             {
                 [mod.RingFishingLargeBar] = I18n.RingOfWideNets_Name(),
                 [mod.RingCombatRegen] = I18n.RingOfRegeneration_Name(),

@@ -1,14 +1,25 @@
-﻿{
-    "Name": "Mayo Hats",
-    "Author": "spacechase0",
-    "Version": "1.0.0",
-    "Description": "...",
-    "UniqueID": "spacechase0.MayoHats",
-    "EntryDll": "MayoHats.dll",
-    "UpdateKeys": [ "Nexus:" ],
-    "Dependencies": [
-        {
-            "UniqueID": "spacechase0.JsonAssets"
-        }
-    ]
+{
+  /*
+   | This file is automatically updated by ModManifestBuilder
+   | when the project is compiled.
+   | 
+   | Changes made to this file may be overwritten.
+   | 
+   */
+  "$schema": "https://smapi.io/schemas/manifest.json",
+  "UniqueID": "spacechase0.MayoHats",
+  "Name": "Mayo Hats",
+  "Author": "spacechase0",
+  "Version": "1.0.0-Debug",
+  "Description": "...",
+  "EntryDll": "MayoHats.dll",
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.JsonAssets"
+    }
+  ],
+  "UpdateKeys": [
+    "Nexus:17514",
+    "Nexus:"
+  ]
 }

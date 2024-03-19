@@ -4,20 +4,26 @@
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>0.1.7</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>Moon Misadventures</Name>
+    <Description>Want to go to the moon? Now you can!</Description>
+    <Version>0.2.0</Version>
+    <UpdateKeys>Nexus:10612</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
     <EnableHarmony>true</EnableHarmony>
 
     <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" Private="false" />
-    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false">
+      <Version_AppendConfiguration>false</Version_AppendConfiguration>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

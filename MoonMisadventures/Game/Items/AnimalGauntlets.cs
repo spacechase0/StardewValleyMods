@@ -1,11 +1,14 @@
+using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MoonMisadventures;
 using MoonMisadventures.Game.Locations;
 using Netcode;
 using StardewValley;
 
-namespace MoonMisadventures.Game.Items
+namespace StardewValley.Tools
 {
     [XmlType( "Mods_spacechase0_MoonMisadventures_AnimalGauntlets" )]
     public class AnimalGauntlets : Tool
@@ -21,7 +24,7 @@ namespace MoonMisadventures.Game.Items
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields( holding );
+            NetFields.AddField( holding, nameof( holding ) );
         }
 
         protected override string loadDisplayName()
@@ -53,62 +56,70 @@ namespace MoonMisadventures.Game.Items
             who.UsingTool = false;
             who.canReleaseTool = true;
 
-            if ( location is IAnimalLocation aloc )
+            var spot = Mod.instance.Helper.Input.GetCursorPosition();
+
+            if ( holding.Value == null )
             {
-                if ( location is not LunarLocation )
+                foreach ( long key in location.Animals.Keys )
                 {
-                    Game1.addHUDMessage( new HUDMessage( I18n.Tool_AnimalGauntlets_MoonRequirement() ) );
-                }
-
-                var spot = Mod.instance.Helper.Input.GetCursorPosition();
-
-                if ( holding.Value == null )
-                {
-                    foreach ( long key in aloc.Animals.Keys )
+                    var animal = location.Animals[ key ];
+                    if ( animal.GetCursorPetBoundingBox().Contains( spot.AbsolutePixels ) )
                     {
-                        var animal = aloc.Animals[ key ];
-                        if ( animal.GetCursorPetBoundingBox().Contains( spot.AbsolutePixels ) )
-                        {
-                            aloc.Animals.Remove( key );
-                            holding.Value = animal;
-                            break;
-                        }
+                        location.Animals.Remove( key );
+                        holding.Value = animal;
+                        break;
                     }
                 }
-                else
+            }
+            else
+            {
+                if ( location.isTilePlaceable( spot.Tile ) )
                 {
-                    if ( location.isTileLocationTotallyClearAndPlaceableIgnoreFloors( spot.Tile ) )
-                    {
-                        holding.Value.position.Value = spot.AbsolutePixels;
-                        aloc.Animals.Add( holding.Value.myID.Value, holding.Value );
-                        holding.Value = null;
-                    }
+                    holding.Value.position.Value = spot.AbsolutePixels;
+                    location.Animals.Add( holding.Value.myID.Value, holding.Value );
+                    holding.Value = null;
                 }
             }
         }
 
+        /*
         public override void drawInMenu( SpriteBatch spriteBatch, Vector2 location, float scaleSize, float transparency, float layerDepth, StackDrawType drawStackNumber, Color color, bool drawShadow )
         {
             spriteBatch.Draw( Assets.AnimalGauntlets, location, null, Color.White * transparency, 0, Vector2.Zero, scaleSize * 4, SpriteEffects.None, layerDepth );
         }
+        */
 
-        public override Item getOne()
+        protected override Item GetOneNew()
         {
-            var ret = new AnimalGauntlets();
-            // not sure how to clone the animal... only allow lunar for now
-            if ( holding.Value is LunarAnimal lanimal )
+            return new AnimalGauntlets();
+        }
+
+        protected override void GetOneCopyFrom(Item source)
+        {
+            base.GetOneCopyFrom(source);
+
+            var gauntlets = source as AnimalGauntlets;
+
+            if (gauntlets.holding.Value != null)
             {
-                var mp = Mod.instance.Helper.Reflection.GetField< Multiplayer >( typeof( Game1 ), "multiplayer" ).GetValue();
-                var other = new LunarAnimal( lanimal.lunarType.Value, Vector2.Zero, mp.getNewID() );
-                other.age.Value = lanimal.age.Value;
-                other.currentProduce.Value = lanimal.age.Value;
-                other.happiness.Value = lanimal.happiness.Value;
-                other.fullness.Value = lanimal.fullness.Value;
-                other.wasPet.Value = lanimal.wasPet.Value;
-                ret.holding.Value = other;
+                var animal = new FarmAnimal();
+
+                var a = gauntlets.holding.Value.NetFields.GetFields().ToList();
+                var b = animal.NetFields.GetFields().ToList();
+                for (int i = 0; i < a.Count; ++i)
+                {
+                    using MemoryStream ms = new();
+                    using BinaryWriter bw = new(ms);
+                    a[i].WriteFull(bw);
+
+                    bw.Flush();
+                    ms.Position = 0;
+                    using BinaryReader br = new(ms);
+                    b[i].ReadFull(br, new());
+                }
+
+                holding.Value = animal;
             }
-            ret._GetOneFrom( this );
-            return ret;
         }
     }
 }
