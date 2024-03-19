@@ -36,6 +36,10 @@ namespace SpaceCore.VanillaAssetExpansion
         public TotemWarpData TotemWarp { get; set; }
 
         public bool UseForTriggerAction { get; set; } = false;
+
+        public string GiftedToNotOnAllowListMessage { get; set; }
+        public Dictionary<string, bool> GiftableToNpcAllowList { get; set; }
+        public Dictionary<string, string> GiftableToNpcDisallowList { get; set; }
     }
 
     [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.getCategoryName))]

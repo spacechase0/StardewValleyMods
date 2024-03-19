@@ -97,12 +97,12 @@ namespace SpaceCore.Events
             Util.InvokeEvent("SpaceEvents.ServerGotClient", SpaceEvents.ServerGotClient.GetInvocationList(), server, args);
         }
 
-        internal static bool InvokeBeforeReceiveObject(NPC npc, SObject obj, Farmer farmer)
+        internal static bool InvokeBeforeReceiveObject(NPC npc, SObject obj, Farmer farmer, bool probe)
         {
             Log.Trace("Event: BeforeReceiveObject");
             if (SpaceEvents.BeforeGiftGiven == null)
                 return false;
-            var arg = new EventArgsBeforeReceiveObject(npc, obj);
+            var arg = new EventArgsBeforeReceiveObject(npc, obj, probe);
             return Util.InvokeEventCancelable("SpaceEvents.BeforeReceiveObject", SpaceEvents.BeforeGiftGiven.GetInvocationList(), farmer, arg);
         }
 

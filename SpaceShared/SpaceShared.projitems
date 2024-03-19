@@ -29,6 +29,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommonExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommonHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\ContentParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\ContentEngine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\PatchContentEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\ConsoleCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\ConsoleCommandHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\IConsoleCommand.cs" />

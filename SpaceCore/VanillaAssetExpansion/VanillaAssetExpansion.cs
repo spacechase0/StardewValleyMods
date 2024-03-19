@@ -30,11 +30,42 @@ namespace SpaceCore.VanillaAssetExpansion
             SpaceCore.Instance.Helper.Events.GameLoop.UpdateTicking += GameLoop_UpdateTicking;
             SpaceCore.Instance.Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
 
+            SpaceEvents.BeforeGiftGiven += SpaceEvents_BeforeGiftGiven;
             SpaceEvents.AfterGiftGiven += SpaceEvents_AfterGiftGiven;
             SpaceEvents.OnItemEaten += SpaceEvents_OnItemEaten;
 
             TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_OnItemUsed");
             TriggerActionManager.RegisterTrigger("spacechase0.SpaceCore_OnItemEaten");
+        }
+
+        private static void SpaceEvents_BeforeGiftGiven(object sender, EventArgsBeforeReceiveObject e)
+        {
+            string npc = e.Npc.Name;
+            string item = e.Gift.ItemId;
+
+            var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
+            if (!dict.TryGetValue(item, out var data))
+                return;
+
+            if (data.GiftableToNpcDisallowList != null && data.GiftableToNpcDisallowList.TryGetValue(npc, out string disallowed) && disallowed != null)
+            {
+                if (!e.Probe)
+                {
+                    e.Cancel = true;
+                    Game1.activeClickableMenu = new DialogueBox(new Dialogue(e.Npc, "spacecore:objectextensiondata:gift_disallowed", disallowed));
+                }
+            }
+            else if (data.GiftableToNpcAllowList != null)
+            {
+                if (!data.GiftableToNpcAllowList.TryGetValue(npc, out bool allowed) && !allowed)
+                {
+                    if (!e.Probe)
+                    {
+                        e.Cancel = true;
+                        Game1.activeClickableMenu = new DialogueBox(new Dialogue(e.Npc, "spacecore:objectextensiondata:gift_not_disallowed", data.GiftedToNotOnAllowListMessage));
+                    }
+                }
+            }
         }
 
         private static void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)

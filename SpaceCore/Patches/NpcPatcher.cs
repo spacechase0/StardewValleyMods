@@ -35,9 +35,9 @@ namespace SpaceCore.Patches
         ** Private methods
         *********/
         /// <summary>The method to call before <see cref="NPC.tryToReceiveActiveObject"/>.</summary>
-        private static bool Before_TryToReceiveActiveObject(NPC __instance, Farmer who)
+        private static bool Before_TryToReceiveActiveObject(NPC __instance, Farmer who, bool probe)
         {
-            return !SpaceEvents.InvokeBeforeReceiveObject(__instance, who.ActiveObject, who);
+            return !SpaceEvents.InvokeBeforeReceiveObject(__instance, who.ActiveObject, who, probe);
         }
 
         /// <summary>The method to call after <see cref="NPC.receiveGift"/>.</summary>
