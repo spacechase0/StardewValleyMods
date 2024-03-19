@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -242,6 +243,22 @@ namespace SpaceCore
         public static string[] GetSkillList()
         {
             return Skills.SkillsByName.Keys.ToArray();
+        }
+
+        public static List<Tuple<string, int, int>> GetExperienceAndLevels(Farmer farmer)
+        {
+            List<Tuple<string, int, int>> forFarmer = new();
+            if (!Skills.Exp.ContainsKey(farmer.UniqueMultiplayerID))
+                return forFarmer;
+
+            forFarmer.AddRange(
+                from skillName in Skills.Exp[farmer.UniqueMultiplayerID].Keys
+                let xp = Skills.GetExperienceFor(farmer, skillName)
+                let level = Skills.GetSkillLevel(farmer, skillName)
+                select new Tuple<string, int, int>(skillName, xp, level)
+                );
+
+            return forFarmer;
         }
 
         public static int GetExperienceFor(Farmer farmer, string skillName)
@@ -684,6 +701,11 @@ namespace SpaceCore
         public static int GetCustomSkillLevel(this Farmer farmer, string skill)
         {
             return Skills.GetSkillLevel(farmer, skill);
+        }
+
+        public static List<Tuple<string, int, int>> GetCustomSkillExperienceAndLevels(this Farmer farmer)
+        {
+            return Skills.GetExperienceAndLevels(farmer);
         }
 
         public static int GetCustomBuffedSkillLevel(this Farmer farmer, Skills.Skill skill)
