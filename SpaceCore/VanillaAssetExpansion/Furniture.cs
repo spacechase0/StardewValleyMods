@@ -7,12 +7,14 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Objects;
+using StardewValley.TokenizableStrings;
 
 namespace SpaceCore.VanillaAssetExpansion
 {
     public class FurnitureExtensionData
     {
         public Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>> TileProperties { get; set; } = new();
+        public string DescriptionOverride { get; set; }
     }
 
     [HarmonyPatch(typeof(Furniture), nameof(Furniture.DoesTileHaveProperty))]
@@ -33,6 +35,19 @@ namespace SpaceCore.VanillaAssetExpansion
                     property_value = propValue;
                     __result = true;
                 }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Furniture), nameof(Furniture.getDescription))]
+    public static class FurnitureDescriptionExtensionPatch
+    {
+        public static void Postfix(Furniture __instance, ref string __result)
+        {
+            var dict = Game1.content.Load<Dictionary<string, FurnitureExtensionData>>("spacechase0.SpaceCore/FurnitureExtensionData");
+            if (dict.TryGetValue(__instance.ItemId, out var furnData) && furnData.DescriptionOverride != null)
+            {
+                __result = Game1.parseText(TokenParser.ParseText(furnData.DescriptionOverride), Game1.smallFont, 320);
             }
         }
     }
