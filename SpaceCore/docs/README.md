@@ -60,6 +60,7 @@ Provided functionality for content pack authors:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
     * Furniture - Stored in the asset `"spacechase0.SpaceCore/FurnitureExtensionData"`, which is a dictionary with the key being the furniture ID, and the value being an object containing the following fields:
         * `TileProperties` - A dictionary of tile coordinates to a dictionary of layers to a dictionary of tile properties. Just look at [this example](https://gist.github.com/spacechase0/ea6db01284157d408d9f359f141a0d65).
+        * `DescriptionOverride` - Description override for the furniture.
     * Shops - Stored in the asset `"spacechase0.SpaceCore/ShopExtensionData"`, which is a dictionary with the key being the shop ID, and the value being an object containing the following fields:
         * `Tabs` - The options are `"None"`, `"Catalogue"`, `"FurnitureCatalogue"`, and `"Custom"`. For custom, see the next field.
         * `CustomTabs` - A list consisting of the following object (see [this example](https://gist.github.com/spacechase0/8a80b22655f624d9854486bfbe5abc7e)):
