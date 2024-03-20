@@ -35,9 +35,9 @@ namespace ProfitCalculator
 
                 string name = produced.DisplayName;
                 int cost = seed.salePrice();
-                int value = produced.salePrice();
+                int value = produced.sellToStorePrice();
 
-                int total_phases = crop.Value.DaysInPhase.Sum();
+                int totalPhases = crop.Value.DaysInPhase.Sum();
                 float avgPerHarvest = (crop.Value.HarvestMinStack + crop.Value.HarvestMaxStack) / 2f;
 
                 float profit;
@@ -47,12 +47,12 @@ namespace ProfitCalculator
                     int days = 28;
                     int harvests = 0;
 
-                    days -= total_phases + 1; ++harvests;
+                    days -= totalPhases + 1; ++harvests;
                     harvests += days / regrowth;
                     profit = value * harvests * avgPerHarvest - cost;
                 }
                 else {
-                    profit = (value * avgPerHarvest - cost) * (28 / total_phases);
+                    profit = (value * avgPerHarvest - cost) * (28 / totalPhases);
                 }
 
                 var data = new ProfitData
