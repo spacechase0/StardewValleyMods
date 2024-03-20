@@ -114,6 +114,7 @@ namespace JsonAssets
         private bool FirstTick = true;
         private void OnTick(object sender, UpdateTickedEventArgs e)
         {
+            //var t = Game1.currentLocation.terrainFeatures;
             // This needs to run after GameLaunched, because of the event
             if (this.FirstTick)
             {

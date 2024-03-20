@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Name>Json Assets</Name>
     <Description>Lets content packs add custom content to the game.</Description>
-    <Version>1.11.0</Version>
+    <Version>1.11.1</Version>
     <UpdateKeys>Nexus:1720</UpdateKeys>
 
     <TargetFramework>net6.0</TargetFramework>

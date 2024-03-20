@@ -47,11 +47,14 @@ namespace SpaceShared
                 var ret = action(l.terrainFeatures[key]);
                 if (ret == null)
                     toRemove.Add(key);
-                else
+                else if ( ret != l.terrainFeatures[key] ) // For some reason this condition fixes a bug on the farm where certain tiles sometimes keep soil from staying tilled
                     l.terrainFeatures[key] = ret;
             }
             foreach (var r in toRemove)
+            {
+                Console.WriteLine("removing " + r);
                 l.terrainFeatures.Remove(r);
+            }
 
             for (int i = l.resourceClumps.Count - 1; i >= 0; --i)
             {
