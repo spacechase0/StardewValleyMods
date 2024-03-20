@@ -15,7 +15,7 @@ any custom crops you installed, and will take account of your farming level.
 You can optionally check for a particular season like `profits_crops spring`.
 
 ## Compatibility
-Compatible with Stardew Valley 1.5.5+ on Linux/macOS/Windows, both single-player and multiplayer.
+Compatible with Stardew Valley 1.6.0+ on Linux/macOS/Windows, both single-player and multiplayer.
 
 ## See also
 * [Release notes](release-notes.md)
