@@ -24,7 +24,7 @@ namespace ProfitCalculator
             Log.Info("NOTE: This takes into account your farming level");
 
             var profits = new List<ProfitData>();
-            var objectInfo = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
+            var objectInfo = Game1.content.Load<Dictionary<int, string>>("Data\\Object");
             var cropInfo = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
 
             foreach (var crop in cropInfo)
