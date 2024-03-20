@@ -17,7 +17,7 @@ namespace SpaceCore
 
         public abstract class IngredientMatcher
         {
-            public abstract string DispayName { get; }
+            public abstract string DisplayName { get; }
 
             public abstract Texture2D IconTexture { get; }
             public abstract Rectangle? IconSubrect { get; }
@@ -52,7 +52,7 @@ namespace SpaceCore
                 this.qty = quantity;
             }
 
-            public override string DispayName
+            public override string DisplayName
             {
                 get
                 {
