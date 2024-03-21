@@ -19,6 +19,7 @@ Provided functionality for players:
 Provided functionality for content pack authors:
 * New GameStateQuery queries:
     * Every custom skill registered through the C# API automatically registers a `PLAYER_<SKILLID_IN_CAPS>_LEVEL` query matching the vanilla ones (such as PLAYER_FARMING_LEVEL).
+    * `NEARBY_CROPS radius cropId` - Only usable in CropExtensionData YieldOverrides PerItemCondition entries. Checks for fully grown crops of a particular type in a certain radius.
 * New tile action - `spacechase0.SpaceCore_TriggerAction triggerActionId` - for running a trigger action, set the Trigger to "Manual"
 * New touch action - `spacechase0.SpaceCore_TriggerAction triggerActionId` - for running a trigger action, set the Trigger to "Manual"
 * New trigger actions
@@ -56,6 +57,8 @@ Provided functionality for content pack authors:
         * `GiftableToNpcDisallowList` - A dictionary of NPC names to messages that should show when you try to gift the item to them, instead of them receiving the gift.
         * `GiftableToNpcAllowList` - A dictionary of NPC names to `true` for if you want that NPC allowed. If set, any NPCs not listed here will not be able to receive the gift, and instead will show the message from the folowing field.
         * `GiftedToNotOnAllowListMessage` - The message to show for when the item is gifted to someone not on the allow list. Required if `GiftableToNpcAllowList` is set. (The disallow list is checked first, so you can still allow specific responses by certain NPCs.)
+    * Crops - These are in `spacechase0.SpaceCore/CropExtensionData`
+        * `YieldOverrides` - A little complex, but you can override each crop phase's harvestability with experience gained, the new phase it goes to, and the drops it has (including conditional drops). Example [here](https://gist.github.com/spacechase0/79f95bcd46160da9e52f5bc0c71329f4).
     * Weapons - Stored in the `CustomFields` on the weapon data asset object:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
     * Furniture - Stored in the asset `"spacechase0.SpaceCore/FurnitureExtensionData"`, which is a dictionary with the key being the furniture ID, and the value being an object containing the following fields:
@@ -110,6 +113,7 @@ Provided functionality for content pack authors:
     * `spacechase0.SpaceCore/CurrentlyInEvent` - true or false
     * `spacechase0.SpaceCore/CurrentEventId` - the current event ID, if in an event
     * `spacechase0.SpaceCore/QuestionsAsked` - a token which takes in an NPC name, and returns the questions asked (not including repeatable questions). (For use with the Backstory Questions feature.)
+    * `spacechase0.SpaceCore/BooksellerInTown` - true or false
 
 The rest of the features assume you understand C# and the game code a little bit (and are only accessible via C#):
 * In the API provided through SMAPI's mod registry (see mod source for interface you can copy):

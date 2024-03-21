@@ -100,6 +100,8 @@ namespace SpaceCore
 
             public virtual void DoLevelPerk(int level) { }
 
+            public virtual bool ShouldShowOnSkillsPage => true;
+
             protected Skill(string id)
             {
                 this.Id = id;
@@ -534,7 +536,7 @@ namespace SpaceCore
             {
                 if (SpaceCore.Instance.Config.CustomSkillPage && ( Skills.SkillsByName.Count > 0 || SpaceEvents.HasAddWalletItemEventHandlers() ) )
                 {
-                    gm.pages[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
+                    //gm.pages[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
                 }
             }
         }

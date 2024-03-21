@@ -37,6 +37,7 @@ using SpaceCore.UI;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Delegates;
 using Location = xTile.Dimensions.Location;
+using StardewValley.TerrainFeatures;
 
 namespace SpaceCore
 {
@@ -152,6 +153,37 @@ namespace SpaceCore
                 return true;
             });
 
+            GameStateQuery.Register("NEARBY_CROP", (string[] query, GameStateQueryContext ctx) =>
+            {
+                if (!ArgUtility.TryGetInt(query, 1, out int radius, out string error) || !ArgUtility.TryGet(query, 2, out string cropSeedId, out error))
+                {
+                    Log.Warn($"Error for NEARBY_CROP: {error}");
+                    return false;
+                }
+                if (ctx.CustomFields == null || !ctx.CustomFields.TryGetValue("Tile", out object tileObj) || tileObj is not Vector2 tile)
+                {
+                    Log.Warn("No tile for NEARBY_CROP GSQ");
+                    return false;
+                }
+
+                for (int ix = -radius; ix <= radius; ++ix)
+                {
+                    for (int iy = -radius; iy <= radius; ++iy)
+                    {
+                        if (ix == 0 && iy == 0)
+                            continue;
+
+                        if (!ctx.Location.terrainFeatures.TryGetValue(tile + new Vector2(ix, iy), out var tf) || tf is not HoeDirt hd || hd.crop == null)
+                            continue;
+                        hd.crop.growCompletely();
+                        if (hd.crop.netSeedIndex.Value == cropSeedId && hd.crop.currentPhase.Value == hd.crop.phaseDays.Count - 1)
+                            return true;
+                    }
+                }
+
+                return false;
+            });
+
             Event.RegisterCommand("damageFarmer", DamageFarmerEventCommand);
             Event.RegisterCommand("giveHat", GiveHatEventCommand);
             Event.RegisterCommand("setDating", SetDatingEventCommand);
@@ -200,6 +232,9 @@ namespace SpaceCore
 
             if (e.Button.IsActionButton() && (Config.SocialInteractions_AlwaysTrigger || Config.SocialInteractions_TriggerModifier.IsDown()))
             {
+                Game1.player.forceCanMove();
+                Game1.dialogueUp = false;
+
                 Rectangle tileRect = new Rectangle((int)e.Cursor.GrabTile.X * 64, (int)e.Cursor.GrabTile.Y * 64, 64, 64);
                 NPC npc = null;
                 foreach (var character in Game1.currentLocation.characters)
@@ -241,19 +276,23 @@ namespace SpaceCore
                 {
                     responses.Add(new(entry.Key, entry.Key));
                 }
-                responses.Add(new("Cancel", I18n.Interaction_Cancel()));
+                Response cancel = new("Cancel", I18n.Interaction_Cancel());
+                cancel.SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape);
+                responses.Add(cancel);
 
                 Game1.currentLocation.afterQuestion = (farmer, answer) =>
                 {
                     //Log.Debug("hi");
                     Game1.activeClickableMenu = null;
                     Game1.player.CanMove = true;
+                    Game1.dialogueUp = false;
                     if (lastChoices.ContainsKey(answer))
                         lastChoices[answer]();
                     else
                         ;// Log.Debug("wat");
                 };
                 Game1.currentLocation.createQuestionDialogue(I18n.InteractionWith(npc.displayName), responses.ToArray(), "advanced-social-interaction");
+                
             }
         }
 
@@ -657,6 +696,13 @@ namespace SpaceCore
                         return null;
 
                     return new string[] { Game1.CurrentEvent.id.ToString() };
+                });
+                cp.RegisterToken(ModManifest, "BooksellerInTown", () =>
+                {
+                    if (!Context.IsWorldReady)
+                        return null;
+
+                    return new string[] { Utility.getDaysOfBooksellerThisSeason().Contains(Game1.dayOfMonth)?"true":"false" };
                 });
             }
         }
