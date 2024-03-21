@@ -294,6 +294,10 @@ namespace SpaceShared.Content
                 (SourceElement se, start) = BuildArray(tokens, start);
                 return new(se, start + (tokens[start].IsEndStatement() ? 1 : 0));
             }
+            else if (tok.IsNull())
+            {
+                return new(tok, start + 1);
+            }
 
             throw new ArgumentException($"Invalid token \"{tok.Value}\" at {tok.FilePath}:{tok.Line}:{tok.Column}");
         }

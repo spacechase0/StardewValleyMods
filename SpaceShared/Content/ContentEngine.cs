@@ -61,12 +61,24 @@ namespace SpaceShared.Content
                 if (fcall.Parameters.Count != 1)
                     throw new ArgumentException($"Asset path function @ must have exactly one string parameter, at {fcall.FilePath}:{fcall.Line}:{fcall.Column}");
 
+                string path = Path.Combine(ce.ContentRootFolder, Path.GetDirectoryName(fcall.Parameters[0].FilePath), fcall.Parameters[0].SimplifyToToken(ce).Value).Replace('\\', '/');
+                List<string> pathParts = new(path.Split('/'));
+                for (int i = 1; i < pathParts.Count; ++i)
+                {
+                    if (pathParts[i] == "..")
+                    {
+                        pathParts.RemoveAt(i);
+                        pathParts.RemoveAt(i - 1);
+                    }
+                }
+                path = string.Join('/', pathParts);
+
                 return new Token()
                 {
                     FilePath = fcall.FilePath,
                     Line = fcall.Line,
                     Column = fcall.Column,
-                    Value = ce.Helper.ModContent.GetInternalAssetName(Path.Combine(ce.ContentRootFolder, Path.GetDirectoryName(fcall.Parameters[0].FilePath), fcall.Parameters[0].SimplifyToToken(ce).Value)).Name,
+                    Value = ce.Helper.ModContent.GetInternalAssetName(path).Name,
                     Context = fcall.Context,
                 };
             }

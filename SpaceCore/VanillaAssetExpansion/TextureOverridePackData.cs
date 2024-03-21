@@ -12,7 +12,13 @@ namespace SpaceCore.VanillaAssetExpansion
     {
         public string TargetTexture { get; set; }
         public Rectangle TargetRect { get; set; }
-        public string SourceTexture { get; set; }
+
+        private string _sourcetex;
+        public string SourceTexture
+        {
+            get { return _sourcetex; }
+            set { _sourcetex = value; animation = TextureAnimation.ParseFrom(SourceTexture); }
+        }
 
         public Texture2D sourceTex;
         internal TextureAnimation animation;
@@ -38,7 +44,6 @@ namespace SpaceCore.VanillaAssetExpansion
             // This is important because the paths need to match exactly.
             // Starting in SDV 1.5.5, these are always '/', not OS-dependent.
             this.TargetTexture = this.TargetTexture.Replace('\\', '/');
-            animation = TextureAnimation.ParseFrom(SourceTexture);
         }
     }
 }

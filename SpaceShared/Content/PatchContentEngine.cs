@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace SpaceShared.Content
         public PatchContentEngine Engine { get; }
         public Statement Original { get; }
 
-        public string Id { get; set; }
+        public string Id { get; set; } = "";
         public string File { get; set; }
         public SourceElement Path { get; set; }
         public SourceElement Condition { get; set; } = AlwaysTrue;
@@ -41,39 +42,42 @@ namespace SpaceShared.Content
             Engine = engine;
             Original = statement;
 
-            if (Original.FuncCall.Parameters.Count < 2)
+            if (Original.FuncCall.Parameters.Count < 1)
                 throw new ArgumentException($"Not enough parameters to Entry function at {Original.FilePath}:{Original.Line}:{Original.Column}");
             if (Original.FuncCall.Parameters[0] is not Token)
-                throw new ArgumentException($"Entry function ID parameter must be a string at {Original.FilePath}:{Original.Line}:{Original.Column}");
-            if (Original.FuncCall.Parameters[1] is not Token)
                 throw new ArgumentException($"Entry function file parameter must be a string at {Original.FilePath}:{Original.Line}:{Original.Column}");
+            if (Original.FuncCall.Parameters.Count >= 2 && Original.FuncCall.Parameters[1] is not Token and not Statement)
+                throw new ArgumentException($"Entry function path parameter, if provided, must be a string at {Original.FuncCall.Parameters[1].FilePath}:{Original.FuncCall.Parameters[1].Line}:{Original.FuncCall.Parameters[1].Column}");
             if (Original.FuncCall.Parameters.Count >= 3 && Original.FuncCall.Parameters[2] is not Token and not Statement)
-                throw new ArgumentException($"Entry function path parameter, if provided, must be a string at {Original.FuncCall.Parameters[2].FilePath}:{Original.FuncCall.Parameters[2].Line}:{Original.FuncCall.Parameters[2].Column}");
-            if (Original.FuncCall.Parameters.Count >= 4 && Original.FuncCall.Parameters[3] is not Token and not Statement)
-                throw new ArgumentException($"Entry function condition parameter, if provided, must be a string at {Original.FuncCall.Parameters[3].FilePath}:{Original.FuncCall.Parameters[3].Line}:{Original.FuncCall.Parameters[3].Column}");
+                throw new ArgumentException($"Entry function condition parameter, if provided, must be a string at {Original.FuncCall.Parameters[2].FilePath}:{Original.FuncCall.Parameters[2].Line}:{Original.FuncCall.Parameters[2].Column}");
+            if (Original.FuncCall.Parameters.Count >= 4 && Original.FuncCall.Parameters[3] is not Token)
+                throw new ArgumentException($"Entry function priority parameter, if provided, must be 'Low', 'Medium', 'High', 'Exclusive', or an integer, at {Original.FuncCall.Parameters[3].FilePath}:{Original.FuncCall.Parameters[3].Line}:{Original.FuncCall.Parameters[3].Column}");
             if (Original.FuncCall.Parameters.Count >= 5 && Original.FuncCall.Parameters[4] is not Token)
-                throw new ArgumentException($"Entry function priority parameter, if provided, must be 'Low', 'Medium', 'High', 'Exclusive', or an integer, at {Original.FuncCall.Parameters[4].FilePath}:{Original.FuncCall.Parameters[4].Line}:{Original.FuncCall.Parameters[4].Column}");
+                throw new ArgumentException($"Entry function ID parameter, if provided, must be a string, at {Original.FuncCall.Parameters[4].FilePath}:{Original.FuncCall.Parameters[4].Line}:{Original.FuncCall.Parameters[4].Column}");
 
-            Id = (Original.FuncCall.Parameters[0] as Token).Value;
-            File = (Original.FuncCall.Parameters[1] as Token).Value.Replace( '\\', '/' );
+            File = (Original.FuncCall.Parameters[0] as Token).Value.Replace('\\', '/');
+            if (Original.FuncCall.Parameters.Count >= 2)
+                Path = Original.FuncCall.Parameters[1];
             if (Original.FuncCall.Parameters.Count >= 3)
-                Path = Original.FuncCall.Parameters[2];
+                Condition = Original.FuncCall.Parameters[2];
             if (Original.FuncCall.Parameters.Count >= 4)
-                Condition = Original.FuncCall.Parameters[3];
-            if (Original.FuncCall.Parameters.Count >= 5)
             {
-                switch ((Original.FuncCall.Parameters[4] as Token).Value)
+                switch ((Original.FuncCall.Parameters[3] as Token).Value)
                 {
                     case "Low": Priority = (int)AssetLoadPriority.Low; break;
                     case "Medium": Priority = (int)AssetLoadPriority.Medium; break;
                     case "High": Priority = (int)AssetLoadPriority.High; break;
                     case "Exclusive": Priority = (int)AssetLoadPriority.Exclusive; break;
                     default:
-                        if ( !int.TryParse((Original.FuncCall.Parameters[4] as Token).Value, out int priority ))
-                            throw new ArgumentException($"Entry function priority parameter, if provided, be 'Low', 'Medium', 'High', 'Exclusive', or an integer, at {Original.FuncCall.Parameters[4].FilePath}:{Original.FuncCall.Parameters[4].Line}:{Original.FuncCall.Parameters[4].Column}");
+                        if (!int.TryParse((Original.FuncCall.Parameters[3] as Token).Value, out int priority))
+                            throw new ArgumentException($"Entry function priority parameter, if provided, be 'Low', 'Medium', 'High', 'Exclusive', or an integer, at {Original.FuncCall.Parameters[3].FilePath}:{Original.FuncCall.Parameters[3].Line}:{Original.FuncCall.Parameters[3].Column}");
                         Priority = priority;
                         break;
                 }
+            }
+            if (Original.FuncCall.Parameters.Count >= 5)
+            {
+                Id = (Original.FuncCall.Parameters[4] as Token).Value;
             }
         }
 
@@ -135,28 +139,42 @@ namespace SpaceShared.Content
             }
             else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
             {
-                if (se is not Block block)
-                    throw new ArgumentException($"Looking for a block at {se.FilePath}:{se.Line}:{se.Column}");
-
-                IDictionary dict = (IDictionary)Activator.CreateInstance(type);
-                foreach (var kvp in block.Contents)
+                if (se is Token tok && tok.IsNull())
                 {
-                    dict.Add(CreateFromSourceElement(type.GetGenericArguments()[0], kvp.Key),
-                             CreateFromSourceElement(type.GetGenericArguments()[1], kvp.Value));
+                    return null;
                 }
-                return dict;
+                else
+                {
+                    if (se is not Block block)
+                        throw new ArgumentException($"Looking for a block at {se.FilePath}:{se.Line}:{se.Column}");
+
+                    IDictionary dict = (IDictionary)Activator.CreateInstance(type);
+                    foreach (var kvp in block.Contents)
+                    {
+                        dict.Add(CreateFromSourceElement(type.GetGenericArguments()[0], kvp.Key),
+                                 CreateFromSourceElement(type.GetGenericArguments()[1], kvp.Value));
+                    }
+                    return dict;
+                }
             }
             else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
             {
-                if (se is not Array array)
-                    throw new ArgumentException($"Looking for a array at {se.FilePath}:{se.Line}:{se.Column}");
-
-                IList list = (IList)Activator.CreateInstance(type);
-                foreach (var val in array.Contents)
+                if (se is Token tok && tok.IsNull())
                 {
-                    list.Add(CreateFromSourceElement(type.GetGenericArguments()[0], val));
+                    return null;
                 }
-                return list;
+                else
+                {
+                    if (se is not Array array)
+                        throw new ArgumentException($"Looking for an array at {se.FilePath}:{se.Line}:{se.Column}");
+
+                    IList list = (IList)Activator.CreateInstance(type);
+                    foreach (var val in array.Contents)
+                    {
+                        list.Add(CreateFromSourceElement(type.GetGenericArguments()[0], val));
+                    }
+                    return list;
+                }
             }
             else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
@@ -186,12 +204,30 @@ namespace SpaceShared.Content
             }
             else
             {
-                if (se is not Block block)
-                    throw new ArgumentException($"Looking for a block at {se.FilePath}:{se.Line}:{se.Column}");
+                if (se is Token tok && tok.IsNull())
+                {
+                    return null;
+                }
+                else
+                {
+                    if (se is not Block block)
+                        throw new ArgumentException($"Looking for a block at {se.FilePath}:{se.Line}:{se.Column}");
 
-                object obj = Activator.CreateInstance(type);
-                Populate(obj, block);
-                return obj;
+                    object obj = Activator.CreateInstance(type);
+                    Populate(obj, block);
+
+                    // TODO: A version that checks for any method with [OnDeserialized]
+                    var desMethod = obj.GetType().GetMethod("OnDeserialized", new[] { typeof(StreamingContext) } );
+                    if (desMethod != null)
+                    {
+                        desMethod.Invoke(obj, new object[]
+                        {
+                            new StreamingContext( StreamingContextStates.File )
+                        });
+                    }
+
+                    return obj;
+                }
             }
         }
     }

@@ -253,7 +253,8 @@ namespace SpaceCore
             sc.AdvancedInteractionStarted += Asi_AdvancedInteractionStarted;
 
             var cp = Helper.ModRegistry.GetApi<IContentPatcherApi>("Pathoschild.ContentPatcher");
-            cp.RegisterToken(ModManifest, "QuestionsAsked", new QuestionsAskedToken());
+            if (cp != null)
+                cp.RegisterToken(ModManifest, "QuestionsAsked", new QuestionsAskedToken());
         }
 
         private void GameLoop_DayStarted(object sender, StardewModdingAPI.Events.DayStartedEventArgs e)
