@@ -252,6 +252,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlahajBlast", "BlahajBlast\BlahajBlast.csproj", "{3A3AA540-7855-4CD6-BBE1-5AFD180F2C11}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arsenal", "Arsenal\Arsenal.csproj", "{91942776-CBC3-4D4C-8C7A-0065DF1FDC0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RiverlandsFeatureAddition", "RiverlandsFeatureAddition\RiverlandsFeatureAddition.csproj", "{234B37B7-3B0B-4FDE-A031-D107531426D8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonMisadventuresRedux", "SylviaMod\MoonMisadventuresRedux.csproj", "{1A380343-AB07-40C8-8B1F-9D3E6648780C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -707,6 +710,14 @@ Global
 		{91942776-CBC3-4D4C-8C7A-0065DF1FDC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91942776-CBC3-4D4C-8C7A-0065DF1FDC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91942776-CBC3-4D4C-8C7A-0065DF1FDC0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{234B37B7-3B0B-4FDE-A031-D107531426D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{234B37B7-3B0B-4FDE-A031-D107531426D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{234B37B7-3B0B-4FDE-A031-D107531426D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{234B37B7-3B0B-4FDE-A031-D107531426D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A380343-AB07-40C8-8B1F-9D3E6648780C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A380343-AB07-40C8-8B1F-9D3E6648780C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A380343-AB07-40C8-8B1F-9D3E6648780C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A380343-AB07-40C8-8B1F-9D3E6648780C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -776,6 +787,8 @@ Global
 		SolutionGuid = {38EB01DD-BAE8-4977-9815-463F5F434FBF}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{014b4846-0e6c-4c73-b851-0a560d36aeee}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{014b4846-0e6c-4c73-b851-0a560d36aeee}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{061610a4-7d02-4f52-a921-f59ed123c2a9}*SharedItemsImports = 13
 		SpaceShared\SpaceShared.projitems*{08e2e2a4-2ce6-4b8b-9bb0-79573808b0d3}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{100b0e56-6ff4-48ea-97b6-6102cb68931e}*SharedItemsImports = 5
@@ -784,11 +797,14 @@ Global
 		SpaceShared\SpaceShared.projitems*{16c65e62-e346-4aea-809a-36ebc0442607}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{17716b42-ef3b-4faf-9a42-af54c00b7824}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{19eb9934-6f62-401b-9447-3661bae212a0}*SharedItemsImports = 5
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{1a380343-ab07-40c8-8b1f-9d3e6648780c}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{1a380343-ab07-40c8-8b1f-9d3e6648780c}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1c1289bd-f40b-4343-aa8a-4f151f887463}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1c3d86aa-c048-4798-bec5-07d7269cce53}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1d6c6511-624c-4332-9e70-486f81a28888}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1e295971-f8e9-45d6-bdf5-de76675753fa}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{20e193c9-a779-494e-83f1-b2a920551b19}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{234b37b7-3b0b-4fde-a031-d107531426d8}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{273b7946-725e-4dcf-8a8c-0d9e5b2d2eec}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{27983ca4-bc2e-4c12-bd06-60c6be031eb1}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{34eac087-758b-4d03-b597-9623286f482d}*SharedItemsImports = 5
