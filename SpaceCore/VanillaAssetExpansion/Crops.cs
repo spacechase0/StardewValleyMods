@@ -35,7 +35,7 @@ namespace SpaceCore.VanillaAssetExpansion
         public static bool Prefix(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester, ref bool __result)
         {
             var dict = Game1.content.Load<Dictionary<string, CropExtensionData>>("spacechase0.SpaceCore/CropExtensionData");
-            if (!dict.TryGetValue(__instance.netSeedIndex.Value, out var extData))
+            if (__instance.netSeedIndex.Value == null || !dict.TryGetValue(__instance.netSeedIndex.Value, out var extData))
                 return true;
             if (!extData.YieldOverrides.TryGetValue(__instance.currentPhase.Value, out var yields))
                 return true;

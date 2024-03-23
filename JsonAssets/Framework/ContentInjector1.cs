@@ -28,7 +28,7 @@ namespace JsonAssets.Framework
                 {"Data\\FruitTrees", this.InjectDataFruitTrees},
                 {"Data\\CookingRecipes", this.InjectDataCookingRecipes},
                 {"Data\\CraftingRecipes", this.InjectDataCraftingRecipes},
-                {"Data\\BigCraftablesInformation", this.InjectDataBigCraftablesInformation},
+                {"Data\\BigCraftables", this.InjectDataBigCraftablesInformation},
                 {"Data\\hats", this.InjectDataHats},
                 {"Data\\Weapons", this.InjectDataWeapons},
                 {"Data\\ClothingInformation", this.InjectDataClothingInformation},

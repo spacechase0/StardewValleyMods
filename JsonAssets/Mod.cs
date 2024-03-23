@@ -91,7 +91,7 @@ namespace JsonAssets
                 new CropPatcher(),
                 //new FencePatcher(),
                 new Game1Patcher(),
-                new GiantCropPatcher(),
+                //new GiantCropPatcher(),
                 new HoeDirtPatcher(),
                 new ShopMenuPatcher()
             );

@@ -60,7 +60,7 @@ namespace JsonAssets.Data
                 Price = this.Price,
                 Fragility = 0,
                 IsLamp = ProvidesLight,
-                Texture = $"JA\\BigCraftables\\{Name}",
+                Texture = $"JA\\BigCraftable0\\{Name}",
                 SpriteIndex = 0,
             };
         }
