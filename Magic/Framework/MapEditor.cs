@@ -22,7 +22,7 @@ namespace Magic.Framework
         private readonly IModContentHelper Content;
 
         /// <summary>Whether the player has Stardew Valley Expanded installed.</summary>
-        private readonly bool HasStardewValleyExpanded;
+        public readonly bool HasStardewValleyExpanded;
 
 
         /*********
@@ -120,9 +120,9 @@ namespace Magic.Framework
             int y = this.Config.RadioY;
 
             if (x < 0)
-                x = this.HasStardewValleyExpanded ? 5 : 1;
+                x = this.HasStardewValleyExpanded ? 1 : 1;
             if (y < 0)
-                y = this.HasStardewValleyExpanded ? 23 : 5;
+                y = this.HasStardewValleyExpanded ? 15 : 5;
 
             return (x, y);
         }

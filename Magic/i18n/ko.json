@@ -68,6 +68,10 @@
     "spell.arcane:disenchant.desc": "물품의 품질을 낮춥니다.\n 해당 물품의 판매 가격의 전후 차이가 보상됩니다.",
     "spell.arcane:enchant.name": "마법 부여",
     "spell.arcane:enchant.desc": "촉매제: 돈\n물품의 품질을 올리십시오.\n 비용은 판매가격의 전후 차이입니다.",
+    "spell.arcane:disenchantcostly.name": "Disenchant",
+    "spell.arcane:disenchantcostly.desc": "Lower the quality of an item.\nGet 50% of the value difference to your wallet.",
+    "spell.arcane:enchantcostly.name": "Enchant",
+    "spell.arcane:enchantcostly.desc": "Catalyst: Money\nRaise the quality of an item.\nCosts x3 of the value difference.",
     "spell.arcane:rewind.name": "되감기",
     "spell.arcane:rewind.desc": "촉매제: 금 주괴\n시간을 돌립니다.",
 
@@ -79,6 +83,8 @@
     "spell.toil:water.desc": "목표 지점 주변의 흙을 물로 적십니다.\n더 높은 레벨에서 더 넓은 영역에 물을 줄 수 있습니다.",
     "spell.toil:blink.name": "블링크(점멸)",
     "spell.toil:blink.desc": "목표 지점으로 순간이동합니다.",
+    "spell.toil:harvest.name": "Grass Removal",
+    "spell.toil:harvest.desc": "Clear a large area of grass.",
 
     "spell.nature:lantern.name": "랜턴(등불)",
     "spell.nature:lantern.desc": "당신을 따라다니는 빛을 소환합니다.\n더 높은 레벨에서 더 많은 빛을 생성할 수 있습니다.",
@@ -140,6 +146,13 @@
     "config.y.name": "Y",
     "config.y.tooltip": "그것 배치할 Y타일 위치, 'Debug Mode' 모드에 표시된 대로.",
     "config.x-or-y.automatic-position": "automatic", // TODO
+
+    "config.blinkSpell": "Replace Blink Spell",
+    "config.blinkspell.tooltip": "For those who want to turn on and off the blink spell, given that it can lead to getting stuck if used recklessly. A new 'harvest' spell will take it's place.'",
+
+    "config.enchantSpell": "Balance the Enchant Spell Spell",
+    "config.enchantspell.tooltip": "Makes Enchantment and Disenchantment not return/cost the exact gold amount to go up and down in quality. To prevent easy Iridium crops.",
+
 
     // controls
     "config.controls": "Controls", // TODO

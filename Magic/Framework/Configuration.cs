@@ -36,5 +36,11 @@ namespace Magic.Framework
 
         /// <summary>The Y tile position for the radio, or <c>-1</c> to position it automatically.</summary>
         public int RadioY { get; set; } = -1;
+
+        /// <summary>Control if the blink spell should exist or not with how powerful it is.</summary>
+        public bool BlinkSpell { get; set; } = true;
+
+        /// <summary>Balance the Enchant/Disenchant spell. It can be used to get a ton of crops very easily to iridium quality making gift giving easy. </summary>
+        public bool EnchantSpell { get; set; } = false;
     }
 }

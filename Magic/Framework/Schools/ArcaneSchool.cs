@@ -17,7 +17,15 @@ namespace Magic.Framework.Schools
 
         public override Spell[] GetSpellsTier2()
         {
-            return new[] { SpellManager.Get("arcane:disenchant"), SpellManager.Get("arcane:enchant") };
+            string EnchantSpell = "arcane:enchant";
+            string DisenchantSpell = "arcane:disenchant";
+            if (Mod.Config.EnchantSpell == true)
+            {
+                EnchantSpell = "arcane:enchant_costly";
+                DisenchantSpell = "arcane:disenchant_costly";
+            }
+
+            return new[] { SpellManager.Get(DisenchantSpell), SpellManager.Get(EnchantSpell) };
         }
 
         public override Spell[] GetSpellsTier3()
