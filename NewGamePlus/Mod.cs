@@ -9,6 +9,7 @@ using SpaceShared.APIs;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.GameData.Objects;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Objects;
@@ -39,22 +40,46 @@ namespace NewGamePlus
             legacyTokenTex = Helper.ModContent.Load<Texture2D>("assets/LegacyToken.png");
             stableTokenTex = Helper.ModContent.Load<Texture2D>("assets/StableToken.png");
 
-            Helper.ConsoleCommands.Add("legacytoken", "...", (cmd, args) => Game1.player.addItemByMenuIfNecessary(new LegacyToken()));
+            Helper.ConsoleCommands.Add("legacytoken", "...", (cmd, args) => Game1.player.addItemByMenuIfNecessary(new StardewValley.Object( $"{ModManifest.UniqueID}_LegacyToken", 1 )));
 
             Helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             Helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             Helper.Events.GameLoop.SaveCreating += OnSaveCreating;
+            Helper.Events.Content.AssetRequested += this.Content_AssetRequested;
 
             var harmony = new Harmony(ModManifest.UniqueID);
             harmony.PatchAll();
         }
 
+        private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
+        {
+            if (e.NameWithoutLocale.BaseName.Equals("Data/Objects"))
+            {
+                e.Edit((asset) =>
+                {
+                    var dict = asset.AsDictionary<string, ObjectData>().Data;
+                    dict.Add($"{ModManifest.UniqueID}_LegacyToken", new ObjectData()
+                    {
+                        Name = "Legacy Token",
+                        DisplayName = I18n.Item_LegacyToken_Name(),
+                        Description = I18n.Item_LegacyToken_Description(),
+                        Texture = Helper.ModContent.GetInternalAssetName( "assets/LegacyToken.png" ).Name,
+                        ExcludeFromShippingCollection = true,
+                    }); dict.Add($"{ModManifest.UniqueID}_StableToken", new ObjectData()
+                    {
+                        Name = "Stable Token",
+                        DisplayName = I18n.Item_StableToken_Name(),
+                        Description = I18n.Item_StableToken_Description(),
+                        Texture = Helper.ModContent.GetInternalAssetName("assets/StableToken.png").Name,
+                        ExcludeFromShippingCollection = true,
+                        ContextTags = [ "placeable" ],
+                    });
+                });
+            }
+        }
+
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            var sc = Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
-            sc.RegisterSerializerType(typeof(LegacyToken));
-            sc.RegisterSerializerType(typeof(StableToken));
-
             var gmcm = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
             {
@@ -77,7 +102,7 @@ namespace NewGamePlus
                  Game1.player.isCustomized.Value)
             {
                 Game1.addMail($"{this.ModManifest.UniqueID}/ReceivedLegacyToken", true);
-                Game1.player.addItemByMenuIfNecessary(new LegacyToken());
+                Game1.player.addItemByMenuIfNecessary(new StardewValley.Object($"{ModManifest.UniqueID}_LegacyToken", 1));
             }
         }
 
@@ -86,7 +111,7 @@ namespace NewGamePlus
             if (Game1.IsMasterGame && plusButton.sourceRect.X == 236)
             {
                 Game1.addMail($"{this.ModManifest.UniqueID}/ReceivedLegacyToken", true);
-                Game1.player.addItemByMenuIfNecessary(new LegacyToken());
+                Game1.player.addItemByMenuIfNecessary(new StardewValley.Object($"{ModManifest.UniqueID}_LegacyToken", 1));
 
                 if (Config.StockList)
                     Game1.addMailForTomorrow("gotMissingStocklist", true, true);
@@ -109,7 +134,7 @@ namespace NewGamePlus
         }
     }
 
-    [HarmonyPatch(typeof(CharacterCustomization), "setUpPositions")]
+    [HarmonyPatch(typeof(CharacterCustomization), "ResetComponents")]
     public static class CharacterCustomizationAddButtonPatch
     {
         public static void Postfix(CharacterCustomization __instance)
@@ -236,7 +261,7 @@ namespace NewGamePlus
     [HarmonyPatch(typeof(Utility), nameof(Utility.playerCanPlaceItemHere))]
     public static class UtilityCanPlaceStablePatch
     {
-        private static bool Impl(GameLocation location, Item item, int x, int y, Farmer f)
+        private static bool Impl(GameLocation location, Item item, int x, int y, Farmer f, bool show_error)
         {
             if (Utility.isPlacementForbiddenHere(location))
             {
@@ -248,55 +273,35 @@ namespace NewGamePlus
             }
             bool withinRadius = false;
             Vector2 tileLocation = new Vector2(x / 64, y / 64);
-            Vector2 playerTile = f.getTileLocation();
+            Vector2 playerTile = f.Tile;
             for (int ix = (int)tileLocation.X; ix < (int)tileLocation.X + 4; ++ix)
             {
                 for (int iy = (int)tileLocation.Y; iy < (int)tileLocation.Y + 2; ++iy)
                 {
-                    if (Math.Abs(ix - playerTile.X) <= 1 && Math.Abs(iy - playerTile.Y) <= 1)
+                    if (Math.Abs(ix - playerTile.X) <= 4 && Math.Abs(iy - playerTile.Y) <= 4)
                     {
                         withinRadius = true;
                     }
                 }
             }
 
-            if (withinRadius || (item is Wallpaper && location is DecoratableLocation) || (item is Furniture furniture && location.CanPlaceThisFurnitureHere(furniture)))
+            if (withinRadius)
             {
                 if (item.canBePlacedHere(location, tileLocation))
                 {
-                    if (!((StardewValley.Object)item).isPassable())
-                    {
-                        foreach (Farmer farmer in location.farmers)
-                        {
-                            for (int ix = (int)tileLocation.X; ix < (int)tileLocation.X + 4; ++ix)
-                            {
-                                for (int iy = (int)tileLocation.Y; iy < (int)tileLocation.Y + 2; ++iy)
-                                {
-                                    if (farmer.GetBoundingBox().Intersects(new Rectangle(ix * 64, iy * 64, 64, 64)))
-                                    {
-                                        return false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    var itemCanBePlaced = Mod.instance.Helper.Reflection.GetMethod(typeof(Utility), "itemCanBePlaced");
-                    if (itemCanBePlaced.Invoke<bool>(location, tileLocation, item) || Utility.isViableSeedSpot(location, tileLocation, item))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
             return false;
         }
 
-        public static bool Prefix(GameLocation location, Item item, int x, int y, Farmer f, ref bool __result)
+        public static bool Prefix(GameLocation location, Item item, int x, int y, Farmer f, bool show_error, ref bool __result)
         {
-            if (item is StableToken)
+            if (item.ItemId == $"{Mod.instance.ModManifest.UniqueID}_StableToken")
             {
-                __result = Impl(location, item, x, y, f);
-                Log.Debug("result:" + __result);
+                __result = Impl(location, item, x, y, f, show_error);
+                Console.WriteLine("meow:" + __result);
                 return false;
             }
             return true;

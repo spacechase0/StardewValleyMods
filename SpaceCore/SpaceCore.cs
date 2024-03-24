@@ -90,7 +90,7 @@ namespace SpaceCore
             GameLocation.RegisterTileAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
             {
                 var triggers = TriggerActionManager.GetActionsForTrigger("Manual");
-                var trigger = triggers.FirstOrDefault(t => t.Data.Id == args[0]);
+                var trigger = triggers.FirstOrDefault(t => t.Data.Id == args[1]);
                 if (trigger != null)
                 {
                     foreach (var action in trigger.Actions)
@@ -109,7 +109,7 @@ namespace SpaceCore
             GameLocation.RegisterTouchAction("spacechase0.SpaceCore_TriggerAction", (loc, args, farmer, pos) =>
             {
                 var triggers = TriggerActionManager.GetActionsForTrigger("Manual");
-                var trigger = triggers.FirstOrDefault(t => t.Data.Id == args[0]);
+                var trigger = triggers.FirstOrDefault(t => t.Data.Id == args[1]);
                 if (trigger != null)
                 {
                     foreach (var action in trigger.Actions)

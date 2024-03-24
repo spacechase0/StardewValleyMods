@@ -3,8 +3,13 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.0.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
-    <EnableHarmony>true</EnableHarmony>
+    <Name>Gradient Hair Colors</Name>
+    <Version>1.1.1</Version>
+    <UpdateKeys>Nexus:12744</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
 </Project>

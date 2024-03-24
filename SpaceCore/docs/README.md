@@ -92,6 +92,8 @@ Provided functionality for content pack authors:
             * `OverrideText` - You can override the text shown for the ingredient by specifying this. Required for `Type`=`"ContextTag"`
             * `OverrideTexturePath` - The path to texture to use for this ingredient. You can use a vanilla texture path, or one from your mod using the `{{InternalAssetKey}}` token. Required for `Type`=`"ContextTag"`
             * `OverrideTextureRect` - If using `OverrideTexturePath`, where on the texture should be displayed for this ingredient. Required for `Type`=`"ContextTag"`
+    * Farm Types - Stored in `spacechase0.SpaceCore/FarmExtensionData`:
+        * This lets you place buildings (with or without animals) and fences on the farm at creation. Example [here](https://gist.github.com/spacechase0/063505cabbed28dfa94b802b28857885).
 * Animations - You can animate textures by editing `"spacechase0.SpaceCore/TextureOverrides"`, which is a dictionary with the key being the ID of your animation, and the following information:
     * `TargetTexture` - The path to the file you want to animate.
     * `TargetRect` - The rectangle in the target file you want to animate. Example: `{ "X": 32, "Y": 48, "Width": 16, "Height": 16 }`

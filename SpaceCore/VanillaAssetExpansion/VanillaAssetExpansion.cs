@@ -225,6 +225,8 @@ namespace SpaceCore.VanillaAssetExpansion
                 e.LoadFrom(() => new Dictionary<string, NpcExtensionData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/ShopExtensionData"))
                 e.LoadFrom(() => new Dictionary<string, ShopExtensionData>(), AssetLoadPriority.Low);
+            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/FarmExtensionData"))
+                e.LoadFrom(() => new Dictionary<string, FarmExtensionData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/TextureOverrides"))
                 e.LoadFrom(() => new Dictionary<string, TextureOverridePackData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/CraftingRecipeOverrides"))
