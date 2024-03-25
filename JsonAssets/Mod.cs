@@ -587,7 +587,7 @@ namespace JsonAssets
                     PurchaseFrom = hat.PurchaseFrom,
                     Price = hat.PurchasePrice,
                     PurchaseRequirements = ParsedConditions.AlwaysTrue,
-                    Object = () => new Hat(hat.Name)
+                    Object = () => new Hat(hat.Name.FixIdJA())
                 });
             }
 
