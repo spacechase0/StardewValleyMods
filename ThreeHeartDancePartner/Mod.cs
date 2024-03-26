@@ -79,10 +79,14 @@ namespace ThreeHeartDancePartner
 
             // check if rejection dialogue
             Dialogue dialog = dialogBox.characterDialogue;
+            if(dialog == null || dialog.speaker == null) // I got a nullPointerException becuase of this at the end of the flower dance.
+            {
+                return;
+            }
             NPC npc = dialog.speaker;
             if (!npc.datable.Value || npc.HasPartnerForDance)
                 return;
-            string rejectionText = new Dialogue(Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{dialog.speaker.Name}")["danceRejection"], dialog.speaker).getCurrentDialogue();
+            string rejectionText = Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{dialog.speaker.Name}")["FlowerDance_Decline"];
             if (dialog.getCurrentDialogue() != rejectionText)
                 return;
 
@@ -90,12 +94,20 @@ namespace ThreeHeartDancePartner
             // The original stuff, only the relationship point check is modified
             if (!npc.HasPartnerForDance && Game1.player.getFriendshipLevelForNPC(npc.Name) >= this.Config.RequiredHearts * NPC.friendshipPointsPerHeartLevel)
             {
-                string s = npc.Gender switch
+                string s;
+                if (npc.isMarried())
                 {
-                    NPC.male => Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1633"),
-                    NPC.female => Game1.content.LoadString("Strings\\StringsFromCSFiles:Event.cs.1634"),
-                    _ => ""
-                };
+                    s = Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{dialog.speaker.Name}")["FlowerDance_Accept_Spouse"];
+                }else if (npc.isRoommate())
+                {
+                    s = Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{dialog.speaker.Name}")["FlowerDance_Accept_Roommate"];
+                }
+                else
+                {
+                    s = Game1.content.Load<Dictionary<string, string>>($"Characters\\Dialogue\\{dialog.speaker.Name}")["FlowerDance_Accept"];
+                }
+                
+
                 try
                 {
                     Game1.player.changeFriendship(250, Game1.getCharacterFromName(npc.Name));
@@ -104,7 +116,7 @@ namespace ThreeHeartDancePartner
                 {
                 }
                 Game1.player.dancePartner.Value = npc;
-                npc.setNewDialogue(s);
+                npc.setNewDialogue(new Dialogue(npc, null, s));
 
                 foreach (NPC actor in festival.actors)
                 {
@@ -113,7 +125,7 @@ namespace ThreeHeartDancePartner
                 }
 
                 // Okay, looks like I need to fix the current dialog box
-                Game1.activeClickableMenu = new DialogueBox(new Dialogue(s, npc) { removeOnNextMove = false });
+                Game1.activeClickableMenu = new DialogueBox(new Dialogue(npc, null, s) { removeOnNextMove = false });
             }
         }
     }
