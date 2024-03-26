@@ -257,8 +257,26 @@ namespace RushOrders
         private static MethodInfo GetToolUpgradePriceInfo;
         public static int GetToolUpgradePrice(int level)
         {
-            Mod.GetToolUpgradePriceInfo ??= Mod.Instance.Helper.Reflection.GetMethod(typeof(Utility), "priceForToolUpgradeLevel").MethodInfo;
-            return (int)Mod.GetToolUpgradePriceInfo.Invoke(null, new object[] { level });
+            int price;
+            if (level == 0)
+            {
+                price = 2000;
+            }
+            else if (level == 1)
+            {
+                price = 5000;
+            }
+            else if (level == 2)
+            {
+                price = 10000;
+            }
+            else if (level == 3)
+            {
+                price = 25000;
+            }
+            else price = 0;
+            //Mod.GetToolUpgradePriceInfo ??= Mod.Instance.Helper.Reflection.GetMethod(typeof(Utility), "priceForToolUpgradeLevel").MethodInfo;
+            return price;
         }
 
         public static void RushBuilding()
