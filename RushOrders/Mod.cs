@@ -310,13 +310,15 @@ namespace RushOrders
                 Building building = GetConstructingBuilding();
                 if (building.daysOfConstructionLeft.Value > 0)
                 {
-                    BluePrint bp = new BluePrint(building.buildingType.Value);
-                    num = bp.moneyRequired;
+                    num = building.GetData().BuildCost;
                 }
                 else if (building.daysUntilUpgrade.Value > 0)
                 {
-                    BluePrint bp = new BluePrint(building.getNameOfNextUpgrade());
-                    num = bp.moneyRequired;
+                    //Stole this line from Building.FinishConstruction()
+                    string nextUpgrade = building.upgradeName.Value ?? "Well";
+                    //Cannot construct a Building without a Vector2 object
+                    Building upgrade = new Building(nextUpgrade, new Microsoft.Xna.Framework.Vector2());
+                    num = upgrade.GetData().BuildCost;
                 }
             }
 
