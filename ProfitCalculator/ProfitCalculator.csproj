@@ -3,7 +3,11 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.0.4</Version>
-    <TargetFramework>net5.0</TargetFramework>
+    <Name>Profit Calculator</Name>
+    <Description>Calculate the profits from growing each crop for an entire season.</Description>
+    <Version>1.1.0</Version>
+    <TargetFramework>net6.0</TargetFramework>
+    <UpdateKeys>Nexus:3378</UpdateKeys>
+    <MinimumApiVersion>4.0.0</MinimumApiVersion>
   </PropertyGroup>
 </Project>
