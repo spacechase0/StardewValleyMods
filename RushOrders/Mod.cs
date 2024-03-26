@@ -157,7 +157,7 @@ namespace RushOrders
                 toolRush.description = I18n.Clint_Rush_Description() + Environment.NewLine + Environment.NewLine + tool.description;
                 toolNow.description = I18n.Clint_Instant_Description() + Environment.NewLine + Environment.NewLine + tool.description;
 
-                int price = Mod.GetToolUpgradePrice(tool.UpgradeLevel);
+                int price = Mod.GetToolUpgradePrice(tool);
                 if (entry.Value.Price == price)
                 {
                     var entryDataRush = entry.Value.Clone();
@@ -227,21 +227,21 @@ namespace RushOrders
             bool hasDialog = clint?.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317");
             if (hasDialog && !Mod.HadDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null)
             {
-                int curPrice = Mod.GetToolUpgradePrice(Game1.player.toolBeingUpgraded.Value.UpgradeLevel);
+                int curPrice = Mod.GetToolUpgradePrice(Game1.player.toolBeingUpgraded.Value);
                 int diff = Mod.PrevMoney - Game1.player.Money;
 
                 if (diff == (int)(curPrice * Mod.ModConfig.PriceFactor.Tool.Now))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
-                    Game1.DrawDialogue(clint, I18n.Clint_Instant_Dialogue());
+                    Game1.drawObjectDialogue(I18n.Clint_Instant_Dialogue());
                     Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
                 else if (diff == (int)(curPrice * Mod.ModConfig.PriceFactor.Tool.Rush))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
-                    Game1.DrawDialogue(clint, I18n.Clint_Rush_Dialogue());
+                    Game1.drawObjectDialogue(I18n.Clint_Rush_Dialogue());
                     Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
             }
@@ -255,26 +255,29 @@ namespace RushOrders
         }
 
         private static MethodInfo GetToolUpgradePriceInfo;
-        public static int GetToolUpgradePrice(int level)
+        public static int GetToolUpgradePrice(Tool tool)
         {
             int price;
-            if (level == 1)
-            {
-                price = 2000;
+            if (tool.GetToolData().SalePrice == -1) {
+                if (tool.GetToolData().UpgradeLevel == 1)
+                {
+                    price = 2000;
+                }
+                else if (tool.GetToolData().UpgradeLevel == 2)
+                {
+                    price = 5000;
+                }
+                else if (tool.GetToolData().UpgradeLevel == 3)
+                {
+                    price = 10000;
+                }
+                else if (tool.GetToolData().UpgradeLevel == 4)
+                {
+                    price = 25000;
+                }
+                else price = 0;
             }
-            else if (level == 2)
-            {
-                price = 5000;
-            }
-            else if (level == 3)
-            {
-                price = 10000;
-            }
-            else if (level == 4)
-            {
-                price = 25000;
-            }
-            else price = 0;
+            else price = tool.GetToolData().SalePrice;
             //Mod.GetToolUpgradePriceInfo ??= Mod.Instance.Helper.Reflection.GetMethod(typeof(Utility), "priceForToolUpgradeLevel").MethodInfo;
             return price;
         }
