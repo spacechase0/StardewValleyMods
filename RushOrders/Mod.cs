@@ -234,14 +234,14 @@ namespace RushOrders
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(clint, I18n.Clint_Instant_Dialogue());
+                    Game1.DrawDialogue(clint, I18n.Clint_Instant_Dialogue());
                     Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
                 else if (diff == (int)(curPrice * Mod.ModConfig.PriceFactor.Tool.Rush))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(clint, I18n.Clint_Rush_Dialogue());
+                    Game1.DrawDialogue(clint, I18n.Clint_Rush_Dialogue());
                     Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
             }
