@@ -188,10 +188,27 @@ namespace RushOrders
                 return true;
 
             // building
-            Building constructing = Game1.getFarm().getBuildingUnderConstruction();
+            Building constructing = GetConstructingBuilding();
             return constructing != null && (constructing.daysOfConstructionLeft.Value > 1 || constructing.daysUntilUpgrade.Value > 1);
         }
 
+        /// <summary>Get whichever non-farmhouse building is being upgraded or constructed. Returns null if none are.</summary>
+        private static Building GetConstructingBuilding()
+        {
+            List<GameLocation> buildableLocations = new List<GameLocation>();
+            foreach (GameLocation location in Game1.locations)
+            {
+                if (location.IsBuildableLocation()) buildableLocations.Add(location);
+            }
+            foreach (GameLocation location in buildableLocations)
+            {
+                foreach (Building building in location.buildings)
+                {
+                    if (building.daysOfConstructionLeft.Value > 1 || building.daysUntilUpgrade.Value > 1) return building;
+                }
+            }
+            return null;
+        }
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
@@ -243,9 +260,9 @@ namespace RushOrders
         {
             if (Game1.player.daysUntilHouseUpgrade.Value > 0)
                 Game1.player.daysUntilHouseUpgrade.Value--;
-            else if (Game1.getFarm().getBuildingUnderConstruction() != null)
+            else if (GetConstructingBuilding() != null)
             {
-                Building building = Game1.getFarm().getBuildingUnderConstruction();
+                Building building = GetConstructingBuilding();
                 if (building.daysOfConstructionLeft.Value > 0)
                     building.daysOfConstructionLeft.Value--;
                 else if (building.daysUntilUpgrade.Value > 0)
@@ -258,9 +275,9 @@ namespace RushOrders
         {
             if (Game1.player.daysUntilHouseUpgrade.Value > 0)
                 return Game1.player.daysUntilHouseUpgrade.Value;
-            else if (Game1.getFarm().getBuildingUnderConstruction() != null)
+            else if (GetConstructingBuilding() != null)
             {
-                Building building = Game1.getFarm().getBuildingUnderConstruction();
+                Building building = GetConstructingBuilding();
                 if (building.daysOfConstructionLeft.Value > 0)
                     return building.daysOfConstructionLeft.Value;
                 else if (building.daysUntilUpgrade.Value > 0)
@@ -283,9 +300,9 @@ namespace RushOrders
                     _ => num
                 };
             }
-            else if (Game1.getFarm().getBuildingUnderConstruction() != null)
+            else if (GetConstructingBuilding() != null)
             {
-                Building building = Game1.getFarm().getBuildingUnderConstruction();
+                Building building = GetConstructingBuilding();
                 if (building.daysOfConstructionLeft.Value > 0)
                 {
                     BluePrint bp = new BluePrint(building.buildingType.Value);
