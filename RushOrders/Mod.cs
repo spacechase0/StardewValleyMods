@@ -122,7 +122,7 @@ namespace RushOrders
             var items = shop.forSale;
             foreach (var entry in stock)
             {
-                if (entry.Key is not (Tool tool and (Axe or Pickaxe or Hoe or WateringCan)))
+                if (entry.Key is not (Tool tool and (Axe or Pickaxe or Hoe or WateringCan or Pan)))
                     continue;
 
                 // I'm going to edit the description, and I don't want to affect the original shop entry
@@ -146,6 +146,11 @@ namespace RushOrders
                 {
                     toolRush = new WateringCan();
                     toolNow = new WateringCan();
+                }
+                else if (tool is Pan)
+                {
+                    toolRush = new Pan();
+                    toolNow = new Pan();
                 }
                 toolRush.UpgradeLevel = tool.UpgradeLevel;
                 toolNow.UpgradeLevel = tool.UpgradeLevel;
