@@ -1,0 +1,71 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // filter labels
+    "filter.category": "Catégorie :",
+    "filter.sorting": "Trier :",
+
+    // sort types
+    "sort.none": "Aucun",
+    "sort.name": "Nom",
+    "sort.price": "Prix",
+
+    //quantity dialog
+    "quantity.name" :  "Quantité",
+
+    // category names
+    "categories.everything": "Tout",
+    "categories.other": "Autre",
+    "categories.artisan-goods": "Produits Artisanaux",
+    "categories.bait": "Appâts",
+    "categories.big-craftables": "Grosses Fabrications",
+    "categories.boots": "Chaussures",
+    "categories.building-resources": "Ressources de construction",
+    "categories.clothing": "Vêtements",
+    "categories.cooking": "Cuisine",
+    "categories.crafting": "Fabrication",
+    "categories.eggs": "Oeuf",
+    "categories.equipment": "Équipement",
+    "categories.fertilizer": "Engrais",
+    "categories.fish": "Poisson",
+    "categories.flowers": "Fleurs",
+    "categories.fruits": "Fruits",
+    "categories.furniture": "Meubles",
+    "categories.gems": "Gemmes",
+    "categories.greens": "Légumes verts",
+    "categories.hats": "Chapeaux",
+    "categories.ingredients": "Ingrédients",
+    "categories.junk": "Ordures",
+    "categories.meat": "Viande",
+    "categories.metals": "Métaux",
+    "categories.milk": "Lait",
+    "categories.minerals": "Minéraux",
+    "categories.monster-loot": "Butin de Monstre",
+    "categories.recipes": "Recettes",
+    "categories.rings": "Anneaux",
+    "categories.seeds": "Graines",
+    "categories.seedsOther": "Autres Graines",
+    "categories.sell-to-pierre-or-marnie": "Vendable chez Pierre/Marnie",
+    "categories.sell-to-pierre": "Vendable chez Pierre",
+    "categories.sell-to-willy": "Vendable chez Willy",
+    "categories.syrups": "Sirops",
+    "categories.tackle": "Matériel de pêche",
+    "categories.tools": "Outils",
+    "categories.vegetables": "Légumes",
+    "categories.weapons": "Armes",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.grid-layout.name": "Disposition de la grille",
+    "config.grid-layout.tooltip": "S'il faut utiliser la disposition en grille dans les magasins.",
+
+    "config.quantity-dialog.name": "Demander Quantité",
+    "config.quantity-dialog.tooltip": "Ouvre une boîte de dialogue pour demander un nombre d'achat personnalisé. Ouvrir avec Alt gauche/Option + clic droit.",
+
+    /** grid/std layout button hover text */
+    "button.grid-layout.tooltip": "Sélectionner la disposition en grille",
+    "button.std-layout.tooltip": "Sélectionner la disposition standard"
+}
