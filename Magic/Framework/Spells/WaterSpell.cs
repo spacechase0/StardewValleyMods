@@ -53,7 +53,7 @@ namespace Magic.Framework.Spells
 
                     player.AddMana(-4);
                     player.AddCustomSkillExperience(Magic.Skill, 1);
-                    loc.localSoundAt("wateringCan", tile);
+                    loc.localSound("wateringCan", tile);
                 }
             }
 

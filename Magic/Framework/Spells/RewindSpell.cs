@@ -19,7 +19,7 @@ namespace Magic.Framework.Spells
 
         public override bool CanCast(Farmer player, int level)
         {
-            return base.CanCast(player, level) && player.hasItemInInventory(336, 1);
+            return base.CanCast(player, level) && player.Items.ContainsId("336", 1);
         }
 
         public override int GetManaCost(Farmer player, int level)
@@ -29,7 +29,7 @@ namespace Magic.Framework.Spells
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
-            player.consumeObject(336, 1);
+            player.Items.ReduceId("336", 1);
             Game1.timeOfDay -= 200;
             player.AddCustomSkillExperience(Magic.Skill, 25);
             return null;

@@ -234,7 +234,7 @@ namespace SpaceCore
                     }
                     foreach (NPC ch in Game1.locations[i].characters)
                     {
-                        if (!ch.eventActor && ch.isVillager())
+                        if (ch.IsVillager)
                         {
                             if (!dict.ContainsKey(ch.Name))
                                 dict.Add(ch.Name, new());

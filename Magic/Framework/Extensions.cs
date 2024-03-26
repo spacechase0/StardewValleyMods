@@ -47,7 +47,7 @@ namespace Magic.Framework
                 x: (int)(pixelPosition.X / Game1.tileSize),
                 y: (int)(pixelPosition.Y / Game1.tileSize)
             );
-            location.localSoundAt(audioName, tile);
+            location.playSound(audioName, tile);
         }
 
         /// <summary>Play a local sound centered on the given player.</summary>

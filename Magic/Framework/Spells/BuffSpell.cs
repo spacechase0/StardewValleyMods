@@ -6,6 +6,7 @@ namespace Magic.Framework.Spells
 {
     internal class BuffSpell : Spell
     {
+        private static readonly string BuffId = "space:spell:life:buff";
         /*********
         ** Public methods
         *********/
@@ -16,10 +17,9 @@ namespace Magic.Framework.Spells
         {
             if (player == Game1.player)
             {
-                foreach (var buff in Game1.buffsDisplay.otherBuffs)
+                if (Game1.player.buffs.IsApplied(BuffId))
                 {
-                    if (buff.source == "spell:life:buff")
-                        return false;
+                    return false;
                 }
             }
 
@@ -36,14 +36,11 @@ namespace Magic.Framework.Spells
             if (player != Game1.player)
                 return null;
 
-            foreach (var buff in Game1.buffsDisplay.otherBuffs)
-            {
-                if (buff.source == "spell:life:buff")
+            if (Game1.player.buffs.AppliedBuffIds.Contains(BuffId)) { 
                     return null;
             }
 
-            Game1.player.removeBuffAttributes();
-            Game1.player.attack = 0;
+            Game1.player.buffs.Clear();
 
             int l = level + 1;
             int farm = l, fish = l, mine = l, luck = l, forage = l, def = 0 /*1*/, atk = 2;
@@ -54,7 +51,8 @@ namespace Magic.Framework.Spells
                 _ => atk
             };
 
-            Game1.buffsDisplay.addOtherBuff(new Buff(farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, "spell:life:buff", "Buff (spell)"));
+            // TODO: Resurrect this with the new 1.6 buff framework. Losing a spell > losing the entire mod.
+            //Game1.buffsDisplay.addOtherBuff(new Buff(BuffId,farm, fish, mine, 0, luck, forage, 0, 0, 0, 0, def, atk, 60 + level * 120, , "Buff (spell)"));
             player.AddCustomSkillExperience(Magic.Skill, 10);
             return null;
         }

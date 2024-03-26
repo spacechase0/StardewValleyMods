@@ -35,7 +35,11 @@ namespace Magic.Framework.Game
         *********/
         public SpellProjectile()
         {
-            this.NetFields.AddFields(this.Damage, this.Direction, this.Velocity, this.IsSeeking, this.TexId);
+            this.NetFields.AddField(this.Damage);
+            this.NetFields.AddField(this.Direction);
+            this.NetFields.AddField(this.Velocity);
+            this.NetFields.AddField(this.IsSeeking);
+            this.NetFields.AddField(this.TexId);
         }
 
         public SpellProjectile(Farmer source, ProjectileSpell spell, int damage, float direction, float velocity, bool isSeeking)
@@ -81,11 +85,6 @@ namespace Magic.Framework.Game
             }
         }
 
-        public override void behaviorOnCollisionWithMineWall(int tileX, int tileY)
-        {
-            //disappear(loc);
-        }
-
         public override void behaviorOnCollisionWithMonster(NPC npc, GameLocation loc)
         {
             if (npc is not Monster)
@@ -113,13 +112,16 @@ namespace Magic.Framework.Game
                 this.Disappear(loc);
         }
 
-        public override bool isColliding(GameLocation location)
+        public override bool isColliding(GameLocation location, out Character target, out TerrainFeature terrainFeature)
         {
             if (this.IsSeeking.Value)
             {
+                target = null;
+                terrainFeature = null;
                 return location.doesPositionCollideWithCharacter(this.getBoundingBox()) != null;
             }
-            else return base.isColliding(location);
+
+            return base.isColliding(location, out target, out terrainFeature);
         }
 
         public override Rectangle getBoundingBox()
@@ -138,7 +140,7 @@ namespace Magic.Framework.Game
                 }
                 else
                 {
-                    Vector2 unit = new Vector2(this.SeekTarget.GetBoundingBox().Center.X + 32, this.SeekTarget.GetBoundingBox().Center.Y + 32) - this.position;
+                    Vector2 unit = new Vector2(this.SeekTarget.GetBoundingBox().Center.X + 32, this.SeekTarget.GetBoundingBox().Center.Y + 32) - this.position.Value;
                     unit.Normalize();
 
                     this.xVelocity.Value = unit.X * this.Velocity.Value;

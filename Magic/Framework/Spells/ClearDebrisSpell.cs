@@ -83,7 +83,7 @@ namespace Magic.Framework.Spells
                             {
                                 player.AddMana(-3);
                             }
-                            if (feature.performToolAction(axe, 0, tile, loc) || feature is Grass || (feature is Tree && feature.performToolAction(axe, 0, tile, loc)))
+                            if (feature.performToolAction(axe, 0, tile) || feature is Grass || (feature is Tree && feature.performToolAction(axe, 0, tile)))
                             {
                                 if (feature is Tree)
                                     player.AddCustomSkillExperience(Magic.Skill, 5);
@@ -92,9 +92,9 @@ namespace Magic.Framework.Spells
                             if (feature is Grass && loc is Farm farm)
                             {
                                 farm.tryToAddHay(1);
-                                loc.localSoundAt("swordswipe", tile);
+                                loc.localSound("swordswipe", tile);
                                 farm.temporarySprites.Add(new TemporaryAnimatedSprite(28, tile * Game1.tileSize + new Vector2(Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4), Game1.random.Next(-Game1.pixelZoom * 4, Game1.pixelZoom * 4)), Color.Green, 8, Game1.random.NextDouble() < 0.5, Game1.random.Next(60, 100)));
-                                farm.temporarySprites.Add(new TemporaryAnimatedSprite(Game1.objectSpriteSheetName, Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 178, 16, 16), 750f, 1, 0, player.position - new Vector2(0.0f, Game1.tileSize * 2), false, false, player.position.Y / 10000f, 0.005f, Color.White, Game1.pixelZoom, -0.005f, 0.0f, 0.0f)
+                                farm.temporarySprites.Add(new TemporaryAnimatedSprite(Game1.objectSpriteSheetName, Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 178, 16, 16), 750f, 1, 0, player.position.Value - new Vector2(0.0f, Game1.tileSize * 2), false, false, player.position.Y / 10000f, 0.005f, Color.White, Game1.pixelZoom, -0.005f, 0.0f, 0.0f)
                                 {
                                     motion = { Y = -1f },
                                     layerDepth = (float)(1.0 - Game1.random.Next(100) / 10000.0),
@@ -108,16 +108,14 @@ namespace Magic.Framework.Spells
                     {
                         ICollection<ResourceClump> clumps = loc.resourceClumps;
 
-                        if (loc is Woods woods)
-                            clumps = woods.stumps;
                         if (clumps != null)
                         {
                             foreach (var rc in clumps)
                             {
-                                if (new Rectangle((int)rc.tile.X, (int)rc.tile.Y, rc.width.Value, rc.height.Value).Contains(tileX, tileY))
+                                if (new Rectangle((int)rc.Tile.X, (int)rc.Tile.Y, rc.width.Value, rc.height.Value).Contains(tileX, tileY))
                                 {
                                     player.AddMana(-3);
-                                    if (rc.performToolAction(axe, 1, tile, loc) || rc.performToolAction(pickaxe, 1, tile, loc))
+                                    if (rc.performToolAction(axe, 1, tile) || rc.performToolAction(pickaxe, 1, tile))
                                     {
                                         clumps.Remove(rc);
                                         player.AddCustomSkillExperience(Magic.Skill, 10);

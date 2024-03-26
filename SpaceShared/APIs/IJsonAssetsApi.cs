@@ -27,6 +27,8 @@ namespace SpaceShared.APIs
         List<string> GetAllClothingFromContentPack(string cp);
         List<string> GetAllBootsFromContentPack(string cp);
 
+        public string GetObjectId(string name);
+
         event EventHandler ItemsRegistered;
         event EventHandler AddedItemsToShop;
     }

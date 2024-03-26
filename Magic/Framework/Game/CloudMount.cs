@@ -61,7 +61,7 @@ namespace Magic.Framework.Game
             this.dismounting.Value = true;
             this.farmerPassesThrough = false;
             this.rider.TemporaryPassableTiles.Clear();
-            Vector2 tileForCharacter = Utility.recursiveFindOpenTileForCharacter(this.rider, this.rider.currentLocation, this.rider.getTileLocation(), 9 * 9);
+            Vector2 tileForCharacter = Utility.recursiveFindOpenTileForCharacter(this.rider, this.rider.currentLocation, this.rider.Tile, 9 * 9);
             this.dismounting.Value = false;
             this.Halt();
             if (!tileForCharacter.Equals(Vector2.Zero) /*&& (double)Vector2.Distance(tileForCharacter, this.rider.getTileLocation()) < 2.0*/)
