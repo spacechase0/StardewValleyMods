@@ -1,0 +1,19 @@
+﻿{
+    // Generic Mod Config Menu UI
+    "config.custom-skill-page.name": "Page de compétences personnalisées",
+    "config.custom-skill-page.tooltip": "Possibilité d'afficher la page de compétences personnalisées.\nCela déplacera le portefeuille afin qu'il y ait de la place pour plus de compétences.",
+    "config.support-all-professions-mod.name": "Prendre en charge le mod All Professions",
+    "config.support-all-professions-mod.tooltip": "Lorsque All Professions est installé, indique s'il faut automatiquement appliquer les professions personnalisées enregistrées via SpaceCore lorsque leur niveau est atteint.",
+    "config.advanced-social-interactions": "Interactions Sociales Avancées",
+    "config.always-trigger.name": "Toujours déclencher",
+    "config.always-trigger.description": "Si le menu doit toujours se déclencher lors de l'interaction avec un PNJ.",
+    "config.trigger-modifier.name": "Modificateur de déclenchement",
+    "config.trigger-modifier.description": "La touche à maintenir lorsque vous interagissez avec quelqu'un pour déclencher le menu d'interaction avancée.",
+
+    "interaction-with": "Interaction avec {{npc}}",
+    "interaction.chat": "Discuter",
+    "interaction.gift-held": "Donner en cadeau l'objet tenu",
+    "interaction.cancel": "Annuler",
+
+    "question.ask": "Poser une question"
+}
