@@ -258,19 +258,19 @@ namespace RushOrders
         public static int GetToolUpgradePrice(int level)
         {
             int price;
-            if (level == 0)
+            if (level == 1)
             {
                 price = 2000;
             }
-            else if (level == 1)
+            else if (level == 2)
             {
                 price = 5000;
             }
-            else if (level == 2)
+            else if (level == 3)
             {
                 price = 10000;
             }
-            else if (level == 3)
+            else if (level == 4)
             {
                 price = 25000;
             }
