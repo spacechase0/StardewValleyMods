@@ -175,7 +175,11 @@ namespace LuckSkill
             }
             if (Game1.player.professions.Contains(Mod.PopularHelperProfessionId) && Game1.questOfTheDay == null)
             {
-                if (Utility.isFestivalDay(Game1.dayOfMonth, Game1.currentSeason) || Utility.isFestivalDay(Game1.dayOfMonth + 1, Game1.currentSeason))
+                if (!Game1.IsMasterGame)
+                {
+                    // Only enable on host to avoid messing multiplayer synch
+                }
+                if (!Utility.isFestivalDay() && !Utility.isFestivalDay(Game1.dayOfMonth + 1, Game1.season))
                 {
                     // Vanilla code doesn't put quests on these days.
                 }
@@ -184,21 +188,21 @@ namespace LuckSkill
                     Quest quest = null;
                     for (uint i = 0; i < 2 && quest == null; ++i)
                     {
-                        Game1.stats.daysPlayed += i * 999999; // To rig the rng to not just give the same results.
+                        Game1.stats.DaysPlayed += i * 999999; // To rig the rng to not just give the same results.
                         try // Just in case. Want to make sure stats.daysPlayed gets fixed
                         {
                             quest = Utility.getQuestOfTheDay();
                         }
                         finally
                         {
-                            Game1.stats.daysPlayed -= i * 999999;
+                            Game1.stats.DaysPlayed -= i * 999999;
                         }
                     }
 
                     if (quest != null)
                     {
                         Log.Info($"Applying quest {quest} for today, due to having PROFESSION_MOREQUESTS.");
-                        Game1.questOfTheDay = quest;
+                        Game1.netWorldState.Value.SetQuestOfTheDay(quest);
                     }
                 }
             }
@@ -232,8 +236,8 @@ namespace LuckSkill
                             GameLocation loc = locs[i];
                             if (loc == null) // From buildings without a valid indoors
                                 continue;
-                            if (loc is BuildableGameLocation bgl)
-                                locs.AddRange(bgl.buildings.Select(b => b.indoors.Value));
+                            if (loc.IsBuildableLocation())
+                                locs.AddRange(loc.buildings.Select(b => b.indoors.Value));
 
                             foreach (var entry in loc.objects.Pairs.ToList())
                             {
@@ -244,7 +248,7 @@ namespace LuckSkill
                                     if (dirt.crop == null || dirt.crop.fullyGrown.Value)
                                         continue;
 
-                                    dirt.crop.newDay(HoeDirt.watered, dirt.fertilizer.Value, (int)entry.Key.X, (int)entry.Key.Y, loc);
+                                    dirt.crop.newDay(1);
                                 }
                             }
 
@@ -256,15 +260,15 @@ namespace LuckSkill
                                     if (dirt.crop == null || dirt.crop.fullyGrown.Value)
                                         continue;
 
-                                    dirt.crop.newDay(HoeDirt.watered, dirt.fertilizer.Value, (int)entry.Key.X, (int)entry.Key.Y, loc);
+                                    dirt.crop.newDay(1);
                                 }
                                 else if (tf is FruitTree ftree)
                                 {
-                                    ftree.dayUpdate(loc, entry.Key);
+                                    ftree.dayUpdate();
                                 }
                                 else if (tf is Tree tree)
                                 {
-                                    tree.dayUpdate(loc, entry.Key);
+                                    tree.dayUpdate();
                                 }
                             }
                         }
@@ -304,7 +308,7 @@ namespace LuckSkill
                         Game1.showGlobalMessage(I18n.JunimoRewards_GrowGrass());
                     }
 
-                    if (r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(new SObject(SObject.prismaticShardIndex, 1)))
+                    if (r.Next() <= 0.05 && Game1.player.addItemToInventoryBool(ItemRegistry.Create("(O)74", 1)))
                     {
                         Game1.showGlobalMessage(I18n.JunimoRewards_PrismaticShard());
                         continue;
@@ -313,9 +317,9 @@ namespace LuckSkill
                     var animalHouses = new List<AnimalHouse>();
                     foreach (var loc in Game1.locations)
                     {
-                        if (loc is BuildableGameLocation bgl)
+                        if (loc.IsBuildableLocation())
                         {
-                            foreach (var building in bgl.buildings)
+                            foreach (var building in loc.buildings)
                             {
                                 if (building.indoors.Value is AnimalHouse ah)
                                 {
@@ -442,7 +446,7 @@ namespace LuckSkill
                     if (i == 0)
                         text = I18n.Skill_Name();
                     int num4 = Game1.player.LuckLevel;
-                    bool flag2 = (Game1.player.addedLuckLevel.Value > 0);
+                    bool flag2 = (Game1.player.buffs.LuckLevel > 0);
                     Rectangle empty = new Rectangle(50, 428, 10, 10);
 
                     if (!text.Equals(""))
@@ -489,13 +493,13 @@ namespace LuckSkill
                 FarmEvent ev = null;
                 //for (uint i = 0; i < 100 && ev == null; ++i) // Testing purposes.
                 {
-                    Game1.stats.daysPlayed += 999999; // To rig the rng to not just give the same results.
+                    Game1.stats.DaysPlayed += 999999; // To rig the rng to not just give the same results.
                     try // Just in case. Want to make sure stats.daysPlayed gets fixed
                     {
                         ev = this.PickFarmEvent();
                     }
                     catch (Exception) { }
-                    Game1.stats.daysPlayed -= 999999;
+                    Game1.stats.DaysPlayed -= 999999;
                     //if (ev != null) Log.Async("ev=" + ev + " " + (ev is SoundInTheNightEvent ? (Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "behavior") + " " + Util.GetInstanceField(typeof(SoundInTheNightEvent), ev, "soundName")) : "?"));
                     if (ev != null && ev.setUp())
                     {
@@ -548,7 +552,7 @@ namespace LuckSkill
                 return new WorldChangeEvent(10);
             if (Game1.player.mailForTomorrow.Contains("ccMovieTheater%&NL&%") || Game1.player.mailForTomorrow.Contains("ccMovieTheater"))
                 return new WorldChangeEvent(11);
-            if (Game1.MasterPlayer.eventsSeen.Contains(191393) && (Game1.isRaining || Game1.isLightning) && (!Game1.MasterPlayer.mailReceived.Contains("abandonedJojaMartAccessible") && !Game1.MasterPlayer.mailReceived.Contains("ccMovieTheater")))
+            if (Game1.MasterPlayer.eventsSeen.Contains("191393") && (Game1.isRaining || Game1.isLightning) && (!Game1.MasterPlayer.mailReceived.Contains("abandonedJojaMartAccessible") && !Game1.MasterPlayer.mailReceived.Contains("ccMovieTheater")))
                 return new WorldChangeEvent(12);
             if (random.NextDouble() < 0.01 && !Game1.currentSeason.Equals("winter"))
                 return new FairyEvent();
