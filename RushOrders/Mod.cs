@@ -89,13 +89,13 @@ namespace RushOrders
             {
                 case ShopMenu shop:
                     {
-                        switch (shop.portraitPerson?.Name)
+                        switch (shop.ShopId)
                         {
-                            case "Clint":
+                            case "ClintUpgrade":
                                 Mod.AddToolRushOrders(shop);
                                 break;
 
-                            case "Robin":
+                            case "Carpenter":
                                 if (this.HasBuildingToRush() && e.OldMenu is not RushConstructionMenu)
                                     Mod.DoRushBuildingDialogue();
                                 break;
@@ -122,7 +122,7 @@ namespace RushOrders
             var items = shop.forSale;
             foreach (var entry in stock)
             {
-                if (entry.Key is not (Tool tool and (Axe or Pickaxe or Hoe or WateringCan)))
+                if (entry.Key is not (Tool tool and (Axe or Pickaxe or Hoe or WateringCan or Pan)))
                     continue;
 
                 // I'm going to edit the description, and I don't want to affect the original shop entry
@@ -147,25 +147,30 @@ namespace RushOrders
                     toolRush = new WateringCan();
                     toolNow = new WateringCan();
                 }
+                else if (tool is Pan)
+                {
+                    toolRush = new Pan();
+                    toolNow = new Pan();
+                }
                 toolRush.UpgradeLevel = tool.UpgradeLevel;
                 toolNow.UpgradeLevel = tool.UpgradeLevel;
                 toolRush.description = I18n.Clint_Rush_Description() + Environment.NewLine + Environment.NewLine + tool.description;
                 toolNow.description = I18n.Clint_Instant_Description() + Environment.NewLine + Environment.NewLine + tool.description;
 
-                int price = Mod.GetToolUpgradePrice(tool.UpgradeLevel);
-                if (entry.Value.price == price)
+                int price = Mod.GetToolUpgradePrice(tool);
+                if (entry.Value.Price == price)
                 {
                     var entryDataRush = entry.Value.Clone();
                     var entryDataNow = entry.Value.Clone();
-                    entryDataRush.price = (int)(entry.Value.price * Mod.ModConfig.PriceFactor.Tool.Rush);
-                    entryDataNow.price = (int)(entry.Value.price * Mod.ModConfig.PriceFactor.Tool.Now);
+                    entryDataRush.Price = (int)(entry.Value.Price * Mod.ModConfig.PriceFactor.Tool.Rush);
+                    entryDataNow.Price = (int)(entry.Value.Price * Mod.ModConfig.PriceFactor.Tool.Now);
 
-                    if (entryDataRush.price != entry.Value.price && Mod.ModConfig.PriceFactor.Tool.Rush > 0)
+                    if (entryDataRush.Price != entry.Value.Price && Mod.ModConfig.PriceFactor.Tool.Rush > 0)
                     {
                         toAddStock.Add(toolRush, entryDataRush);
                         toAddItems.Add(toolRush);
                     }
-                    if (entryDataNow.price != entry.Value.price && Mod.ModConfig.PriceFactor.Tool.Now > 0)
+                    if (entryDataNow.Price != entry.Value.Price && Mod.ModConfig.PriceFactor.Tool.Now > 0)
                     {
                         toAddStock.Add(toolNow, entryDataNow);
                         toAddItems.Add(toolNow);
@@ -188,10 +193,27 @@ namespace RushOrders
                 return true;
 
             // building
-            Building constructing = Game1.getFarm().getBuildingUnderConstruction();
+            Building constructing = GetConstructingBuilding();
             return constructing != null && (constructing.daysOfConstructionLeft.Value > 1 || constructing.daysUntilUpgrade.Value > 1);
         }
 
+        /// <summary>Get whichever non-farmhouse building is being upgraded or constructed. Returns null if none are.</summary>
+        private static Building GetConstructingBuilding()
+        {
+            List<GameLocation> buildableLocations = new List<GameLocation>();
+            foreach (GameLocation location in Game1.locations)
+            {
+                if (location.IsBuildableLocation()) buildableLocations.Add(location);
+            }
+            foreach (GameLocation location in buildableLocations)
+            {
+                foreach (Building building in location.buildings)
+                {
+                    if (building.daysOfConstructionLeft.Value > 1 || building.daysUntilUpgrade.Value > 1) return building;
+                }
+            }
+            return null;
+        }
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
@@ -205,21 +227,21 @@ namespace RushOrders
             bool hasDialog = clint?.CurrentDialogue.Count > 0 && clint.CurrentDialogue.Peek().getCurrentDialogue() == Game1.content.LoadString("Strings\\StringsFromCSFiles:Tool.cs.14317");
             if (hasDialog && !Mod.HadDialogue && Game1.player.daysLeftForToolUpgrade.Value == 2 && Game1.player.toolBeingUpgraded.Value != null)
             {
-                int curPrice = Mod.GetToolUpgradePrice(Game1.player.toolBeingUpgraded.Value.UpgradeLevel);
+                int curPrice = Mod.GetToolUpgradePrice(Game1.player.toolBeingUpgraded.Value);
                 int diff = Mod.PrevMoney - Game1.player.Money;
 
                 if (diff == (int)(curPrice * Mod.ModConfig.PriceFactor.Tool.Now))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 0;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(clint, I18n.Clint_Instant_Dialogue());
+                    Game1.drawObjectDialogue(I18n.Clint_Instant_Dialogue());
                     Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
                 else if (diff == (int)(curPrice * Mod.ModConfig.PriceFactor.Tool.Rush))
                 {
                     Game1.player.daysLeftForToolUpgrade.Value = 1;
                     clint.CurrentDialogue.Pop();
-                    Game1.drawDialogue(clint, I18n.Clint_Rush_Dialogue());
+                    Game1.drawObjectDialogue(I18n.Clint_Rush_Dialogue());
                     Mod.Api.InvokeToolRushed(Game1.player.toolBeingUpgraded.Value);
                 }
             }
@@ -233,19 +255,40 @@ namespace RushOrders
         }
 
         private static MethodInfo GetToolUpgradePriceInfo;
-        public static int GetToolUpgradePrice(int level)
+        public static int GetToolUpgradePrice(Tool tool)
         {
-            Mod.GetToolUpgradePriceInfo ??= Mod.Instance.Helper.Reflection.GetMethod(typeof(Utility), "priceForToolUpgradeLevel").MethodInfo;
-            return (int)Mod.GetToolUpgradePriceInfo.Invoke(null, new object[] { level });
+            int price;
+            if (tool.GetToolData().SalePrice == -1) {
+                if (tool.GetToolData().UpgradeLevel == 1)
+                {
+                    price = 2000;
+                }
+                else if (tool.GetToolData().UpgradeLevel == 2)
+                {
+                    price = 5000;
+                }
+                else if (tool.GetToolData().UpgradeLevel == 3)
+                {
+                    price = 10000;
+                }
+                else if (tool.GetToolData().UpgradeLevel == 4)
+                {
+                    price = 25000;
+                }
+                else price = 0;
+            }
+            else price = tool.GetToolData().SalePrice;
+            //Mod.GetToolUpgradePriceInfo ??= Mod.Instance.Helper.Reflection.GetMethod(typeof(Utility), "priceForToolUpgradeLevel").MethodInfo;
+            return price;
         }
 
         public static void RushBuilding()
         {
             if (Game1.player.daysUntilHouseUpgrade.Value > 0)
                 Game1.player.daysUntilHouseUpgrade.Value--;
-            else if (Game1.getFarm().getBuildingUnderConstruction() != null)
+            else if (GetConstructingBuilding() != null)
             {
-                Building building = Game1.getFarm().getBuildingUnderConstruction();
+                Building building = GetConstructingBuilding();
                 if (building.daysOfConstructionLeft.Value > 0)
                     building.daysOfConstructionLeft.Value--;
                 else if (building.daysUntilUpgrade.Value > 0)
@@ -258,9 +301,9 @@ namespace RushOrders
         {
             if (Game1.player.daysUntilHouseUpgrade.Value > 0)
                 return Game1.player.daysUntilHouseUpgrade.Value;
-            else if (Game1.getFarm().getBuildingUnderConstruction() != null)
+            else if (GetConstructingBuilding() != null)
             {
-                Building building = Game1.getFarm().getBuildingUnderConstruction();
+                Building building = GetConstructingBuilding();
                 if (building.daysOfConstructionLeft.Value > 0)
                     return building.daysOfConstructionLeft.Value;
                 else if (building.daysUntilUpgrade.Value > 0)
@@ -283,18 +326,20 @@ namespace RushOrders
                     _ => num
                 };
             }
-            else if (Game1.getFarm().getBuildingUnderConstruction() != null)
+            else if (GetConstructingBuilding() != null)
             {
-                Building building = Game1.getFarm().getBuildingUnderConstruction();
+                Building building = GetConstructingBuilding();
                 if (building.daysOfConstructionLeft.Value > 0)
                 {
-                    BluePrint bp = new BluePrint(building.buildingType.Value);
-                    num = bp.moneyRequired;
+                    num = building.GetData().BuildCost;
                 }
                 else if (building.daysUntilUpgrade.Value > 0)
                 {
-                    BluePrint bp = new BluePrint(building.getNameOfNextUpgrade());
-                    num = bp.moneyRequired;
+                    //Stole this line from Building.FinishConstruction()
+                    string nextUpgrade = building.upgradeName.Value ?? "Well";
+                    //Cannot construct a Building without a Vector2 object
+                    Building upgrade = new Building(nextUpgrade, new Microsoft.Xna.Framework.Vector2());
+                    num = upgrade.GetData().BuildCost;
                 }
             }
 
@@ -307,10 +352,10 @@ namespace RushOrders
         internal static ItemStockInformation Clone(this ItemStockInformation isi)
         {
             ItemStockInformation ret = new();
-            ret.price = isi.price;
-            ret.stock = isi.stock;
-            ret.tradeItem = isi.tradeItem;
-            ret.tradeItemCount = isi.tradeItemCount;
+            ret.Price = isi.Price;
+            ret.Stock = isi.Stock;
+            ret.TradeItem = isi.TradeItem;
+            ret.TradeItemCount = isi.TradeItemCount;
             return ret;
         }
     }
