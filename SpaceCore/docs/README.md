@@ -238,7 +238,8 @@ The rest of the features assume you understand C# and the game code a little bit
             * `ExtraFields` - a `Dictionary<string, string>` that contains all the attributes you put on the element in the XML that weren't used in deserialition.
             * `UserData` - an `object` field for you to store whatever you want in
 * Content Engine
-    * *Also hard to document, go read the source ([here](https://github.com/spacechase0/StardewValleyMods/tree/develop/SpaceShared/Content)) or look at Moon Misadventures Redux for an example.
+    * Also hard to document, go read the source ([here](https://github.com/spacechase0/StardewValleyMods/tree/develop/SpaceShared/Content)) or look at Moon Misadventures Redux for an example.
+* `List<int> SpaceCore.GetLocalIndexForMethod(MethodBase meth, string local)` - gets the indices of all variables in a method using a given name. Used for transpilers.
 * Some other things that will remain undocumented because they will be removed soon.
 
 ## Compatibility

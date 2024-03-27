@@ -38,6 +38,8 @@ using StardewValley.BellsAndWhistles;
 using StardewValley.Delegates;
 using Location = xTile.Dimensions.Location;
 using StardewValley.TerrainFeatures;
+using System.Reflection.PortableExecutable;
+using System.Reflection.Metadata;
 
 namespace SpaceCore
 {
@@ -80,6 +82,8 @@ namespace SpaceCore
             SpaceCore.Reflection = helper.Reflection;
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<Configuration>();
+
+            GatherLocals();
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Input.ButtonPressed += this.Input_ButtonPressed;
@@ -221,6 +225,124 @@ namespace SpaceCore
                 new SkillBuffPatcher(),
                 new SpriteBatchPatcher()
             );
+        }
+
+        private static HashSet<string> ambiguousMethods = new();
+        private static Dictionary<string, Dictionary<string, List<int>>> locals = new();
+        public static List<int> GetLocalIndexForMethod(MethodBase meth, string local)
+        {
+            string fullDesc = meth.FullDescription();
+            if (ambiguousMethods.Contains(fullDesc))
+            {
+                Log.Warn($"{Assembly.GetCallingAssembly().FullName} just tried to get the locals for method '{fullDesc}' but it's an ambiguous match - we can't do that method due to the same parameter count and names, sorry!");
+                return null;
+            }
+            if (locals.TryGetValue(fullDesc, out var methLocals) && methLocals.TryGetValue(local, out var ret))
+            {
+                return ret;
+            }
+            return null;
+        }
+
+        private void GatherLocals()
+        {
+            using var fs = new FileStream(typeof(Game1).Assembly.Location, FileMode.Open, FileAccess.Read);
+            using var pe = new PEReader(fs);
+            var stuff = pe.ReadDebugDirectory().ToList();
+            var s2 = stuff.Where(x => x.Type == DebugDirectoryEntryType.EmbeddedPortablePdb).ToList();
+            var prov = pe.ReadEmbeddedPortablePdbDebugDirectoryData(s2.Single());
+            var mr = prov.GetMetadataReader();
+            var mr2 = pe.GetMetadataReader();
+
+            Dictionary<string, Type> types = new();
+
+            foreach (var mdih in mr.MethodDebugInformation)
+            {
+                try
+                {
+                    var mi = mr2.GetMethodDefinition(mdih.ToDefinitionHandle());
+                    var t = mr2.GetTypeDefinition(mi.GetDeclaringType());
+
+                    string s = $"{mr2.GetString(t.Namespace)}.{mr2.GetString(t.Name)}";
+                    if (!s.StartsWith("StardewValley"))
+                        continue;
+                    s += ", Stardew Valley";
+
+                    Type type = null;
+                    if (types.ContainsKey(s))
+                        type = types[s];
+                    else
+                        types.Add(s, type = Type.GetType(s));
+
+                    // This is pretty inefficient...
+                    string methName = mr2.GetString(mi.Name);
+                    if (methName == ".cctor") // static constructor, ignoring these since they don't make sense to patch to begin with
+                        continue;
+                    var meths = AccessTools.GetDeclaredMethods(type).Where(methInfo => methInfo.Name == methName && methInfo.GetParameters().Length == mi.GetParameters().Count).ToList();
+                    MethodBase result = null;
+                    IEnumerable<string> targetMethParams = mi.GetParameters().Select(ph => mr2.GetString(mr2.GetParameter(ph).Name));
+                    foreach (var meth in meths)
+                    {
+                        if (meth.GetParameters().Select(pi => pi.Name).SequenceEqual(targetMethParams))
+                        {
+                            result = meth;
+                            break;
+                        }
+                    }
+                    if (result == null)
+                    {
+                        if (methName == ".ctor")
+                        {
+                            var ctors = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                            foreach (var ctor in ctors)
+                            {
+                                if (ctor.GetParameters().Select(pi => pi.Name).SequenceEqual(targetMethParams))
+                                {
+                                    result = ctor;
+                                    break;
+                                }
+                            }
+                        }
+                        if (result == null)
+                        {
+                            //Log.Warn($"Failed to find matching method for {s}.{methName} with params {string.Join(',', targetMethParams)}");
+                            continue;
+                        }
+                    }
+
+                    Dictionary<string, List<int>> methLocals = new();
+                    foreach (var lsh in mr.GetLocalScopes(mdih))
+                    {
+                        var ls = mr.GetLocalScope(lsh);
+                        foreach (var lvh in ls.GetLocalVariables())
+                        {
+                            var lv = mr.GetLocalVariable(lvh);
+                            string s_ = mr.GetString(lv.Name);
+                            if (methLocals.ContainsKey(s_))
+                            {
+                                methLocals[s_].Add(lv.Index);
+                            }
+                            else methLocals.Add(s_, [lv.Index]);
+                        }
+                    }
+
+                    string fullDesc = result.FullDescription();
+                    if (!ambiguousMethods.Contains(fullDesc))
+                    {
+                        if (locals.ContainsKey(fullDesc))
+                        {
+                            ambiguousMethods.Add(fullDesc);
+                            locals.Remove(fullDesc);
+                        }
+                        else locals.Add(fullDesc, methLocals);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("got exception " + mdih + " " + e);
+                    continue;
+                }
+            }
         }
 
         internal NPC lastInteraction = null;

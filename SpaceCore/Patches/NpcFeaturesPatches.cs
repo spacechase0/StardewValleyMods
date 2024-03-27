@@ -194,15 +194,15 @@ namespace SpaceCore.Patches
                 }
                 // add an extra vec2 multiply and vec2 add after applying
                 // breathScale
-                else if (i > 1 && scaleCount < 1 && orig[i - 2].opcode == OpCodes.Ldc_R4 && orig[i - 2].operand.Equals(4f) && orig[i - 1].opcode == OpCodes.Mul && orig[i].opcode == OpCodes.Ldloc_2)
+                else if (i > 1 && scaleCount < 1 && orig[i - 2].opcode == OpCodes.Ldc_R4 && orig[i - 2].operand.Equals(4f) && orig[i - 1].opcode == OpCodes.Mul && orig[i].opcode == OpCodes.Ldloc_S && (orig[i].operand as LocalBuilder).LocalIndex == 5)
                 {
                     ++scaleCount;
                     Log.Trace($"NPC.DrawBreathing: inserting vec2 mul/add at {i}");
                     ret.AddRange(new List<CodeInstruction>(){
                         new(OpCodes.Ldloc, scale),
                         new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Multiply", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(float), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
-                        new(OpCodes.Ldloc_2),
-                        new(OpCodes.Ldloc_2),
+                        new(OpCodes.Ldloc_S, orig[i].operand),
+                        new(OpCodes.Ldloc_S, orig[i].operand),
                         new(OpCodes.Newobj, typeof(Microsoft.Xna.Framework.Vector2).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, CallingConventions.HasThis, new Type[]{typeof(float), typeof(float)}, null)),
                         new(OpCodes.Call, typeof(Microsoft.Xna.Framework.Vector2).GetMethod("op_Addition", BindingFlags.Public | BindingFlags.Static, null, new Type[]{typeof(Microsoft.Xna.Framework.Vector2), typeof(Microsoft.Xna.Framework.Vector2)}, null)),
                     });
@@ -227,6 +227,7 @@ namespace SpaceCore.Patches
                 Log.Error($"NPC.DrawBreathing: some transpiler targets were not found. Aborting edit.");
                 return orig;
             }
+
             return ret;
         }
     }
