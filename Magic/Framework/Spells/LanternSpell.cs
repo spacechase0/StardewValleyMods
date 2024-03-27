@@ -39,7 +39,7 @@ namespace Magic.Framework.Spells
                 _ => 4
             };
 
-            player.currentLocation.sharedLights.Add(this.GetUnusedLightSourceId(player.currentLocation), new LightSource(1, Game1.player.position, power));
+            player.currentLocation.sharedLights.Add(this.GetUnusedLightSourceId(player.currentLocation), new LightSource(1, Game1.player.position.Get(), power));
             player.AddCustomSkillExperience(Magic.Skill, level);
 
             return null;

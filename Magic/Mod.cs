@@ -56,6 +56,18 @@ namespace Magic
             helper.Events.GameLoop.DayStarted += this.OnDayStarted;
             helper.Events.GameLoop.Saving += this.OnSaving;
 
+            GameLocation.RegisterTileAction("MagicAltar", (loc, args, who, Tile) =>
+            {
+                Framework.Magic.OnAltarClicked();
+                return true;
+            });
+
+            GameLocation.RegisterTileAction("MagicRadio", (loc, args, who, Tile) =>
+            {
+                Framework.Magic.OnRadioClicked();
+                return true;
+            });
+
             Framework.Magic.Init(helper.Events, helper.Input, helper.ModRegistry, helper.Multiplayer.GetNewID);
             ConsoleCommandHelper.RegisterCommandsInAssembly(this);
         }

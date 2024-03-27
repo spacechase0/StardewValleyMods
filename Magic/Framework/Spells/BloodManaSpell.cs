@@ -33,13 +33,13 @@ namespace Magic.Framework.Spells
         {
             int health = 10 + 10 * level;
             player.health -= health;
-            player.currentLocation.debris.Add(new Debris(health, new Vector2(player.getStandingX() + 8, player.getStandingY()), Color.Red, 1f, player));
+            player.currentLocation.debris.Add(new Debris(health, new Vector2(player.StandingPixel.X + 8, player.StandingPixel.Y), Color.Red, 1f, player));
             player.LocalSound("ow");
             Game1.hitShakeTimer = 100 * health;
 
             int mana = (int)(health * (BloodManaSpell.ManaRatioBase + BloodManaSpell.ManaRatioIncr * level));
             player.AddMana(mana);
-            player.currentLocation.debris.Add(new Debris(mana, new Vector2(player.getStandingX() + 8, player.getStandingY()), Color.Blue, 1f, player));
+            player.currentLocation.debris.Add(new Debris(mana, new Vector2(player.StandingPixel.X + 8, player.StandingPixel.Y), Color.Blue, 1f, player));
             player.LocalSound("powerup");
             /*
             player.AddCustomSkillExperience(Magic.Skill,-mana);

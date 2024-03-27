@@ -74,7 +74,7 @@ namespace Magic.Framework.Spells.Effects
                 {
                     if (character is Monster mob)
                     {
-                        if (Vector2.Distance(new Vector2(this.LandX, this.LandY), mob.position) < this.CurrRad * Game1.tileSize)
+                        if (Vector2.Distance(new Vector2(this.LandX, this.LandY), mob.position.Value) < this.CurrRad * Game1.tileSize)
                         {
                             // TODO: Use location damage method for xp and quest progress
                             mob.takeDamage((this.Level + 1) * 5 * (this.Player.CombatLevel + 1), 0, 0, false, 0, this.Player);

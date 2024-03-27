@@ -39,7 +39,7 @@ namespace Magic.Framework.Spells.Effects
             Vector2 mobPos = new Vector2(this.Mob.GetBoundingBox().Center.X, this.Mob.GetBoundingBox().Center.Y);
             if (Vector2.Distance(mobPos, this.Pos) >= this.Radius)
             {
-                Vector2 offset = this.Mob.position - this.Pos;
+                Vector2 offset = this.Mob.position.Value - this.Pos;
                 offset.Normalize();
                 offset *= this.Radius;
                 this.Mob.position.Value = this.Pos + offset;

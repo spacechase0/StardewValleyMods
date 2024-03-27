@@ -117,7 +117,7 @@ namespace Magic.Framework.Spells
 
                     foreach (ResourceClump clump in player.currentLocation.resourceClumps)
                     {
-                        if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.tile.Value.X, (int)clump.tile.Value.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
+                        if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex && new Rectangle((int)clump.Tile.X, (int)clump.Tile.Y, clump.width.Value, clump.height.Value).Contains((int)tilePos.X, (int)tilePos.Y))
                         {
                             spellsLearnt.Add("eldritch:meteor");
                             break;

@@ -36,7 +36,7 @@ namespace Magic.Framework.Spells
                 {
                     float rad = Game1.tileSize;
                     int dur = 11 * 60;
-                    if (Vector2.Distance(mob.position, new Vector2(targetX, targetY)) <= rad)
+                    if (Vector2.Distance(mob.position.Get(), new Vector2(targetX, targetY)) <= rad)
                     {
                         tendrils.Add(new Tendril(mob, new Vector2(targetX, targetY), rad, dur));
                         player.AddCustomSkillExperience(Magic.Skill, 3);

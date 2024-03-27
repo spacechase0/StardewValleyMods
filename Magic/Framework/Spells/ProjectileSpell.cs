@@ -42,7 +42,7 @@ namespace Magic.Framework.Spells
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
             int dmg = (this.DamageBase + this.DamageIncr * level) * (player.CombatLevel + 1);
-            float dir = (float)-Math.Atan2(player.getStandingY() - targetY, targetX - player.getStandingX());
+            float dir = (float)-Math.Atan2(player.StandingPixel.Y - targetY, targetX - player.StandingPixel.X);
             player.currentLocation.projectiles.Add(new SpellProjectile(player, this, dmg, dir, 4f + 3 * level, this.Seeking));
             if (this.Sound != null)
                 player.LocalSound(this.Sound);

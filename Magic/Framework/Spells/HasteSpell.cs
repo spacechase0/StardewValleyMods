@@ -6,6 +6,8 @@ namespace Magic.Framework.Spells
 {
     internal class HasteSpell : Spell
     {
+        private static readonly string BuffId = "space:spell:life:haste";
+
         /*********
         ** Public methods
         *********/
@@ -16,10 +18,9 @@ namespace Magic.Framework.Spells
         {
             if (player == Game1.player)
             {
-                foreach (var buff in Game1.buffsDisplay.otherBuffs)
+                if (Game1.player.buffs.IsApplied(BuffId))
                 {
-                    if (buff.source == "spell:life:haste")
-                        return false;
+                    return false;
                 }
             }
 
@@ -36,13 +37,13 @@ namespace Magic.Framework.Spells
             if (player != Game1.player)
                 return null;
 
-            foreach (var buff in Game1.buffsDisplay.otherBuffs)
+            if (Game1.player.buffs.AppliedBuffIds.Contains(BuffId))
             {
-                if (buff.source == "spell:life:haste")
                     return null;
             }
 
-            Game1.buffsDisplay.addOtherBuff(new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, level + 1, 0, 0, 60 + level * 120, "spell:life:haste", "Haste (spell)"));
+            // TODO: Resurrect this with the new 1.6 buff framework. Losing a spell > losing the entire mod.
+            //Game1.buffsDisplay.addOtherBuff(new Buff(0, 0, 0, 0, 0, 0, 0, 0, 0, level + 1, 0, 0, 60 + level * 120, "spell:life:haste", "Haste (spell)"));
             player.AddCustomSkillExperience(Magic.Skill, 5);
             return null;
         }

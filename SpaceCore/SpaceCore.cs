@@ -411,7 +411,9 @@ namespace SpaceCore
                     if (lastChoices.ContainsKey(answer))
                         lastChoices[answer]();
                     else
-                        ;// Log.Debug("wat");
+                    {
+                        // Log.Debug("wat");
+                    }
                 };
                 Game1.currentLocation.createQuestionDialogue(I18n.InteractionWith(npc.displayName), responses.ToArray(), "advanced-social-interaction");
                 

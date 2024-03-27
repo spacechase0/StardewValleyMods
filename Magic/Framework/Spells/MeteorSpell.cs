@@ -20,7 +20,7 @@ namespace Magic.Framework.Spells
 
         public override bool CanCast(Farmer player, int level)
         {
-            return base.CanCast(player, level) && player.hasItemInInventory(SObject.iridium, 1);
+            return base.CanCast(player, level) && player.Items.ContainsId(SObject.iridiumID, 1);
         }
 
         public override int GetMaxCastingLevel()
@@ -30,7 +30,7 @@ namespace Magic.Framework.Spells
 
         public override IActiveEffect OnCast(Farmer player, int level, int targetX, int targetY)
         {
-            player.consumeObject(SObject.iridium, 1);
+            player.Items.ReduceId(SObject.iridiumID, 1);
             return new Meteor(player, targetX, targetY);
         }
     }

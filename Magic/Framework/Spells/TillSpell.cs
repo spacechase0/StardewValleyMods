@@ -59,11 +59,11 @@ namespace Magic.Framework.Spells
                     }
 
                     // till dirt
-                    if (loc.doesTileHaveProperty(tileX, tileY, "Diggable", "Back") != null && !loc.isTileOccupied(tile))
+                    if (loc.doesTileHaveProperty(tileX, tileY, "Diggable", "Back") != null && !loc.IsTileOccupiedBy(tile, CollisionMask.All))
                     {
                         loc.makeHoeDirt(tile);
-                        loc.playSoundAt("hoeHit", tile);
-                        Game1.removeSquareDebrisFromTile(tileX, tileY);
+                        loc.playSound("hoeHit", tile);
+                        // Unnecessary in 1.6 ? Game1.removeSquareDebrisFromTile(tileX, tileY);
                         loc.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(tileX * (float)Game1.tileSize, tileY * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f));
                         loc.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(tileX * (float)Game1.tileSize, tileY * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, Vector2.Distance(tile, target) * 30f));
                         loc.checkForBuriedItem(tileX, tileY, false, false, player);

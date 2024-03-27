@@ -30,7 +30,7 @@ namespace Magic.Framework
         private const string SelectedBarKey = SpellBookData.Prefix + "/SelectedBar";
 
         /// <summary>The player's mod data.</summary>
-        private ModDataDictionary Data => this.Player.modData;
+        private StardewValley.Mods.ModDataDictionary Data => this.Player.modData;
 
         /// <summary>The mod data version for which the fields were cached.</summary>
         private int? UpdatedTick;
