@@ -15,6 +15,7 @@ namespace SpaceCore.VanillaAssetExpansion
     {
         public Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>> TileProperties { get; set; } = new();
         public string DescriptionOverride { get; set; }
+        public Dictionary<int, List<Vector2>> SeatLocations { get; set; } = new();
     }
 
     [HarmonyPatch(typeof(Furniture), nameof(Furniture.DoesTileHaveProperty))]
@@ -48,6 +49,38 @@ namespace SpaceCore.VanillaAssetExpansion
             if (dict.TryGetValue(__instance.ItemId, out var furnData) && furnData.DescriptionOverride != null)
             {
                 __result = Game1.parseText(TokenParser.ParseText(furnData.DescriptionOverride), Game1.smallFont, 320);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Furniture), nameof(Furniture.GetSeatPositions))]
+    public static class FurnitureSeatLocationExtensionPatch
+    {
+        public static void Postfix(Furniture __instance, ref List<Vector2> __result)
+        {
+            var dict = Game1.content.Load<Dictionary<string, FurnitureExtensionData>>("spacechase0.SpaceCore/FurnitureExtensionData");
+            if (dict.TryGetValue(__instance.ItemId, out var furnData) && furnData.SeatLocations != null)
+            {
+                if (furnData.SeatLocations.ContainsKey(__instance.currentRotation.Value))
+                {
+                    __result = furnData.SeatLocations[__instance.currentRotation.Value];
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Furniture), nameof(Furniture.GetSeatCapacity))]
+    public static class FurnitureSeatCapacityExtensionPatch
+    {
+        public static void Postfix(Furniture __instance, ref int __result)
+        {
+            var dict = Game1.content.Load<Dictionary<string, FurnitureExtensionData>>("spacechase0.SpaceCore/FurnitureExtensionData");
+            if (dict.TryGetValue(__instance.ItemId, out var furnData) && furnData.SeatLocations != null)
+            {
+                if (furnData.SeatLocations.ContainsKey(__instance.currentRotation.Value))
+                {
+                    __result = furnData.SeatLocations[__instance.currentRotation.Value].Count;
+                }
             }
         }
     }
