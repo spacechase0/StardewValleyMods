@@ -48,67 +48,50 @@ namespace SpaceCore.VanillaAssetExpansion
         {
             Vector2[] fruits = new[]
             {
-                new Vector2( -32,  48 ),
-                new Vector2(  32,  48 ),
-                new Vector2( -64,   0 ),
-                new Vector2(   0,   0 ),
-                new Vector2(  64,   0 ),
-                new Vector2( -32, -48 ),
-                new Vector2(  32, -48 ),
+                new Vector2( 0, -64 ),
+                new Vector2( 64, -32 ),
+                new Vector2( 0, 32 )
             };
             return index < fruits.Length ? fruits[index] : fruits[0];
         }
 
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> instructions)
+        public static void Prefix(FruitTree __instance, out List<Item> __state)
         {
-            List<CodeInstruction> ret = new();
+            __state = new List<Item>();
 
-            int drawCounts = 0;
-            int lightningCounter = 0;
-            foreach (var insn in instructions)
+            var dict = Game1.content.Load<Dictionary<string, FruitTreeExtensionData>>("spacechase0.SpaceCore/FruitTreeExtensionData");
+
+            // Remove the fruits from the tree temporarily if we want to draw them ourselves
+            if (dict.TryGetValue(__instance.treeId.Value, out var ftData) && ftData.FruitLocations != null)
             {
-                if (drawCounts > 0 && insn.opcode == OpCodes.Callvirt && insn.operand is MethodInfo mi && mi.DeclaringType == typeof(SpriteBatch) && mi.Name == "Draw")
+                for (int i = 0; i < __instance.fruit.Count; i++)
                 {
-                    // TODO: Don't hardcode these local variable indices
-                    int sourceRectIndex = 8;
-                    int fruitIndexIndex = 6;
-
-                    int sr = ret.Count - 1;
-                    for (; sr >= 0; --sr)
-                    {
-                        if (ret[sr].opcode == OpCodes.Ldloc_S && (ret[sr].operand as LocalBuilder).LocalIndex == sourceRectIndex)
-                        {
-                            List<CodeInstruction> insert = new();
-                            insert.Add(new CodeInstruction(OpCodes.Pop));
-                            insert.Add(new CodeInstruction(OpCodes.Ldarg_2));
-                            insert.Add(new CodeInstruction(OpCodes.Ldloc, fruitIndexIndex));
-                            insert.Add(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(FruitTreeDrawFruitPatch), nameof(FruitTreeDrawFruitPatch.GetFruitOffset))));
-                            ret.InsertRange(sr, insert);
-                            break;
-                        }
-                    }
-
-                    --drawCounts;
+                    __state.Add(__instance.fruit[i]);
                 }
-                else if (insn.opcode == OpCodes.Ldfld && (insn.operand as FieldInfo).Name == nameof(FruitTree.struckByLightningCountdown))
-                {
-                    if (++lightningCounter == 4)
-                        drawCounts = 3;
-                }
-                ret.Add(insn);
+                __instance.fruit.Clear();
             }
-
-            return ret;
         }
 
-        public static void Postfix(FruitTree __instance, SpriteBatch spriteBatch, Vector2 tileLocation)
+        public static void Postfix(FruitTree __instance, SpriteBatch spriteBatch, Vector2 tileLocation, Netcode.NetList<Item, Netcode.NetRef<Item>> __state)
         {
-            for (int i = 3; i < __instance.fruit.Count; i++)
+            var dict = Game1.content.Load<Dictionary<string, FruitTreeExtensionData>>("spacechase0.SpaceCore/FruitTreeExtensionData");
+
+            if (dict.TryGetValue(__instance.treeId.Value, out var ftData) && ftData.FruitLocations != null)
             {
-                ParsedItemData obj = (((int)__instance.struckByLightningCountdown.Value > 0) ? ItemRegistry.GetDataOrErrorItem("(O)382") : ItemRegistry.GetDataOrErrorItem(__instance.fruit[i].QualifiedItemId));
-                Texture2D texture = obj.GetTexture();
-                Rectangle sourceRect = obj.GetSourceRect();
-                spriteBatch.Draw(texture, GetFruitOffset(tileLocation, __instance, i), sourceRect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)__instance.getBoundingBox().Bottom / 10000f + 0.002f - tileLocation.X / 1000000f);
+                // Put the fruit back on if we need to
+                for (int i = 0; i < __state.Count; i++)
+                {
+                    __instance.fruit.Add(__state[i]);
+                }
+
+                // Draw the fruit if we need to
+                for (int i = 0; i < __instance.fruit.Count; i++)
+                {
+                    ParsedItemData obj = (__instance.struckByLightningCountdown.Value > 0) ? ItemRegistry.GetDataOrErrorItem("(O)382") : ItemRegistry.GetDataOrErrorItem(__instance.fruit[i].QualifiedItemId);
+                    Texture2D texture = obj.GetTexture();
+                    Rectangle sourceRect = obj.GetSourceRect();
+                    spriteBatch.Draw(texture, GetFruitOffset(tileLocation, __instance, i), sourceRect, Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, (float)__instance.getBoundingBox().Bottom / 10000f + 0.002f - tileLocation.X / 1000000f);
+                }
             }
         }
     }
