@@ -72,7 +72,7 @@ namespace SpaceCore.VanillaAssetExpansion
             }
         }
 
-        public static void Postfix(FruitTree __instance, SpriteBatch spriteBatch, Vector2 tileLocation, Netcode.NetList<Item, Netcode.NetRef<Item>> __state)
+        public static void Postfix(FruitTree __instance, SpriteBatch spriteBatch, List<Item> __state)
         {
             var dict = Game1.content.Load<Dictionary<string, FruitTreeExtensionData>>("spacechase0.SpaceCore/FruitTreeExtensionData");
 
@@ -84,6 +84,7 @@ namespace SpaceCore.VanillaAssetExpansion
                     __instance.fruit.Add(__state[i]);
                 }
 
+                Vector2 tileLocation = __instance.Tile;
                 // Draw the fruit if we need to
                 for (int i = 0; i < __instance.fruit.Count; i++)
                 {
