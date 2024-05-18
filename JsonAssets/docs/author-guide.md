@@ -72,7 +72,6 @@ Json Assets is a great tool if you want to add one of the above objects, but the
  * [Content Patcher](https://www.nexusmods.com/stardewvalley/mods/1915)
  * [Better Artisan Good Icons](https://www.nexusmods.com/stardewvalley/mods/2080) to customize the appearance of artisan products. \*Note: Does not currently support objects added by JA but good for keeping a similar aesthetic.
  * [Mail Framework Mod](https://www.nexusmods.com/stardewvalley/mods/1536) to send objects & cooking/crafting recipes.
- * [Shop Tile Framework](https://www.nexusmods.com/stardewvalley/mods/5005) to add shops easier with full JA pack support.
  * [Farm Type Manager](https://www.nexusmods.com/stardewvalley/mods/3231) useful for adding custom foraging objects.
  * [Hybrid Crop Engine](https://www.nexusmods.com/stardewvalley/mods/6577) allows you to crossbreed crops together.
  * [Custom Furniture](https://www.nexusmods.com/stardewvalley/mods/1254) JA does not support furniture. You still have to use Custom Furniture for that.
