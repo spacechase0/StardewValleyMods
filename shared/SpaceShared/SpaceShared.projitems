@@ -48,13 +48,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ui\ISingleTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ISingleTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ItemSlot.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ItemWithBorder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\RootElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Scrollbar.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ui\ScrollContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ScrollContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\StaticContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Table.cs" />
