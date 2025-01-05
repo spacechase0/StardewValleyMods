@@ -47,6 +47,7 @@ using StardewValley.TokenizableStrings;
 using SpaceCore.Dungeons;
 using System.Collections.ObjectModel;
 using SpaceCore.Guidebooks;
+using SpaceCore.Integrations;
 
 namespace SpaceCore
 {
@@ -137,6 +138,7 @@ namespace SpaceCore
         ** Fields
         *********/
         internal Harmony Harmony;
+        internal IStardewAccessApi StardewAccessApi;
 
         /// <summary>Handles migrating legacy data for a save file.</summary>
         private LegacyDataMigrator LegacyDataMigrator;
@@ -412,7 +414,7 @@ namespace SpaceCore
 
                         if (!ctx.Location.terrainFeatures.TryGetValue(tile + new Vector2(ix, iy), out var tf) || tf is not HoeDirt hd || hd.crop == null)
                             continue;
-                        
+
                         if (hd.crop.netSeedIndex.Value == cropSeedId && hd.crop.currentPhase.Value == hd.crop.phaseDays.Count - 1)
                             return true;
                     }
@@ -723,7 +725,7 @@ namespace SpaceCore
                         ;// Log.Debug("wat");
                 };
                 Game1.currentLocation.createQuestionDialogue(I18n.InteractionWith(npc.displayName), responses.ToArray(), "advanced-social-interaction");
-                
+
             }
         }
 
@@ -1146,6 +1148,13 @@ namespace SpaceCore
 
                     return new string[] { Utility.getDaysOfBooksellerThisSeason().Contains(Game1.dayOfMonth)?"true":"false" };
                 });
+            }
+
+            // Initialize Stardew Access' Api
+            StardewAccessApi = this.Helper.ModRegistry.GetApi<IStardewAccessApi>("shoaib.stardewaccess");
+            if (StardewAccessApi != null)
+            {
+                Log.Info("Initializing Stardew Access' api successfully");
             }
         }
 
