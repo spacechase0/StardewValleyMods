@@ -18,9 +18,6 @@ namespace ContentPatcherAnimations.Framework
         /// <summary>Simplifies access to private code.</summary>
         private readonly IReflectionHelper Reflection;
 
-        /// <summary>The underlying patch's <c>LastChangedTick</c> property.</summary>
-        private readonly IReflectedProperty<int> LastChangedTickProperty;
-
         /// <summary>The underlying patch's <c>IsReady</c> property.</summary>
         private readonly IReflectedProperty<bool> IsReadyProperty;
 
@@ -41,9 +38,6 @@ namespace ContentPatcherAnimations.Framework
 
         /// <summary>The raw patch name to display in error messages.</summary>
         private readonly string Name;
-
-        /// <summary>The last <see cref="Game1.ticks"/> value when the underlying patch data was last changed.</summary>
-        private int LastChangedTick;
 
         /// <summary>The cached source frame data.</summary>
         private readonly IDictionary<int, Color[]> AnimationFrames = new Dictionary<int, Color[]>();
@@ -98,7 +92,6 @@ namespace ContentPatcherAnimations.Framework
             this.Name = name;
             this.Reflection = reflection;
 
-            this.LastChangedTickProperty = reflection.GetProperty<int>(patch, "LastChangedTick");
             this.IsReadyProperty = reflection.GetProperty<bool>(patch, "IsReady");
             this.IsAppliedProperty = reflection.GetProperty<bool>(patch, "IsApplied");
             this.FromAssetProperty = reflection.GetProperty<string>(patch, "FromAsset");
@@ -112,14 +105,12 @@ namespace ContentPatcherAnimations.Framework
         /// <summary>Refresh the patch data if the underlying patch changed.</summary>
         public void RefreshIfNeeded()
         {
-            // update IsActive (doesn't change LastChangedTick value)
+            // update IsActive
             this.IsActive = this.IsAppliedProperty.GetValue();
 
             // refresh if patch data changed
-            int lastChangedTick = this.LastChangedTickProperty.GetValue();
-            if (lastChangedTick > this.LastChangedTick || this.ForceNextRefresh)
+            if (this.ForceNextRefresh)
             {
-                this.LastChangedTick = lastChangedTick;
                 this.ForceNextRefresh = false;
                 this.AnimationFrames.Clear();
 
