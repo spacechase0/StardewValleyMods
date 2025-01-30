@@ -122,6 +122,8 @@ namespace GenericModConfigMenu.Framework
                                 LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
                                 Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
                                 UserData = opt,
+                                ScreenReaderText = $"{name}[[InputListener]]",
+                                ScreenReaderDescription = tooltip,
                             };
                             break;
 
@@ -135,6 +137,8 @@ namespace GenericModConfigMenu.Framework
                                 LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
                                 Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
                                 UserData = opt,
+                                ScreenReaderText = $"{name}[[InputListener]]",
+                                ScreenReaderDescription = tooltip,
                             };
                             break;
                     }
@@ -150,6 +154,8 @@ namespace GenericModConfigMenu.Framework
                         String = config.ModName,
                         UserData = config.ModManifest.Description,
                         Bold = true,
+                        ScreenReaderText = config.ModName,
+                        ScreenReaderDescription = config.ModManifest.Description,
                     };
                     if (!string.IsNullOrEmpty(config.ModManifest.Description))
                         OptHovers.Add(header);
@@ -200,7 +206,9 @@ namespace GenericModConfigMenu.Framework
                 Label label = new Label
                 {
                     String = name,
-                    UserData = tooltip
+                    UserData = tooltip,
+                    ScreenReaderText = name,
+                    ScreenReaderDescription = tooltip
                 };
                 if (!string.IsNullOrEmpty(tooltip))
                     this.OptHovers.Add(label);
@@ -225,7 +233,9 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Checked = option.Value,
-                            Callback = (Element e) => option.Value = (e as Checkbox).Checked
+                            Callback = (Element e) => option.Value = (e as Checkbox).Checked,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
                         };
                         break;
 
@@ -237,7 +247,9 @@ namespace GenericModConfigMenu.Framework
                         {
                             String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
+                            ScreenReaderText = $"{name}[[InputListener]]",
+                            ScreenReaderDescription = tooltip,
                         };
                         break;
 
@@ -249,7 +261,9 @@ namespace GenericModConfigMenu.Framework
                         {
                             String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
+                            ScreenReaderText = $"{name}[[InputListener]]",
+                            ScreenReaderDescription = tooltip,
                         };
                         break;
 
@@ -271,7 +285,9 @@ namespace GenericModConfigMenu.Framework
                             {
                                 option.Value = (e as Slider<int>).Value;
                                 rightLabel.String = option.FormatValue();
-                            }
+                            },
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
                         };
 
                         rightLabel.LocalPosition = optionElement.LocalPosition + new Vector2(x: optionElement.Width + 15, y: 0);
@@ -295,7 +311,9 @@ namespace GenericModConfigMenu.Framework
                             {
                                 option.Value = (e as Slider<float>).Value;
                                 rightLabel.String = option.FormatValue();
-                            }
+                            },
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
                         };
 
                         rightLabel.LocalPosition = optionElement.LocalPosition + new Vector2(x: optionElement.Width + 15, y: 0);
@@ -311,7 +329,9 @@ namespace GenericModConfigMenu.Framework
                             RequestWidth = (int)this.Table.Size.X / 2,
                             Value = option.Value,
                             MaxValuesAtOnce = Math.Min(option.Choices.Length, 5),
-                            Callback = (Element e) => option.Value = (e as Dropdown).Value
+                            Callback = (Element e) => option.Value = (e as Dropdown).Value,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
                         };
                         break;
 
@@ -323,7 +343,9 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
-                            Callback = (Element e) => option.Value = (e as Intbox).Value
+                            Callback = (Element e) => option.Value = (e as Intbox).Value,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
                         };
                         break;
 
@@ -335,7 +357,9 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
-                            Callback = (Element e) => option.Value = (e as Floatbox).Value
+                            Callback = (Element e) => option.Value = (e as Floatbox).Value,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
                         };
                         break;
 
@@ -347,7 +371,9 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             String = option.Value,
-                            Callback = (Element e) => option.Value = (e as Textbox).String
+                            Callback = (Element e) => option.Value = (e as Textbox).String,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
                         };
                         break;
 
@@ -422,7 +448,8 @@ namespace GenericModConfigMenu.Framework
                                 NonBoldScale = 1f,
                                 NonBoldShadow = false,
                                 Font = Game1.smallFont,
-                                String = text.ToString()
+                                String = text.ToString(),
+                                ScreenReaderText = text.ToString(),
                             };
                             break;
                         }
@@ -625,7 +652,8 @@ namespace GenericModConfigMenu.Framework
                     String = I18n.Config_Buttons_Cancel(),
                     Bold = true,
                     LocalPosition = leftPosition,
-                    Callback = _ => this.Cancel()
+                    Callback = _ => this.Cancel(),
+                    ScreenReaderText = Mod.instance.StardewAccessApi.Translate("options_element-button_info", tokens: new {label = I18n.Config_Buttons_Cancel()}, "Menu"),
                 };
                 var resetButton = new Label
                 {
@@ -633,14 +661,18 @@ namespace GenericModConfigMenu.Framework
                     Bold = true,
                     LocalPosition = leftPosition,
                     Callback = _ => this.ResetConfig(),
-                    ForceHide = () => this.IsSubPage || modManifest == null
+                    ForceHide = () => this.IsSubPage || modManifest == null,
+                    ScreenReaderText = (modManifest != null && !this.IsSubPage)
+                        ? Mod.instance.StardewAccessApi.Translate("options_element-button_info", tokens: new { label = I18n.Config_Buttons_ResetToDefault() }, "Menu")
+                        : "",
                 };
                 var saveButton = new Label
                 {
                     String = I18n.Config_Buttons_Save(),
                     Bold = true,
                     LocalPosition = leftPosition,
-                    Callback = _ => this.SaveConfig()
+                    Callback = _ => this.SaveConfig(),
+                    ScreenReaderText = Mod.instance.StardewAccessApi.Translate("options_element-button_info", tokens: new {label = I18n.Config_Buttons_Save()}, "Menu"),
                 };
                 var saveAndCloseButton = new Label
                 {
@@ -651,7 +683,8 @@ namespace GenericModConfigMenu.Framework
                     {
                         this.SaveConfig();
                         this.Close();
-                    }
+                    },
+                    ScreenReaderText = Mod.instance.StardewAccessApi.Translate("options_element-button_info", tokens: new {label = I18n.Config_Buttons_SaveAndClose()}, "Menu"),
                 };
                 Label[] buttons = new[] { cancelButton, resetButton, saveButton, saveAndCloseButton };
                 int[] widths = buttons.Select(p => p.Width).ToArray();

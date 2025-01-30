@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
+using SpaceShared;
 
 #if IS_SPACECORE
 namespace SpaceCore.UI
@@ -14,7 +16,7 @@ namespace SpaceShared.UI
 {
     internal
 #endif
-         abstract class Element
+         abstract class Element : IScreenReadable
     {
         /*********
         ** Accessors
@@ -44,9 +46,16 @@ namespace SpaceShared.UI
         public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
+        public string ScreenReaderText { get; set; }
+        public string ScreenReaderDescription { get; set; }
+        public bool ScreenReaderIgnore { get; set; } = false;
+
         /// <summary>Whether to disable the element so it's invisible and can't be interacted with.</summary>
         public Func<bool> ForceHide;
 
+        // TODO Add docs
+        public static event EventHandler<EventArgs> MouseEntered;
+        public static event EventHandler<EventArgs> MouseHovered;
 
         /*********
         ** Public methods
@@ -78,8 +87,16 @@ namespace SpaceShared.UI
             }
 
             bool newHover = !hidden && !this.GetRoot().Obscured && this.Bounds.Contains(mouseX, mouseY);
-            if (newHover && !this.Hover && this.HoveredSound != null)
-                Game1.playSound(this.HoveredSound);
+            if (newHover)
+            {
+                if (!this.Hover)
+                {
+                    if (this.HoveredSound != null) Game1.playSound(this.HoveredSound);
+                    Element.MouseEntered?.Invoke(this, EventArgs.Empty);
+                }
+                Element.MouseHovered?.Invoke((this), EventArgs.Empty);
+            }
+
             this.Hover = newHover;
 
             this.ClickGestured = (Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released);

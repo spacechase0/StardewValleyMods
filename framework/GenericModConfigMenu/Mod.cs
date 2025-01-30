@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GenericModConfigMenu.Framework;
+using GenericModConfigMenu.Integrations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -36,6 +37,8 @@ namespace GenericModConfigMenu
 
         /// <summary>Manages registered mod config menus.</summary>
         internal readonly ModConfigManager ConfigManager = new();
+
+        internal IStardewAccessApi StardewAccessApi;
 
         /*********
         ** Accessors
@@ -193,7 +196,7 @@ namespace GenericModConfigMenu
                     OpenListMenuNew(listScrollRow);
                 }
             );
-            
+
             if (Game1.activeClickableMenu is TitleMenu)
             {
                 TitleMenu.subMenu = newMenu;
@@ -270,7 +273,8 @@ namespace GenericModConfigMenu
                     {
                         Game1.playSound("newArtifact");
                         this.OpenListMenuNew();
-                    }
+                    },
+                    ScreenReaderText = "GMCM"
                 };
 
                 this.Ui.AddChild(this.ConfigButton);
@@ -350,6 +354,99 @@ namespace GenericModConfigMenu
                 if (evt.Tab == nameof(BetterGameMenuTabs.Options) && evt.Page is OptionsPage page)
                     page.options.Add(new OptionsButton(I18n.Button_ModOptions(), () => this.OpenListMenuNew()));
             });
+
+            // Initialize Stardew Access' Api
+            this.StardewAccessApi = this.Helper.ModRegistry.GetApi<IStardewAccessApi>("shoaib.stardewaccess");
+            if (this.StardewAccessApi is not null)
+            {
+                Log.Info("Initialized Stardew Access' api successfully");
+                this.StardewAccessApi.RegisterCustomMenuAsAccessible(typeof(ModConfigMenu).FullName);
+                this.StardewAccessApi.RegisterCustomMenuAsAccessible(typeof(SpecificModConfigMenu).FullName);
+
+                Element.MouseHovered += (sender, args) =>
+                {
+                    Element element = ((Element)sender);
+                    if (element.ScreenReaderIgnore) return;
+
+                    this.StardewAccessApi.SayWithMenuChecker(this.GetScreenReaderInfoOfElement(element), true);
+                };
+            }
+        }
+
+        private string GetScreenReaderInfoOfElement(Element element)
+        {
+            string translationKey;
+            string label = element.ScreenReaderText;
+            object? tokens = new { label };
+
+            switch (element)
+            {
+                case Button:
+                    translationKey = "options_element-button_info";
+                    break;
+                case Checkbox checkbox:
+                    translationKey = "options_element-checkbox_info";
+                    tokens = new
+                    {
+                        label,
+                        is_checked = checkbox.Checked ? 1 : 0
+                    };
+                    break;
+                case Dropdown dropdown:
+                    translationKey = "options_element-dropdown_info";
+                    tokens = new
+                    {
+                        label,
+                        selected_option = dropdown.Value
+                    };
+                    break;
+                case Slider<float> slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label,
+                        slider_value = slider.Value
+                    };
+                    break;
+                case Slider<int> slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label,
+                        slider_value = slider.Value
+                    };
+                    break;
+                case Slider slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label,
+                        slider_value = ((Slider<float>)slider).Value
+                    };
+                    break;
+                case Textbox textbox:
+                    translationKey = "options_element-text_box_info";
+                    tokens = new
+                    {
+                        label,
+                        value = string.IsNullOrEmpty(textbox.String) ? "null" : textbox.String,
+                    };
+                    break;
+                case Label labelElement when label != null && label.EndsWith("[[InputListener]]"):
+                    translationKey = "options_element-input_listener_info";
+                    tokens = new
+                    {
+                        label = label.Replace("[[InputListener]]", ""),
+                        buttons_list = labelElement.String
+                    };
+                    break;
+                default:
+                    return label;
+            }
+
+            if (string.IsNullOrWhiteSpace(label)) return "unknown";
+
+            return $"{this.StardewAccessApi.Translate(translationKey, tokens, "Menu")}\n{element.ScreenReaderDescription}";
         }
 
         private void FiveTicksAfterGameLaunched(object sender, UpdateTickingEventArgs e)
