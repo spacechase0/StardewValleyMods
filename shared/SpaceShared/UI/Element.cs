@@ -6,6 +6,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 using SpaceShared;
+using StardewModdingAPI.Utilities;
 
 #if IS_SPACECORE
 namespace SpaceCore.UI
@@ -104,6 +105,9 @@ namespace SpaceShared.UI
 
             this.ClickGestured = (Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released);
             this.ClickGestured = this.ClickGestured || (Game1.options.gamepadControls && (Game1.input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A)));
+            KeybindList leftClickMainKey = KeybindList.Parse("LeftControl + Enter");
+            KeybindList leftClickAlternateKey = KeybindList.Parse("OemOpenBrackets");
+            this.ClickGestured = this.ClickGestured || leftClickMainKey.JustPressed() || leftClickAlternateKey.JustPressed();
             if (this.ClickGestured && (Dropdown.SinceDropdownWasActive > 0 || Dropdown.ActiveDropdown != null))
             {
                 this.ClickGestured = false;

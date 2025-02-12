@@ -146,6 +146,13 @@ namespace GenericModConfigMenu.Framework
 
             this.Ui.AddChild(this.Table);
 
+            if (Game1.activeClickableMenu is TitleMenu titleMenu)
+            {
+                // Back button on title menu
+                this.allClickableComponents.Last().downNeighborID = titleMenu.backButton.myID;
+                this.allClickableComponents.Add(titleMenu.backButton);
+            }
+
             var button = new Button(keybindsTexture)
             {
                 LocalPosition = this.Table.LocalPosition - new Vector2( keybindsTexture.Width / 2 + 32, 0 ),
