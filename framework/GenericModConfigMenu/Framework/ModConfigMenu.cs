@@ -28,6 +28,8 @@ namespace GenericModConfigMenu.Framework
 
         private List<Label> LabelsWithTooltips = new();
 
+        private int oldScrollRow;
+
 
         /*********
         ** Accessors
@@ -54,6 +56,7 @@ namespace GenericModConfigMenu.Framework
         {
             this.ScrollSpeed = scrollSpeed;
             this.OpenModMenu = openModMenu;
+            this.allClickableComponents = new();
 
             // init UI
             this.Ui = new RootElement();
@@ -83,17 +86,22 @@ namespace GenericModConfigMenu.Framework
                         .OrderBy(entry => entry.ModName)
                         .ToArray();
 
-                    foreach (ModConfig entry in editable)
+                    for (int index = 0; index < editable.Length; index++)
                     {
+                        var entry = editable[index];
                         Label label = new Label
                         {
                             String = entry.ModName,
                             ScreenReaderText = $"{entry.ModName}, {entry.ModManifest.Description}",
                             UserData = entry.ModManifest.Description,
-                            Callback = _ => this.ChangeToModPage(entry.ModManifest)
+                            Callback = _ => this.ChangeToModPage(entry.ModManifest),
+                            CreateDummyClickableComponent = true
                         };
                         this.Table.AddRow(new Element[] { label });
-                        LabelsWithTooltips.Add(label);
+                        this.LabelsWithTooltips.Add(label);
+                        if (index == 0) label.DummyClickableComponent.leftNeighborID = 500;
+                        if (label.DummyClickableComponent != null)
+                            this.allClickableComponents.Add(label.DummyClickableComponent);
                     }
                 }
             }
@@ -142,6 +150,12 @@ namespace GenericModConfigMenu.Framework
                 Callback = _ => openKeybindsMenu( this.ScrollRow),
                 ScreenReaderText = I18n.List_Keybinds(), // TODO Maybe add "Keybindings Menu" entry
             };
+            button.DummyClickableComponent = new(button.Bounds, "")
+            {
+                myID = 500,
+                rightNeighborID = 2000
+            };
+            this.allClickableComponents.Add(button.DummyClickableComponent);
             this.Ui.AddChild(button);
 
             if (Constants.TargetPlatform == GamePlatform.Android)
@@ -149,14 +163,34 @@ namespace GenericModConfigMenu.Framework
             else
                 this.upperRightCloseButton = null;
 
-            if (scrollTo != null)
+            if (scrollTo != null) {
                 this.ScrollRow = scrollTo.Value;
+                this.oldScrollRow = scrollTo.Value;
+            }
 
             if (!InGame)
             {
                 // This hack lets gamepad cursor movement work without a harmony patch
                 Mod.instance.Helper.Reflection.GetField<bool>(Game1.activeClickableMenu, "titleInPosition").SetValue(false);
             }
+
+            this.snapToDefaultClickableComponent();
+        }
+
+        public override void applyMovementKey(int direction)
+        {
+            base.applyMovementKey(direction);
+            if (direction is 0 or 2 && this.currentlySnappedComponent != null &&
+                this.Table.IsElementOffScreen(this.currentlySnappedComponent))
+            {
+                this.Table.Scrollbar.ScrollBy(direction is 0 ? -1 : 1);
+            }
+        }
+
+        public override void snapToDefaultClickableComponent()
+        {
+            this.currentlySnappedComponent = getComponentWithID(2000);
+            this.snapCursorToCurrentSnappedComponent();
         }
 
         /// <inheritdoc />
@@ -193,6 +227,12 @@ namespace GenericModConfigMenu.Framework
                 }
             }
             else scrollCounter = 0;
+
+            if (this.oldScrollRow != ScrollRow)
+            {
+                this.oldScrollRow = ScrollRow;
+                this.snapCursorToCurrentSnappedComponent();
+            }
         }
 
         /// <inheritdoc />
@@ -241,12 +281,6 @@ namespace GenericModConfigMenu.Framework
             var b = oldUi.Children.First(e => e is Button);
             oldUi.RemoveChild(b);
             this.Ui.AddChild(b);
-        }
-
-        /// <inheritdoc/>
-        public override bool overrideSnappyMenuCursorMovementBan()
-        {
-            return true;
         }
 
         /*********

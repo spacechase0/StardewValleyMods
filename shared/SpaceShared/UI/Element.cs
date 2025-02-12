@@ -46,6 +46,9 @@ namespace SpaceShared.UI
         public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
+        public bool CreateDummyClickableComponent = false;
+        public ClickableComponent DummyClickableComponent { get; set; } = null;
+
         public string ScreenReaderText { get; set; }
         public string ScreenReaderDescription { get; set; }
         public bool ScreenReaderIgnore { get; set; } = false;

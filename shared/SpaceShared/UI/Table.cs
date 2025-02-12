@@ -1,4 +1,5 @@
 using System;
+using SpaceShared;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -81,11 +82,26 @@ namespace SpaceShared.UI
         {
             this.Rows.Add(elements);
             int maxElementHeight = 0;
-            foreach (var child in elements)
+            int rowID = this.Rows.Count * 1000;
+            for (int index = 0; index < elements.Length; index++)
             {
+                var child = elements[index];
+                if (child.CreateDummyClickableComponent)
+                {
+                    child.DummyClickableComponent = new ClickableComponent(child.Bounds, "")
+                    {
+                        myID = rowID + index,
+                        upNeighborID = rowID - 1000 >= 1000 ? rowID - 1000 : -1,
+                        rightNeighborID = (index + 1 < elements.Length) ? rowID + index + 1 : -1,
+                        downNeighborID = rowID + 1000,
+                        leftNeighborID = (index - 1 > 0) ? rowID + index - 1 : -1,
+                    };
+                }
+
                 this.AddChild(child);
                 maxElementHeight = Math.Max(maxElementHeight, child.Height);
             }
+
             this.ContentHeight += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             this.UpdateScrollbar();
         }
@@ -104,6 +120,8 @@ namespace SpaceShared.UI
                 foreach (var element in row)
                 {
                     element.LocalPosition = new Vector2(element.LocalPosition.X, topPx - this.Scrollbar.TopRow * this.RowHeight);
+                    if (element.CreateDummyClickableComponent) element.DummyClickableComponent.bounds = element.Bounds;
+
                     bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
 
                     if (!isChildOffScreen || element is Label) // Labels must update anyway to get rid of hovertext on scrollwheel
@@ -187,11 +205,19 @@ namespace SpaceShared.UI
         *********/
         /// <summary>Get whether a child element is outside the table's current display area.</summary>
         /// <param name="element">The child element to check.</param>
-        private bool IsElementOffScreen(Element element)
+        public bool IsElementOffScreen(Element element)
         {
             return
-                element.Position.Y + element.Height < this.Position.Y
-                || element.Position.Y > this.Position.Y + this.Size.Y;
+                element.Position.Y < this.Position.Y
+                || element.Position.Y + element.Height > this.Position.Y + this.Size.Y;
+        }
+
+        // TODO Update name and add xmldoc
+        public bool IsElementOffScreen(ClickableComponent element)
+        {
+            return
+                element.bounds.Y < this.Position.Y
+                || element.bounds.Y + element.bounds.Height > this.Position.Y + this.Size.Y;
         }
 
         private void UpdateScrollbar()
