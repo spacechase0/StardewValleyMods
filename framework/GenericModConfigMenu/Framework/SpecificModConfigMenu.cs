@@ -538,6 +538,38 @@ namespace GenericModConfigMenu.Framework
 
         public override void applyMovementKey(int direction)
         {
+            // Abort navigation when a textbox is selected
+            if (Textbox.SelectedTextbox is { Selected: true }) return;
+
+            if (direction is 1 or 3)
+            {
+                if (Mod.instance.CurrentHoveredButton is Slider<int> slider)
+                {
+                    slider.Value = direction == 1
+                        ? Math.Min(slider.Value + slider.Interval, slider.Maximum)
+                        : Math.Max(slider.Value - slider.Interval, slider.Minimum);
+                    slider.Callback?.Invoke(slider);
+                    return;
+                }
+                else if (Mod.instance.CurrentHoveredButton is Slider<float> slider1)
+                {
+                    slider1.Value = direction == 1
+                        ? Math.Min(slider1.Value + slider1.Interval, slider1.Maximum)
+                        : Math.Max(slider1.Value - slider1.Interval, slider1.Minimum);
+                    slider1.Callback?.Invoke(slider1);
+                    return;
+                }
+
+                else if (Mod.instance.CurrentHoveredButton is Dropdown dropdown)
+                {
+                    dropdown.ActiveChoice = direction == 1
+                        ? Math.Min(dropdown.ActiveChoice + 1, dropdown.Choices.Length - 1)
+                        : Math.Max(dropdown.ActiveChoice - 1, 0);
+                    dropdown.Callback?.Invoke(dropdown);
+                    return;
+                }
+            }
+
             base.applyMovementKey(direction);
             if (direction is 0 or 2 && this.currentlySnappedComponent != null &&
                 this.Table.IsElementOffScreen(this.currentlySnappedComponent))
@@ -566,6 +598,13 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void receiveKeyPress(Keys key)
         {
+            // Unselect selected textbox on escape pressed
+            if (key == Keys.Escape && Textbox.SelectedTextbox is { Selected: true })
+            {
+                Textbox.SelectedTextbox.Selected = false;
+                return;
+            }
+
             if (key == Keys.Escape && !this.IsBindingKey)
                 this.ExitOnNextUpdate = true;
             base.receiveKeyPress(key);

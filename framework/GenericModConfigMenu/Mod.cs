@@ -40,6 +40,8 @@ namespace GenericModConfigMenu
 
         internal IStardewAccessApi StardewAccessApi;
 
+        internal Element CurrentHoveredButton = null;
+
         /*********
         ** Accessors
         *********/
@@ -366,6 +368,8 @@ namespace GenericModConfigMenu
                 Element.MouseHovered += (sender, args) =>
                 {
                     Element element = ((Element)sender);
+                    this.CurrentHoveredButton = element;
+
                     if (element.ScreenReaderIgnore) return;
 
                     this.StardewAccessApi.SayWithMenuChecker(this.GetScreenReaderInfoOfElement(element), true);
@@ -520,9 +524,10 @@ namespace GenericModConfigMenu
                 this.OpenListMenuNew();
 
             // pass input to menu
-            // TODO Investigate why this is needed
-            // else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
-            //     menu.receiveKeyPress(key);
+            else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu &&
+                     Textbox.SelectedTextbox is { Selected: true } &&
+                     e.Button.TryGetKeyboard(out Keys key))
+                menu.receiveKeyPress(key);
         }
 
         /// <inheritdoc cref="IInputEvents.ButtonPressed"/>

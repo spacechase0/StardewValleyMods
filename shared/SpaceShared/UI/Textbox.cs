@@ -23,6 +23,9 @@ namespace SpaceShared.UI
         private bool SelectedImpl;
 
 
+        public static Textbox SelectedTextbox = null;
+
+
         /*********
         ** Accessors
         *********/
@@ -93,6 +96,9 @@ namespace SpaceShared.UI
                 b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 16 + (int)vector2.X + 2, (int)this.Position.Y + 8, 4, 32), Game1.textColor);
 
             b.DrawString(this.Font, text, this.Position + new Vector2(16, 12), Game1.textColor);
+
+            if (this.Selected) Textbox.SelectedTextbox = this;
+            else Textbox.SelectedTextbox = null;
         }
 
         /// <inheritdoc />
