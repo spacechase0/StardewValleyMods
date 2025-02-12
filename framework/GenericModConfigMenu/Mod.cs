@@ -520,8 +520,9 @@ namespace GenericModConfigMenu
                 this.OpenListMenuNew();
 
             // pass input to menu
-            else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
-                menu.receiveKeyPress(key);
+            // TODO Investigate why this is needed
+            // else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
+            //     menu.receiveKeyPress(key);
         }
 
         /// <inheritdoc cref="IInputEvents.ButtonPressed"/>

@@ -28,6 +28,7 @@ namespace SpaceShared.UI
         private int RowHeightImpl;
         private bool FixedRowHeight;
         private int ContentHeight;
+        private int CurrentNavigatableRowIndex = 1;
 
 
         /*********
@@ -82,26 +83,32 @@ namespace SpaceShared.UI
         {
             this.Rows.Add(elements);
             int maxElementHeight = 0;
-            int rowID = this.Rows.Count * 1000;
-            for (int index = 0; index < elements.Length; index++)
+            int rowID = this.CurrentNavigatableRowIndex * 1000;
+            int i = 0;
+            bool anyChildAdded = false;
+
+            foreach (var child in elements)
             {
-                var child = elements[index];
                 if (child.CreateDummyClickableComponent)
                 {
                     child.DummyClickableComponent = new ClickableComponent(child.Bounds, "")
                     {
-                        myID = rowID + index,
+                        myID = rowID + i,
                         upNeighborID = rowID - 1000 >= 1000 ? rowID - 1000 : -1,
-                        rightNeighborID = (index + 1 < elements.Length) ? rowID + index + 1 : -1,
+                        rightNeighborID = (i + 1 < elements.Length) ? rowID + i + 1 : -1,
                         downNeighborID = rowID + 1000,
-                        leftNeighborID = (index - 1 > 0) ? rowID + index - 1 : -1,
+                        leftNeighborID = (i - 1 > 0) ? rowID + i - 1 : -1,
+                        ScreenReaderIgnore = true
                     };
+                    i++;
+                    anyChildAdded = true;
                 }
 
                 this.AddChild(child);
                 maxElementHeight = Math.Max(maxElementHeight, child.Height);
             }
 
+            if (anyChildAdded) this.CurrentNavigatableRowIndex++;
             this.ContentHeight += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             this.UpdateScrollbar();
         }

@@ -28,7 +28,7 @@ namespace GenericModConfigMenu.Framework
 
         private List<Label> LabelsWithTooltips = new();
 
-        private int oldScrollRow;
+        private float oldScrollPercent = -999;
 
 
         /*********
@@ -100,8 +100,7 @@ namespace GenericModConfigMenu.Framework
                         this.Table.AddRow(new Element[] { label });
                         this.LabelsWithTooltips.Add(label);
                         if (index == 0) label.DummyClickableComponent.leftNeighborID = 500;
-                        if (label.DummyClickableComponent != null)
-                            this.allClickableComponents.Add(label.DummyClickableComponent);
+                        if (label.DummyClickableComponent != null) this.allClickableComponents.Add(label.DummyClickableComponent);
                     }
                 }
             }
@@ -133,11 +132,14 @@ namespace GenericModConfigMenu.Framework
                             String = entry.ModName,
                             UserData = entry.ModManifest.Description,
                             IdleTextColor = Color.Black * 0.4f,
-                            HoverTextColor = Color.Black * 0.4f
+                            HoverTextColor = Color.Black * 0.4f,
+                            ScreenReaderText = $"{entry.ModName}, {entry.ModManifest.Description}",
+                            CreateDummyClickableComponent = true
                         };
 
                         this.Table.AddRow(new Element[] { label });
                         LabelsWithTooltips.Add(label);
+                        if (label.DummyClickableComponent != null) this.allClickableComponents.Add(label.DummyClickableComponent);
                     }
                 }
             }
@@ -153,7 +155,8 @@ namespace GenericModConfigMenu.Framework
             button.DummyClickableComponent = new(button.Bounds, "")
             {
                 myID = 500,
-                rightNeighborID = 2000
+                rightNeighborID = 1000,
+                ScreenReaderIgnore = true
             };
             this.allClickableComponents.Add(button.DummyClickableComponent);
             this.Ui.AddChild(button);
@@ -163,10 +166,7 @@ namespace GenericModConfigMenu.Framework
             else
                 this.upperRightCloseButton = null;
 
-            if (scrollTo != null) {
-                this.ScrollRow = scrollTo.Value;
-                this.oldScrollRow = scrollTo.Value;
-            }
+            if (scrollTo != null) this.ScrollRow = scrollTo.Value;
 
             if (!InGame)
             {
@@ -189,7 +189,7 @@ namespace GenericModConfigMenu.Framework
 
         public override void snapToDefaultClickableComponent()
         {
-            this.currentlySnappedComponent = getComponentWithID(2000);
+            this.currentlySnappedComponent = getComponentWithID(1000);
             this.snapCursorToCurrentSnappedComponent();
         }
 
@@ -228,9 +228,9 @@ namespace GenericModConfigMenu.Framework
             }
             else scrollCounter = 0;
 
-            if (this.oldScrollRow != ScrollRow)
+            if (this.oldScrollPercent != this.Table.Scrollbar.ScrollPercent)
             {
-                this.oldScrollRow = ScrollRow;
+                this.oldScrollPercent = this.Table.Scrollbar.ScrollPercent;
                 this.snapCursorToCurrentSnappedComponent();
             }
         }
