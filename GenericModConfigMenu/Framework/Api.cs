@@ -127,6 +127,15 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
+        public void AddTextOption(IManifest mod, Func<string> getValue, Action<string> setValue, int? width, int? height, Func<string> name = null, Func<string> tooltip = null, string[] allowedValues = null, Func<string, string> formatAllowedValue = null, string fieldId = null)
+        {
+            if (allowedValues?.Any() == true)
+                this.AddChoiceOption(mod, name, tooltip, getValue, setValue, allowedValues, formatAllowedValue, fieldId);
+            else
+                this.AddSimpleOption(mod, name, tooltip, getValue, setValue, fieldId, width, height);
+        }
+
+        /// <inheritdoc />
         public void AddKeybind(IManifest mod, Func<SButton> getValue, Action<SButton> setValue, Func<string> name = null, Func<string> tooltip = null, string fieldId = null)
         {
             this.AddSimpleOption(mod, name, tooltip, getValue, setValue, fieldId);
@@ -515,7 +524,7 @@ namespace GenericModConfigMenu.Framework
         /// <param name="getValue">Get the current value from the mod config.</param>
         /// <param name="setValue">Set a new value in the mod config.</param>
         /// <param name="fieldId">The unique field ID used when raising field-changed events, or <c>null</c> to generate a random one.</param>
-        private void AddSimpleOption<T>(IManifest mod, Func<string> name, Func<string> tooltip, Func<T> getValue, Action<T> setValue, string fieldId)
+        private void AddSimpleOption<T>(IManifest mod, Func<string> name, Func<string> tooltip, Func<T> getValue, Action<T> setValue, string fieldId, int? width = null, int? height = null)
         {
             mod ??= this.mod;
             this.AssertNotNull(name);
@@ -528,7 +537,7 @@ namespace GenericModConfigMenu.Framework
             if (!valid.Contains(typeof(T)))
                 throw new ArgumentException("Invalid config option type.");
 
-            modConfig.AddOption(new SimpleModOption<T>(fieldId, name, tooltip, modConfig, getValue, setValue));
+            modConfig.AddOption(new SimpleModOption<T>(fieldId, name, tooltip, modConfig, getValue, setValue, width, height));
         }
 
         /// <summary>Add a numeric option with optional clamping.</summary>

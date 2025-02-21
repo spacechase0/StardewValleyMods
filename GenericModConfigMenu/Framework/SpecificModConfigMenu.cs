@@ -349,6 +349,10 @@ namespace GenericModConfigMenu.Framework
                             String = option.Value,
                             Callback = (Element e) => option.Value = (e as Textbox).String
                         };
+                        if (option.Width.HasValue)
+                            (optionElement as Textbox).SetWidth = option.Width.Value;
+                        if (option.Height.HasValue)
+                            (optionElement as Textbox).SetHeight = option.Height.Value;
                         break;
 
                     case SectionTitleModOption _:

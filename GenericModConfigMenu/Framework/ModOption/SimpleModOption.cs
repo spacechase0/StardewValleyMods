@@ -39,7 +39,9 @@ namespace GenericModConfigMenu.Framework.ModOption
             }
         }
 
-
+        public virtual int? Width { get; set; }
+        public virtual int? Height { get; set; }
+        
         /*********
         ** Public methods
         *********/
@@ -50,13 +52,15 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="mod">The mod config UI that contains this option.</param>
         /// <param name="getValue">Get the latest value from the mod config.</param>
         /// <param name="setValue">Update the mod config with the given value.</param>
-        public SimpleModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue)
+        public SimpleModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue, int? width = null, int? height = null)
             : base(fieldId, name, tooltip, mod)
         {
             this.GetValue = getValue;
             this.SetValue = setValue;
 
             this.CachedValue = this.GetValue();
+            this.Width = width;
+            this.Height = height;
         }
 
         /// <inheritdoc />

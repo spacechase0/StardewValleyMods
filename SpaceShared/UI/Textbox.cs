@@ -49,11 +49,13 @@ namespace SpaceShared.UI
 
         public Action<Element> Callback { get; set; }
 
+        public int SetWidth { get; set; } = 192;
+        public int SetHeight { get; set; } = 48;
         /// <inheritdoc />
-        public override int Width => 192;
+        public override int Width => SetWidth;
 
         /// <inheritdoc />
-        public override int Height => 48;
+        public override int Height => SetHeight;
 
 
         /*********
@@ -82,12 +84,34 @@ namespace SpaceShared.UI
             if (this.IsHidden())
                 return;
 
-            b.Draw(this.Tex, this.Position, Color.White);
+            if (this.Width == Tex.Width && this.Height == Tex.Height)
+            {
+                b.Draw(this.Tex, this.Position, Color.White);
+            }
+            else
+            {
+                var textureWidthMinus16 = this.Tex.Width - 16;
+                var textureHeightMinus16 = this.Tex.Height - 16;
+                var textureWidthMinus32 = this.Tex.Width - 32;
+                var textureHeightMinus32 = this.Tex.Height - 32;
+                // Draw the corners
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X, (int)this.Position.Y, 16, 16), new Rectangle(0, 0, 16, 16), Color.White);
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X + this.Width - 16, (int)this.Position.Y, 16, 16), new Rectangle(textureWidthMinus16, 0, 16, 16), Color.White);
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X, (int)this.Position.Y + this.Height - 16, 16, 16), new Rectangle(0, textureHeightMinus16, 16, 16), Color.White);
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X + this.Width - 16, (int)this.Position.Y + this.Height - 16, 16, 16), new Rectangle(textureWidthMinus16, textureHeightMinus16, 16, 16), Color.White);
+                // Draw the edges
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X + 16, (int)this.Position.Y, this.Width - 32, 16), new Rectangle(16, 0, textureWidthMinus32, 16), Color.White);
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X + 16, (int)this.Position.Y + this.Height - 16, this.Width - 32, 16), new Rectangle(16, textureHeightMinus16, textureWidthMinus32, 16), Color.White);
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X, (int)this.Position.Y + 16, 16, this.Height - 32), new Rectangle(0, 16, 16, textureHeightMinus32), Color.White);
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X + this.Width - 16, (int)this.Position.Y + 16, 16, this.Height - 32), new Rectangle(textureWidthMinus16, 16, 16, textureHeightMinus32), Color.White);
+                // Draw the center
+                b.Draw(this.Tex, new Rectangle((int)this.Position.X + 16, (int)this.Position.Y + 16, this.Width - 32, this.Height - 32), new Rectangle(16, 16, textureWidthMinus32, textureHeightMinus32), Color.White);
+            }
 
             // Copied from game code - caret
             string text = this.String;
             Vector2 vector2;
-            for (vector2 = this.Font.MeasureString(text); vector2.X > 192f; vector2 = this.Font.MeasureString(text))
+            for (vector2 = this.Font.MeasureString(text); vector2.X > this.Width; vector2 = this.Font.MeasureString(text))
                 text = text.Substring(1);
             if (DateTime.UtcNow.Millisecond % 1000 >= 500 && this.Selected)
                 b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 16 + (int)vector2.X + 2, (int)this.Position.Y + 8, 4, 32), Game1.textColor);
