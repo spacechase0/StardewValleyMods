@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+
+using Leclair.Stardew.BetterGameMenu;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using Newtonsoft.Json;
+
 using SpaceCore.Events;
 using SpaceCore.Interface;
+
 using SpaceShared;
 using SpaceShared.APIs;
+
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
+
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Network;
@@ -232,6 +240,7 @@ namespace SpaceCore
         internal static List<KeyValuePair<string, int>> NewLevels => State.NewLevels;
 
         private static IExperienceBarsApi? BarsApi;
+        private static IBetterGameMenuApi? BetterGameMenuApi;
 
         internal static void Init(IModEvents events)
         {
@@ -253,6 +262,24 @@ namespace SpaceCore
             BarsApi = SpaceCore.Instance.Helper.ModRegistry.GetApi<IExperienceBarsApi>("spacechase0.ExperienceBars");
             if (BarsApi is not null)
                 events.Display.RenderedHud += Skills.OnRenderedHud;
+
+            try
+            {
+                BetterGameMenuApi = SpaceCore.Instance.Helper.ModRegistry.GetApi<IBetterGameMenuApi>("leclair.bettergamemenu");
+            }
+            catch (Exception ex)
+            {
+                SpaceCore.Instance.Monitor.Log($"Unable to obtain Better Game Menu API: {ex}", LogLevel.Warn);
+            }
+
+            BetterGameMenuApi?.RegisterImplementation(
+                nameof(VanillaTabOrders.Skills),
+                100,
+                getPageInstance: gm => new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width, gm.height),
+                getWidth: width => width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0),
+                onResize: input => new NewSkillsPage(input.Menu.xPositionOnScreen, input.Menu.yPositionOnScreen, input.Menu.width, input.Menu.height)
+            );
+
         }
 
         private static void GameLoop_ReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
@@ -265,7 +292,7 @@ namespace SpaceCore
         private static void DayStarted(object sender, DayStartedEventArgs e)
         {
             //Get all currently loaded skills
-            foreach(string Id in Skills.GetSkillList())
+            foreach (string Id in Skills.GetSkillList())
             {
                 //Get the skill level for the player
                 int skillLevel = Game1.player.GetCustomSkillLevel(Id);
@@ -697,7 +724,7 @@ namespace SpaceCore
         {
             if (e.NewMenu is GameMenu gm)
             {
-                if (SpaceCore.Instance.Config.CustomSkillPage ) // && ( Skills.SkillsByName.Count > 0 || SpaceEvents.HasAddWalletItemEventHandlers() ) )
+                if (SpaceCore.Instance.Config.CustomSkillPage) // && ( Skills.SkillsByName.Count > 0 || SpaceEvents.HasAddWalletItemEventHandlers() ) )
                 {
                     gm.pages[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
                 }
