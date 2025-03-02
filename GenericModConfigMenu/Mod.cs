@@ -1,5 +1,10 @@
+using System;
 using System.Collections.Generic;
+
 using GenericModConfigMenu.Framework;
+
+using Leclair.Stardew.BetterGameMenu;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,7 +18,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Delegates;
 using StardewValley.Menus;
-using StardewValley.TokenizableStrings;
 using StardewValley.Triggers;
 
 
@@ -35,6 +39,8 @@ namespace GenericModConfigMenu
 
         /// <summary>Manages registered mod config menus.</summary>
         internal readonly ModConfigManager ConfigManager = new();
+
+        private IBetterGameMenuApi? BetterGameMenu;
 
         /*********
         ** Accessors
@@ -132,7 +138,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi(IModInfo mod)
         {
-            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null), (s) => LogDeprecated( mod.Manifest.UniqueID, s));
+            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null), (s) => LogDeprecated(mod.Manifest.UniqueID, s));
         }
 
 
@@ -152,7 +158,7 @@ namespace GenericModConfigMenu
         /// <param name="scrollRow">The initial scroll position, represented by the row index at the top of the visible area.</param>
         private void OpenListMenuNew(int? scrollRow = null)
         {
-            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow), openKeybindingsMenu: currScrollRow => OpenKeybindingsMenuNew( currScrollRow ), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow);
+            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow), openKeybindingsMenu: currScrollRow => OpenKeybindingsMenuNew(currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow);
         }
         private void OpenListMenu(int? scrollRow = null)
         {
@@ -192,7 +198,7 @@ namespace GenericModConfigMenu
                     OpenListMenuNew(listScrollRow);
                 }
             );
-            
+
             if (Game1.activeClickableMenu is TitleMenu)
             {
                 TitleMenu.subMenu = newMenu;
@@ -275,7 +281,7 @@ namespace GenericModConfigMenu
                 this.Ui.AddChild(this.ConfigButton);
             }
 
-            if (Game1.activeClickableMenu is TitleMenu tm && tm.allClickableComponents?.Find( (cc) => cc?.myID == 509800 ) == null )
+            if (Game1.activeClickableMenu is TitleMenu tm && tm.allClickableComponents?.Find((cc) => cc?.myID == 509800) == null)
             {
                 // Gamepad support
                 Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
@@ -310,7 +316,7 @@ namespace GenericModConfigMenu
             // the texture.
             this.Helper.Events.GameLoop.UpdateTicking += this.FiveTicksAfterGameLaunched;
 
-            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null), (s) => LogDeprecated( ModManifest.UniqueID, s));
+            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null), (s) => LogDeprecated(ModManifest.UniqueID, s));
 
             configMenu.Register(
                 mod: this.ModManifest,
@@ -337,6 +343,21 @@ namespace GenericModConfigMenu
                 getValue: () => this.Config.OpenMenuKey,
                 setValue: value => this.Config.OpenMenuKey = value
             );
+
+            try
+            {
+                this.BetterGameMenu = this.Helper.ModRegistry.GetApi<IBetterGameMenuApi>("leclair.bettergamemenu");
+            }
+            catch (Exception ex)
+            {
+                this.Monitor.Log($"Unable to obtain Better Game Menu API: {ex}", LogLevel.Warn);
+            }
+
+            this.BetterGameMenu?.OnPageCreated(evt =>
+            {
+                if (evt.Page is OptionsPage page)
+                    page.options.Add(new OptionsButton(I18n.Button_ModOptions(), () => this.OpenListMenuNew()));
+            });
         }
 
         private void FiveTicksAfterGameLaunched(object sender, UpdateTickingEventArgs e)
@@ -375,7 +396,7 @@ namespace GenericModConfigMenu
         /// <param name="e">The event arguments.</param>
         private void OnWindowResized(object sender, WindowResizedEventArgs e)
         {
-            if ( this.ConfigButton != null )
+            if (this.ConfigButton != null)
                 this.ConfigButton.LocalPosition = new Vector2(this.ConfigButton.Position.X, Game1.viewport.Height - 100);
         }
 
