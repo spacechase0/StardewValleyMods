@@ -370,11 +370,13 @@ namespace GenericModConfigMenu
                 Element.MouseHovered += (sender, args) =>
                 {
                     Element element = ((Element)sender);
-                    this.CurrentHoveredButton = element;
+                    if (element is Container) return;
 
+                    this.CurrentHoveredButton = element;
                     if (element.ScreenReaderIgnore) return;
 
-                    this.StardewAccessApi.SayWithMenuChecker(this.GetScreenReaderInfoOfElement(element), true);
+                    this.StardewAccessApi.SayMenuElement(GetScreenReaderInfoOfElement(element),
+                        description: element.ScreenReaderDescription, interrupt: true);
                 };
             }
         }
@@ -455,7 +457,7 @@ namespace GenericModConfigMenu
 
             if (string.IsNullOrWhiteSpace(label)) return "unknown";
 
-            return $"{this.StardewAccessApi.Translate(translationKey, tokens, "Menu")}\n{element.ScreenReaderDescription}";
+            return this.StardewAccessApi.Translate(translationKey, tokens, "Menu");
         }
 
         private void FiveTicksAfterGameLaunched(object sender, UpdateTickingEventArgs e)
