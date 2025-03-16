@@ -29,6 +29,7 @@ namespace GenericModConfigMenu
         /*********
         ** Fields
         *********/
+        private IModHelper? ModHelper;
         private OwnModConfig Config;
         private RootElement? Ui;
         private Button ConfigButton;
@@ -94,6 +95,7 @@ namespace GenericModConfigMenu
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            this.ModHelper = helper;
             I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<OwnModConfig>();
@@ -409,7 +411,8 @@ namespace GenericModConfigMenu
                     tokens = new
                     {
                         label,
-                        slider_value = slider.Value
+                        slider_value = slider.Value,
+                        is_percentage = 0
                     };
                     break;
                 case Slider<int> slider:
@@ -417,7 +420,8 @@ namespace GenericModConfigMenu
                     tokens = new
                     {
                         label,
-                        slider_value = slider.Value
+                        slider_value = slider.Value,
+                        is_percentage = 0
                     };
                     break;
                 case Slider slider:
@@ -425,7 +429,8 @@ namespace GenericModConfigMenu
                     tokens = new
                     {
                         label,
-                        slider_value = ((Slider<float>)slider).Value
+                        slider_value = ((Slider<float>)slider).Value,
+                        is_percentage = 0
                     };
                     break;
                 case Textbox textbox:
@@ -527,7 +532,10 @@ namespace GenericModConfigMenu
             else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu &&
                      Textbox.SelectedTextbox is { Selected: true } &&
                      e.Button.TryGetKeyboard(out Keys key))
+            {
                 menu.receiveKeyPress(key);
+                if (key == Keys.Escape) this.ModHelper?.Input.Suppress(e.Button);
+            }
         }
 
         /// <inheritdoc cref="IInputEvents.ButtonPressed"/>
