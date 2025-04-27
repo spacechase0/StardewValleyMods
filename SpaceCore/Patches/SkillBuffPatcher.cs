@@ -12,6 +12,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Objects;
 using StardewValley.Menus;
+using StardewValley.Minigames;
 using static System.Net.Mime.MediaTypeNames;
 using static SpaceCore.Skills;
 
@@ -157,13 +158,47 @@ internal class SkillBuffPatcher : BasePatcher
             }
             else if (step == 2)
             {
+
                 yield return new CodeInstruction(OpCodes.Ldarg_S, 0);
                 yield return new CodeInstruction(OpCodes.Ldarg_S, 2);
                 yield return new CodeInstruction(OpCodes.Ldarg_S, 9);
+                yield return new CodeInstruction(OpCodes.Ldarg_S, 16);
+                yield return new CodeInstruction(OpCodes.Ldloc, 1);
                 yield return new CodeInstruction(OpCodes.Ldloc, 5);
                 yield return new CodeInstruction(OpCodes.Ldloc, 6);
                 yield return CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(DrawCustomSkillBuff));
                 yield return new CodeInstruction(OpCodes.Stloc, 6);
+                codeInstructions[i + 1].opcode = OpCodes.Nop;
+                codeInstructions[i + 1].opcode = OpCodes.Nop;
+                codeInstructions[i + 2].opcode = OpCodes.Nop;
+                codeInstructions[i + 3].opcode = OpCodes.Nop;
+                codeInstructions[i + 4].opcode = OpCodes.Nop;
+                codeInstructions[i + 5].opcode = OpCodes.Nop;
+                codeInstructions[i + 6].opcode = OpCodes.Nop;
+                codeInstructions[i + 7].opcode = OpCodes.Nop;
+                codeInstructions[i + 8].opcode = OpCodes.Nop;
+                codeInstructions[i + 9].opcode = OpCodes.Nop;
+                codeInstructions[i + 10].opcode = OpCodes.Nop;
+                codeInstructions[i + 11].opcode = OpCodes.Nop;
+                codeInstructions[i + 12].opcode = OpCodes.Nop;
+                codeInstructions[i + 13].opcode = OpCodes.Nop;
+                codeInstructions[i + 14].opcode = OpCodes.Nop;
+                codeInstructions[i + 15].opcode = OpCodes.Nop;
+                codeInstructions[i + 16].opcode = OpCodes.Nop;
+                codeInstructions[i + 17].opcode = OpCodes.Nop;
+                codeInstructions[i + 18].opcode = OpCodes.Nop;
+                codeInstructions[i + 19].opcode = OpCodes.Nop;
+                codeInstructions[i + 20].opcode = OpCodes.Nop;
+                codeInstructions[i + 21].opcode = OpCodes.Nop;
+                codeInstructions[i + 22].opcode = OpCodes.Nop;
+                codeInstructions[i + 23].opcode = OpCodes.Nop;
+                codeInstructions[i + 24].opcode = OpCodes.Nop;
+                codeInstructions[i + 25].opcode = OpCodes.Nop;
+                codeInstructions[i + 26].opcode = OpCodes.Nop;
+                codeInstructions[i + 27].opcode = OpCodes.Nop;
+                codeInstructions[i + 28].opcode = OpCodes.Nop;
+
+
             }
 
             yield return codeInstructions[i];
@@ -189,17 +224,17 @@ internal class SkillBuffPatcher : BasePatcher
             foreach (var entry in Skills.SkillBuff.ParseCustomFields(buffData.CustomFields))
             {
                 addedAny = true;
-                height += 34;
+                height += 39;
             }
             if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/HealthRegeneration"))
             {
                 addedAny = true;
-                height += 34;
+                height += 39;
             }
             if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/StaminaRegeneration"))
             {
                 addedAny = true;
-                height += 34;
+                height += 39;
             }
         }
 
@@ -246,19 +281,32 @@ internal class SkillBuffPatcher : BasePatcher
                 width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.StaminaRegen()).X) + 92;
             }
         }
-
         return width;
     }
 
-    private static int DrawCustomSkillBuff(SpriteBatch b, SpriteFont font, Item hoveredItem, int x, int y)
+    private static int DrawCustomSkillBuff(SpriteBatch b, SpriteFont font, Item hoveredItem, StardewValley.CraftingRecipe craftingIngredients, int width, int x, int y)
     {
+
         if (hoveredItem is null ||
             !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
-            data.Buffs is null ||
-            data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
+            data.Buffs is null)
         {
             return y;
         }
+
+        y += 16;
+        b.Draw(Game1.staminaRect, new Rectangle(x + 12, y + 6, width - ((craftingIngredients != null) ? 4 : 24), 2), new Color(207, 147, 103) * 0.8f);
+
+        if (hoveredItem is null ||
+            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data2) ||
+            data2.Buffs is null ||
+            data2.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
+        {
+            return y;
+        }
+
+
+
 
         foreach (var buffData in data.Buffs)
         {
@@ -276,7 +324,7 @@ internal class SkillBuffPatcher : BasePatcher
 
                 Utility.drawWithShadow(b, skill.SkillsPageIcon, new Vector2(x + 16 + 4, y + 16), new Rectangle(0, 0, 10, 10), Color.White, 0f, Vector2.Zero, 3f, flipped: false, 0.95f);
                 Utility.drawTextWithShadow(b, text, font, new Vector2(x + 16 + 34 + 4, y + 16), Game1.textColor);
-                y += 34;
+                y += 39;
             }
 
             if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/HealthRegeneration"))
@@ -285,7 +333,7 @@ internal class SkillBuffPatcher : BasePatcher
                 string text = (amt >= 0 ? "+" : "") + amt + " " + I18n.HealthRegen();
                 Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(x + 16 + 4, y + 16), new Rectangle(0, 438, 10, 10), Color.White, 0f, Vector2.Zero, 3f, flipped: false, 0.95f);
                 Utility.drawTextWithShadow(b, text, font, new Vector2(x + 16 + 34 + 4, y + 16), Game1.textColor);
-                y += 34;
+                y += 39;
             }
             if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/StaminaRegeneration"))
             {
@@ -293,7 +341,7 @@ internal class SkillBuffPatcher : BasePatcher
                 string text = (amt >= 0 ? "+" : "") + amt + " " + I18n.StaminaRegen();
                 Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(x + 16 + 4, y + 16), new Rectangle((amt < 0) ? 140 : 0, 428, 10, 10), Color.White, 0f, Vector2.Zero, 3f, flipped: false, 0.95f);
                 Utility.drawTextWithShadow(b, text, font, new Vector2(x + 16 + 34 + 4, y + 16), Game1.textColor);
-                y += 34;
+                y += 39;
             }
         }
 
