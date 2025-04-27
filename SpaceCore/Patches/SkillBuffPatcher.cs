@@ -12,7 +12,6 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Objects;
 using StardewValley.Menus;
-using StardewValley.Minigames;
 using static System.Net.Mime.MediaTypeNames;
 using static SpaceCore.Skills;
 
