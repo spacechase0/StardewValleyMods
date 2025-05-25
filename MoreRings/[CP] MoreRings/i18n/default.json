@@ -1,0 +1,22 @@
+{
+	"wide-nets.name": "Ring of Wide Nets",
+	"wide-nets.description": "Increases the size of the fishing bar.",
+
+	"regeneration.name": "Ring of Regeneration",
+	"regeneration.description": "Slowly heal over time.",
+
+	"booze.name": "Ring of Diamond Booze",
+	"booze.description": "Negates the tipsy effect of lighter alcohol.",
+
+	"refreshing.name": "Refreshing Ring",
+	"refreshing.description": "I wonder what it does.",
+
+	"quality.name": "Quality+ Ring",
+	"quality.description": "A chance for higher quality crop harvests.",
+
+	"reaching.name": "Ring of Far Reaching",
+	"reaching.description": "Use tools at a distance.",
+
+	"sight.name": "Ring of True Sight",
+	"sight.description": "See beyond what you can see."
+}

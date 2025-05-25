@@ -1,0 +1,282 @@
+{
+  "Format": "2.6.0",
+  "Changes": [
+    {
+      "Action": "EditData",
+      "Target": "Data/Objects",
+      "Entries": {
+        "Ring_of_Wide_Nets": {
+          "Name": "{{ModId}}_Ring_of_Wide_Nets",
+          "DisplayName": "{{i18n: wide-nets.name}}",
+          "Description": "{{i18n: wide-nets.description}}",
+          "Type": "Ring",
+          "Category": 0,
+          "Price": 5000,
+          "Texture": "Mods\\{{ModId}}\\Rings",
+          "SpriteIndex": 0,
+          "Edibility": -300,
+          "IsDrink": false,
+          "Buffs": null,
+          "GeodeDropsDefaultItems": false,
+          "GeodeDrops": null,
+          "ArtifactSpotChanes": null,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true,
+          "ContextTags": [
+            "ring_item",
+				"color_gold"
+          ],
+          "CustomFields": null
+        },
+        "Ring_of_Regeneration": {
+          "Name": "{{ModId}}_Ring_of_Regeneration",
+          "DisplayName": "{{i18n: regeneration.name}}",
+          "Description": "{{i18n: regeneration.description}}",
+          "Type": "Ring",
+          "Category": 0,
+          "Price": 10000,
+          "Texture": "Mods\\{{ModId}}\\Rings",
+          "SpriteIndex": 1,
+          "Edibility": -300,
+          "IsDrink": false,
+          "Buffs": null,
+          "GeodeDropsDefaultItems": false,
+          "GeodeDrops": null,
+          "ArtifactSpotChanes": null,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true,
+          "ContextTags": [
+            "ring_item",
+				"color_red"
+          ],
+          "CustomFields": null
+        },
+        "Ring_of_Diamond_Booze": {
+          "Name": "{{ModId}}_Ring_of_Diamond_Booze",
+          "DisplayName": "{{i18n: booze.name}}",
+          "Description": "{{i18n: booze.description}}",
+          "Type": "Ring",
+          "Category": 0,
+          "Price": 1000,
+          "Texture": "Mods\\{{ModId}}\\Rings",
+          "SpriteIndex": 2,
+          "Edibility": -300,
+          "IsDrink": false,
+          "Buffs": null,
+          "GeodeDropsDefaultItems": false,
+          "GeodeDrops": null,
+          "ArtifactSpotChanes": null,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true,
+          "ContextTags": [
+            "ring_item"
+          ],
+          "CustomFields": null
+        },
+        "Refreshing_Ring": {
+          "Name": "{{ModId}}_Refreshing_Ring",
+          "DisplayName": "{{i18n: refreshing.name}}",
+          "Description": "{{i18n: refreshing.description}}",
+          "Type": "Ring",
+          "Category": 0,
+          "Price": 25000,
+          "Texture": "Mods\\{{ModId}}\\Rings",
+          "SpriteIndex": 3,
+          "Edibility": -300,
+          "IsDrink": false,
+          "Buffs": null,
+          "GeodeDropsDefaultItems": false,
+          "GeodeDrops": null,
+          "ArtifactSpotChanes": null,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true,
+          "ContextTags": [
+            "ring_item",
+				"color_prismatic"
+          ],
+          "CustomFields": null
+        },
+        "Quality+_Ring": {
+          "Name": "{{ModId}}_Quality+_Ring",
+          "DisplayName": "{{i18n: quality.name}}",
+          "Description": "{{i18n: quality.description}}",
+          "Type": "Ring",
+          "Category": 0,
+          "Price": 1000,
+          "Texture": "Mods\\{{ModId}}\\Rings",
+          "SpriteIndex": 4,
+          "Edibility": -300,
+          "IsDrink": false,
+          "Buffs": null,
+          "GeodeDropsDefaultItems": false,
+          "GeodeDrops": null,
+          "ArtifactSpotChanes": null,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true,
+          "ContextTags": [
+            "ring_item",
+				"color_jade"
+          ],
+          "CustomFields": null
+        },
+        "Ring_of_Far_Reaching": {
+          "Name": "{{ModId}}_Ring_of_Far_Reaching",
+          "DisplayName": "{{i18n: reaching.name}}",
+          "Description": "{{i18n: reaching.description}}",
+          "Type": "Ring",
+          "Category": 0,
+          "Price": 10000,
+          "Texture": "Mods\\{{ModId}}\\Rings",
+          "SpriteIndex": 5,
+          "Edibility": -300,
+          "IsDrink": false,
+          "Buffs": null,
+          "GeodeDropsDefaultItems": false,
+          "GeodeDrops": null,
+          "ArtifactSpotChanes": null,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true,
+          "ContextTags": [
+            "ring_item",
+				"color_green"
+          ],
+          "CustomFields": null
+        },
+        "Ring_of_True_Sight": {
+          "Name": "{{ModId}}_Ring_of_True_Sight",
+          "DisplayName": "{{i18n: sight.name}}",
+          "Description": "{{i18n: sight.description}}",
+          "Type": "Ring",
+          "Category": 0,
+          "Price": 10000,
+          "Texture": "Mods\\{{ModId}}\\Rings",
+          "SpriteIndex": 6,
+          "Edibility": -300,
+          "IsDrink": false,
+          "Buffs": null,
+          "GeodeDropsDefaultItems": false,
+          "GeodeDrops": null,
+          "ArtifactSpotChanes": null,
+          "ExcludeFromFishingCollection": true,
+          "ExcludeFromShippingCollection": true,
+          "ExcludeFromRandomSale": true,
+          "ContextTags": [
+            "ring_item",
+				"color_gold",
+				"color_red"
+          ],
+          "CustomFields": null
+        }
+      }
+    },
+	 {
+		 "Action": "EditData",
+		 "Target": "Data/CraftingRecipes",
+		 "Entries": {
+			 "{{ModId}}_Ring_of_Wide_Nets": "734 3 336 5/Field/Ring_of_Wide_Nets/false/null",
+			 "{{ModId}}_Ring_of_Regeneration": "773 3 337 3/Field/Ring_of_Regeneration/false/null",
+			 "{{ModId}}_Ring_of_Diamond_Booze": "72 1 336 3/Field/Ring_of_Diamond_Booze/false/null",
+			 "{{ModId}}_Refreshing_Ring": "74 1 337 3/Field/Refreshing_Ring/false/null",
+			 "{{ModId}}_Quality+_Ring": "577 1 336 3/Field/Quality+_Ring/false/null",
+			 "{{ModId}}_Ring_of_Far_Reaching": "578 1 910 3/Field/Ring_of_Far_Reaching/false/null",
+			 "{{ModId}}_Ring_of_True_Sight": "562 2 336 10/Field/Ring_of_True_Sight/false/null",
+		 }
+	 },
+	 {
+		 "Action": "EditData",
+		 "Target": "Data/Shops",
+		 "TargetField": [ "FishShop", "Items" ],
+		 "Entries": {
+			 "{{ModId}}_Ring_of_Wide_Nets": {
+				 "Id": "{{ModId}}_Ring_of_Wide_Nets",
+				 "ItemId": "(O)Ring_of_Wide_Nets",
+				 "Price": 5000,
+				 "AvailableStock": 1,
+				 "AvailableStockLimit": "Player",
+				 "Condition": "WEATHER Beach Rain",
+				 "IsRecipe": true
+			 }
+		 }
+	 },
+	 {
+		 "Action": "EditData",
+		 "Target": "Data/Shops",
+		 "TargetField": [ "AdventureShop", "Items" ],
+		 "Entries": {
+			 "{{ModId}}_Ring_of_Regeneration": {
+				 "Id": "{{ModId}}_Ring_of_Regeneration",
+				 "ItemId": "Ring_of_Regeneration",
+				 "Price": 10000,
+				 "AvailableStock": 1,
+				 "AvailableStockLimit": "Player",
+				 "IsRecipe": true
+			 }
+		 }
+	 },
+	 {
+		 "Action": "EditData",
+		 "Target": "Data/Shops",
+		 "TargetField": [ "Dwarf", "Items" ],
+		 "Entries": {
+			 "{{ModId}}_Ring_of_Diamond_Booze": {
+				 "Id": "{{ModId}}_Ring_of_Diamond_Booze",
+				 "ItemId": "Ring_of_Diamond_Booze",
+				 "Price": 1000,
+				 "AvailableStock": 1,
+				 "AvailableStockLimit": "Player",
+				 "IsRecipe": true
+			 },
+			 "{{ModId}}_Quality+_Ring": {
+				 "Id": "{{ModId}}_Quality+_Ring",
+				 "ItemId": "Quality+_Ring",
+				 "Price": 1000,
+				 "AvailableStock": 1,
+				 "AvailableStockLimit": "Player",
+				 "IsRecipe": true
+			 },
+			 "{{ModId}}_Ring_of_Far_Reaching": {
+				 "Id": "{{ModId}}_Ring_of_Far_Reaching",
+				 "ItemId": "Ring_of_Far_Reaching",
+				 "Price": 25000,
+				 "AvailableStock": 1,
+				 "AvailableStockLimit": "Player",
+				 "IsRecipe": true
+			 },
+			 "{{ModId}}_Ring_of_True_Sight": {
+				 "Id": "{{ModId}}_Ring_of_True_Sighte",
+				 "ItemId": "Ring_of_True_Sight",
+				 "Price": 125000,
+				 "AvailableStock": 1,
+				 "AvailableStockLimit": "Player",
+				 "IsRecipe": true
+			 }
+		 }
+	 },
+	 {
+		 "Action": "EditData",
+		 "Target": "Data/Shops",
+		 "TargetField": [ "ShadowShop", "Items" ],
+		 "Entries": {
+			 "{{ModId}}_Refreshing_Ring": {
+				 "Id": "{{ModId}}_Refreshing_Ring",
+				 "ItemId": "Refreshing_Ring",
+				 "Price": 25000,
+				 "AvailableStock": 1,
+				 "AvailableStockLimit": "Player",
+				 "IsRecipe": true
+			 }
+		 }
+	 },
+	 {
+		 "Action": "Load",
+		 "Target": "Mods/{{ModId}}/Rings",
+		 "FromFile": "assets/{{TargetWithoutPath}}.png"
+	 }
+  ]
+}

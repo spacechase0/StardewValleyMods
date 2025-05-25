@@ -1,0 +1,19 @@
+{
+  "quality-chance.name": "Quality+ Ring: Chance",
+  "quality-chance.description": "The percentage chance of a higher crop quality with the Quality+ Ring equipped.",
+
+  "nets-multiplier.name": "Ring of Wide Nets: Multiplier",
+  "nets-multiplier.description": "The multiplier applied to the fishing bar size with the Ring of Wide Nets equipped.",
+
+  "regeneration-rate.name": "Ring of Regeneration: Regen",
+  "regeneration-rate.description": "The health regen rate per second with the Ring of Regeneration equipped.",
+
+  "refreshing-rate.name": "Refreshing Ring: Regen",
+  "refreshing-rate.description": "The stamina regen rate per second with the Refreshing Ring equipped.",
+
+  "reaching-distance.name": "Ring of Far Reaching: Distance",
+  "reaching-distance.description": "The distance in tiles at which you can use tools with the Ring of Far Reaching equipped.",
+
+  "debug.name": "Debug Logs",
+  "debug.description": "For SMAPI debugging logs. Enable before generating a SMAPI log and posting a bug report."
+}
