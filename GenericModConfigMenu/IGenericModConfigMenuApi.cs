@@ -1,5 +1,5 @@
 using System;
-using GenericModConfigMenu.Framework;
+using GenericModConfigMenu.Framework; // DELETE THIS LINE WHEN COPIED INTO YOUR MOD CODE
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
