@@ -1,0 +1,6 @@
+﻿{
+    "config.hingedness.name": "Hingedness",
+    "config.hingedness.description": "How hinged the corrections are, determined by the 'distance' from the original word. (No, there is no completely hinged / sane option.)",
+    "config.hingedness.value.semi-hinged": "Semi-hinged",
+    "config.hingedness.value.unhinged": "Unhinged",
+}

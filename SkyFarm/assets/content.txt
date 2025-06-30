@@ -1,0 +1,6 @@
+Entry( Data/AudioChanges; &_AirshipPutter )
+{
+    Id: &_AirshipPutter;
+    FilePaths: [ @@( airship_putter.wav ) ];
+    Category: Footsteps;
+};

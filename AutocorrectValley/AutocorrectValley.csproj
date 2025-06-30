@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common.targets" />
+  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>Autocorrect Valley</Name>
+    <Description>Corrects your item names for you.</Description>
+    <Version>1.0.1</Version>
+    <UpdateKeys>Nexus:</UpdateKeys>
+
+    <TargetFramework>net6.0</TargetFramework>
+
+    <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\space\.nuget\packages\symspell\6.7.3\contentFiles\any\netstandard2.0\frequency_bigramdictionary_en_243_342.txt" />
+    <Content Remove="C:\Users\space\.nuget\packages\symspell\6.7.3\contentFiles\any\netstandard2.0\frequency_dictionary_en_82_765.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+    <PackageReference Include="SymSpell" Version="6.7.3" />
+  </ItemGroup>
+</Project>

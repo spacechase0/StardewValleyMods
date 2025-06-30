@@ -286,6 +286,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiserableLife", "7thaxisMis
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potioncraft", "Potioncraft\Potioncraft.csproj", "{CF639A6A-C97F-4409-BE34-53E60D2092CC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutocorrectValley", "AutocorrectValley\AutocorrectValley.csproj", "{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1332,6 +1334,18 @@ Global
 		{CF639A6A-C97F-4409-BE34-53E60D2092CC}.Release|arm64.Build.0 = Release|Any CPU
 		{CF639A6A-C97F-4409-BE34-53E60D2092CC}.Release|x86.ActiveCfg = Release|Any CPU
 		{CF639A6A-C97F-4409-BE34-53E60D2092CC}.Release|x86.Build.0 = Release|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Debug|arm64.Build.0 = Debug|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Debug|x86.Build.0 = Debug|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Release|arm64.ActiveCfg = Release|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Release|arm64.Build.0 = Release|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Release|x86.ActiveCfg = Release|Any CPU
+		{5D370D5B-BC5A-457A-9A44-5AE4BC8F2770}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1413,13 +1427,20 @@ Global
 		SpaceShared.Common\SpaceShared.Common.projitems*{1a380343-ab07-40c8-8b1f-9d3e6648780c}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{1a380343-ab07-40c8-8b1f-9d3e6648780c}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{1a380343-ab07-40c8-8b1f-9d3e6648780c}*SharedItemsImports = 5
+		SpaceShared.Common\SpaceShared.Common.projitems*{5d370d5b-bc5a-457a-9a44-5ae4bc8f2770}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{5d370d5b-bc5a-457a-9a44-5ae4bc8f2770}*SharedItemsImports = 5
 		SpaceShared.Common\SpaceShared.Common.projitems*{8c47a513-a4e8-4f12-9bf8-afd89066b249}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{a87f5d49-6246-4b14-8363-114dc9335c2c}*SharedItemsImports = 13
+		SpaceShared.Common\SpaceShared.Common.projitems*{b008b8af-d4d0-485b-95da-e35a0e7966f6}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{b008b8af-d4d0-485b-95da-e35a0e7966f6}*SharedItemsImports = 5
 		SpaceShared.Common\SpaceShared.Common.projitems*{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}*SharedItemsImports = 5
 		SpaceSharedPatching\SpaceSharedPatching.projitems*{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{ba657cb4-93ed-4c3a-a66e-86954beb4ce6}*SharedItemsImports = 5
 		SpaceShared.Common\SpaceShared.Common.projitems*{bc6a8a34-68ff-413c-9532-b4af2a93641e}*SharedItemsImports = 13
 		SpaceShared.Common\SpaceShared.Common.projitems*{c3d5972f-cb65-4c85-8e1c-55c78a99940a}*SharedItemsImports = 5
 		SpaceShared\SpaceShared.projitems*{c3d5972f-cb65-4c85-8e1c-55c78a99940a}*SharedItemsImports = 5
+		SpaceShared.Common\SpaceShared.Common.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
+		SpaceSharedPatching\SpaceSharedPatching.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
+		SpaceShared\SpaceShared.projitems*{eef5d802-f0a2-43b4-bd27-16b8262c4de4}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

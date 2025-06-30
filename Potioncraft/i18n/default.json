@@ -1,0 +1,227 @@
+﻿{
+    "potion-menu.water": "Water (optional)",
+    "potion-menu.ingredients": "Ingredients",
+    "potion-menu.ingredients.too-many": "Your cauldron is full. (Max 40 items)",
+
+    "object.empty-cup.name": "Empty Cup",
+    "object.empty-cup.description": "Fill it at a water source.",
+    "object.water.name": "Water",
+    "object.water.description": "A cup of normal water. Has no special properties.",
+    "object.mystical-water.name": "Mystical Water",
+    "object.mystical-water.description": "A cup of mystical water. Useful for utility potions.",
+    "object.tropical-water.name": "Tropical Water",
+    "object.tropical-water.description": "A cup of tropical water. Useful for skill potions.",
+    "object.tainted-water.name": "Tainted Water",
+    "object.tainted-water.description": "A cup of tainted water. Useful for combat potions.",
+    "object.mysterious-potion.name": "Mysterious Potion",
+    "object.mysterious-potion.description": "A mysterious potion crafted by the farmer.",
+    "object.portable-potioncraft-guide.name": "Portable Potioncraft Guide",
+    "object.portable-potioncraft-guide.description": "A portable guide to potioncraft. Use it to open the book.",
+
+    "guidebook.name": "Potioncraft",
+    "guidebook.introduction.name": "Introduction",
+    "guidebook.introduction.page.intro": "[center][font=dialogue]Introduction[/font][/center]
+This book is your guide to potion crafting. Here you can find all the information you need on crafting potions! Some information may be revealed as you progress through the game.
+ 
+Potions can be brewed at cauldrons, found in either the [color=green]Wizard's Tower[/color] or the [color=green][if=PLAYER_VISITED_LOCATION Current WitchHut]Witch Hut[/if][else]???[/else][/color]. You can find a copy of this guide near the cauldrons in those locations.
+ 
+(You can also get your own [color=blue]Cauldron[/color] and [color=blue]Purple Book[/color] from the [if=PLAYER_HAS_MET Current Krobus[/if][color=blue]Wizard Catalogue[/color] in [color=red]Krobus[/color]'s shop in the [color=green]Sewers[/color][/if][else][color=green]???[/color][/else], or purchase a [color=blue]Portable Potion Guide[/color] from the shop in [color=green][if=PLAYER_VISITED_LOCATION Current QiNutRoom]Qi's Walnut Room[/if][else]???[/else][/color])",
+    "guidebook.introduction.page.brewing": "[center][font=dialogue]Potions[/font][/center]
+Potions can be drank to provide a buff, tracked separately from food and drink. This means you can have a food buff, a drink buff, and a potion buff going at the same time.
+ 
+Potions have a base duration of 5 hours, though depending on when you make it and the quality and quanity of ingredients, this may end up being longer.
+* Ingredients providing a positive effect will provide a multiplier to the potion duration. The multipliers for all positive effect ingredients are averaged before being applied.
+* Ingredients providing a negative effect provide an additional multiplier. Unlike positive effect ingredients, these all apply individually instead of being averaged.
+* The quality of the water provided (only applicable to certain water types) will affect the duration as well.
+ 
+The ingredients of your potion determine the effect, though when you brew the potion can boost the strength of the effects.
+ 
+By interacting with a cauldron, you open up a menu for brewing your potions. There are three sections to this menu:
+* Water - Different types of water will affect your potion differently. Not required, but useful.
+* Ingredients - You can have up to 6 different item types as ingredients for your potion. A total of 40 individual ingredient items will fit in the cauldron.
+* A button to brew the potion into an item.",
+    "guidebook.water.name": "Water",
+    "guidebook.water.page.intro": "[center][font=dialogue]Water[/font][/center]
+Different types of water can enhance your potion in different ways. Some water can be obtained by crafting an [color=blue]Empty Cup[/color] and using it on a water source. Most water obtained this way does not have special properties, but there are a few locations that where the water is different.
+ 
+[if=!PLAYER_HAS_CRAFTING_RECIPE Current spacechase0.Potioncraft_EmptyCup][action=MarkCraftingRecipeKnown Current spacechase0.Potioncraft_EmptyCup]Click here to learn the [color=blue]Empty Cup[/color] recipe.[/action]
+ [/if]
+If you provide no water to your potion, you will get no bonuses to your potion.",
+    "guidebook.water.page.plain": "[center][font=dialogue][color=Blue]Water[/color][/font][/center]
+[image=SMAPI/spacechase0.potioncraft/objects.png:0,0,16,16:16]
+This water is obtained from using a [color=blue]Empty Cup[/color] on water sources in most locations.
+ 
+It provides a 10% duration boost to your potion.",
+    "guidebook.water.page.mystical": "[center][font=dialogue][color=Blue]Mystical Water[/color][/font][/center]
+[image=SMAPI/spacechase0.potioncraft/objects.png:48,0,16,16:16]
+This water is obtained from using a [color=blue]Empty Cup[/color] on water sources in the [color=green][if=PLAYER_VISITED_LOCATION Current Woods]Secret Woods[/if][else]???[/else][/color] or the [color=green][if=PLAYER_VISITED_LOCATION Current WitchSwamp]Witch's Swamp[/if][else]???[/else][/color].
+ 
+It provides a strength boost to utility effects of your potion.",
+    "guidebook.water.page.tropical": "[center][font=dialogue][color=Blue]Tropical Water[/color][/font][/center]
+[image=SMAPI/spacechase0.potioncraft/objects.png:32,0,16,16:16]
+This water is obtained from using a [color=blue]Empty Cup[/color] on water sources in the [color=green][if=PLAYER_VISITED_LOCATION Current IslandSouth]Ginger Island[/if][else]???[/else][/color].
+ 
+It provides a strength boost to skill effects of your potion.",
+    "guidebook.water.page.tainted": "[center][font=dialogue][color=Blue]Tainted Water[/color][/font][/center]
+[image=SMAPI/spacechase0.potioncraft/objects.png:16,0,16,16:16]
+This water is obtained from using a [color=blue]Empty Cup[/color] on water sources in the [color=green][if=PLAYER_VISITED_LOCATION Current Sewer]Sewers[/if][else]???[/else][/color] or the [color=green][if=PLAYER_VISITED_LOCATION Current BugLand]Mutant Bug Lair[/if][else]???[/else][/color].
+ 
+It provides a strength boost to combat effects of your potion.",
+    "guidebook.water.page.wine": "[center][font=dialogue][color=Blue]Wine[/color][/font][/center]
+[image=TileSheets/Objects_2:48,240,16,16:16]
+Using any type of [color=blue]Wine[/color] as your water is required to get [link=Utility/TemporaryEnchantments]Temporary Enchantment effects[/link] on your potion.
+ 
+The quality of the item will give a bonus to the potion duration:
+* Normal - No boost
+* Silver - +10% duration
+* Gold - +20% duration
+* Iridium - +40% duration",
+    "guidebook.water.page.juice": "[center][font=dialogue][color=Blue]Juice[/color][/font][/center]
+[image=TileSheets/Objects_2:80,240,16,16:16]
+Using any type of [color=blue]Juice[/color] as your water is required to get [link=Utility/TemporaryRings]Temporary Ring effects[/link] on your potion.
+ 
+The quality of the item will give a bonus to the potion duration:
+* Normal - No boost
+* Silver - +10% duration
+* Gold - +20% duration
+* Iridium - +40% duration",
+    "guidebook.water.page.mead": "[center][font=dialogue][color=Blue]Mead[/color][/font][/center]
+[image=TileSheets/Objects_2:80,240,16,16:16]
+Using any type of [color=blue]mead[/color] as your water is boosts the strength of all positive buffs your potion applies - though not as strong of a boost as using water boosting a specific type of buff.
+ 
+The quality of the item will give a bonus to the potion duration:
+* Normal - No boost
+* Silver - +10% duration
+* Gold - +20% duration
+* Iridium - +40% duration",
+    "guidebook.skills.name": "Skill Effects",
+    "guidebook.skills.page.intro": "[center][font=dialogue]Skill Effects[/font][/center]
+Effects in this category boost specific skills. These effects will be stronger if they are brewed on the day of a full moon (the 1st or 14th).",
+    "guidebook.skills.page.farming": "[center][font=dialogue]Farming[/font][/center]
+Ingredient - Any [color=blue]Vegetable[/color] or [color=blue]Fruit[/color]
+ 
+Duration Multiplier - Affected by total value of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on sunny days during Fall.",
+    "guidebook.skills.page.foraging": "[center][font=dialogue]Foraging[/font][/center]
+Ingredient - Any [color=blue]Forage[/color]
+ 
+Duration Multiplier - Affected by total value of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on windy days during Spring.",
+    "guidebook.skills.page.fishing": "[center][font=dialogue]Fishing[/font][/center]
+Ingredient - Any [color=blue]Fish[/color]
+ 
+Duration Multiplier - Affected by total fishing difficulty of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on rainy days during Summer.",
+    "guidebook.skills.page.mining": "[center][font=dialogue]Mining[/font][/center]
+Ingredient - Any [color=blue]Gemstone[/color] (minerals from geodes don't count)
+ 
+Duration Multiplier - Affected by total value of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on snowy days during Winter.",
+    "guidebook.skills.page.luck": "[center][font=dialogue]Luck[/font][/center]
+Ingredient - [color=blue]Radioactive Ore[/color]
+ 
+Duration Multiplier - Affected by total amount of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed during green rain or on a festival day.",
+    "guidebook.combat.name": "Combat Effects",
+    "guidebook.combat.page.intro": "[center][font=dialogue]Combat Effects[/font][/center]
+Effects in this category are combat-related. These effects will be stronger if they are brewed on the day of a new moon (the 7th or 21st).",
+    "guidebook.combat.page.attack": "[center][font=dialogue]Attack[/font][/center]
+Ingredient - [color=blue]Bone Fragments[/color]
+ 
+Duration Multiplier - Affected by total amount of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on sunny days during Summer.",
+    "guidebook.combat.page.defense": "[center][font=dialogue]Defense[/font][/center]
+Ingredient - [color=blue]Copper Ore[/color]
+ 
+Duration Multiplier - Affected by total amount of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on windy days during Fall.",
+    "guidebook.combat.page.speed": "[center][font=dialogue]Speed[/font][/center]
+Ingredient - [color=blue]Aerinite[/color]
+ 
+Duration Multiplier - Affected by total amount of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on rainy days during Fall.",
+    "guidebook.combat.page.health-regen": "[center][font=dialogue]Health Regeneration[/font][/center]
+Ingredient - Any [color=blue]Cooked Food[/color]
+ 
+Duration Multiplier - Affected by total edibility value of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on snowy days during winter.",
+    "guidebook.utility.name": "Combat Effects",
+    "guidebook.utility.page.intro": "[center][font=dialogue]Utility Effects[/font][/center]
+Effects in this category dont' really fit in the other two.",
+    "guidebook.utility.page.stamina-regen": "[center][font=dialogue]Stamina Regeneration[/font][/center]
+Ingredient - Any [color=blue]Flower[/color]
+ 
+Duration Multiplier - Affected by total value of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on windy days during Spring.",
+    "guidebook.utility.page.max-energy": "[center][font=dialogue]Maximum Energy[/font][/center]
+Ingredient - [color=blue]Copper Ore[/color]
+ 
+Duration Multiplier - Affected by total amount of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on sunny days during Spring.",
+    "guidebook.utility.page.magnetism": "[center][font=dialogue]Magnetism[/font][/center]
+Ingredient - [color=blue]Iron Ore[/color]
+ 
+Duration Multiplier - Affected by total amount of all applicable ingredients
+ 
+Strength Multiplier - The effect will be stronger if brewed on sunny days during Spring.",
+    "guidebook.utility.page.temporary-enchantments": "[center][font=dialogue]Temporary Enchantment Effects[/font][/center]
+By putting [color=blue]Cinder Fragments[/color] (dropped by monsters in the last 40 floors of the [color=green]Mines[/color], or in the [color=green][if=PLAYER_VISITED_LOCATION Current IslandNorth]Volcano[/if][else]???[/else][/color]) and another ingredient, you can temporarily gain part of the power of an enchantment. The more [color=blue]Cinder Fragments[/color] and other item you put in, the longer the potion duration.
+
+Items and their corresponding enchantments:
+* [color=blue]Star Shards[/color] - [color=purple]Reaching[/color] - Allows you to charge tools longer for a wider range of effect.
+* [color=blue]Pyrite[/color] - [color=purple]Generous[/color] - Increased items from tilling and panning.
+* [color=blue]Dolomite[/color] - [color=purple]Master[/color] - Adds an additional fishing level.
+* [color=blue]Obsidian[/color] - [color=purple]Bug Killer[/color] - Allows killing armored bugs.
+* [color=blue]Lunarite[/color] - [color=purple]Crusader[/color] - Allows killing mummies.
+* [color=blue]Neptunite[/color] - [color=purple]Shaving[/color] - Extra drops from cutting trees, stumps, and giant crops.
+* [color=blue]Ocean Stone[/color] - [color=purple]Fisher[/color] - Chance of receiving fish when panning.
+* [color=blue]Helvite[/color] - [color=purple]Archeologist[/color] - Increased changes of finding artifacts from artifact spots and panning.
+* [color=blue]Celestine[/color] - [color=purple]Artful[/color] - Reduced special move cooldown.
+* [color=blue]Hematite[/color] - [color=purple]Auto-Hook[/color] - Automatically hooks when a bite happens while fishing.
+* [color=blue]Preserving[/color] - [color=purple]Preserving[/color] - Chance of not consuming bait or tackle durability while fishing.",
+    "guidebook.utility.page.temporary-rings": "[center][font=dialogue]Temporary Ring Effects[/font][/center]
+By putting [color=blue]Solar Essence[/color] (or [color=blue]Void Essence[/color] for a duration boost) in your potion, you can add an additional item to have the effects of certain rings while the potion effect is active.
+
+Items and their corresponding enchantments:
+* [color=blue]Jamborite[/color] - [color=blue]Thorns Ring[/color] - When enemies damage you, they will also take damage.
+* [color=blue]Orpiment[/color] - [color=blue]Sturdy Ring[/color] - Reduced debuff duration from monsters by half.
+* [color=blue]Petrified Slime[/color] - [color=blue]Slime Charmer Ring[/color] - Prevents damage from slimes.
+* [color=blue]Jasper[/color] - [color=blue]Burglar Ring[/color] - More loot from monsters.",
+    "guidebook.utility.name": "Negative Effects",
+    "guidebook.negative.page.intro": "[center][font=dialogue]Negative Effects[/font][/center]
+Negative effects can be added with certain ingredients to increase the potion duration. Putting double the required amount of a negative ingredient will increase the strength of a random positive effect.
+ 
+You can do this for each ingredient type, and the effects will stack.",
+    "guidebook.negative.page.slime": "[center][font=dialogue]Slime[/font][/center]
+Putting 5 [color=blue]Slime[/color] in a potion will put a random debuff on the potion and increase the potion duration:
+* Farming
+* Foraging
+* Fishing
+* Mining
+ 
+Putting 10 will increase the strength of the negative effect, but increase the effect of a random positive buff.",
+    "guidebook.negative.page.bug-meat": "[center][font=dialogue]Bug Meat[/font][/center]
+Putting 5 [color=blue]Bug Meat[/color] in a potion will put a random debuff on the potion and increase the potion duration:
+* Attack
+* Defense
+* Speed
+ 
+Putting 10 will increase the strength of the negative effect, but increase the effect of a random positive buff.",
+    "guidebook.negative.page.bat-wing": "[center][font=dialogue]Bat Wing[/font][/center]
+Putting 5 [color=blue]Bat Wings[/color] in a potion will put a random debuff on the potion and increase the potion duration:
+* Max Energy
+* Magnetism
+ 
+Putting 10 will increase the strength of the negative effect, but increase the effect of a random positive buff.",
+}
