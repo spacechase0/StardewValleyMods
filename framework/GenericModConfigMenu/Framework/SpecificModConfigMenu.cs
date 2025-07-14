@@ -55,7 +55,9 @@ namespace GenericModConfigMenu.Framework
 
         private List<Label> keybindOpts = new();
 
-        private float oldScrollPercent;
+        private float OldScrollPercent;
+
+        private int LastSnappedComponentId = -1;
 
         /*********
         ** Accessors
@@ -189,7 +191,7 @@ namespace GenericModConfigMenu.Framework
 
             RefreshKeybindColor();
 
-            this.oldScrollPercent = -999;
+            this.OldScrollPercent = -999;
             this.snapToDefaultClickableComponent();
         }
 
@@ -506,9 +508,9 @@ namespace GenericModConfigMenu.Framework
                 }
 
                 if (optionElement == null || optionElement.CreateDummyClickableComponent == false)
-                {
                     label.CreateDummyClickableComponent = true;
-                }
+                else
+                    label.ScreenReaderIgnore = true;
 
                 this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
                 if (optionElement != null)
@@ -532,7 +534,7 @@ namespace GenericModConfigMenu.Framework
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
 
-            this.oldScrollPercent = -999;
+            this.OldScrollPercent = -999;
             this.snapToDefaultClickableComponent();
         }
 
@@ -641,9 +643,9 @@ namespace GenericModConfigMenu.Framework
             }
             else scrollCounter = 0;
 
-            if (this.oldScrollPercent != this.Table.Scrollbar.ScrollPercent)
+            if (this.OldScrollPercent != this.Table.Scrollbar.ScrollPercent)
             {
-                this.oldScrollPercent = this.Table.Scrollbar.ScrollPercent;
+                this.OldScrollPercent = this.Table.Scrollbar.ScrollPercent;
                 this.snapCursorToCurrentSnappedComponent();
             }
 
@@ -961,9 +963,12 @@ namespace GenericModConfigMenu.Framework
         {
             Game1.playSound("breathin");
 
+            this.LastSnappedComponentId = this.currentlySnappedComponent.myID;
+
             this.ActiveKeybindOverlay = option switch
             {
                 SimpleModOption<SButton> buttonOption => new KeybindOverlay(
+                    activeMenu: this,
                     keybinds: [new Keybind(buttonOption.Value)],
                     onlyAllowSingleButton: true,
                     name: option.Name(),
@@ -975,6 +980,7 @@ namespace GenericModConfigMenu.Framework
                 ),
 
                 SimpleModOption<KeybindList> listOption => new KeybindOverlay(
+                    activeMenu: this,
                     keybinds: listOption.Value.Keybinds,
                     onlyAllowSingleButton: false,
                     name: option.Name(),
@@ -998,6 +1004,9 @@ namespace GenericModConfigMenu.Framework
             this.Ui.Obscured = false;
 
             RefreshKeybindColor();
+
+            this.setCurrentlySnappedComponentTo(this.LastSnappedComponentId);
+            this.snapCursorToCurrentSnappedComponent();
         }
 
         private void RefreshKeybindColor()

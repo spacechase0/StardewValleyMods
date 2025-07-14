@@ -365,7 +365,7 @@ namespace GenericModConfigMenu
             {
                 Log.Info("Initialized Stardew Access' api successfully");
                 this.StardewAccessApi.RegisterCustomMenuAsAccessible(typeof(ModConfigMenu).FullName);
-                this.StardewAccessApi.RegisterCustomMenuAsAccessible(typeof(SpecificModConfigMenu).FullName);
+                this.StardewAccessApi.IgnoreHoverTextInMenu(typeof(SpecificModConfigMenu).FullName);
 
                 Element.MouseHovered += (sender, args) =>
                 {

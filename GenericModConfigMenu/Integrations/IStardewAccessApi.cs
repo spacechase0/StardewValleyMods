@@ -285,6 +285,10 @@ public interface IStardewAccessApi
     /// </param>
     public void RegisterCustomMenuAsAccessible(string? fullNameOfClass);
 
+    public void IgnoreHoverTextInMenu(string? fullNameOfClass);
+
+    public void IgnoreClickableComponentsInMenu(string? fullNameOfClass);
+
     /// <summary>
     /// Registers a language helper to be used for a specific locale.
     /// </summary>

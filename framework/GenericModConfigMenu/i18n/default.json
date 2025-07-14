@@ -22,6 +22,10 @@
     "config.rebind-key.combo-instructions": "Press a key combination to rebind.",
     "config.rebind-key.no-key": "(None)",
     "config.rebind-key.keybind-list": "Keybinds:",
+    "config.rebind-key.remove-key": "Remove {{key}}",
+    "config.rebind-key.add-key": "Add",
+    "config.rebind-key.ok-button": "Ok button",
+    "config.rebind-key.clear-button": "Clear button",
 
 
     /*********

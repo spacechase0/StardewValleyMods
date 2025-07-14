@@ -45,6 +45,9 @@ namespace GenericModConfigMenu.Framework.Overlays
         /****
         ** State
         ****/
+        /// <summary>The instance of <see cref="SpecificModConfigMenu"/> from where this overlay is opened.</summary>
+        private readonly SpecificModConfigMenu ActiveMenu;
+
         /// <summary>The keybinds to edit and save.</summary>
         private readonly List<Keybind> Keybinds;
 
@@ -89,12 +92,14 @@ namespace GenericModConfigMenu.Framework.Overlays
         ** Public methods
         *********/
         /// <summary>Construct an instance.</summary>
+        /// <param name="activeMenu">Instance of <see cref="SpecificModConfigMenu"/> initializing this instance.</param>
         /// <param name="keybinds">The keybinds to edit and save.</param>
         /// <param name="onlyAllowSingleButton">Whether the config only allows a single button, rather than a full keybind list.</param>
         /// <param name="name">The translated keybind name.</param>
         /// <param name="onSaved">The callback to invoke with the updated keybinds when the overlay is closed and saved.</param>
-        public KeybindOverlay(Keybind[] keybinds, bool onlyAllowSingleButton, string name, Action<Keybind[]> onSaved)
+        public KeybindOverlay(SpecificModConfigMenu activeMenu, Keybind[] keybinds, bool onlyAllowSingleButton, string name, Action<Keybind[]> onSaved)
         {
+            this.ActiveMenu = activeMenu;
             this.Keybinds = [.. keybinds];
             this.OnlyAllowSingleButton = onlyAllowSingleButton;
             this.Name = name;
@@ -191,6 +196,7 @@ namespace GenericModConfigMenu.Framework.Overlays
             this.ButtonsChanged = false;
             this.ShouldResetLayout = false;
             this.Labels.Clear();
+            this.Buttons.ForEach(e => this.ActiveMenu.allClickableComponents.Remove(e));
             this.Buttons.Clear();
 
             // init
@@ -255,15 +261,28 @@ namespace GenericModConfigMenu.Framework.Overlays
                             bounds.Y += (Game1.tileSize - bounds.Height) / 2;
 
                         this.Labels.Add(new ClickableComponent(bounds, string.Empty, text));
-                        this.Buttons.Add(
-                            new ClickableTextureComponent($"{KeybindOverlay.RemoveAction} {i}", new Rectangle(padding + listIndent, topOffset, 44, 44), null, null, Game1.mouseCursors, new Rectangle(338, 494, 11, 11), Game1.pixelZoom)
-                        );
+                        var button = new ClickableTextureComponent($"{KeybindOverlay.RemoveAction} {i}", new Rectangle(padding + listIndent, topOffset, 44, 44), null, null, Game1.mouseCursors, new Rectangle(338, 494, 11, 11), Game1.pixelZoom)
+                        {
+                            ScreenReaderText = I18n.Config_RebindKey_RemoveKey(text),
+                            myID = 100 + i,
+                            upNeighborID = i == 0 ? -1 : 100 + i - 1,
+                            downNeighborID = 100 + i + 1,
+                        };
+                        this.ActiveMenu.allClickableComponents.Add(button);
+                        this.Buttons.Add(button);
 
                         topOffset += Math.Max(bounds.Height, 44);
                     }
 
                     // add button
-                    var appendButton = new ClickableTextureComponent(KeybindOverlay.AddAction, new Rectangle(padding + listIndent, topOffset, 40, 44), null, null, Game1.mouseCursors, new Rectangle(402, 361, 10, 11), Game1.pixelZoom);
+                    var appendButton = new ClickableTextureComponent(KeybindOverlay.AddAction, new Rectangle(padding + listIndent, topOffset, 40, 44), null, null, Game1.mouseCursors, new Rectangle(402, 361, 10, 11), Game1.pixelZoom)
+                    {
+                        ScreenReaderText = I18n.Config_RebindKey_AddKey(),
+                        myID = 100 + this.Keybinds.Count,
+                        upNeighborID = 100 + this.Keybinds.Count == 0 ? -1 : 100 + this.Keybinds.Count - 1,
+                        downNeighborID = 100 + this.Keybinds.Count + 1,
+                    };
+                    this.ActiveMenu.allClickableComponents.Add(appendButton);
                     this.Buttons.Add(appendButton);
                     topOffset += appendButton.bounds.Height;
                 }
@@ -290,10 +309,28 @@ namespace GenericModConfigMenu.Framework.Overlays
 
             // add buttons under content box
             const int mainButtonSize = Game1.tileSize;
-            this.Buttons.AddRange([
-                new ClickableTextureComponent(KeybindOverlay.OkAction, new Rectangle(x + width - mainButtonSize - mainButtonSize, y + height, mainButtonSize, mainButtonSize), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f),
-                new ClickableTextureComponent(KeybindOverlay.ClearAction, new Rectangle(x + width - mainButtonSize, y + height, mainButtonSize, mainButtonSize), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f)
-            ]);
+            var okButton = new ClickableTextureComponent(KeybindOverlay.OkAction, new Rectangle(x + width - mainButtonSize - mainButtonSize, y + height, mainButtonSize, mainButtonSize), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
+            {
+                ScreenReaderText = I18n.Config_RebindKey_OkButton(),
+                myID = 100 + this.Keybinds.Count + 1,
+                upNeighborID = 100 + this.Keybinds.Count, // Add button
+                rightNeighborID = 100 + this.Keybinds.Count + 2,
+            };
+            this.ActiveMenu.allClickableComponents.Add(okButton);
+            this.Buttons.Add(okButton);
+
+            var clearButton = new ClickableTextureComponent(KeybindOverlay.ClearAction, new Rectangle(x + width - mainButtonSize, y + height, mainButtonSize, mainButtonSize), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f)
+            {
+                ScreenReaderText = I18n.Config_RebindKey_ClearButton(),
+                myID = 100 + this.Keybinds.Count + 2,
+                upNeighborID = 100 + this.Keybinds.Count,
+                leftNeighborID = 100 + this.Keybinds.Count + 1,
+            };
+            this.ActiveMenu.allClickableComponents.Add(clearButton);
+            this.Buttons.Add(clearButton);
+
+            this.ActiveMenu.setCurrentlySnappedComponentTo(100);
+            this.ActiveMenu.snapCursorToCurrentSnappedComponent();
         }
 
         /// <summary>Add a label horizontally centered within the given content area to the <see cref="Labels"/>.</summary>
@@ -409,6 +446,7 @@ namespace GenericModConfigMenu.Framework.Overlays
             if (save)
                 this.OnSaved(this.Keybinds.ToArray());
 
+            this.Buttons.ForEach(e => this.ActiveMenu.allClickableComponents.Remove(e));
             this.IsFinished = true;
             this.KeybindEdit = null;
         }
