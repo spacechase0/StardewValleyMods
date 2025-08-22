@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using HarmonyLib; // el diavolo nuevo
@@ -119,49 +120,108 @@ internal class SkillBuffPatcher : BasePatcher
         }
     }
 
-    private static IEnumerable<CodeInstruction> Transpile_IClickableMenu_DrawHoverText(IEnumerable<CodeInstruction> instructions)
+    private static IEnumerable<CodeInstruction> Transpile_IClickableMenu_DrawHoverText(ILGenerator gen, MethodBase original, IEnumerable<CodeInstruction> il)
     {
-        List<CodeInstruction> codeInstructions = new List<CodeInstruction>(instructions);
-        int step = 0;
-        yield return codeInstructions[0];
-        for (int i = 1; i < codeInstructions.Count; i++)
+        var matcher = new CodeMatcher(il);
+
+        matcher.Start();
+
+        // Add to HoverText TextureBox height:
+
+        // MATCH: if (buffIconsToDisplay != null)
+        matcher.MatchEndForward(
+            new(OpCodes.Ldarg_S, (byte)8),
+            new(OpCodes.Brfalse_S));
+
+        // INSERT: height += SkillBuffPatcher.GetHeightAdjustment(buffIconsToDisplay, hoveredItem, height)
+        matcher.InsertAndAdvance(
+            new(OpCodes.Ldarg_S, 8),
+            new(OpCodes.Ldarg_S, 9),
+            new(OpCodes.Ldloc_2),
+            CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(SkillBuffPatcher.GetHeightAdjustment)),
+            new(OpCodes.Stloc_2));
+
+        // Check to set HoverText TextureBox minimum width:
+
+        // MATCH: if (buffIconsToDisplay != null)
+        matcher.MatchEndForward(
+            new(OpCodes.Ldarg_S, (byte)8),
+            new(OpCodes.Brfalse_S));
+
+        // INSERT: width = SkillBuffPatcher.GetWidthAdjustment(font, hoveredItem, width)
+        matcher.InsertAndAdvance(
+            new(OpCodes.Ldarg_S, 2),
+            new(OpCodes.Ldarg_S, 9),
+            new(OpCodes.Ldloc_1),
+            CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(GetWidthAdjustment)),
+            new(OpCodes.Stloc_1));
+
+        // Draw SkillBuff custom skill buff effects:
+
+        // above the divider (health + stamina):
+
+        // these are attributes more closely tied to health/stamina than
+        // skills and combat attributes, so they're drawn separately
+
+        // MATCH: if (buffIconsToDisplay != null)
+        matcher.MatchEndForward(
+            new(OpCodes.Ldarg_S, (byte)8),
+            new(OpCodes.Brfalse)); // not _s
+
+        // INSERT: y += SkillBuffPatcher.DrawAdditionalBuffEffects(b, font, hoveredItem, x, y)
+        matcher.InsertAndAdvance(
+            new(OpCodes.Ldarg_S, 0),
+            new(OpCodes.Ldarg_S, 2),
+            new(OpCodes.Ldarg_S, 9),
+            new(OpCodes.Ldloc, 5),
+            new(OpCodes.Ldloc, 6),
+            CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(DrawAdditionalBuffEffects)),
+            new(OpCodes.Stloc, 6));
+
+        // optional divider ( | skills + attributes):
+
+        // given the base game divider draw behaviour requires you to have included some
+        // basic buff attributes, items with only SpaceCore custom skill buff effects
+        // need to manually draw the divider and their buff effects outside of the usual branch
+
+        // INSERT: y += SkillBuffPatcher.DrawCustomSkillBuffEffectsIfNoBasicEffects(b, font, hoveredItem, x, y, width, buffIconsToDisplay, craftingIngredients)
+        matcher.InsertAndAdvance(
+            new(OpCodes.Ldarg_S, 0),
+            new(OpCodes.Ldarg_S, 2),
+            new(OpCodes.Ldarg_S, 9),
+            new(OpCodes.Ldloc, 5),
+            new(OpCodes.Ldloc, 6),
+            new(OpCodes.Ldloc, 1),
+            new(OpCodes.Ldarg_S, 8),
+            new(OpCodes.Ldarg_S, 16),
+            CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(DrawCustomSkillBuffEffectsIfNoBasicEffects)),
+            new(OpCodes.Stloc, 6));
+
+        // below the divider (skills + attributes):
+
+        // these are drawn above basic skills, as it might look odd having them
+        // below basic non-skill attributes, such as attack, defence, magnetism, ...
+
+        // MATCH: b.Draw(Game1.staminaRect, new Rectangle(...), new Color(...));
+        matcher.MatchEndForward(new CodeMatch(op => op.Is(OpCodes.Callvirt, AccessTools.Method(typeof(SpriteBatch), nameof(SpriteBatch.Draw), [typeof(Texture2D), typeof(Rectangle), typeof(Color)]))));
+
+        // INSERT: y += SkillBuffPatcher.DrawCustomSkillBuffEffects(b, font, hoveredItem, x, y)
+        matcher.InsertAndAdvance(
+            new(OpCodes.Ldarg_S, 0),
+            new(OpCodes.Ldarg_S, 2),
+            new(OpCodes.Ldarg_S, 9),
+            new(OpCodes.Ldloc, 5),
+            new(OpCodes.Ldloc, 6),
+            CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(DrawCustomSkillBuffEffects)),
+            new(OpCodes.Stloc, 6));
+
+        if (matcher.IsInvalid)
         {
-            if (!codeInstructions[i - 1].Is(OpCodes.Ldarg_S, 8) || (!(codeInstructions[i].opcode == OpCodes.Brfalse_S) && !(codeInstructions[i].opcode == OpCodes.Brfalse)))
-            {
-                yield return codeInstructions[i];
-                continue;
-            }
-
-            if (step == 0)
-            {
-                yield return new CodeInstruction(OpCodes.Ldarg_S, 8);
-                yield return new CodeInstruction(OpCodes.Ldarg_S, 9);
-                yield return new CodeInstruction(OpCodes.Ldloc_2);
-                yield return CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(GetHeightAdjustment));
-                yield return new CodeInstruction(OpCodes.Stloc_2);
-            }
-            else if (step == 1)
-            {
-                yield return new CodeInstruction(OpCodes.Ldarg_S, 2);
-                yield return new CodeInstruction(OpCodes.Ldarg_S, 9);
-                yield return new CodeInstruction(OpCodes.Ldloc_1);
-                yield return CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(GetWidthAdjustment));
-                yield return new CodeInstruction(OpCodes.Stloc_1);
-            }
-            else if (step == 2)
-            {
-                yield return new CodeInstruction(OpCodes.Ldarg_S, 0);
-                yield return new CodeInstruction(OpCodes.Ldarg_S, 2);
-                yield return new CodeInstruction(OpCodes.Ldarg_S, 9);
-                yield return new CodeInstruction(OpCodes.Ldloc, 5);
-                yield return new CodeInstruction(OpCodes.Ldloc, 6);
-                yield return CodeInstruction.Call(typeof(SkillBuffPatcher), nameof(DrawCustomSkillBuff));
-                yield return new CodeInstruction(OpCodes.Stloc, 6);
-            }
-
-            yield return codeInstructions[i];
-            step++;
+            Log.Error($"Failed to apply {nameof(SkillBuffPatcher)} {nameof(Transpile_IClickableMenu_DrawHoverText)}. Custom buff effects will not be listed on items.");
+            return il;
         }
+
+        return matcher.InstructionEnumeration();
     }
 
     private static int GetHeightAdjustment(string[] buffIconsToDisplay, Item hoveredItem, int height)
@@ -186,7 +246,7 @@ internal class SkillBuffPatcher : BasePatcher
                     if (skill is null)
                         continue;
 
-                    height += 34;
+                    height += 34 + 5;
                 }
                 if (health != 0)
                 {
@@ -243,7 +303,10 @@ internal class SkillBuffPatcher : BasePatcher
         return width;
     }
 
-    private static int DrawCustomSkillBuff(SpriteBatch b, SpriteFont font, Item hoveredItem, int x, int y)
+    /// <summary>
+    /// For items with basic buff attributes, draws custom skill buff effects, or does nothing if no custom skill effects are found.
+    /// </summary>
+    private static int DrawCustomSkillBuffEffects(SpriteBatch b, SpriteFont font, Item hoveredItem, int x, int y)
     {
         if (hoveredItem is null ||
             !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
@@ -253,8 +316,8 @@ internal class SkillBuffPatcher : BasePatcher
             return y;
         }
 
-        Vector2 offset = new Vector2(4 + 1, 4) * Game1.pixelZoom;
-        Point spacing = new Point(34, 34);
+        Vector2 offset = new Vector2(16 + 4, 16);
+        Point spacing = new Point(34, 34 + 5);
 
         foreach (var buffData in data.Buffs)
         {
@@ -269,19 +332,74 @@ internal class SkillBuffPatcher : BasePatcher
                     SkillBuff.DrawBuffEffect(b, new Vector2(x, y) + offset, entry.Value, skill.GetName(), font: font, icon: skill.SkillsPageIcon, spacing: spacing.X);
                     y += spacing.Y;
                 }
-                if (health != 0)
-                {
-                    SkillBuff.DrawHealthRegenBuffEffect(b, new Vector2(x, y) + offset, health, font: font, spacing: spacing.X);
-                    y += spacing.Y;
-                }
+            }
+        }
+
+        return y;
+    }
+
+    /// <summary>
+    /// For all items, draws any SpaceCore additional buff effects, or does nothing if no additional effects are found.
+    /// </summary>
+    private static int DrawAdditionalBuffEffects(SpriteBatch b, SpriteFont font, Item hoveredItem, int x, int y)
+    {
+        if (hoveredItem is null ||
+            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
+            data.Buffs is null ||
+            data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
+        {
+            return y;
+        }
+
+        Vector2 offset = new Vector2(16 + 4, 16);
+        Point spacing = new Point(34, 34);
+
+        foreach (var buffData in data.Buffs)
+        {
+            if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var skills, out float health, out float stamina))
+            {
                 if (stamina != 0)
                 {
                     SkillBuff.DrawStaminaRegenBuffEffect(b, new Vector2(x, y) + offset, stamina, font: font, spacing: spacing.X);
                     y += spacing.Y;
                 }
+                if (health != 0)
+                {
+                    SkillBuff.DrawHealthRegenBuffEffect(b, new Vector2(x, y) + offset, health, font: font, spacing: spacing.X);
+                    y += spacing.Y;
+                }
             }
         }
 
+        return y;
+    }
+
+    /// <summary>
+    /// For hovered items without basic buff attributes, draws a divider and custom skill buff effects, or does nothing if no custom skill effects are found..
+    /// </summary>
+    private static int DrawCustomSkillBuffEffectsIfNoBasicEffects(SpriteBatch b, SpriteFont font, Item hoveredItem, int x, int y, int width, string[] buffIconsToDisplay, CraftingRecipe craftingIngredients)
+    {
+        // duplicate spacecore code
+        if (hoveredItem is null ||
+            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
+            data.Buffs is null ||
+            data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
+        {
+            return y;
+        }
+
+        // handle alternate branch in base game code without transpiling labels
+        if (buffIconsToDisplay is null)
+        {
+            // duplicate base game code
+            y += 16;
+            b.Draw(Game1.staminaRect, new Rectangle(x + 12, y + 6, width - ((craftingIngredients is not null) ? 4 : 24), 2), new Color(207, 147, 103) * 0.8f);
+
+            // duplicate spacecore code
+            y += SkillBuffPatcher.DrawCustomSkillBuffEffects(b, font, hoveredItem, x, y);
+        }
+
+        // this is a miserable method
         return y;
     }
 }
