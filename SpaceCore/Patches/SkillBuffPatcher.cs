@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-using HarmonyLib;
+using HarmonyLib; // el diavolo nuevo
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Spacechase.Shared.Patching;
@@ -12,7 +12,6 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Objects;
 using StardewValley.Menus;
-using static System.Net.Mime.MediaTypeNames;
 using static SpaceCore.Skills;
 
 namespace SpaceCore.Patches;
@@ -51,10 +50,7 @@ internal class SkillBuffPatcher : BasePatcher
         // If there is custom data, find the matching buff to wrap.
         foreach ( var buffData in data.Buffs )
         {
-            if (buffData.CustomFields?.Any(b => b.Key.StartsWith("spacechase.SpaceCore.SkillBuff.") ||
-                                                b.Key.StartsWith("spacechase0.SpaceCore.SkillBuff.") ||
-                                                b.Key.StartsWith("spacechase0.SpaceCore/HealthRegeneration") ||
-                                                b.Key.StartsWith("spacechase0.SpaceCore/StaminaRegeneration") ) ?? false)
+            if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var skills, out float health, out float stamina))
             {
                 Buff matchingBuff = null;
                 string id = buffData.BuffId;
@@ -113,13 +109,10 @@ internal class SkillBuffPatcher : BasePatcher
                 continue;
             }
 
-            StringBuilder sb = new StringBuilder();
-            sb.Append("+");
-            sb.Append(skillLevel.Value);
-            sb.Append(" ");
-            sb.Append(skill.GetName());
-            sb.Append("\n");
-            sb.Append(Game1.content.LoadString("Strings\\StringsFromCSFiles:Buff.cs.508"));
+            StringBuilder sb = new();
+            sb.Append(SkillBuff.FormattedBuffEffect(skillLevel.Value, skillLevel.Key));
+            sb.AppendLine();
+            sb.Append(Game1.content.LoadString("Strings/StringsFromCSFiles:Buff.cs.508"));
             sb.Append(buff.displaySource ?? buff.source);
 
             yield return new ClickableTextureComponent("", Rectangle.Empty, null, sb.ToString(), skill.Icon, new Rectangle(0, 0, 16, 16), 4f);
@@ -184,22 +177,25 @@ internal class SkillBuffPatcher : BasePatcher
         bool addedAny = false;
         foreach (var buffData in data.Buffs)
         {
-            if (buffData.CustomFields is null)
-                continue;
-            foreach (var entry in Skills.SkillBuff.ParseCustomFields(buffData.CustomFields))
+            if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var skills, out float health, out float stamina))
             {
                 addedAny = true;
-                height += 34;
-            }
-            if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/HealthRegeneration"))
-            {
-                addedAny = true;
-                height += 34;
-            }
-            if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/StaminaRegeneration"))
-            {
-                addedAny = true;
-                height += 34;
+                foreach (var entry in skills)
+                {
+                    Skills.Skill skill = Skills.GetSkill(entry.Key);
+                    if (skill is null)
+                        continue;
+
+                    height += 34;
+                }
+                if (health != 0)
+                {
+                    height += 34;
+                }
+                if (stamina != 0)
+                {
+                    height += 34;
+                }
             }
         }
 
@@ -221,29 +217,26 @@ internal class SkillBuffPatcher : BasePatcher
             return width;
         }
 
-        foreach ( var buffData in data.Buffs )
+        foreach (var buffData in data.Buffs)
         {
-            if (buffData.CustomFields is null)
-                continue;
-            foreach (var entry in Skills.SkillBuff.ParseCustomFields(buffData.CustomFields))
+            if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var skills, out float health, out float stamina))
             {
-                Skills.Skill skill = Skills.GetSkill(entry.Key);
-
-                if (skill is null)
+                foreach (var entry in skills)
                 {
-                    continue;
+                    Skills.Skill skill = Skills.GetSkill(entry.Key);
+                    if (skill is null)
+                        continue;
+
+                    width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X) + 92;
                 }
-
-                width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X) + 92;
-            }
-
-            if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/HealthRegeneration"))
-            {
-                width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.HealthRegen()).X) + 92;
-            }
-            if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/StaminaRegeneration"))
-            {
-                width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.StaminaRegen()).X) + 92;
+                if (health != 0)
+                {
+                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.HealthRegen()).X) + 92;
+                }
+                if (stamina != 0)
+                {
+                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.StaminaRegen()).X) + 92;
+                }
             }
         }
 
@@ -260,40 +253,32 @@ internal class SkillBuffPatcher : BasePatcher
             return y;
         }
 
+        Vector2 offset = new Vector2(4 + 1, 4) * Game1.pixelZoom;
+        Point spacing = new Point(34, 34);
+
         foreach (var buffData in data.Buffs)
         {
-            if (buffData.CustomFields is null)
-                continue;
-            foreach (var entry in Skills.SkillBuff.ParseCustomFields(buffData.CustomFields))
+            if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var skills, out float health, out float stamina))
             {
-                Skills.Skill skill = Skills.GetSkill(entry.Key);
-
-                if (skill is null)
+                foreach (var entry in skills)
                 {
-                    continue;
+                    Skills.Skill skill = Skills.GetSkill(entry.Key);
+                    if (skill is null)
+                        continue;
+
+                    SkillBuff.DrawBuffEffect(b, new Vector2(x, y) + offset, entry.Value, skill.GetName(), font: font, icon: skill.SkillsPageIcon, spacing: spacing.X);
+                    y += spacing.Y;
                 }
-                string text = $"+{entry.Value}  {skill.GetName()}";
-
-                Utility.drawWithShadow(b, skill.SkillsPageIcon, new Vector2(x + 16 + 4, y + 16), new Rectangle(0, 0, 10, 10), Color.White, 0f, Vector2.Zero, 3f, flipped: false, 0.95f);
-                Utility.drawTextWithShadow(b, text, font, new Vector2(x + 16 + 34 + 4, y + 16), Game1.textColor);
-                y += 34;
-            }
-
-            if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/HealthRegeneration"))
-            {
-                float amt = float.Parse(buffData.CustomFields["spacechase0.SpaceCore/HealthRegeneration"]);
-                string text = (amt >= 0 ? "+" : "") + amt + " " + I18n.HealthRegen();
-                Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(x + 16 + 4, y + 16), new Rectangle(0, 438, 10, 10), Color.White, 0f, Vector2.Zero, 3f, flipped: false, 0.95f);
-                Utility.drawTextWithShadow(b, text, font, new Vector2(x + 16 + 34 + 4, y + 16), Game1.textColor);
-                y += 34;
-            }
-            if (buffData.CustomFields.ContainsKey("spacechase0.SpaceCore/StaminaRegeneration"))
-            {
-                float amt = float.Parse(buffData.CustomFields["spacechase0.SpaceCore/StaminaRegeneration"]);
-                string text = (amt >= 0 ? "+" : "") + amt + " " + I18n.StaminaRegen();
-                Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(x + 16 + 4, y + 16), new Rectangle((amt < 0) ? 140 : 0, 428, 10, 10), Color.White, 0f, Vector2.Zero, 3f, flipped: false, 0.95f);
-                Utility.drawTextWithShadow(b, text, font, new Vector2(x + 16 + 34 + 4, y + 16), Game1.textColor);
-                y += 34;
+                if (health != 0)
+                {
+                    SkillBuff.DrawHealthRegenBuffEffect(b, new Vector2(x, y) + offset, health, font: font, spacing: spacing.X);
+                    y += spacing.Y;
+                }
+                if (stamina != 0)
+                {
+                    SkillBuff.DrawStaminaRegenBuffEffect(b, new Vector2(x, y) + offset, stamina, font: font, spacing: spacing.X);
+                    y += spacing.Y;
+                }
             }
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -117,20 +118,33 @@ namespace SpaceCore
 
             public SkillBuff(Buff buff, string id, Dictionary<string, string> customFields) : base(id, buff.source, buff.displaySource, buff.millisecondsDuration, buff.iconTexture, buff.iconSheetIndex, buff.effects, false, buff.displayName, buff.description)
             {
-                foreach (var entry in ParseCustomFields(customFields))
+                if (SkillBuff.TryGetAdditionalBuffEffects(customFields, out var skills, out float health, out float stamina))
                 {
-                    SkillLevelIncreases[entry.Key] = entry.Value;
+                    foreach (var entry in skills)
+                        this.SkillLevelIncreases[entry.Key] = entry.Value;
+                    this.HealthRegen = health;
+                    this.StaminaRegen = stamina;
                 }
-                if (customFields.TryGetValue(RegenHealth, out string regenStr) && float.TryParse(regenStr, out float regen))
-                    HealthRegen = regen;
-                if (customFields.TryGetValue(RegenStamina, out regenStr) && float.TryParse(regenStr, out regen))
-                    StaminaRegen = regen;
-
             }
 
-            public static IEnumerable<KeyValuePair<string, int>> ParseCustomFields(Dictionary<string, string> customFields)
+            /// <summary>
+            /// Parses a given dictionary, probably a <c>CustomFields</c> field, for any SpaceCore additional buff effects.
+            /// </summary>
+            /// <param name="dict"></param>
+            /// <param name="skills">Map of SpaceCore <see cref="Skill"/> IDs to their respective values, or an empty dictionary if none are found.</param>
+            /// <param name="health">Float value of health regenerated per second.</param>
+            /// <param name="stamina">Float value of energy regenerated per second.</param>
+            /// <returns>Returns whether any additional buff effects were found with tangible (non-zero or non-empty) values.</returns>
+            public static bool TryGetAdditionalBuffEffects(Dictionary<string, string> dict, out Dictionary<string, int> skills, out float health, out float stamina)
             {
-                foreach (KeyValuePair<string, string> entry in customFields)
+                skills = [];
+                health = 0;
+                stamina = 0;
+
+                if (dict is null || !dict.Any())
+                    return false;
+
+                foreach (var entry in dict)
                 {
                     if (!entry.Key.StartsWith(SkillBuffField) && !entry.Key.StartsWith(SkillBuffFieldLegacy))
                     {
@@ -144,22 +158,94 @@ namespace SpaceCore
                         continue;
                     }
 
-                    yield return KeyValuePair.Create(skillId, level);
+                    skills.Add(skillId, level);
                 }
+
+                if (dict.TryGetValue(RegenHealth, out string regenStr) && float.TryParse(regenStr, out float regen))
+                    health = regen;
+                if (dict.TryGetValue(RegenStamina, out regenStr) && float.TryParse(regenStr, out regen))
+                    stamina = regen;
+
+                return skills.Any() || health != 0 || stamina != 0;
             }
 
             public string DescriptionHook()
             {
-                string ret = "";
+                StringBuilder sb = new();
                 if (HealthRegen != 0)
                 {
-                    ret += (HealthRegen > 0 ? "+" : "") + HealthRegen + " " + I18n.HealthRegen();
+                    sb.Append(FormattedBuffEffect(HealthRegen, I18n.HealthRegen()));
                 }
                 if (StaminaRegen != 0)
                 {
-                    ret += (StaminaRegen > 0 ? "+" : "") + StaminaRegen + " " + I18n.StaminaRegen();
+                    sb.Append(FormattedBuffEffect(StaminaRegen, I18n.StaminaRegen()));
                 }
-                return ret;
+                return sb.ToString();
+            }
+
+            /// <summary>
+            /// Formats a buff effect value into a signed label.
+            /// </summary>
+            /// <param name="value">Buff effect value.</param>
+            /// <param name="label">Translated label.</param>
+            public static string FormattedBuffEffect(float value, string label = null)
+            {
+                return string.IsNullOrWhiteSpace(label) ? $"{(value > 0 ? "+" : "")}{value}" : $"{(value > 0 ? "+" : "")}{value} {label}";
+            }
+
+            /// <summary>
+            /// Draws a buff icon and formatted buff effect value label.
+            /// </summary>
+            /// <param name="position">Local display pixel draw position.</param>
+            /// <param name="value">Buff effect value.</param>
+            /// <param name="label">Translated label. Will be formatted into a standardised style when drawn.</param>
+            /// <param name="font">Font used to draw label. Defaults to <see cref="Game1.smallFont"/>.</param>
+            /// <param name="icon">Texture used for buff icon.</param>
+            /// <param name="iconSource">Area in icon texture used for buff icon when drawn. Defaults to entire texture.</param>
+            /// <param name="alpha">Opacity of icon and label when drawn.</param>
+            /// <param name="spacing">Display pixel spacing between icon and text.</param>
+            /// <param name="shadowAlpha">Relative opacity of shadow when drawn.</param>
+            public static void DrawBuffEffect(SpriteBatch b, Vector2 position, float value, string label = null, SpriteFont font = null, Texture2D icon = null, Rectangle? iconSource = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
+            {
+                string text = SkillBuff.FormattedBuffEffect(value, label);
+                int xOffset = 0;
+
+                if (icon is not null)
+                {
+                    Utility.drawWithShadow(b, icon, position, iconSource ?? icon.Bounds, Color.White * alpha, 0f, Vector2.Zero, 3f, flipped: false, layerDepth: 0.95f, shadowIntensity: 0.35f * shadowAlpha * alpha);
+                    xOffset += spacing;
+                }
+                Utility.drawTextWithShadow(b, text, font ?? Game1.smallFont, position + new Vector2(xOffset, 0), Game1.textColor * alpha);
+            }
+
+            /// <summary>
+            /// Draws a buff icon and formatted buff effect value label in the style of a SpaceCore <see cref="HealthRegen"/> buff.
+            /// </summary>
+            /// <param name="position">Local display pixel draw position.</param>
+            /// <param name="value">Health regeneration value.</param>
+            /// <param name="drawText">Whether to draw label in addition to buff effect value.</param>
+            /// <param name="font">Font used to draw label. Defaults to <see cref="Game1.smallFont"/>.</param>
+            /// <param name="alpha">Opacity of icon and label when drawn.</param>
+            /// <param name="spacing">Display pixel spacing between icon and text.</param>
+            /// <param name="shadowAlpha">Relative opacity of shadow when drawn.</param>
+            public static void DrawHealthRegenBuffEffect(SpriteBatch b, Vector2 position, float value, bool drawText = true, SpriteFont font = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
+            {
+                SkillBuff.DrawBuffEffect(b, position, value, drawText ? I18n.HealthRegen() : null, font, Game1.mouseCursors, new Rectangle(0, 438, 10, 10), alpha: alpha, spacing: spacing, shadowAlpha: shadowAlpha);
+            }
+
+            /// <summary>
+            /// Draws a buff icon and formatted buff effect value label in the style of a SpaceCore <see cref="StaminaRegen"/> buff.
+            /// </summary>
+            /// <param name="position">Local display pixel draw position.</param>
+            /// <param name="value">Stamina regeneration value.</param>
+            /// <param name="drawText">Whether to draw label in addition to buff effect value.</param>
+            /// <param name="font">Font used to draw label. Defaults to <see cref="Game1.smallFont"/>.</param>
+            /// <param name="alpha">Opacity of icon and label when drawn.</param>
+            /// <param name="spacing">Display pixel spacing between icon and text.</param>
+            /// <param name="shadowAlpha">Relative opacity of shadow when drawn.</param>
+            public static void DrawStaminaRegenBuffEffect(SpriteBatch b, Vector2 position, float value, bool drawText = true, SpriteFont font = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
+            {
+                SkillBuff.DrawBuffEffect(b, position, value, drawText ? I18n.StaminaRegen() : null, font, Game1.mouseCursors, new Rectangle((value < 0) ? 140 : 0, 428, 10, 10), alpha: alpha, spacing: spacing, shadowAlpha: shadowAlpha);
             }
 
             public override void OnAdded()
