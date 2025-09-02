@@ -17,8 +17,8 @@ namespace SpaceCore
 
         public abstract class IngredientMatcher
         {
-            public abstract string DispayName { get; }
-
+            public abstract string DisplayName { get; }
+            
             public abstract Texture2D IconTexture { get; }
             public abstract Rectangle? IconSubrect { get; }
 
@@ -37,30 +37,29 @@ namespace SpaceCore
             }
 
             public abstract void Consume(IList<IInventory> additionalIngredients);
+
+            public abstract bool Matches(Item item);
         }
 
-        public class ObjectIngredientMatcher : IngredientMatcher
+        public class ItemIngredientMatcher : IngredientMatcher
         {
-            private readonly Item dummyObj;
-            private readonly string objectIndex;
-            private readonly int qty;
+            private readonly Item _item;
+            private readonly string _itemId;
+            private readonly int _quantity;
 
-            public ObjectIngredientMatcher( string index, int quantity )
+            public ItemIngredientMatcher(string query, int quantity)
             {
-                string origIndex = index;
-                if (!index.StartsWith("("))
-                    index = $"(O){index}";
+                this._itemId = query;
+                this._quantity = quantity;
 
-                this.dummyObj = ItemRegistry.Create(index, quantity);
-                this.objectIndex = origIndex;
-                this.qty = quantity;
+                this._item = ItemRegistry.Create(this._itemId);
             }
 
-            public override string DispayName
+            public override string DisplayName
             {
                 get
                 {
-                    if (int.TryParse( this.objectIndex, out int i ) && i < 0)
+                    if (int.TryParse(this._itemId, out int i ) && i < 0)
                     {
                         return i switch
                         {
@@ -74,22 +73,22 @@ namespace SpaceCore
                             _ => "???",
                         };
                     }
-                    return dummyObj.DisplayName;
+                    return _item.DisplayName;
                 }
             }
 
-            public override Texture2D IconTexture => ItemRegistry.GetDataOrErrorItem( dummyObj.QualifiedItemId ).GetTexture();
+            public override Texture2D IconTexture => ItemRegistry.GetDataOrErrorItem(_item.QualifiedItemId).GetTexture();
 
-            public override Rectangle? IconSubrect => ItemRegistry.GetDataOrErrorItem(dummyObj.QualifiedItemId).GetSourceRect(0, dummyObj.ParentSheetIndex);
+            public override Rectangle? IconSubrect => ItemRegistry.GetDataOrErrorItem(_item.QualifiedItemId).GetSourceRect();
 
-            public override int Quantity => qty;
+            public override int Quantity => this._quantity;
 
             public override int GetAmountInList(IList<Item> items)
             {
                 int ret = 0;
                 foreach ( var item in items )
                 {
-                    if (this.ItemMatches(item))
+                    if (this.Matches(item))
                         ret += item.Stack;
                 }
 
@@ -98,11 +97,11 @@ namespace SpaceCore
 
             public override void Consume(IList<IInventory> additionalIngredients)
             {
-                int left = this.qty;
+                int left = this._quantity;
                 for ( int i = Game1.player.Items.Count - 1; i >= 0; --i )
                 {
                     var item = Game1.player.Items[i];
-                    if (this.ItemMatches( item ) )
+                    if (this.Matches(item))
                     {
                         int amt = Math.Min(left, item.Stack);
                         left -= amt;
@@ -123,7 +122,7 @@ namespace SpaceCore
                         for (int i = chest.Count - 1; i >= 0; --i)
                         {
                             var item = chest[i];
-                            if (this.ItemMatches( item ) )
+                            if (this.Matches(item))
                             {
                                 int amt = Math.Min(left, item.Stack);
                                 left -= amt;
@@ -147,16 +146,16 @@ namespace SpaceCore
                 }
             }
 
-            private bool ItemMatches(Item item)
+            public override bool Matches(Item item)
             {
                 if (item == null)
                     return false;
 
-                if (item is StardewValley.Object obj2 && objectIndex.StartsWith("-"))
+                if (item is StardewValley.Object o && this._itemId.StartsWith("-"))
                 {
-                    return obj2.Category == int.Parse(objectIndex);
+                    return o.Category == int.Parse(this._itemId);
                 }
-                return item.canStackWith(dummyObj);
+                return item.canStackWith(this._item);
             }
         }
 
