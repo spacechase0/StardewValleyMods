@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\common.targets" />
-  <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
-
-  <PropertyGroup>
-    <Version>1.2.0</Version>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
-</Project>

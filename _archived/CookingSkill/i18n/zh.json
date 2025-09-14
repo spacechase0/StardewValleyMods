@@ -1,0 +1,19 @@
+﻿{
+    // skill
+    "skill.name": "烹饪",
+    "skill.level-up-perk": "+{{bonus}}% 料理的回复量",
+
+    // professions
+    "efficient.name": "高效烹饪者",
+    "efficient.desc": "15% 几率不消耗食材",
+    "gourmet.name": "美食家",
+    "gourmet.desc": "+20% 食品售价",
+    "intense-flavors.name": "厚重调味",
+    "intense-flavors.desc": "食物增益再每次进食时都会增强\n(+20% 最大能量或磁力范围)",
+    "professional-chef.name": "专业大厨",
+    "professional-chef.desc": "烹饪出来的成品最低为银星品质",
+    "satisfying.name": "酒足饭饱",
+    "satisfying.desc": "+25% 增益持续时间",
+    "secret-spices.name": "秘制香料",
+    "secret-spices.desc": "食用无增益食物后会获得随机增益"
+}

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>Giant Omelet</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+    <Description>Giant omelet! Free food! (Once a day only)</Description>
+    <Version>1.0.0</Version>
+    <UpdateKeys>Nexus:13852</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)spacecore.targets" />
+  <ItemGroup>
+    <Folder Include="assets\" />
+  </ItemGroup>
+</Project>

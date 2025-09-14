@@ -1,7 +1,33 @@
 ﻿This repository contains my SMAPI mods for Stardew Valley. See the individual mods in the
 subfolders for documentation and release notes.
 
+## Quick links
+You don't want to want to read this whole readme and look through every folder just to find something, I get it. Especially if you haven't updated your bookmarks from before I reorganized this repository. So here, have some quick links to documentation that I imagine is frequently used (especially by people not looking to make contributions to the mods themselves):
+* [SpaceCore documentation](framework\SpaceCore\docs\README.md)
+* [Json Assets documentation](framework\JsonAssets\docs\author-guide.md) (Not used as much nowadays as it used to be, since people should be and are making Content Patcher packs instead.)
+
+## Organization
+Mods are grouped into a few broad categories:
+* `_archived/` - These mods definitely aren't getting updated (and some of them were never even released). I might revisit concepts from these at some point, but I'll most likely be starting from scratch. These mods are not part of the .sln, so you won't see them in your IDE.
+* `_external/` - External dependencies, stored via git submodules. See "Compiling the mods" for reasoning.
+* `_external_helpers/` - Helpers to make things in `_external/` compile correctly for our use case.
+* `ContentEngine/` - SpaceCore content engine stuff. This is being removed soon (if it hasn't been already by the time you read this), as I have a new solution in mind for the use case I created this for.
+* `framework/` - Frameworks mods, intended for simplifying development for myself, other C# mod authors, or content pack authors.
+* `cosmetic/` - Mods which have no impact on gameplay.
+* `gameplay/` - Mods which *do* have an impact on gameplay, at least a litte. This is broken down into further categories:
+    * These categories would be difficult to organize if done by mod size (specifically, measured in a consistent, player-quanitifable way).
+      Therefore, it's organized a little differently.
+    * `gameplay/ignorable/` - These mods are sort of "opt-in". Even if you have them installed, you won't be impacted besides new keybindings or menu changes, until you use those things. These are also the least likely to have compatibility problems with other mods.
+    * `gameplay/unavoidable/` - These mods impact the game in a way that is unavoidable if you go to the area they touch. It could be something as small as a few tile changes on a map, or a rare drop from an enemy. It could also be something much larger. These have an average chance of having compatibility problems with other mods.
+    * `gameplay/overhaul/` - These mods touch large swathes of the game, and definitely have compatibility problems with many other mods. These are likely not compatible with most mods even in this repository, even ones in `cosmetic/` or `gameplay/ignorable/` (depending on the combination).
+* `joke/` - Joke mods. Enough said.
+* `joke/totally-serious/` - Mods that people *think* are joke mods, but are 100% serious and are each a must-have for every playthrough.
+* `shared/` - Various common code used between multiple projects.
+
+There is an additional folder in your IDE, `_root/`, which contains various files that are actually in the root of this repository. This contains the README.md (this file!), the LICENSE, as well as various utility helper files.
+
 ## Translating the mods
+(TODO: This section hasn't been updated in ages. Need to automate it somehow.)
 <!--
 
     This section is auto-generated using a script, there's no need to edit it manually.
@@ -62,6 +88,8 @@ Three-Heart Dance Partner  | [❑](ThreeHeartDancePartner/i18n)                 
 Installing stable releases from Nexus Mods is recommended for most users. If you really want to
 compile the mod yourself, read on.
 
+Make sure to initialize submodules when after cloning the repository. A couple mods use submodules for dependencies that don't have nuget packages.
+
 These mods use the [crossplatform build config](https://www.nuget.org/packages/Pathoschild.Stardew.ModBuildConfig)
 so they can be built on Linux, macOS, and Windows without changes. See [the build config documentation](https://www.nuget.org/packages/Pathoschild.Stardew.ModBuildConfig)
 for troubleshooting.
@@ -80,70 +108,3 @@ To package a mod for release:
 1. Switch to `Release` build configuration.
 2. Recompile the mods per the previous section.
 3. Upload the generated `bin/Release/<mod name>-<version>.zip` file from the project folder.
-
-### Release order
-This order avoids releasing mod updates which need an unreleased update (e.g. updating Json Assets
-before a SpaceCore update it needs).
-
-```
-Release phases:
-      I: non-frameworks with no spacechase dependency
-      II: framework mods
-      III: mods which use phase II frameworks
-      IV: mods which need custom packaging
-
-phase |    mod
------ | ------------------------------
-I     | 1.  Better Meteorites
-      | 2.  Better Shop Menu
-      | 3.  Carry Chest
-      | 4.  Combat Level Damage Scaler
-      | 5.  Console Code
-      | 6.  Custom Critters
-      | 7.  Custom NPC Fixes
-      | 8.  Experience Bars
-      | 9.  Extended Reach
-      | 10. Flower Color Picker
-      | 11. Flower Rain
-      | 12. Jump Over
-      | 13. Junimos Accept Cash
-      | 14. More Giant Crops
-      | 15. More Grass Starters
-      | 16. MultiFertilizer
-      | 17. Object Time Left
-      | 18. Profit Calculator
-      | 19. Realtime Minimap
-      | 20. Rush Orders
-      | 21. Spenny
-      | 22. Super Hopper
-      | 23. Three-Heart Dance Partner
-      | 24. Throwable Axe
------ | ------------------------------
-II    | 25. Content Patcher Animations
-      | 26. Generic Mod Config Menu
-      | 27. Hybrid Crop Engine
-      | 28. SpaceCore
-      | 29. Dynamic Game Assets         * needs SpaceCore
-      | 30. Json Assets                 * needs SpaceCore
------ | ------------------------------
-III   | 31. Animal Social Menu
-      | 32. Another Hunger Mod
-      | 33. Bigger Craftables
-      | 34. Bug Net
-      | 35. Capstone Professions
-      | 36. Cooking Skill
-      | 37. DGAAutomate
-      | 38. Displays
-      | 39. Luck Skill
-      | 40. Mana Bar
-      | 41. Magic                       * needs Mana Bar
-      | 42. More Buildings
-      | 43. More Rings
-      | 44. Preexisting Relationship
-      | 45. Pyromancer's Journey
-      | 46. Sleepy Eye
-      | 47. Statue of Generosity
-      | 48. Theft of the Winter Star
------ | ------------------------------
-IV    | 49. Surfing Festival
-```

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>Better Meteorites</Name>
+    <Description>Improves loot dropped by meteorites.</Description>
+    <Version>1.0.3</Version>
+    <UpdateKeys>Nexus:5096</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+</Project>

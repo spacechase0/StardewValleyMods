@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <OutputPath>$(SolutionDir)/spacecore-content-tools/server</OutputPath>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LanguageServerProtocol" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)ContentEngine\SpaceCore.Content.Engine\SpaceCore.Content.Engine.csproj" />
+    <ProjectReference Include="$(SolutionDir)ContentEngine\SpaceCore.Content.Parser\SpaceCore.Content.Parser.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(SolutionDir)spacecore-content-tools\server\*.*&quot; &quot;$(SolutionDir)SpaceCore.Content.VisualStudio\Server&quot; /Y /I /E" />
+  </Target>
+
+</Project>

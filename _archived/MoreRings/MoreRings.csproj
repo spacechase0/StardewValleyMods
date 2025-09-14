@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>More Rings</Name>
+    <Description>Adds new rings with special effects.</Description>
+    <Authors>spacechase0, ParadigmNomad (sprites)</Authors>
+    <Version>1.2.4</Version>
+    <UpdateKeys>Nexus:2054</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
+
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)spacecore.targets" /></Project>

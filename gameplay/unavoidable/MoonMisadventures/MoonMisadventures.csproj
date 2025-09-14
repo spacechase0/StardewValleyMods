@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>Moon Misadventures</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+    <Description>Want to go to the moon? Now you can!</Description>
+    <Version>0.2.0</Version>
+    <UpdateKeys>Nexus:10612</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableHarmony>true</EnableHarmony>
+
+    <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)spacecore.targets" />
+  <ItemGroup>
+    <None Update="asset-credits.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

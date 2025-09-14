@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>Json Assets</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+    <Description>Lets content packs add custom content to the game.</Description>
+    <Version>1.11.10</Version>
+    <UpdateKeys>Nexus:1720</UpdateKeys>
+
+    <TargetFramework>net6.0</TargetFramework>
+
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)spacecore.targets" />
+  <ItemGroup>
+    <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
+    <SMAPIDependency Include="Cherry.ExpandedPreconditionsUtility" Required="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utilities\" />
+  </ItemGroup>
+</Project>

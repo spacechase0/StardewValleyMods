@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>Gradient Hair Colors</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+    <Version>1.1.1</Version>
+    <UpdateKeys>Nexus:12744</UpdateKeys>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>

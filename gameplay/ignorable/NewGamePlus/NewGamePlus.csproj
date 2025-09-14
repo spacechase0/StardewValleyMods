@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+    <Name>New Game Plus</Name>
+    <Version>1.0.2</Version>
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)spacecore.targets" /></Project>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <TargetFramework>net5.0</TargetFramework>
+
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" Private="false" />
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
+  </ItemGroup>
+</Project>

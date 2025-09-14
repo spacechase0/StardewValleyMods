@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>Combat Level Damage Scaler</Name>
+    <Description>Scales damage up based on your combat level.</Description>
+    <Version>1.1.5</Version>
+    <UpdateKeys>Nexus:3905</UpdateKeys>
+    
+    <TargetFramework>net6.0</TargetFramework>
+
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+  </ItemGroup>
+</Project>

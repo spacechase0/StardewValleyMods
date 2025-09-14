@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Name>Jump Over</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+    <Version>1.3.0</Version>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
+  </ItemGroup>
+</Project>

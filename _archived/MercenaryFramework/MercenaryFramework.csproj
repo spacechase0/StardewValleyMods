@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)spacecore.targets" />
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

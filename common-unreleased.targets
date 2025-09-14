@@ -1,7 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!--common project properties for unreleased mods-->
-  <PropertyGroup>
-    <EnableModDeploy>false</EnableModDeploy>
-    <EnableModZip>false</EnableModZip>
-  </PropertyGroup>
-</Project>

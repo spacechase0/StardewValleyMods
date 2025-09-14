@@ -1,0 +1,8 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)framework\SpaceCore\SpaceCore.csproj" Private="False">
+      <!-- so the manifest builder doesn't get confused with debug builds -->
+      <Version_AppendConfiguration>false</Version_AppendConfiguration>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
