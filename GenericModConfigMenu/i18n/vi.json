@@ -1,0 +1,32 @@
+{
+    /*********
+    ** Generic config UI
+    *********/
+    // button text at the bottom of the in-game options menu
+    "button.mod-options": "Tuỳ chọn mod",
+
+    // mod list UI
+    "list.editable-heading": "Cấu hình Mod",
+    "list.not-editable-heading": "Chỉ sửa từ màn hình tiêu đề:",
+    "list.keybindings": "Tổ hợp phím",
+
+    // mod config pages
+    "config.buttons.cancel": "Huỷ",
+    "config.buttons.reset-to-default": "Mặc định",
+    "config.buttons.save": "Lưu",
+    "config.buttons.save-and-close": "Lưu và thoát",
+
+    "config.rebind-key.title": "Phím phục hồi: {{optionName}}",
+    "config.rebind-key.simple-instructions": "Nhấn một phím để khởi động lại",
+    "config.rebind-key.combo-instructions": "Nhấn tổ hợp phím để khởi động lại",
+    "config.rebind-key.no-key": "(Không)",
+
+
+    /*********
+    ** Config options for Generic Mod Config Menu itself
+    *********/
+    "options.open-menu-key.name": "Mở phím menu",
+    "options.open-menu-key.desc": "Một tổ hợp phím để mở menu.",
+    "options.scroll-speed.name": "Tốc độ cuộn",
+    "options.scroll-speed.desc": "Số cột sẽ di chuyển khi cuộn qua menu cấu hình."
+}
