@@ -3,6 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Name>Potioncraft</Name>
     <Version>1.0.0</Version>
     <TargetFramework>net6.0</TargetFramework>

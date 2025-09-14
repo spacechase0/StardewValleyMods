@@ -1,0 +1,61 @@
+﻿{
+    "action_sets": [
+        {
+            "name": "/actions/global",
+            "usage": "leftright"
+        },
+        {
+            "name": "/actions/menu",
+            "usage": "leftright"
+        }
+    ],
+    "actions": [
+        {
+            "name": "/actions/global/in/pointer_primary",
+            "requirement": "mandatory",
+            "type": "pose"
+        },
+        {
+            "name": "/actions/global/in/pointer_secondary",
+            "requirement": "mandatory",
+            "type": "pose"
+        },
+
+        {
+            "name": "/actions/menu/in/left_click",
+            "requirement": "mandatory",
+            "type": "boolean"
+        },
+        {
+            "name": "/actions/menu/in/right_click",
+            "requirement": "mandatory",
+            "type": "boolean"
+        },
+        {
+            "name": "/actions/menu/in/scroll",
+            "requirement": "suggested",
+            "type": "vector2"
+        }
+    ],
+    "default_bindings": [
+        {
+            "controller_type": "oculus_touch",
+            "binding_url": "oculus_touch.json"
+        }
+    ],
+    "localization": [
+        {
+            "language_tag": "en_us",
+
+            "/actions/global": "Global actions",
+            "/actions/menu": "Menus",
+
+            "/actions/global/in/pointer_primary": "Primary Hand - Pointer",
+            "/actions/global/in/pointer_secondary": "Second Hand - Pointer",
+
+            "/actions/menu/in/left_click": "Left Click",
+            "/actions/menu/in/right_click": "Right Click",
+            "/actions/menu/in/scroll": "Scroll"
+        }
+    ]
+}

@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Angry Seagulls</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Version>1.0.1</Version>
     <TargetFramework>net6.0</TargetFramework>
 

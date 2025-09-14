@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Junimos Accept Cash</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>Purchase community center bundles with gold.</Description>
     <Version>1.1.5</Version>
     <UpdateKeys>Nexus:7437</UpdateKeys>

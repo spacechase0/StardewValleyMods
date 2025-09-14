@@ -3,6 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Name>Pyromancer's Journey</Name>
     <Description>Adds a new Doom-style arcade game.</Description>
     <Version>1.0.4</Version>

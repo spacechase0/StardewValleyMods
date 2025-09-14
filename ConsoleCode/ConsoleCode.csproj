@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Console Code</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>Run C# code in the SMAPI console.</Description>
     <Version>1.1.0</Version>
     <UpdateKeys>Nexus:3101</UpdateKeys>

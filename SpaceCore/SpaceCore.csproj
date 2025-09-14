@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <Name>SpaceCore</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>The space-iest of cores. (Framework mod)</Description>
     <Version>1.28.0</Version>
     <UpdateKeys>Nexus:1348</UpdateKeys>

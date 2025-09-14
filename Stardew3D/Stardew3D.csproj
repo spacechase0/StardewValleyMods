@@ -1,25 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.targets" />
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
   <Import Project="..\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
-    <Version>1.0.0</Version>
+    <Name>The Third Dimension</Name>
+    <Description>Stardew Valley... in THREE DEEEEE. (Incompatibility with other mods almost guarenteed.)</Description>
+    <Version>0.1.0</Version>
+    <!--<UpdateKeys>Nexus:</UpdateKeys>-->
+    <Version_AppendConfiguration>false</Version_AppendConfiguration> <!-- StardewVR will get confused about version numbers otherwise -->
+    
     <TargetFramework>net6.0</TargetFramework>
+    
     <EnableHarmony>true</EnableHarmony>
-    <GamePath>$(GamePath)_3d</GamePath>
+    <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="SharpGLTF.Core">
-      <HintPath>C:\Programming\bin\sharpgltf_monogame\SharpGLTF.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpGLTF.Runtime.MonoGame">
-      <HintPath>C:\Programming\bin\sharpgltf_monogame\SharpGLTF.Runtime.MonoGame.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="False">
+      <Version_AppendConfiguration>false</Version_AppendConfiguration>
+    </ProjectReference>
+    <ProjectReference Include="..\_external\MonoScene\src\MonoScene.Pipeline.GLTF\MonoScene.Pipeline.GLTF.csproj" />
+    <ProjectReference Include="..\_external\MonoScene\src\MonoScene.Runtime.Scene3D\MonoScene.Runtime.Scene3D.csproj" />
   </ItemGroup>
 </Project>

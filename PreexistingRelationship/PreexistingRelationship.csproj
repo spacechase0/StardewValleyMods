@@ -3,6 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Version>1.0.7</Version>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>

@@ -29,17 +29,17 @@ charset = utf-8-bom
 dotnet_sort_system_directives_first = true
 
 # use 'this.' qualifier
-dotnet_style_qualification_for_field = true:suggestion
-dotnet_style_qualification_for_property = true:suggestion
-dotnet_style_qualification_for_method = true:suggestion
-dotnet_style_qualification_for_event = true:suggestion
+#dotnet_style_qualification_for_field = true:suggestion
+#dotnet_style_qualification_for_property = true:suggestion
+#dotnet_style_qualification_for_method = true:suggestion
+#dotnet_style_qualification_for_event = true:suggestion
 
 # use language keywords (like int) instead of type (like Int32)
-dotnet_style_predefined_type_for_locals_parameters_members = true:error
-dotnet_style_predefined_type_for_member_access = true:error
+#dotnet_style_predefined_type_for_locals_parameters_members = true:error
+#dotnet_style_predefined_type_for_member_access = true:error
 
 # don't use 'var' for language keywords
-csharp_style_var_for_built_in_types = false:error
+#csharp_style_var_for_built_in_types = false:error
 
 # suggest modern C# features where simpler
 dotnet_style_object_initializer = true:suggestion
@@ -57,15 +57,15 @@ csharp_style_expression_bodied_methods = false:suggestion
 csharp_style_expression_bodied_constructors = false:suggestion
 
 # prefer property expression bodies
-csharp_style_expression_bodied_properties = true:suggestion
-csharp_style_expression_bodied_indexers = true:suggestion
-csharp_style_expression_bodied_accessors = true:suggestion
+#csharp_style_expression_bodied_properties = true:suggestion
+#csharp_style_expression_bodied_indexers = true:suggestion
+#csharp_style_expression_bodied_accessors = true:suggestion
 
 # prefer inline out variables
-csharp_style_inlined_variable_declaration = true:warning
+#csharp_style_inlined_variable_declaration = true:warning
 
 # avoid superfluous braces
-csharp_prefer_braces = false:hint
+#csharp_prefer_braces = false:hint
 
 # naming conventions
 dotnet_naming_style.pascal_case_style.capitalization=pascal_case
@@ -75,12 +75,13 @@ dotnet_naming_symbols.pascal_types.applicable_accessibilities=*
 
 dotnet_naming_rule.most_identifiers_should_be_pascal_case.symbols=pascal_types
 dotnet_naming_rule.most_identifiers_should_be_pascal_case.style=pascal_case_style
-dotnet_naming_rule.most_identifiers_should_be_pascal_case.severity=warning
+#dotnet_naming_rule.most_identifiers_should_be_pascal_case.severity=warning
 
+# TODO: Only disable these for stuff in _external?
 # configure stricter code analysis warnings
 # documentation: https://docs.microsoft.com/en-ca/dotnet/fundamentals/code-analysis/categories
-dotnet_diagnostic.CA1001.severity = error # Types that own disposable fields should be disposable
-dotnet_diagnostic.CA2000.severity = error # Dispose objects before losing scope
+#dotnet_diagnostic.CA1001.severity = error # Types that own disposable fields should be disposable
+#dotnet_diagnostic.CA2000.severity = error # Dispose objects before losing scope
 
 ##########
 ## Column guidelines

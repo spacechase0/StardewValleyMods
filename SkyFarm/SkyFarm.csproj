@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>SkyFarm</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>A challenge map in the sky.</Description>
     <Version>1.0.0</Version>
 

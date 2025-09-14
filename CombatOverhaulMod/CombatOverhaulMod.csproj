@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Combat Overhaul Mod</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Version>1.0.0</Version>
     <TargetFramework>net6.0</TargetFramework>
     <EnableHarmony>true</EnableHarmony>

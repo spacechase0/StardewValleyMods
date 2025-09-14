@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Random Cats in Events</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>...</Description>
     <Version>1.1.0</Version>
     <UpdateKeys>Nexus:26444</UpdateKeys>

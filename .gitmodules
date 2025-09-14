@@ -1,0 +1,3 @@
+[submodule "external/MonoScene"]
+	path = _external/MonoScene
+	url = git@github.com:vpenades/MonoScene.git

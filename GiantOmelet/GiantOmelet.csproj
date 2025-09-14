@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Giant Omelet</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>Giant omelet! Free food! (Once a day only)</Description>
     <Version>1.0.0</Version>
     <UpdateKeys>Nexus:13852</UpdateKeys>

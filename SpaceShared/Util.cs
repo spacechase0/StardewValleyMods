@@ -63,13 +63,13 @@ namespace SpaceShared
         public static string? FetchTexturePath( IModRegistry modRegistry, string modIdAndPath )
             => FetchTextureLocation(modRegistry, modIdAndPath)?.BaseName;
 
-        public static string FetchFullPath(IModRegistry modRegistry, string modIdAndPath)
+        public static string FetchFullPath(IModRegistry modRegistry, string modIdAndPath, char partSep = '/')
         {
-            if (modIdAndPath == null || modIdAndPath.IndexOf('/') == -1)
+            if (modIdAndPath == null || modIdAndPath.IndexOf(partSep) == -1)
                 return null;
 
-            string packId = modIdAndPath.Substring(0, modIdAndPath.IndexOf('/'));
-            string path = modIdAndPath.Substring(modIdAndPath.IndexOf('/') + 1);
+            string packId = modIdAndPath.Substring(0, modIdAndPath.IndexOf(partSep));
+            string path = modIdAndPath.Substring(modIdAndPath.IndexOf(partSep) + 1);
 
             // This is really bad. Pathos don't kill me.
             var modInfo = modRegistry.Get(packId);
@@ -134,6 +134,18 @@ namespace SpaceShared
                 value = (T)(object)(vInt - vInt % iInt);
 
             return value;
+        }
+
+        public static int Wrap(int value, int min, int max)
+        {
+            int interval = max - min;
+            return (value - min) % interval + min;
+        }
+
+        public static float Wrap(float value, float min, float max)
+        {
+            float interval = max - min;
+            return (value - min) % interval + min;
         }
 
         public static void Swap<T>(ref T lhs, ref T rhs)

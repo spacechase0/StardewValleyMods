@@ -1,0 +1,13 @@
+{
+    "source": "builtin",
+    "applications": [
+        {
+            "app_key": "com.kittycatcasey.mod.stardewvr",
+            "is_dashboard_overlay": false,
+            "action_manifest_path": "openvr_input_bindings/actions.json",
+            "strings": {
+                "en_us": "Stardew Valley (VR Mod)"
+            }
+        }
+    ]
+}

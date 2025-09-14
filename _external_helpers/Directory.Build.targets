@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- Stolen from SMAPI - not bothering with the whole find game targets file yet -->
+  <Import Condition="$(OS) != 'Windows_NT'" Project="$(HOME)\stardewvalley.targets" />
+  <Import Condition="$(OS) == 'Windows_NT'" Project="$(USERPROFILE)\stardewvalley.targets" />
+  <ItemGroup>
+    <Reference Include="$(GamePath)/MonoGame.Framework.dll" />
+  </ItemGroup>
+</Project>

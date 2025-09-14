@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Autocorrect Valley</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>Corrects your item names for you.</Description>
     <Version>1.0.1</Version>
     <UpdateKeys>Nexus:</UpdateKeys>

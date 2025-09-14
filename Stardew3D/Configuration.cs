@@ -10,9 +10,12 @@ namespace Stardew3D
 {
     public class Configuration
     {
+        public int FieldOfViewDegrees { get; set; } = 90;
         public int MultisampleCount { get; set; } = 0;
 
-        public KeybindList RotateLeft { get; set; } = new KeybindList(SButton.Q);
-        public KeybindList RotateRight { get; set; } = new KeybindList(SButton.R);
+        public KeybindList ToggleThirdDimension { get; set; } = new(SButton.Home);
+
+        public bool RenderDebugDraw => false;
+        public bool RenderDebugGrid => false;
     }
 }

@@ -1,15 +1,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--common project properties-->
   <PropertyGroup>
-    <Authors>spacechase0</Authors>
+    <Authors>kittycatcasey</Authors>
     <Description>...</Description>
-    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
+    <UniqueId>kittycatcasey.$(AssemblyName)</UniqueId>
     <MinimumApiVersion_Behavior>Update</MinimumApiVersion_Behavior>
     <MinimumGameVersion_Behavior>UpdateFull</MinimumGameVersion_Behavior>
     
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
@@ -22,6 +22,10 @@
 
   <!-- Why didn't I do this for SpaceShared in the first place? -->
   <Import Project="$(SolutionDir)\SpaceShared.Common\SpaceShared.Common.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)\SpaceShared.Mods.SourceGen\SpaceShared.SourceGenCommon.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\SpaceShared.SourceGenerator\SpaceShared.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
 
   <!--common mod build package options-->
   <PropertyGroup>

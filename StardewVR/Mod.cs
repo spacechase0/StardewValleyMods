@@ -5,65 +5,71 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using SpaceShared.Attributes;
 using Stardew3D;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
+using StardewVR.GameHandlers;
+using StardewVR.GameHandlers.FirstPerson;
+using StardewVR.MenuHandlers;
 using Valve.VR;
+
+
+// This might be incorrect since I don't understand matrices super well, but:
+//
+// MonoGame docs and code say (or seem to say) the following: Row major, pre-multiplication, right handed, forward = -Z
+//      Row major: operator[] docs
+//      Pre-multiplication: Code in EffectHelpers.SetWorldViewProjAndFog does world * view * projection, not projection * view * world
+//      Right handed: Matrix docs
+//      Forward: Vector3.Forward = (0, 0, -1)
+//
+// OpenVR docs and code say (or seem to say) the following: Column major, post-multiplication, right handed, forward = -Z
+//      Column major (logically): From https://github.com/ValveSoftware/openvr/wiki/Matrix-Usage-Example
+//      Post-multiplication: Same link as previous, the example does projection * view * world
+//      Right handed: openvr.h, comment right above the matrix struct definitions
+//      Forward: openvr.h, same spot as previous
+//
+// OpenVR.Net docs and code say (or seem to say) the following: Column major, post-multiplication, left handed, forward = ?
+//      Column major: It doesn't change how the values are used compared to base OpenVR
+//      Post-multiplication: README shows it, the example has projection on the first of the multiplied terms
+//      Left handed: README mentions it
+//      Forward: ? (not sure if it even has concept of this)
+//
+// You might have noticed that OpenVR.Net said that their coordinates are left handed, unlike OpenVR and MonoGame.
+// I don't see any conversion in the projection matrix code (not that I know if there would be any for projection matrices).
+// But I *do* see conversion in their function to extract the position from an OpenVR matrix.
+// (It seems like for rotations too, but it's harder to be sure because I understand quaternions even less than matrices.)
+//
+// So... basically we're gonna pretend OpenVR.Net's wrapper level doesn't exist for anything but initialization, cleanup, and the Update* methods. :P
+// (I was using a different wrapper library previously but was having weird problems that went away when I switched...
+// though that likely was just me doing things wrong)
+//
+// So we just gotta transpose OpenVR matrices before using them.
+// 
+// We try to stick with MonoGame conventions here, though that's hard when I don't know what I'm doing.
 
 namespace StardewVR
 {
-    public class Mod : StardewModdingAPI.Mod
+    //[HasConfig<Configuration>]
+    //[HasState<State>]
+    [HasHarmony]
+    public partial class Mod : BaseMod< Mod >
     {
-        public static Mod instance;
-
-        internal CVRSystem vrSys;
-        internal uint headsetIndex = uint.MaxValue;
-        internal uint leftControllerIndex = uint.MaxValue, rightControllerIndex = uint.MaxValue;
-
-        internal RenderTarget2D leftScreen, rightScreen;
-
-        internal EVREye activeEye;
-        internal RenderTarget2D activeScreen;
-        internal Matrix activeEyeTransform;
-
-        public override void Entry(IModHelper helper)
+        protected override void ModEntry()
         {
-            instance = this;
-            Log.Monitor = Monitor;
+            Stardew3D.Mod.State.Handlers.Add(new FirstPersonVRGameHandler());
 
-            EVRInitError ie = EVRInitError.None;
-            vrSys = OpenVR.Init(ref ie);
-            if (ie != EVRInitError.None)
-            {
-                Log.Error("Failed to init VR headset: " + ie);
-                return;
-            }
-
-            for (uint i = 0; i < OpenVR.k_unMaxTrackedDeviceCount; ++i)
-            {
-                var c = vrSys.GetTrackedDeviceClass(i);
-                if (c == ETrackedDeviceClass.Controller)
-                {
-                    var role = vrSys.GetControllerRoleForTrackedDeviceIndex(i);
-                    if (role == ETrackedControllerRole.LeftHand)
-                        leftControllerIndex = i;
-                    else if (role == ETrackedControllerRole.RightHand)
-                        rightControllerIndex = i;
-                }
-                else if (c == ETrackedDeviceClass.HMD)
-                    headsetIndex = i;
-            }
-
-            uint screenWidth = 0, screenHeight = 0;
-            vrSys.GetRecommendedRenderTargetSize( ref screenWidth, ref screenHeight);
-            leftScreen = new(Game1.graphics.GraphicsDevice, ( int ) screenWidth, ( int ) screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
-            rightScreen = new(Game1.graphics.GraphicsDevice, ( int ) screenWidth, ( int ) screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
-
-            var harmony = new Harmony(ModManifest.UniqueID);
-            harmony.PatchAll();
+            Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
         }
 
-        internal void Submit(EVREye which, RenderTarget2D target)
+        private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
+        {
+            Stardew3D.Mod.State.SetMenuHandlerForGameHandlerTags<IClickableMenu>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler(handler as IVRGameHandler, menu));
+            Stardew3D.Mod.State.SetMenuHandlerForGameHandlerTags<TitleMenu>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as IVRGameHandler, menu as TitleMenu));
+        }
+
+        internal static Texture_t GetTextureFrom(RenderTarget2D target)
         {
             // TODO: Use SMAPI reflection since it caches
             var fieldInfo = typeof(Texture2D).GetField("glTexture", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
@@ -73,93 +79,41 @@ namespace StardewVR
             tex.handle = handle;
             tex.eType = ETextureType.OpenGL;
             tex.eColorSpace = EColorSpace.Auto;
-            var texBounds = new VRTextureBounds_t();
-            texBounds.uMin = 0;
-            texBounds.uMax = 1;
-            texBounds.vMin = 1;
-            texBounds.vMax = 0;
-            var ce = OpenVR.Compositor.Submit(which, ref tex, ref texBounds, EVRSubmitFlags.Submit_Default);
-            if (ce != EVRCompositorError.None)
-                Log.Error("Compositor error: " + ce);
+            return tex;
         }
 
-        ~Mod()
+        // Based on https://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+        public static Vector3 GetRotationFrom(Matrix mat)
         {
-            OpenVR.Shutdown();
-        }
-    }
+            // roll yaw pitch
+            // o u o_?
 
-    [HarmonyPatch(typeof(Stardew3D.Mod), "DoCamera")]
-    public static class FixCameraPatch
-    {
-        public static void Postfix()
-        {
-            var poses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-            Mod.instance.vrSys.GetDeviceToAbsoluteTrackingPose(ETrackingUniverseOrigin.TrackingUniverseSeated, 0, poses);
-            
-            var oldTarget = Stardew3D.Mod.State.Camera.Target;
-
-            var x = poses[Mod.instance.headsetIndex].mDeviceToAbsoluteTracking.ToMonogame();
-            Stardew3D.Mod.instance.basicEffect.Projection = Mod.instance.vrSys.GetProjectionMatrix(Mod.instance.activeEye, 0.01f, 200f).ToMonogame();
-            Stardew3D.Mod.instance.basicEffect.View = Matrix.CreateLookAt(x.Translation + oldTarget, x.Translation + oldTarget + x.Forward, x.Up) * Mod.instance.activeEyeTransform;
-
-            Stardew3D.Mod.State.Camera.Target = oldTarget;
-        }
-    }
-
-    [HarmonyPatch(typeof(Stardew3D.Camera), nameof(Stardew3D.Camera.GetUp))]
-    public static class FixCameraUpPatch
-    {
-        public static void Postfix( ref Vector3 __result )
-        {
-            var poses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-            Mod.instance.vrSys.GetDeviceToAbsoluteTrackingPose(ETrackingUniverseOrigin.TrackingUniverseSeated, 0, poses);
-
-            //__result = poses[Mod.instance.headsetIndex].mDeviceToAbsoluteTracking.ToMonogame().Up;
-            //__result = new Vector3(__result.X, __result.Y, __result.Z);
-        }
-    }
-
-    [HarmonyPatch(typeof(Stardew3D.Mod.DoRender), "Prefix")]
-    public static class DoDrawVRPatch
-    {
-        public static bool Prefix(GameTime gameTime, RenderTarget2D target_screen,
-                                  Task __2, IMonitor __3, Multiplayer __4)
-        {
-            if (Game1.game1.takingMapScreenshot)
-                return true;
-
-            var renderPoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-            var gamePoses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
-            var ce = OpenVR.Compositor.WaitGetPoses(renderPoses, gamePoses);
-            if (ce != EVRCompositorError.None)
-                Log.Error("Compositor Error: " + ce);
-
-            var oldViewport = Game1.viewport;
-            var oldUiViewport = Game1.uiViewport;
-            Game1.viewport.Width = Mod.instance.leftScreen.Width;
-            Game1.viewport.Height = Mod.instance.leftScreen.Height;
-            Game1.uiViewport.Width = Mod.instance.leftScreen.Width;
-            Game1.uiViewport.Height = Mod.instance.leftScreen.Height;
-
-            Game1.isRenderingScreenBuffer = true;
-
-            Mod.instance.activeEye = EVREye.Eye_Left;
-            Mod.instance.activeScreen = Mod.instance.leftScreen;
-            Mod.instance.activeEyeTransform = Matrix.Invert( Mod.instance.vrSys.GetEyeToHeadTransform( EVREye.Eye_Left ).ToMonogame() );
-            Mod.instance.Helper.Reflection.GetMethod(typeof(Stardew3D.SGameDrawOverride), "Impl").Invoke(gameTime, Mod.instance.activeScreen, __2, __3, __4);
-            Mod.instance.Submit(Mod.instance.activeEye, Mod.instance.activeScreen);
-
-            Mod.instance.activeEye = EVREye.Eye_Right;
-            Mod.instance.activeScreen = Mod.instance.rightScreen;
-            Mod.instance.activeEyeTransform = Matrix.Invert( Mod.instance.vrSys.GetEyeToHeadTransform(EVREye.Eye_Right).ToMonogame() );
-            Mod.instance.Helper.Reflection.GetMethod(typeof(Stardew3D.SGameDrawOverride), "Impl").Invoke(gameTime, Mod.instance.activeScreen, __2, __3, __4);
-            Mod.instance.Submit(Mod.instance.activeEye, Mod.instance.activeScreen);
-
-            Game1.viewport = oldViewport;
-            Game1.uiViewport = oldUiViewport;
-
-            return true;
+            if (MathF.Abs(mat.M31) != 1)
+            {
+                var o1 = -MathF.Asin(mat.M31);
+                //var o2 = MathF.PI - o1;
+                var u1 = MathF.Atan2(mat.M32 / MathF.Cos(o1), mat.M33 / MathF.Cos(o1));
+                //var u2 = MathF.Atan2(mat.M32 / MathF.Cos(o2), mat.M33 / MathF.Cos(o2));
+                var o_1 = MathF.Atan2(mat.M21 / MathF.Cos(o1), mat.M11 / MathF.Cos(o1));
+                //var o_2 = MathF.Atan2(mat.M21 / MathF.Cos(o2), mat.M11 / MathF.Cos(o2));
+                return new(o1, u1, o_1);
+            }
+            else
+            {
+                var o_ = 0f;
+                if (mat.M31 == -1)
+                {
+                    var o = MathF.PI / 2;
+                    var u = o_ + MathF.Atan2(mat.M12, mat.M13);
+                    return new(o, u, o_);
+                }
+                else
+                {
+                    var o = -MathF.PI / 2;
+                    var u = -o_ + MathF.Atan2(-mat.M12, -mat.M13);
+                    return new(o, u, o_);
+                }
+            }
         }
     }
 }

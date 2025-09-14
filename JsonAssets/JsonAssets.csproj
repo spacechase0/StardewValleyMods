@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <Name>Json Assets</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>Lets content packs add custom content to the game.</Description>
     <Version>1.11.10</Version>
     <UpdateKeys>Nexus:1720</UpdateKeys>

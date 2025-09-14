@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <Name>Moon Misadventures</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>Want to go to the moon? Now you can!</Description>
     <Version>0.2.0</Version>
     <UpdateKeys>Nexus:10612</UpdateKeys>

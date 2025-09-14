@@ -3,6 +3,7 @@
   <Import Project="..\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Name>Satchels</Name>
     <Description>An item that lets you hold more items.</Description>
     <Version>1.0.2</Version>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="12" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="1">
+ <tileset firstgid="1" name="floor" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/floor.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="201" name="ceiling" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/ceiling.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="401" name="wall_down_offset" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/wall_down_offset.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="601" name="wall_down_size" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/wall_down_size.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="801" name="wall_right_size" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/wall_right_size.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="1001" name="townInterior" tilewidth="16" tileheight="16" tilecount="2176" columns="32">
+  <image source="townInterior" width="512" height="1088"/>
+ </tileset>
+ <tileset firstgid="3177" name="floor_modifier" tilewidth="16" tileheight="16" tilecount="1600" columns="20">
+  <image source="ThirdDimensionData/floor_modifier.png" width="320" height="1280"/>
+ </tileset>
+ <tileset firstgid="4777" name="wall_left_offset" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/wall_left_offset.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="4977" name="wall_left_size" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/wall_left_size.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="5177" name="wall_right_offset" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/wall_right_offset.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="5377" name="wall_up_offset" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/wall_up_offset.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="5577" name="wall_up_size" tilewidth="16" tileheight="16" tilecount="200" columns="20">
+  <image source="ThirdDimensionData/wall_up_size.png" width="320" height="160"/>
+ </tileset>
+ <layer id="4" name="kittycatcasey.Stardew3D/Ceiling" width="12" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,2305,2306,2305,2305,2305,2306,2305,2305,2338,2305,0,
+0,2305,2337,2305,2337,2305,2337,2306,2305,2337,2305,0,
+0,2305,2305,2305,2306,2338,2338,2337,2305,2305,2305,0,
+0,2305,2338,2305,2305,2305,2338,2305,2337,2338,2306,0,
+0,2305,2305,2305,2337,2305,2305,2305,2305,2305,2305,0,
+0,2306,2305,2337,2305,2305,2337,2306,2305,2337,2305,0,
+0,2305,2338,2305,2338,2305,2306,2305,2338,2305,2305,0,
+0,0,0,2305,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="1" name="kittycatcasey.Stardew3D/FloorData" width="12" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,0,
+0,0,0,1,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="2" name="kittycatcasey.Stardew3D/CeilingData" width="12" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,261,261,261,261,261,261,261,261,261,261,0,
+0,261,261,261,261,261,261,261,261,261,261,0,
+0,261,261,261,261,261,261,261,261,261,261,0,
+0,261,261,261,261,261,261,261,261,261,261,0,
+0,261,261,261,261,261,261,261,261,261,261,0,
+0,261,261,261,261,261,261,261,261,261,261,0,
+0,261,261,261,261,261,261,261,261,261,261,0,
+0,0,0,241,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="5" name="kittycatcasey.Stardew3D/WallData_South_Size" width="12" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,641,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>

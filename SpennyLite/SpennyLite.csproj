@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Name>Spenny Lite</Name>
+    <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>Spenny - Lite edition</Description>
     <Version>1.0.4</Version>
     <UpdateKeys>Nexus:14249</UpdateKeys>

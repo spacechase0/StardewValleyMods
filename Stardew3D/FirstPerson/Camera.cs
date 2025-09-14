@@ -1,0 +1,24 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Stardew3D.Rendering;
+using static StardewValley.Minigames.TargetGame;
+
+namespace Stardew3D.FirstPerson
+{
+    public class Camera : ICamera
+    {
+        public Vector3 Position { get; set; }
+        public float RotationForHorizontal { get; set; } = 0;
+        public float RotationForVertical { get; set; } = 0;
+        public float ExtraRotationForZ { get; set; } = 0; // Purely here for letting VR match things up right, not used in not-VR
+
+        public virtual Vector3 Up => Vector3.Cross(Vector3.Transform(Vector3.Right, Matrix.CreateRotationY(RotationForHorizontal)), Forward);
+        public virtual Vector3 Forward => Vector3.Transform(Vector3.Forward, Matrix.CreateRotationX(RotationForVertical) * Matrix.CreateRotationY(RotationForHorizontal) * Matrix.CreateRotationZ(ExtraRotationForZ));
+
+        public virtual Matrix ViewMatrix => Matrix.CreateLookAt(Position, Position + Forward, Up);
+    }
+}
