@@ -1,0 +1,7 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.scan-everywhere.name": "Chercher partout",
+    "config.scan-everywhere.tooltip": "Scannez partout pour une création hybride.\nDésactiver signifie scanner uniquement la ferme et la serre."
+}
