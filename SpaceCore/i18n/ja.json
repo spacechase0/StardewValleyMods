@@ -1,0 +1,24 @@
+{
+    // Generic Mod Config Menu UI
+    "config.custom-skill-page.name": "カスタムスキルページ",
+    "config.custom-skill-page.tooltip": "カスタムスキルページを表示する。\n有効にするとスキルタブのスキルの為により多くのスペースが確保されます。",
+    "config.support-all-professions-mod.name": "All Professions Modのサポート",
+    "config.support-all-professions-mod.tooltip": "All Professions Modがインストールされている場合、カスタム技能がレベルに達したときに自動的に適用されるかどうか。",
+    "config.advanced-social-interactions": "高度な交流",
+    "config.always-trigger.name": "対話メニューを常に表示",
+    "config.always-trigger.description": "NPCと対話するときに、対話メニューを常に表示するかどうか。",
+    "config.trigger-modifier.name": "ホットキー",
+    "config.trigger-modifier.description": "対話するときに押して、対話メニューを起動するキー。",
+
+    "interaction-with": "{{npc}}が目の前に居ます",
+    "interaction.chat": "会話する",
+    "interaction.gift-held": "プレゼントを渡す",
+    "interaction.cancel": "キャンセル",
+
+    "question.ask": "質問する",
+
+    "health-regen": "1秒あたりのヘルス",
+    "stamina-regen": "1秒あたりのスタミナ",
+
+    "resource-clump.bad-tool-tier": "あなたの道具はこれを破壊できるほど強力ではありません。",
+}
