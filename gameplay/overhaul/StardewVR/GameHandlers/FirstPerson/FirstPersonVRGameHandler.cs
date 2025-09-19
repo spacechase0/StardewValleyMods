@@ -542,7 +542,7 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
         Camera.AdditionalTransform = Matrix.Identity;// VR.GetEyeToHeadTransform(ActiveEye.Value).ToMonogame().Invert();
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;
 
-        var baseProj = VR.GetProjectionMatrix(ActiveEye.Value, 0.1f, 256).ToMonogame();
+        var baseProj = VR.GetProjectionMatrix(ActiveEye.Value, 0.1f, 10000).ToMonogame();
         var eyeToHead = VR.GetEyeToHeadTransform(ActiveEye.Value).ToMonogame().Invert();
         var headsetTransform = Camera.ViewMatrix.Invert();
         //headsetTransform = (Headset.CurrentRotation * Matrix.CreateTranslation( Headset.CurrentPosition )).Invert();

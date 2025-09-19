@@ -26,7 +26,7 @@ public class ThirdPersonGameHandler : ModGameHandler
     public override void SwitchOn()
     {
         base.SwitchOn();
-        ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Mod.Config.FieldOfViewDegrees), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.1f, 256);
+        ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Mod.Config.FieldOfViewDegrees), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.1f, 10000);
         RenderHelper.GenericEffect.Projection = ProjectionMatrix;
     }
 

@@ -36,7 +36,7 @@ namespace Stardew3D
             Plane plane = new(data.Position, data.QuadFacingNormal);
 
             float dist = 100000;
-            Ray test = new(new(data.Position.X + subTile.X - 0.5f, dist, data.Position.Y + subTile.Y - 0.5f), Vector3.Down);
+            Ray test = new(new(data.Position.X + subTile.X - 0.5f, dist, data.Position.Z + subTile.Y - 0.5f), Vector3.Down);
             float ret = dist - test.Intersects(plane).Value;
 
             // TODO: Map resulting X/Z for "region" thing
@@ -75,19 +75,19 @@ namespace Stardew3D
             }
         }
 
-        public static (Vector3 Position, Vector3 QuadFacingNormal, Vector3 QuadUpNormal, Vector2 QuadSize) GetPositionForTile(xTile.Map map, Point tile, bool forCeiling = false)
+        public static (Vector3 Position, Vector3 QuadFacingNormal, Vector3 QuadVert00, Vector3 QuadVert10, Vector3 QuadVert01, Vector3 QuadVert11, float HeightBoundingSize) GetPositionForTile(xTile.Map map, Point tile, bool forCeiling = false)
         {
             if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Layers[0].LayerWidth || tile.Y >= map.Layers[0].TileHeight)
-                return new(new Vector3(tile.X, float.NaN, tile.Y), forCeiling ? Vector3.Down : Vector3.Up, Vector3.Forward, Vector2.One);
+                return new(new Vector3(tile.X + 0.5f, float.NaN, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
             string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}Data";
             string dataModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}ModifierData";
 
             var data = map.GetLayer(dataLayer);
-            var modifiers = map.GetLayer(dataModifierLayer);
+            var modifiers = map.Layers.Where(l => l.Id == dataModifierLayer || l.Id.StartsWith( $"{dataModifierLayer}_" ));
 
             if (data == null)
-                return new(new Vector3(tile.X, float.NaN, tile.Y), forCeiling ? Vector3.Down : Vector3.Up, Vector3.Forward, Vector2.One);
+                return new(new Vector3(tile.X + 0.5f, float.NaN, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
             float baseHeight = GetValueForDataTileIndex(data.GetTileIndexAt(tile.X, tile.Y));
             float topLeft = baseHeight;
@@ -95,9 +95,14 @@ namespace Stardew3D
             float bottomRight = baseHeight;
             float bottomLeft = baseHeight;
 
-            ModifyValueForDataTileIndex(modifiers?.GetTileIndexAt(tile.X, tile.Y) ?? -1, ref topLeft, ref topRight, ref bottomRight, ref bottomLeft);
+            foreach (var modifier in modifiers)
+            {
+                ModifyValueForDataTileIndex(modifier.GetTileIndexAt(tile.X, tile.Y), ref topLeft, ref topRight, ref bottomRight, ref bottomLeft);
+            }
 
             // Probably incorrect implementation, just cobbled something together myself
+            float top = MathF.Max(MathF.Max(topLeft, topRight), MathF.Max(bottomRight, bottomRight));
+            float bottom = MathF.Min(MathF.Min(topLeft, topRight), MathF.Min(bottomRight, bottomRight));
             float center = (topLeft + topRight + bottomLeft + bottomRight) / 4;
 
             float posX = (topRight + bottomRight) / 2;
@@ -113,10 +118,18 @@ namespace Stardew3D
             float rotX = MathF.Asin(zDiff / zLen);
             float rotZ = MathF.Asin(xDiff / xLen);
 
+            float leftSize = MathF.Sqrt( 1 + MathF.Pow(topLeft - bottomLeft, 2) );
+            float topSize = MathF.Sqrt(1 + MathF.Pow(topLeft - topRight, 2));
+            float rightSize = MathF.Sqrt(1 + MathF.Pow(topRight - bottomRight, 2));
+            float bottomSize = MathF.Sqrt(1 + MathF.Pow(bottomLeft - bottomRight, 2));
+
             return new(new Vector3(tile.X + 0.5f, center, tile.Y + 0.5f),
                        Vector3.TransformNormal(forCeiling ? Vector3.Down : Vector3.Up, Matrix.CreateRotationX(rotX) * Matrix.CreateRotationZ(rotZ)),
-                       Vector3.TransformNormal(Vector3.Forward, Matrix.CreateRotationX(rotX) * Matrix.CreateRotationZ(rotZ)),
-                       new(xLen, zLen));
+                       new(-0.5f, topLeft - center, -0.5f),
+                       new(0.5f, topRight - center, -0.5f),
+                       new(-0.5f, bottomLeft - center, 0.5f),
+                       new(0.5f, bottomRight - center, 0.5f),
+                       top - bottom);
         }
 
         public static Vector3 GetPositionAtTile(xTile.Map map, Point pt, TileSpot spot = TileSpot.Center, bool forCeiling = false)

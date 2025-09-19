@@ -10,7 +10,7 @@ namespace Stardew3D
 {
     public class Configuration
     {
-        public int FieldOfViewDegrees { get; set; } = 90;
+        public int FieldOfViewDegrees { get; set; } = 70;
         public int MultisampleCount { get; set; } = 0;
 
         public KeybindList ToggleThirdDimension { get; set; } = new(SButton.Home);

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
 namespace Stardew3D.Models;
-internal interface IModelMapping
+
+public interface IModelMapping
 {
     public Vector3 Scale { get; set; }
     public Vector3 Rotation { get; set; }
