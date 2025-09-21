@@ -27,11 +27,12 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         protected override void ReceiveInput(string str)
         {
+            bool hasMinus = this.String.Contains('-');
             bool valid = true;
             for (int i = 0; i < str.Length; ++i)
             {
                 char c = str[i];
-                if (!char.IsDigit(c) && !(c == '-' && this.String == "" && i == 0))
+                if ((Caret == 0 && hasMinus) || (!char.IsDigit(c) && !(c == '-' && !hasMinus && Caret + i == 0)))
                 {
                     valid = false;
                     break;
@@ -40,7 +41,7 @@ namespace SpaceShared.UI
             if (!valid)
                 return;
 
-            this.String += str;
+            this.String = this.String[..Caret] + str + this.String[Caret..];
             this.Callback?.Invoke(this);
         }
     }

@@ -103,17 +103,21 @@ namespace SpaceShared.UI
                 int maxElementHeight = 0;
                 foreach (var element in row)
                 {
-                    element.LocalPosition = new Vector2(element.LocalPosition.X, topPx - this.Scrollbar.TopRow * this.RowHeight);
-                    bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
+                    if (element.ForceHide?.Invoke() != true)
+                    {
+                        element.LocalPosition = new Vector2(element.LocalPosition.X, topPx - this.Scrollbar.TopRow * this.RowHeight);
 
+                        maxElementHeight = Math.Max(maxElementHeight, element.Height);
+                    }
+                    bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
                     if (!isChildOffScreen || element is Label) // Labels must update anyway to get rid of hovertext on scrollwheel
                         element.Update(isOffScreen: isChildOffScreen);
-                    maxElementHeight = Math.Max(maxElementHeight, element.Height);
                 }
-                topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
+                if (maxElementHeight != 0 || row.Length == 0) topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             }
 
-            if (topPx != this.ContentHeight) {
+            if (topPx != this.ContentHeight)
+            {
                 this.ContentHeight = topPx;
                 this.Scrollbar.Rows = PxToRow(this.ContentHeight);
             }
@@ -129,13 +133,16 @@ namespace SpaceShared.UI
                 int maxElementHeight = 0;
                 foreach (var element in row)
                 {
-                    element.LocalPosition = new Vector2(element.LocalPosition.X, topPx - this.Scrollbar.ScrollPercent * this.Rows.Count * this.RowHeight);
-                    bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
+                    if (element.ForceHide?.Invoke() != true)
+                    {
+                        element.LocalPosition = new Vector2(element.LocalPosition.X, topPx - this.Scrollbar.ScrollPercent * this.Rows.Count * this.RowHeight);
 
+                        maxElementHeight = Math.Max(maxElementHeight, element.Height);
+                    }
+                    bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
                     element.Update(isOffScreen: isChildOffScreen);
-                    maxElementHeight = Math.Max(maxElementHeight, element.Height);
                 }
-                topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
+                if (maxElementHeight != 0 || row.Length == 0) topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             }
             this.ContentHeight = topPx;
             this.Scrollbar.Update(isOffScreen);
@@ -168,7 +175,8 @@ namespace SpaceShared.UI
                     {
                         if (this.IsElementOffScreen(element))
                             continue;
-                        if (element == this.RenderLast) {
+                        if (element == this.RenderLast)
+                        {
                             renderLast = element;
                             continue;
                         }
