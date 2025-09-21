@@ -244,6 +244,7 @@ namespace GenericModConfigMenu
                 page: page,
                 openPage: newPage =>
                 {
+                    if (Game1.activeClickableMenu is SpecificModConfigMenu) Game1.activeClickableMenu.exitThisMenu();
                     OpenModMenuNew(mod, newPage, listScrollRow);
                 },
                 returnToList: () =>
