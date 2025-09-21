@@ -249,7 +249,9 @@ namespace GenericModConfigMenu
                 },
                 returnToList: () =>
                 {
-                    OpenListMenuNew(listScrollRow);
+                    //when is this actually needed? not sure what this is for, but it might be safer to use some parent check (todo for later)
+                    if (Game1.activeClickableMenu is ModConfigMenu) OpenListMenuNew(listScrollRow);
+                    else if (Game1.activeClickableMenu is SpecificModConfigMenu) Game1.activeClickableMenu.exitThisMenu();
                 }
             );
 
