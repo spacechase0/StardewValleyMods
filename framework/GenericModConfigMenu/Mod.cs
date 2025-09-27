@@ -361,16 +361,16 @@ namespace GenericModConfigMenu
 
             // Initialize Stardew Access' Api
             this.StardewAccessApi = this.Helper.ModRegistry.GetApi<IStardewAccessApi>("shoaib.stardewaccess");
-            if (this.StardewAccessApi is not null)
+            if (this.StardewAccessApi != null)
             {
                 Log.Info("Initialized Stardew Access' api successfully");
                 this.StardewAccessApi.RegisterCustomMenuAsAccessible(typeof(ModConfigMenu).FullName);
                 this.StardewAccessApi.IgnoreHoverTextInMenu(typeof(SpecificModConfigMenu).FullName);
 
-                Element.MouseHovered += (sender, args) =>
+                Element.MouseHovered += (senderElement, args) =>
                 {
-                    Element element = ((Element)sender);
-                    if (element is Container) return;
+                    Element element = (Element)senderElement;
+                    if (element is Container or null) return;
 
                     this.CurrentHoveredButton = element;
                     if (element.ScreenReaderIgnore) return;
@@ -381,11 +381,14 @@ namespace GenericModConfigMenu
             }
         }
 
+        /// <summary>
+        /// Adds the suffixes (button, checkbox, etc.) according to the appropriate element type.
+        /// </summary>
         private string GetScreenReaderInfoOfElement(Element element)
         {
             string translationKey;
-            string label = element.ScreenReaderText;
-            object? tokens = new { label };
+            string elementText = element.ScreenReaderText;
+            object? tokens = new { label = elementText };
 
             switch (element)
             {
@@ -396,7 +399,7 @@ namespace GenericModConfigMenu
                     translationKey = "options_element-checkbox_info";
                     tokens = new
                     {
-                        label,
+                        label = elementText,
                         is_checked = checkbox.Checked ? 1 : 0
                     };
                     break;
@@ -404,7 +407,7 @@ namespace GenericModConfigMenu
                     translationKey = "options_element-dropdown_info";
                     tokens = new
                     {
-                        label,
+                        label = elementText,
                         selected_option = dropdown.Value
                     };
                     break;
@@ -412,7 +415,7 @@ namespace GenericModConfigMenu
                     translationKey = "options_element-slider_info";
                     tokens = new
                     {
-                        label,
+                        label = elementText,
                         slider_value = slider.Value,
                         is_percentage = 0
                     };
@@ -421,7 +424,7 @@ namespace GenericModConfigMenu
                     translationKey = "options_element-slider_info";
                     tokens = new
                     {
-                        label,
+                        label = elementText,
                         slider_value = slider.Value,
                         is_percentage = 0
                     };
@@ -430,7 +433,7 @@ namespace GenericModConfigMenu
                     translationKey = "options_element-slider_info";
                     tokens = new
                     {
-                        label,
+                        label = elementText,
                         slider_value = ((Slider<float>)slider).Value,
                         is_percentage = 0
                     };
@@ -439,23 +442,23 @@ namespace GenericModConfigMenu
                     translationKey = "options_element-text_box_info";
                     tokens = new
                     {
-                        label,
+                        label = elementText,
                         value = string.IsNullOrEmpty(textbox.String) ? "null" : textbox.String,
                     };
                     break;
-                case Label labelElement when label != null && label.EndsWith("[[InputListener]]"):
+                case Label labelElement when elementText != null && elementText.EndsWith("[[InputListener]]"):
                     translationKey = "options_element-input_listener_info";
                     tokens = new
                     {
-                        label = label.Replace("[[InputListener]]", ""),
+                        label = elementText.Replace("[[InputListener]]", ""),
                         buttons_list = labelElement.String
                     };
                     break;
                 default:
-                    return label;
+                    return elementText;
             }
 
-            if (string.IsNullOrWhiteSpace(label)) return "unknown";
+            if (string.IsNullOrWhiteSpace(elementText)) return "unknown";
 
             return this.StardewAccessApi.Translate(translationKey, tokens, "Menu");
         }

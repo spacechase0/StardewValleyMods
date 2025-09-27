@@ -645,6 +645,7 @@ namespace GenericModConfigMenu.Framework
 
             if (this.OldScrollPercent != this.Table.Scrollbar.ScrollPercent)
             {
+                // Re-snap cursor to the component on scroll change.
                 this.OldScrollPercent = this.Table.Scrollbar.ScrollPercent;
                 this.snapCursorToCurrentSnappedComponent();
             }

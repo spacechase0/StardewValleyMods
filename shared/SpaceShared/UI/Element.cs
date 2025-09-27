@@ -47,18 +47,30 @@ namespace SpaceShared.UI
         public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
+        /// <summary>
+        /// Whether to create a dummy clickable component.
+        /// Setting this true will automatically create the dummy component at the element's position in <see cref="Table"/>.
+        /// </summary>
         public bool CreateDummyClickableComponent = false;
+        /// <summary>
+        /// Used for gamepad/snappy navigation in menus.
+        /// Needs to be added to <see cref="IClickableMenu.allClickableComponents">allClickableComponents</see> list of the menu.
+        /// </summary>
         public ClickableComponent DummyClickableComponent { get; set; } = null;
 
+        /// <inheritdoc />
         public string ScreenReaderText { get; set; }
+        /// <inheritdoc />
         public string ScreenReaderDescription { get; set; }
+        /// <inheritdoc />
         public bool ScreenReaderIgnore { get; set; } = false;
 
         /// <summary>Whether to disable the element so it's invisible and can't be interacted with.</summary>
         public Func<bool> ForceHide;
 
-        // TODO Add docs
+        /// <summary> Triggered when the mouse cursor enters the element i.e., on first hover. </summary>
         public static event EventHandler<EventArgs> MouseEntered;
+        /// <summary> Triggered while the mouse cursor is hovering the element. </summary>
         public static event EventHandler<EventArgs> MouseHovered;
 
         /*********

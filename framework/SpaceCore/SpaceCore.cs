@@ -1151,11 +1151,96 @@ namespace SpaceCore
             }
 
             // Initialize Stardew Access' Api
-            StardewAccessApi = this.Helper.ModRegistry.GetApi<IStardewAccessApi>("shoaib.stardewaccess");
-            if (StardewAccessApi != null)
+            this.StardewAccessApi = this.Helper.ModRegistry.GetApi<IStardewAccessApi>("shoaib.stardewaccess");
+            if (this.StardewAccessApi != null)
             {
-                Log.Info("Initializing Stardew Access' api successfully");
+                Log.Debug("Initialized Stardew Access' api successfully");
+
+                Element.MouseHovered += (senderElement, args) =>
+                {
+                    Element element = (Element)senderElement;
+                    if (element is Container or null) return;
+
+                    if (element.ScreenReaderIgnore) return;
+
+                    this.StardewAccessApi.SayMenuElement(GetScreenReaderInfoOfElement(element),
+                        description: element.ScreenReaderDescription, interrupt: true);
+                };
             }
+        }
+
+        /// <summary>
+        /// Adds the suffixes (button, checkbox, etc.) according to the appropriate element type.
+        /// </summary>
+        private string GetScreenReaderInfoOfElement(Element element)
+        {
+            string translationKey;
+            string elementText = element.ScreenReaderText;
+            object? tokens = new { label = elementText };
+
+            switch (element)
+            {
+                case Button:
+                    translationKey = "options_element-button_info";
+                    break;
+                case Checkbox checkbox:
+                    translationKey = "options_element-checkbox_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        is_checked = checkbox.Checked ? 1 : 0
+                    };
+                    break;
+                case Dropdown dropdown:
+                    translationKey = "options_element-dropdown_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        selected_option = dropdown.Value
+                    };
+                    break;
+                case Slider<float> slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = slider.Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Slider<int> slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = slider.Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Slider slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = ((Slider<float>)slider).Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Textbox textbox:
+                    translationKey = "options_element-text_box_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        value = string.IsNullOrEmpty(textbox.String) ? "null" : textbox.String,
+                    };
+                    break;
+                default:
+                    return elementText;
+            }
+
+            if (string.IsNullOrWhiteSpace(elementText)) return "unknown";
+
+            return this.StardewAccessApi.Translate(translationKey, tokens, "Menu");
         }
 
         /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
@@ -1237,7 +1322,7 @@ namespace SpaceCore
                     {
                         int whole = (int)Math.Truncate(ext.staminaBuffer);
                         ext.staminaBuffer -= whole;
-                        Game1.player.Stamina += whole; 
+                        Game1.player.Stamina += whole;
                     }
                 }
                 if (ext.HealthRegen != 0)

@@ -7,7 +7,7 @@ using StardewValley.Menus;
 
 namespace GenericModConfigMenu.Integrations;
 
-// TODO: Remove unwanted
+// Ref: https://github.com/stardew-access/stardew-access/blob/development/stardew-access/PublicApi/IStardewAccessApi.cs
 public interface IStardewAccessApi
 {
     #region Screen reader related
@@ -59,7 +59,7 @@ public interface IStardewAccessApi
     /// <returns>true if the text was spoken otherwise false.</returns>
     public bool Say(string text, bool interrupt);
 
-    public bool TranslateAndSay(string translationKey, bool interrupt, object? translationTokens = null, string translationCategory = "default", bool disableTranslationWarnings = false);
+    public bool TranslateAndSay(string translationKey, bool interrupt, object? translationTokens = null, string translationCategory = "Default", bool disableTranslationWarnings = false);
 
     /// <summary>Speaks the text via the loaded screen reader (if any).
     /// <br/>Skips the text narration if the previously narrated text was the same as the one provided.</summary>
@@ -69,7 +69,7 @@ public interface IStardewAccessApi
     /// <returns>true if the text was spoken otherwise false.</returns>
     public bool SayWithChecker(string text, bool interrupt, string? customQuery = null);
 
-    public bool TranslateAndSayWithChecker(string translationKey, bool interrupt, object? translationTokens = null, string translationCategory = "default", string? customQuery = null, bool disableTranslationWarnings = false);
+    public bool TranslateAndSayWithChecker(string translationKey, bool interrupt, object? translationTokens = null, string translationCategory = "Default", string? customQuery = null, bool disableTranslationWarnings = false);
 
     /// <summary>Speaks the text via the loaded screen reader (if any).
     /// <br/>Skips the text narration if the previously narrated text was the same as the one provided.
@@ -80,9 +80,24 @@ public interface IStardewAccessApi
     /// <returns>true if the text was spoken otherwise false.</returns>
     public bool SayWithMenuChecker(string text, bool interrupt, string? customQuery = null);
 
-    public bool TranslateAndSayWithMenuChecker(string translationKey, bool interrupt, object? translationTokens = null, string translationCategory = "menu", string? customQuery = null, bool disableTranslationWarnings = false);
+    public bool TranslateAndSayWithMenuChecker(string translationKey, bool interrupt, object? translationTokens = null, string translationCategory = "Menu", string? customQuery = null, bool disableTranslationWarnings = false);
 
-    public bool SayMenuElement(string text, string description = "", bool interrupt = true, bool excludeFromBuffer = false);
+    /// <summary>
+    /// Speaks the content of the given element while using the menu query to prevent speaking multiple times in the menu.
+    /// </summary>
+    /// <param name="element">The element to be spoken.</param>
+    /// <param name="interrupt">Whether to skip the currently speaking text or not.</param>
+    /// <returns>true if the element was spoken otherwise false.</returns>
+    public bool SayMenuElement(IScreenReadable element, bool interrupt = true);
+
+    /// <summary>
+    /// Speaks the given element's contents while using the menu query to prevent speaking multiple times in the menu.
+    /// </summary>
+    /// <param name="text">The element's text (can be its name) to be spoken.</param>
+    /// <param name="description">The element's description to be spoken.</param>
+    /// <param name="interrupt">Whether to skip the currently speaking text or not.</param>
+    /// <returns>true if the element was spoken otherwise false.</returns>
+    public bool SayMenuElement(string text, string description = "", bool interrupt = true);
 
     /// <summary>Speaks the text via the loaded screen reader (if any).
     /// <br/>Skips the text narration if the previously narrated text was the same as the one provided.
@@ -113,13 +128,13 @@ public interface IStardewAccessApi
     /// </summary>
     /// <param name="center">The starting point.</param>
     /// <param name="limit">The limiting factor or simply radius of the search area.</param>
-    /// <returns>A dictionary with all the detected tiles along with the name of the object on it and it's category.</returns>
+    /// <returns>A dictionary with all the detected tiles along with the name of the object on it, and it's category.</returns>
     public Dictionary<Vector2, (string name, string category)> SearchNearbyTiles(Vector2 center, int limit);
 
     /// <summary>
     /// Search the entire location using Breadth First Search algorithm(BFS).
     /// </summary>
-    /// <returns>A dictionary with all the detected tiles along with the name of the object on it and it's category.</returns>
+    /// <returns>A dictionary with all the detected tiles along with the name of the object on it, and it's category.</returns>
     public Dictionary<Vector2, (string name, string category)> SearchLocation();
 
     /// <summary>
@@ -221,7 +236,6 @@ public interface IStardewAccessApi
         int price = -1,
         int extraItemToShowIndex = -1,
         int extraItemToShowAmount = -1);
-
     #endregion
 
     /// <summary>
@@ -230,7 +244,7 @@ public interface IStardewAccessApi
     /// and if these are empty, speaks the <see cref="ClickableComponent.name"/> and <see cref="ClickableComponent.label"/> as fallback.
     /// </summary>
     /// <param name="ccList">The list of components to speak from.</param>
-    /// <returns>returns true if a hovered component was detected, otherwise false. It also returns true if a component was hovered but it's text was not spoken if either the fields were empty or <see cref="ClickableComponent.ScreenReaderIgnore"/> was true for the hovered component.</returns>
+    /// <returns>returns true if a hovered component was detected, otherwise false. It also returns true if a component was hovered, but it's text was not spoken if either the fields were empty or <see cref="ClickableComponent.ScreenReaderIgnore"/> was true for the hovered component.</returns>
     public bool SpeakHoveredClickableComponentsFromList<T>(List<T> ccList) where T : ClickableComponent;
 
     /// <summary>
@@ -251,9 +265,8 @@ public interface IStardewAccessApi
     /// <param name="optionSlots">The slots where the elements will be drawn/rendered.</param>
     /// <param name="options">The list of elements.</param>
     /// <param name="currentItemIndex">The index of the element currently being rendered in the first slot.</param>
-    /// <returns>returns true if a hovered element was detected, otherwise false. It also returns true if a component was hovered but it's text was not spoken if either the fields were empty or <see cref="OptionsElement.ScreenReaderIgnore"/> was true for the hovered component.</returns>
-    public bool SpeakHoveredOptionsElementSlot(List<ClickableComponent> optionSlots, List<OptionsElement> options,
-        int currentItemIndex);
+    /// <returns>returns true if a hovered element was detected, otherwise false. It also returns true if a component was hovered but its text was not spoken if either the fields were empty or <see cref="OptionsElement.ScreenReaderIgnore"/> was true for the hovered component.</returns>
+    public bool SpeakHoveredOptionsElementSlot(List<ClickableComponent> optionSlots, List<OptionsElement> options, int currentItemIndex);
 
     /// <summary>
     /// Speaks the hovered element from <paramref name="options"/>.
@@ -264,7 +277,7 @@ public interface IStardewAccessApi
     /// Only use this when element are being drawn independently from slots or when the element's position is correctly reflected in <see cref="OptionsElement.bounds"/>.
     /// </remarks>
     /// <param name="options">The list of elements.</param>
-    /// <returns>returns true if a hovered element was detected, otherwise false. It also returns true if a component was hovered but it's text was not spoken if either the fields were empty or <see cref="OptionsElement.ScreenReaderIgnore"/> was true for the hovered component.</returns>
+    /// <returns>returns true if a hovered element was detected, otherwise false. It also returns true if a component was hovered but its text was not spoken if either the fields were empty or <see cref="OptionsElement.ScreenReaderIgnore"/> was true for the hovered component.</returns>
     public bool SpeakHoveredOptionsElementFromList<T>(List<T> options) where T : OptionsElement;
 
     /// <summary>
@@ -277,23 +290,41 @@ public interface IStardewAccessApi
     public void SpeakOptionsElement(OptionsElement element);
 
     /// <summary>
-    /// Necessary to be called once if you have manually made a custom menu of your mod accessible.
-    /// This will skip stardew access' patch that speaks the hover info in that menu.
+    /// A combination of <see cref="IgnoreHoverTextInMenu"/> and <see cref="IgnoreClickableComponentsInMenu"/>.
+    /// <br/>Ignores both the hover texts and the clickable components.
     /// </summary>
-    /// <param name="fullNameOfClass">The full name of the menu's class.
-    /// <example>typeof(MyCustomMenu).FullName</example>
+    /// <param name="fullNameOfClass">
+    /// The full name of the menu's class.
+    /// <example>typeof(MyCustomMenu).FullName
+    /// </example>
     /// </param>
     public void RegisterCustomMenuAsAccessible(string? fullNameOfClass);
 
+    /// <summary>
+    /// Ignores speaking hover texts of the menu.
+    /// </summary>
+    /// <param name="fullNameOfClass">
+    /// The full name of the menu's class.
+    /// <example>typeof(MyCustomMenu).FullName</example>
+    /// </param>
     public void IgnoreHoverTextInMenu(string? fullNameOfClass);
 
+    /// <summary>
+    /// Ignores speaking clickable components of the menu.
+    /// <br/>The clickable components are found with <see cref="IClickableMenu.allClickableCompnents"/>
+    /// as well as by using reflection to get the fields of type <see cref="ClickableComponent"/>
+    /// </summary>
+    /// <param name="fullNameOfClass">
+    /// The full name of the menu's class.
+    /// <example>typeof(MyCustomMenu).FullName</example>
+    /// </param>
     public void IgnoreClickableComponentsInMenu(string? fullNameOfClass);
 
     /// <summary>
     /// Registers a language helper to be used for a specific locale.
     /// </summary>
     /// <param name="locale">The locale for which the helper should be used (e.g., "en", "fr", "es-es").</param>
-    /// <param name="helper">An instance of the language helper class implementing <see cref="ILanguageHelper"/>.</param>
+    /// <param name="helperType">An instance of the language helper class implementing <see cref="ILanguageHelper"/>.</param>
     /// <remarks>
     /// The provided helper class should ideally derive from <see cref="LanguageHelperBase"/> for optimal compatibility, though this is not strictly required as long as it implements <see cref="ILanguageHelper"/>.
     /// </remarks>
