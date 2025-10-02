@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using GenericModConfigMenu.Framework;
-using GenericModConfigMenu.Integrations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -278,7 +277,7 @@ namespace GenericModConfigMenu
                         Game1.playSound("newArtifact");
                         this.OpenListMenuNew();
                     },
-                    ScreenReaderText = "GMCM"
+                    ScreenReaderText = I18n.Button_TitleMenu()
                 };
 
                 this.Ui.AddChild(this.ConfigButton);

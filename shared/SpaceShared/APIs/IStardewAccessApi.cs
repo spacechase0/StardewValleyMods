@@ -5,7 +5,7 @@ using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace GenericModConfigMenu.Integrations;
+namespace SpaceShared.APIs;
 
 // Ref: https://github.com/stardew-access/stardew-access/blob/development/stardew-access/PublicApi/IStardewAccessApi.cs
 public interface IStardewAccessApi

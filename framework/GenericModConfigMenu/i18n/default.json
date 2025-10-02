@@ -2,6 +2,8 @@
     /*********
     ** Generic config UI
     *********/
+    /// button text at the title menu
+    "button.title-menu": "GMCM",
     // button text at the bottom of the in-game options menu
     "button.mod-options": "Mod Options",
 

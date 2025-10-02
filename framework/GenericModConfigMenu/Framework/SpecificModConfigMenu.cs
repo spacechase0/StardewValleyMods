@@ -77,8 +77,6 @@ namespace GenericModConfigMenu.Framework
             ScrollSpeed = scrollSpeed;
             ReturnToList = returnToList;
 
-            this.allClickableComponents = new();
-
             this.Table = new Table(fixedRowHeight: false)
             {
                 RowHeight = 50,
@@ -509,7 +507,7 @@ namespace GenericModConfigMenu.Framework
 
                 if (optionElement == null || optionElement.CreateDummyClickableComponent == false)
                     label.CreateDummyClickableComponent = true;
-                else
+                else if (label != null)
                     label.ScreenReaderIgnore = true;
 
                 this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());

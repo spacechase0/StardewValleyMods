@@ -47,7 +47,6 @@ using StardewValley.TokenizableStrings;
 using SpaceCore.Dungeons;
 using System.Collections.ObjectModel;
 using SpaceCore.Guidebooks;
-using SpaceCore.Integrations;
 
 namespace SpaceCore
 {

@@ -226,13 +226,13 @@ namespace GenericModConfigMenu.Framework.Overlays
                             : I18n.Config_RebindKey_ComboInstructions();
                     }
 
-                    topOffset += this.AddCenteredLabel(text + newLine, 0, 0, topOffset, width).Height;
+                    topOffset += this.AddCenteredLabel(text + newLine, 0, 0, topOffset, width, allowGamepadSnap: true).Height;
                 }
                 else if (this.OnlyAllowSingleButton)
                 {
                     string text = I18n.Config_RebindKey_SimpleInstructions();
 
-                    topOffset += this.AddCenteredLabel(text + newLine, 0, 0, topOffset, width).Height;
+                    topOffset += this.AddCenteredLabel(text + newLine, 0, 0, topOffset, width, allowGamepadSnap: true).Height;
                 }
 
                 // keybind list
@@ -329,7 +329,7 @@ namespace GenericModConfigMenu.Framework.Overlays
             this.ActiveMenu.allClickableComponents.Add(clearButton);
             this.Buttons.Add(clearButton);
 
-            this.ActiveMenu.setCurrentlySnappedComponentTo(100);
+            this.ActiveMenu.setCurrentlySnappedComponentTo((!this.OnlyAllowSingleButton && this.KeybindEdit is null) ? 100 : 200);
             this.ActiveMenu.snapCursorToCurrentSnappedComponent();
         }
 
@@ -339,8 +339,9 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <param name="contentY">The Y pixel position on screen at which the content area begins.</param>
         /// <param name="topOffset">The pixel offset from the top of the content area at which to draw the label.</param>
         /// <param name="contentWidth">The content area's width.</param>
+        /// <param name="allowGamepadSnap">Will add a ID to the label if set, which in turn will snap the cursor to the label.</param>
         /// <returns>Returns the created component's bounds.</returns>
-        private Rectangle AddCenteredLabel(string text, int contentX, int contentY, int topOffset, int contentWidth)
+        private Rectangle AddCenteredLabel(string text, int contentX, int contentY, int topOffset, int contentWidth, bool allowGamepadSnap = false)
         {
             const int padding = KeybindOverlay.ContentPadding;
 
@@ -353,8 +354,13 @@ namespace GenericModConfigMenu.Framework.Overlays
                 height: (int)size.Y
             );
 
-            ClickableComponent label = new ClickableComponent(bounds, "", text);
+            ClickableComponent label = new ClickableComponent(bounds, "", text)
+            {
+                ScreenReaderText = text,
+                myID = (allowGamepadSnap) ? 200 : -500,
+            };
             this.Labels.Add(label);
+            this.ActiveMenu.allClickableComponents.Add(label);
             return label.bounds;
         }
 

@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IJsonAssetsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ISolidFoundationsAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ISpaceCoreApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IStardewAccessApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ITrainStationApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseMod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
