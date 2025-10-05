@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using StardewValley;
 
 namespace Stardew3D.Data;
 public class LocationModelData : ModelData
@@ -20,4 +21,9 @@ public class LocationModelData : ModelData
         public Vector3 Facing { get; set; }
     }
     public Dictionary<string, Portal> Portals { get; set; } = new();
+
+    public new static LocationModelData Get(string id)
+    {
+        return ModelData.Get(id) as LocationModelData;
+    }
 }

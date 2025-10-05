@@ -19,6 +19,12 @@ namespace Stardew3D
 {
     public static class Extensions
     {
+        public static Matrix NoTranslation(this Matrix m)
+        {
+            m.Translation = Microsoft.Xna.Framework.Vector3.Zero;
+            return m;
+        }
+
         public static Matrix ToMonogame(this System.Numerics.Matrix4x4 mat)
         {
             return new(mat.M11, mat.M12, mat.M13, mat.M14,
@@ -77,6 +83,9 @@ namespace Stardew3D
 
         public static (Vector3 Position, Vector3 QuadFacingNormal, Vector3 QuadVert00, Vector3 QuadVert10, Vector3 QuadVert01, Vector3 QuadVert11, float HeightBoundingSize) GetPositionForTile(xTile.Map map, Point tile, bool forCeiling = false)
         {
+            if (map == null)
+                return new(new Vector3(tile.X + 0.5f, float.NaN, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+
             if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Layers[0].LayerWidth || tile.Y >= map.Layers[0].TileHeight)
                 return new(new Vector3(tile.X + 0.5f, float.NaN, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 

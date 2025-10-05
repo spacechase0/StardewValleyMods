@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
   <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
   <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
@@ -17,14 +17,45 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
   </ItemGroup>
-  
+
   <Import Project="$(SolutionDir)spacecore.targets" />
 
-<ItemGroup>
-    <ProjectReference Include="$(SolutionDir)_external\MonoScene\src\MonoScene.Pipeline.GLTF\MonoScene.Pipeline.GLTF.csproj" />
-    <ProjectReference Include="$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Scene3D\MonoScene.Runtime.Scene3D.csproj" />
+  <ItemGroup>
+    <!-- We're doing this kinda weird since publicizer doesn't seem to work with ProjectReference -->
+    <ProjectReference Include="$(SolutionDir)_external\MonoScene\src\MonoScene.Pipeline.GLTF\MonoScene.Pipeline.GLTF.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Scene3D\MonoScene.Runtime.Scene3D.csproj" ReferenceOutputAssembly="false" />
+
+    <Publicize Include="MonoScene.Runtime.Model3D" IncludeVirtualMembers="false" />
+    <Publicize Include="MonoScene.Runtime.Scene3D" IncludeVirtualMembers="false" />
+
+    <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0029" />
+    <Reference Include="MonoGamePolyfill.dll">
+      <HintPath>$(SolutionDir)_external_helpers\MonoGamePolyfill\bin\Debug\net6.0\MonoGamePolyfill.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Pipeline.GLTF.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Pipeline.GLTF\bin\Debug\net6.0\MonoScene.Pipeline.GLTF.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Content.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Content\bin\Debug\net6.0\MonoScene.Runtime.Content.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Effects.Classic.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Effects.Classic\bin\Debug\net6.0\MonoScene.Runtime.Effects.Classic.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Effects.PBR.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Effects.PBR\bin\Debug\net6.0\MonoScene.Runtime.Effects.PBR.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Model3D.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Model3D\bin\Debug\net6.0\MonoScene.Runtime.Model3D.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Scene3D.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Scene3D\bin\Debug\net6.0\MonoScene.Runtime.Scene3D.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

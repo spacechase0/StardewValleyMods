@@ -26,11 +26,6 @@ public interface IGameHandler
     public void SwitchOn();
     public void SwitchOff();
 
-    public void SetMenuHandler<MenuType>(Func<IClickableMenu, IMenuHandler> createHandlerFunc, bool includeMenuSubclasses = true);
-    public void AddMenuHandlerAddon<MenuType>(Func<IClickableMenu, IMenuHandler> createHandlerFunc, bool includeMenuSubclasses = true);
-    public IMenuHandler[] CreateApplicableMenuHandlers(IClickableMenu menu);
-
-
     delegate void DefaultInputHandling(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState);
 
     public void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, DefaultInputHandling defaultInputHandling);

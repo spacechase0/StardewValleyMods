@@ -29,5 +29,26 @@
     <ProjectReference Include="$(SolutionDir)gameplay\overhaul\Stardew3D\Stardew3D.csproj" Private="False">
       <Version_AppendConfiguration>false</Version_AppendConfiguration>
     </ProjectReference>
+    <Reference Include="MonoGamePolyfill.dll">
+      <HintPath>$(SolutionDir)_external_helpers\MonoGamePolyfill\bin\Debug\net6.0\MonoGamePolyfill.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Pipeline.GLTF.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Pipeline.GLTF\bin\Debug\net6.0\MonoScene.Pipeline.GLTF.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Content.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Content\bin\Debug\net6.0\MonoScene.Runtime.Content.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Effects.Classic.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Effects.Classic\bin\Debug\net6.0\MonoScene.Runtime.Effects.Classic.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Effects.PBR.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Effects.PBR\bin\Debug\net6.0\MonoScene.Runtime.Effects.PBR.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Model3D.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Model3D\bin\Debug\net6.0\MonoScene.Runtime.Model3D.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoScene.Runtime.Scene3D.dll">
+      <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Scene3D\bin\Debug\net6.0\MonoScene.Runtime.Scene3D.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

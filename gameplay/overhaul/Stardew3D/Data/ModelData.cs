@@ -27,30 +27,28 @@ namespace Stardew3D.Data
         {
             public string ModelId { get; set; }
 
-            public Vector3 Scale { get; set; }
-            public Vector3 Rotation { get; set; }
-            public Vector3 Translation { get; set; }
+            public Vector3 Scale { get; set; } = Vector3.One;
+            public Vector3 Rotation { get; set; } = Vector3.Zero;
+            public Vector3 Translation { get; set; } = Vector3.Zero;
 
             public Dictionary<string, string> TextureMap { get; set; } = new();
         }
         public List<OtherModelReference> OtherModels { get; set; } = new();
 
         public Dictionary<string, string> TextureMap { get; set; } = new();
+        public List<string> ForceTransparency { get; set; } = new();
 
         public Vector3 Scale { get; set; } = Vector3.One;
         public Vector3 Rotation { get; set; } = Vector3.Zero;
         public Vector3 Translation { get; set; } = Vector3.Zero;
 
-        // Objects
-        public Vector3? HeldObjectOffset { get; set; }
-        public float HeldObjectScale { get; set; } = 1;
-        public BoundingBox? InteractBox { get; set; }
-
-        // Characters
-        // ...
-
-        // Farmer
-        // ...
+        public static ModelData Get(string id)
+        {
+            var dict = Game1.content.Load<Dictionary<string, ModelData>>($"{Mod.Instance.ModManifest.UniqueID}/Models");
+            if (!Mod.Instance.ModelDataDict.TryGetValue(id, out var data))
+                return null;
+            return data;
+        }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext ctx)

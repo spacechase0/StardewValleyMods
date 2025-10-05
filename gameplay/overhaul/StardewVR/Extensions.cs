@@ -40,11 +40,5 @@ namespace StardewVR
                 mat.m12, mat.m13, mat.m14, mat.m15);
             return m.Transpose();
         }
-
-        public static Matrix NoTranslation(this Matrix m)
-        {
-            m.Translation = Microsoft.Xna.Framework.Vector3.Zero;
-            return m;
-        }
     }
 }

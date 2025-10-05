@@ -24,7 +24,7 @@ public class ModelManager
     internal Dictionary<string, ModelObject> models = new();
 
     internal string modelBeingLoaded = null;
-    internal IModelMapping mapperForModelBeingLoaded = null;
+    internal Stack<IModelMapping> mapperForModelBeingLoaded = new();
 
     internal ModelManager()
     {
@@ -52,9 +52,12 @@ public class ModelManager
 
     private ArraySegment<byte> ReadFileForModel(string assetName)
     {
-        if (mapperForModelBeingLoaded?.TextureMap.TryGetValue(PathUtilities.NormalizePath(assetName), out string newAssetName) ?? false)
+        foreach (var entry in mapperForModelBeingLoaded)
         {
-            assetName = newAssetName;
+            if (entry.TextureMap.TryGetValue(PathUtilities.NormalizePath(assetName), out string newAssetName))
+            {
+                assetName = newAssetName;
+            }
         }
 
         int colon = modelBeingLoaded.IndexOf(':');

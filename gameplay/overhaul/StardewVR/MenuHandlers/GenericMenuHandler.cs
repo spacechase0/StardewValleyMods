@@ -11,8 +11,10 @@ using MonoScene.Graphics;
 using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D;
+using Stardew3D.Data;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
+using Stardew3D.Rendering.Renderers;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
@@ -20,53 +22,39 @@ using StardewVR.GameHandlers;
 using StardewVR.GameHandlers.FirstPerson;
 
 namespace StardewVR.MenuHandlers;
-internal class GenericMenuHandler : IMenuHandler
+internal class GenericMenuHandler<TMenu> : RendererFor<ModelData, TMenu>, IUpdateHandler
+    where TMenu : IClickableMenu
 {
-    public IVRGameHandler handler;
-    public IClickableMenu menu;
+    public IVRGameHandler GameHandler;
 
-    private Vector3 BasePosition;
-    private Matrix BaseOrientation;
+    public Matrix BaseOrientation;
+    public Vector3 DisplayPosition;
+    public Vector2 DisplaySize;
 
-    private PBREnvironment env;
-
-    public GenericMenuHandler(IVRGameHandler handler, IClickableMenu menu)
+    public GenericMenuHandler(IVRGameHandler handler, TMenu menu)
+        : base($"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", menu)
     {
-        this.handler = handler;
-        this.menu = menu;
+        this.GameHandler = handler;
 
-        env = PBREnvironment.CreateDefault();
-
-        BasePosition = handler.Camera.Position;
+        var basePosition = handler.Camera.Position;
         BaseOrientation = (handler.Camera as StardewVR.GameHandlers.FirstPerson.Camera).HeadsetRotation;
-    }
-
-    public void UpdateMenu(GameTime time, Action<GameTime> forceMenuUpdateIfNotAlreadyRun)
-    {
-        forceMenuUpdateIfNotAlreadyRun(time);
-    }
-
-    public void RenderMenu(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Action<RenderSteps, SpriteBatch, GameTime, RenderTarget2D> forceMenuRenderIfNotAlreadyRun)
-    {
-        bool setCursorPos = false;
-
-        if (step != RenderSteps.World)
-        {
-            forceMenuRenderIfNotAlreadyRun(step, sb, time, targetScreen);
-            return;
-        }
 
         // TODO: Configurable distance for these menus
-        var displayPos = BasePosition + BaseOrientation.Forward * 5;
-        var displaySize = new Vector2(Game1.game1.uiScreen.Width / (float)Game1.game1.uiScreen.Height, 1) * 3;
-        //RenderHelper.DrawQuad(Game1.staminaRect, displayPos - BaseOrientation.Forward * 0.1f, displaySize, Game1.staminaRect.Bounds, BaseOrientation.Backward, upOverride: BaseOrientation.Up);
-        RenderHelper.DrawQuad(Game1.game1.uiScreen, displayPos, displaySize, Game1.game1.uiScreen.Bounds, BaseOrientation.Backward, upOverride: BaseOrientation.Up);
+        DisplayPosition = basePosition + BaseOrientation.Forward * 5;
+        DisplaySize = new Vector2(Game1.game1.uiScreen.Width / (float)Game1.game1.uiScreen.Height, 1) * 3;
+    }
 
-        BoundingBox display = new(new(-displaySize.X / 2, -displaySize.Y / 2, 0), new(displaySize.X / 2, displaySize.Y / 2, 0.05f));
+    public virtual void Update(IUpdateHandler.UpdateContext ctx)
+    {
+        ctx.ForceUpdateIfNotAlreadyRun(ctx);
 
-        Matrix cursorTransform = Matrix.CreateTranslation( -displayPos ) * BaseOrientation.Invert();
-        Vector3 cursorPos = Vector3.Transform(handler.PrimaryPointerPosition, cursorTransform);
-        Vector3 cursorDir = Vector3.TransformNormal(handler.PrimaryPointerOrientation.Forward, cursorTransform);
+        bool setCursorPos = false;
+
+        BoundingBox display = new(new(-DisplaySize.X / 2, -DisplaySize.Y / 2, 0), new(DisplaySize.X / 2, DisplaySize.Y / 2, 0.05f));
+
+        Matrix cursorTransform = Matrix.CreateTranslation(-DisplayPosition) * BaseOrientation.Invert();
+        Vector3 cursorPos = Vector3.Transform(GameHandler.PrimaryPointerPosition, cursorTransform);
+        Vector3 cursorDir = Vector3.TransformNormal(GameHandler.PrimaryPointerOrientation.Forward, cursorTransform);
         Ray cursor = new(cursorPos, cursorDir);
         var spot = cursor.Intersects(display);
         if (spot.HasValue)
@@ -81,6 +69,34 @@ internal class GenericMenuHandler : IMenuHandler
         if (!setCursorPos)
         {
             Game1.setMousePosition(0, 0, true);
+        }
+    }
+
+    protected override RenderDataBase CreateInitialRenderData(IRenderHandler.RenderContext ctx)
+    {
+        return new RenderData(ctx, this);
+    }
+
+    private class RenderData : RenderData<GenericMenuHandler<TMenu>>
+    {
+        private int menuInstance = -1;
+
+        public RenderData(IRenderHandler.RenderContext ctx, GenericMenuHandler<TMenu> parent)
+            : base(ctx, parent)
+        {
+            if (ctx.TargetScreen == Game1.game1.uiScreen)
+                return;
+
+            menuInstance = Batch.AddNonInstanced((env, color, world, view, proj) =>
+            {
+                RenderHelper.DrawQuad(Game1.game1.uiScreen, Vector3.Zero, Parent.DisplaySize, Game1.game1.uiScreen.Bounds, Parent.BaseOrientation.Backward, upOverride: Parent.BaseOrientation.Up, col: color, additionalTransform: world);
+            }, Matrix.Identity, hasTransparency: true);
+        }
+
+        public override void Update(IRenderHandler.RenderContext ctx)
+        {
+            base.Update(ctx);
+            ctx.WorldBatch.UpdateNonInstanced(menuInstance, Matrix.CreateTranslation(Parent.DisplayPosition));
         }
     }
 }

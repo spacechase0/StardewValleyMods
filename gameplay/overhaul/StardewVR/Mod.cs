@@ -65,8 +65,8 @@ namespace StardewVR
 
         private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
         {
-            Stardew3D.Mod.State.SetMenuHandlerForGameHandlerTags<IClickableMenu>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler(handler as IVRGameHandler, menu));
-            Stardew3D.Mod.State.SetMenuHandlerForGameHandlerTags<TitleMenu>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as IVRGameHandler, menu as TitleMenu));
+            Stardew3D.Mod.State.SetJointHandlerForGameHandlerTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as IVRGameHandler, menu as IClickableMenu));
+            Stardew3D.Mod.State.SetJointHandlerForGameHandlerTags<TitleMenu, TitleMenuHandler>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as IVRGameHandler, menu as TitleMenu));
         }
 
         internal static Texture_t GetTextureFrom(RenderTarget2D target)

@@ -19,9 +19,11 @@ using Stardew3D.FirstPerson;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Mods;
 using StardewVR.Hardware;
 using Valve.VR;
+using static OpenVR.NET.Devices.VrDevice;
 using static Stardew3D.IGameHandler;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
@@ -34,6 +36,8 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
     public override string[] Tags => [CategoryVR, CategoryFirstPerson];
 
     public override Camera Camera { get; } = new();
+
+    public override bool HandlesUiElsewhere => false;
 
     public Point EmulatedCursor { get; set; }
 
@@ -75,6 +79,15 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
 
     private TimeSpan oldInactiveSleepTime, oldMaxTime, oldTargetTime;
     private bool oldFixedTimestemp, oldVsync;
+
+    private IClickableMenu lastMenu = null;
+    private RenderBatcher menuBatch = null;
+
+    public FirstPersonVRGameHandler()
+    {
+        menuBatch = new(Game1.graphics.GraphicsDevice);
+    }
+
     public override void SwitchOn()
     {
         base.SwitchOn();
@@ -163,6 +176,8 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
             GameRunner.instance.TargetElapsedTime = oldTargetTime;
             Game1.graphics.SynchronizeWithVerticalRetrace = oldVsync;
         }
+
+        menuBatch.ClearData();
 
         base.SwitchOff();
     }
@@ -384,6 +399,12 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
                 {
                     return false;
                 }
+                /*
+                else if (step >= RenderSteps.MenuBackground && step < RenderSteps.GlobalFade)
+                {
+                    return true;
+                }
+                //*/
 
                 return base.HandleRender(step, sb, time, uiScreen, defaultRender);
             }
@@ -413,11 +434,29 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
                 base.HandleRender(step, sb, time, targetScreen, defaultRender);
                 if (Game1.activeClickableMenu != null)
                 {
-                    var currentMenuHandlers = Stardew3D.Mod.State.GetMenuHandlersFor(Game1.activeClickableMenu);
+                    if (lastMenu != Game1.activeClickableMenu)
+                    {
+                        menuBatch.ClearData();
+                        lastMenu = Game1.activeClickableMenu;
+                    }
+                    var currentMenuHandlers = Stardew3D.Mod.State.GetRenderHandlersFor(Game1.activeClickableMenu);
                     foreach (var handler in currentMenuHandlers)
                     {
-                        handler.RenderMenu(step, sb, time, targetScreen, (step, sb, time, targetScreen) => { });
+                        handler.Render(new()
+                        {
+                            Time = time,
+                            TargetScreen = targetScreen,
+
+                            MenuSpriteBatch = sb,
+
+                            WorldBatch = menuBatch,
+                            WorldEnvironment = env,
+                            WorldCamera = Camera,
+                            WorldTransform = Matrix.Identity
+                        });
                     }
+                    menuBatch.DrawBatched(env, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+                    menuBatch.HideInstancesAfterFrame();
                 }
                 return false;
             }
@@ -451,26 +490,29 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
 
                 if (Game1.activeClickableMenu != null)
                 {
-                    bool hasRenderedDefaultYet = false;
-                    void RenderMenuDefault(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen)
+                    if (lastMenu != Game1.activeClickableMenu)
                     {
-                        if (hasRenderedDefaultYet)
-                            return;
-
-                        RenderHelper.DrawQuad(uiScreen, Vector3.Forward * 3 + Vector3.Up * 2, new Vector2(rat, 1) * 3, uiScreen.Bounds, Vector3.Backward);
-                        hasRenderedDefaultYet = true;
+                        menuBatch.ClearData();
+                        lastMenu = Game1.activeClickableMenu;
                     }
-
-                    var currentMenuHandlers = Stardew3D.Mod.State.GetMenuHandlersFor(Game1.activeClickableMenu);
+                    var currentMenuHandlers = Stardew3D.Mod.State.GetRenderHandlersFor(Game1.activeClickableMenu);
                     foreach (var handler in currentMenuHandlers)
                     {
-                        handler.RenderMenu(RenderSteps.World, sb, time, targetScreen, RenderMenuDefault);
-                    }
+                        handler.Render(new()
+                        {
+                            Time = time,
+                            TargetScreen = targetScreen,
 
-                    if (currentMenuHandlers.Length == 0)
-                    {
-                        RenderMenuDefault(step, sb, time, targetScreen);
+                            MenuSpriteBatch = sb,
+
+                            WorldBatch = menuBatch,
+                            WorldEnvironment = env,
+                            WorldCamera = Camera,
+                            WorldTransform = Matrix.Identity
+                        });
                     }
+                    menuBatch.DrawBatched(env, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+                    menuBatch.HideInstancesAfterFrame();
                 }
             }
             else

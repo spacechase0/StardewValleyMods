@@ -10,11 +10,13 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoScene.Graphics;
 using MonoScene.Graphics.Pipeline;
 using SpaceShared;
 using SpaceShared.Attributes;
 using Stardew3D.Data;
 using Stardew3D.Rendering;
+using Stardew3D.Rendering.Renderers;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -23,8 +25,10 @@ using StardewValley.BellsAndWhistles;
 using StardewValley.Enchantments;
 using StardewValley.Events;
 using StardewValley.ItemTypeDefinitions;
+using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Mods;
+using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using StardewValley.Util;
 using xTile.Layers;
@@ -38,7 +42,7 @@ namespace Stardew3D
     public partial class Mod : BaseMod< Mod >
     {
         // TODO: Cache this until invalidated
-        internal Dictionary<string, ModelData> ModelData => Helper.GameContent.Load<Dictionary<string, ModelData>>($"{ModManifest.UniqueID}/Models");
+        internal Dictionary<string, ModelData> ModelDataDict => Helper.GameContent.Load<Dictionary<string, ModelData>>($"{ModManifest.UniqueID}/Models");
 
         protected override void ModEntry()
         {
@@ -54,6 +58,7 @@ namespace Stardew3D
             }
 #endif
 
+            Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
             Helper.Events.Content.AssetRequested += this.Content_AssetRequested;
             Helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
             Helper.Events.GameLoop.UpdateTicking += (s, e) => State.ActiveHandler?.BeforeUpdate();
@@ -71,6 +76,13 @@ namespace Stardew3D
                 //TextureEnabled = true,
             };
             RenderHelper.quadVbo = new VertexBuffer(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), 6, BufferUsage.WriteOnly);
+        }
+
+        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            State.SetRenderHandlerForGameHandlerTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
+            State.SetRenderHandlerForGameHandlerTags<StardewValley.Object>([], handler => obj => new ObjectRenderer( obj as StardewValley.Object));
+            State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new GenericRenderer<ModelData, ResourceClump>($"({ModManifest.UniqueID}/ResourceClump){(obj as ResourceClump).parentSheetIndex.Value}", obj as ResourceClump));
         }
 
         private void Input_ButtonsChanged(object sender, ButtonsChangedEventArgs e)
@@ -93,7 +105,7 @@ namespace Stardew3D
             {
                 string specific = e.NameWithoutLocale.Name.Substring(mapsFolder.Length);
                 string ours = Path.Combine("assets", "maps", $"{specific}.tmx");
-                if (Helper.ModContent.DoesAssetExist< xTile.Map >(ours))
+                if (Helper.ModContent.DoesAssetExist<xTile.Map>(ours))
                 {
                     e.Edit(a => a.AsMap().PatchMap(Helper.ModContent.Load<xTile.Map>(ours)), AssetEditPriority.Early);
                 }
@@ -268,7 +280,7 @@ namespace Stardew3D
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Skybox.gltf")}",
                         TextureMap = { { "Cursors.png", "LooseSprites/Cursors" } },
-                        Scale = new( 30 ),
+                        ForceTransparency = { "/Sky/stars" },
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle", new()
                     {
@@ -340,6 +352,234 @@ namespace Stardew3D
                         SubModelPath = "/buttons/back",
                         TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
                         Translation = new( -5.6544f-5.75f, 2.5902f-15, -0.2719f ),
+                    } },
+                    { $"Debris/Stone/1", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
+                        SubModelPath = "/stone/stone1",
+                    } },
+                    { $"Debris/Stone/2", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
+                        SubModelPath = "/stone/stone2",
+                    } },
+                    { $"Debris/Wood/1", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
+                        SubModelPath = "/wood/wood1",
+                        Rotation = new( 0, MathHelper.ToRadians( -45 ), 0 ),
+                    } },
+                    { $"Debris/Wood/2", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
+                        SubModelPath = "/wood/wood2",
+                        Rotation = new( 0, MathHelper.ToRadians( 45 ), 0 ),
+                    } },
+                    { $"(O)450", new()
+                    {
+                        OtherModels =
+                        [
+                            new()
+                            {
+                                ModelId = "Debris/Stone/1",
+                                Rotation = new( 0, MathHelper.ToRadians( 0 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stone/1",
+                                Rotation = new( 0, MathHelper.ToRadians( 90 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stone/1",
+                                Rotation = new( 0, MathHelper.ToRadians( 180 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stone/1",
+                                Rotation = new( 0, MathHelper.ToRadians( 270 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stone/2",
+                                Rotation = new( 0, MathHelper.ToRadians( 0 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stone/2",
+                                Rotation = new( 0, MathHelper.ToRadians( 90 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stone/2",
+                                Rotation = new( 0, MathHelper.ToRadians( 180 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stone/2",
+                                Rotation = new( 0, MathHelper.ToRadians( 270 ), 0 ),
+                            },
+                        ],
+                    } },
+                    { $"(O)343", new()
+                    {
+                        OtherModels =
+                        [
+                            new()
+                            {
+                                ModelId = "(O)450",
+                            },
+                        ],
+                    } },
+                    { $"(O)294", new()
+                    {
+                        OtherModels =
+                        [
+                            new()
+                            {
+                                ModelId = "Debris/Wood/1",
+                                Rotation = new( 0, MathHelper.ToRadians( 0 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Wood/1",
+                                Rotation = new( 0, MathHelper.ToRadians( 90 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Wood/1",
+                                Rotation = new( 0, MathHelper.ToRadians( 180 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Wood/1",
+                                Rotation = new( 0, MathHelper.ToRadians( 270 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Wood/2",
+                                Rotation = new( 0, MathHelper.ToRadians( 0 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Wood/2",
+                                Rotation = new( 0, MathHelper.ToRadians( 90 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Wood/2",
+                                Rotation = new( 0, MathHelper.ToRadians( 180 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Wood/2",
+                                Rotation = new( 0, MathHelper.ToRadians( 270 ), 0 ),
+                            },
+                        ]
+                    } },
+                    { $"(O)295", new()
+                    {
+                        OtherModels =
+                        [
+                            new()
+                            {
+                                ModelId = "(O)294",
+                            },
+                        ],
+                    } },
+                    { $"Debris/Stump", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
+                        SubModelPath = "/stump/stump1",
+                    } },
+                    { $"Debris/Log", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
+                        SubModelPath = "/log/log1",
+                        Rotation = new( 0, MathHelper.ToRadians( 45 ), 0 ),
+                    } },
+                    { $"Debris/Boulder", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
+                        SubModelPath = "/boulder/boulder1",
+                    } },
+                    { $"({ModManifest.UniqueID}/ResourceClump)600", new()
+                    {
+                        OtherModels =
+                        [
+                            new()
+                            {
+                                ModelId = "Debris/Stump",
+                                Rotation = new( 0, MathHelper.ToRadians( 0 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stump",
+                                Rotation = new( 0, MathHelper.ToRadians( 90 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stump",
+                                Rotation = new( 0, MathHelper.ToRadians( 180 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Stump",
+                                Rotation = new( 0, MathHelper.ToRadians( 270 ), 0 ),
+                            },
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/ResourceClump)602", new()
+                    {
+                        OtherModels =
+                        [
+                            new()
+                            {
+                                ModelId = "Debris/Log",
+                                Rotation = new( 0, MathHelper.ToRadians( 0 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Log",
+                                Rotation = new( 0, MathHelper.ToRadians( 90 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Log",
+                                Rotation = new( 0, MathHelper.ToRadians( 180 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Log",
+                                Rotation = new( 0, MathHelper.ToRadians( 270 ), 0 ),
+                            },
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/ResourceClump)672", new()
+                    {
+                        OtherModels =
+                        [
+                            new()
+                            {
+                                ModelId = "Debris/Boulder",
+                                Rotation = new( 0, MathHelper.ToRadians( 0 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Boulder",
+                                Rotation = new( 0, MathHelper.ToRadians( 90 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Boulder",
+                                Rotation = new( 0, MathHelper.ToRadians( 180 ), 0 ),
+                            },
+                            new()
+                            {
+                                ModelId = "Debris/Boulder",
+                                Rotation = new( 0, MathHelper.ToRadians( 270 ), 0 ),
+                            },
+                        ],
                     } },
                 }, AssetLoadPriority.Exclusive);
         }

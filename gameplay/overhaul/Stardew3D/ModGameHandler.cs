@@ -14,6 +14,7 @@ using SpaceShared;
 using Stardew3D.Data;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
+using Stardew3D.Rendering.Renderers;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
@@ -59,13 +60,23 @@ public abstract partial class ModGameHandler : IGameHandler
     }
     public virtual void AfterUpdate() { }
 
-    private IClickableMenu lastClickableMenu = null;
+    public virtual bool HandlesUiElsewhere => false;
+
+    private RenderBatcher menuBatch;
+    private RenderBatcher worldBatch;
+
+    private IClickableMenu lastMenu = null;
 
     protected PBREnvironment env = PBREnvironment.CreateDefault();
     protected ModelObject skybox;
 
+    public ModGameHandler()
+    {
+        menuBatch = new(Game1.graphics.GraphicsDevice);
+        worldBatch = new(Game1.graphics.GraphicsDevice);
+    }
+
     private bool builtLocationRecently = false;
-    private Dictionary<string, LocationRenderer> locationRenderers = new();
     public virtual bool HandleRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Func<RenderSteps, SpriteBatch, GameTime, RenderTarget2D, bool> defaultRender)
     {
         if (Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget != targetScreen)
@@ -73,25 +84,6 @@ public abstract partial class ModGameHandler : IGameHandler
 
         if (step >= RenderSteps.MenuBackground && step < RenderSteps.GlobalFade)
         {
-            bool didRenderOnce = false;
-            void forceMenuRenderIfNotAlreadyRun(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen)
-            {
-                if (didRenderOnce)
-                    return;
-
-                defaultRender(step, sb, time, targetScreen);
-                didRenderOnce = true;
-            }
-
-            if (Game1.activeClickableMenu != null)
-            {
-                var currentMenuHandlers = Mod.State.GetMenuHandlersFor(Game1.activeClickableMenu);
-                foreach (var handler in currentMenuHandlers)
-                {
-                    handler.RenderMenu(step, sb, time, targetScreen, forceMenuRenderIfNotAlreadyRun);
-                }
-                return currentMenuHandlers.Length == 0 ? true : didRenderOnce;
-            }
             return true;
         }
 
@@ -132,70 +124,81 @@ public abstract partial class ModGameHandler : IGameHandler
         return true;
     }
 
+    private GameLocation lastLoc;
     protected void RenderLocation(GameLocation loc)
     {
-        if (!locationRenderers.TryGetValue(loc.NameOrUniqueName, out var renderer))
+        List<(string LocationName, IRenderHandler[] Renderers, Matrix TransformFromCurrent)> adjacencies = new();
+        adjacencies.Add(new(loc.NameOrUniqueName, Mod.State.GetRenderHandlersFor(loc), Matrix.Identity));
+
+        void AddAdjacenciesForPortals(LocationModelData locModel, Matrix prevTransform)
         {
-            locationRenderers.Add(loc.NameOrUniqueName, renderer = new(loc));
+            if (locModel == null)
+                return;
+
+            foreach (var entry in locModel.Portals)
+            {
+                if (adjacencies.Any(p => p.LocationName == entry.Value.OtherLocation))
+                    continue;
+
+                var loc = Game1.getLocationFromName(entry.Value.OtherLocation);
+                if (loc == null)
+                    continue;
+
+                var renderers = Mod.State.GetRenderHandlersFor(loc);
+                var mainRenderer = renderers[0] as LocationRenderer;
+
+                if (!mainRenderer.ModelData.Portals.TryGetValue(entry.Value.MatchingPortal, out var match))
+                    match = null;
+
+                // TODO: Support non-opposite facing portals
+                Matrix oursToTheirs = prevTransform *
+                                        Matrix.CreateTranslation(entry.Value.Position) *
+                                        Matrix.CreateTranslation(-match.Position);
+
+                adjacencies.Add(new(entry.Value.OtherLocation, renderers, oursToTheirs));
+            }
         }
 
-        List<(string LocationName, LocationRenderer Renderer, Matrix TransformFromCurrent)> adjacencies = new();
-        adjacencies.Add(new(loc.NameOrUniqueName, renderer, Matrix.Identity));
-        if (renderer.IsDirty && !builtLocationRecently)
+        for (int i = 0; i < adjacencies.Count; i++)
         {
-            renderer.Build();
-            builtLocationRecently = true;
+            var renderers = adjacencies[i].Renderers;
+            var mainRenderer = renderers[0] as LocationRenderer;
+            AddAdjacenciesForPortals(mainRenderer.ModelData, adjacencies[i].TransformFromCurrent);
+
+            if (mainRenderer.IsDirty && !builtLocationRecently)
+            {
+                mainRenderer.Build();
+                builtLocationRecently = true;
+            }
         }
-        else
+
+        if (lastLoc != loc)
         {
-            void AddAdjacenciesForPortals(LocationModelData locModel, Matrix prevTransform)
-            {
-                if (locModel == null)
-                    return;
-
-                foreach (var entry in locModel.Portals)
-                {
-                    if (adjacencies.Any(p => p.LocationName == entry.Value.OtherLocation))
-                        continue;
-
-                    var loc = Game1.getLocationFromName(entry.Value.OtherLocation);
-                    if (loc == null)
-                        continue;
-
-                    if (!locationRenderers.TryGetValue(entry.Value.OtherLocation, out var otherRenderer))
-                    {
-                        locationRenderers.Add(entry.Value.OtherLocation, otherRenderer = new(loc));
-                    }
-
-                    if (!otherRenderer.LocationModelData.Portals.TryGetValue(entry.Value.MatchingPortal, out var match))
-                        match = null;
-
-                    // TODO: Support non-opposite facing portals
-                    Matrix oursToTheirs = prevTransform *
-                                          Matrix.CreateTranslation(entry.Value.Position) *
-                                          Matrix.CreateTranslation(-match.Position);
-
-                    adjacencies.Add(new(entry.Value.OtherLocation, otherRenderer, oursToTheirs));
-                }
-            }
-
-            for (int i = 0; i < adjacencies.Count; i++)
-            {
-                var otherRenderer = adjacencies[i].Renderer;
-                AddAdjacenciesForPortals(otherRenderer.LocationModelData, adjacencies[i].TransformFromCurrent);
-
-                if (otherRenderer.IsDirty && !builtLocationRecently)
-                {
-                    otherRenderer.Build();
-                    builtLocationRecently = true;
-                }
-            }
+            //worldBatch.ClearData();
+            lastLoc = loc;
         }
 
         foreach (var other in adjacencies)
         {
-            other.Renderer.Render(Camera, other.TransformFromCurrent);
+            var env = (other.Renderers[0] as LocationRenderer).Environment;
+            foreach (var renderer in other.Renderers)
+            {
+                renderer.Render(new()
+                {
+                    Time = Game1.currentGameTime,
+                    TargetScreen = Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D,
+
+                    MenuSpriteBatch = Game1.spriteBatch,
+
+                    WorldBatch = worldBatch,
+                    WorldEnvironment = env,
+                    WorldCamera = Camera,
+                    WorldTransform = other.TransformFromCurrent
+                });
+            }
         }
+        worldBatch.DrawBatched(env, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+        worldBatch.HideInstancesAfterFrame();
     }
 
 #if false

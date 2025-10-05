@@ -63,6 +63,18 @@ public static class RenderHelper
         GenerateQuad(toAddTo, pos, new(-displaySize.X / 2, -displaySize.Y / 2), new(displaySize.X / 2, -displaySize.Y / 2), new(-displaySize.X / 2, displaySize.Y / 2), new(displaySize.X / 2, displaySize.Y / 2), tx, ty, twidth, theight, facingDir, col_, upOverride);
     }
 
+    public static void GenerateQuad(ICollection<SimpleVertex> toAddTo, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Vector3 facingDir, Color? col = null, Vector3? upOverride = null, Matrix? additionalTransform = null)
+    {
+        Matrix additionalTransform_ = additionalTransform ?? Matrix.Identity;
+
+        float tx = texCoords.X / (float)tex.Width;
+        float ty = texCoords.Y / (float)tex.Height;
+        float txi = texCoords.Width / (float)tex.Width;
+        float tyi = texCoords.Height / (float)tex.Height;
+
+        GenerateQuad(toAddTo, pos, displaySize, tx, ty, txi, tyi, facingDir, col, upOverride);
+    }
+
     public static void DrawQuad(Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Vector3 facingDir, Color? col = null, Vector3? upOverride = null, Matrix? additionalTransform = null )
     {
         Matrix additionalTransform_ = additionalTransform ?? Matrix.Identity;
@@ -92,6 +104,11 @@ public static class RenderHelper
     public static void DrawBillboard(ICamera camera, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null)
     {
         DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(camera.Position, additionalTransform?.Invert() ?? Matrix.Identity ) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(camera.Up, additionalTransform?.Invert() ?? Matrix.Identity), additionalTransform: additionalTransform);
+    }
+
+    public static void DrawBillboard(Vector3 cameraPos, Vector3 cameraUp, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null)
+    {
+        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(cameraPos, additionalTransform?.Invert() ?? Matrix.Identity) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(cameraUp, additionalTransform?.Invert() ?? Matrix.Identity), additionalTransform: additionalTransform);
     }
 
     public static void DebugRenderGrid()

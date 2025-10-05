@@ -40,23 +40,31 @@ internal class Menus
         public static void HandleMenuUpdate(IClickableMenu menu, GameTime time)
         {
             bool didUpdateOnce = false;
-            void forceMenuUpdateIfNotAlreadyRun(GameTime time)
+            void forceMenuUpdateIfNotAlreadyRun(IUpdateHandler.UpdateContext ctx)
             {
                 if (didUpdateOnce)
                     return;
-                menu.update(time);
+                menu.update(ctx.Time);
                 didUpdateOnce = true;
             }
 
-            var currentMenuHandlers = Mod.State.GetMenuHandlersFor(Game1.activeClickableMenu);
+            var currentMenuHandlers = Mod.State.GetUpdateHandlersFor(Game1.activeClickableMenu);
             foreach (var handler in currentMenuHandlers)
             {
-                handler.UpdateMenu(time, forceMenuUpdateIfNotAlreadyRun);
+                handler.Update(new()
+                {
+                    Time = time,
+                    ForceUpdateIfNotAlreadyRun = forceMenuUpdateIfNotAlreadyRun,
+                });
             }
 
             if (currentMenuHandlers.Length == 0)
             {
-                forceMenuUpdateIfNotAlreadyRun(time);
+                forceMenuUpdateIfNotAlreadyRun(new()
+                {
+                    Time = time,
+                    ForceUpdateIfNotAlreadyRun = forceMenuUpdateIfNotAlreadyRun,
+                });
             }
         }
 
