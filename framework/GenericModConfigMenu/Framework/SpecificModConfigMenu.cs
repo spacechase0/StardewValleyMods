@@ -825,24 +825,27 @@ namespace GenericModConfigMenu.Framework
                 cancelButton.DummyClickableComponent = new(cancelButton.Bounds, "")
                 {
                     myID = rowId,
-                    upNeighborID = (last != null) ? last.myID : -1,
+                    upNeighborID = last?.myID ?? -1,
                     rightNeighborID = rowId + 1,
                     ScreenReaderIgnore = true
                 };
                 rowId++;
-                resetButton.DummyClickableComponent = new(resetButton.Bounds, "")
+                if (modManifest != null && !this.IsSubPage)
                 {
-                    myID = rowId,
-                    upNeighborID = (last != null) ? last.myID : -1,
-                    rightNeighborID = rowId + 1,
-                    leftNeighborID = rowId - 1,
-                    ScreenReaderIgnore = true
-                };
-                rowId++;
+                    resetButton.DummyClickableComponent = new(resetButton.Bounds, "")
+                    {
+                        myID = rowId,
+                        upNeighborID = last?.myID ?? -1,
+                        rightNeighborID = rowId + 1,
+                        leftNeighborID = rowId - 1,
+                        ScreenReaderIgnore = true
+                    };
+                    rowId++;
+                }
                 saveButton.DummyClickableComponent = new(saveButton.Bounds, "")
                 {
                     myID = rowId,
-                    upNeighborID = (last != null) ? last.myID : -1,
+                    upNeighborID = last?.myID ?? -1,
                     rightNeighborID = rowId + 1,
                     leftNeighborID = rowId - 1,
                     ScreenReaderIgnore = true
@@ -851,7 +854,7 @@ namespace GenericModConfigMenu.Framework
                 saveAndCloseButton.DummyClickableComponent = new(saveAndCloseButton.Bounds, "")
                 {
                     myID = rowId,
-                    upNeighborID = (last != null) ? last.myID : -1,
+                    upNeighborID = last?.myID ?? -1,
                     rightNeighborID = rowId + 1,
                     leftNeighborID = rowId - 1,
                     ScreenReaderIgnore = true

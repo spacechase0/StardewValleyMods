@@ -1226,11 +1226,15 @@ namespace SpaceCore
                     };
                     break;
                 case Textbox textbox:
+                    if (textbox.Selected)
+                    {
+                        return string.IsNullOrEmpty(textbox.String) ? "" : textbox.String;
+                    }
                     translationKey = "options_element-text_box_info";
                     tokens = new
                     {
                         label = elementText,
-                        value = string.IsNullOrEmpty(textbox.String) ? "null" : textbox.String,
+                        value = string.IsNullOrEmpty(textbox.String) ? "" : textbox.String,
                     };
                     break;
                 default:
