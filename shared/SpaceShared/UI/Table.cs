@@ -219,7 +219,8 @@ namespace SpaceShared.UI
                 || element.Position.Y + element.Height > this.Position.Y + this.Size.Y;
         }
 
-        // TODO Update name and add xmldoc
+        /// <summary>Get whether a child element is outside the table's current display area.</summary>
+        /// <param name="element">The child element to check.</param>
         public bool IsElementOffScreen(ClickableComponent element)
         {
             return

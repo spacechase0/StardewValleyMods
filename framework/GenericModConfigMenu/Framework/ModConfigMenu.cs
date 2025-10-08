@@ -157,7 +157,7 @@ namespace GenericModConfigMenu.Framework
             {
                 LocalPosition = this.Table.LocalPosition - new Vector2( keybindsTexture.Width / 2 + 32, 0 ),
                 Callback = _ => openKeybindsMenu( this.ScrollRow),
-                ScreenReaderText = I18n.List_Keybinds(), // TODO Maybe add "Keybindings Menu" entry
+                ScreenReaderText = I18n.List_Keybinds(),
             };
             button.DummyClickableComponent = new(button.Bounds, "")
             {
