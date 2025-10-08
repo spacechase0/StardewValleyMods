@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Mods;
-using static Stardew3D.IRenderHandler;
+using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Rendering.Renderers;
 

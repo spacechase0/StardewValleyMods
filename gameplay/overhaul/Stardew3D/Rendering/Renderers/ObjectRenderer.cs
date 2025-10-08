@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.Data;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
-using static Stardew3D.IRenderHandler;
+using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Rendering.Renderers;
 public class ObjectRenderer : RendererFor<ModelData, StardewValley.Object>

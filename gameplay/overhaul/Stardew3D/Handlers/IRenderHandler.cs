@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.Rendering;
 using StardewValley.Mods;
 
-namespace Stardew3D;
+namespace Stardew3D.Handlers;
 public interface IRenderHandler
 {
     public struct RenderContext

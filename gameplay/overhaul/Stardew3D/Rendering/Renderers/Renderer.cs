@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.Data;
+using Stardew3D.Handlers;
 using StardewValley.Mods;
-using static Stardew3D.IRenderHandler;
+using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Rendering.Renderers;
 public abstract class Renderer : IRenderHandler

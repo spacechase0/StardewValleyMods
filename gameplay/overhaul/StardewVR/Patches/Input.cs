@@ -7,7 +7,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using StardewValley;
-using StardewVR.GameHandlers;
+using StardewVR.Handlers.Game;
 
 namespace StardewVR.Patches;
 
@@ -20,7 +20,7 @@ internal static class InputStateOverridesInVRPatch
     private static float scrollX, scrollY;
     public static void Postfix(InputState __instance, ref KeyboardState ____currentKeyboardState, ref MouseState ____currentMouseState, GamePadState ____currentGamepadState)
     {
-        if (Stardew3D.Mod.State.ActiveHandler is not IVRGameHandler vr)
+        if (Stardew3D.Mod.State.ActiveHandler is not VRGameHandler vr)
         {
             return;
         }
@@ -40,7 +40,7 @@ internal static class SetMousePositionOverrideInVRPatch
 {
     public static bool Prefix(int x, int y)
     {
-        if (Stardew3D.Mod.State.ActiveHandler is not IVRGameHandler vr)
+        if (Stardew3D.Mod.State.ActiveHandler is not VRGameHandler vr)
         {
             return true;
         }

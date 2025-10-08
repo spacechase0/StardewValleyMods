@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Spacechase.Shared.Patching;
+using Stardew3D.Handlers;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Minigames;

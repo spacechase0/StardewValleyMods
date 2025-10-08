@@ -17,7 +17,7 @@ using StardewValley.ItemTypeDefinitions;
 using StardewValley.Mods;
 using xTile;
 using xTile.Tiles;
-using static Stardew3D.IRenderHandler;
+using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Rendering.Renderers;
 

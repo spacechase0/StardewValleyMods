@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.Models;
 using StardewValley.Mods;
-using static Stardew3D.IRenderHandler;
+using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Rendering.Renderers;
 

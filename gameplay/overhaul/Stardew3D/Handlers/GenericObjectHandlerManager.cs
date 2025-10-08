@@ -1,5 +1,5 @@
-global using InputHandlerManager = Stardew3D.GenericHandlerManager<object, Stardew3D.IUpdateHandler>;
-global using RenderHandlerManager = Stardew3D.GenericHandlerManager<object, Stardew3D.IRenderHandler>;
+global using UpdateHandlerManager = Stardew3D.Handlers.GenericObjectHandlerManager<object, Stardew3D.Handlers.IUpdateHandler>;
+global using RenderHandlerManager = Stardew3D.Handlers.GenericObjectHandlerManager<object, Stardew3D.Handlers.IRenderHandler>;
 
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using StardewValley.Menus;
 
-namespace Stardew3D;
+namespace Stardew3D.Handlers;
 
-public class GenericHandlerManager<TBaseType, THandlerInterface>
+public class GenericObjectHandlerManager<TBaseType, THandlerInterface>
     where TBaseType : class
     where THandlerInterface : class
 {

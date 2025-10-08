@@ -5,17 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Stardew3D;
+using Stardew3D.Rendering;
 
-namespace StardewVR.GameHandlers.FirstPerson;
-public class Camera : Stardew3D.FirstPerson.Camera
+namespace StardewVR.Handlers.Game;
+public class Camera : ICamera
 {
+    public Vector3 Position { get; set; }
+
     public Vector3 HeadsetRelativePosition { get; set; }
     public Matrix HeadsetRotation { get; set; } = Matrix.Identity;
     public Matrix AdditionalTransform { get; set; } = Matrix.Identity;
 
-    public override Vector3 Up => Vector3.Transform(Vector3.Up, HeadsetRotation);
-    public override Vector3 Forward => Vector3.Transform(Vector3.Forward, HeadsetRotation);
-    public override Matrix ViewMatrix
+    public Vector3 Up => Vector3.Transform(Vector3.Up, HeadsetRotation);
+    public Vector3 Forward => Vector3.Transform(Vector3.Forward, HeadsetRotation);
+    public Matrix ViewMatrix
     {
         get
         {

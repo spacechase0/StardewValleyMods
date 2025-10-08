@@ -15,6 +15,9 @@ using MonoScene.Graphics.Pipeline;
 using SpaceShared;
 using SpaceShared.Attributes;
 using Stardew3D.Data;
+using Stardew3D.Handlers.Game;
+using Stardew3D.Handlers.Game.FirstPerson;
+using Stardew3D.Handlers.Game.ThirdPerson;
 using Stardew3D.Rendering;
 using Stardew3D.Rendering.Renderers;
 using StardewModdingAPI;
@@ -41,7 +44,8 @@ namespace Stardew3D
     [HasHarmony]
     public partial class Mod : BaseMod< Mod >
     {
-        // TODO: Cache this until invalidated
+        public string DefaultHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
+
         internal Dictionary<string, ModelData> ModelDataDict => Helper.GameContent.Load<Dictionary<string, ModelData>>($"{ModManifest.UniqueID}/Models");
 
         protected override void ModEntry()
@@ -63,6 +67,17 @@ namespace Stardew3D
             Helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
             Helper.Events.GameLoop.UpdateTicking += (s, e) => State.ActiveHandler?.BeforeUpdate();
             Helper.Events.GameLoop.UpdateTicked += (s, e) => State.ActiveHandler?.AfterUpdate();
+            State.AddingGameHandlers += (s, e) =>
+            {
+                State.AddGameHandler(new FirstPersonGameHandler());
+                State.AddGameHandler(new ThirdPersonGameHandler());
+            };
+            State.GameHandlersFinalized += (s, e) =>
+            {
+                State.SetRenderHandlerForGameHandlerTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
+                State.SetRenderHandlerForGameHandlerTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
+                State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new GenericRenderer<ModelData, ResourceClump>($"({ModManifest.UniqueID}/ResourceClump){(obj as ResourceClump).parentSheetIndex.Value}", obj as ResourceClump));
+            };
 
             var hooks = AccessTools.Field(typeof(Game1), "hooks");
             hooks.SetValue(null, new MyModHooks(( ModHooks ) hooks.GetValue(null)));
@@ -78,22 +93,32 @@ namespace Stardew3D
             RenderHelper.quadVbo = new VertexBuffer(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), 6, BufferUsage.WriteOnly);
         }
 
+        [EventPriority(EventPriority.Low)]
         private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            State.SetRenderHandlerForGameHandlerTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
-            State.SetRenderHandlerForGameHandlerTags<StardewValley.Object>([], handler => obj => new ObjectRenderer( obj as StardewValley.Object));
-            State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new GenericRenderer<ModelData, ResourceClump>($"({ModManifest.UniqueID}/ResourceClump){(obj as ResourceClump).parentSheetIndex.Value}", obj as ResourceClump));
+            State.InvokeAddingGameHandlers();
         }
 
         private void Input_ButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
             if (Config.ToggleThirdDimension.JustPressed())
             {
-                string oldId = State.ActiveHandler?.Id ?? "null";
-                State.ActiveHandler?.SwitchOff();
-                State.ActiveHandlerIndex++;
-                State.ActiveHandler?.SwitchOn();
-                Log.Debug( $"Switched from game handler \"{oldId}\" to \"{State.ActiveHandler?.Id ?? "null"}\"" );
+                var currHandler = State.ActiveHandler;
+                var targetHandler = State.GetGameHandler(DefaultHandler);
+                if (currHandler != null)
+                {
+                    if (currHandler.Tags.Contains(IGameHandler.CategoryFirstPerson))
+                    {
+                        string[] tags = currHandler.Tags.Select(t => t == IGameHandler.CategoryFirstPerson ? IGameHandler.CategoryThirdPerson : t).ToArray();
+                        targetHandler = State.FindGameHandlersMatching(tags).FirstOrDefault() ?? targetHandler;
+                    }
+                    else
+                    {
+                        targetHandler = null;
+                    }
+                }
+
+                State.ActiveHandler = targetHandler;
             }
         }
 

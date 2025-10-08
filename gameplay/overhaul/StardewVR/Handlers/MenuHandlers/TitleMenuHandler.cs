@@ -11,23 +11,23 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoScene.Graphics;
 using SharpGLTF.Schema2;
 using SpaceShared;
-using Stardew3D;
 using Stardew3D.Data;
+using Stardew3D.Handlers;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using Stardew3D.Rendering.Renderers;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using StardewVR.GameHandlers;
-using static Stardew3D.IRenderHandler;
+using StardewVR.Handlers.Game;
+using static Stardew3D.Handlers.IRenderHandler;
 
-namespace StardewVR.MenuHandlers;
+namespace StardewVR.Handlers.Menu;
 internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
 {
     private Dictionary<ClickableTextureComponent, BoundingBox> clickables = new();
 
-    public TitleMenuHandler(IVRGameHandler handler, TitleMenu menu)
+    public TitleMenuHandler(VRGameHandler handler, TitleMenu menu)
         : base(handler, menu )
     {
         Vector3 spot = new(0, 3, -15f);
@@ -132,7 +132,7 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
         private Dictionary<ClickableTextureComponent, (ModelObject IdleModel, int[] IdleInstances, ModelObject HoverModel, int[] HoverInstances)> clickables = new();
         private int mouse;
 
-        public RenderData(IRenderHandler.RenderContext ctx, TitleMenuHandler parent)
+        public RenderData(RenderContext ctx, TitleMenuHandler parent)
             : base(ctx, parent)
         {
             // TODO: Use model associations instead
@@ -260,7 +260,7 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
                         Util.Swap(ref model, ref hiddenModel);
                         Util.Swap(ref inst, ref hiddenInst);
 
-                        Vector2 mousePos = (Game1.getMousePosition().ToVector2() / Parent.DisplaySize - Parent.DisplaySize / 2);
+                        Vector2 mousePos = Game1.getMousePosition().ToVector2() / Parent.DisplaySize - Parent.DisplaySize / 2;
                         renderMousePos = primaryCursor.Position + primaryCursor.Direction * intersection.Value;
                         renderMouseFacing = -primaryCursor.Direction;
                         renderMouseUp = handler.PrimaryPointerOrientation.Up;

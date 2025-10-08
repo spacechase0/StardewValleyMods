@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Stardew3D.Rendering;
 
-namespace Stardew3D.ThirdPerson
+namespace Stardew3D.Handlers.Game.ThirdPerson
 {
     public class Camera : ICamera
     {

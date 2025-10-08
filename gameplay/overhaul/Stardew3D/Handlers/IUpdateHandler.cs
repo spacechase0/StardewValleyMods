@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Stardew3D;
+namespace Stardew3D.Handlers;
 public interface IUpdateHandler
 {
     struct UpdateContext

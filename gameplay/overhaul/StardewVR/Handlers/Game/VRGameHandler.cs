@@ -1,21 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Netcode;
-using SixLabors.ImageSharp.Processing;
 using SpaceShared;
 using Stardew3D;
-using Stardew3D.FirstPerson;
+using Stardew3D.Handlers.Game;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
@@ -23,32 +19,22 @@ using StardewValley.Menus;
 using StardewValley.Mods;
 using StardewVR.Hardware;
 using Valve.VR;
-using static OpenVR.NET.Devices.VrDevice;
-using static Stardew3D.IGameHandler;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
-using Vector3 = Microsoft.Xna.Framework.Vector3;
+using static Stardew3D.Handlers.Game.IGameHandler;
 
-namespace StardewVR.GameHandlers.FirstPerson;
-
-public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
+namespace StardewVR.Handlers.Game;
+public abstract class VRGameHandler : CommonGameHandler
 {
-    public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
-    public override string[] Tags => [CategoryVR, CategoryFirstPerson];
-
     public override Camera Camera { get; } = new();
+    public override Matrix ProjectionMatrix { get; protected set; }
 
-    public override bool HandlesUiElsewhere => false;
-
-    public Point EmulatedCursor { get; set; }
-
-    private global::OpenVR.NET.VR _vr;
+    protected OpenVR.NET.VR _vr;
     public CVRSystem VR { get; private set; }
 
     internal RenderTarget2D leftScreen, rightScreen;
     internal RenderTarget2D uiScreen => Game1.game1.uiScreen;
 
-    private delegate TrackedDevice TrackedDeviceFactoryFunction( uint deviceIndex );
-    private TrackedDeviceFactoryFunction[] TrackedDeviceFactory =
+    private delegate TrackedDevice TrackedDeviceFactoryFunction(uint deviceIndex);
+    private static TrackedDeviceFactoryFunction[] TrackedDeviceFactory =
     {
         null, // Invalid
         deviceIndex => new TrackedHeadset( deviceIndex ), // HMD
@@ -77,85 +63,114 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
     public bool RightClick { get; private set; }
     public Vector2 CurrentScroll { get; private set; }
 
+    public Point EmulatedCursor { get; set; }
+
     private TimeSpan oldInactiveSleepTime, oldMaxTime, oldTargetTime;
     private bool oldFixedTimestemp, oldVsync;
 
     private IClickableMenu lastMenu = null;
-    private RenderBatcher menuBatch = null;
+    private ConditionalWeakTable<IClickableMenu, RenderBatcher> menuBatchers = new();
 
-    public FirstPersonVRGameHandler()
+    public override void SwitchOn(IGameHandler previousHandler)
     {
-        menuBatch = new(Game1.graphics.GraphicsDevice);
-    }
+        base.SwitchOn(previousHandler);
 
-    public override void SwitchOn()
-    {
-        base.SwitchOn();
-
-        _vr = new();
-        _vr.Events.OnLog += (s, e, o) => Log.Monitor.Log($"{s}\n{o}", e > OpenVR.NET.EventType.InitializationSuccess && e < OpenVR.NET.EventType.NoFous ? LogLevel.Error : LogLevel.Debug);
-        if (!_vr.TryStart())
+        if (previousHandler is VRGameHandler vrHandler)
         {
-            Log.Error("Failed to start VR");
-            return;
+            _vr = vrHandler._vr;
+            VR = vrHandler.VR;
+
+            leftScreen = vrHandler.leftScreen;
+            rightScreen = vrHandler.rightScreen;
+
+            _devices = vrHandler._devices;
+            headsetIndex = vrHandler.headsetIndex;
+            leftControllerIndex = vrHandler.leftControllerIndex;
+            rightControllerIndex = vrHandler.rightControllerIndex;
+
+            globalActionSetHandle = vrHandler.globalActionSetHandle;
+            menuActionSetHandle = vrHandler.menuActionSetHandle;
+            pointerPrimaryActionHandle = vrHandler.pointerPrimaryActionHandle;
+            pointerSecondaryActionHandle = vrHandler.pointerSecondaryActionHandle;
+            leftClickActionHandle = vrHandler.leftClickActionHandle;
+            rightClickActionHandle = vrHandler.rightClickActionHandle;
+            scrollActionHandle = vrHandler.scrollActionHandle;
+
+            oldInactiveSleepTime = vrHandler.oldInactiveSleepTime;
+            oldFixedTimestemp = vrHandler.oldFixedTimestemp;
+            oldMaxTime = vrHandler.oldMaxTime;
+            oldTargetTime = vrHandler.oldTargetTime;
+            oldVsync = vrHandler.oldVsync;
         }
-        VR = _vr.CVR;
+        else
+        {
+            _vr = new();
+            _vr.Events.OnLog += (s, e, o) => Log.Monitor.Log($"{s}\n{o}", e > OpenVR.NET.EventType.InitializationSuccess && e < OpenVR.NET.EventType.NoFous ? LogLevel.Error : LogLevel.Debug);
+            if (!_vr.TryStart())
+            {
+                Log.Error("Failed to start VR");
+                _vr = null;
+                Stardew3D.Mod.State.ActiveHandler = null;
+                return;
+            }
+            VR = _vr.CVR;
 
-        var aerr = Valve.VR.OpenVR.Applications.AddApplicationManifest(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "game.vrmanifest"), true);
-        if (aerr != EVRApplicationError.None) Log.Error($"Failed to add application manifest to OpenVR: {aerr}");
+            var aerr = Valve.VR.OpenVR.Applications.AddApplicationManifest(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "game.vrmanifest"), true);
+            if (aerr != EVRApplicationError.None) Log.Error($"Failed to add application manifest to OpenVR: {aerr}");
 
-        uint screenWidth = 0, screenHeight = 0;
-        VR.GetRecommendedRenderTargetSize(ref screenWidth, ref screenHeight);
-        leftScreen = new(Game1.graphics.GraphicsDevice, (int)screenWidth, (int)screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
-        leftScreen.Name = "VR Headset (Left Eye)";
-        rightScreen = new(Game1.graphics.GraphicsDevice, (int)screenWidth, (int)screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
-        rightScreen.Name = "VR Headset (Right Eye)";
-        //uiScreen = new(Game1.graphics.GraphicsDevice, Game1.viewport.Width, Game1.viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            uint screenWidth = 0, screenHeight = 0;
+            VR.GetRecommendedRenderTargetSize(ref screenWidth, ref screenHeight);
+            leftScreen = new(Game1.graphics.GraphicsDevice, (int)screenWidth, (int)screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
+            leftScreen.Name = "VR Headset (Left Eye)";
+            rightScreen = new(Game1.graphics.GraphicsDevice, (int)screenWidth, (int)screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
+            rightScreen.Name = "VR Headset (Right Eye)";
+            //uiScreen = new(Game1.graphics.GraphicsDevice, Game1.viewport.Width, Game1.viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
-        globalActionSetHandle = menuActionSetHandle = Valve.VR.OpenVR.k_ulInvalidActionSetHandle;
-        pointerPrimaryActionHandle = pointerSecondaryActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
-        leftClickActionHandle = rightClickActionHandle = scrollActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
-        var err = Valve.VR.OpenVR.Input.SetActionManifestPath(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "openvr_input_bindings", "actions.json"));
-        if (err != EVRInputError.None) Log.Error($"Failed to set action manifest for OpenVR input: {err}");
-        err = Valve.VR.OpenVR.Input.GetActionSetHandle("/actions/global", ref globalActionSetHandle);
-        if (err != EVRInputError.None) Log.Error($"Failed to get global action set handle for OpenVR input: {err}");
-        err = Valve.VR.OpenVR.Input.GetActionSetHandle("/actions/menu", ref menuActionSetHandle);
-        if (err != EVRInputError.None) Log.Error($"Failed to get menu action set handle for OpenVR input: {err}");
-        err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/pointer_primary", ref pointerPrimaryActionHandle);
-        if (err != EVRInputError.None) Log.Error($"Failed to get pointer primary action handle for OpenVR input: {err}");
-        err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/pointer_secondary", ref pointerSecondaryActionHandle);
-        if (err != EVRInputError.None) Log.Error($"Failed to get pointer primary action handle for OpenVR input: {err}");
-        err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/left_click", ref leftClickActionHandle);
-        if (err != EVRInputError.None) Log.Error($"Failed to get left click action handle for OpenVR input: {err}");
-        err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/right_click", ref rightClickActionHandle);
-        if (err != EVRInputError.None) Log.Error($"Failed to get right click action handle for OpenVR input: {err}");
-        err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/scroll", ref scrollActionHandle);
-        if (err != EVRInputError.None) Log.Error($"Failed to get scroll action handle for OpenVR input: {err}");
+            globalActionSetHandle = menuActionSetHandle = Valve.VR.OpenVR.k_ulInvalidActionSetHandle;
+            pointerPrimaryActionHandle = pointerSecondaryActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
+            leftClickActionHandle = rightClickActionHandle = scrollActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
+            var err = Valve.VR.OpenVR.Input.SetActionManifestPath(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "openvr_input_bindings", "actions.json"));
+            if (err != EVRInputError.None) Log.Error($"Failed to set action manifest for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionSetHandle("/actions/global", ref globalActionSetHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get global action set handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionSetHandle("/actions/menu", ref menuActionSetHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get menu action set handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/pointer_primary", ref pointerPrimaryActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get pointer primary action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/pointer_secondary", ref pointerSecondaryActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get pointer primary action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/left_click", ref leftClickActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get left click action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/right_click", ref rightClickActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get right click action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/scroll", ref scrollActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get scroll action handle for OpenVR input: {err}");
 
-        // We absolutely do not want the game to slow down when the window isn't active.
-        // That would cause comfort problems in vR
-        oldInactiveSleepTime = GameRunner.instance.InactiveSleepTime;
-        GameRunner.instance.InactiveSleepTime = TimeSpan.Zero;
+            // We absolutely do not want the game to slow down when the window isn't active.
+            // That would cause comfort problems in vR
+            oldInactiveSleepTime = GameRunner.instance.InactiveSleepTime;
+            GameRunner.instance.InactiveSleepTime = TimeSpan.Zero;
 
-        // Similarly, we need to go above 60 FPS. As much as the game and OpenVR will let us, essentially.
-        // We implement our own "fixed time step" specifically for the Update stuff, so that it isn't called as fast the framerate. (TODO)
-        oldFixedTimestemp = GameRunner.instance.IsFixedTimeStep;
-        GameRunner.instance.IsFixedTimeStep = false;
+            // Similarly, we need to go above 60 FPS. As much as the game and OpenVR will let us, essentially.
+            // We implement our own "fixed time step" specifically for the Update stuff, so that it isn't called as fast the framerate. (TODO)
+            oldFixedTimestemp = GameRunner.instance.IsFixedTimeStep;
+            GameRunner.instance.IsFixedTimeStep = false;
 
-        oldMaxTime = GameRunner.instance.MaxElapsedTime;
-        //GameRunner.instance.MaxElapsedTime = TimeSpan.Zero;
+            oldMaxTime = GameRunner.instance.MaxElapsedTime;
+            //GameRunner.instance.MaxElapsedTime = TimeSpan.Zero;
 
-        oldTargetTime = GameRunner.instance.TargetElapsedTime;
-        // Set once we get the refresh rate for the headset
+            oldTargetTime = GameRunner.instance.TargetElapsedTime;
+            // Set once we get the refresh rate for the headset
 
-        // Don't want to be limited by desktop FPS
-        oldVsync = Game1.graphics.SynchronizeWithVerticalRetrace;
-        Game1.graphics.SynchronizeWithVerticalRetrace = false;
+            // Don't want to be limited by desktop FPS
+            oldVsync = Game1.graphics.SynchronizeWithVerticalRetrace;
+            Game1.graphics.SynchronizeWithVerticalRetrace = false;
+        }
     }
 
-    public override void SwitchOff()
+    public override void SwitchOff(IGameHandler nextHandler)
     {
-        if (_vr != null)
+        if (_vr != null && nextHandler is not VRGameHandler)
         {
             _vr.GracefullyExit();
             _vr = null;
@@ -177,10 +192,11 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
             Game1.graphics.SynchronizeWithVerticalRetrace = oldVsync;
         }
 
-        menuBatch.ClearData();
+        menuBatchers.Clear();
 
-        base.SwitchOff();
+        base.SwitchOff(nextHandler);
     }
+
 
     private void UpdateInput()
     {
@@ -189,7 +205,7 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
         _vr.UpdateInput();
 
         // From: https://github.com/ValveSoftware/openvr/wiki/IVRSystem::GetDeviceToAbsoluteTrackingPose
-        // Without this there is a bit of nausea (at least for me), I believe due to your movements in-world being delayed from your real one
+        // Without this there is a bit of nausea (at least for me), I believe due to your position in-world being delayed from your real one
         float fSecondsSinceLastVsync = 0;
         ulong pulFrameCounter = 0;
         VR.GetTimeSinceLastVsync(ref fSecondsSinceLastVsync, ref pulFrameCounter);
@@ -256,8 +272,8 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
 
                 if (existing is TrackedController controller)
                 {
-                    existing.SeatedRotation*= Matrix.CreateRotationX(MathHelper.ToRadians(-35)) * existing.SeatedRotation; // TODO: Better method of determining pointer - maybe using openvr actions?
-                    existing.StandingRotation = Matrix.CreateRotationX(MathHelper.ToRadians(-35))* existing.StandingRotation; // TODO: Better method of determining pointer - maybe using openvr actions?
+                    existing.SeatedRotation *= Matrix.CreateRotationX(MathHelper.ToRadians(-35)) * existing.SeatedRotation; // TODO: Better method of determining pointer - maybe using openvr actions?
+                    existing.StandingRotation = Matrix.CreateRotationX(MathHelper.ToRadians(-35)) * existing.StandingRotation; // TODO: Better method of determining pointer - maybe using openvr actions?
 
                     VRControllerState_t state = default;
                     bool valid = Valve.VR.OpenVR.System.GetControllerState(deviceInd, ref state, (uint)Marshal.SizeOf<VRControllerState_t>());
@@ -424,7 +440,7 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
                 Game1.uiViewport.Width = uiScreen.Width;
                 Game1.uiViewport.Height = uiScreen.Height;
 
-                DoCamera();
+                UpdateCamera();
 
                 Game1.graphics.GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer | ClearOptions.Stencil, Color.CornflowerBlue, 1, 0);
                 return true;
@@ -434,11 +450,7 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
                 base.HandleRender(step, sb, time, targetScreen, defaultRender);
                 if (Game1.activeClickableMenu != null)
                 {
-                    if (lastMenu != Game1.activeClickableMenu)
-                    {
-                        menuBatch.ClearData();
-                        lastMenu = Game1.activeClickableMenu;
-                    }
+                    var menuBatch = menuBatchers.GetValue(Game1.activeClickableMenu, _ => new(Game1.graphics.GraphicsDevice));
                     var currentMenuHandlers = Stardew3D.Mod.State.GetRenderHandlersFor(Game1.activeClickableMenu);
                     foreach (var handler in currentMenuHandlers)
                     {
@@ -450,12 +462,12 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
                             MenuSpriteBatch = sb,
 
                             WorldBatch = menuBatch,
-                            WorldEnvironment = env,
+                            WorldEnvironment = WorldRenderer.CurrentEnvironment,
                             WorldCamera = Camera,
                             WorldTransform = Matrix.Identity
                         });
                     }
-                    menuBatch.DrawBatched(env, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+                    menuBatch.DrawBatched(WorldRenderer.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
                     menuBatch.HideInstancesAfterFrame();
                 }
                 return false;
@@ -490,11 +502,7 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
 
                 if (Game1.activeClickableMenu != null)
                 {
-                    if (lastMenu != Game1.activeClickableMenu)
-                    {
-                        menuBatch.ClearData();
-                        lastMenu = Game1.activeClickableMenu;
-                    }
+                    var menuBatch = menuBatchers.GetValue(Game1.activeClickableMenu, _ => new(Game1.graphics.GraphicsDevice));
                     var currentMenuHandlers = Stardew3D.Mod.State.GetRenderHandlersFor(Game1.activeClickableMenu);
                     foreach (var handler in currentMenuHandlers)
                     {
@@ -506,12 +514,12 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
                             MenuSpriteBatch = sb,
 
                             WorldBatch = menuBatch,
-                            WorldEnvironment = env,
+                            WorldEnvironment = WorldRenderer.CurrentEnvironment,
                             WorldCamera = Camera,
                             WorldTransform = Matrix.Identity
                         });
                     }
-                    menuBatch.DrawBatched(env, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+                    menuBatch.DrawBatched(WorldRenderer.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
                     menuBatch.HideInstancesAfterFrame();
                 }
             }
@@ -527,9 +535,9 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
                 }
             }
 
-            void DrawHand( Vector3 pointerPosition, Matrix pointerOrientation, Color col )
+            void DrawHand(Vector3 pointerPosition, Matrix pointerOrientation, Color col)
             {
-                var handSize = 0.125f/4;
+                var handSize = 0.125f / 4;
                 Color colFront = col, colSide = col, colBack = col;
                 colSide.R = (byte)(colSide.R * 0.75f);
                 colSide.G = (byte)(colSide.G * 0.75f);
@@ -538,7 +546,7 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
                 colBack.G = (byte)(colBack.G * 0.5f);
                 colBack.B = (byte)(colBack.B * 0.5f);
 
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Right * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Right, pointerOrientation), colSide, Vector3.Transform(Vector3.Up, pointerOrientation) );
+                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Right * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Right, pointerOrientation), colSide, Vector3.Transform(Vector3.Up, pointerOrientation));
                 RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Left * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Left, pointerOrientation), colSide, Vector3.Transform(Vector3.Up, pointerOrientation));
                 RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Up * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Up, pointerOrientation), colSide, Vector3.Transform(Vector3.Forward, pointerOrientation));
                 RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Down * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Down, pointerOrientation), colSide, Vector3.Transform(Vector3.Backward, pointerOrientation));
@@ -563,23 +571,18 @@ public class FirstPersonVRGameHandler : FirstPersonGameHandler, IVRGameHandler
         return true;
     }
 
-    protected override void DoCamera()
+    protected abstract void UpdateCameraPosition();
+
+    protected override void UpdateCamera()
     {
         if (!ActiveEye.HasValue) return;
         if (Headset == null) return;
 
-        if (Context.IsWorldReady)
-        {
-            Camera.Position = Game1.player.GetPosition3D();
-            Camera.Position += new Vector3(0, Headset.CurrentPosition.Y, 0);
-            Camera.HeadsetRelativePosition = Headset.CurrentPosition;
-        }
-        else
-        {
-            Camera.Position = Vector3.Zero;
-            Camera.Position += Headset.CurrentPosition;
-            Camera.HeadsetRelativePosition = Headset.CurrentPosition;
-        }
+        Camera.Position = Vector3.Zero;
+        Camera.Position += Headset.CurrentPosition;
+        Camera.HeadsetRelativePosition = Headset.CurrentPosition;
+        UpdateCameraPosition();
+
         Camera.HeadsetRotation = Headset.CurrentRotation;
         Camera.AdditionalTransform = Matrix.Identity;// VR.GetEyeToHeadTransform(ActiveEye.Value).ToMonogame().Invert();
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;

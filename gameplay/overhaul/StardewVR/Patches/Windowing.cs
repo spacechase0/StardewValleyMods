@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
-using StardewVR.GameHandlers;
+using StardewVR.Handlers.Game;
 
 namespace StardewVR.Patches;
 
@@ -14,7 +14,7 @@ internal static class WindowAlwaysActiveInVRPatch
 {
     public static void Postfix(ref bool __result)
     {
-        if (Stardew3D.Mod.State.ActiveHandler is not IVRGameHandler vr)
+        if (Stardew3D.Mod.State.ActiveHandler is not VRGameHandler vr)
         {
             return;
         }

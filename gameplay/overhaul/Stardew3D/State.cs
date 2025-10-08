@@ -3,51 +3,102 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SharpGLTF.Schema2;
 using SpaceShared;
-using Stardew3D.FirstPerson;
+using Stardew3D.Handlers;
+using Stardew3D.Handlers.Game;
+using Stardew3D.Handlers.Game.FirstPerson;
+using Stardew3D.Handlers.Game.ThirdPerson;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using Stardew3D.Rendering.Renderers;
-using Stardew3D.ThirdPerson;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 
 namespace Stardew3D;
 public class State
 {
-    public List<IGameHandler> Handlers { get; } = [null, new FirstPersonGameHandler(), new ThirdPersonGameHandler()];
-    private int _activeHandlerIndex = 0;
-    public int ActiveHandlerIndex
+    private Dictionary<string, IGameHandler> Handlers { get; } = [];
+    internal string ActiveHandlerId = null;
+
+    public IGameHandler ActiveHandler
     {
-        get => _activeHandlerIndex;
-        set => _activeHandlerIndex = value % Handlers.Count;
+        get => ActiveHandlerId == null ? null : Handlers[ActiveHandlerId];
+        set
+        {
+            if (value != null && (!Handlers.ContainsKey(value.Id) || !Handlers.Values.Contains(value) || Handlers[value.Id] != value))
+                throw new ArgumentException($"Given handler {value} wasn't registered", nameof(ActiveHandler));
+            Log.Debug($"Switching from game handler \"{value?.Id ?? "null"}\" to \"{ActiveHandlerId ?? "null"}\"");
+
+            if (value == null)
+            {
+                ActiveHandler?.SwitchOff(null);
+                ActiveHandlerId = null;
+                return;
+            }
+
+            var oldHandler = ActiveHandler;
+            ActiveHandlerId = value?.Id;
+
+            oldHandler?.SwitchOff(ActiveHandler);
+            ActiveHandlerId = value?.Id;
+            ActiveHandler?.SwitchOn(oldHandler);
+        }
     }
-    public IGameHandler ActiveHandler => Handlers[ActiveHandlerIndex];
+    public void AddGameHandler(IGameHandler handler)
+    {
+        if (finishedAddingGameHandlers)
+            throw new InvalidOperationException("Game handler registration has already finished");
+
+        Handlers.Add(handler.Id, handler);
+    }
+    public IGameHandler GetGameHandler(string id) => Handlers.GetOrDefault(id, null);
+    public IEnumerable<string> HandlerIds => Handlers.Keys;
+
+    public static event EventHandler AddingGameHandlers;
+    public static event EventHandler GameHandlersFinalized;
+    private bool invokedEventsForThis = false;
+    private bool finishedAddingGameHandlers = false;
 
     public ModelManager ModelManager { get; } = new();
     public GenericModelEffect GenericModelEffect { get; }
 
     private class GameHandlerSpecificData
     {
-        public InputHandlerManager UpdateHandlerManager { get; } = new();
+        public UpdateHandlerManager UpdateHandlerManager { get; } = new();
         public RenderHandlerManager RenderHandlerManager { get; } = new();
         public ConditionalWeakTable<object, object> JointHandlers { get; } = new();
     }
     private ConditionalWeakTable<IGameHandler, GameHandlerSpecificData> handlerData = new();
 
-    public State()
+    internal State()
     {
         GenericModelEffect = new(Game1.graphics.GraphicsDevice, File.ReadAllBytes(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "GenericModelEffect.mgfxo")));
+
+        if (Context.IsGameLaunched)
+            InvokeAddingGameHandlers();
     }
 
-    private IEnumerable<IGameHandler> FindGameHandlersMatching(IReadOnlyCollection<string> requiredTags)
+    internal void InvokeAddingGameHandlers()
     {
-        foreach (var handler in Handlers)
+        if (invokedEventsForThis)
+            return;
+
+        invokedEventsForThis = true;
+        AddingGameHandlers?.Invoke(this, new());
+        finishedAddingGameHandlers = true;
+        GameHandlersFinalized?.Invoke(this, new());
+    }
+
+    public IEnumerable<IGameHandler> FindGameHandlersMatching(IReadOnlyCollection<string> requiredTags)
+    {
+        foreach (var handler in Handlers.Values)
         {
             if (handler == null)
                 continue;

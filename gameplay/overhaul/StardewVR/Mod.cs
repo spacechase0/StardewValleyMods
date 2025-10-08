@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using SpaceShared.Attributes;
-using Stardew3D;
+using Stardew3D.Handlers.Game;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
-using StardewVR.GameHandlers;
-using StardewVR.GameHandlers.FirstPerson;
-using StardewVR.MenuHandlers;
+using StardewVR.Handlers.Game;
+using StardewVR.Handlers.Game.FirstPerson;
+using StardewVR.Handlers.Menu;
 using Valve.VR;
 
 
@@ -51,22 +52,55 @@ using Valve.VR;
 
 namespace StardewVR
 {
-    //[HasConfig<Configuration>]
+    [HasConfig<Configuration>]
     //[HasState<State>]
     [HasHarmony]
     public partial class Mod : BaseMod< Mod >
     {
+        public string DefaultVrHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
+
         protected override void ModEntry()
         {
-            Stardew3D.Mod.State.Handlers.Add(new FirstPersonVRGameHandler());
-
             Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
+            Helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
         }
 
         private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
         {
-            Stardew3D.Mod.State.SetJointHandlerForGameHandlerTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as IVRGameHandler, menu as IClickableMenu));
-            Stardew3D.Mod.State.SetJointHandlerForGameHandlerTags<TitleMenu, TitleMenuHandler>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as IVRGameHandler, menu as TitleMenu));
+            Stardew3D.State.AddingGameHandlers += (sender, _) =>
+            {
+                var state = sender as Stardew3D.State;
+                state.AddGameHandler(new FirstPersonVRGameHandler());
+            };
+            Stardew3D.State.GameHandlersFinalized += (sender, _) =>
+            {
+                var state = sender as Stardew3D.State;
+                state.SetJointHandlerForGameHandlerTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameHandler, menu as IClickableMenu));
+                state.SetJointHandlerForGameHandlerTags<TitleMenu, TitleMenuHandler>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameHandler, menu as TitleMenu));
+            };
+        }
+
+        private void Input_ButtonsChanged(object sender, StardewModdingAPI.Events.ButtonsChangedEventArgs e)
+        {
+            if (Config.ToggleVirtualReality.JustPressed())
+            {
+                var currHandler = Stardew3D.Mod.State.ActiveHandler;
+                var targetHandler = Stardew3D.Mod.State.GetGameHandler(DefaultVrHandler);
+                if (currHandler != null)
+                {
+                    if (!currHandler.Tags.Contains(IGameHandler.CategoryVR))
+                    {
+                        string[] tags = currHandler.Tags.Select(t => t == IGameHandler.CategoryFlatscreen ? IGameHandler.CategoryVR : t).ToArray();
+                        targetHandler = Stardew3D.Mod.State.FindGameHandlersMatching(tags).FirstOrDefault() ?? targetHandler;
+                    }
+                    else
+                    {
+                        targetHandler = null;
+                    }
+                }
+
+                Stardew3D.Mod.State.ActiveHandler = targetHandler;
+            }
         }
 
         internal static Texture_t GetTextureFrom(RenderTarget2D target)

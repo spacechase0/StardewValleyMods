@@ -11,23 +11,22 @@ using SpaceShared;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
-using static Stardew3D.IGameHandler;
+using static Stardew3D.Handlers.Game.IGameHandler;
 using static StardewValley.Minigames.MineCart.MapJunimo;
 
-namespace Stardew3D.ThirdPerson;
-public class ThirdPersonGameHandler : ModGameHandler
+namespace Stardew3D.Handlers.Game.ThirdPerson;
+public class ThirdPersonGameHandler : CommonGameHandler
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/ThirdPerson";
-    public override string[] Tags => [Category3D, CategoryThirdPerson];
+    public override string[] Tags => [CategoryFlatscreen, CategoryThirdPerson];
 
     public override Matrix ProjectionMatrix { get; protected set; }
     public override Camera Camera { get; } = new();
 
-    public override void SwitchOn()
+    public override void SwitchOn(IGameHandler previousHandler)
     {
-        base.SwitchOn();
+        base.SwitchOn(previousHandler);
         ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Mod.Config.FieldOfViewDegrees), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.1f, 10000);
-        RenderHelper.GenericEffect.Projection = ProjectionMatrix;
     }
 
     public override void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, DefaultInputHandling defaultInputHandling)
@@ -49,8 +48,7 @@ public class ThirdPersonGameHandler : ModGameHandler
         defaultInputHandling(ref keyboardState, ref mouseState, ref gamePadState);
     }
 
-    float f = 0;
-    protected override void DoCamera()
+    protected override void UpdateCamera()
     {
         Camera.Target = Game1.player.GetPosition3D();
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;

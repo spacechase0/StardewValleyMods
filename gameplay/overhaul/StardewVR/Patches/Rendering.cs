@@ -7,7 +7,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using StardewVR.GameHandlers.FirstPerson;
+using StardewVR.Handlers.Game.FirstPerson;
 
 namespace StardewVR.Patches;
 

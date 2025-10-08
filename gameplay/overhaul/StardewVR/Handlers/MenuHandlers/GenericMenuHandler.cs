@@ -12,32 +12,32 @@ using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D;
 using Stardew3D.Data;
+using Stardew3D.Handlers;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using Stardew3D.Rendering.Renderers;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using StardewVR.GameHandlers;
-using StardewVR.GameHandlers.FirstPerson;
+using StardewVR.Handlers.Game;
 
-namespace StardewVR.MenuHandlers;
+namespace StardewVR.Handlers.Menu;
 internal class GenericMenuHandler<TMenu> : RendererFor<ModelData, TMenu>, IUpdateHandler
     where TMenu : IClickableMenu
 {
-    public IVRGameHandler GameHandler;
+    public VRGameHandler GameHandler;
 
     public Matrix BaseOrientation;
     public Vector3 DisplayPosition;
     public Vector2 DisplaySize;
 
-    public GenericMenuHandler(IVRGameHandler handler, TMenu menu)
+    public GenericMenuHandler(VRGameHandler handler, TMenu menu)
         : base($"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", menu)
     {
-        this.GameHandler = handler;
+        GameHandler = handler;
 
         var basePosition = handler.Camera.Position;
-        BaseOrientation = (handler.Camera as StardewVR.GameHandlers.FirstPerson.Camera).HeadsetRotation;
+        BaseOrientation = (handler.Camera as Game.Camera).HeadsetRotation;
 
         // TODO: Configurable distance for these menus
         DisplayPosition = basePosition + BaseOrientation.Forward * 5;

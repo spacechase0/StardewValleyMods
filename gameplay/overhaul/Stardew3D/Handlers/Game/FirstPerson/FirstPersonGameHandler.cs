@@ -8,27 +8,26 @@ using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using Stardew3D.Rendering;
 using StardewValley;
-using static Stardew3D.IGameHandler;
+using static Stardew3D.Handlers.Game.IGameHandler;
 
-namespace Stardew3D.FirstPerson;
-public class FirstPersonGameHandler : ModGameHandler
+namespace Stardew3D.Handlers.Game.FirstPerson;
+public class FirstPersonGameHandler : CommonGameHandler
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
-    public override string[] Tags => [Category3D, CategoryFirstPerson];
+    public override string[] Tags => [CategoryFlatscreen, CategoryFirstPerson];
 
     public override Matrix ProjectionMatrix { get; protected set; }
     public override Camera Camera { get; } = new();
 
-    public override void SwitchOn()
+    public override void SwitchOn(IGameHandler previousHandler)
     {
-        base.SwitchOn();
+        base.SwitchOn(previousHandler);
         ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Mod.Config.FieldOfViewDegrees), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.1f, 10000);
-        RenderHelper.GenericEffect.Projection = ProjectionMatrix;
     }
 
-    public override void SwitchOff()
+    public override void SwitchOff(IGameHandler nextHandler)
     {
-        base.SwitchOff();
+        base.SwitchOff(nextHandler);
         Game1.game1.IsMouseVisible = Game1.options.hardwareCursor;
     }
 
@@ -68,7 +67,7 @@ public class FirstPersonGameHandler : ModGameHandler
         wasActive = GameRunner.instance.IsActive;
     }
 
-    protected override void DoCamera()
+    protected override void UpdateCamera()
     {
         Camera.Position = Game1.player.GetPosition3D() + new Vector3( 0, 1.75f, 0 );
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;
