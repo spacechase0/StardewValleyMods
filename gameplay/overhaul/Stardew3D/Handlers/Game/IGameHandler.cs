@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Stardew3D.Rendering;
+using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
 
@@ -20,6 +22,11 @@ public interface IGameHandler
 
     public string Id { get; }
     public string[] Tags { get; }
+
+    public ICamera Camera { get; }
+    public RenderTarget2D CurrentTargetScreen { get; }
+    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location);
+    public Matrix GetCurrentTransformFor(GameLocation location);
 
     public void SwitchOn( IGameHandler previousHandler );
     public void SwitchOff( IGameHandler nextHandler );

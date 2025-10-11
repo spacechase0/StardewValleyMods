@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewValley;
 
 namespace Stardew3D.Handlers;
 public interface IUpdateHandler
@@ -12,6 +13,7 @@ public interface IUpdateHandler
     struct UpdateContext
     {
         public GameTime Time;
+
         public Action<UpdateContext> ForceUpdateIfNotAlreadyRun;
     }
 

@@ -16,8 +16,8 @@ public abstract class BaseMod< ActualType > : StardewModdingAPI.Mod where Actual
         Log.Monitor = Monitor;
 
         SetupConfig();
-        ModEntry();
         SetupHarmony();
+        ModEntry();
     }
 
     protected abstract void ModEntry();

@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
+using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
-using Stardew3D.Rendering.Renderers;
 using StardewValley;
 
 namespace Stardew3D.Rendering;
@@ -21,8 +23,13 @@ public class WorldRenderer : IDisposable
 
     public PBREnvironment CurrentEnvironment => env;
 
+    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location) => (Mod.State.GetRenderHandlersFor(location)[0] as LocationRenderer)?.Environment ?? CurrentEnvironment;
+    public Matrix GetCurrentTransformFor(GameLocation location) => locationTransforms.GetOrCreateValue( location ).Value;
+
     private bool builtLocationRecently = false;
     private GameLocation lastLoc;
+
+    private ConditionalWeakTable<GameLocation, Holder<Matrix>> locationTransforms = new();
 
     public void Dispose()
     {
@@ -65,13 +72,17 @@ public class WorldRenderer : IDisposable
                 var renderers = Mod.State.GetRenderHandlersFor(loc);
                 var mainRenderer = renderers[0] as LocationRenderer;
 
-                if (!mainRenderer.ModelData.Portals.TryGetValue(entry.Value.MatchingPortal, out var match))
-                    match = null;
+                LocationModelData.Portal match = null;
+                if (mainRenderer != null)
+                {
+                    if (!mainRenderer.ModelData.Portals.TryGetValue(entry.Value.MatchingPortal, out match))
+                        match = null;
+                }
 
                 // TODO: Support non-opposite facing portals
                 Matrix oursToTheirs = prevTransform *
-                                        Matrix.CreateTranslation(entry.Value.Position) *
-                                        Matrix.CreateTranslation(-match.Position);
+                                      Matrix.CreateTranslation(entry.Value.Position) *
+                                      Matrix.CreateTranslation(-match.Position);
 
                 adjacencies.Add(new(entry.Value.OtherLocation, renderers, oursToTheirs));
             }
@@ -98,6 +109,10 @@ public class WorldRenderer : IDisposable
 
         foreach (var other in adjacencies)
         {
+            if ((other.Renderers[0] as LocationRenderer)?.Object != null)
+            {
+                locationTransforms.AddOrUpdate((other.Renderers[0] as LocationRenderer)?.Object, new(other.TransformFromCurrent));
+             }
             var env = (other.Renderers[0] as LocationRenderer).Environment;
             foreach (var renderer in other.Renderers)
             {

@@ -6,12 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Mods;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Rendering.Renderers;
+namespace Stardew3D.Handlers.Render;
 
 public class LocationRenderData : RenderData<LocationRenderer>
 {
@@ -71,7 +72,27 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 RenderContext subCtx = ctx;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.Key.ToPoint().To3D(Parent.Object.Map)) * ctx.WorldTransform;
-                renderer.Render(subCtx);
+                renderer?.Render(subCtx);
+            }
+        }
+
+        foreach (var obj in Parent.Object.terrainFeatures.Pairs)
+        {
+            foreach (var renderer in Mod.State.GetRenderHandlersFor(obj.Value))
+            {
+                RenderContext subCtx = ctx;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.Key.ToPoint().To3D(Parent.Object.Map) + new Vector3(0.5f, 0, 0.5f)) * ctx.WorldTransform;
+                renderer?.Render(subCtx);
+            }
+        }
+
+        foreach (var obj in Parent.Object.largeTerrainFeatures)
+        {
+            foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
+            {
+                RenderContext subCtx = ctx;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.Tile.ToPoint().To3D(Parent.Object.Map) + new Vector3(0.5f, 0, 0.5f)) * ctx.WorldTransform;
+                renderer?.Render(subCtx);
             }
         }
 
@@ -81,7 +102,27 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 RenderContext subCtx = ctx;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.Tile.ToPoint().To3D(Parent.Object.Map) + new Vector3(0.5f, 0, 0.5f)) * ctx.WorldTransform;
-                renderer.Render(subCtx);
+                renderer?.Render(subCtx);
+            }
+        }
+
+        foreach (var obj in Parent.Object.farmers)
+        {
+            foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
+            {
+                RenderContext subCtx = ctx;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.Position.To3D(Parent.Object.Map) + new Vector3(0.5f, 0, 0.5f)) * ctx.WorldTransform;
+                renderer?.Render(subCtx);
+            }
+        }
+
+        foreach (var obj in Parent.Object.characters)
+        {
+            foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
+            {
+                RenderContext subCtx = ctx;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.Position.To3D(Parent.Object.Map) + new Vector3(0.5f, 0, 0.5f)) * ctx.WorldTransform;
+                renderer?.Render(subCtx);
             }
         }
     }

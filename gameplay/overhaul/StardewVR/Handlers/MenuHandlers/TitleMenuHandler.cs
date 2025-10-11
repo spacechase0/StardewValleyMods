@@ -13,9 +13,9 @@ using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
+using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
-using Stardew3D.Rendering.Renderers;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
@@ -25,7 +25,7 @@ using static Stardew3D.Handlers.IRenderHandler;
 namespace StardewVR.Handlers.Menu;
 internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
 {
-    private Dictionary<ClickableTextureComponent, BoundingBox> clickables = new();
+    private List<(Func<ClickableTextureComponent> Button, BoundingBox BoundingBox)> clickables = new();
 
     public TitleMenuHandler(VRGameHandler handler, TitleMenu menu)
         : base(handler, menu )
@@ -33,22 +33,22 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
         Vector3 spot = new(0, 3, -15f);
         clickables = new()
         {
-            {
-                menu.buttons.First( c => c.name == "New" ),
+            new(
+                () => menu.buttons.First( c => c.name == "New" ),
                 new BoundingBox(new(spot.X + -5.5f  - 1.5f, spot.Y + -5f, spot.Z + 0), new Vector3(spot.X + -5.5f  - 1.5f, spot.Y + -5f, spot.Z + 0) + new Vector3(3.15f, 2.54f, 0.24f))
-            },
-            {
-                menu.buttons.First( c => c.name == "Load" ),
+            ),
+            new(
+                () => menu.buttons.First( c => c.name == "Load" ),
                 new BoundingBox(new(spot.X + -1.85f - 1.5f, spot.Y + -5f, spot.Z + 0), new Vector3(spot.X + -1.85f - 1.5f, spot.Y + -5f, spot.Z + 0) + new Vector3(3.15f, 2.54f, 0.24f))
-            },
-            {
-                menu.buttons.First( c => c.name == "Co-op" ),
+            ),
+            new(
+                () => menu.buttons.First( c => c.name == "Co-op" ),
                 new BoundingBox(new(spot.X +  1.85f - 1.5f, spot.Y + -5f, spot.Z + 0), new Vector3(spot.X +  1.85f - 1.5f, spot.Y + -5f, spot.Z + 0) + new Vector3(3.15f, 2.54f, 0.24f))
-            },
-            {
-                menu.buttons.First( c => c.name == "Exit" ),
+            ),
+            new (
+                () => menu.buttons.First( c => c.name == "Exit" ),
                 new BoundingBox(new(spot.X +  5.5f  - 1.5f, spot.Y + -5f, spot.Z + 0), new Vector3(spot.X +  5.5f  - 1.5f, spot.Y + -5f, spot.Z + 0) + new Vector3(3.15f, 2.54f, 0.24f))
-            },
+            ),
         };
     }
 
@@ -74,7 +74,7 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
             var subHandlers = Stardew3D.Mod.State.GetUpdateHandlersFor(subMenu);
             foreach (var subHandler in subHandlers)
             {
-                subHandler.Update(ctx);
+                subHandler?.Update(ctx);
             }
         }
 
@@ -83,20 +83,20 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
         {
             bool setCursorPos = false;
 
-            var leftCursor = new Ray(GameHandler.SecondaryPointerPosition, GameHandler.SecondaryPointerOrientation.Forward);
-            var rightCursor = new Ray(GameHandler.PrimaryPointerPosition, GameHandler.PrimaryPointerOrientation.Forward);
+            var leftCursor = new Ray(GameHandler.Global_SecondaryPointerPosition, GameHandler.Global_SecondaryPointerOrientation.Forward);
+            var rightCursor = new Ray(GameHandler.Global_PrimaryPointerPosition, GameHandler.Global_PrimaryPointerOrientation.Forward);
             foreach (var button in clickables)
             {
                 if (subMenu == null)
                 {
-                    float? intersection = rightCursor.Intersects(button.Value);
+                    float? intersection = rightCursor.Intersects(button.BoundingBox);
                     if (intersection.HasValue)
                     {
                         Vector3 intersectionPoint = rightCursor.Position + rightCursor.Direction * intersection.Value;
                         RenderHelper.DrawQuad(Game1.mouseCursors, intersectionPoint + rightCursor.Direction * -1f, new(0.5f), Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, 16, 16), -rightCursor.Direction, upOverride: GameHandler.RightController.CurrentRotation.Up);
-                        Vector2 clickableLocal = new((intersectionPoint.X - button.Value.Min.X) / (button.Value.Max.X - button.Value.Min.X) * button.Key.bounds.Width,
-                                                        button.Key.bounds.Height - (intersectionPoint.Y - button.Value.Min.Y) / (button.Value.Max.Y - button.Value.Min.Y) * button.Key.bounds.Height);
-                        Game1.setMousePosition(button.Key.bounds.Location + clickableLocal.ToPoint(), true);
+                        Vector2 clickableLocal = new((intersectionPoint.X - button.BoundingBox.Min.X) / (button.BoundingBox.Max.X - button.BoundingBox.Min.X) * button.Button().bounds.Width,
+                                                        button.Button().bounds.Height - (intersectionPoint.Y - button.BoundingBox.Min.Y) / (button.BoundingBox.Max.Y - button.BoundingBox.Min.Y) * button.Button().bounds.Height);
+                        Game1.setMousePosition(button.Button().bounds.Location + clickableLocal.ToPoint(), true);
                         setCursorPos = true;
                     }
                 }
@@ -129,7 +129,7 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
 
         private int[] titleInstances;
         private int[] skyboxInstances;
-        private Dictionary<ClickableTextureComponent, (ModelObject IdleModel, int[] IdleInstances, ModelObject HoverModel, int[] HoverInstances)> clickables = new();
+        private List<(Func<ClickableTextureComponent> Button, ModelObject IdleModel, int[] IdleInstances, ModelObject HoverModel, int[] HoverInstances)> clickables = new();
         private int mouse;
 
         public RenderData(RenderContext ctx, TitleMenuHandler parent)
@@ -156,34 +156,34 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
 
             clickables = new()
             {
-                {
-                    parent.Object.buttons.First( c => c.name == "New" ),
-                    new(buttonNewIdle,
-                        buttonNewIdle.Draw( Batch, Matrix.Identity ),
-                        buttonNewHover,
-                        buttonNewHover.Draw( Batch, Matrix.Identity ) )
-                },
-                {
-                    parent.Object.buttons.First( c => c.name == "Load" ),
-                    new(buttonLoadIdle,
-                        buttonLoadIdle.Draw( Batch, Matrix.Identity ),
-                        buttonLoadHover,
-                        buttonLoadHover.Draw( Batch, Matrix.Identity ) )
-                },
-                {
-                    parent.Object.buttons.First( c => c.name == "Co-op" ),
-                    new(buttonCoopIdle,
-                        buttonCoopIdle.Draw( Batch, Matrix.Identity ),
-                        buttonCoopHover,
-                        buttonCoopHover.Draw( Batch, Matrix.Identity ) )
-                },
-                {
-                    parent.Object.buttons.First( c => c.name == "Exit" ),
-                    new(buttonExitIdle,
-                        buttonExitIdle.Draw( Batch, Matrix.Identity ),
-                        buttonExitHover,
-                        buttonExitHover.Draw( Batch, Matrix.Identity ) )
-                },
+                new(
+                    parent.clickables[0].Button,
+                    buttonNewIdle,
+                    buttonNewIdle.Draw( Batch, Matrix.Identity ),
+                    buttonNewHover,
+                    buttonNewHover.Draw( Batch, Matrix.Identity )
+                ),
+                new(
+                    parent.clickables[1].Button,
+                    buttonLoadIdle,
+                    buttonLoadIdle.Draw( Batch, Matrix.Identity ),
+                    buttonLoadHover,
+                    buttonLoadHover.Draw( Batch, Matrix.Identity )
+                ),
+                new(
+                    parent.clickables[2].Button,
+                    buttonCoopIdle,
+                    buttonCoopIdle.Draw( Batch, Matrix.Identity ),
+                    buttonCoopHover,
+                    buttonCoopHover.Draw( Batch, Matrix.Identity )
+                ),
+                new (
+                    parent.clickables[3].Button,
+                    buttonExitIdle,
+                    buttonExitIdle.Draw( Batch, Matrix.Identity ),
+                    buttonExitHover,
+                    buttonExitHover.Draw( Batch, Matrix.Identity )
+                ),
             };
 
             mouse = Batch.AddNonInstanced((env, color, world, view, proj) =>
@@ -216,7 +216,7 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
                 var subHandlers = Stardew3D.Mod.State.GetRenderHandlersFor(subMenu);
                 foreach (var subHandler in subHandlers)
                 {
-                    subHandler.Render(ctx);
+                    subHandler?.Render(ctx);
                 }
             }
 
@@ -229,8 +229,8 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
                 title.Update(Batch, titleInstances, Matrix.Identity, Color.Transparent);
                 foreach (var entry in clickables)
                 {
-                    entry.Value.IdleModel.Update(Batch, entry.Value.IdleInstances, Matrix.Identity, Color.Transparent);
-                    entry.Value.HoverModel.Update(Batch, entry.Value.HoverInstances, Matrix.Identity, Color.Transparent);
+                    entry.IdleModel.Update(Batch, entry.IdleInstances, Matrix.Identity, Color.Transparent);
+                    entry.HoverModel.Update(Batch, entry.HoverInstances, Matrix.Identity, Color.Transparent);
                 }
                 return;
             }
@@ -242,15 +242,15 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
             title.Update(Batch, titleInstances, Matrix.CreateTranslation(spot) * Matrix.CreateTranslation(0, 3, 0), color: Color.White);
 
             bool foundMouse = false;
-            var secondaryCursor = new Ray(handler.SecondaryPointerPosition, handler.SecondaryPointerOrientation.Forward);
-            var primaryCursor = new Ray(handler.PrimaryPointerPosition, handler.PrimaryPointerOrientation.Forward);
+            var secondaryCursor = new Ray(handler.Global_SecondaryPointerPosition, handler.Global_SecondaryPointerOrientation.Forward);
+            var primaryCursor = new Ray(handler.Global_PrimaryPointerPosition, handler.Global_PrimaryPointerOrientation.Forward);
             foreach (var button in clickables)
             {
-                BoundingBox box = Parent.clickables[button.Key];
-                var model = button.Value.IdleModel;
-                var hiddenModel = button.Value.HoverModel;
-                int[] inst = button.Value.IdleInstances;
-                int[] hiddenInst = button.Value.HoverInstances;
+                BoundingBox box = Parent.clickables.First(b => b.Button() == button.Button()).BoundingBox;
+                var model = button.IdleModel;
+                var hiddenModel = button.HoverModel;
+                int[] inst = button.IdleInstances;
+                int[] hiddenInst = button.HoverInstances;
 
                 if (TitleMenu.subMenu == null)
                 {
@@ -263,7 +263,7 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
                         Vector2 mousePos = Game1.getMousePosition().ToVector2() / Parent.DisplaySize - Parent.DisplaySize / 2;
                         renderMousePos = primaryCursor.Position + primaryCursor.Direction * intersection.Value;
                         renderMouseFacing = -primaryCursor.Direction;
-                        renderMouseUp = handler.PrimaryPointerOrientation.Up;
+                        renderMouseUp = handler.Global_PrimaryPointerOrientation.Up;
                         Batch.UpdateNonInstanced(mouse, Matrix.CreateTranslation(renderMousePos.Value) * ctx.WorldTransform);
 
                         foundMouse = true;
@@ -271,8 +271,8 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
                 }
 
                 Vector3 center = new((box.Min.X + box.Max.X) / 2, (box.Min.Y + box.Max.Y) / 2, (box.Min.Z + box.Max.Z) / 2);
-                model.Update(Batch, inst, Matrix.CreateScale(button.Key.scale / button.Key.baseScale) * Matrix.CreateTranslation(center), color: Color.White);
-                hiddenModel.Update(Batch, hiddenInst, Matrix.CreateScale(button.Key.scale / button.Key.baseScale) * Matrix.CreateTranslation(center), color: Color.Transparent);
+                model.Update(Batch, inst, Matrix.CreateScale(button.Button().scale / button.Button().baseScale) * Matrix.CreateTranslation(center), color: Color.White);
+                hiddenModel.Update(Batch, hiddenInst, Matrix.CreateScale(button.Button().scale / button.Button().baseScale) * Matrix.CreateTranslation(center), color: Color.Transparent);
             }
 
             if (!foundMouse)

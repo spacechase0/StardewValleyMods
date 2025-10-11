@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoScene.Graphics;
 
 namespace Stardew3D.Rendering;
+
 public class RenderBatcher : IDisposable
 {
     public delegate void RenderNonInstanced(PBREnvironment env, Color color, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix);

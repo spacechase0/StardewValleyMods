@@ -10,7 +10,7 @@ using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Rendering.Renderers;
+namespace Stardew3D.Handlers.Render;
 public class ObjectRenderer : RendererFor<ModelData, StardewValley.Object>
 {
     public ObjectRenderer(StardewValley.Object obj)

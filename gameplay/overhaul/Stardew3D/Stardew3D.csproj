@@ -58,4 +58,8 @@
       <HintPath>$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Scene3D\bin\Debug\net6.0\MonoScene.Runtime.Scene3D.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Handlers\Update\" />
+  </ItemGroup>
 </Project>

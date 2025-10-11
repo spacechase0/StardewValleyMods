@@ -14,9 +14,9 @@ using Stardew3D.Handlers;
 using Stardew3D.Handlers.Game;
 using Stardew3D.Handlers.Game.FirstPerson;
 using Stardew3D.Handlers.Game.ThirdPerson;
+using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
-using Stardew3D.Rendering.Renderers;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
@@ -34,7 +34,7 @@ public class State
         {
             if (value != null && (!Handlers.ContainsKey(value.Id) || !Handlers.Values.Contains(value) || Handlers[value.Id] != value))
                 throw new ArgumentException($"Given handler {value} wasn't registered", nameof(ActiveHandler));
-            Log.Debug($"Switching from game handler \"{value?.Id ?? "null"}\" to \"{ActiveHandlerId ?? "null"}\"");
+            Log.Debug($"Switching to game handler \"{value?.Id ?? "null"}\" (from \"{ActiveHandlerId ?? "null"}\")");
 
             if (value == null)
             {
@@ -155,7 +155,7 @@ public class State
     public IUpdateHandler[] GetUpdateHandlersFor(object obj)
     {
         if (ActiveHandler == null || obj == null)
-            return [];
+            return [null];
 
         return handlerData.GetOrCreateValue(ActiveHandler).UpdateHandlerManager.GetHandlersFor(obj);
     }
@@ -179,7 +179,7 @@ public class State
     public IRenderHandler[] GetRenderHandlersFor(object obj)
     {
         if (ActiveHandler == null || obj == null)
-            return [];
+            return [null];
 
         return handlerData.GetOrCreateValue(ActiveHandler).RenderHandlerManager.GetHandlersFor(obj);
     }

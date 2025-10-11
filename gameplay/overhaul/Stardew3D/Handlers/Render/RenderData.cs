@@ -7,10 +7,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.Models;
+using Stardew3D.Rendering;
 using StardewValley.Mods;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Rendering.Renderers;
+namespace Stardew3D.Handlers.Render;
 
 
 public abstract class RenderDataBase

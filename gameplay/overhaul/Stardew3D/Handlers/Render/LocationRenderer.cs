@@ -19,7 +19,7 @@ using xTile;
 using xTile.Tiles;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Rendering.Renderers;
+namespace Stardew3D.Handlers.Render;
 
 public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
 {

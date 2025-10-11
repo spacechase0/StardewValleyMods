@@ -34,19 +34,14 @@ public class GenericObjectHandlerManager<TBaseType, THandlerInterface>
 
     public THandlerInterface[] CreateApplicableHandlers(TBaseType menu)
     {
-        List<THandlerInterface> ret = new();
-        bool didPrimary = false;
+        List<THandlerInterface> ret = [null];
         for (Type check = menu.GetType(); check != typeof(TBaseType).BaseType; check = check.BaseType)
         {
-            if (!didPrimary)
+            if (handlers.TryGetValue(check, out var handlerData))
             {
-                if (handlers.TryGetValue(check, out var handlerData))
+                if (handlerData.allowsSubclasses || check == menu.GetType())
                 {
-                    if (handlerData.allowsSubclasses || check == menu.GetType())
-                    {
-                        didPrimary = true;
-                        ret.Insert(0, handlerData.createHandlerFunc(menu)); // Insert, not add, so that even if some addons get added first, the main handler goes first
-                    }
+                    ret[0] = handlerData.createHandlerFunc(menu);
                 }
             }
 
@@ -56,7 +51,7 @@ public class GenericObjectHandlerManager<TBaseType, THandlerInterface>
                 {
                     if (addonData.allowsSubclasses || check == menu.GetType())
                     {
-                        ret.Insert(didPrimary ? 1 : 0, addonData.createHandlerFunc(menu)); // Insert, not add, so that parent class addons come first
+                        ret.Insert(1, addonData.createHandlerFunc(menu)); // Insert, not add, so that parent class addons come first
                     }
                 }
             }

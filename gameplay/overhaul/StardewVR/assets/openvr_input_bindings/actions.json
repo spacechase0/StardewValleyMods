@@ -7,6 +7,10 @@
         {
             "name": "/actions/menu",
             "usage": "leftright"
+        },
+        {
+            "name": "/actions/world",
+            "usage": "leftright"
         }
     ],
     "actions": [
@@ -35,6 +39,17 @@
             "name": "/actions/menu/in/scroll",
             "requirement": "suggested",
             "type": "vector2"
+        },
+
+        {
+            "name": "/actions/world/in/movement",
+            "requirement": "mandatory",
+            "type": "vector2"
+        },
+        {
+            "name": "/actions/world/in/rotation",
+            "requirement": "mandatory",
+            "type": "vector2"
         }
     ],
     "default_bindings": [
@@ -55,7 +70,10 @@
 
             "/actions/menu/in/left_click": "Left Click",
             "/actions/menu/in/right_click": "Right Click",
-            "/actions/menu/in/scroll": "Scroll"
+            "/actions/menu/in/scroll": "Scroll",
+
+            "/actions/world/in/movement": "Movement",
+            "/actions/world/in/rotation": "Rotation"
         }
     ]
 }

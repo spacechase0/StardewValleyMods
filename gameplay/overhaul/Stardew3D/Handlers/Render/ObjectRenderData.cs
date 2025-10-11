@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json.Linq;
+using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Mods;
 using StardewValley.Network.NetEvents;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Rendering.Renderers;
+namespace Stardew3D.Handlers.Render;
 
 public class ObjectRenderData : RenderData<ObjectRenderer>
 {
@@ -22,7 +23,7 @@ public class ObjectRenderData : RenderData<ObjectRenderer>
 
     public ObjectRenderData(RenderContext ctx, ObjectRenderer parent)
         : base( ctx, parent,
-            (parent.Object.Location == null) ? 0 : (parent.Object.TileLocation.ToPoint().X + parent.Object.TileLocation.ToPoint().Y * parent.Object.Location.Map.Layers[0].LayerWidth))
+            parent.Object.Location == null ? 0 : parent.Object.TileLocation.ToPoint().X + parent.Object.TileLocation.ToPoint().Y * parent.Object.Location.Map.Layers[0].LayerWidth)
     {
         if (Model.Matches.Count == 0)
         {

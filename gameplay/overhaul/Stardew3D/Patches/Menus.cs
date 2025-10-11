@@ -52,14 +52,14 @@ internal class Menus
             var currentMenuHandlers = Mod.State.GetUpdateHandlersFor(Game1.activeClickableMenu);
             foreach (var handler in currentMenuHandlers)
             {
-                handler.Update(new()
+                handler?.Update(new()
                 {
                     Time = time,
                     ForceUpdateIfNotAlreadyRun = forceMenuUpdateIfNotAlreadyRun,
                 });
             }
 
-            if (currentMenuHandlers.Length == 0)
+            if (currentMenuHandlers[0] == null)
             {
                 forceMenuUpdateIfNotAlreadyRun(new()
                 {

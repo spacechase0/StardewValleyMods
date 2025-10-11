@@ -18,8 +18,9 @@ using Stardew3D.Data;
 using Stardew3D.Handlers.Game;
 using Stardew3D.Handlers.Game.FirstPerson;
 using Stardew3D.Handlers.Game.ThirdPerson;
+using Stardew3D.Handlers.Render;
+using Stardew3D.Patches;
 using Stardew3D.Rendering;
-using Stardew3D.Rendering.Renderers;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -91,6 +92,8 @@ namespace Stardew3D
                 //TextureEnabled = true,
             };
             RenderHelper.quadVbo = new VertexBuffer(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), 6, BufferUsage.WriteOnly);
+
+            CharacterHandlers.ManualBootstrap(Harmony);
         }
 
         [EventPriority(EventPriority.Low)]

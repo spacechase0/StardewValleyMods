@@ -50,18 +50,25 @@ public abstract class VRGameHandler : CommonGameHandler
     public TrackedHeadset Headset => headsetIndex.HasValue ? _devices[headsetIndex.Value] as TrackedHeadset : null;
     public TrackedController LeftController => leftControllerIndex.HasValue ? _devices[leftControllerIndex.Value] as TrackedController : null;
     public TrackedController RightController => rightControllerIndex.HasValue ? _devices[rightControllerIndex.Value] as TrackedController : null;
-
+    
     // TODO: Make all these less hardcoded here and specific to menus
-    private ulong globalActionSetHandle, menuActionSetHandle;
+    private ulong primaryInput, secondaryInput;
+    private ulong globalActionSetHandle, menuActionSetHandle, worldActionSetHandle;
     private ulong pointerPrimaryActionHandle, pointerSecondaryActionHandle;
     private ulong leftClickActionHandle, rightClickActionHandle, scrollActionHandle;
-    public Vector3 PrimaryPointerPosition { get; private set; }
-    public Matrix PrimaryPointerOrientation { get; private set; }
-    public Vector3 SecondaryPointerPosition { get; private set; }
-    public Matrix SecondaryPointerOrientation { get; private set; }
-    public bool LeftClick { get; private set; }
-    public bool RightClick { get; private set; }
-    public Vector2 CurrentScroll { get; private set; }
+    private ulong movementActionHandle, rotationActionHandle;
+    public Vector3 Global_PrimaryPointerPosition { get; protected set; }
+    public Matrix Global_PrimaryPointerOrientation { get; protected set; }
+    public Vector3 Global_SecondaryPointerPosition { get; protected set; }
+    public Matrix Global_SecondaryPointerOrientation { get; protected set; }
+    public bool Menu_Primary_LeftClick { get; protected set; }
+    public bool Menu_Primary_RightClick { get; protected set; }
+    public Vector2 Menu_Primary_CurrentScroll { get; protected set; }
+    public bool Menu_Secondary_LeftClick { get; protected set; }
+    public bool Menu_Secondary_RightClick { get; protected set; }
+    public Vector2 Menu_Secondary_CurrentScroll { get; protected set; }
+    public Vector2 World_MovementJoystick { get; protected set; }
+    public Vector2 World_RotationJoystick { get; protected set; }
 
     public Point EmulatedCursor { get; set; }
 
@@ -88,13 +95,20 @@ public abstract class VRGameHandler : CommonGameHandler
             leftControllerIndex = vrHandler.leftControllerIndex;
             rightControllerIndex = vrHandler.rightControllerIndex;
 
+            primaryInput = vrHandler.primaryInput;
+            secondaryInput = vrHandler.secondaryInput;
             globalActionSetHandle = vrHandler.globalActionSetHandle;
             menuActionSetHandle = vrHandler.menuActionSetHandle;
+            worldActionSetHandle = vrHandler.worldActionSetHandle;
+
             pointerPrimaryActionHandle = vrHandler.pointerPrimaryActionHandle;
             pointerSecondaryActionHandle = vrHandler.pointerSecondaryActionHandle;
             leftClickActionHandle = vrHandler.leftClickActionHandle;
             rightClickActionHandle = vrHandler.rightClickActionHandle;
             scrollActionHandle = vrHandler.scrollActionHandle;
+
+            movementActionHandle = vrHandler.movementActionHandle;
+            rotationActionHandle = vrHandler.rotationActionHandle;
 
             oldInactiveSleepTime = vrHandler.oldInactiveSleepTime;
             oldFixedTimestemp = vrHandler.oldFixedTimestemp;
@@ -126,25 +140,37 @@ public abstract class VRGameHandler : CommonGameHandler
             rightScreen.Name = "VR Headset (Right Eye)";
             //uiScreen = new(Game1.graphics.GraphicsDevice, Game1.viewport.Width, Game1.viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
-            globalActionSetHandle = menuActionSetHandle = Valve.VR.OpenVR.k_ulInvalidActionSetHandle;
+            primaryInput = secondaryInput = Valve.VR.OpenVR.k_ulInvalidInputValueHandle;
+            globalActionSetHandle = menuActionSetHandle = worldActionSetHandle = Valve.VR.OpenVR.k_ulInvalidActionSetHandle;
             pointerPrimaryActionHandle = pointerSecondaryActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
             leftClickActionHandle = rightClickActionHandle = scrollActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
+            movementActionHandle = rotationActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
             var err = Valve.VR.OpenVR.Input.SetActionManifestPath(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "openvr_input_bindings", "actions.json"));
             if (err != EVRInputError.None) Log.Error($"Failed to set action manifest for OpenVR input: {err}");
+
             err = Valve.VR.OpenVR.Input.GetActionSetHandle("/actions/global", ref globalActionSetHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get global action set handle for OpenVR input: {err}");
             err = Valve.VR.OpenVR.Input.GetActionSetHandle("/actions/menu", ref menuActionSetHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get menu action set handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionSetHandle("/actions/world", ref worldActionSetHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get world action set handle for OpenVR input: {err}");
+
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/pointer_primary", ref pointerPrimaryActionHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get pointer primary action handle for OpenVR input: {err}");
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/pointer_secondary", ref pointerSecondaryActionHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get pointer primary action handle for OpenVR input: {err}");
+
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/left_click", ref leftClickActionHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get left click action handle for OpenVR input: {err}");
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/right_click", ref rightClickActionHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get right click action handle for OpenVR input: {err}");
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/scroll", ref scrollActionHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get scroll action handle for OpenVR input: {err}");
+
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/world/in/movement", ref movementActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get movement action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/world/in/rotation", ref rotationActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get rotation action handle for OpenVR input: {err}");
 
             // We absolutely do not want the game to slow down when the window isn't active.
             // That would cause comfort problems in vR
@@ -302,31 +328,68 @@ public abstract class VRGameHandler : CommonGameHandler
 
         unsafe
         {
-            var ierr = Valve.VR.OpenVR.Input.UpdateActionState([new() { ulActionSet = globalActionSetHandle, }, new() { ulActionSet = menuActionSetHandle, }], (uint)sizeof(VRActiveActionSet_t));
-            if (ierr != EVRInputError.None) Log.Error($"Failed to update action state for OpenVR input: {ierr}");
-            InputDigitalActionData_t digitalInput = new();
-            ierr = Valve.VR.OpenVR.Input.GetDigitalActionData(leftClickActionHandle, ref digitalInput, (uint)sizeof(InputDigitalActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
-            if (ierr != EVRInputError.None) Log.Error($"Failed to get left click action data for OpenVR input: {ierr}");
-            LeftClick = digitalInput.bState;
-            ierr = Valve.VR.OpenVR.Input.GetDigitalActionData(rightClickActionHandle, ref digitalInput, (uint)sizeof(InputDigitalActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
-            if (ierr != EVRInputError.None) Log.Error($"Failed to get right click action data for OpenVR input: {ierr}");
-            RightClick = digitalInput.bState;
-            InputAnalogActionData_t analogInput = new();
-            ierr = Valve.VR.OpenVR.Input.GetAnalogActionData(scrollActionHandle, ref analogInput, (uint)sizeof(InputAnalogActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
-            if (ierr != EVRInputError.None) Log.Error($"Failed to get scroll action data for OpenVR input: {ierr}");
-            CurrentScroll = new(analogInput.x, analogInput.y);
             InputPoseActionData_t poseInput = new();
-            ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(pointerPrimaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
-            if (ierr != EVRInputError.None) Log.Error($"Failed to get primary pointer action data for OpenVR input: {ierr}");
-            PrimaryPointerPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
-            PrimaryPointerOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
-            ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(pointerSecondaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
-            if (ierr != EVRInputError.None) Log.Error($"Failed to get second pointer action data for OpenVR input: {ierr}");
-            SecondaryPointerPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
-            SecondaryPointerOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
+            InputDigitalActionData_t digitalInput = new();
+            InputAnalogActionData_t analogInput = new();
+            EVRInputError ierr;
 
-            PrimaryPointerPosition += Camera.Position - Camera.HeadsetRelativePosition;
-            SecondaryPointerPosition += Camera.Position - Camera.HeadsetRelativePosition;
+            ierr = Valve.VR.OpenVR.Input.UpdateActionState(
+            [
+                new() { ulActionSet = globalActionSetHandle },
+                new() { ulActionSet = menuActionSetHandle },
+                new() { ulActionSet = worldActionSetHandle },
+            ], (uint)sizeof(VRActiveActionSet_t));
+            if (ierr != EVRInputError.None) Log.Error($"Failed to update action states for OpenVR input: {ierr}");
+
+            {
+                ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(pointerPrimaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get primary pointer action data for OpenVR input: {ierr}");
+                Global_PrimaryPointerPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
+                Global_PrimaryPointerOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
+                //primaryInput = poseInput.activeOrigin;
+
+                ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(pointerSecondaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get second pointer action data for OpenVR input: {ierr}");
+                Global_SecondaryPointerPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
+                Global_SecondaryPointerOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
+                //secondaryInput = poseInput.activeOrigin;
+            }
+
+            {
+                ierr = Valve.VR.OpenVR.Input.GetDigitalActionData(leftClickActionHandle, ref digitalInput, (uint)sizeof(InputDigitalActionData_t), primaryInput);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get primary left click action data for OpenVR input: {ierr}");
+                Menu_Primary_LeftClick = digitalInput.bState;
+                ierr = Valve.VR.OpenVR.Input.GetDigitalActionData(rightClickActionHandle, ref digitalInput, (uint)sizeof(InputDigitalActionData_t), primaryInput);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get primary right click action data for OpenVR input: {ierr}");
+                Menu_Primary_RightClick = digitalInput.bState;
+                ierr = Valve.VR.OpenVR.Input.GetAnalogActionData(scrollActionHandle, ref analogInput, (uint)sizeof(InputAnalogActionData_t), primaryInput);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get primary scroll action data for OpenVR input: {ierr}");
+                Menu_Primary_CurrentScroll = new(analogInput.x, analogInput.y);
+            }
+
+            {
+                /*
+                ierr = Valve.VR.OpenVR.Input.GetDigitalActionData(leftClickActionHandle, ref digitalInput, (uint)sizeof(InputDigitalActionData_t), secondaryInput);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get secondary left click action data for OpenVR input: {ierr}");
+                Menu_Secondary_LeftClick = digitalInput.bState;
+                ierr = Valve.VR.OpenVR.Input.GetDigitalActionData(rightClickActionHandle, ref digitalInput, (uint)sizeof(InputDigitalActionData_t), secondaryInput);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get secondary right click action data for OpenVR input: {ierr}");
+                Menu_Secondary_RightClick = digitalInput.bState;
+                ierr = Valve.VR.OpenVR.Input.GetAnalogActionData(scrollActionHandle, ref analogInput, (uint)sizeof(InputAnalogActionData_t), secondaryInput);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get secondary scroll action data for OpenVR input: {ierr}");
+                Menu_Secondary_CurrentScroll = new(analogInput.x, analogInput.y);
+                */
+            }
+
+            {
+                ierr = Valve.VR.OpenVR.Input.GetAnalogActionData(movementActionHandle, ref analogInput, (uint)sizeof(InputAnalogActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get movement action data for OpenVR input: {ierr}");
+                World_MovementJoystick = new(analogInput.x, analogInput.y);
+
+                ierr = Valve.VR.OpenVR.Input.GetAnalogActionData(rotationActionHandle, ref analogInput, (uint)sizeof(InputAnalogActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get rotation action data for OpenVR input: {ierr}");
+                World_RotationJoystick = new(analogInput.x, analogInput.y);
+            }
         }
     }
 
@@ -454,7 +517,7 @@ public abstract class VRGameHandler : CommonGameHandler
                     var currentMenuHandlers = Stardew3D.Mod.State.GetRenderHandlersFor(Game1.activeClickableMenu);
                     foreach (var handler in currentMenuHandlers)
                     {
-                        handler.Render(new()
+                        handler?.Render(new()
                         {
                             Time = time,
                             TargetScreen = targetScreen,
@@ -506,7 +569,7 @@ public abstract class VRGameHandler : CommonGameHandler
                     var currentMenuHandlers = Stardew3D.Mod.State.GetRenderHandlersFor(Game1.activeClickableMenu);
                     foreach (var handler in currentMenuHandlers)
                     {
-                        handler.Render(new()
+                        handler?.Render(new()
                         {
                             Time = time,
                             TargetScreen = targetScreen,
@@ -527,11 +590,11 @@ public abstract class VRGameHandler : CommonGameHandler
             {
                 if (Game1.displayHUD && Game1.activeClickableMenu == null)
                 {
-                    float dist = 4f;
-                    float scale = 3;
+                    float dist = 2.5f;
+                    float scale = 2;
                     float rat = uiScreen.Width / (float)uiScreen.Height;
                     Game1.graphics.GraphicsDevice.Clear(ClearOptions.DepthBuffer, Color.Black, 1, 0); // TODO: Could do this as an optional config...
-                    RenderHelper.DrawBillboard(Camera, uiScreen, Camera.Position + Camera.HeadsetRotation.Forward * dist, new Vector2(rat, 1) * scale, uiScreen.Bounds);
+                    RenderHelper.DrawBillboard(Camera, uiScreen, Camera.Position + Camera.Forward * dist, new Vector2(rat, 1) * scale, uiScreen.Bounds);
                 }
             }
 
@@ -558,8 +621,8 @@ public abstract class VRGameHandler : CommonGameHandler
                 RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + pointerOrientation.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), pointerOrientation.Left, upOverride: pointerOrientation.Forward);
                 RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + pointerOrientation.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), pointerOrientation.Right, upOverride: pointerOrientation.Forward);
             }
-            DrawHand(SecondaryPointerPosition, SecondaryPointerOrientation, Color.Red);
-            DrawHand(PrimaryPointerPosition, PrimaryPointerOrientation, Color.Blue);
+            DrawHand(Global_SecondaryPointerPosition, Global_SecondaryPointerOrientation, Color.Red);
+            DrawHand(Global_PrimaryPointerPosition, Global_PrimaryPointerOrientation, Color.Blue);
 
             if (ActiveEye.HasValue)
             {
@@ -580,7 +643,6 @@ public abstract class VRGameHandler : CommonGameHandler
 
         Camera.Position = Vector3.Zero;
         Camera.Position += Headset.CurrentPosition;
-        Camera.HeadsetRelativePosition = Headset.CurrentPosition;
         UpdateCameraPosition();
 
         Camera.HeadsetRotation = Headset.CurrentRotation;

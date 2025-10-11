@@ -14,6 +14,7 @@
                     "path": "/user/hand/right/pose/openxr_aim"
                 }
             ],
+            "skeleton": [],
             "sources": []
         },
         "/actions/menu": {
@@ -29,6 +30,16 @@
             ],
             "skeleton": [],
             "sources": [
+                {
+                    "inputs": {
+                        "click": {
+                            "output": "/actions/menu/in/left_click"
+                        }
+                    },
+                    "mode": "button",
+                    "parameters": {},
+                    "path": "/user/hand/right/input/trigger"
+                },
                 {
                     "inputs": {
                         "click": {
@@ -48,21 +59,25 @@
                     "mode": "joystick",
                     "parameters": {},
                     "path": "/user/hand/right/input/thumbstick"
-                },
+                }
+            ]
+        },
+        "/actions/world": {
+            "sources": [
                 {
                     "inputs": {
-                        "click": {
-                            "output": "/actions/menu/in/left_click"
+                        "position": {
+                            "output": "/actions/world/in/movement"
                         }
                     },
-                    "mode": "button",
+                    "mode": "joystick",
                     "parameters": {},
-                    "path": "/user/hand/right/input/trigger"
+                    "path": "/user/hand/left/input/joystick"
                 },
                 {
                     "inputs": {
                         "position": {
-                            "output": "/actions/menu/in/scroll"
+                            "output": "/actions/world/in/rotation"
                         }
                     },
                     "mode": "joystick",
@@ -76,7 +91,7 @@
     "controller_type": "oculus_touch",
     "description": "(auto-remapped from oculus_touch)",
     "interaction_profile": "",
-    "name": "My StardewModdingAPI configuration for Oculus Touch Controller",
+    "name": "Stardew VR (mod for Stardew Valley) configuration for Oculus Touch Controller",
     "options": {
         "simulate_hmd": true,
         "simulate_rendermodel": true,

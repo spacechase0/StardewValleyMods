@@ -13,9 +13,9 @@ using SpaceShared;
 using Stardew3D;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
+using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
-using Stardew3D.Rendering.Renderers;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
@@ -37,7 +37,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<ModelData, TMenu>, IUpdat
         GameHandler = handler;
 
         var basePosition = handler.Camera.Position;
-        BaseOrientation = (handler.Camera as Game.Camera).HeadsetRotation;
+        BaseOrientation = handler.Camera.ViewMatrix.NoTranslation();
 
         // TODO: Configurable distance for these menus
         DisplayPosition = basePosition + BaseOrientation.Forward * 5;
@@ -53,8 +53,8 @@ internal class GenericMenuHandler<TMenu> : RendererFor<ModelData, TMenu>, IUpdat
         BoundingBox display = new(new(-DisplaySize.X / 2, -DisplaySize.Y / 2, 0), new(DisplaySize.X / 2, DisplaySize.Y / 2, 0.05f));
 
         Matrix cursorTransform = Matrix.CreateTranslation(-DisplayPosition) * BaseOrientation.Invert();
-        Vector3 cursorPos = Vector3.Transform(GameHandler.PrimaryPointerPosition, cursorTransform);
-        Vector3 cursorDir = Vector3.TransformNormal(GameHandler.PrimaryPointerOrientation.Forward, cursorTransform);
+        Vector3 cursorPos = Vector3.Transform(GameHandler.Global_PrimaryPointerPosition, cursorTransform);
+        Vector3 cursorDir = Vector3.TransformNormal(GameHandler.Global_PrimaryPointerOrientation.Forward, cursorTransform);
         Ray cursor = new(cursorPos, cursorDir);
         var spot = cursor.Intersects(display);
         if (spot.HasValue)

@@ -15,7 +15,6 @@ using Stardew3D.Data;
 using Stardew3D.Handlers;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
-using Stardew3D.Rendering.Renderers;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
@@ -39,8 +38,12 @@ public abstract partial class CommonGameHandler : IGameHandler
     public abstract string[] Tags { get; }
 
     public abstract ICamera Camera { get; }
-    public abstract Matrix ProjectionMatrix { get; protected set; }
 
+    public RenderTarget2D CurrentTargetScreen { get => Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D; }
+    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location) => WorldRenderer.GetCurrentEnvironmentFor(location);
+    public Matrix GetCurrentTransformFor(GameLocation location) => WorldRenderer.GetCurrentTransformFor( location );
+
+    public abstract Matrix ProjectionMatrix { get; protected set; }
     protected WorldRenderer WorldRenderer { get; set; }
 
     public virtual void SwitchOn(IGameHandler previousHandler)

@@ -8,10 +8,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
+using Stardew3D.Rendering;
 using StardewValley.Mods;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Rendering.Renderers;
+namespace Stardew3D.Handlers.Render;
 public abstract class Renderer : IRenderHandler
 {
     public string QualifiedId { get; }
@@ -20,7 +21,7 @@ public abstract class Renderer : IRenderHandler
     public Renderer(string qualifiedId)
     {
         QualifiedId = qualifiedId;
-        BaseModelData = Stardew3D.Data.ModelData.Get(QualifiedId);
+        BaseModelData = ModelData.Get(QualifiedId);
     }
 
     public abstract void Render(RenderContext ctx);
