@@ -37,7 +37,7 @@ public class GenericObjectHandlerManager<TBaseType, THandlerInterface>
         List<THandlerInterface> ret = [null];
         for (Type check = menu.GetType(); check != typeof(TBaseType).BaseType; check = check.BaseType)
         {
-            if (handlers.TryGetValue(check, out var handlerData))
+            if (ret[0] == null && handlers.TryGetValue(check, out var handlerData))
             {
                 if (handlerData.allowsSubclasses || check == menu.GetType())
                 {

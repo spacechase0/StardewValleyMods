@@ -76,8 +76,16 @@ namespace Stardew3D
             State.GameHandlersFinalized += (s, e) =>
             {
                 State.SetRenderHandlerForGameHandlerTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
+                State.SetRenderHandlerForGameHandlerTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
                 State.SetRenderHandlerForGameHandlerTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
-                State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new GenericRenderer<ModelData, ResourceClump>($"({ModManifest.UniqueID}/ResourceClump){(obj as ResourceClump).parentSheetIndex.Value}", obj as ResourceClump));
+                State.SetRenderHandlerForGameHandlerTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>($"({ModManifest.UniqueID}/TerrainFeature){obj.GetType().Name}", obj as TerrainFeature));
+                State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
+                State.SetRenderHandlerForGameHandlerTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
+                //State.SetRenderHandlerForGameHandlerTags<FruitTree>([], handler => obj => new FruitTreeRenderer(obj as FruitTree));
+                //State.SetRenderHandlerForGameHandlerTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
+                State.SetRenderHandlerForGameHandlerTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
+                //State.SetRenderHandlerForGameHandlerTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
+                //State.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
             };
 
             var hooks = AccessTools.Field(typeof(Game1), "hooks");
@@ -531,7 +539,7 @@ namespace Stardew3D
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
                         SubModelPath = "/boulder/boulder1",
                     } },
-                    { $"({ModManifest.UniqueID}/ResourceClump)600", new()
+                    { $"({ModManifest.UniqueID}/ResourceClump)Maps/springobjects:600", new()
                     {
                         OtherModels =
                         [
@@ -557,7 +565,7 @@ namespace Stardew3D
                             },
                         ],
                     } },
-                    { $"({ModManifest.UniqueID}/ResourceClump)602", new()
+                    { $"({ModManifest.UniqueID}/ResourceClump)Maps/springobjects:602", new()
                     {
                         OtherModels =
                         [
@@ -583,7 +591,7 @@ namespace Stardew3D
                             },
                         ],
                     } },
-                    { $"({ModManifest.UniqueID}/ResourceClump)672", new()
+                    { $"({ModManifest.UniqueID}/ResourceClump)Maps/springobjects:672", new()
                     {
                         OtherModels =
                         [

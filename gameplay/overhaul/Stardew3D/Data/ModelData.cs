@@ -44,6 +44,7 @@ namespace Stardew3D.Data
 
         public static ModelData Get(string id)
         {
+            id = id.Replace('\\', '/');
             var dict = Game1.content.Load<Dictionary<string, ModelData>>($"{Mod.Instance.ModManifest.UniqueID}/Models");
             if (!Mod.Instance.ModelDataDict.TryGetValue(id, out var data))
                 return null;

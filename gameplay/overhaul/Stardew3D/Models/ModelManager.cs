@@ -41,6 +41,7 @@ public class ModelManager
 
     public ModelObject RequestModel(string id)
     {
+        id = id.Replace('\\', '/');
         if (!models.TryGetValue(id, out var model))
         {
             models.Add(id, model = new ModelObject(this, id));

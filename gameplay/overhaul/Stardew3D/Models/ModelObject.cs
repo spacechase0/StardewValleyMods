@@ -52,7 +52,7 @@ public class ModelObject
             if (cachedData != null)
                 return;
 
-            Mod.Instance.ModelDataDict.TryGetValue(Id, out cachedData);
+            cachedData = ModelData.Get(Id);
             if (cachedData == null)
             {
                 Log.Error($"No model data found for {Id}");

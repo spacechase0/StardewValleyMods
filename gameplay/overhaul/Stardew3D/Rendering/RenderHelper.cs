@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using StardewValley;
 
 namespace Stardew3D.Rendering;
@@ -20,7 +21,7 @@ public static class RenderHelper
 
     internal static VertexBuffer quadVbo;
 
-    public static void GenerateQuad(ICollection<SimpleVertex> toAddTo, Vector3 pos, Vector2 vp00, Vector2 vp10, Vector2 vp01, Vector2 vp11, float tx, float ty, float twidth, float theight, Vector3 facingDir, Color? col_ = null, Vector3? upOverride = null)
+    public static void GenerateQuad(ICollection<SimpleVertex> toAddTo, Vector3 pos, Vector2 vp00, Vector2 vp10, Vector2 vp01, Vector2 vp11, float tx, float ty, float twidth, float theight, Vector3 facingDir, Color? col_ = null, Vector3? upOverride = null, SpriteEffects texCoordEffect = SpriteEffects.None)
     {
         Color col = col_.HasValue ? col_.Value : Color.White;
 
@@ -43,6 +44,16 @@ public static class RenderHelper
         SimpleVertex v11 = new(new(vp11.X, vp11.Y, 0), new Vector2(tx, ty));
         SimpleVertex v01 = new(new(vp01.X, vp01.Y, 0), new Vector2(tx + twidth, ty));
         v00.Color = v10.Color = v11.Color = v01.Color = col;
+        if (texCoordEffect.HasFlag(SpriteEffects.FlipHorizontally))
+        {
+            Util.Swap(ref v00.TexCoord, ref v10.TexCoord);
+            Util.Swap(ref v01.TexCoord, ref v11.TexCoord);
+        }
+        if (texCoordEffect.HasFlag(SpriteEffects.FlipVertically))
+        {
+            Util.Swap(ref v00.TexCoord, ref v01.TexCoord);
+            Util.Swap(ref v10.TexCoord, ref v11.TexCoord);
+        }
 
         var transform = Matrix.CreateBillboard(pos, pos + facingDir, up, -facingDir);
         v00.Position = Vector3.Transform(v00.Position, transform);
@@ -58,24 +69,22 @@ public static class RenderHelper
         toAddTo.Add(v01);
     }
 
-    public static void GenerateQuad(ICollection<SimpleVertex> toAddTo, Vector3 pos, Vector2 displaySize, float tx, float ty, float twidth, float theight, Vector3 facingDir, Color? col_ = null, Vector3? upOverride = null)
+    public static void GenerateQuad(ICollection<SimpleVertex> toAddTo, Vector3 pos, Vector2 displaySize, float tx, float ty, float twidth, float theight, Vector3 facingDir, Color? col_ = null, Vector3? upOverride = null, SpriteEffects texCoordEffect = SpriteEffects.None)
     {
-        GenerateQuad(toAddTo, pos, new(-displaySize.X / 2, -displaySize.Y / 2), new(displaySize.X / 2, -displaySize.Y / 2), new(-displaySize.X / 2, displaySize.Y / 2), new(displaySize.X / 2, displaySize.Y / 2), tx, ty, twidth, theight, facingDir, col_, upOverride);
+        GenerateQuad(toAddTo, pos, new(-displaySize.X / 2, -displaySize.Y / 2), new(displaySize.X / 2, -displaySize.Y / 2), new(-displaySize.X / 2, displaySize.Y / 2), new(displaySize.X / 2, displaySize.Y / 2), tx, ty, twidth, theight, facingDir, col_, upOverride, texCoordEffect: texCoordEffect);
     }
 
-    public static void GenerateQuad(ICollection<SimpleVertex> toAddTo, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Vector3 facingDir, Color? col = null, Vector3? upOverride = null, Matrix? additionalTransform = null)
+    public static void GenerateQuad(ICollection<SimpleVertex> toAddTo, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Vector3 facingDir, Color? col = null, Vector3? upOverride = null, SpriteEffects texCoordEffect = SpriteEffects.None)
     {
-        Matrix additionalTransform_ = additionalTransform ?? Matrix.Identity;
-
         float tx = texCoords.X / (float)tex.Width;
         float ty = texCoords.Y / (float)tex.Height;
         float txi = texCoords.Width / (float)tex.Width;
         float tyi = texCoords.Height / (float)tex.Height;
 
-        GenerateQuad(toAddTo, pos, displaySize, tx, ty, txi, tyi, facingDir, col, upOverride);
+        GenerateQuad(toAddTo, pos, displaySize, tx, ty, txi, tyi, facingDir, col, upOverride, texCoordEffect: texCoordEffect);
     }
 
-    public static void DrawQuad(Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Vector3 facingDir, Color? col = null, Vector3? upOverride = null, Matrix? additionalTransform = null )
+    public static void DrawQuad(Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Vector3 facingDir, Color? col = null, Vector3? upOverride = null, Matrix? additionalTransform = null, SpriteEffects texCoordEffect = SpriteEffects.None)
     {
         Matrix additionalTransform_ = additionalTransform ?? Matrix.Identity;
 
@@ -85,7 +94,7 @@ public static class RenderHelper
         float tyi = texCoords.Height / (float)tex.Height;
 
         List<SimpleVertex> vertices = new(6);
-        GenerateQuad( vertices, pos, displaySize, tx, ty, txi, tyi, facingDir, col, upOverride );
+        GenerateQuad( vertices, pos, displaySize, tx, ty, txi, tyi, facingDir, col, upOverride, texCoordEffect: texCoordEffect );
         quadVbo.SetData(vertices.ToArray());
         Game1.graphics.GraphicsDevice.SetVertexBuffer(quadVbo);
 
@@ -101,14 +110,14 @@ public static class RenderHelper
         }
     }
 
-    public static void DrawBillboard(ICamera camera, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null)
+    public static void DrawBillboard(ICamera camera, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null, SpriteEffects texCoordEffect = SpriteEffects.None)
     {
-        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(camera.Position, additionalTransform?.Invert() ?? Matrix.Identity ) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(camera.Up, additionalTransform?.Invert() ?? Matrix.Identity), additionalTransform: additionalTransform);
+        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(camera.Position, additionalTransform?.Invert() ?? Matrix.Identity ) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(camera.Up, additionalTransform?.Invert() ?? Matrix.Identity), additionalTransform: additionalTransform, texCoordEffect: texCoordEffect);
     }
 
-    public static void DrawBillboard(Vector3 cameraPos, Vector3 cameraUp, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null)
+    public static void DrawBillboard(Vector3 cameraPos, Vector3 cameraUp, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null, SpriteEffects texCoordEffect = SpriteEffects.None)
     {
-        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(cameraPos, additionalTransform?.Invert() ?? Matrix.Identity) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(cameraUp, additionalTransform?.Invert() ?? Matrix.Identity), additionalTransform: additionalTransform);
+        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(cameraPos, additionalTransform?.Invert() ?? Matrix.Identity) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(cameraUp, additionalTransform?.Invert() ?? Matrix.Identity), additionalTransform: additionalTransform, texCoordEffect: texCoordEffect);
     }
 
     public static void DebugRenderGrid()
