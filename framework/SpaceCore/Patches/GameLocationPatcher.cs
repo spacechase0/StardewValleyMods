@@ -164,10 +164,9 @@ namespace SpaceCore.Patches
                 Game1.player.Money = Math.Max(0, Game1.player.Money - 10000);
                 for (int i = 0; i < skill.Professions.Count; i++)
                 {
-                    if (Game1.player.professions.Contains(skill.Professions[i].GetVanillaId()))
+                    if (Game1.player.professions.Remove(skill.Professions[i].GetVanillaId()))
                     {
                         skill.Professions[i].UndoImmediateProfessionPerk();
-                        Game1.player.professions.Remove(skill.Professions[i].GetVanillaId());
                     }
                 }
                 Game1.drawObjectDialogue(Game1.content.LoadString("Strings\\Locations:Sewer_DogStatueFinished"));
