@@ -88,7 +88,7 @@ namespace JsonAssets.Data
                     ObjectCategory.Crafting => "Crafting",
                     ObjectCategory.Fish => "Fish",
                     ObjectCategory.Seeds => "Seeds",
-                    ObjectCategory.Mineral => "Mineral",
+                    ObjectCategory.Mineral => "Minerals",
                     ObjectCategory.Artifact => "Arch",
                     ObjectCategory.Ring => "Ring",
                     _ => "Basic",
