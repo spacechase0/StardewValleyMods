@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HarmonyLib;
 using StardewValley;
 using StardewValley.Menus;
+using static SpaceCore.Skills;
 
 namespace SpaceCore.VanillaAssetExpansion
 {
@@ -20,13 +17,7 @@ namespace SpaceCore.VanillaAssetExpansion
             if (__instance is Skills.SkillBuff)
                 return;
 
-            if (__instance.customFields == null)
-                return;
-
-            if (__instance.customFields.Any(b => b.Key.StartsWith("spacechase.SpaceCore.SkillBuff.") ||
-                                                 b.Key.StartsWith("spacechase0.SpaceCore.SkillBuff.") ||
-                                                 b.Key.StartsWith("spacechase0.SpaceCore/HealthRegeneration") ||
-                                                 b.Key.StartsWith("spacechase0.SpaceCore/StaminaRegeneration")))
+            if (SkillBuff.TryGetAdditionalBuffEffects(__instance.customFields, out var _, out float _, out float _))
             {
                 Game1.player.applyBuff(new Skills.SkillBuff(__instance, __instance.id, __instance.customFields));
             }
@@ -77,22 +68,13 @@ namespace SpaceCore.VanillaAssetExpansion
 
             if (!DataLoader.Buffs(Game1.content).TryGetValue(buff.id, out var buffData))
                 return;
-            if (buffData.CustomFields == null)
-                return;
 
-            if (buffData.CustomFields.TryGetValue("spacechase0.SpaceCore/HealthRegeneration", out string valStr))
+            if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var _, out float health, out float stamina))
             {
-                if (float.TryParse(valStr, out float val))
-                {
-                    buff.description += (val >= 0 ? "+" : "") + val + " " + I18n.HealthRegen();
-                }
-            }
-            if (buffData.CustomFields.TryGetValue("spacechase0.SpaceCore/StaminaRegeneration", out valStr))
-            {
-                if (float.TryParse(valStr, out float val))
-                {
-                    buff.description += (val >= 0 ? "+" : "") + val + " " + I18n.StaminaRegen();
-                }
+                if (health != 0)
+                    buff.description += SkillBuff.FormattedBuffEffect(health, I18n.HealthRegen());
+                if (stamina != 0)
+                    buff.description += SkillBuff.FormattedBuffEffect(stamina, I18n.StaminaRegen());
             }
         }
 
