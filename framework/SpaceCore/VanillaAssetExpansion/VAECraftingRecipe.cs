@@ -47,7 +47,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
         public VAECraftingRecipe.IngredientData Data => data;
 
-        public override string DispayName => data.OverrideText ?? ItemRegistry.GetDataOrErrorItem(data.Value).DisplayName;
+        public override string DisplayName => data.OverrideText ?? ItemRegistry.GetDataOrErrorItem(data.Value).DisplayName;
 
         public override Texture2D IconTexture => data.OverrideTexturePath != null ? Game1.content.Load<Texture2D>(data.OverrideTexturePath) : ItemRegistry.GetDataOrErrorItem(data.Value).GetTexture();
 
@@ -110,18 +110,18 @@ namespace SpaceCore.VanillaAssetExpansion
             return items.Sum(i => Matches(i) ? i.Stack : 0);
         }
 
-        private bool Matches(Item i)
+        public override bool Matches(Item item)
         {
-            if (i == null)
+            if (item == null)
                 return false;
 
             switch (data.Type)
             {
                 case VAECraftingRecipe.IngredientData.IngredientType.Item:
-                    return i.QualifiedItemId == data.Value;
+                    return item.QualifiedItemId == data.Value;
                 case VAECraftingRecipe.IngredientData.IngredientType.ContextTag:
                     var tags = data.Value.Split(',').Select(s => s.Trim());
-                    return data.ContextTagsRequireAll ? tags.All(s => i.HasContextTag(s)) : tags.Any(s => i.HasContextTag(s));
+                    return data.ContextTagsRequireAll ? tags.All(s => item.HasContextTag(s)) : tags.Any(s => item.HasContextTag(s));
             }
 
             return false;
@@ -145,26 +145,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
         public VAECraftingRecipe Data => data;
 
-        public override string Description
-        {
-            get
-            {
-                Dictionary<string, string> dict = CraftingRecipe.craftingRecipes;
-                int ind = CraftingRecipe.index_craftingDisplayName;
-                if (cooking)
-                {
-                    dict = CraftingRecipe.cookingRecipes;
-                    ind = CraftingRecipe.index_cookingDisplayName;
-                }
-
-                string[] split = dict[id].Split('/');
-                if (ind < split.Length)
-                    return split[ind];
-
-                // Why are we using displayname here? I dunno, the old code returned the display name...
-                return ItemRegistry.GetDataOrErrorItem(data.ProductQualifiedId).DisplayName;
-            }
-        }
+        public override string Description => ItemRegistry.GetDataOrErrorItem(data.ProductQualifiedId).Description ?? string.Empty;
 
         public override Texture2D IconTexture => ItemRegistry.GetDataOrErrorItem(data.ProductQualifiedId).GetTexture();
 
