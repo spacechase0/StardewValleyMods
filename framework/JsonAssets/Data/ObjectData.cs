@@ -82,7 +82,17 @@ namespace JsonAssets.Data
                 Name = this.Name,
                 DisplayName = this.LocalizedName(),
                 Description = this.LocalizedDescription(),
-                Type = Category == ObjectCategory.Artifact ? "Arch" : (Category == ObjectCategory.Ring ? "Ring" : "Basic"),
+                Type = Category switch
+                {
+                    ObjectCategory.Cooking => "Cooking",
+                    ObjectCategory.Crafting => "Crafting",
+                    ObjectCategory.Fish => "Fish",
+                    ObjectCategory.Seeds => "Seeds",
+                    ObjectCategory.Mineral => "Minerals",
+                    ObjectCategory.Artifact => "Arch",
+                    ObjectCategory.Ring => "Ring",
+                    _ => "Basic",
+                },
                 Category = (int)this.Category,
                 Price = Price,
                 Texture = $"JA\\Object\\{Name.FixIdJA("O")}",
