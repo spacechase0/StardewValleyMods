@@ -6,7 +6,7 @@
     <Name>Experience Bars</Name>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>Shows experience bars in the top-left corner.</Description>
-    <Version>1.4.5</Version>
+    <Version>1.4.6</Version>
     <UpdateKeys>Nexus:509</UpdateKeys>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
