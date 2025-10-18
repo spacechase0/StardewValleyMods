@@ -161,7 +161,6 @@ namespace SpaceCore.Patches
 
                 Game1.player.Money = Math.Max(0, Game1.player.Money - 10000);
 
-                Game1.player.Money = Math.Max(0, Game1.player.Money - 10000);
                 for (int i = 0; i < skill.Professions.Count; i++)
                 {
                     skill.Professions[i].UndoImmediateProfessionPerk();
