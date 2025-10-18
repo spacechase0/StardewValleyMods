@@ -17,7 +17,11 @@ namespace ExperienceBars
 {
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static readonly int[] ExpNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
+        // Vanilla game only supports levels 1-10
+        public static readonly int[] VanillaExpNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
+        
+        // VPP (Vanilla Plus Professions) extends to level 20
+        public static readonly int[] VppExpNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000, 21000, 28000, 36000, 45000, 55000, 66000, 78000, 91000, 105000, 120000 };
 
         public static Configuration Config;
         private static readonly Color DefaultBarForeground = new(150, 150, 150);
@@ -26,6 +30,7 @@ namespace ExperienceBars
         public static int ExpBottom;
         public static bool Show = true;
         private static bool StopLevelExtenderCompat;
+        private static bool IsVppInstalled = false;
 
         private const int BarWidth = 102;
         private const int BarHeight = 10;
@@ -38,6 +43,9 @@ namespace ExperienceBars
             I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             Mod.Config = helper.ReadConfig<Configuration>();
+
+            // Check if VPP is installed using the correct UniqueID
+            IsVppInstalled = helper.ModRegistry.IsLoaded("KediDili.VanillaPlusProfessions");
 
             helper.Events.GameLoop.GameLaunched += this.OnGameLaunched;
             helper.Events.Display.RenderedHud += this.OnRenderedHud;
@@ -140,7 +148,7 @@ namespace ExperienceBars
                         if (skills[i] < extLevels[i])
                             continue;
                         skills[i] = extLevels[i];
-                        exp[i] = skills[i] < 10 ? exp[i] : extExp[i];
+                        exp[i] = skills[i] < 20 ? exp[i] : extExp[i];
                     }
                     foundLevelExtender = true;
                 }
@@ -158,14 +166,17 @@ namespace ExperienceBars
             for (int i = 0; i < (Mod.RenderLuck ? 6 : 5); ++i)
             {
                 int prevReq = 0, nextReq = 1;
+                int maxVanillaLevel = IsVppInstalled ? 20 : 10;
+                var expTable = IsVppInstalled ? VppExpNeededForLevel : VanillaExpNeededForLevel;
+                
                 if (skills[i] == 0)
                 {
-                    nextReq = Mod.ExpNeededForLevel[0];
+                    nextReq = expTable[0];
                 }
-                else if (skills[i] < 10)
+                else if (skills[i] < maxVanillaLevel)
                 {
-                    prevReq = Mod.ExpNeededForLevel[skills[i] - 1];
-                    nextReq = Mod.ExpNeededForLevel[skills[i]];
+                    prevReq = expTable[skills[i] - 1];
+                    nextReq = expTable[skills[i]];
                 }
                 else if (foundLevelExtender)
                 {
@@ -176,7 +187,7 @@ namespace ExperienceBars
                 int haveExp = exp[i] - prevReq;
                 int needExp = nextReq - prevReq;
                 float progress = (float)haveExp / needExp;
-                if (skills[i] == 10 && !foundLevelExtender || skills[i] == 100)
+                if (skills[i] == maxVanillaLevel && !foundLevelExtender || skills[i] == 100)
                 {
                     progress = -1;
                 }
@@ -290,8 +301,6 @@ namespace ExperienceBars
                     };
                     background = Color.Multiply(background, colorMultiply);
                     foreground = Color.Multiply(foreground, colorMultiply);
-
-
 
                     emptyColors[x + y * Mod.BarWidth] = background;
                     fillColors[x + y * Mod.BarWidth] = foreground;
