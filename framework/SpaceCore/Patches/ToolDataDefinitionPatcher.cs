@@ -42,6 +42,10 @@ namespace SpaceCore.Patches
             if (tool is not ErrorTool)
                 return tool;
 
+            // no tool data (i.e. GenericTool)
+            if (toolData is null)
+                return tool;
+
             // try to find a registered type matching provided type name
             Type type = SpaceCore.ModTypes.Where(t => t.AssemblyQualifiedName == toolData.ClassName).FirstOrDefault();
 
