@@ -26,8 +26,8 @@ public class ModelObject
     private ModelRoot cachedModel = null;
 
     private List<Node> matches = new();
-    private List<List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)>> bakedMatches = new();
-    public IReadOnlyList<List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)>> Matches => bakedMatches;
+    private List<Dictionary<string, List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)>>> bakedMatches = new();
+    public IReadOnlyList<Dictionary<string, List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)>>> Matches => bakedMatches;
 
     internal ModelObject( ModelManager manager, string id )
     {
@@ -108,25 +108,25 @@ public class ModelObject
                 foreach (var entry in matches)
                 {
                     var inverseEntry = entry.WorldMatrix.ToMonogame().Invert();
-                    List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)> results = new();
+                    Dictionary<string, List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)>> allResults = new();
 
                     void GetAllMeshes(IEnumerable<Node> nodes)
                     {
                         foreach (var node in nodes)
                         {
+                            string name = "";
+                            for (var nodeCheck = node; nodeCheck != null && nodeCheck != null; nodeCheck = nodeCheck.VisualParent)
+                            {
+                                if (nodeCheck.Name == null && nodeCheck.VisualParent == null)
+                                    break;
+
+                                name = $"/{nodeCheck.Name ?? "null"}" + name;
+                            }
+
+                            List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)> results = new();
                             if (node.Mesh != null)
                             {
-                                bool forceTransparent = false;
-                                string name = "";
-                                for (var nodeCheck = node; nodeCheck != null && nodeCheck != null; nodeCheck = nodeCheck.VisualParent)
-                                {
-                                    if (nodeCheck.Name == null && nodeCheck.VisualParent == null)
-                                        break;
-
-                                    name = $"/{nodeCheck.Name ?? "null"}" + name;
-                                }
-                                if (cachedData.ForceTransparency.Any(s => name.StartsWith(s)))
-                                    forceTransparent = true;
+                                bool forceTransparent = cachedData.ForceTransparency.Any(s => name.StartsWith(s));
 
                                 var meshes = Manager.gltfFactory.ReadMeshContent([node.Mesh]);
                                 if (meshes.Meshes.Meshes.SelectMany(m => m.Parts).Count() == 0) continue; // No clue why I get an empty mesh as a child of a mesh which has no children pre-export
@@ -144,12 +144,14 @@ public class ModelObject
                                     results.Add(new(mesh, inverseEntry * node.WorldMatrix.ToMonogame() * matrixTransform));
                                 }
                             }
+                            allResults.Add(name, results);
+
                             GetAllMeshes(node.VisualChildren);
                         }
                     }
 
                     GetAllMeshes([entry]);
-                    bakedMatches.Add(results);
+                    bakedMatches.Add(allResults);
                 }
             }
 
@@ -165,12 +167,15 @@ public class ModelObject
                     var model = Manager.RequestModel(entry.ModelId);
                     foreach (var match in model.Matches)
                     {
-                        List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)> results = new();
-                        foreach (var submodel in match)
+                        foreach (var matchEntry in match)
                         {
-                            results.Add(new(submodel.Mesh, submodel.Transform * mat));
+                            List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)> results = new();
+                            foreach (var submodel in matchEntry.Value)
+                            {
+                                results.Add(new(submodel.Mesh, submodel.Transform * mat));
+                            }
+                            bakedMatches.Add(new() { { $"{entry.ModelId}/{matchEntry.Key}", results } });
                         }
-                        bakedMatches.Add(results);
                     }
                 }
                 finally
@@ -181,35 +186,38 @@ public class ModelObject
 
             foreach (var entry in bakedMatches)
             {
-                foreach (var mesh in entry)
+                foreach (var matchEntry in entry)
                 {
-                    // These aren't up to date if we manually changed stuff earlier.
-                    mesh.Mesh._OpaquePrimitives = null;
-                    mesh.Mesh._TranslucidPrimitives = null;
-
-                    for (int i = 0; i < mesh.Mesh.Count; ++i)
+                    foreach (var mesh in matchEntry.Value)
                     {
-                        var part = mesh.Mesh[i];
+                        // These aren't up to date if we manually changed stuff earlier.
+                        mesh.Mesh._OpaquePrimitives = null;
+                        mesh.Mesh._TranslucidPrimitives = null;
 
-                        var newEffect = Mod.State.GenericModelEffect.Clone() as GenericModelEffect;
-                        newEffect.CurrentTechnique = newEffect.Techniques["SingleDrawing"];
-                        switch (part.Effect)
+                        for (int i = 0; i < mesh.Mesh.Count; ++i)
                         {
-                            case GenericModelEffect effect:
-                                newEffect.Texture = effect.Texture;
-                                break;
-                            case BasicEffect effect:
-                                newEffect.Texture = effect.Texture;
-                                break;
-                            case AlphaTestEffect effect:
-                                newEffect.Texture = effect.Texture;
-                                break;
-                            case SkinnedEffect effect:
-                                newEffect.Texture = effect.Texture;
-                                break;
-                        }
+                            var part = mesh.Mesh[i];
 
-                        part.Effect = newEffect;
+                            var newEffect = Mod.State.GenericModelEffect.Clone() as GenericModelEffect;
+                            newEffect.CurrentTechnique = newEffect.Techniques["SingleDrawing"];
+                            switch (part.Effect)
+                            {
+                                case GenericModelEffect effect:
+                                    newEffect.Texture = effect.Texture;
+                                    break;
+                                case BasicEffect effect:
+                                    newEffect.Texture = effect.Texture;
+                                    break;
+                                case AlphaTestEffect effect:
+                                    newEffect.Texture = effect.Texture;
+                                    break;
+                                case SkinnedEffect effect:
+                                    newEffect.Texture = effect.Texture;
+                                    break;
+                            }
+
+                            part.Effect = newEffect;
+                        }
                     }
                 }
             }
@@ -245,9 +253,12 @@ public class ModelObject
         whichMatch %= Matches.Count;
 
         List<int> forThis = new();
-        foreach (var mesh in Matches[whichMatch])
+        foreach (var entry in Matches[whichMatch])
         {
-            forThis.Add(batch.AddInstanced(mesh.Mesh, mesh.Transform * transform, color.Value));
+            foreach (var matchEntry in entry.Value)
+            {
+                forThis.Add(batch.AddInstanced(matchEntry.Mesh, matchEntry.Transform * transform, color.Value));
+            }
         }
         return forThis.ToArray();
     }
@@ -257,9 +268,14 @@ public class ModelObject
         color ??= Color.White;
         whichMatch %= Matches.Count;
 
-        for ( int i = 0; i < instances.Length; ++i )
+        int i = 0;
+        foreach (var entry in Matches[whichMatch])
         {
-            batch.UpdateInstanced(instances[i], Matches[whichMatch][i].Transform * transform, color.Value);
+            foreach (var matchEntry in entry.Value)
+            {
+                batch.UpdateInstanced(instances[i], matchEntry.Transform * transform, color.Value);
+                ++i;
+            }
         }
     }
 }

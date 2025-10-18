@@ -86,6 +86,7 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
                         Indices = new(Game1.graphics.GraphicsDevice, IndexElementSize.SixteenBits, vertices.Count, BufferUsage.WriteOnly),
                         Effect = Mod.State.GenericModelEffect.Clone(),
                         Blend = BlendState.AlphaBlend,
+                        Rasterizer = RasterizerState.CullNone,
                     };
                     data.Vertices.SetData(vertices.ToArray());
                     data.Indices.SetData(Enumerable.Range(0, vertices.Count).Select(i => (short)i).ToArray());
@@ -111,7 +112,12 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
                 if (!Parent.Placeholders[ip].DisplayCondition())
                     continue;
 
-                Batch.UpdateInstanced(Instances[ip], Matrix.CreateConstrainedBillboard(Vector3.Zero, lastCamera.Position - ctx.WorldTransform.Translation, Vector3.Up, lastCamera.Forward, Vector3.Forward) * ctx.WorldTransform, Parent.Placeholders[ip].Color);
+                Matrix billboard = Matrix.Identity;
+                if (ctx.CanBillboard)
+                {
+                    billboard *= Matrix.CreateConstrainedBillboard(Vector3.Zero, lastCamera.Position - ctx.WorldTransform.Translation, Vector3.Up, lastCamera.Forward, Vector3.Forward);
+                }
+                Batch.UpdateInstanced(Instances[ip], billboard * ctx.WorldTransform, Parent.Placeholders[ip].Color);
             }
         }
     }

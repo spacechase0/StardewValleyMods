@@ -598,32 +598,6 @@ public abstract class VRGameHandler : CommonGameHandler
                 }
             }
 
-            void DrawHand(Vector3 pointerPosition, Matrix pointerOrientation, Color col)
-            {
-                var handSize = 0.125f / 4;
-                Color colFront = col, colSide = col, colBack = col;
-                colSide.R = (byte)(colSide.R * 0.75f);
-                colSide.G = (byte)(colSide.G * 0.75f);
-                colSide.B = (byte)(colSide.B * 0.75f);
-                colBack.R = (byte)(colBack.R * 0.5f);
-                colBack.G = (byte)(colBack.G * 0.5f);
-                colBack.B = (byte)(colBack.B * 0.5f);
-
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Right * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Right, pointerOrientation), colSide, Vector3.Transform(Vector3.Up, pointerOrientation));
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Left * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Left, pointerOrientation), colSide, Vector3.Transform(Vector3.Up, pointerOrientation));
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Up * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Up, pointerOrientation), colSide, Vector3.Transform(Vector3.Forward, pointerOrientation));
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Down * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Down, pointerOrientation), colSide, Vector3.Transform(Vector3.Backward, pointerOrientation));
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Forward * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Forward, pointerOrientation), colFront, Vector3.Transform(Vector3.Up, pointerOrientation));
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + Vector3.Transform(Vector3.Backward * handSize / 2, pointerOrientation), Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Transform(Vector3.Backward, pointerOrientation), colBack, Vector3.Transform(Vector3.Up, pointerOrientation));
-
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + pointerOrientation.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), pointerOrientation.Up, upOverride: pointerOrientation.Forward);
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + pointerOrientation.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), pointerOrientation.Down, upOverride: pointerOrientation.Forward);
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + pointerOrientation.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), pointerOrientation.Left, upOverride: pointerOrientation.Forward);
-                RenderHelper.DrawQuad(Game1.staminaRect, pointerPosition + pointerOrientation.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), pointerOrientation.Right, upOverride: pointerOrientation.Forward);
-            }
-            DrawHand(Global_SecondaryPointerPosition, Global_SecondaryPointerOrientation, Color.Red);
-            DrawHand(Global_PrimaryPointerPosition, Global_PrimaryPointerOrientation, Color.Blue);
-
             if (ActiveEye.HasValue)
             {
                 Game1.viewport = oldViewport;

@@ -14,17 +14,19 @@ public class ItemRenderer<TData, TItem> : RendererWithPlaceholder<TData, TItem>
     where TData : ModelData
     where TItem : Item
 {
-    public override PlaceholderData[] Placeholders =>
-    [
-        new()
-        {
-            Texture = ItemRegistry.GetDataOrErrorItem(Object.QualifiedItemId).GetTexture(),
-            TextureRegion = ItemRegistry.GetDataOrErrorItem(Object.QualifiedItemId).GetSourceRect()
-        }
-    ];
+    private PlaceholderData[] placeholders;
+    public override PlaceholderData[] Placeholders => placeholders;
 
     public ItemRenderer(TItem item)
         : base(item.QualifiedItemId, item)
     {
+        placeholders =
+        [
+            new()
+            {
+                Texture = ItemRegistry.GetDataOrErrorItem(Object.QualifiedItemId).GetTexture(),
+                TextureRegion = ItemRegistry.GetDataOrErrorItem(Object.QualifiedItemId).GetSourceRect()
+            }
+        ];
     }
 }

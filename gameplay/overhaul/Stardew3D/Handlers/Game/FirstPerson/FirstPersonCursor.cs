@@ -13,8 +13,8 @@ public class FirstPersonCursor : IFirstPersonCursor
     public FirstPersonGameHandler GameHandler { get; }
 
     public Vector3 Position => GameHandler.Camera.Position;
-
     public Vector3 Facing => GameHandler.Camera.Forward;
+    public Vector3 Up => GameHandler.Camera.Up;
 
     public Item Holding => Game1.player.CurrentItem;
 

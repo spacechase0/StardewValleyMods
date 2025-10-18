@@ -14,30 +14,31 @@ internal class FirstPersonVRCursor : IFirstPersonCursor
 {
     private Func<Vector3> positionFunc;
     private Func<Vector3> facingFunc;
-    private Func<Item> holdingFunc;
+    private Func<Vector3> upFunc;
     private Func<bool> menuLeftClick;
     private Func<bool> menuRightClick;
     private Func<Vector2> menuScroll;
 
-    public Vector3 Position => positionFunc();
+    private Func<Item> holdingFunc;
 
+    public Vector3 Position => positionFunc();
     public Vector3 Facing => facingFunc();
+    public Vector3 Up => upFunc();
+
+    public bool MenuLeftClick => menuLeftClick();
+    public bool MenuRightClick => menuRightClick();
+    public Vector2 MenuScroll => menuScroll();
 
     public Item Holding => holdingFunc();
 
-    public bool MenuLeftClick => menuLeftClick();
-
-    public bool MenuRightClick => menuRightClick();
-
-    public Vector2 MenuScroll => menuScroll();
-
-    public FirstPersonVRCursor(Func<Vector3> positionFunc, Func<Vector3> facingFunc, Func<Item> holdingFunc, Func<bool> menuLeftClick, Func<bool> menuRightClick, Func<Vector2> menuScroll)
+    public FirstPersonVRCursor(Func<Vector3> positionFunc, Func<Vector3> facingFunc, Func<Vector3> upFunc, Func<bool> menuLeftClick, Func<bool> menuRightClick, Func<Vector2> menuScroll, Func<Item> holdingFunc)
     {
         this.positionFunc = positionFunc;
         this.facingFunc = facingFunc;
-        this.holdingFunc = holdingFunc;
+        this.upFunc = upFunc;
         this.menuLeftClick = menuLeftClick;
         this.menuRightClick = menuRightClick;
         this.menuScroll = menuScroll;
+        this.holdingFunc = holdingFunc;
     }
 }

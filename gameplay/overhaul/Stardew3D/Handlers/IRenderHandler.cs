@@ -22,7 +22,9 @@ public interface IRenderHandler
         public PBREnvironment WorldEnvironment;
         public ICamera WorldCamera;
         public Matrix WorldTransform;
+        public bool CanBillboard = true;
 
+        public bool Reset = false;
         public Action<RenderContext> ForceRenderIfNotAlreadyRun = static (_) => { };
 
         public RenderContext()

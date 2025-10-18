@@ -57,7 +57,7 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
 
     public override void Render(RenderContext ctx)
     {
-        if (Game1.GetKeyboardState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Delete))
+        if (ctx.Reset || Game1.GetKeyboardState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Delete))
         {
             dirty = true;
         }

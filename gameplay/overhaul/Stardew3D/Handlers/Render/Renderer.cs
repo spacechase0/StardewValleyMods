@@ -44,6 +44,9 @@ public class RendererFor<TData, TObject> : Renderer
 
     public override void Render(RenderContext ctx)
     {
+        if (ctx.Reset)
+            renderData.Clear();
+
         RenderDataBase data = renderData.GetValue(ctx.WorldBatch, key => CreateInitialRenderData(ctx));
         data.Update(ctx);
     }

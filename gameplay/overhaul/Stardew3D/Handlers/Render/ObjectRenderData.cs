@@ -42,6 +42,18 @@ public class ObjectRenderData : RenderDataWithPlaceholder<ModelData, StardewVall
 
     public override void Update(RenderContext ctx)
     {
+        if (Parent.Object.Location == null)
+        {
+            if (Model.Matches.Count == 0)
+            {
+                ctx.WorldTransform = Matrix.CreateScale(1f / 8) * ctx.WorldTransform;
+            }
+            else
+            {
+                ctx.WorldTransform = Matrix.CreateTranslation(0.10f, 0.40f, 0.0f) * ctx.WorldTransform;
+            }
+        }
+
         base.Update(ctx);
 
         if (nonInstanced != -1)

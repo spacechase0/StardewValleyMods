@@ -54,6 +54,7 @@ public class RenderBatcher : IDisposable
         public IndexBuffer Indices { get; set; }
         public Effect Effect { get; set; }
         public BlendState Blend { get; set; } = BlendState.Opaque;
+        public RasterizerState Rasterizer { get; set; } = RasterizerState.CullClockwise;
 
         public void Dispose()
         {
@@ -217,7 +218,7 @@ public class RenderBatcher : IDisposable
                 graphics.BlendState = entry.Blend;
                 graphics.SetVertexBuffers(new(entry.Vertices), new(instanceVbo, 0, 1));
                 graphics.Indices = entry.Indices;
-                graphics.RasterizerState = RenderHelper.RasterizerState;
+                graphics.RasterizerState = entry.Rasterizer;
                 foreach (var pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();

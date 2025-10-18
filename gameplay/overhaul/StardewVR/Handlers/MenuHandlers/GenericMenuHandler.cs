@@ -37,7 +37,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<ModelData, TMenu>, IUpdat
         GameHandler = handler;
 
         var basePosition = handler.Camera.Position;
-        BaseOrientation = handler.Camera.ViewMatrix.NoTranslation();
+        BaseOrientation = handler.Camera.ViewMatrix.NoTranslation().Invert();
 
         // TODO: Configurable distance for these menus
         DisplayPosition = basePosition + BaseOrientation.Forward * 5;

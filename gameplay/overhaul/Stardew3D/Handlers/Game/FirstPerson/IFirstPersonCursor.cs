@@ -12,6 +12,7 @@ public interface IFirstPersonCursor
 {
     public Vector3 Position { get; }
     public Vector3 Facing { get; }
+    public Vector3 Up { get; }
 
     public Item Holding { get; }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,6 +25,7 @@ using StardewVR.Hardware;
 using Valve.VR;
 using static OpenVR.NET.Devices.VrDevice;
 using static Stardew3D.Handlers.Game.IGameHandler;
+using static Stardew3D.Handlers.IRenderHandler;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
@@ -61,10 +61,12 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
     {
         cursors =
         [
-            new FirstPersonVRCursor(() => Global_PrimaryPointerPosition, () => Global_PrimaryPointerOrientation.Forward, () => Game1.player.ActiveItem,
-                                    () => Menu_Primary_LeftClick, () => Menu_Primary_RightClick, () => Menu_Primary_CurrentScroll),
-            new FirstPersonVRCursor(() => Global_SecondaryPointerPosition, () => Global_SecondaryPointerOrientation.Forward, () => null,
-                                    () => Menu_Primary_LeftClick, () => Menu_Primary_RightClick, () => Menu_Secondary_CurrentScroll),
+            new FirstPersonVRCursor(() => Global_PrimaryPointerPosition, () => Global_PrimaryPointerOrientation.Forward, () => Global_PrimaryPointerOrientation.Up,
+                                    () => Menu_Primary_LeftClick, () => Menu_Primary_RightClick, () => Menu_Primary_CurrentScroll,
+                                    () => Game1.player.ActiveItem),
+            new FirstPersonVRCursor(() => Global_SecondaryPointerPosition, () => Global_SecondaryPointerOrientation.Forward, () => Global_SecondaryPointerOrientation.Up,
+                                    () => Menu_Secondary_LeftClick, () => Menu_Secondary_RightClick, () => Menu_Secondary_CurrentScroll,
+                                    () => null),
         ];
     }
 
@@ -118,6 +120,96 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
     {
         base.AfterUpdate();
         lastHeadsetPosition = Headset.CurrentPosition;
+    }
+
+    private RenderBatcher extraBatch = new(Game1.graphics.GraphicsDevice);
+    public override bool AfterRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen)
+    {
+        var handSize = 0.125f / 4;
+
+        if (ActiveEye.HasValue && step == RenderSteps.FullScene)
+        {
+            extraBatch.ClearData();
+
+            IEnumerable<Color> cols = [Color.Blue, Color.Red];
+            IEnumerator<Color> colIt = cols.GetEnumerator();
+            foreach (var cursor_ in Cursors)
+            {
+                var cursor = cursor_;
+                colIt.MoveNext();
+                var cursorTransform = Matrix.Identity;
+                cursorTransform.Translation = cursor.Position;
+                cursorTransform.Forward = cursor.Facing;
+                cursorTransform.Up = cursor.Up;
+                cursorTransform.Right = Vector3.Cross(cursor.Facing, cursor.Up);
+                //cursorTransform = Matrix.CreateBillboard(cursor.Position, cursor.Position + cursor.Facing, -cursor.Facing, cursor.Up);
+                Matrix pointerOrientation = cursorTransform.NoTranslation();
+
+                extraBatch.AddNonInstanced((env, col, world, view, proj) =>
+                {
+                    Color colFront = col, colSide = col, colBack = col;
+                    colSide.R = (byte)(colSide.R * 0.75f);
+                    colSide.G = (byte)(colSide.G * 0.75f);
+                    colSide.B = (byte)(colSide.B * 0.75f);
+                    colBack.R = (byte)(colBack.R * 0.5f);
+                    colBack.G = (byte)(colBack.G * 0.5f);
+                    colBack.B = (byte)(colBack.B * 0.5f);
+
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Right * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Right, colSide, Vector3.Up, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Left * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Left, colSide, Vector3.Up, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Up * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Up, colSide, Vector3.Forward, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Down * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Down, colSide, Vector3.Backward, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Forward, colFront, Vector3.Up, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Backward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Backward, colBack, Vector3.Up, additionalTransform: world);
+
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Up, upOverride: Vector3.Forward, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Down, upOverride: Vector3.Forward, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Left, upOverride: Vector3.Forward, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Right, upOverride: Vector3.Forward, additionalTransform: world);
+                }, cursorTransform, colIt.Current);
+
+                if (cursor.Holding != null)
+                {
+                    // TODO: Move these over to a farmer addon renderer
+
+                    var renderers = Stardew3D.Mod.State.GetRenderHandlersFor(cursor.Holding);
+                    foreach (var renderer in renderers)
+                    {
+                        renderer?.Render(new()
+                        {
+                            Time = Game1.currentGameTime,
+
+                            MenuSpriteBatch = sb,
+
+                            WorldBatch = extraBatch,
+                            WorldEnvironment = WorldRenderer.CurrentEnvironment,
+                            WorldCamera = Camera,
+                            WorldTransform = Matrix.CreateScale(1f / 8)
+                                * Matrix.CreateFromQuaternion // Was getting a gimbal lock otherwise
+                                (
+                                      Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationX(MathHelper.ToRadians(45)))
+                                    * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(MathHelper.ToRadians(-90)))
+                                    * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationZ(MathHelper.ToRadians(0)))
+                                )
+                                * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, -0.045f))
+                                //* Matrix.CreateRotationX(MathHelper.ToRadians(90))
+                                //* Matrix.CreateRotationY(MathHelper.ToRadians(-88))
+                                //* Matrix.CreateRotationZ(MathHelper.ToRadians(0))
+                                * cursorTransform
+                                //* Matrix.CreateTranslation(cursorTransform.Translation)
+                                * Matrix.CreateTranslation(new Vector3(0.0f,0.0f,0.0f)),
+                            CanBillboard = false,
+
+                            Reset = true,
+                        });
+                    }
+
+                }
+            }
+            extraBatch.DrawBatched(WorldRenderer.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+        }
+
+        return base.AfterRender(step, sb, time, targetScreen);
     }
 
     protected override void UpdateCameraPosition()

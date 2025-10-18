@@ -32,6 +32,7 @@ using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Mods;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using StardewValley.Util;
@@ -78,6 +79,7 @@ namespace Stardew3D
                 State.SetRenderHandlerForGameHandlerTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
                 State.SetRenderHandlerForGameHandlerTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
                 State.SetRenderHandlerForGameHandlerTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
+                State.SetRenderHandlerForGameHandlerTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
                 State.SetRenderHandlerForGameHandlerTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>($"({ModManifest.UniqueID}/TerrainFeature){obj.GetType().Name}", obj as TerrainFeature));
                 State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
                 State.SetRenderHandlerForGameHandlerTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
@@ -320,71 +322,71 @@ namespace Stardew3D
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/title",
                         Translation = new( 0, -5.18f, -0.02f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/New/Idle", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/new",
                         Translation = new( 5.6325f-7.25f, 0.2678f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/New/Hover", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/new",
                         TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
                         Translation = new( 5.6325f-7.25f, 0.2678f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/Load/Idle", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/load",
                         Translation = new( 1.8538f-6.75f, 0.2678f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/Load/Hover", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/load",
                         TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
                         Translation = new( 1.8538f-6.75f, 0.2678f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/Coop/Idle", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/coop",
                         Translation = new( -0.19249f-8f, 0.2678f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/Coop/Hover", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/coop",
                         TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
                         Translation = new( -0.19249f-8f, 0.2678f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/Exit/Idle", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/exit",
                         Translation = new( -5.7036f-5.75f, 0.2678f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/Exit/Hover", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/exit",
                         TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
                         Translation = new( -5.7036f-5.75f, 0.2678f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/Back/Idle", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/back",
                         Translation = new( -5.6544f-5.75f, 2.5902f-15, -0.2719f ),
                     } },
                     { $"{ModManifest.UniqueID}/GameTitle/Buttons/Back/Hover", new()
                     {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Title.gltf")}",
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/back",
                         TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
                         Translation = new( -5.6544f-5.75f, 2.5902f-15, -0.2719f ),
@@ -522,6 +524,21 @@ namespace Stardew3D
                                 ModelId = "(O)294",
                             },
                         ],
+                    } },
+                    { $"(O)167", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "objects", "JojaCola.gltf")}",
+                    } },
+                    { $"(F)288", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "furniture", "Armchair.gltf")}",
+                        SubModelPath = "/BasicArmchair",
+                        Rotation = new Vector3(0, MathHelper.ToRadians( 180 ), 0 ), // TODO: temporary
+                    } },
+                    { $"(F)1466", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "furniture", "TV.gltf")}",
+                        SubModelPath = "/BudgetTV",
                     } },
                     { $"Debris/Stump", new()
                     {
