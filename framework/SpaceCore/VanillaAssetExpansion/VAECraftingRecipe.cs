@@ -47,7 +47,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
         public VAECraftingRecipe.IngredientData Data => data;
 
-        public override string DisplayName => data.OverrideText ?? ItemRegistry.GetDataOrErrorItem(data.Value).DisplayName;
+        public override string DisplayName => StardewValley.TokenizableStrings.TokenParser.ParseText(data.OverrideText) ?? ItemRegistry.GetDataOrErrorItem(data.Value).DisplayName;
 
         public override Texture2D IconTexture => data.OverrideTexturePath != null ? Game1.content.Load<Texture2D>(data.OverrideTexturePath) : ItemRegistry.GetDataOrErrorItem(data.Value).GetTexture();
 

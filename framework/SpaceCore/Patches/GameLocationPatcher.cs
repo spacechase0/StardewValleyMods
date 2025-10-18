@@ -163,8 +163,10 @@ namespace SpaceCore.Patches
 
                 for (int i = 0; i < skill.Professions.Count; i++)
                 {
-                    skill.Professions[i].UndoImmediateProfessionPerk();
-                    Game1.player.professions.Remove(skill.Professions[i].GetVanillaId());
+                    if (Game1.player.professions.Remove(skill.Professions[i].GetVanillaId()))
+                    {
+                        skill.Professions[i].UndoImmediateProfessionPerk();
+                    }
                 }
                 Game1.drawObjectDialogue(Game1.content.LoadString("Strings\\Locations:Sewer_DogStatueFinished"));
                 int level = Skills.GetSkillLevel(Game1.player, skill.Id);

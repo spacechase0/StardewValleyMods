@@ -246,7 +246,7 @@ namespace GenericModConfigMenu
                 },
                 returnToList: () =>
                 {
-                    OpenListMenuNew(listScrollRow);
+                    OpenListMenu(listScrollRow);
                 }
             );
 
