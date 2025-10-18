@@ -359,6 +359,15 @@ namespace GenericModConfigMenu.Framework
                         optionElement = null;
                         break;
 
+                    case SectionSubHeaderModOption _:
+                        label.LocalPosition = new Vector2(-8, 0);
+                        label.Bold = true;
+                        label.Scale = 0.75f;
+                        if (name == "")
+                            label = null;
+                        optionElement = null;
+                        break;
+
                     case PageLinkModOption option:
                         label.Bold = true;
                         label.Callback = _ => this.OpenPage(option.PageId);

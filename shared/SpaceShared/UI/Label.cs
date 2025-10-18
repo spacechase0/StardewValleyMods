@@ -19,14 +19,19 @@ namespace SpaceShared.UI
         ** Accessors
         *********/
         public bool Bold { get; set; } = false;
-        public float NonBoldScale { get; set; } = 1f; // Only applies when Bold = false
+        public float NonBoldScale
+        {
+            get => this.Scale;
+            set => this.Scale = value;
+        } // Maintained for compatibility
+
         public bool NonBoldShadow { get; set; } = true; // Only applies when Bold = false
         public Color IdleTextColor { get; set; } = Game1.textColor;
         public Color HoverTextColor { get; set; } = Game1.unselectedOptionColor;
 
         public SpriteFont Font { get; set; } = Game1.dialogueFont; // Only applies when Bold = false
 
-        public float Scale => this.Bold ? 1f : this.NonBoldScale;
+        public float Scale { get; set; } = 1.0f;
 
         public string String { get; set; }
 
@@ -57,7 +62,7 @@ namespace SpaceShared.UI
         /// <summary>Measure the label's rendered dialogue text size.</summary>
         public Vector2 Measure()
         {
-            return Label.MeasureString(this.String, this.Bold, scale: this.Bold ? 1f : this.NonBoldScale, font: this.Font);
+            return Label.MeasureString(this.String, this.Bold, scale: this.Scale, font: this.Font);
         }
 
         /// <inheritdoc />
@@ -68,7 +73,12 @@ namespace SpaceShared.UI
 
             bool altColor = this.Hover && this.Callback != null;
             if (this.Bold)
+            {
+                float originalTextScale = SpriteText.fontPixelZoom;
+                SpriteText.fontPixelZoom *= this.Scale;
                 SpriteText.drawString(b, this.String, (int)this.Position.X, (int)this.Position.Y, layerDepth: 1, color: altColor ? SpriteText.color_Gray : null);
+                SpriteText.fontPixelZoom = originalTextScale;
+            }
             else
             {
                 Color col = altColor ? this.HoverTextColor : this.IdleTextColor;
@@ -76,9 +86,9 @@ namespace SpaceShared.UI
                     return;
 
                 if (this.NonBoldShadow)
-                    Utility.drawTextWithShadow(b, this.String, this.Font, this.Position, col, this.NonBoldScale);
+                    Utility.drawTextWithShadow(b, this.String, this.Font, this.Position, col, this.Scale);
                 else
-                    b.DrawString(this.Font, this.String, this.Position, col, 0f, Vector2.Zero, this.NonBoldScale, SpriteEffects.None, 1);
+                    b.DrawString(this.Font, this.String, this.Position, col, 0f, Vector2.Zero, this.Scale, SpriteEffects.None, 1);
             }
         }
 

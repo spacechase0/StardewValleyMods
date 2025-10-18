@@ -80,6 +80,16 @@ namespace GenericModConfigMenu.Framework
         }
 
         /// <inheritdoc />
+        public void AddSubHeader(IManifest mod, Func<string> text)
+        {
+            mod ??= this.mod;
+            this.AssertNotNull(text);
+
+            ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
+            modConfig.AddOption(new SectionSubHeaderModOption(text, modConfig));
+        }
+
+        /// <inheritdoc />
         public void AddParagraph(IManifest mod, Func<string> text)
         {
             mod ??= this.mod;
