@@ -1,4 +1,4 @@
-﻿{
+{
     // Generic Mod Config Menu UI
     "config.custom-skill-page.name": "Page de compétences personnalisées",
     "config.custom-skill-page.tooltip": "Possibilité d'afficher la page de compétences personnalisées.\nCela déplacera le portefeuille afin qu'il y ait de la place pour plus de compétences.",
@@ -15,5 +15,10 @@
     "interaction.gift-held": "Donner en cadeau l'objet tenu",
     "interaction.cancel": "Annuler",
 
-    "question.ask": "Poser une question"
+    "question.ask": "Poser une question",
+
+    "health-regen": "Santé par seconde",
+    "stamina-regen": "Endurance par seconde",
+
+    "resource-clump.bad-tool-tier": "Votre outil n’est pas assez solide pour casser ceci.",
 }
