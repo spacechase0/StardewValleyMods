@@ -1,0 +1,8 @@
+﻿{
+    "object.Film.name": "Film",
+    "object.Film.description": "Zur Verwendung mit Kameras.",
+    "object.Film.category": "Werkzeug",
+
+    "furniture.TestPortrait.name": "Testporträt",
+    "furniture.TestPortrait.description": "Miau"
+}

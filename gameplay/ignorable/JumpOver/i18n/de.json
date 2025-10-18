@@ -1,0 +1,9 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.jump-key.name": "Sprungtaste",
+    "config.jump-key.tooltip": "Die Taste zum Springen.",
+    "config.rock-crab-crushing.name": "Zertrümmern von Stein-Krabben",
+    "config.rock-crab-crushing.tooltip": "Die Fähigkeit, Stein-Krabben zu zertrümmern, indem man auf sie springt.",
+}

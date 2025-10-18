@@ -1,0 +1,10 @@
+﻿{
+    /*********
+    ** Item data
+    *********/
+    "seeds.name": "Knobinaken-Saat",
+    "seeds.description": "Wie ist das passiert? Wächst im Frühling, dauert 4 Tage.",
+
+    "produce.name": "Knobinaken",
+    "produce.description": "Eine eklige Kombination aus Knoblauch und Pastinaken.",
+}

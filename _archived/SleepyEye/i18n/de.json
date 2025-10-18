@@ -1,0 +1,13 @@
+﻿{
+    // tent tool
+    "tent.name": "Zelt",
+    "tent.description": "Schlaf hier. Schlaf dort. Schlafe überall!",
+
+    // HUD messages
+    "messages.slept-at-lost-location": "Du hast an einem merkwürdigen Ort gezeltet, also bist du nach Hause zurückgekehrt.",
+    "messages.slept-at-festival": "Du hast auf dem Festgelände gezeltet, also bist du nach Hause zurückgekehrt.",
+
+    // Generic Mod Config Menu UI
+    "config.seconds-until-save.name": "Sekunden bis zum Speichern",
+    "config.seconds-until-save.tooltip": "Die Anzahl der Sekunden, bis das Zeltwerkzeug eine Speicherung auslösen soll."
+}

@@ -1,0 +1,28 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // Clint's shop
+    "clint.rush.description": "Die Verbesserung des Werkzeugs wird einen Tag dauern.",
+    "clint.rush.dialogue": "Danke. Ich werde gleich damit anfangen. Es sollte morgen fertig sein.",
+
+    "clint.instant.description": "Das Werkzeug wird sofort verbessert werden.",
+    "clint.instant.dialogue": "Danke. Ich werde gleich damit anfangen. Es sollte in wenigen Minuten fertig sein..",
+
+    // Robin's shop
+    "robin.rush-question": "Dein Bauvorhaben beschleunigen? ({{daysLeft}} tage übrig.)",
+    "robin.rush-answer-yes": "Ja ({{price}}g)",
+    "robin.rush-answer-no": "Nein",
+    "robin.not-enough-money": "Du hast nicht genug Geld.",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.price-tool-one-day.name": "Preis: Werkzeug - Ein Tag",
+    "config.price-tool-one-day.tooltip": "Der Preismultiplikator für ein eintägige Werkzeug-Verbesserung.",
+    "config.price-tool-instant.name": "Preis: Werkzeug - Sofort",
+    "config.price-tool-instant.tooltip": "Der Preismultiplikator für eine sofortige Verbesserung.",
+    "config.price-building.name": "Preis: Gebäude - Beschleunigen",
+    "config.price-building.tooltip": "Der Preismultiplikator, um den Bau von Gebäuden um einen Tag zu beschleunigen."
+}

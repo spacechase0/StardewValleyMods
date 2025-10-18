@@ -1,0 +1,42 @@
+﻿{
+    "option.stock-list.name": "Pierres Lagerliste",
+    "option.stock-list.description": "Starte mit Pierres VLagerliste, in der alle Samen das ganze Jahr über aufgelistet sind.",
+    "option.ginger-island.name": "Ingwerinsel",
+    "option.ginger-island.description": "Starte mit einem reparierten Boot zur Ingwerinsel.",
+    "option.additional-profit.name": "Profit-Multiplikator",
+    "option.additional-profit.description": "Multipliziert die Profitrate, die du zu Beginn des Spiels ausgewählt hast, mit diesem Wert.",
+    "option.relationship-penalty.name": "Beziehungstrafen %",
+    "option.relationship-penalty.description": "Wie viel weniger Freundschaftspunkte du durch Geschenke und so bekommst.",
+    "option.exp-curve.name": "Exp-Kurve",
+    "option.exp-curve.description": "Die Menge an Erfahrung, die benötigt wird, um eine Fertigkeit auf die höchste Stufe zu bringen.\n(Vanilla nutzt 15,000.)",
+    "option.starting-points.name": "Startpunkte",
+    "option.starting-points.description": "Wie viele Punkte du für das Legacy-Menü ausgeben kannst.",
+    "option.gold-per-leftover-point.name": "Gold pro übrig gebliebenem Punkt",
+    "option.gold-per-leftover-point.description": "Wie viel Gold du pro Punkt bekommst, den du nicht ausgibst.",
+
+    "create.option.name": "Neues Spiel+",
+    "create.option.description": "Schalte hier um, ob Neues Spiel+ aktiviert ist oder nicht.",
+
+    "item.legacy-token.name": "Legacy-Token",
+    "item.legacy-token.description": "Beanspruchen dein Legacy-Token hier",
+
+    "item.stable-token.name": "Stall-Token",
+    "item.stable-token.description": "Platziere in der unteren rechten Ecke der Stelle, an der du deinen Stall haben möchtest.",
+
+    "menu.title": "Legacy",
+    "menu.points": "Verbleibende Punkte: {{pts}}",
+    "menu.gold": "Gold: {{gold}}",
+    "menu.accept": "Akzeptieren",
+    "menu.cancel": "Abbrechen",
+    "menu.item.sword": "Schwert",
+    "menu.item.dagger": "Dolch",
+    "menu.item.club": "Keule",
+    "menu.item.return-scepter": "Return\nScepter",
+    "menu.item.house.0": "Haus:\nStandard",
+    "menu.item.house.1": "Haus:\nmit Küche",
+    "menu.item.town-key": "Stadtschlüssel",
+    "menu.item.horse": "Pferd",
+    "menu.item.backpack": "Rucksack",
+    "menu.item.recipes": "Standard\nRezepte",
+    "menu.item.ring": "Kein Ring"
+}

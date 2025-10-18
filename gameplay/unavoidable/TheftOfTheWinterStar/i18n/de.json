@@ -1,0 +1,55 @@
+﻿{
+    /*********
+    ** Items
+    *********/
+    // crafting recipe
+    "recipe.frosty-stardrop.name": "Frostige Sternenfall-Frucht",
+
+    // items
+    "item.festive-big-key-a.name": "Festlicher großer Schlüssel (A)",
+    "item.festive-big-key-a.description": "Die Hälfte eines 'großen Schlüssels', der im Frostverlies verwendet wird.",
+
+    "item.festive-big-key-b.name": "Festlicher großer Schlüssel (B)",
+    "item.festive-big-key-b.description": "Die Hälfte eines 'großen Schlüssels', der im Frostverlies verwendet wird.",
+
+    "item.festive-key.name": "Festlicher Schlüssel",
+    "item.festive-key.description": "Ein Schlüssel, der im Frostverlies verwendet wird.",
+
+    "item.frosty-stardrop-piece.name": "Teil einer frostigen Sternenfall-Frucht",
+    "item.frosty-stardrop-piece.description": "Ein Teil einer Sternenfall-Frucht. Fünf davon können zu einer ganzen kombiniert werden.",
+
+    "item.tempus-globe.name": "Tempus-Globus",
+    "item.tempus-globe.description": "Ein mysteriöser Gegenstand, der die Pflanzen in seiner Umgebung das ganze Jahr über wachsen lässt. Außerdem bewässert er die Pflanzen in seiner Nähe.\n5x5 Fläche, um den Gegenstand herum.",
+
+    // weapons
+    "weapon.festive-scepter.name": "Festliches Zepter",
+    "weapon.festive-scepter.description": "Er schießt einen frostigen Strahl.",
+
+
+    /*********
+    ** Lewis event
+    *********/
+    "event.lewis-speech": "Hallo, @.#$b#Ich war dabei, Vorbereitungen für das Fest des Wintersterns zu treffen und... Ich kann keine der Dekorationen finden!$s#$b#Es scheint, als hätte jemand die Dekoration gestohlen.$4#$b#Ich bin mir nicht sicher, warum jemand so etwas tun sollte... aber Dekorationen verschwinden nicht einfach von selbst!$s#$b#Wie auch immer, ich hatte gehofft, du könntest sie für uns auftreiben?$h#$b#Es führte eine Spur von zerbrochenen Dekorationen durch den Tunnel links von der Bushaltestelle. Wir wären alle dankbar, wenn du das für uns übernehmen könntest.$n#$b#Oder wir könnten Marlon engagieren, aber das würde teuer werden.$s#$b#Viel Glück!$n",
+
+
+    /*********
+    ** Map messages
+    *********/
+    "map-messages.locked-entrance": "Diese Tür ist momentan verschlossen.",
+    "map-messages.locked-door": "Diese Tür ist verschlossen. Sie benötigt wahrscheinlich einen Schlüssel.",
+    "map-messages.locked-boss": "Diese gigantische Tür ist verschlossen. Vielleicht kann etwas in der Nähe sie öffnen.",
+    "map-messages.unlocked": "Die Tür wurde aufgeschlossen.",
+    "map-messages.item-puzzle": "Auf dem Sockel scheint eine Silhouette zu stehen.",
+    "map-messages.target": "Ein Ziel.",
+    "map-messages.trail-lights": "Einige festliche Lichter.",
+    "map-messages.trail-candy-cane": "Eine zerbrochene Zuckerstange.",
+    "map-messages.trail-ornaments": "Einige festliche Dekorationen.",
+    "map-messages.trail-tree": "Ein zerbrochener Miniaturbaum.",
+
+
+    /*********
+    ** Final boss
+    *********/
+    "final-boss.speech": "Wie WAGEN sie es, ohne mich Spaß zu haben! Sie werden ihre Dekorationen nie wieder bekommen!",
+    "final-boss.victory-message": "Du hast die Dekorationen zurückbekommen!\nDu hast auch das Rezept für den 'Tempus-Globus' gelernt!"
+}

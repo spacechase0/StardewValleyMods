@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Building data
+    *********/
+    "spooky-shed.name": "Gespenstischer Schuppen",
+    "spooky-shed.description": "Ein leeres Gebäude. Aber irgendwie gespenstisch.",
+
+    "fishing-shack.name": "Fischerhütte",
+    "fishing-shack.description": "Eine Hütte zum Fischen.",
+
+    "mini-spa.name": "Mini-Spa",
+    "mini-spa.description": "Ein Ort zum Entspannen und Regenerieren."
+}

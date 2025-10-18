@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Buffs and debuffs
+    *********/
+    "buff.full": "Sättigung",
+    "buff.hungry": "Hungrig",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.fullness-ui-X.name": "Sättigungs-UI (X)",
+    "config.fullness-ui-X.tooltip": "Die Pixelposition X der Sättigungs-UI",
+    "config.fullness-ui-Y.name": "Sättigungs-UI (Y)",
+    "config.fullness-ui-Y.tooltip": "Die Pixelposition Y der Sättigungs-UI",
+
+    "config.fullness-ui-alignment.name": "Sättigungs-UI (Ausrichtung)",
+    "config.fullness-ui-alignment.tooltip": "Die Ausrichtung der Sättigungs-UI auf dem Spielbildschirm.",
+    "config.fullness-ui-alignment.topLeft": "Oben links",
+    "config.fullness-ui-alignment.topRight": "Oben rechts",
+    "config.fullness-ui-alignment.bottomLeft": "Unten links",
+    "config.fullness-ui-alignment.bottomRight": "Unten rechts",
+
+    "config.fullness-max.name": "Maximale Sättigung",
+    "config.fullness-max.tooltip": "Die maximale Menge an Sättigung, die du haben kannst",
+    "config.fullness-drain.name": "Sättigungsverlust",
+    "config.fullness-drain.tooltip": "Die Menge an Sättigung, die pro Spielminute verloren geht.",
+
+    "config.edibility-multiplier.name": "Essbarkeits-Multiplikator",
+    "config.edibility-multiplier.tooltip": "Ein Multiplikator für die Menge an Sättigung die du erhältst, basierend auf der Essbarkeit der Nahrung.",
+
+    "config.positive-buff-threshold.name": "Positiver Buff-Grenzwert",
+    "config.positive-buff-threshold.tooltip": "Die minimale Sättigung, bei der positive Buffs wirksam werden.",
+    "config.negative-buff-threshold.name": "Negativer Buff-Grenzwert",
+    "config.negative-buff-threshold.tooltip": "Die maximale Sättigung, bevor negative Buffs wirksam werden.",
+    "config.starvation-damage.name": "Schaden durch Verhungern",
+    "config.starvation-damage.tooltip": "Die Menge an Hungerschaden jede Spielminute, wenn du keine Sättigung besitzt.",
+    "config.unfed-spouse-penalty.name": "Strafe für nicht ernährten Ehepartner",
+    "config.unfed-spouse-penalty.tooltip": "Der Beziehungspunkteabzug wenn der Ehepartner nicht ernährt wurde."
+}

@@ -1,0 +1,141 @@
+﻿{
+    /*********
+    ** Festival
+    *********/
+    // info
+    "festival.name": "Surffest",
+
+    // race
+    "race.start.question": "Bereit für das Rennen?",
+    "race.start.yes": "Ja, lasst uns beginnen.",
+    "race.start.no": "Noch nicht.",
+    "race.instructions": "Gegenstände (Rechtsklick zum Benutzen):^ Sternfall-Boost - Vorübergehender Geschwindigkeitsschub.^ Kugelfisch-Projektil - Schieße einen Kugelfisch auf den nächsten Spieler vor dir.^ Suchende Wolke -Zappe den ersten Spieler..^ Junimokraft - Unbesiegbarkeit und ein kleiner Geschwindigkeitsschub.",
+    "race.lewis-start.0": "Auf die Plätze...",
+    "race.lewis-start.1": "Fertig.....",
+    "race.lewis-start.2": "Los!",
+    "race.winner.player": "Gratulation, {{name}}!#$b#Jedes Mal wenn ich dich sehe, lerne ich etwas Neues über dich! Ich glaube kaum, dass jemand von uns wusste, dass du so gut surfen kannst.#$b#Komm und hol dir deinen Preis.",
+    "race.winner.harvey": "Gratulation, Harvey! Nicht schlecht für einen Neuling, hier ist dein Preis.",
+    "race.winner.emily": "Gratulation, Emily! Nächstes Jahr wirst du ein harter Gegner sein. Hier ist dein Preis.",
+    "race.winner.maru": "Gratulation, Maru! Du warst fantastisch da draußen. Hier ist dein Preis.",
+    "race.winner.shane": "Gratulation, Shane! Jas hat dich die ganze Zeit über angefeuert. Hier ist dein Preis.",
+
+    // dialogue
+    "npc.Abigail_spouse": "Weißt du, warum ich Angst hatte, surfen zu gehen, @?#$b#Jemand hat im Internet von einem Seeungeheuer gesprochen, das unter dem Wasser lebt. Ich weiß, ich sollte nicht alles glauben, was ich lese, aber es klang so authentisch!",
+    "npc.Leah_spouse": "Wenn du mitmachst, werde ich dich anfeuern!$h",
+    "npc.Maru_spouse": "Denkst du, du kannst mich im Surf-Wettbewerb schlagen? Wie wär's wenn Verlierer heute das Abendessen macht?",
+    "npc.Penny_spouse": "Hast du schon entschieden, ob du mitmachst, @? Ich feuere dich auf jeden Fall an! Du schaffst das!$h",
+    "npc.Haley_spouse": "Ich bleib lieber hier an Land und schau zu. Emily meint, ich soll mal was Spannendes ausprobieren, aber das ist einfach nichts für mich.",
+    "npc.Sebastian_spouse": "Was glaubst du, was sich unter Wasser befindet? Abigail hat mir einen Beitrag über eine da unten lebende Meereskreatur geschickt. Glaubst du, das ist wahr?",
+    "npc.Sam_spouse": "Ich wollte mitmachen, aber meine Mutter hält es für das Beste, wenn ich es wegen Vincent nicht tue. Sie will nicht, dass er auf dumme Gedanken kommt, und ich kann es ihr nicht übel nehmen. Er ist ein wilder kleiner Racker.",
+    "npc.Alex_spouse": "Du musst dir keine Sorgen um mich machen. Ich habe meine Teilnahme zurückgezogen, weil Sam nicht dabei sein konnte. Wir wollten schauen, wer der Schnellste ist: ich oder der Skateboarder.",
+    "npc.Harvey_spouse": "Bitte verletze dich nicht, @. Ich will nicht, dass du gegen einen Felsen prallst und dir den Kopf anschlägst.",
+    "npc.Elliott_spouse": "Manchmal vermisse ich diese alte, windige Hütte. Aber unser Zuhause ist viel schöner.",
+    "npc.Emily_spouse": "Ich versuche immer noch, Haley dazu zu bringen, mal was Neues auszuprobieren. Sie wollte immer aus Pelikan Stadt raus, aber wo in der Stadt könnte sie Wellen reiten?",
+    "npc.Abigail": "Hast du vor, an dem Rennen teilzunehmen, @?#$b#Ich wollte ja, aber... ich hab irgendwie Angst vor dem, was da im Wasser sein könnte.$3",
+    "npc.Emily": "Haley will immer aufregende Dinge ausprobieren, aber wollte nicht am Rennen teilnehmen#$b#Also habe ich ihren Platz übernommen! Viel Glück an dich @!$h",
+    "npc.Robin": "Lewis hat mich gebeten, ein paar Surfbretter herzustellen, da der Import zu teuer war.",
+    "npc.Demetrius": "Wusstest du, dass Maru surft? Ich hatte keine Ahnung! Dieses Tal ist voller Geheimnisse, auch nicht wissenschaftliche.",
+    "npc.Maru": "Hmm, ich bin ein bisschen nervös wegen des Surfwettbewerbs, aber Harvey hat gesagt, er würde mit mir teilnehmen.",
+    "npc.Sebastian": "Ich könnte etwas Adrenalin gebrauchen, aber ich bleibe bei meinem Fahrrad.",
+    "npc.Linus": "Ich würde viel lieber im Wasser schwimmen, als auf dem Wasser zu surfen.",
+    "npc.Pierre": "Schau dir all die Surfbretter an, die Robin hergestellt hat. Ich fühle mich geehrt, solch feine Handwerkskunst zu verkaufen.",
+    "npc.Caroline": "Ich liebe diese Art von Festen immer. Es ist so schön, von Freunden und Essen umgeben zu sein, und es ist toll zu sehen, wie die Kinder Spaß haben.",
+    "npc.Alex": "Ich wollte diese Muskeln zur Schau stellen und gegen Sam antreten, aber er hat in letzter Minute abgesagt.",
+    "npc.George": "Früher hab ich auch gesurft. Ich war auf Oahu und Tavarua, falls du diesem alten Knacker glaubst.",
+    "npc.Evelyn": "Wusstest du, dass George früher Surfer war?#$b#Ich kannte ihn nicht, als er surfte, aber er hat mir Bilder gezeigt, auf denen er auf den Wellen reitet.#$b#Er war schon immer so charmant.$h",
+    "npc.Lewis": "Falls du es noch nicht getan hast, vergiss nicht, etwas Brennmaterial ins Lagerfeuer zu geben. #$b#Wir wollen, dass es alle während des Wettbewerbs warm haben.",
+    "npc.Clint": "Ich habe den größten Teil meines Lebens hier in Pelikan Stadt verbracht, @, und hätte nie gedacht, dass man auf diesen Gewässern surfen kann.$s",
+    "npc.Penny": "Ich freue mich schon auf den Surfwettbewerb später! Meinst du, ich sollte mich für's nächstes Jahr vorbereiten, @?",
+    "npc.Pam": "So ein Fest hat es hier im Tal noch nie gegeben, bevor du gekommen bist, @. Lewis hat sich das auf keinen Fall selbst ausgedacht.",
+    "npc.Haley": "Emily meint, ich soll surfen ausprobieren, aber ich will meine Haare nicht ruinieren.#$b#'Ne Badekappe? Nein! Das würde ja schrecklich aussehen.$a",
+    "npc.Jodi": "Ich habe es geschafft, den Jungs das Surfen dieses Jahr auszureden.#$b#Sam ist ein Naturtalent, weil er Skateboard fährt, aber ich will nicht, dass er sich an einem Felsen verletzt oder sich in einem Netz verfängt.#$b#Vincent? Er ist zu jung, aber vielleicht, wenn er älter ist.",
+    "npc.Kent": "Jodi hätte die Kinder ruhig mal machen lassen sollen. Die sind jung, die brauchen mehr positive Erfahrungen.",
+    "npc.Marlon": "Kein Schwert und kein Bogen dieser Welt können etwas gegen die Wellen ausrichten. Viel Glück, @.",
+    "npc.Sam": "Alex wollte ein Rennen machen, aber ich will lieber entspannen. Und ich habe die perfekte Ausrede.",
+    "npc.Leah": "Ich bleib an Land und lass mich für mein nächstes Kunstwerk inspirieren. Vielleicht nenn ich es 'Talwellen'.",
+    "npc.Shane": "Ich freu mich schon auf das Rennen später! Wir haben ein zusätzliches Brett, falls du teilnehmen möchtest @.",
+    "npc.Marnie": "Lewis hat mir erzählt, dass Shane sich fürs Rennen angemeldet hat. Erst war ich überrascht, aber ich weiß, dass er gewinnen kann.",
+    "npc.Elliott": "Ich bin nicht begeistert, dass mein Vorgarten übernommen wurde, aber das Fest macht Spaß.#$b#Vielleicht probier ich das Balancieren auf einem Surfbrett in einem Gezeitentümpel.",
+    "npc.Gus": "Ich liebe es immer, mal einen Tag außerhalb desr Kneipe zu verbringen. Dieses Fest wird großartig!$h",
+    "npc.Dwarf": "An der Oberfläche haben die Leute keine Angst vor Wasser. Sie reiten darauf. Aber hier unten? Strömt das Wasser durch die Risse.",
+    "npc.Wizard": "Brauchst du einen magischen Zauber, um dein Glück im Wettbewerb zu verbessern?",
+    "npc.Harvey": "*schluck* Warum hab' ich zugestimmt, das auszuprobieren? Ich bin noch nie surfen gewesen.$s",
+    "npc.Sandy": "Es findet ein Fest statt! Ich bin so aufgeregt!",
+    "npc.Jas": "Shane wird den Surfwettbewerb gewinnen!$h",
+    "npc.Vincent": "Mama hat gesagt, ich bin noch zu jung, um surfen zu gehen.$s",
+    "npc.Willy": "Manchmal hör' ich die Wellen gegen den Hafen schlagen. Ich hoffe, die Kinder wissen, was sie tun. Das Meer, es kann ganz schön unruhig sein.",
+
+
+    /*********
+    ** Map text
+    *********/
+    "ui.laps": "Runden: {{laps}}/2",
+    "ui.ranking": "Bewertung",
+    "ui.wood": "Füge etwas Holz zum Lagerfeuer hinzu",
+    "dialog.wood": "Du hast 50 Holz auf das Lagerfeuer gelegt.",
+    "dialog.shorts": "...Das ist seltsam. Warum hat sich das Feuer lila verfärbt?",
+    "dialog.prize-money": "Du hast 1500g erhalten.",
+    "item.boost": "Sternenfall-Boost",
+    "item.homing-projectile": "Kugelfisch-Projektil",
+    "item.first-place-projectile": "Suchende Wolke",
+    "item.invincibility": "Junimokraft",
+    "secret.text": "Auf einem Schild steht: Willst du weiterkommen, jetzt und in der Zukunft? Mach ein Angebot.",
+    "secret.yes": "100,000g in die Kiste werfen?",
+    "secret.no": "Verlassen",
+    "secret.broke": "Das kannst du dir nicht leisten.",
+    "secret.purchased": "Du fühlst dich irgendwie anders.",
+
+
+    /*********
+    ** Craftable items
+    *********/
+    "craftables.surfboard-brown.name": "Braunes Surfbrett (Vogelscheuche)",
+    "craftables.surfboard-brown.description": "Ein braunes Surfbrett, das auch als Vogelscheuche fungiert.",
+
+    "craftables.surfboard-cool.name": "Cooles Surfbrett (Vogelscheuche)",
+    "craftables.surfboard-cool.description": "Ein Surfbrett mit einem coolen, leuchtend grünen Muster darauf, das auch als Vogelscheuche fungiert.",
+
+    "craftables.surfboard-hibiscus.name": "Hibiskus-Surfbrett (Vogelscheuche)",
+    "craftables.surfboard-hibiscus.description": "Ein rosa-gelbes Surfbrett mit Hibiskus darauf, das auch als Vogelscheuche fungiert.",
+
+    "craftables.surfboard-red.name": "Rotes Surfbrett (Vogelscheuche)",
+    "craftables.surfboard-red.description": "Ein rotes Surfbrett, das auch als Vogelscheuche fungiert.",
+
+    "craftables.surfboard-stripe.name": "Gestreiftes Surfbrett (Vogelscheuche)",
+    "craftables.surfboard-stripe.description": "Ein blau gestreiftes Surfbrett, das auch als Vogelscheuche fungiert.",
+
+    "craftables.surfboard-white.name": "Weißes Surfbrett (Vogelscheuche)",
+    "craftables.surfboard-white.description": "Ein weißes Surfbrett, das auch als Vogelscheuche fungiert.",
+
+    "craftables.surfing-trophy.name": "Surf-Trophäe",
+    "craftables.surfing-trophy.description": "Eine Trophäe für den Sieg beim Surffest.",
+
+
+    /*********
+    ** Hat items
+    *********/
+    "hats.snorkel-mask-black.name": "Schwarze Schnorchelmaske",
+    "hats.snorkel-mask-black.description": "Eine Schnorchelmaske - dient nur zu dekorativen Zwecken.",
+
+    "hats.snorkel-mask-blue.name": "Blaue Schnorchelmaske",
+    "hats.snorkel-mask-blue.description": "Eine Schnorchelmaske - dient nur zu dekorativen Zwecken.",
+
+    "hats.snorkel-mask-green.name": "Grüne Schnorchelmaske",
+    "hats.snorkel-mask-green.description": "Eine Schnorchelmaske - dient nur zu dekorativen Zwecken.",
+
+    "hats.snorkel-mask-orange.name": "Orangene Schnorchelmaske",
+    "hats.snorkel-mask-orange.description": "Eine Schnorchelmaske - dient nur zu dekorativen Zwecken.",
+
+    "hats.snorkel-mask-pink.name": "Rosa Schnorchelmaske",
+    "hats.snorkel-mask-pink.description": "Eine Schnorchelmaske - dient nur zu dekorativen Zwecken.",
+
+    "hats.snorkel-mask-red.name": "Rote Schnorchelmaske",
+    "hats.snorkel-mask-red.description": "Eine Schnorchelmaske - dient nur zu dekorativen Zwecken.",
+
+
+    /*********
+    ** Object items
+    *********/
+    "items.cheap-amulet.name": "Billiges Amulett?",
+    "items.cheap-amulet.description": "Irgendetwas scheint an diesem Amulett nicht zu stimmen. Warum es wohl so billig war?"
+}

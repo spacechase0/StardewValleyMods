@@ -1,0 +1,24 @@
+﻿{
+    "config.placement-modifier.name": "Platzierungsmodifikator-Taste",
+    "config.placement-modifier.tooltip": "Wird beim Platzieren einiger Objekte verwendet.",
+
+    "tool.drill.name": "Bohrer",
+    "tool.drill.description": "Er kann unterirdisch Hohlräume schaffen.\nAchte darauf, dass du deine Röntgenbrille trägst!",
+    "tool.wire-cutter.name": "Drahtschneider",
+    "tool.wire-cutter.description": "Verbindet Verbinder desselben Typs mit Metallstangen für Drähte.\nKupfer für Strom, Eisen für Logik.",
+
+    "message.drill.need-goggles": "Du brauchst eine Röntgenbrille, um sie zu benutzen!",
+    "message.wire-cutter.need-wire": "Du brauchst Metallstangen für den Draht.",
+    "message.wire-cutter.wrong-wire": "Die ausgewählte Metallstange ist für diesen Anschluss inkorrekt.",
+    "message.wire-cutter.prep": "Bereite Verbindung vor...",
+    "message.wire-cutter.placed": "Verbindung platziert!",
+
+    "item.conveyor.name": "Förderband",
+    "item.conveyor.description": "Kann Gegenstände umherbewegen.\nKann unterirdisch (mit Röntgenbrille) oder auf einem Gerüst platziert werden.\nLogikverbinder darunter können die Richtung umkehren. \nLogikverbinder an den Seiten erkennen Gegenstände auf dem Förderband.",
+    "item.unhopper.name": "Entnehmer",
+    "item.unhopper.description": "Entfernt Gegenstände aus Maschinen und legt sie auf nahegelegene Förderbänder.\n(Beginnt mit einem unterirdischen Förderband, geht dann nach Westen, Süden und Osten und dann nach oben.",
+    "item.logic-connector.name": "Logikverbinder",
+    "item.logic-connector.description": "Verwende den Drahtschneider mit Eisen, um Logikverbinder zu verbinden.\nEin Verbinder wird mit dem Objekt in der Richtung verbunden, in die du schaust.\nWenn die Lauftaste gehalten wird, wird eine Verbindung nach unten hergestellt.\nWenn die 'Misapplied Physicalities' Platzierungsmodifikator-Taste gehalten wird\n(standardmäßig linke Strg-Taste, in GMCM änderbar), wird eine Verbindung nach oben hergestellt.",
+    "item.lever-block.name": "Hebelblock",
+    "item.lever-block.description": "Ein Block, der an allen Seiten ein logisches Signal sendet.\n0, wenn der Hebel nach links zeigt, 1, wenn der Hebel nach rechts zeigt.",
+}

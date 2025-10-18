@@ -1,0 +1,71 @@
+﻿{
+    /*********
+    ** Shop UI
+    *********/
+    // filter labels
+    "filter.category": "Kategorie:",
+    "filter.sorting": "Sortierung:",
+
+    // sort types
+    "sort.none": "Keine",
+    "sort.name": "Name",
+    "sort.price": "Preis",
+
+    //quantity dialog
+    "quantity.name" :  "Anzahl",
+
+    // category names
+    "categories.everything": "Alles",
+    "categories.other": "Anderes",
+    "categories.artisan-goods": "Handwerkswaren",
+    "categories.bait": "Köder",
+    "categories.big-craftables": "Große Herstellungsobjekte",
+    "categories.boots": "Schuhe",
+    "categories.building-resources": "Bauressourcen",
+    "categories.clothing": "Kleidung",
+    "categories.cooking": "Kochen",
+    "categories.crafting": "Herstellung",
+    "categories.eggs": "Ei",
+    "categories.equipment": "Geräte",
+    "categories.fertilizer": "Dünger",
+    "categories.fish": "Fisch",
+    "categories.flowers": "Blumen",
+    "categories.fruits": "Früchte",
+    "categories.furniture": "Möbel",
+    "categories.gems": "Edelsteine",
+    "categories.greens": "Greens",
+    "categories.hats": "Hüte",
+    "categories.ingredients": "Zutaten",
+    "categories.junk": "Müll",
+    "categories.meat": "Fleisch",
+    "categories.metals": "Metalle",
+    "categories.milk": "Milch",
+    "categories.minerals": "Mineralien",
+    "categories.monster-loot": "Monsterbeute",
+    "categories.recipes": "Rezepte",
+    "categories.rings": "Ringe",
+    "categories.seeds": "Saat",
+    "categories.seedsOther": "Andere Saat",
+    "categories.sell-to-pierre-or-marnie": "Verkaufbar bei Pierre/Marnie",
+    "categories.sell-to-pierre": "Verkaufbar bei Pierre",
+    "categories.sell-to-willy": "Verkaufbar bei Willy",
+    "categories.syrups": "Sirupe",
+    "categories.tackle": "Angelzubehör",
+    "categories.tools": "Werkzeuge",
+    "categories.vegetables": "Gemüse",
+    "categories.weapons": "Waffen",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.grid-layout.name": "Rasterlayout",
+    "config.grid-layout.tooltip": "Ob das Rasterlayout in Geschäften verwendet werden soll.",
+
+    "config.quantity-dialog.name": "Anzahl-Dialog",
+    "config.quantity-dialog.tooltip": "Öffnet einen Dialog für einen beliebige Anzahl. Öffnen über LeftAlt/Option + Rechtsklick.",
+
+    /** grid/std layout button hover text */
+    "button.grid-layout.tooltip": "Rasterlayout auswählen",
+    "button.std-layout.tooltip": "Standardlayout auswählen"
+}

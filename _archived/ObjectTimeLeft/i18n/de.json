@@ -1,0 +1,13 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.show-on-start.name": "Bei Spielstart anzeigen",
+    "config.show-on-start.tooltip": "Ob beim Spielstart die verbleibende Zeit bereits angezeigt werden soll.",
+
+    "config.toggle-key.name": "Taste: Umschalten der Anzeige",
+    "config.toggle-key.tooltip": "Die Taste zum Umschalten der Anzeige von Objekten.",
+
+    "config.text-scale.name": "Textskalierung",
+    "config.text-scale.tooltip": "Die Skalierung des Textes, der die Objekte überlagert."
+}

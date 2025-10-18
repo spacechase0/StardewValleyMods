@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.wiggly-arms.name": "Wackelnde Arme",
+    "config.wiggly-arms.tooltip": "Ob wackelnde Arme angezeigt werden sollen, die sich nach dem Cursor ausstrecken."
+}

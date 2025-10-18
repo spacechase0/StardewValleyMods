@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.damage-scale.name": "Schadensskalierung",
+    "config.damage-scale.tooltip": "Wie viel Schaden pro Kampfstufe hochskaliert werden soll, in Prozent."
+}

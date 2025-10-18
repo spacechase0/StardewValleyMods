@@ -1,0 +1,40 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    // top section
+    "config.show-by-default.name": "Standardmäßig anzeigen",
+    "config.show-by-default.tooltip": "Ob die Minimap standardmäßig angezeigt werden soll.\nDu musst das Spiel neu starten, damit diese Einstellung wirksam wird.",
+    "config.toggle-key.name": "Umschalttaste",
+    "config.toggle-key.tooltip": "Die Taste zum Ein- und Ausblenden der Minimap.",
+    "config.update-interval.name": "Aktualisierungs-Intervall",
+    "config.update-interval.tooltip": "Das Intervall in Millisekunden zwischen jeder Aktualisierung der Minimap. 0 bedeutet, dass jeden Frame aktualisiert wird; -1 bedeutet, dass dies nur geschieht, wenn ein neuer Ort betreten wird. (Marker werden unabhängig davon jeden Frame aktualisiert.)",
+
+    // Positioning & Size section
+    "config.positioning-and-size.text": "Positionierung & Größe",
+    "config.positioning-and-size.tooltip": "Optionen, die die Platzierung der Minimap betreffen.",
+    "config.anchor-x.name": "Minimap-Anker X",
+    "config.anchor-x.tooltip": "Der Prozentbereich der Bildschirmbreite, in dem die Minimap oben links platziert werden soll.",
+    "config.anchor-y.name": "Minimap-Anker Y",
+    "config.anchor-y.tooltip": "Der Prozentbereich der Bildschirmhöhe, in dem die Minimap oben links platziert werden soll.",
+    "config.offset-x.name": "Minimap-Verschiebung X",
+    "config.offset-x.tooltip": "Die X-Verschiebung vom Anker, an der die Minimap platziert werden soll.",
+    "config.offset-y.name": "Minimap-Verschiebung Y",
+    "config.offset-y.tooltip": "Die Y-Verschiebung vom Anker, an der die Minimap platziert werden soll.",
+    "config.size.name": "Minimap-Größe",
+    "config.size.tooltip": "Die Größe der Minimap in Pixeln (vor UI-Skalierung).",
+
+    // Markers section
+    "config.markers.text": "Marker",
+    "config.markers.tooltip": "Optionen für die Darstellung von Markierungen auf der Karte.",
+    "config.player-marker-scale.name": "Spielerköpfe",
+    "config.player-marker-scale.tooltip": "Renderskalierung für den Kopf eines Spielers. 0 schaltet sie aus.",
+    "config.npc-marker-scale.name": "NPC-Köpfe",
+    "config.npc-marker-scale.tooltip": "Renderskalierung für den Kopf eines NPC. 0 schaltet sie aus.",
+    "config.wood-sign-marker-scale.name": "Holzschilder",
+    "config.wood-sign-marker-scale.tooltip": "Renderskalierung für auf Holzschildern abgebildete Gegenstände. 0 deaktivert diese.",
+    "config.stone-sign-marker-scale.name": "Steinschilder",
+    "config.stone-sign-marker-scale.tooltip": "Renderskalierung für auf Steinschildern abgebildete Gegenstände. 0 deaktivert diese.",
+    "config.dark-sign-marker-scale.name": "Dunkle Schilder",
+    "config.dark-sign-marker-scale.tooltip": "Renderskalierung für auf dunklen Schildern abgebildete Gegenstände.. 0 deaktivert diese."
+}

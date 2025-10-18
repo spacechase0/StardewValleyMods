@@ -1,0 +1,8 @@
+﻿{
+    "menu.title": "Bestehende Beziehungen",
+    "menu.text": "Du sprichst schon eine ganze Weile mit jemandem, \nund ziehst schließlich ins Tal, um bei demjenigen zu sein... \nWer ist es?",
+    "menu.button.accept": "Akzeptieren",
+    "menu.button.cancel": "Abbrechen",
+    "married": "Dein Ehepartner ist eingezogen!",
+    "spouse-taken": "Dieser NPC ist bereits verheiratet."
+}

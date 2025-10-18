@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.vanilla-flowers-only.name": "Nutze nur Vanilla-Blumen",
+    "config.vanilla-flowers-only.tooltip": "Ob im Blumenregen nur Vanilla-Blumen verwendet werden sollen."
+}

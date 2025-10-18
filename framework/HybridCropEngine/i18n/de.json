@@ -1,0 +1,7 @@
+﻿{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.scan-everywhere.name": "Überall scannen",
+    "config.scan-everywhere.tooltip": "Scanne überall nach Hybriderzeugung.\nFalse bedeutet, dass nur der Hof und das Gewächshaus gescannt werden."
+}

@@ -1,3 +1,6 @@
 {
-    "item-tooltip.added-by-mod": "Mod: {{name}}"
+    "item-tooltip.added-by-mod": "Mod: {{name}}",
+    "not-enough-ingredients":  "Benötigt mehr {{item}}",
+    "not-enough-ingredients-generic": "Unzureichende Zutaten für das Rezept",
+    "wrong-ingredient-selected": "Keine Rezepte mit {{Item}} als Hauptzutat"
 }
