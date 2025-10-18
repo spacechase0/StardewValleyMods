@@ -94,11 +94,14 @@ Provided functionality for content pack authors:
         * `BuffIdToApply` - The ID of the buff to apply, pulled from the vanilla file `Data/Buffs`.
     * Crops - These are in `spacechase0.SpaceCore/CropExtensionData`
         * `YieldOverrides` - A little complex, but you can override each crop phase's harvestability with experience gained, the new phase it goes to, and the drops it has (including conditional drops). Example [here](https://gist.github.com/spacechase0/79f95bcd46160da9e52f5bc0c71329f4).
+    * Fruit trees - These are in `spacechase0.SpaceCore/FruitTreeExtensionData`
+        * `FruitLocations` - A list of tile coordinates to use for the offset of each fruit grown, instead of what vanilla does by default.
     * Weapons - Stored in the `CustomFields` on the weapon data asset object:
         * `CanBeTrashed` - true/false, also prevents dropping, default true
     * Furniture - Stored in the asset `"spacechase0.SpaceCore/FurnitureExtensionData"`, which is a dictionary with the key being the furniture ID, and the value being an object containing the following fields:
         * `TileProperties` - A dictionary of tile coordinates to a dictionary of layers to a dictionary of tile properties. Just look at [this example](https://gist.github.com/spacechase0/ea6db01284157d408d9f359f141a0d65).
         * `DescriptionOverride` - Description override for the furniture.
+        * `SeatLocations` - A dictionary for overriding where seats are on the location. The key is an integer corresponding to the rotation the seats are for, and the value is a list of coordinates (in pixels relative to the furniture).
     * Shops - Stored in the asset `"spacechase0.SpaceCore/ShopExtensionData"`, which is a dictionary with the key being the shop ID, and the value being an object containing the following fields:
         * `Tabs` - The options are `"None"`, `"Catalogue"`, `"FurnitureCatalogue"`, and `"Custom"`. For custom, see the next field.
         * `CustomTabs` - A list consisting of the following object (see [this example](https://gist.github.com/spacechase0/8a80b22655f624d9854486bfbe5abc7e)):

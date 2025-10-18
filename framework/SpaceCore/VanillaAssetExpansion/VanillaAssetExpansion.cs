@@ -494,6 +494,8 @@ namespace SpaceCore.VanillaAssetExpansion
                 e.LoadFrom(() => new Dictionary<string, ObjectExtensionData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/CropExtensionData"))
                 e.LoadFrom(() => new Dictionary<string, CropExtensionData>(), AssetLoadPriority.Low);
+            if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/spacechase0.SpaceCore/FruitTreeExtensionData"))
+                e.LoadFrom(() => new Dictionary<string, FruitTreeExtensionData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/FurnitureExtensionData"))
                 e.LoadFrom(() => new Dictionary<string, FurnitureExtensionData>(), AssetLoadPriority.Low);
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/NpcExtensionData"))
