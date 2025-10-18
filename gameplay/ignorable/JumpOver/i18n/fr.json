@@ -1,7 +1,9 @@
-﻿{
+{
     /*********
     ** Generic Mod Config Menu UI
     *********/
     "config.jump-key.name": "Touche de saut",
-    "config.jump-key.tooltip": "La touche pour sauter."
+    "config.jump-key.tooltip": "La touche pour sauter.",
+    "config.rock-crab-crushing.name": "Explosion des crabes rocheux",
+    "config.rock-crab-crushing.tooltip": "La faculté d’exploser des crabes rocheux en leur sautant dessus.",
 }
