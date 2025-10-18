@@ -1076,6 +1076,12 @@ namespace SpaceCore
             GuidebookFont.Fonts.Add("default", Game1.smallFont);
             GuidebookFont.Fonts.Add("tiny", Game1.tinyFont);
             GuidebookFont.Fonts.Add("dialogue", Game1.dialogueFont);
+            LocalizedContentManager.OnLanguageChange += code =>
+            {
+                GuidebookFont.Fonts["default"] = Game1.smallFont;
+                GuidebookFont.Fonts["tiny"] = Game1.tinyFont;
+                GuidebookFont.Fonts["dialogue"] = Game1.dialogueFont;
+            };
 
             api = Helper.ModRegistry.GetApi<IApi>(ModManifest.UniqueID);
             api.RegisterCustomProperty(typeof(Farmer), "SpaceCore_ExtraEquippables", typeof(NetStringDictionary<Item, NetRef<Item>>), AccessTools.Method(typeof(FarmerExtData), nameof(FarmerExtData.get_equippables)), AccessTools.Method(typeof(FarmerExtData), nameof(FarmerExtData.set_equippables)));
