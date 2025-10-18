@@ -35,7 +35,7 @@ namespace SpaceCore.VanillaAssetExpansion
     [HarmonyPatch(typeof(Crop), nameof(Crop.harvest))]
     public static class CropHarvestOverridePatch
     {
-        public static bool Prefix(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester, ref bool __result)
+        public static bool Prefix(Crop __instance, int xTile, int yTile, HoeDirt soil, JunimoHarvester junimoHarvester, bool isForcedScytheHarvest, ref bool __result)
         {
             var dict = Game1.content.Load<Dictionary<string, CropExtensionData>>("spacechase0.SpaceCore/CropExtensionData");
             if (__instance.netSeedIndex.Value == null || !dict.TryGetValue(__instance.netSeedIndex.Value, out var extData))
@@ -59,7 +59,7 @@ namespace SpaceCore.VanillaAssetExpansion
             void DoStuff( Item harvestedItem, int numToHarvest, ref bool localSuccess )
             {
                 HarvestMethod harvestMethod = data?.HarvestMethod ?? HarvestMethod.Grab;
-                if (harvestMethod == HarvestMethod.Scythe)
+                if (harvestMethod == HarvestMethod.Scythe || isForcedScytheHarvest)
                 {
                     if (junimoHarvester != null)
                     {
