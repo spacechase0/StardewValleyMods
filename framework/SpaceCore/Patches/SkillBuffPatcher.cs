@@ -111,7 +111,7 @@ internal class SkillBuffPatcher : BasePatcher
             }
 
             StringBuilder sb = new();
-            sb.Append(SkillBuff.FormattedBuffEffect(skillLevel.Value, skillLevel.Key));
+            sb.Append(SkillBuff.FormattedBuffEffect(skillLevel.Value, skill.GetName()));
             sb.AppendLine();
             sb.Append(Game1.content.LoadString("Strings/StringsFromCSFiles:Buff.cs.508"));
             sb.Append(buff.displaySource ?? buff.source);
