@@ -305,8 +305,6 @@ internal class SkillBuffPatcher : BasePatcher
                 }
             }
         }
-        Log.Warn("TESTERS");
-        Log.Warn($"{width}");
 
         return width;
     }
