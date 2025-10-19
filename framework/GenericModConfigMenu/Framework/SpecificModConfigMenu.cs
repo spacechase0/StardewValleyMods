@@ -189,7 +189,7 @@ namespace GenericModConfigMenu.Framework
 
             RefreshKeybindColor();
 
-            this.OldScrollPercent = -999;
+            this.OldScrollPercent = float.NaN;
             this.snapToDefaultClickableComponent();
         }
 
@@ -532,7 +532,7 @@ namespace GenericModConfigMenu.Framework
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
 
-            this.OldScrollPercent = -999;
+            this.OldScrollPercent = float.NaN;
             this.snapToDefaultClickableComponent();
         }
 
@@ -815,7 +815,7 @@ namespace GenericModConfigMenu.Framework
                 foreach (var button in buttons)
                     this.Ui.AddChild(button);
                 int rowId = 1000;
-                var last = this.allClickableComponents.Last();
+                var last = this.allClickableComponents.LastOrDefault();
                 if (last != null)
                 {
                     rowId = ((int)Math.Floor((double)last.myID / 1000) * 1000) + 1000;

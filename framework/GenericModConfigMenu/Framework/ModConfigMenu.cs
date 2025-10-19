@@ -13,6 +13,8 @@ namespace GenericModConfigMenu.Framework
 {
     internal class ModConfigMenu : IClickableMenu
     {
+        private const int DEFAULT_COMPONENT_ID = 1000;
+
         /*********
         ** Fields
         *********/
@@ -23,13 +25,13 @@ namespace GenericModConfigMenu.Framework
         private readonly int ScrollSpeed;
 
         /// <summary>Open the config UI for a specific mod.</summary>
-        private readonly Action<IManifest, int> OpenModMenu;
+        private readonly Action<IManifest, int, int> OpenModMenu;
         private bool InGame => Context.IsWorldReady;
 
         private List<Label> LabelsWithTooltips = new();
 
-        private float oldScrollPercent = -999;
-
+        private float oldScrollPercent;
+        private int initialSnappedComponentId;
 
         /*********
         ** Accessors
@@ -52,11 +54,13 @@ namespace GenericModConfigMenu.Framework
         /// <param name="keybindsTexture">The icon texture for the keybinds menu.</param>
         /// <param name="configs">The mod configurations to display.</param>
         /// <param name="scrollTo">The initial scroll position, represented by the row index at the top of the visible area.</param>
-        public ModConfigMenu(int scrollSpeed, Action<IManifest, int> openModMenu, Action<int> openKeybindsMenu, ModConfigManager configs, Texture2D keybindsTexture, int? scrollTo = null)
+        public ModConfigMenu(int scrollSpeed, Action<IManifest, int, int> openModMenu, Action<int> openKeybindsMenu, ModConfigManager configs, Texture2D keybindsTexture, int? scrollTo = null, int? snapTo = null)
         {
             this.ScrollSpeed = scrollSpeed;
             this.OpenModMenu = openModMenu;
             this.allClickableComponents = new();
+            this.oldScrollPercent = float.NaN;
+            this.initialSnappedComponentId = snapTo ?? ModConfigMenu.DEFAULT_COMPONENT_ID;
 
             // init UI
             this.Ui = new RootElement();
@@ -73,10 +77,17 @@ namespace GenericModConfigMenu.Framework
                 var heading = new Label
                 {
                     String = I18n.List_EditableHeading(),
-                    Bold = true
+                    Bold = true,
+                    ScreenReaderText = I18n.List_EditableHeading(),
+                    CreateDummyClickableComponent = true
                 };
                 heading.LocalPosition = new Vector2((800 - heading.Measure().X) / 2, heading.LocalPosition.Y);
                 this.Table.AddRow(new Element[] { heading });
+
+                heading.DummyClickableComponent.bounds.X = (int)heading.LocalPosition.X;
+                heading.DummyClickableComponent.bounds.Y = (int)heading.LocalPosition.Y;
+                heading.DummyClickableComponent.leftNeighborID = 500;
+                this.allClickableComponents.Add(heading.DummyClickableComponent);
 
                 // mod list
                 {
@@ -99,7 +110,6 @@ namespace GenericModConfigMenu.Framework
                         };
                         this.Table.AddRow(new Element[] { label });
                         this.LabelsWithTooltips.Add(label);
-                        if (index == 0) label.DummyClickableComponent.leftNeighborID = 500;
                         if (label.DummyClickableComponent != null) this.allClickableComponents.Add(label.DummyClickableComponent);
                     }
                 }
@@ -162,7 +172,7 @@ namespace GenericModConfigMenu.Framework
             button.DummyClickableComponent = new(button.Bounds, "")
             {
                 myID = 500,
-                rightNeighborID = 1000,
+                rightNeighborID = ModConfigMenu.DEFAULT_COMPONENT_ID,
                 ScreenReaderIgnore = true
             };
             this.allClickableComponents.Add(button.DummyClickableComponent);
@@ -180,8 +190,6 @@ namespace GenericModConfigMenu.Framework
                 // This hack lets gamepad cursor movement work without a harmony patch
                 Mod.instance.Helper.Reflection.GetField<bool>(Game1.activeClickableMenu, "titleInPosition").SetValue(false);
             }
-
-            this.snapToDefaultClickableComponent();
         }
 
         public override void applyMovementKey(int direction)
@@ -196,7 +204,7 @@ namespace GenericModConfigMenu.Framework
 
         public override void snapToDefaultClickableComponent()
         {
-            this.currentlySnappedComponent = getComponentWithID(1000);
+            this.currentlySnappedComponent = getComponentWithID(ModConfigMenu.DEFAULT_COMPONENT_ID);
             this.snapCursorToCurrentSnappedComponent();
         }
 
@@ -235,8 +243,9 @@ namespace GenericModConfigMenu.Framework
             }
             else scrollCounter = 0;
 
-            if (this.oldScrollPercent != this.Table.Scrollbar.ScrollPercent)
+            if (this.oldScrollPercent != this.Table.Scrollbar.ScrollPercent && GetChildMenu() == null)
             {
+                if (float.IsNaN(this.oldScrollPercent)) this.setCurrentlySnappedComponentTo(this.initialSnappedComponentId);
                 this.oldScrollPercent = this.Table.Scrollbar.ScrollPercent;
                 this.snapCursorToCurrentSnappedComponent();
             }
@@ -298,7 +307,9 @@ namespace GenericModConfigMenu.Framework
             Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
 
-            this.OpenModMenu(modManifest, this.ScrollRow);
+            this.oldScrollPercent = float.NaN;
+            this.initialSnappedComponentId = this.currentlySnappedComponent.myID;
+            this.OpenModMenu(modManifest, this.ScrollRow, this.currentlySnappedComponent.myID);
         }
     }
 }

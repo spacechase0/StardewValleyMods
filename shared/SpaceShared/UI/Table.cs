@@ -212,11 +212,10 @@ namespace SpaceShared.UI
         *********/
         /// <summary>Get whether a child element is outside the table's current display area.</summary>
         /// <param name="element">The child element to check.</param>
-        public bool IsElementOffScreen(Element element)
+        private bool IsElementOffScreen(Element element)
         {
-            return
-                element.Position.Y < this.Position.Y
-                || element.Position.Y + element.Height > this.Position.Y + this.Size.Y;
+            return element.Position.Y + element.Height < this.Position.Y
+                   || element.Position.Y > this.Position.Y + this.Size.Y;
         }
 
         /// <summary>Get whether a child element is outside the table's current display area.</summary>

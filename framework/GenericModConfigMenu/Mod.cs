@@ -129,7 +129,7 @@ namespace GenericModConfigMenu
                     return false;
                 }
 
-                OpenModMenuNew(manifest, null, null);
+                OpenModMenuNew(manifest, null, null, null);
 
                 error = null;
                 return true;
@@ -139,7 +139,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi(IModInfo mod)
         {
-            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null), (s) => LogDeprecated( mod.Manifest.UniqueID, s));
+            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null, snappedComponentId: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null, snappedComponentId: null), (s) => LogDeprecated( mod.Manifest.UniqueID, s));
         }
 
 
@@ -157,13 +157,13 @@ namespace GenericModConfigMenu
 
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
         /// <param name="scrollRow">The initial scroll position, represented by the row index at the top of the visible area.</param>
-        private void OpenListMenuNew(int? scrollRow = null)
+        private void OpenListMenuNew(int? scrollRow = null, int? snappedComponentId = null)
         {
-            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew( currScrollRow ), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow);
+            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow, curSnappedCompId) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow, snappedComponentId: curSnappedCompId), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew( currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow, snappedComponentId);
         }
-        private void OpenListMenu(int? scrollRow = null)
+        private void OpenListMenu(int? scrollRow = null, int? snappedComponentId = null)
         {
-            var newMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew(currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow); ;
+            var newMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow, curSnappedCompId) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow, snappedComponentId: curSnappedCompId), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew(currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow, snappedComponentId);
             if (Game1.activeClickableMenu is TitleMenu)
             {
                 TitleMenu.subMenu = newMenu;
@@ -182,7 +182,7 @@ namespace GenericModConfigMenu
                 returnToList: () =>
                 {
                     if (Game1.activeClickableMenu is TitleMenu)
-                        OpenListMenuNew(listScrollRow);
+                        OpenListMenuNew(listScrollRow, null);
                     else
                         Mod.ActiveConfigMenu = null;
                 }
@@ -196,7 +196,7 @@ namespace GenericModConfigMenu
                 scrollSpeed: this.Config.ScrollSpeed,
                 returnToList: () =>
                 {
-                    OpenListMenuNew(listScrollRow);
+                    OpenListMenuNew(listScrollRow, null);
                 }
             );
 
@@ -214,7 +214,7 @@ namespace GenericModConfigMenu
         /// <param name="mod">The mod whose config menu to display.</param>
         /// <param name="page">The page to display within the mod's config menu.</param>
         /// <param name="listScrollRow">The scroll position to set in the mod list when returning to it, represented by the row index at the top of the visible area.</param>
-        private void OpenModMenuNew(IManifest mod, string page, int? listScrollRow)
+        private void OpenModMenuNew(IManifest mod, string page, int? listScrollRow, int? snappedComponentId)
         {
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
@@ -226,19 +226,19 @@ namespace GenericModConfigMenu
                 {
                     if (!(Game1.activeClickableMenu is TitleMenu))
                         Mod.ActiveConfigMenu = null;
-                    this.OpenModMenuNew(mod, newPage, listScrollRow);
+                    this.OpenModMenuNew(mod, newPage, listScrollRow, snappedComponentId);
                 },
                 returnToList: () =>
                 {
                     if (Game1.activeClickableMenu is TitleMenu)
-                        OpenListMenuNew(listScrollRow);
+                        OpenListMenuNew(listScrollRow, snappedComponentId);
                     else
                         Mod.ActiveConfigMenu = null;
                 }
             );
         }
 
-        private void OpenModMenu(IManifest mod, string page, int? listScrollRow)
+        private void OpenModMenu(IManifest mod, string page, int? listScrollRow, int? snappedComponentId)
         {
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
@@ -248,11 +248,11 @@ namespace GenericModConfigMenu
                 page: page,
                 openPage: newPage =>
                 {
-                    OpenModMenuNew(mod, newPage, listScrollRow);
+                    OpenModMenuNew(mod, newPage, listScrollRow, snappedComponentId);
                 },
                 returnToList: () =>
                 {
-                    OpenListMenu(listScrollRow);
+                    OpenListMenu(listScrollRow, snappedComponentId);
                 }
             );
 
@@ -318,7 +318,7 @@ namespace GenericModConfigMenu
             // the texture.
             this.Helper.Events.GameLoop.UpdateTicking += this.FiveTicksAfterGameLaunched;
 
-            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null), (s) => LogDeprecated( ModManifest.UniqueID, s));
+            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null, snappedComponentId: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null, snappedComponentId: null), (s) => LogDeprecated( ModManifest.UniqueID, s));
 
             configMenu.Register(
                 mod: this.ModManifest,
