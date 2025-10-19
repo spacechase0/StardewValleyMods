@@ -243,7 +243,10 @@ namespace GenericModConfigMenu.Framework
                     case ComplexModOption option:
                         optionElement = new ComplexModOptionWidget(option)
                         {
-                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0)
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -498,7 +501,10 @@ namespace GenericModConfigMenu.Framework
                                 Texture = texture,
                                 TexturePixelArea = option.TexturePixelArea ?? new Rectangle(0, 0, (int)size.X, (int)size.Y),
                                 Scale = option.Scale,
-                                LocalPosition = localPos
+                                LocalPosition = localPos,
+                                ScreenReaderText = option.Name(),
+                                ScreenReaderDescription = option.Tooltip(),
+                                CreateDummyClickableComponent = true
                             };
 
                             break;
