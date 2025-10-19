@@ -276,7 +276,6 @@ internal class SkillBuffPatcher : BasePatcher
         {
             return width;
         }
-
         foreach (var buffData in data.Buffs)
         {
             if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var skills, out float health, out float stamina))
@@ -285,6 +284,13 @@ internal class SkillBuffPatcher : BasePatcher
                 {
                     Skills.Skill skill = Skills.GetSkill(entry.Key);
                     if (skill is null)
+                        continue;
+
+                    // Prevents the tooltip from growing too wide.
+                    // The longest (english) skill name atm that fits on the skill screen without clipping is at 11-12 characters.
+                    // An 11 to 12 character name makes the width around 284.
+                    // made the check 290 to try to accomidate other languages!
+                    if (width > 290)
                         continue;
 
                     width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X) + 92;
@@ -299,6 +305,8 @@ internal class SkillBuffPatcher : BasePatcher
                 }
             }
         }
+        Log.Warn("TESTERS");
+        Log.Warn($"{width}");
 
         return width;
     }
