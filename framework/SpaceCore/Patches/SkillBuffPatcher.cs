@@ -276,6 +276,7 @@ internal class SkillBuffPatcher : BasePatcher
         {
             return width;
         }
+
         foreach (var buffData in data.Buffs)
         {
             if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var skills, out float health, out float stamina))
