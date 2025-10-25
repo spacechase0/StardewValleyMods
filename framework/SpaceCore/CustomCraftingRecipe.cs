@@ -17,7 +17,10 @@ namespace SpaceCore
 
         public abstract class IngredientMatcher
         {
-            public abstract string DisplayName { get; }
+            public virtual string DisplayName => DispayName;
+
+            [Obsolete("this will be removed eventually, override DisplayName instead")]
+            public abstract string DispayName { get; }
             
             public abstract Texture2D IconTexture { get; }
             public abstract Rectangle? IconSubrect { get; }
@@ -55,7 +58,7 @@ namespace SpaceCore
                 this._item = ItemRegistry.Create(this._itemId);
             }
 
-            public override string DisplayName
+            public override string DispayName
             {
                 get
                 {
