@@ -7,6 +7,8 @@
     <Description>Adds an in-game UI to edit other mods' config options (for mods which support it).</Description>
     <Version>1.17.0-alpha</Version>
     <UpdateKeys>Nexus:5098</UpdateKeys>
+    
+    <DefineConstants>GMCM_LEGACY_API</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
