@@ -22,7 +22,7 @@ using StardewValley.Mods;
 using StardewVR.Handlers.Game;
 
 namespace StardewVR.Handlers.Menu;
-internal class GenericMenuHandler<TMenu> : RendererFor<ModelData, TMenu>, IUpdateHandler
+internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IUpdateHandler
     where TMenu : IClickableMenu
 {
     public VRGameHandler GameHandler;

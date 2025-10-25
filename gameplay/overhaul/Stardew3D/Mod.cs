@@ -137,7 +137,7 @@ namespace Stardew3D
 
         private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            string mapsFolder = PathUtilities.NormalizeAssetName("Maps/a"); // If we just do "Maps/" it removes the /, which is a big part of what we want
+            string mapsFolder = PathUtilities.NormalizeAssetName("Maps/meow"); // If we just do "Maps/" it removes the /, which is a big part of what we want
             mapsFolder = mapsFolder.Substring( 0, mapsFolder.Length - 1 );
             if (e.DataType == typeof(xTile.Map) && e.NameWithoutLocale.StartsWith(mapsFolder))
             {
@@ -326,70 +326,30 @@ namespace Stardew3D
                         SubModelPath = "/title",
                         Translation = new( 0, -5.18f, -0.02f ),
                     } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/New/Idle", new()
+                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/New", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/new",
-                        Translation = new( 5.6325f-7.25f, 0.2678f-15, -0.2719f ),
                     } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/New/Hover", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/new",
-                        TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
-                        Translation = new( 5.6325f-7.25f, 0.2678f-15, -0.2719f ),
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Load/Idle", new()
+                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Load", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/load",
-                        Translation = new( 1.8538f-6.75f, 0.2678f-15, -0.2719f ),
                     } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Load/Hover", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/load",
-                        TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
-                        Translation = new( 1.8538f-6.75f, 0.2678f-15, -0.2719f ),
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Coop/Idle", new()
+                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Coop", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/coop",
-                        Translation = new( -0.19249f-8f, 0.2678f-15, -0.2719f ),
                     } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Coop/Hover", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/coop",
-                        TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
-                        Translation = new( -0.19249f-8f, 0.2678f-15, -0.2719f ),
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Exit/Idle", new()
+                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Exit", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/exit",
-                        Translation = new( -5.7036f-5.75f, 0.2678f-15, -0.2719f ),
                     } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Exit/Hover", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/exit",
-                        TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
-                        Translation = new( -5.7036f-5.75f, 0.2678f-15, -0.2719f ),
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Back/Idle", new()
+                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Back", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/back",
-                        Translation = new( -5.6544f-5.75f, 2.5902f-15, -0.2719f ),
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Back/Hover", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/back",
-                        TextureMap = { { "titleButtons_idle.png", "titleButtons_hover.png" } },
-                        Translation = new( -5.6544f-5.75f, 2.5902f-15, -0.2719f ),
                     } },
                     { $"Debris/Stone/1", new()
                     {

@@ -11,7 +11,11 @@ namespace Stardew3D.Data;
 
 internal class ModelDataCreationConverter : JsonConverter
 {
-    internal static Dictionary<string, Func<ModelData>> creationFuncs = new();
+    internal static Dictionary<string, Func<ModelData>> creationFuncs = new()
+    {
+        { new LocationModelData().Type, () => new LocationModelData() },
+        { new MenuModelData().Type, () => new MenuModelData() },
+    };
 
     public override bool CanWrite => false;
     public override bool CanRead => true;
