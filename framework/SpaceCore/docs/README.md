@@ -248,9 +248,9 @@ Provided functionality for content pack authors:
 * Animations - You can animate textures by editing `"spacechase0.SpaceCore/TextureOverrides"`, which is a dictionary with the key being the ID of your animation, and the following information:
     * `TargetTexture` - The path to the file you want to animate.
     * `TargetRect` - The rectangle in the target file you want to animate. Example: `{ "X": 32, "Y": 48, "Width": 16, "Height": 16 }`
-    * `SourceTexture` - The texture and frames you want to pull from for the animation, in the old DGA format. (The texture name followed by a colon, followed by a comma separated list of frame indices. Frame indices can optionally include a frame duration with @.)
-        * Example (for Content Patcher): `"{{InternalAssetKey: assets/prismatic.png}}:0@5,1@5,2@5,3@5,4@5,5@5`
-        * Another way of doing the above is using `..` to specify a sequence of frames that all get the same duration: `{{InternalAssetKey: assets/prismatic.png}}:0..5@5`
+    * `SourceTexture` - The texture and frames you want to pull from for the animation, in the old DGA format. (The texture name followed by a colon, followed by the frame index. Frame indices can optionally include a frame duration with @.)
+        * Example (for Content Patcher): `"{{InternalAssetKey: assets/prismatic.png}}:0@5,{{InternalAssetKey: assets/prismatic.png}}:1@5,{{InternalAssetKey: assets/prismatic.png}}:2@5`
+        * Another way of doing the above is using `..` to specify a sequence of frames that all get the same duration: `{{InternalAssetKey: assets/prismatic.png}}:0..2@5`
     * `SourceSizeOverride` - A Vector2 size. If specified, the sprite size to use for frames in `SourceTexture` (normally the size is the same as the size in `TargetRect`). This allows you to fit a larger image in place of a smaller vanilla image. (For example, fitting a 256x256 portrait into the default 64x64 spaces.)
     * `ChancePerTick` - The percent chance for an animation, in a range of 0 to 1 (ex. `0.10` = 10% chance per tick). This is the chance for the animation to *start when no animation is active*. If an animation has already been triggered, this value is ignored until the animation is finished.
 * NPC Questions - Previously part of [Backstory Questions Framework](https://www.nexusmods.com/stardewvalley/mods/14451):
