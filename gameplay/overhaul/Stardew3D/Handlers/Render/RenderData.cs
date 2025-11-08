@@ -34,28 +34,25 @@ public class RenderData<TRenderer> : RenderDataBase
 {
     protected TRenderer Parent { get; }
     protected ModelObject Model { get; }
-    protected int WhichMatch { get; }
-
-    protected List<int> Instances { get; } = new();
+    private ModelObject.ModelObjectInstance instance;
 
     public RenderData(RenderContext ctx, TRenderer parent, int whichMatch = 0)
         : base(ctx)
     {
         Parent = parent;
-        WhichMatch = whichMatch;
 
         Model = Mod.State.ModelManager.RequestModel(Parent.QualifiedId);
         if (Model.Matches.Count > 0)
         {
-            Instances.AddRange(Model.Draw(Batch, Matrix.Identity, whichMatch: WhichMatch));
+            instance = Model.Draw(Batch, Matrix.Identity, whichMatch: whichMatch);
         }
     }
 
     public override void Update(RenderContext ctx)
     {
-        if (Model.Matches.Count > 0)
+        if (instance != null)
         {
-            Model.Update(Batch, Instances.ToArray(), ctx.WorldTransform, whichMatch: WhichMatch);
+            Model.Update(Batch, instance, ctx.WorldTransform);
         }
     }
 }
@@ -66,11 +63,14 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
 {
     protected ICamera lastCamera;
 
+    private List<int> placeholderInstances = new();
+
     public RenderDataWithPlaceholder(RenderContext ctx, RendererWithPlaceholder<TData, TObject> parent, int whichMatch = 0)
         : base(ctx, parent, whichMatch)
     {
         if (Model.Matches.Count == 0)
         {
+            placeholderInstances = new();
             for (int ip = 0; ip < Parent.Placeholders.Length; ++ip)
             {
                 var placeholder = Parent.Placeholders[ip];
@@ -95,7 +95,7 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
                 }
 
                 int instance = Batch.AddInstanced(id, Matrix.Identity, placeholder.Color);
-                Instances.Add(instance);
+                placeholderInstances.Add(instance);
             }
         }
     }
@@ -105,7 +105,7 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
         lastCamera = ctx.WorldCamera;
 
         base.Update(ctx);
-        if (Model.Matches.Count == 0)
+        if (placeholderInstances != null)
         {
             for (int ip = 0; ip < Parent.Placeholders.Length; ++ip)
             {
@@ -117,7 +117,7 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
                 {
                     billboard *= Matrix.CreateConstrainedBillboard(Vector3.Zero, lastCamera.Position - ctx.WorldTransform.Translation, Vector3.Up, lastCamera.Forward, Vector3.Forward);
                 }
-                Batch.UpdateInstanced(Instances[ip], billboard * ctx.WorldTransform, Parent.Placeholders[ip].Color);
+                Batch.UpdateInstanced(placeholderInstances[ip], billboard * ctx.WorldTransform, Parent.Placeholders[ip].Color);
             }
         }
     }

@@ -10,7 +10,7 @@ using StardewVR.Hardware;
 
 namespace Stardew3D.Handlers.Game.FirstPerson;
 
-internal class FirstPersonVRCursor : IFirstPersonCursor
+internal class FirstPersonVRCursor : IGameCursor
 {
     private Func<Vector3> positionFunc;
     private Func<Vector3> facingFunc;

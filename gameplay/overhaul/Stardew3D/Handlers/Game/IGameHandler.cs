@@ -24,6 +24,8 @@ public interface IGameHandler
     public string[] Tags { get; }
 
     public ICamera Camera { get; }
+    public IReadOnlyList<IGameCursor> Cursors { get; }
+
     public RenderTarget2D CurrentTargetScreen { get; }
     public PBREnvironment GetCurrentEnvironmentFor(GameLocation location);
     public Matrix GetCurrentTransformFor(GameLocation location);

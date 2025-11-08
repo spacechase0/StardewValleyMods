@@ -102,12 +102,20 @@ public class ModelObject
                     }
                 }
 
-                Matrix matrixTransform = Matrix.CreateScale(cachedData.Scale);
-                matrixTransform *= Matrix.CreateRotationX(cachedData.Rotation.X) * Matrix.CreateRotationY(cachedData.Rotation.Y) * Matrix.CreateRotationZ(cachedData.Rotation.Z);
-                matrixTransform *= Matrix.CreateTranslation(cachedData.Translation);
+                Matrix additionalTransform = Matrix.CreateScale(cachedData.Scale);
+                additionalTransform *= Matrix.CreateRotationX(cachedData.Rotation.X) * Matrix.CreateRotationY(cachedData.Rotation.Y) * Matrix.CreateRotationZ(cachedData.Rotation.Z);
+                additionalTransform *= Matrix.CreateTranslation(cachedData.Translation);
                 foreach (var entry in matches)
                 {
-                    var inverseEntry = entry.WorldMatrix.ToMonogame().Invert();
+                    var baseTransform = entry.WorldMatrix.ToMonogame().Invert();
+                    {
+                        Node toApply = entry;
+                        for (int i = cachedData.UseExistingTransformHierarchy; i != 0 && entry != null; --i, toApply = entry.VisualParent)
+                        {
+                            baseTransform *= toApply.WorldMatrix.ToMonogame();
+                        }
+                    }
+
                     Dictionary<string, List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)>> allResults = new();
 
                     void GetAllMeshes(IEnumerable<Node> nodes)
@@ -141,7 +149,7 @@ public class ModelObject
                                             mesh[ip].Blending = BlendState.AlphaBlend;
                                         }
                                     }
-                                    results.Add(new(mesh, inverseEntry * node.WorldMatrix.ToMonogame() * matrixTransform));
+                                    results.Add(new(mesh, baseTransform * node.WorldMatrix.ToMonogame() * additionalTransform));
                                 }
                             }
                             allResults.Add(name, results);
@@ -247,7 +255,13 @@ public class ModelObject
         immediateBatch.DrawBatched(env, transform, Manager.DrawContext._View, Manager.DrawContext.GetProjectionMatrix());
     }
 
-    public int[] Draw(RenderBatcher batch, Matrix transform, Color? color = null, int whichMatch = 0)
+    public class ModelObjectInstance
+    {
+        public int[] BatcherInstances { get; internal init; }
+        public int WhichMatch { get; internal init; }
+    }
+
+    public ModelObjectInstance Draw(RenderBatcher batch, Matrix transform, Color? color = null, int whichMatch = 0)
     {
         color ??= Color.White;
         whichMatch %= Matches.Count;
@@ -260,20 +274,23 @@ public class ModelObject
                 forThis.Add(batch.AddInstanced(matchEntry.Mesh, matchEntry.Transform * transform, color.Value));
             }
         }
-        return forThis.ToArray();
+        return new()
+        {
+            BatcherInstances = forThis.ToArray(),
+            WhichMatch = whichMatch,
+        };
     }
 
-    public void Update(RenderBatcher batch, int[] instances, Matrix transform, Color? color = null, int whichMatch = 0)
+    public void Update(RenderBatcher batch, ModelObjectInstance instance, Matrix transform, Color? color = null)
     {
         color ??= Color.White;
-        whichMatch %= Matches.Count;
 
         int i = 0;
-        foreach (var entry in Matches[whichMatch])
+        foreach (var entry in Matches[instance.WhichMatch])
         {
             foreach (var matchEntry in entry.Value)
             {
-                batch.UpdateInstanced(instances[i], matchEntry.Transform * transform, color.Value);
+                batch.UpdateInstanced(instance.BatcherInstances[i], matchEntry.Transform * transform, color.Value);
                 ++i;
             }
         }

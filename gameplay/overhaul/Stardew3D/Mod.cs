@@ -320,37 +320,6 @@ namespace Stardew3D
                         TextureMap = { { "Cursors.png", "LooseSprites/Cursors" } },
                         ForceTransparency = { "/Sky/stars" },
                     } },
-                    { $"{ModManifest.UniqueID}/GameTitle", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/title",
-                        Translation = new( 0, -5.18f, -0.02f ),
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/New", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/new",
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Load", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/load",
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Coop", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/coop",
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Exit", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/exit",
-                    } },
-                    { $"{ModManifest.UniqueID}/GameTitle/Buttons/Back", new()
-                    {
-                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
-                        SubModelPath = "/buttons/back",
-                    } },
                     { $"Debris/Stone/1", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "Debris.gltf")}",
@@ -593,6 +562,109 @@ namespace Stardew3D
                                 Rotation = new( 0, MathHelper.ToRadians( 270 ), 0 ),
                             },
                         ],
+                    } },
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu", new MenuModelData()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
+                        SubModelPath = "/title",
+
+                        UseExistingTransformHierarchy = -1,
+
+                        Clickables = new()
+                        {
+                            { "New", new()
+                            {
+                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/New",
+                                HoverAnimation = "hover",
+                            } },
+                            { "Load", new()
+                            {
+                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Load",
+                                HoverAnimation = "hover",
+                            } },
+                            { "Co-op", new()
+                            {
+                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Coop",
+                                HoverAnimation = "hover",
+                            } },
+                            { "Exit", new()
+                            {
+                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Exit",
+                                HoverAnimation = "hover",
+                            } },
+                        },
+                    } },
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/New", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
+                        SubModelPath = "/buttons/new",
+
+                        AdditionalAnimationData = new()
+                        {
+                            { "hover", new()
+                            {
+                                Loop = ModelData.AnimationMetadata.LoopFinishMode.Hold,
+                                Actions =
+                                [
+                                    new() { Time = 0.01f, ForReverse = false, Actions = [ "SwapTexture titleButtons_idle.png titleButtons_hover.png" ] },
+                                    new() { Time = 0.09f, ForReverse = true, Actions = [ "SwapTexture titleButtons_hover.png, titleButtons_idle.png" ] },
+                                ],
+                            } }
+                        },
+                    } },
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Load", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
+                        SubModelPath = "/buttons/load",
+
+                        AdditionalAnimationData = new()
+                        {
+                            { "hover", new()
+                            {
+                                Loop = ModelData.AnimationMetadata.LoopFinishMode.Hold,
+                                Actions =
+                                [
+                                    new() { Time = 0.01f, ForReverse = false, Actions = [ "SwapTexture titleButtons_idle.png titleButtons_hover.png" ] },
+                                    new() { Time = 0.09f, ForReverse = true, Actions = [ "SwapTexture titleButtons_hover.png, titleButtons_idle.png" ] },
+                                ],
+                            } }
+                        },
+                    } },
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Coop", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
+                        SubModelPath = "/buttons/coop",
+
+                        AdditionalAnimationData = new()
+                        {
+                            { "hover", new()
+                            {
+                                Loop = ModelData.AnimationMetadata.LoopFinishMode.Hold,
+                                Actions =
+                                [
+                                    new() { Time = 0.01f, ForReverse = false, Actions = [ "SwapTexture titleButtons_idle.png titleButtons_hover.png" ] },
+                                    new() { Time = 0.09f, ForReverse = true, Actions = [ "SwapTexture titleButtons_hover.png, titleButtons_idle.png" ] },
+                                ],
+                            } }
+                        },
+                    } },
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Exit", new()
+                    {
+                        ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
+                        SubModelPath = "/buttons/exit",
+
+                        AdditionalAnimationData = new()
+                        {
+                            { "hover", new()
+                            {
+                                Loop = ModelData.AnimationMetadata.LoopFinishMode.Hold,
+                                Actions =
+                                [
+                                    new() { Time = 0.01f, ForReverse = false, Actions = [ "SwapTexture titleButtons_idle.png titleButtons_hover.png" ] },
+                                    new() { Time = 0.09f, ForReverse = true, Actions = [ "SwapTexture titleButtons_hover.png, titleButtons_idle.png" ] },
+                                ],
+                            } }
+                        },
                     } },
                 }, AssetLoadPriority.Exclusive);
         }

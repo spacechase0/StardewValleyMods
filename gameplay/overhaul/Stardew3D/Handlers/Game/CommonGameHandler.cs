@@ -38,6 +38,7 @@ public abstract partial class CommonGameHandler : IGameHandler
     public abstract string[] Tags { get; }
 
     public abstract ICamera Camera { get; }
+    public abstract IReadOnlyList<IGameCursor> Cursors { get; }
 
     public RenderTarget2D CurrentTargetScreen { get => Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D; }
     public PBREnvironment GetCurrentEnvironmentFor(GameLocation location) => WorldRenderer.GetCurrentEnvironmentFor(location);

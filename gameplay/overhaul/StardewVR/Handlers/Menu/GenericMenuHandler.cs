@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoScene.Graphics;
 using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
+using Stardew3D.Handlers.Game;
 using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
@@ -31,6 +33,10 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
     public Vector3 DisplayPosition;
     public Vector2 DisplaySize;
 
+    public Dictionary<ClickableComponent, BoundingBox> Clickables { get; } = new();
+
+    public Dictionary<IGameCursor, Vector3?> cursorTargetMapping = new();
+
     public GenericMenuHandler(VRGameHandler handler, TMenu menu)
         : base($"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", menu)
     {
@@ -48,27 +54,26 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
     {
         ctx.ForceUpdateIfNotAlreadyRun(ctx);
 
-        bool setCursorPos = false;
+        foreach ( var cursor in GameHandler.Cursors.Reverse() )
+            HandleCursor(ctx, cursor);
+    }
 
+    protected virtual void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor)
+    {
         BoundingBox display = new(new(-DisplaySize.X / 2, -DisplaySize.Y / 2, 0), new(DisplaySize.X / 2, DisplaySize.Y / 2, 0.05f));
 
         Matrix cursorTransform = Matrix.CreateTranslation(-DisplayPosition) * BaseOrientation.Invert();
-        Vector3 cursorPos = Vector3.Transform(GameHandler.Global_PrimaryPointerPosition, cursorTransform);
-        Vector3 cursorDir = Vector3.TransformNormal(GameHandler.Global_PrimaryPointerOrientation.Forward, cursorTransform);
-        Ray cursor = new(cursorPos, cursorDir);
-        var spot = cursor.Intersects(display);
+        Vector3 cursorPos = Vector3.Transform(cursor.Position, cursorTransform);
+        Vector3 cursorDir = Vector3.TransformNormal(cursor.Facing, cursorTransform);
+        Ray cursorRay = new(cursorPos, cursorDir);
+        var spot = cursorRay.Intersects(display);
         if (spot.HasValue)
         {
-            var intersectionPoint = cursor.Position + cursor.Direction * spot.Value;
+            var intersectionPoint = cursorRay.Position + cursorRay.Direction * spot.Value;
             Vector2 clickableLocal = new((intersectionPoint.X - display.Min.X) / (display.Max.X - display.Min.X) * Game1.game1.uiScreen.Bounds.Width,
                                           Game1.game1.uiScreen.Bounds.Height - (intersectionPoint.Y - display.Min.Y) / (display.Max.Y - display.Min.Y) * Game1.game1.uiScreen.Bounds.Height);
-            Game1.setMousePosition(Game1.game1.uiScreen.Bounds.Location + clickableLocal.ToPoint(), true);
-            setCursorPos = true;
-        }
 
-        if (!setCursorPos)
-        {
-            Game1.setMousePosition(0, 0, true);
+            Object.performHoverAction((int)clickableLocal.X, (int)clickableLocal.Y);
         }
     }
 
@@ -80,6 +85,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
     private class RenderData : RenderData<GenericMenuHandler<TMenu>>
     {
         private int menuInstance = -1;
+        private int cursorInstance = -1;
 
         public RenderData(IRenderHandler.RenderContext ctx, GenericMenuHandler<TMenu> parent)
             : base(ctx, parent)
@@ -90,6 +96,25 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
             menuInstance = Batch.AddNonInstanced((env, color, world, view, proj) =>
             {
                 RenderHelper.DrawQuad(Game1.game1.uiScreen, Vector3.Zero, Parent.DisplaySize, Game1.game1.uiScreen.Bounds, Parent.BaseOrientation.Backward, upOverride: Parent.BaseOrientation.Up, col: color, additionalTransform: world);
+            }, Matrix.Identity, hasTransparency: true);
+
+            cursorInstance = Batch.AddNonInstanced((env, color, world, view, proj) =>
+            {
+                if (!Parent.ShowingMainMenu || !renderMousePos.HasValue)
+                    return;
+
+                var size = new Vector2(16f / Game1.game1.uiScreen.Width, 16f / Game1.game1.uiScreen.Height) * Game1.pixelZoom * Parent.DisplaySize * 4;
+                var size3d = new Vector3(size.X, size.Y, 0);
+                var forward = Vector3.TransformNormal(renderMouseFacing, world);
+                var up = Vector3.TransformNormal(renderMouseUp, world);
+                var offset = Matrix.Identity;
+                offset *= Matrix.CreateTranslation(-up * size3d / 2) * Matrix.CreateTranslation(Vector3.Cross(up, forward) * size3d / 2);
+                offset *= Matrix.CreateTranslation(forward * 0.1f);
+
+                RenderHelper.GenericEffect.View = view;
+                RenderHelper.GenericEffect.Projection = proj;
+                RenderHelper.DrawQuad(Game1.mouseCursors, Vector3.Zero, size, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, 16, 16), forward, upOverride: up, col: color, additionalTransform: offset * world);
+                //RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Zero, size, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, 16, 16), forward, upOverride: up, col: color, additionalTransform: offset * world );
             }, Matrix.Identity, hasTransparency: true);
         }
 

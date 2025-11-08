@@ -55,7 +55,7 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
     }
     public Vector2 MovementAmountForced => new Vector2(Headset.CurrentPosition.X, Headset.CurrentPosition.Z) - new Vector2(lastHeadsetPosition.X, lastHeadsetPosition.Z);
     private FirstPersonVRCursor[] cursors;
-    public IReadOnlyList<IFirstPersonCursor> Cursors => cursors;
+    public override IReadOnlyList<IGameCursor> Cursors => cursors;
 
     public FirstPersonVRGameHandler()
     {

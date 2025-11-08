@@ -15,7 +15,7 @@ public class MenuModelData : ModelData
         public string HoverAnimation { get; set; }
         public string ClickAnimation { get; set; }
 
-        public BoundingBox BoundingBoxOverride {get;set;}
+        public BoundingBox? BoundingBoxOverride { get; set; } = null;
     }
     public Dictionary<string, ClickableModelData> Clickables { get; set; } = new();
 

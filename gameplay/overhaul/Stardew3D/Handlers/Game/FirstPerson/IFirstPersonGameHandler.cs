@@ -7,11 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace Stardew3D.Handlers.Game.FirstPerson;
 
-public interface IFirstPersonGameHandler
+public interface IFirstPersonGameHandler : IGameHandler
 {
     public Vector3 MovementFacing { get; }
     public Vector2 MovementAmount { get; }
     public Vector2 MovementAmountForced { get; }
-
-    public IReadOnlyList<IFirstPersonCursor> Cursors { get; }
 }

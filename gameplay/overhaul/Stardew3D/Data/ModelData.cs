@@ -75,7 +75,7 @@ namespace Stardew3D.Data
         public Dictionary<string, string> TextureMap { get; set; } = new();
         public List<string> ForceTransparency { get; set; } = new();
 
-        public int UseParentTransforms { get; set; } = 0;
+        public int UseExistingTransformHierarchy { get; set; } = 0;
         public Vector3 Scale { get; set; } = Vector3.One;
         public Vector3 Rotation { get; set; } = Vector3.Zero;
         public Vector3 Translation { get; set; } = Vector3.Zero;
