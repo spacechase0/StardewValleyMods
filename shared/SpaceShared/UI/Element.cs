@@ -4,6 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
+using SpaceShared;
+using StardewModdingAPI.Utilities;
 
 #if IS_SPACECORE
 namespace SpaceCore.UI
@@ -14,7 +17,7 @@ namespace SpaceShared.UI
 {
     internal
 #endif
-         abstract class Element
+         abstract class Element : IScreenReadable
     {
         /*********
         ** Accessors
@@ -44,9 +47,31 @@ namespace SpaceShared.UI
         public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
+        /// <summary>
+        /// Whether to create a dummy clickable component.
+        /// Setting this true will automatically create the dummy component at the element's position in <see cref="Table"/>.
+        /// </summary>
+        public bool CreateDummyClickableComponent = false;
+        /// <summary>
+        /// Used for gamepad/snappy navigation in menus.
+        /// Needs to be added to <see cref="IClickableMenu.allClickableComponents">allClickableComponents</see> list of the menu.
+        /// </summary>
+        public ClickableComponent DummyClickableComponent { get; set; } = null;
+
+        /// <inheritdoc />
+        public string ScreenReaderText { get; set; }
+        /// <inheritdoc />
+        public string ScreenReaderDescription { get; set; }
+        /// <inheritdoc />
+        public bool ScreenReaderIgnore { get; set; } = false;
+
         /// <summary>Whether to disable the element so it's invisible and can't be interacted with.</summary>
         public Func<bool> ForceHide;
 
+        /// <summary> Triggered when the mouse cursor enters the element i.e., on first hover. </summary>
+        public static event EventHandler<EventArgs> MouseEntered;
+        /// <summary> Triggered while the mouse cursor is hovering the element. </summary>
+        public static event EventHandler<EventArgs> MouseHovered;
 
         /*********
         ** Public methods
@@ -78,12 +103,23 @@ namespace SpaceShared.UI
             }
 
             bool newHover = !hidden && !this.GetRoot().Obscured && this.Bounds.Contains(mouseX, mouseY);
-            if (newHover && !this.Hover && this.HoveredSound != null)
-                Game1.playSound(this.HoveredSound);
+            if (newHover)
+            {
+                if (!this.Hover)
+                {
+                    if (this.HoveredSound != null) Game1.playSound(this.HoveredSound);
+                    Element.MouseEntered?.Invoke(this, EventArgs.Empty);
+                }
+                Element.MouseHovered?.Invoke((this), EventArgs.Empty);
+            }
+
             this.Hover = newHover;
 
             this.ClickGestured = (Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released);
             this.ClickGestured = this.ClickGestured || (Game1.options.gamepadControls && (Game1.input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A)));
+            KeybindList leftClickMainKey = KeybindList.Parse("LeftControl + Enter");
+            KeybindList leftClickAlternateKey = KeybindList.Parse("OemOpenBrackets");
+            this.ClickGestured = this.ClickGestured || leftClickMainKey.JustPressed() || leftClickAlternateKey.JustPressed();
             if (this.ClickGestured && (Dropdown.SinceDropdownWasActive > 0 || Dropdown.ActiveDropdown != null))
             {
                 this.ClickGestured = false;

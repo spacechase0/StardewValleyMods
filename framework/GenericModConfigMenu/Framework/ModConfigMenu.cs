@@ -13,6 +13,8 @@ namespace GenericModConfigMenu.Framework
 {
     internal class ModConfigMenu : IClickableMenu
     {
+        private const int DEFAULT_COMPONENT_ID = 1000;
+
         /*********
         ** Fields
         *********/
@@ -23,11 +25,13 @@ namespace GenericModConfigMenu.Framework
         private readonly int ScrollSpeed;
 
         /// <summary>Open the config UI for a specific mod.</summary>
-        private readonly Action<IManifest, int> OpenModMenu;
+        private readonly Action<IManifest, int, int> OpenModMenu;
         private bool InGame => Context.IsWorldReady;
 
         private List<Label> LabelsWithTooltips = new();
 
+        private float oldScrollPercent;
+        private int initialSnappedComponentId;
 
         /*********
         ** Accessors
@@ -50,10 +54,13 @@ namespace GenericModConfigMenu.Framework
         /// <param name="keybindsTexture">The icon texture for the keybinds menu.</param>
         /// <param name="configs">The mod configurations to display.</param>
         /// <param name="scrollTo">The initial scroll position, represented by the row index at the top of the visible area.</param>
-        public ModConfigMenu(int scrollSpeed, Action<IManifest, int> openModMenu, Action<int> openKeybindsMenu, ModConfigManager configs, Texture2D keybindsTexture, int? scrollTo = null)
+        public ModConfigMenu(int scrollSpeed, Action<IManifest, int, int> openModMenu, Action<int> openKeybindsMenu, ModConfigManager configs, Texture2D keybindsTexture, int? scrollTo = null, int? snapTo = null)
         {
             this.ScrollSpeed = scrollSpeed;
             this.OpenModMenu = openModMenu;
+            this.allClickableComponents = new();
+            this.oldScrollPercent = float.NaN;
+            this.initialSnappedComponentId = snapTo ?? ModConfigMenu.DEFAULT_COMPONENT_ID;
 
             // init UI
             this.Ui = new RootElement();
@@ -70,10 +77,17 @@ namespace GenericModConfigMenu.Framework
                 var heading = new Label
                 {
                     String = I18n.List_EditableHeading(),
-                    Bold = true
+                    Bold = true,
+                    ScreenReaderText = I18n.List_EditableHeading(),
+                    CreateDummyClickableComponent = true
                 };
                 heading.LocalPosition = new Vector2((800 - heading.Measure().X) / 2, heading.LocalPosition.Y);
                 this.Table.AddRow(new Element[] { heading });
+
+                heading.DummyClickableComponent.bounds.X = (int)heading.LocalPosition.X;
+                heading.DummyClickableComponent.bounds.Y = (int)heading.LocalPosition.Y;
+                heading.DummyClickableComponent.leftNeighborID = 500;
+                this.allClickableComponents.Add(heading.DummyClickableComponent);
 
                 // mod list
                 {
@@ -83,16 +97,20 @@ namespace GenericModConfigMenu.Framework
                         .OrderBy(entry => entry.ModName)
                         .ToArray();
 
-                    foreach (ModConfig entry in editable)
+                    for (int index = 0; index < editable.Length; index++)
                     {
+                        var entry = editable[index];
                         Label label = new Label
                         {
                             String = entry.ModName,
+                            ScreenReaderText = $"{entry.ModName}, {entry.ModManifest.Description}",
                             UserData = entry.ModManifest.Description,
-                            Callback = _ => this.ChangeToModPage(entry.ModManifest)
+                            Callback = _ => this.ChangeToModPage(entry.ModManifest),
+                            CreateDummyClickableComponent = true
                         };
                         this.Table.AddRow(new Element[] { label });
-                        LabelsWithTooltips.Add(label);
+                        this.LabelsWithTooltips.Add(label);
+                        if (label.DummyClickableComponent != null) this.allClickableComponents.Add(label.DummyClickableComponent);
                     }
                 }
             }
@@ -124,22 +142,40 @@ namespace GenericModConfigMenu.Framework
                             String = entry.ModName,
                             UserData = entry.ModManifest.Description,
                             IdleTextColor = Color.Black * 0.4f,
-                            HoverTextColor = Color.Black * 0.4f
+                            HoverTextColor = Color.Black * 0.4f,
+                            ScreenReaderText = $"{entry.ModName}, {entry.ModManifest.Description}",
+                            CreateDummyClickableComponent = true
                         };
 
                         this.Table.AddRow(new Element[] { label });
                         LabelsWithTooltips.Add(label);
+                        if (label.DummyClickableComponent != null) this.allClickableComponents.Add(label.DummyClickableComponent);
                     }
                 }
             }
 
             this.Ui.AddChild(this.Table);
 
+            if (Game1.activeClickableMenu is TitleMenu titleMenu)
+            {
+                // Back button on title menu
+                this.allClickableComponents.Last().downNeighborID = titleMenu.backButton.myID;
+                this.allClickableComponents.Add(titleMenu.backButton);
+            }
+
             var button = new Button(keybindsTexture)
             {
                 LocalPosition = this.Table.LocalPosition - new Vector2( keybindsTexture.Width / 2 + 32, 0 ),
                 Callback = _ => openKeybindsMenu( this.ScrollRow),
+                ScreenReaderText = I18n.List_Keybinds(),
             };
+            button.DummyClickableComponent = new(button.Bounds, "")
+            {
+                myID = 500,
+                rightNeighborID = ModConfigMenu.DEFAULT_COMPONENT_ID,
+                ScreenReaderIgnore = true
+            };
+            this.allClickableComponents.Add(button.DummyClickableComponent);
             this.Ui.AddChild(button);
 
             if (Constants.TargetPlatform == GamePlatform.Android)
@@ -147,14 +183,29 @@ namespace GenericModConfigMenu.Framework
             else
                 this.upperRightCloseButton = null;
 
-            if (scrollTo != null)
-                this.ScrollRow = scrollTo.Value;
+            if (scrollTo != null) this.ScrollRow = scrollTo.Value;
 
             if (!InGame)
             {
                 // This hack lets gamepad cursor movement work without a harmony patch
                 Mod.instance.Helper.Reflection.GetField<bool>(Game1.activeClickableMenu, "titleInPosition").SetValue(false);
             }
+        }
+
+        public override void applyMovementKey(int direction)
+        {
+            base.applyMovementKey(direction);
+            if (direction is 0 or 2 && this.currentlySnappedComponent != null &&
+                this.Table.IsElementOffScreen(this.currentlySnappedComponent))
+            {
+                this.Table.Scrollbar.ScrollBy(direction is 0 ? -1 : 1);
+            }
+        }
+
+        public override void snapToDefaultClickableComponent()
+        {
+            this.currentlySnappedComponent = getComponentWithID(ModConfigMenu.DEFAULT_COMPONENT_ID);
+            this.snapCursorToCurrentSnappedComponent();
         }
 
         /// <inheritdoc />
@@ -191,6 +242,13 @@ namespace GenericModConfigMenu.Framework
                 }
             }
             else scrollCounter = 0;
+
+            if (this.oldScrollPercent != this.Table.Scrollbar.ScrollPercent && GetChildMenu() == null)
+            {
+                if (float.IsNaN(this.oldScrollPercent)) this.setCurrentlySnappedComponentTo(this.initialSnappedComponentId);
+                this.oldScrollPercent = this.Table.Scrollbar.ScrollPercent;
+                this.snapCursorToCurrentSnappedComponent();
+            }
         }
 
         /// <inheritdoc />
@@ -241,12 +299,6 @@ namespace GenericModConfigMenu.Framework
             this.Ui.AddChild(b);
         }
 
-        /// <inheritdoc/>
-        public override bool overrideSnappyMenuCursorMovementBan()
-        {
-            return true;
-        }
-
         /*********
         ** Private methods
         *********/
@@ -255,7 +307,9 @@ namespace GenericModConfigMenu.Framework
             Log.Trace("Changing to mod config page for mod " + modManifest.UniqueID);
             Game1.playSound("bigSelect");
 
-            this.OpenModMenu(modManifest, this.ScrollRow);
+            this.oldScrollPercent = float.NaN;
+            this.initialSnappedComponentId = this.currentlySnappedComponent.myID;
+            this.OpenModMenu(modManifest, this.ScrollRow, this.currentlySnappedComponent.myID);
         }
     }
 }

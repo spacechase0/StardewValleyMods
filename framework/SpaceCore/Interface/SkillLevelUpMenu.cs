@@ -205,12 +205,12 @@ namespace SpaceCore.Interface
             this.gameWindowSizeChanged(Rectangle.Empty, Rectangle.Empty);
             if (this.isProfessionChooser)
             {
-                this.leftProfession = new ClickableComponent(new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen + 128, this.width / 2, this.height), "")
+                this.leftProfession = new ClickableComponent(new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen + 192, (this.width / 2) + 32, this.height - 192), "")
                 {
                     myID = 102,
                     rightNeighborID = 103
                 };
-                this.rightProfession = new ClickableComponent(new Rectangle(this.width / 2 + this.xPositionOnScreen, this.yPositionOnScreen + 128, this.width / 2, this.height), "")
+                this.rightProfession = new ClickableComponent(new Rectangle(this.xPositionOnScreen + this.width / 2, this.yPositionOnScreen + 192, this.width / 2, this.height - 192), "")
                 {
                     myID = 103,
                     leftNeighborID = 102
@@ -219,12 +219,31 @@ namespace SpaceCore.Interface
             this.populateClickableComponentList();
             this.RepositionOkButton();
 
+            if (SpaceCore.Instance.StardewAccessApi is not null)
+            {
+                string toSpeak = $"{this.title}";
+                if (this.isProfessionChooser)
+                {
+                    string text = Game1.content.LoadString("Strings\\UI:LevelUp_ChooseProfession");
+                    toSpeak += $",\n{text}";
+                }
+                else
+                {
+                    foreach (string text in this.extraInfoForLevel)
+                    {
+                        toSpeak += $",\n{text}";
+                    }
+                    foreach (CraftingRecipe newCraftingRecipe in this.newCraftingRecipes)
+                    {
+                        string str = Game1.content.LoadString("Strings\\UI:LearnedRecipe_" + (newCraftingRecipe.isCookingRecipe ? "cooking" : "crafting"));
+                        string text = Game1.content.LoadString("Strings\\UI:LevelUp_NewRecipe", str, newCraftingRecipe.DisplayName);
+                        toSpeak += $",\n{text}";
+                    }
+                }
+                SpaceCore.Instance.StardewAccessApi.MenuPrefixNoQueryText = $"{toSpeak}\n";
+            }
+        }
 
-        }
-        public override bool overrideSnappyMenuCursorMovementBan()
-        {
-            return true;
-        }
         public virtual void RepositionOkButton()
         {
             this.okButton.bounds = new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64);
@@ -245,16 +264,8 @@ namespace SpaceCore.Interface
 
         public override void snapToDefaultClickableComponent()
         {
-            if (this.isProfessionChooser)
-            {
-                this.currentlySnappedComponent = this.getComponentWithID(103);
-                Game1.setMousePosition(this.xPositionOnScreen + this.width + 64, this.yPositionOnScreen + this.height + 64);
-            }
-            else
-            {
-                this.currentlySnappedComponent = this.getComponentWithID(101);
-                this.snapCursorToCurrentSnappedComponent();
-            }
+            this.currentlySnappedComponent = this.getComponentWithID(this.isProfessionChooser ? 103 : 101);
+            this.snapCursorToCurrentSnappedComponent();
         }
 
         public override void applyMovementKey(int direction)
@@ -473,7 +484,7 @@ namespace SpaceCore.Interface
             List<string> descriptions = new List<string>();
             SkillLevelUpMenu.addProfessionDescriptions(descriptions, SkillLevelUpMenu.getProfessionName(whichProfession));
             return descriptions;
-            /* 
+            /*
             List<string> descriptions = new List<string>();
             LevelUpMenu.addProfessionDescriptions(descriptions, LevelUpMenu.getProfessionName(whichProfession));
             return descriptions;
@@ -581,7 +592,9 @@ namespace SpaceCore.Interface
                         var ra = new List<string>(new[] { this.profPair.Second.GetName() });
                         ra.AddRange(this.profPair.Second.GetDescription().Split('\n'));
                         this.leftProfessionDescription = la;// LevelUpMenu.getProfessionDescription(this.professionsToChoose[0]);
+                        this.leftProfession.ScreenReaderText = string.Join(",\n", la);
                         this.rightProfessionDescription = ra;//LevelUpMenu.getProfessionDescription(this.professionsToChoose[1]);
+                        this.rightProfession.ScreenReaderText = string.Join(",\n", ra);
                     }
                     this.hasUpdatedProfessions = true;
                 }
@@ -870,6 +883,7 @@ namespace SpaceCore.Interface
                 }
                 else
                 {
+                    string toSpeak = $"{this.title}";
                     Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
                     if (Skills.SkillsByName[this.currentSkill].Icon != null)
                         Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
@@ -881,6 +895,7 @@ namespace SpaceCore.Interface
                     {
                         b.DrawString(Game1.smallFont, text, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.smallFont.MeasureString(text).X / 2f, num), Game1.textColor);
                         num += 48;
+                        toSpeak += $",\n{text}";
                     }
                     foreach (CraftingRecipe newCraftingRecipe in this.newCraftingRecipes)
                     {
@@ -889,6 +904,13 @@ namespace SpaceCore.Interface
                         b.DrawString(Game1.smallFont, text, new Vector2((float)(this.xPositionOnScreen + this.width / 2 - Game1.smallFont.MeasureString(text).X / 2.0 - 64.0), num + (newCraftingRecipe.bigCraftable ? 38 : 12)), Game1.textColor);
                         newCraftingRecipe.drawMenuView(b, (int)(this.xPositionOnScreen + this.width / 2 + Game1.smallFont.MeasureString(text).X / 2.0 - 48.0), num - 16);
                         num += (newCraftingRecipe.bigCraftable ? 128 : 64) + 8;
+                        toSpeak += $",\n{text}";
+                    }
+
+                    if (SpaceCore.Instance.StardewAccessApi is not null && SpaceCore.Instance.StardewAccessApi.PrimaryInfoKey.JustPressed())
+                    {
+                        // Repeats the contents
+                        SpaceCore.Instance.StardewAccessApi.Say(toSpeak, true);
                     }
                     this.okButton.draw(b);
                 }

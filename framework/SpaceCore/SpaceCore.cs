@@ -137,6 +137,7 @@ namespace SpaceCore
         ** Fields
         *********/
         internal Harmony Harmony;
+        internal IStardewAccessApi StardewAccessApi;
 
         /// <summary>Handles migrating legacy data for a save file.</summary>
         private LegacyDataMigrator LegacyDataMigrator;
@@ -412,7 +413,7 @@ namespace SpaceCore
 
                         if (!ctx.Location.terrainFeatures.TryGetValue(tile + new Vector2(ix, iy), out var tf) || tf is not HoeDirt hd || hd.crop == null)
                             continue;
-                        
+
                         if (hd.crop.netSeedIndex.Value == cropSeedId && hd.crop.currentPhase.Value == hd.crop.phaseDays.Count - 1)
                             return true;
                     }
@@ -723,7 +724,7 @@ namespace SpaceCore
                         ;// Log.Debug("wat");
                 };
                 Game1.currentLocation.createQuestionDialogue(I18n.InteractionWith(npc.displayName), responses.ToArray(), "advanced-social-interaction");
-                
+
             }
         }
 
@@ -1147,6 +1148,102 @@ namespace SpaceCore
                     return new string[] { Utility.getDaysOfBooksellerThisSeason().Contains(Game1.dayOfMonth)?"true":"false" };
                 });
             }
+
+            // Initialize Stardew Access' Api
+            this.StardewAccessApi = this.Helper.ModRegistry.GetApi<IStardewAccessApi>("shoaib.stardewaccess");
+            if (this.StardewAccessApi != null)
+            {
+                Log.Debug("Initialized Stardew Access' api successfully");
+
+                Element.MouseHovered += (senderElement, args) =>
+                {
+                    Element element = (Element)senderElement;
+                    if (element is Container or null) return;
+
+                    if (element.ScreenReaderIgnore) return;
+
+                    this.StardewAccessApi.SayMenuElement(GetScreenReaderInfoOfElement(element),
+                        description: element.ScreenReaderDescription, interrupt: true);
+                };
+            }
+        }
+
+        /// <summary>
+        /// Adds the suffixes (button, checkbox, etc.) according to the appropriate element type.
+        /// </summary>
+        private string GetScreenReaderInfoOfElement(Element element)
+        {
+            string translationKey;
+            string elementText = element.ScreenReaderText;
+            object? tokens = new { label = elementText };
+
+            switch (element)
+            {
+                case Button:
+                    translationKey = "options_element-button_info";
+                    break;
+                case Checkbox checkbox:
+                    translationKey = "options_element-checkbox_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        is_checked = checkbox.Checked ? 1 : 0
+                    };
+                    break;
+                case Dropdown dropdown:
+                    translationKey = "options_element-dropdown_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        selected_option = dropdown.Value
+                    };
+                    break;
+                case Slider<float> slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = slider.Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Slider<int> slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = slider.Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Slider slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = ((Slider<float>)slider).Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Textbox textbox:
+                    if (textbox.Selected)
+                    {
+                        return string.IsNullOrEmpty(textbox.String) ? "" : textbox.String;
+                    }
+                    translationKey = "options_element-text_box_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        value = string.IsNullOrEmpty(textbox.String) ? "" : textbox.String,
+                    };
+                    break;
+                default:
+                    return elementText;
+            }
+
+            if (string.IsNullOrWhiteSpace(elementText)) return "unknown";
+
+            return this.StardewAccessApi.Translate(translationKey, tokens, "Menu");
         }
 
         /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
@@ -1228,7 +1325,7 @@ namespace SpaceCore
                     {
                         int whole = (int)Math.Truncate(ext.staminaBuffer);
                         ext.staminaBuffer -= whole;
-                        Game1.player.Stamina += whole; 
+                        Game1.player.Stamina += whole;
                     }
                 }
                 if (ext.HealthRegen != 0)

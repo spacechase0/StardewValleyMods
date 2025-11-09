@@ -55,6 +55,9 @@ namespace GenericModConfigMenu.Framework
 
         private List<Label> keybindOpts = new();
 
+        private float OldScrollPercent;
+
+        private int LastSnappedComponentId = -1;
 
         /*********
         ** Accessors
@@ -122,6 +125,9 @@ namespace GenericModConfigMenu.Framework
                                 LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
                                 Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
                                 UserData = opt,
+                                ScreenReaderText = $"{name}[[InputListener]]",
+                                ScreenReaderDescription = tooltip,
+                                CreateDummyClickableComponent = true
                             };
                             break;
 
@@ -135,6 +141,9 @@ namespace GenericModConfigMenu.Framework
                                 LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
                                 Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
                                 UserData = opt,
+                                ScreenReaderText = $"{name}[[InputListener]]",
+                                ScreenReaderDescription = tooltip,
+                                CreateDummyClickableComponent = true
                             };
                             break;
                     }
@@ -150,13 +159,24 @@ namespace GenericModConfigMenu.Framework
                         String = config.ModName,
                         UserData = config.ModManifest.Description,
                         Bold = true,
+                        ScreenReaderText = config.ModName,
+                        ScreenReaderDescription = config.ModManifest.Description,
+                        CreateDummyClickableComponent = true
                     };
                     if (!string.IsNullOrEmpty(config.ModManifest.Description))
                         OptHovers.Add(header);
                     Table.AddRow([header]);
+                    this.allClickableComponents.Add(header.DummyClickableComponent);
 
                     foreach (var row in rows)
+                    {
                         Table.AddRow(row);
+                        Element optionElement = row.SingleOrDefault(x => x.CreateDummyClickableComponent && x.DummyClickableComponent != null);
+                        if (optionElement != null)
+                        {
+                            this.allClickableComponents.Add(optionElement.DummyClickableComponent);
+                        }
+                    }
 
                     Table.AddRow([]);
                 }
@@ -168,6 +188,9 @@ namespace GenericModConfigMenu.Framework
             this.Table.ForceUpdateEvenHidden();
 
             RefreshKeybindColor();
+
+            this.OldScrollPercent = float.NaN;
+            this.snapToDefaultClickableComponent();
         }
 
         public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
@@ -176,6 +199,8 @@ namespace GenericModConfigMenu.Framework
             this.ScrollSpeed = scrollSpeed;
             this.OpenPage = openPage;
             this.ReturnToList = returnToList;
+
+            this.allClickableComponents = new();
 
             this.CurrPage = page ?? "";
 
@@ -200,7 +225,9 @@ namespace GenericModConfigMenu.Framework
                 Label label = new Label
                 {
                     String = name,
-                    UserData = tooltip
+                    UserData = tooltip,
+                    ScreenReaderText = name,
+                    ScreenReaderDescription = tooltip
                 };
                 if (!string.IsNullOrEmpty(tooltip))
                     this.OptHovers.Add(label);
@@ -216,7 +243,10 @@ namespace GenericModConfigMenu.Framework
                     case ComplexModOption option:
                         optionElement = new ComplexModOptionWidget(option)
                         {
-                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0)
+                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -225,7 +255,10 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Checked = option.Value,
-                            Callback = (Element e) => option.Value = (e as Checkbox).Checked
+                            Callback = (Element e) => option.Value = (e as Checkbox).Checked,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -237,7 +270,10 @@ namespace GenericModConfigMenu.Framework
                         {
                             String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
+                            ScreenReaderText = $"{name}[[InputListener]]",
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -249,7 +285,10 @@ namespace GenericModConfigMenu.Framework
                         {
                             String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
+                            ScreenReaderText = $"{name}[[InputListener]]",
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -271,7 +310,10 @@ namespace GenericModConfigMenu.Framework
                             {
                                 option.Value = (e as Slider<int>).Value;
                                 rightLabel.String = option.FormatValue();
-                            }
+                            },
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
 
                         rightLabel.LocalPosition = optionElement.LocalPosition + new Vector2(x: optionElement.Width + 15, y: 0);
@@ -295,7 +337,10 @@ namespace GenericModConfigMenu.Framework
                             {
                                 option.Value = (e as Slider<float>).Value;
                                 rightLabel.String = option.FormatValue();
-                            }
+                            },
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
 
                         rightLabel.LocalPosition = optionElement.LocalPosition + new Vector2(x: optionElement.Width + 15, y: 0);
@@ -311,7 +356,10 @@ namespace GenericModConfigMenu.Framework
                             RequestWidth = (int)this.Table.Size.X / 2,
                             Value = option.Value,
                             MaxValuesAtOnce = Math.Min(option.Choices.Length, 5),
-                            Callback = (Element e) => option.Value = (e as Dropdown).Value
+                            Callback = (Element e) => option.Value = (e as Dropdown).Value,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -323,7 +371,10 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
-                            Callback = (Element e) => option.Value = (e as Intbox).Value
+                            Callback = (Element e) => option.Value = (e as Intbox).Value,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -335,7 +386,10 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
-                            Callback = (Element e) => option.Value = (e as Floatbox).Value
+                            Callback = (Element e) => option.Value = (e as Floatbox).Value,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -347,7 +401,10 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             String = option.Value,
-                            Callback = (Element e) => option.Value = (e as Textbox).String
+                            Callback = (Element e) => option.Value = (e as Textbox).String,
+                            ScreenReaderText = name,
+                            ScreenReaderDescription = tooltip,
+                            CreateDummyClickableComponent = true
                         };
                         break;
 
@@ -422,7 +479,9 @@ namespace GenericModConfigMenu.Framework
                                 NonBoldScale = 1f,
                                 NonBoldShadow = false,
                                 Font = Game1.smallFont,
-                                String = text.ToString()
+                                String = text.ToString(),
+                                ScreenReaderText = text.ToString(),
+                                CreateDummyClickableComponent = true
                             };
                             break;
                         }
@@ -442,21 +501,93 @@ namespace GenericModConfigMenu.Framework
                                 Texture = texture,
                                 TexturePixelArea = option.TexturePixelArea ?? new Rectangle(0, 0, (int)size.X, (int)size.Y),
                                 Scale = option.Scale,
-                                LocalPosition = localPos
+                                LocalPosition = localPos,
+                                ScreenReaderText = option.Name(),
+                                ScreenReaderDescription = option.Tooltip(),
+                                CreateDummyClickableComponent = true
                             };
 
                             break;
                         }
                 }
 
-                this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
+                if (optionElement == null || optionElement.CreateDummyClickableComponent == false)
+                    label.CreateDummyClickableComponent = true;
+                else if (label != null)
+                    label.ScreenReaderIgnore = true;
 
+                this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
+                if (optionElement != null)
+                {
+                    if (optionElement.DummyClickableComponent != null)
+                    {
+                        this.allClickableComponents.Add(optionElement.DummyClickableComponent);
+                    }
+                }
+                else if (label != null)
+                {
+                     if (label.DummyClickableComponent != null)
+                     {
+                         this.allClickableComponents.Add(label.DummyClickableComponent);
+                     }
+                }
             }
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
+
+            this.OldScrollPercent = float.NaN;
+            this.snapToDefaultClickableComponent();
+        }
+
+        public override void applyMovementKey(int direction)
+        {
+            // Abort navigation when a textbox is selected
+            if (Textbox.SelectedTextbox is { Selected: true }) return;
+
+            if (direction is 1 or 3)
+            {
+                if (Mod.instance.CurrentHoveredButton is Slider<int> slider)
+                {
+                    slider.Value = direction == 1
+                        ? Math.Min(slider.Value + slider.Interval, slider.Maximum)
+                        : Math.Max(slider.Value - slider.Interval, slider.Minimum);
+                    slider.Callback?.Invoke(slider);
+                    return;
+                }
+                else if (Mod.instance.CurrentHoveredButton is Slider<float> slider1)
+                {
+                    slider1.Value = direction == 1
+                        ? Math.Min(slider1.Value + slider1.Interval, slider1.Maximum)
+                        : Math.Max(slider1.Value - slider1.Interval, slider1.Minimum);
+                    slider1.Callback?.Invoke(slider1);
+                    return;
+                }
+
+                else if (Mod.instance.CurrentHoveredButton is Dropdown dropdown)
+                {
+                    dropdown.ActiveChoice = direction == 1
+                        ? Math.Min(dropdown.ActiveChoice + 1, dropdown.Choices.Length - 1)
+                        : Math.Max(dropdown.ActiveChoice - 1, 0);
+                    dropdown.Callback?.Invoke(dropdown);
+                    return;
+                }
+            }
+
+            base.applyMovementKey(direction);
+            if (direction is 0 or 2 && this.currentlySnappedComponent != null &&
+                this.Table.IsElementOffScreen(this.currentlySnappedComponent))
+            {
+                this.Table.Scrollbar.ScrollBy(direction is 0 ? -1 : 1);
+            }
+        }
+
+        public override void snapToDefaultClickableComponent()
+        {
+            this.currentlySnappedComponent = getComponentWithID(1000);
+            this.snapCursorToCurrentSnappedComponent();
         }
 
         /// <inheritdoc />
@@ -473,8 +604,16 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void receiveKeyPress(Keys key)
         {
+            // Unselect selected textbox on escape pressed
+            if (key == Keys.Escape && Textbox.SelectedTextbox is { Selected: true })
+            {
+                Textbox.SelectedTextbox.Selected = false;
+                return;
+            }
+
             if (key == Keys.Escape && !this.IsBindingKey)
                 this.ExitOnNextUpdate = true;
+            base.receiveKeyPress(key);
         }
 
         /// <inheritdoc />
@@ -507,6 +646,13 @@ namespace GenericModConfigMenu.Framework
                 }
             }
             else scrollCounter = 0;
+
+            if (this.OldScrollPercent != this.Table.Scrollbar.ScrollPercent)
+            {
+                // Re-snap cursor to the component on scroll change.
+                this.OldScrollPercent = this.Table.Scrollbar.ScrollPercent;
+                this.snapCursorToCurrentSnappedComponent();
+            }
 
             if (this.ExitOnNextUpdate)
                 this.Cancel();
@@ -577,12 +723,6 @@ namespace GenericModConfigMenu.Framework
             this.ActiveKeybindOverlay?.OnWindowResized();
         }
 
-        /// <inheritdoc/>
-        public override bool overrideSnappyMenuCursorMovementBan()
-        {
-            return true;
-        }
-
 
         /// <summary>Raised when any buttons are pressed or released.</summary>
         /// <param name="e">The event arguments.</param>
@@ -625,7 +765,8 @@ namespace GenericModConfigMenu.Framework
                     String = I18n.Config_Buttons_Cancel(),
                     Bold = true,
                     LocalPosition = leftPosition,
-                    Callback = _ => this.Cancel()
+                    Callback = _ => this.Cancel(),
+                    ScreenReaderText = Mod.instance.StardewAccessApi.Translate("options_element-button_info", tokens: new {label = I18n.Config_Buttons_Cancel()}, "Menu"),
                 };
                 var resetButton = new Label
                 {
@@ -633,14 +774,18 @@ namespace GenericModConfigMenu.Framework
                     Bold = true,
                     LocalPosition = leftPosition,
                     Callback = _ => this.ResetConfig(),
-                    ForceHide = () => this.IsSubPage || modManifest == null
+                    ForceHide = () => this.IsSubPage || modManifest == null,
+                    ScreenReaderText = (modManifest != null && !this.IsSubPage)
+                        ? Mod.instance.StardewAccessApi.Translate("options_element-button_info", tokens: new { label = I18n.Config_Buttons_ResetToDefault() }, "Menu")
+                        : "",
                 };
                 var saveButton = new Label
                 {
                     String = I18n.Config_Buttons_Save(),
                     Bold = true,
                     LocalPosition = leftPosition,
-                    Callback = _ => this.SaveConfig()
+                    Callback = _ => this.SaveConfig(),
+                    ScreenReaderText = Mod.instance.StardewAccessApi.Translate("options_element-button_info", tokens: new {label = I18n.Config_Buttons_Save()}, "Menu"),
                 };
                 var saveAndCloseButton = new Label
                 {
@@ -651,7 +796,8 @@ namespace GenericModConfigMenu.Framework
                     {
                         this.SaveConfig();
                         this.Close();
-                    }
+                    },
+                    ScreenReaderText = Mod.instance.StardewAccessApi.Translate("options_element-button_info", tokens: new {label = I18n.Config_Buttons_SaveAndClose()}, "Menu"),
                 };
                 Label[] buttons = new[] { cancelButton, resetButton, saveButton, saveAndCloseButton };
                 int[] widths = buttons.Select(p => p.Width).ToArray();
@@ -674,6 +820,56 @@ namespace GenericModConfigMenu.Framework
                 // add to UI
                 foreach (var button in buttons)
                     this.Ui.AddChild(button);
+                int rowId = 1000;
+                var last = this.allClickableComponents.LastOrDefault();
+                if (last != null)
+                {
+                    rowId = ((int)Math.Floor((double)last.myID / 1000) * 1000) + 1000;
+                    last.downNeighborID = rowId;
+                }
+
+                cancelButton.DummyClickableComponent = new(cancelButton.Bounds, "")
+                {
+                    myID = rowId,
+                    upNeighborID = last?.myID ?? -1,
+                    rightNeighborID = rowId + 1,
+                    ScreenReaderIgnore = true
+                };
+                rowId++;
+                if (modManifest != null && !this.IsSubPage)
+                {
+                    resetButton.DummyClickableComponent = new(resetButton.Bounds, "")
+                    {
+                        myID = rowId,
+                        upNeighborID = last?.myID ?? -1,
+                        rightNeighborID = rowId + 1,
+                        leftNeighborID = rowId - 1,
+                        ScreenReaderIgnore = true
+                    };
+                    rowId++;
+                }
+                saveButton.DummyClickableComponent = new(saveButton.Bounds, "")
+                {
+                    myID = rowId,
+                    upNeighborID = last?.myID ?? -1,
+                    rightNeighborID = rowId + 1,
+                    leftNeighborID = rowId - 1,
+                    ScreenReaderIgnore = true
+                };
+                rowId++;
+                saveAndCloseButton.DummyClickableComponent = new(saveAndCloseButton.Bounds, "")
+                {
+                    myID = rowId,
+                    upNeighborID = last?.myID ?? -1,
+                    rightNeighborID = rowId + 1,
+                    leftNeighborID = rowId - 1,
+                    ScreenReaderIgnore = true
+                };
+
+                this.allClickableComponents.Add(cancelButton.DummyClickableComponent);
+                this.allClickableComponents.Add(resetButton.DummyClickableComponent);
+                this.allClickableComponents.Add(saveButton.DummyClickableComponent);
+                this.allClickableComponents.Add(saveAndCloseButton.DummyClickableComponent);
             }
         }
 
@@ -775,9 +971,12 @@ namespace GenericModConfigMenu.Framework
         {
             Game1.playSound("breathin");
 
+            this.LastSnappedComponentId = this.currentlySnappedComponent.myID;
+
             this.ActiveKeybindOverlay = option switch
             {
                 SimpleModOption<SButton> buttonOption => new KeybindOverlay(
+                    activeMenu: this,
                     keybinds: [new Keybind(buttonOption.Value)],
                     onlyAllowSingleButton: true,
                     name: option.Name(),
@@ -789,6 +988,7 @@ namespace GenericModConfigMenu.Framework
                 ),
 
                 SimpleModOption<KeybindList> listOption => new KeybindOverlay(
+                    activeMenu: this,
                     keybinds: listOption.Value.Keybinds,
                     onlyAllowSingleButton: false,
                     name: option.Name(),
@@ -812,6 +1012,9 @@ namespace GenericModConfigMenu.Framework
             this.Ui.Obscured = false;
 
             RefreshKeybindColor();
+
+            this.setCurrentlySnappedComponentTo(this.LastSnappedComponentId);
+            this.snapCursorToCurrentSnappedComponent();
         }
 
         private void RefreshKeybindColor()

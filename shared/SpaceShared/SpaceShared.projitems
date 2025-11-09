@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IAdvancedSocialInteractionsApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)apis\IBetterGameMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IBetterGameMenuApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IBugNetApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ICookingSkillApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IDynamicGameAssetsApi.cs" />
@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IJsonAssetsApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ISolidFoundationsAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ISpaceCoreApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IStardewAccessApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\ITrainStationApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseMod.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CancelableEventArgs.cs" />
@@ -48,13 +49,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ui\ISingleTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ISingleTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ItemSlot.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ItemWithBorder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\RootElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Scrollbar.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ui\ScrollContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ScrollContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\StaticContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Table.cs" />

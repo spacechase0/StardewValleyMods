@@ -85,7 +85,8 @@ namespace SpaceCore.Interface
             // Player panel
             this.playerPanel = new ClickableComponent(bounds: new Rectangle(this.xPositionOnScreen + 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 128, 192), name: null)
             {
-                myID = NewSkillsPage.PlayerPanelRegionId
+                myID = NewSkillsPage.PlayerPanelRegionId,
+                ScreenReaderText = $"{Game1.player.Name}, {Game1.player.getTitle()}"
             };
 
             // Professions
@@ -155,6 +156,7 @@ namespace SpaceCore.Interface
                         };
                         textureComponent.leftNeighborID = textureComponent.myID - NewSkillsPage.SkillProfessionIncrement;
                         textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && VisibleSkills.Length == 0 ? -1 : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
+                        textureComponent.ScreenReaderText = $"{professionTitle}, {professionBlurb}";
                         this.skillBars.Add(textureComponent);
                         this.skillBarSkillIndexes[textureComponent.myID] = skillIndex;
                     }
@@ -230,6 +232,8 @@ namespace SpaceCore.Interface
                     _ => skillIndex
                 };
                 string hoverText = "";
+                string skillTitle = "";
+                int skillLevel = 0;
                 switch (actualSkillIndex)
                 {
                     case 0:
@@ -237,30 +241,40 @@ namespace SpaceCore.Interface
                         {
                             hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11592", Game1.player.FarmingLevel) + Environment.NewLine + Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11594", Game1.player.FarmingLevel);
                         }
+                        skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11604");
+                        skillLevel = Game1.player.FarmingLevel;
                         break;
                     case 1:
                         if (Game1.player.FishingLevel > 0)
                         {
                             hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11598", Game1.player.FishingLevel);
                         }
+                        skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11607");
+                        skillLevel = Game1.player.FishingLevel;
                         break;
                     case 2:
                         if (Game1.player.ForagingLevel > 0)
                         {
                             hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11596", Game1.player.ForagingLevel);
                         }
+                        skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11606");
+                        skillLevel = Game1.player.ForagingLevel;
                         break;
                     case 3:
                         if (Game1.player.MiningLevel > 0)
                         {
                             hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11600", Game1.player.MiningLevel);
                         }
+                        skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11605");
+                        skillLevel = Game1.player.MiningLevel;
                         break;
                     case 4:
                         if (Game1.player.CombatLevel > 0)
                         {
                             hoverText = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11602", Game1.player.CombatLevel * 5);
                         }
+                        skillTitle = Game1.content.LoadString("Strings\\StringsFromCSFiles:SkillsPage.cs.11608");
+                        skillLevel = Game1.player.CombatLevel;
                         break;
                 }
 
@@ -278,6 +292,9 @@ namespace SpaceCore.Interface
                 textureComponent.downNeighborID = skillIndex == gameSkillCount - 1 && VisibleSkills.Length == 0 ? -1 : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
                 textureComponent.upNeighborID = skillIndex > 0 ? textureComponent.myID - NewSkillsPage.SkillProfessionIncrement : this.SkillTabRegionId;
 
+                textureComponent.ScreenReaderText = SpaceCore.Instance.StardewAccessApi is not null
+                    ? SpaceCore.Instance.StardewAccessApi.Translate("menu-skills_page-skill_info", new { name = skillTitle, level = skillLevel, buffs = hoverText }, "Menu")
+                    : $"{skillTitle} at level {skillLevel},\n{hoverText}";
                 this.skillAreas.Add(textureComponent);
                 this.skillAreaSkillIndexes[textureComponent.myID] = skillIndex;
             }
@@ -304,6 +321,9 @@ namespace SpaceCore.Interface
                 textureComponent.downNeighborID = skillIndex == VisibleSkills.Length - 1 ? -1 : textureComponent.myID + NewSkillsPage.SkillIdIncrement;
                 textureComponent.upNeighborID = textureComponent.myID - NewSkillsPage.SkillIdIncrement;
 
+                textureComponent.ScreenReaderText = SpaceCore.Instance.StardewAccessApi is not null
+                    ? SpaceCore.Instance.StardewAccessApi.Translate("menu-skills_page-skill_info", new { name = skill.GetName(), level = Game1.player.GetCustomBuffedSkillLevel(skill), buffs = hoverText }, "Menu")
+                    : $"{skill.GetName()} at level {Game1.player.GetCustomBuffedSkillLevel(skill)},\n{hoverText}";
                 this.skillAreas.Add(textureComponent);
                 this.skillAreaSkillIndexes[textureComponent.myID] = actualSkillIndex;
             }
@@ -550,6 +570,29 @@ namespace SpaceCore.Interface
             int y = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 8;
             int indexWithLuckSkill = this.GameSkillCount;
             int xOffset = 0;
+
+            if (SpaceCore.Instance.StardewAccessApi is not null && SpaceCore.Instance.StardewAccessApi.PrimaryInfoKey.JustPressed())
+            {
+                int currentMasteryLevel = MasteryTrackerMenu.getCurrentMasteryLevel();
+                int currentMasteryPoints = (int)Game1.stats.Get("MasteryExp") - MasteryTrackerMenu.getMasteryExpNeededForLevel(currentMasteryLevel);
+                int requiredMasteryPoints = MasteryTrackerMenu.getMasteryExpNeededForLevel(currentMasteryLevel + 1) - MasteryTrackerMenu.getMasteryExpNeededForLevel(currentMasteryLevel);
+
+                object translationTokens = new
+                {
+                    name = Game1.player.Name,
+                    title = Game1.player.getTitle(),
+                    golden_walnut_count = Game1.netWorldState.Value.GoldenWalnuts,
+                    qi_gem_count = Game1.player.QiGems,
+                    house_upgrade_level = Game1.player.HouseUpgradeLevel + 1,
+                    lowest_mine_level = MineShaft.lowestLevelReached < 0 ? 0 : MineShaft.lowestLevelReached,
+                    stardrop_count = Utility.numStardropsFound(Game1.player),
+                    mastery_level = Game1.stats.Get("MasteryExp") != 0 ? currentMasteryLevel : -1,
+                    current_mastery_points = currentMasteryPoints,
+                    required_mastery_points = requiredMasteryPoints,
+                };
+
+                SpaceCore.Instance.StardewAccessApi.TranslateAndSay("menu-skills_page-player_info", true, translationTokens, "Menu");
+            }
 
             // Menu container
             Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height,

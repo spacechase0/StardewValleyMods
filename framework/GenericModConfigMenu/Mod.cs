@@ -28,6 +28,7 @@ namespace GenericModConfigMenu
         /*********
         ** Fields
         *********/
+        private IModHelper? ModHelper;
         private OwnModConfig Config;
         private RootElement? Ui;
         private Button ConfigButton;
@@ -36,6 +37,10 @@ namespace GenericModConfigMenu
 
         /// <summary>Manages registered mod config menus.</summary>
         internal readonly ModConfigManager ConfigManager = new();
+
+        internal IStardewAccessApi StardewAccessApi;
+
+        internal Element CurrentHoveredButton = null;
 
         /*********
         ** Accessors
@@ -89,6 +94,7 @@ namespace GenericModConfigMenu
         public override void Entry(IModHelper helper)
         {
             instance = this;
+            this.ModHelper = helper;
             I18n.Init(helper.Translation);
             Log.Monitor = this.Monitor;
             this.Config = helper.ReadConfig<OwnModConfig>();
@@ -123,7 +129,7 @@ namespace GenericModConfigMenu
                     return false;
                 }
 
-                OpenModMenuNew(manifest, null, null);
+                OpenModMenuNew(manifest, null, null, null);
 
                 error = null;
                 return true;
@@ -133,7 +139,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc />
         public override object GetApi(IModInfo mod)
         {
-            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null), (s) => LogDeprecated( mod.Manifest.UniqueID, s));
+            return new Api(mod.Manifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null, snappedComponentId: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null, snappedComponentId: null), (s) => LogDeprecated( mod.Manifest.UniqueID, s));
         }
 
 
@@ -151,13 +157,13 @@ namespace GenericModConfigMenu
 
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
         /// <param name="scrollRow">The initial scroll position, represented by the row index at the top of the visible area.</param>
-        private void OpenListMenuNew(int? scrollRow = null)
+        private void OpenListMenuNew(int? scrollRow = null, int? snappedComponentId = null)
         {
-            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew( currScrollRow ), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow);
+            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow, curSnappedCompId) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow, snappedComponentId: curSnappedCompId), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew( currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow, snappedComponentId);
         }
-        private void OpenListMenu(int? scrollRow = null)
+        private void OpenListMenu(int? scrollRow = null, int? snappedComponentId = null)
         {
-            var newMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew(currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow); ;
+            var newMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow, curSnappedCompId) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow, snappedComponentId: curSnappedCompId), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew(currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow, snappedComponentId);
             if (Game1.activeClickableMenu is TitleMenu)
             {
                 TitleMenu.subMenu = newMenu;
@@ -176,7 +182,7 @@ namespace GenericModConfigMenu
                 returnToList: () =>
                 {
                     if (Game1.activeClickableMenu is TitleMenu)
-                        OpenListMenuNew(listScrollRow);
+                        OpenListMenuNew(listScrollRow, null);
                     else
                         Mod.ActiveConfigMenu = null;
                 }
@@ -190,10 +196,10 @@ namespace GenericModConfigMenu
                 scrollSpeed: this.Config.ScrollSpeed,
                 returnToList: () =>
                 {
-                    OpenListMenuNew(listScrollRow);
+                    OpenListMenuNew(listScrollRow, null);
                 }
             );
-            
+
             if (Game1.activeClickableMenu is TitleMenu)
             {
                 TitleMenu.subMenu = newMenu;
@@ -208,7 +214,7 @@ namespace GenericModConfigMenu
         /// <param name="mod">The mod whose config menu to display.</param>
         /// <param name="page">The page to display within the mod's config menu.</param>
         /// <param name="listScrollRow">The scroll position to set in the mod list when returning to it, represented by the row index at the top of the visible area.</param>
-        private void OpenModMenuNew(IManifest mod, string page, int? listScrollRow)
+        private void OpenModMenuNew(IManifest mod, string page, int? listScrollRow, int? snappedComponentId)
         {
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
@@ -220,19 +226,19 @@ namespace GenericModConfigMenu
                 {
                     if (!(Game1.activeClickableMenu is TitleMenu))
                         Mod.ActiveConfigMenu = null;
-                    this.OpenModMenuNew(mod, newPage, listScrollRow);
+                    this.OpenModMenuNew(mod, newPage, listScrollRow, snappedComponentId);
                 },
                 returnToList: () =>
                 {
                     if (Game1.activeClickableMenu is TitleMenu)
-                        OpenListMenuNew(listScrollRow);
+                        OpenListMenuNew(listScrollRow, snappedComponentId);
                     else
                         Mod.ActiveConfigMenu = null;
                 }
             );
         }
 
-        private void OpenModMenu(IManifest mod, string page, int? listScrollRow)
+        private void OpenModMenu(IManifest mod, string page, int? listScrollRow, int? snappedComponentId)
         {
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
@@ -242,11 +248,11 @@ namespace GenericModConfigMenu
                 page: page,
                 openPage: newPage =>
                 {
-                    OpenModMenuNew(mod, newPage, listScrollRow);
+                    OpenModMenuNew(mod, newPage, listScrollRow, snappedComponentId);
                 },
                 returnToList: () =>
                 {
-                    OpenListMenu(listScrollRow);
+                    OpenListMenu(listScrollRow, snappedComponentId);
                 }
             );
 
@@ -270,7 +276,8 @@ namespace GenericModConfigMenu
                     {
                         Game1.playSound("newArtifact");
                         this.OpenListMenuNew();
-                    }
+                    },
+                    ScreenReaderText = I18n.Button_TitleMenu()
                 };
 
                 this.Ui.AddChild(this.ConfigButton);
@@ -311,7 +318,7 @@ namespace GenericModConfigMenu
             // the texture.
             this.Helper.Events.GameLoop.UpdateTicking += this.FiveTicksAfterGameLaunched;
 
-            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null), (s) => LogDeprecated( ModManifest.UniqueID, s));
+            Api configMenu = new Api(ModManifest, this.ConfigManager, mod => this.OpenModMenu(mod, page: null, listScrollRow: null, snappedComponentId: null), mod => this.OpenModMenuNew(mod, page: null, listScrollRow: null, snappedComponentId: null), (s) => LogDeprecated( ModManifest.UniqueID, s));
 
             configMenu.Register(
                 mod: this.ModManifest,
@@ -350,6 +357,113 @@ namespace GenericModConfigMenu
                 if (evt.Tab == nameof(BetterGameMenuTabs.Options) && evt.Page is OptionsPage page)
                     page.options.Add(new OptionsButton(I18n.Button_ModOptions(), () => this.OpenListMenuNew()));
             });
+
+            // Initialize Stardew Access' Api
+            this.StardewAccessApi = this.Helper.ModRegistry.GetApi<IStardewAccessApi>("shoaib.stardewaccess");
+            if (this.StardewAccessApi != null)
+            {
+                Log.Info("Initialized Stardew Access' api successfully");
+                this.StardewAccessApi.RegisterCustomMenuAsAccessible(typeof(ModConfigMenu).FullName);
+                this.StardewAccessApi.IgnoreHoverTextInMenu(typeof(SpecificModConfigMenu).FullName);
+
+                Element.MouseHovered += (senderElement, args) =>
+                {
+                    Element element = (Element)senderElement;
+                    if (element is Container or null) return;
+
+                    this.CurrentHoveredButton = element;
+                    if (element.ScreenReaderIgnore) return;
+
+                    this.StardewAccessApi.SayMenuElement(GetScreenReaderInfoOfElement(element),
+                        description: element.ScreenReaderDescription, interrupt: true);
+                };
+            }
+        }
+
+        /// <summary>
+        /// Adds the suffixes (button, checkbox, etc.) according to the appropriate element type.
+        /// </summary>
+        private string GetScreenReaderInfoOfElement(Element element)
+        {
+            string translationKey;
+            string elementText = element.ScreenReaderText;
+            object? tokens = new { label = elementText };
+
+            switch (element)
+            {
+                case Button:
+                    translationKey = "options_element-button_info";
+                    break;
+                case Checkbox checkbox:
+                    translationKey = "options_element-checkbox_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        is_checked = checkbox.Checked ? 1 : 0
+                    };
+                    break;
+                case Dropdown dropdown:
+                    translationKey = "options_element-dropdown_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        selected_option = dropdown.Value
+                    };
+                    break;
+                case Slider<float> slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = slider.Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Slider<int> slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = slider.Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Slider slider:
+                    translationKey = "options_element-slider_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        slider_value = ((Slider<float>)slider).Value,
+                        is_percentage = 0
+                    };
+                    break;
+                case Textbox textbox:
+                    if (textbox.Selected)
+                    {
+                        return string.IsNullOrEmpty(textbox.String) ? "" : textbox.String;
+                    }
+                    translationKey = "options_element-text_box_info";
+                    tokens = new
+                    {
+                        label = elementText,
+                        value = string.IsNullOrEmpty(textbox.String) ? "" : textbox.String,
+                    };
+                    break;
+                case Label labelElement when elementText != null && elementText.EndsWith("[[InputListener]]"):
+                    translationKey = "options_element-input_listener_info";
+                    tokens = new
+                    {
+                        label = elementText.Replace("[[InputListener]]", ""),
+                        buttons_list = labelElement.String
+                    };
+                    break;
+                default:
+                    return elementText;
+            }
+
+            if (string.IsNullOrWhiteSpace(elementText)) return "unknown";
+
+            return this.StardewAccessApi.Translate(translationKey, tokens, "Menu");
         }
 
         private void FiveTicksAfterGameLaunched(object sender, UpdateTickingEventArgs e)
@@ -423,8 +537,13 @@ namespace GenericModConfigMenu
                 this.OpenListMenuNew();
 
             // pass input to menu
-            else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu && e.Button.TryGetKeyboard(out Keys key))
+            else if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu &&
+                     Textbox.SelectedTextbox is { Selected: true } &&
+                     e.Button.TryGetKeyboard(out Keys key))
+            {
                 menu.receiveKeyPress(key);
+                if (key == Keys.Escape) this.ModHelper?.Input.Suppress(e.Button);
+            }
         }
 
         /// <inheritdoc cref="IInputEvents.ButtonPressed"/>
