@@ -578,22 +578,26 @@ namespace SpaceCore.Interface
                 b.Draw(texture: Game1.timeOfDay >= 1900 ? Game1.nightbg : Game1.daybg, position: new Vector2(x1, y1), Color.White);
 
                 // farmer portrait
+                FarmerRenderer.isDrawingForUI = true;
                 Game1.player.FarmerRenderer.draw(b,
                     new FarmerSprite.AnimationFrame(Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex], 0, false, false),
                     currentFrame: Game1.player.bathingClothes.Value ? 108 : this.playerPanelFrames[this.playerPanelIndex],
                     sourceRect: new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, Game1.player.bathingClothes.Value ? 576 : 0, 16, 32),
                     position: new Vector2(x1 + 32, y1 + 32),
                     origin: Vector2.Zero, layerDepth: 0.8f, facingDirection: 2, Color.White, rotation: 0.0f, scale: 1f, who: Game1.player);
+                FarmerRenderer.isDrawingForUI = false;
 
                 // dark overlay on farmer
                 if (Game1.timeOfDay >= 1900)
                 {
+                    FarmerRenderer.isDrawingForUI = true;
                     Game1.player.FarmerRenderer.draw(b,
                         new FarmerSprite.AnimationFrame(this.playerPanelFrames[this.playerPanelIndex], 0, false, false),
                         currentFrame: this.playerPanelFrames[this.playerPanelIndex],
                         sourceRect: new Rectangle(this.playerPanelFrames[this.playerPanelIndex] * 16, 0, 16, 32),
                         position: new Vector2(x1 + 32, y1 + 32),
                         origin: Vector2.Zero, layerDepth: 0.8f, facingDirection: 2, Color.DarkBlue * 0.3f, rotation: 0.0f, scale: 1f, who: Game1.player);
+                    FarmerRenderer.isDrawingForUI = false;
                 }
 
                 // subtitles
