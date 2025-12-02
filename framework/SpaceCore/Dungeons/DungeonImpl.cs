@@ -14,6 +14,7 @@ using SpaceShared;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.ContentManagement;
 using StardewValley.Delegates;
 using StardewValley.Extensions;
 using StardewValley.Locations;
@@ -37,7 +38,7 @@ namespace SpaceCore.Dungeons
         public readonly NetInt spaceCoreDungeonSeed = new();
         public readonly NetPointDictionary<bool, NetBool> spaceCoreDungeonLadders = new();
         public readonly NetBool spaceCoreDungeonIsMonsterLevel = new();
-        public LocalizedContentManager mapContent;
+        public IContentManager mapContent;
         public bool generated = false;
 
         public static ConditionalWeakTable<GameLocation, GameLocationDungeonExt> data = new();
@@ -164,8 +165,8 @@ namespace SpaceCore.Dungeons
 
                 Response[] options =
                 [
-                    new Response("Jump", Game1.content.LoadString("Strings\\Locations:Mines_ShaftJumpIn")).SetHotKey(Keys.Y),
-                    new Response("Do", Game1.content.LoadString("Strings\\Locations:Mines_DoNothing")).SetHotKey(Keys.Escape)
+                    new Response("Jump", Game1.content.LoadString("Strings\\Locations:Mines_ShaftJumpIn"), Keys.Y),
+                    new Response("Do", Game1.content.LoadString("Strings\\Locations:Mines_DoNothing"), Keys.Escape)
                 ];
                 loc.createQuestionDialogue(Game1.content.LoadString("Strings\\Locations:Mines_Shaft"), options, "Shaft");
                 loc.afterQuestion = (who, response) =>
@@ -532,7 +533,7 @@ namespace SpaceCore.Dungeons
     [HarmonyPatch(typeof(GameLocation), "getMapLoader")]
     public static class GameLocationOverrideMapLoaderForDungeonsPatch
     {
-        public static void Postfix(GameLocation __instance, ref LocalizedContentManager __result)
+        public static void Postfix(GameLocation __instance, ref IContentManager __result)
         {
             var ext = __instance.GetDungeonExtData();
             if (ext.spaceCoreDungeonId.Value != null && ext.mapContent != null)
