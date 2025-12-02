@@ -97,7 +97,7 @@ namespace SpaceCore.Patches
             bool isPatched = false;
             for (int i = 0; i < codes.Count; i++)
             {
-                if (!isPatched && CodeInstructionExtensions.Is(codes[i + 3], OpCodes.Ldstr, "Strings\\Locations:Sewer_DogStatueCancel"))
+                if (!isPatched && CodeInstructionExtensions.Is(codes[i + 3], OpCodes.Ldstr, "Strings/Locations:Sewer_DogStatueCancel"))
                 {
                     ret.Add(new CodeInstruction(OpCodes.Ldloc_S, SpaceCore.GetLocalIndexForMethod(original, "skill_responses").Single()).WithLabels(codes[i].labels));
                     ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Skills>(nameof(Skills.GetRespecCustomResponses))));

@@ -15,6 +15,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.ContentManagement;
 using StardewValley.Menus;
 using StardewValley.Network;
 
@@ -345,7 +346,7 @@ namespace SpaceCore
                 id: nameof(BetterGameMenuTabs.Skills),
                 priority: 100,
                 getPageInstance: menu => new NewSkillsPage(menu.xPositionOnScreen, menu.yPositionOnScreen, menu.width, menu.height),
-                getWidth: width => width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0),
+                getWidth: width => width + (Game1.content.LanguageCode == LanguageCode.ru ? 64 : 0),
                 onResize: input => new NewSkillsPage(input.Menu.xPositionOnScreen, input.Menu.yPositionOnScreen, input.Menu.width, input.Menu.height)
             );
         }
@@ -794,7 +795,7 @@ namespace SpaceCore
             {
                 if (SpaceCore.Instance.Config.CustomSkillPage ) // && ( Skills.SkillsByName.Count > 0 || SpaceEvents.HasAddWalletItemEventHandlers() ) )
                 {
-                    gm.pages[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? 64 : 0), gm.height);
+                    gm.pages[GameMenu.skillsTab] = new NewSkillsPage(gm.xPositionOnScreen, gm.yPositionOnScreen, gm.width + (Game1.content.LanguageCode == LanguageCode.ru ? 64 : 0), gm.height);
                 }
             }
         }

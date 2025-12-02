@@ -46,6 +46,7 @@ using System.Collections;
 using StardewValley.TokenizableStrings;
 using SpaceCore.Dungeons;
 using System.Collections.ObjectModel;
+using Microsoft.Xna.Framework.Input;
 using SpaceCore.Guidebooks;
 
 namespace SpaceCore
@@ -707,8 +708,7 @@ namespace SpaceCore
                 {
                     responses.Add(new(entry.Key, entry.Key));
                 }
-                Response cancel = new("Cancel", I18n.Interaction_Cancel());
-                cancel.SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape);
+                Response cancel = new("Cancel", I18n.Interaction_Cancel(), Keys.Escape);
                 responses.Add(cancel);
 
                 Game1.currentLocation.afterQuestion = (farmer, answer) =>
@@ -1076,7 +1076,7 @@ namespace SpaceCore
             GuidebookFont.Fonts.Add("default", Game1.smallFont);
             GuidebookFont.Fonts.Add("tiny", Game1.tinyFont);
             GuidebookFont.Fonts.Add("dialogue", Game1.dialogueFont);
-            LocalizedContentManager.OnLanguageChange += code =>
+            Game1.content.OnGlobalLanguageChanged += code =>
             {
                 GuidebookFont.Fonts["default"] = Game1.smallFont;
                 GuidebookFont.Fonts["tiny"] = Game1.tinyFont;
