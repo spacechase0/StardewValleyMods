@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using SpaceCore.VanillaAssetExpansion;
 using SpaceShared;
 using StardewValley;
+using StardewValley.ContentManagement;
 using StardewValley.Locations;
 using StardewValley.Menus;
 
@@ -91,7 +92,7 @@ namespace SpaceCore.Interface
             // Professions
             VisibleSkills = Skills.GetSkillList().Where(s => Skills.GetSkill(s).ShouldShowOnSkillsPage).ToArray();
             int drawX = 0;
-            int addedX = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + width - 448 - 48 + 4 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 4;
+            int addedX = Game1.content.LanguageCode == LanguageCode.ru ? this.xPositionOnScreen + width - 448 - 48 + 4 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 4;
             int drawY = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 12;
             int gameSkillCount = this.GameSkillCount;
             int leftSnapId = this.playerPanel.myID;
@@ -546,7 +547,7 @@ namespace SpaceCore.Interface
                 this.lastSnappedComponent = this.currentlySnappedComponent;
             }
 
-            int x = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + this.width - 448 - 48 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 8;
+            int x = Game1.content.LanguageCode == LanguageCode.ru ? this.xPositionOnScreen + this.width - 448 - 48 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 8;
             int y = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 8;
             int indexWithLuckSkill = this.GameSkillCount;
             int xOffset = 0;
@@ -968,7 +969,7 @@ namespace SpaceCore.Interface
 			    Utility.drawWithShadow(b, Game1.mouseCursors_1_6, new Vector2(xOffset + base.xPositionOnScreen + 332, yOffset + base.yPositionOnScreen + 400), new Rectangle(457, 298, 11, 11), Color.White, 0f, Vector2.Zero);
 			    float width = 0.64f;
 			    width -= (masteryStringWidth - 100f) / 800f;
-			    if (Game1.content.GetCurrentLanguage() == LocalizedContentManager.LanguageCode.ru)
+			    if (Game1.content.LanguageCode == LanguageCode.ru)
 			    {
 				    width += 0.1f;
 			    }
