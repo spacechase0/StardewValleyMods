@@ -287,22 +287,15 @@ internal class SkillBuffPatcher : BasePatcher
                     if (skill is null)
                         continue;
 
-                    // Prevents the tooltip from growing too wide.
-                    // The longest (english) skill name atm that fits on the skill screen without clipping is at 11-12 characters.
-                    // An 11 to 12 character name makes the width around 284.
-                    // made the check 290 to try to accomidate other languages!
-                    if (width > 290)
-                        continue;
-
-                    width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X) + 92;
+                    width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X + 92 );
                 }
                 if (health != 0)
                 {
-                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.HealthRegen()).X) + 92;
+                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.HealthRegen()).X + 92);
                 }
                 if (stamina != 0)
                 {
-                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.StaminaRegen()).X) + 92;
+                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.StaminaRegen()).X + 92);
                 }
             }
         }
