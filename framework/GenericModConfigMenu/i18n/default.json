@@ -30,5 +30,9 @@
     "options.open-menu-key.name": "Open menu key",
     "options.open-menu-key.desc": "A keybind which opens the menu.",
     "options.scroll-speed.name": "Scroll speed",
-    "options.scroll-speed.desc": "The number of field rows to offset when scrolling a config menu."
+    "options.scroll-speed.desc": "The number of field rows to offset when scrolling a config menu.",
+
+     //Search Box
+    "list.search-label": "Search:",
+    "list.no-results": "No mods found"
 }

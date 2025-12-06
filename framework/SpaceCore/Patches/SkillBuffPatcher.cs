@@ -287,15 +287,15 @@ internal class SkillBuffPatcher : BasePatcher
                     if (skill is null)
                         continue;
 
-                    width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X) + 92;
+                    width = Math.Max(width, (int)font.MeasureString("+99 " + skill.GetName()).X + 92 );
                 }
                 if (health != 0)
                 {
-                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.HealthRegen()).X) + 92;
+                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.HealthRegen()).X + 92);
                 }
                 if (stamina != 0)
                 {
-                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.StaminaRegen()).X) + 92;
+                    width = Math.Max(width, (int)font.MeasureString("+999 " + I18n.StaminaRegen()).X + 92);
                 }
             }
         }

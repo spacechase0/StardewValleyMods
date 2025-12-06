@@ -21,6 +21,7 @@ using StardewValley.Menus;
 using StardewValley.Mods;
 using StardewVR.Handlers.Game;
 using static Stardew3D.Handlers.IRenderHandler;
+using static Stardew3D.Models.ModelObject;
 
 namespace StardewVR.Handlers.Menu;
 internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
@@ -118,39 +119,31 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
     {
         public ModelObject skybox;
         public ModelObject title;
-        public ModelObject buttonNewIdle;
-        public ModelObject buttonLoadIdle;
-        public ModelObject buttonCoopIdle;
-        public ModelObject buttonExitIdle;
-        public ModelObject buttonNewHover;
-        public ModelObject buttonLoadHover;
-        public ModelObject buttonCoopHover;
-        public ModelObject buttonExitHover;
 
-        private int[] titleInstances;
-        private int[] skyboxInstances;
-        private List<(Func<ClickableTextureComponent> Button, ModelObject IdleModel, int[] IdleInstances, ModelObject HoverModel, int[] HoverInstances)> clickables = new();
+        private ModelObjectInstance titleInstance;
+        private ModelObjectInstance skyboxInstance;
+        private List<(Func<ClickableTextureComponent> Button, ModelObject IdleModel, ModelObjectInstance IdleInstance, ModelObject HoverModel, ModelObjectInstance HoverInstance)> clickables = new();
         private int mouse;
 
         public RenderData(RenderContext ctx, TitleMenuHandler parent)
             : base(ctx, parent)
         {
             // TODO: Use model associations instead
-            skybox = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/Skybox");
-            title = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle");
-            buttonNewIdle = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle/Buttons/New/Idle");
-            buttonLoadIdle = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle/Buttons/Load/Idle");
-            buttonCoopIdle = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle/Buttons/Coop/Idle");
-            buttonExitIdle = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle/Buttons/Exit/Idle");
-            buttonNewHover = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle/Buttons/New/Hover");
-            buttonLoadHover = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle/Buttons/Load/Hover");
-            buttonCoopHover = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle/Buttons/Coop/Hover");
-            buttonExitHover = Stardew3D.Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/GameTitle/Buttons/Exit/Hover");
+            skybox = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)Skybox");
+            title = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)TitleMenu");
+            var buttonNewIdle = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)TitleMenu/Buttons/New/Idle");
+            var buttonLoadIdle = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)GameTitle/Buttons/Load/Idle");
+            var buttonCoopIdle = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)GameTitle/Buttons/Coop/Idle");
+            var buttonExitIdle = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)GameTitle/Buttons/Exit/Idle");
+            var buttonNewHover = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)GameTitle/Buttons/New/Hover");
+            var buttonLoadHover = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)GameTitle/Buttons/Load/Hover");
+            var buttonCoopHover = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)GameTitle/Buttons/Coop/Hover");
+            var buttonExitHover = Stardew3D.Mod.State.ModelManager.RequestModel("(kittycatcasey.Stardew3D/Menu)GameTitle/Buttons/Exit/Hover");
 
-            skyboxInstances = skybox.Draw(Batch, Matrix.Identity);
+            skyboxInstance = skybox.Draw(Batch, Matrix.Identity);
 
             Vector3 spot = new(0, 3, -15f);
-            titleInstances = title.Draw(ctx.WorldBatch, Matrix.Identity);
+            titleInstance = title.Draw(ctx.WorldBatch, Matrix.Identity);
 
             // TODO: Music toggle button, language menu button, about menu button
 
@@ -222,15 +215,15 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
 
             //RenderHelper.DebugRenderGrid();
 
-            skybox.Update(Batch, skyboxInstances, Matrix.CreateTranslation(ctx.WorldCamera.Position));
+            skybox.Update(Batch, skyboxInstance, Matrix.CreateTranslation(ctx.WorldCamera.Position));
 
             if (!Parent.ShowingMainMenu)
             {
-                title.Update(Batch, titleInstances, Matrix.Identity, Color.Transparent);
+                title.Update(Batch, titleInstance, Matrix.Identity, Color.Transparent);
                 foreach (var entry in clickables)
                 {
-                    entry.IdleModel.Update(Batch, entry.IdleInstances, Matrix.Identity, Color.Transparent);
-                    entry.HoverModel.Update(Batch, entry.HoverInstances, Matrix.Identity, Color.Transparent);
+                    entry.IdleModel.Update(Batch, entry.IdleInstance, Matrix.Identity, Color.Transparent);
+                    entry.HoverModel.Update(Batch, entry.HoverInstance, Matrix.Identity, Color.Transparent);
                 }
                 return;
             }
@@ -239,7 +232,7 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
             var env = ctx.WorldEnvironment;
             var handler = Parent.GameHandler;
 
-            title.Update(Batch, titleInstances, Matrix.CreateTranslation(spot) * Matrix.CreateTranslation(0, 3, 0), color: Color.White);
+            title.Update(Batch, titleInstance, Matrix.CreateTranslation(spot) * Matrix.CreateTranslation(0, 3, 0), color: Color.White);
 
             bool foundMouse = false;
             var secondaryCursor = new Ray(handler.Global_SecondaryPointerPosition, handler.Global_SecondaryPointerOrientation.Forward);
@@ -249,8 +242,8 @@ internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
                 BoundingBox box = Parent.clickables.First(b => b.Button() == button.Button()).BoundingBox;
                 var model = button.IdleModel;
                 var hiddenModel = button.HoverModel;
-                int[] inst = button.IdleInstances;
-                int[] hiddenInst = button.HoverInstances;
+                ModelObjectInstance inst = button.IdleInstance;
+                ModelObjectInstance hiddenInst = button.HoverInstance;
 
                 if (TitleMenu.subMenu == null)
                 {

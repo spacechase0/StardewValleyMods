@@ -34,7 +34,7 @@ public class RenderData<TRenderer> : RenderDataBase
 {
     protected TRenderer Parent { get; }
     protected ModelObject Model { get; }
-    private ModelObject.ModelObjectInstance instance;
+    protected ModelObject.ModelObjectInstance instance;
 
     public RenderData(RenderContext ctx, TRenderer parent, int whichMatch = 0)
         : base(ctx)

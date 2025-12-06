@@ -16,13 +16,13 @@ public class FirstPersonCursor : IGameCursor
     public Vector3 Facing => GameHandler.Camera.Forward;
     public Vector3 Up => GameHandler.Camera.Up;
 
-    public bool LeftClickJustPressed { get; set; }
-    public bool LeftClickHeld { get; set; }
-    public bool LeftClickJustReleased { get; set; }
-    public bool RightClickJustPressed { get; set; }
-    public bool RightClickHeld { get; set; }
-    public bool RightClickJustReleased { get; set; }
-    public Vector2 Scroll { get; set; }
+    public bool MenuLeftClickJustPressed { get; set; }
+    public bool MenuLeftClickHeld { get; set; }
+    public bool MenuLeftClickJustReleased { get; set; }
+    public bool MenuRightClickJustPressed { get; set; }
+    public bool MenuRightClickHeld { get; set; }
+    public bool MenuRightClickJustReleased { get; set; }
+    public Vector2 MenuScroll { get; set; }
 
     public Item Holding => Game1.player.CurrentItem;
 

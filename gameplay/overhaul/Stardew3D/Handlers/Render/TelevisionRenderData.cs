@@ -37,7 +37,7 @@ public class TelevisionRenderData : RenderDataWithPlaceholder<ModelData, TV>
     {
         if (screenPart == null)
         {
-            var mesh = Model.Matches[WhichMatch];
+            var mesh = Model.Matches[instance.WhichMatch];
 
             var screenEntry = mesh.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE"));
             if (!string.IsNullOrEmpty(screenEntry.Key))
