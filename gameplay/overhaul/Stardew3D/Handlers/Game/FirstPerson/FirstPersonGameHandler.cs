@@ -62,7 +62,7 @@ public class FirstPersonGameHandler : CommonGameHandler, IFirstPersonGameHandler
         }
     }
     public Vector2 MovementAmountForced => Vector2.Zero;
-    public IReadOnlyList<IGameCursor> Cursors => [new FirstPersonCursor(this)];
+    public override IReadOnlyList<IGameCursor> Cursors => [new FirstPersonCursor(this)];
 
     public override void SwitchOn(IGameHandler previousHandler)
     {

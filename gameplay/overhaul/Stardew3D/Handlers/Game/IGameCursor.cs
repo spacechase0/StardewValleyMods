@@ -14,13 +14,14 @@ public interface IGameCursor
     public Vector3 Facing { get; }
     public Vector3 Up { get; }
 
-    public bool LeftClickJustPressed { get; }
-    public bool LeftClickHeld { get; }
-    public bool LeftClickJustReleased { get; }
-    public bool RightClickJustPressed { get; }
-    public bool RightClickHeld { get; }
-    public bool RightClickJustReleased { get; }
-    public Vector2 Scroll { get; }
+    // TODO: Abstract this into an input sets sort of thing
+    public bool MenuLeftClickJustPressed { get; }
+    public bool MenuLeftClickHeld { get; }
+    public bool MenuLeftClickJustReleased { get; }
+    public bool MenuRightClickJustPressed { get; }
+    public bool MenuRightClickHeld { get; }
+    public bool MenuRightClickJustReleased { get; }
+    public Vector2 MenuScroll { get; }
 
     public Item Holding { get; }
 }

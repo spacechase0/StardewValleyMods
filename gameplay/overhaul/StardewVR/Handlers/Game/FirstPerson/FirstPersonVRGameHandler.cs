@@ -66,7 +66,10 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
                                     () => Game1.player.ActiveItem),
             new FirstPersonVRCursor(() => Global_SecondaryPointerPosition, () => Global_SecondaryPointerOrientation.Forward, () => Global_SecondaryPointerOrientation.Up,
                                     () => Menu_Secondary_LeftClick, () => Menu_Secondary_RightClick, () => Menu_Secondary_CurrentScroll,
-                                    () => null),
+                                    () => null)
+            {
+                FlipMenuSprite = true,
+            },
         ];
     }
 
@@ -75,6 +78,11 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
     public override void BeforeUpdate()
     {
         base.BeforeUpdate();
+
+        foreach (var cursor in cursors)
+        {
+            (cursor as FirstPersonVRCursor)?.Update();
+        }
 
         if (Context.IsWorldReady)
         {

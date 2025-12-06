@@ -23,6 +23,8 @@ public class ThirdPersonGameHandler : CommonGameHandler
     public override Matrix ProjectionMatrix { get; protected set; }
     public override Camera Camera { get; } = new();
 
+    public override IReadOnlyList<IGameCursor> Cursors => []; // TODO
+
     public override void SwitchOn(IGameHandler previousHandler)
     {
         base.SwitchOn(previousHandler);

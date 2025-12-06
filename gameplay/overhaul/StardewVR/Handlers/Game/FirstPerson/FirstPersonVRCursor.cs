@@ -21,15 +21,24 @@ internal class FirstPersonVRCursor : IGameCursor
 
     private Func<Item> holdingFunc;
 
+    private bool menuLeftClickState, menuRightClickState;
+    private bool prevMenuLeftClickState, prevMenuRightClickState;
+
     public Vector3 Position => positionFunc();
     public Vector3 Facing => facingFunc();
     public Vector3 Up => upFunc();
 
-    public bool MenuLeftClick => menuLeftClick();
-    public bool MenuRightClick => menuRightClick();
+    public bool MenuLeftClickJustPressed => !prevMenuLeftClickState && menuLeftClickState;
+    public bool MenuLeftClickHeld => menuLeftClickState;
+    public bool MenuLeftClickJustReleased => prevMenuLeftClickState && !menuLeftClickState;
+    public bool MenuRightClickJustPressed => !prevMenuRightClickState && menuRightClickState;
+    public bool MenuRightClickHeld => menuRightClickState;
+    public bool MenuRightClickJustReleased => prevMenuRightClickState && !menuRightClickState;
     public Vector2 MenuScroll => menuScroll();
 
     public Item Holding => holdingFunc();
+
+    public bool FlipMenuSprite { get; init; } = false;
 
     public FirstPersonVRCursor(Func<Vector3> positionFunc, Func<Vector3> facingFunc, Func<Vector3> upFunc, Func<bool> menuLeftClick, Func<bool> menuRightClick, Func<Vector2> menuScroll, Func<Item> holdingFunc)
     {
@@ -40,5 +49,13 @@ internal class FirstPersonVRCursor : IGameCursor
         this.menuRightClick = menuRightClick;
         this.menuScroll = menuScroll;
         this.holdingFunc = holdingFunc;
+    }
+
+    public void Update()
+    {
+        prevMenuLeftClickState = menuLeftClickState;
+        prevMenuRightClickState = menuRightClickState;
+        menuLeftClickState = menuLeftClick();
+        menuRightClickState = menuRightClick();
     }
 }
