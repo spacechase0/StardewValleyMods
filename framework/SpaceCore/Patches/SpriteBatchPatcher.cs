@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -83,7 +84,7 @@ namespace SpaceCore.Patches
             if (TryGetTextureOverride(texture, sourceRectangle, out TextureOverridePackData packData))
             {
                 texture = packData.sourceTex;
-                Rectangle newRect = packData.FullSheetMode ? packData.GetDrawOverrideSourceRect(sourceRectangle.Value, destinationRectangle) : packData.sourceRectCache;
+                Rectangle newRect = packData.FullSheetMode ? packData.GetDrawOverrideSourceRect(sourceRectangle.Value) : packData.sourceRectCache;
                 if (sourceRectangle != newRect)
                 {
                     if (origin != Vector2.Zero)
@@ -101,7 +102,7 @@ namespace SpaceCore.Patches
             if (TryGetTextureOverride(texture, sourceRectangle, out TextureOverridePackData packData))
             {
                 texture = packData.sourceTex;
-                sourceRectangle = packData.FullSheetMode ? packData.GetDrawOverrideSourceRect(sourceRectangle.Value, destinationRectangle) : packData.sourceRectCache;
+                sourceRectangle = packData.FullSheetMode ? packData.GetDrawOverrideSourceRect(sourceRectangle.Value) : packData.sourceRectCache;
             }
         }
 
@@ -113,9 +114,9 @@ namespace SpaceCore.Patches
                 Rectangle newRect;
                 if (packData.FullSheetMode)
                 {
-                    newRect = packData.GetDrawOverrideSourceRect(sourceRectangle.Value, scale.X, scale.Y);
-                    if (packData.FullSheetModeScaleModifier != 1)
-                        scale = new(scale.X * packData.FullSheetModeScaleModifier, scale.Y * packData.FullSheetModeScaleModifier);
+                    newRect = packData.GetDrawOverrideSourceRect(sourceRectangle.Value);
+                    if (packData.SourceSizeModifer != 1)
+                        scale = new(scale.X / packData.SourceSizeModifer, scale.Y / packData.SourceSizeModifer);
                 }
                 else
                 {
@@ -148,8 +149,8 @@ namespace SpaceCore.Patches
 
                 if (packData.FullSheetMode)
                 {
-                    needDrawRedirect = packData.FullSheetModeScaleModifier != 1 || texture.Bounds != packData.sourceTex.Bounds;
-                    overrideSourceRect = packData.GetDrawOverrideSourceRect(texture.Bounds, 1, 1);
+                    needDrawRedirect = packData.SourceSizeModifer != 1 || texture.Bounds != packData.sourceTex.Bounds;
+                    overrideSourceRect = packData.GetDrawOverrideSourceRect(texture.Bounds);
                 }
                 else
                 {
@@ -180,8 +181,8 @@ namespace SpaceCore.Patches
 
                 if (packData.FullSheetMode)
                 {
-                    needDrawRedirect = packData.FullSheetModeScaleModifier != 1;
-                    overrideSourceRect = packData.GetDrawOverrideSourceRect(sourceRectangle.Value, 1, 1);
+                    needDrawRedirect = packData.SourceSizeModifer != 1;
+                    overrideSourceRect = packData.GetDrawOverrideSourceRect(sourceRectangle.Value);
                 }
                 else
                 {
@@ -213,8 +214,8 @@ namespace SpaceCore.Patches
 
                 if (packData.FullSheetMode)
                 {
-                    needDrawRedirect = packData.FullSheetModeScaleModifier != 1 || texture.Bounds != packData.sourceTex.Bounds;
-                    overrideSourceRect = packData.GetDrawOverrideSourceRect(texture.Bounds, 1, 1);
+                    needDrawRedirect = packData.SourceSizeModifer != 1 || texture.Bounds != packData.sourceTex.Bounds;
+                    overrideSourceRect = packData.GetDrawOverrideSourceRect(texture.Bounds);
                 }
                 else
                 {
@@ -232,6 +233,14 @@ namespace SpaceCore.Patches
 
                 texture = packData.sourceTex;
             }
+            else
+            {
+                if (texture.Name == "Animals/Error")
+                {
+                    Console.WriteLine($"{destinationRectangle}: {texture.Bounds}");
+                    Console.WriteLine(string.Join(' ', packOverrides.Select(value => value.ToString())));
+                }
+            }
             return true;
         }
 
@@ -243,7 +252,7 @@ namespace SpaceCore.Patches
         private static bool TryGetTextureOverride_Standard(Texture2D tex, Rectangle? sourceRect, out TextureOverridePackData packData)
         {
             packData = null;
-            if (InDrawRedirection || tex == null || tex.Name == null || sourceRect is null || sourceRect.Value.Width == 0 || sourceRect.Value.Height == 0)
+            if (InDrawRedirection || tex == null || tex.Name == null || sourceRect is null)
                 return false;
             // override by name and rect
             if (packOverrides.TryGetValue((tex.Name, sourceRect.Value), out packData))

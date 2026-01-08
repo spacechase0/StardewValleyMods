@@ -278,6 +278,20 @@ namespace SpaceCore.VanillaAssetExpansion
 
                 foreach (var newTex in newTexs)
                 {
+                    // ensure no division by 0
+                    if (newTex.Value.SourceSizeModifer <= 0)
+                    {
+                        newTex.Value.SourceSizeModifer = 1;
+                    }
+                    // special case: when using SourceSizeModifer without SourceSizeOverride, compute the SourceSizeOverride
+                    // do so even in full sheet mode, for purpose of hash code
+                    if (newTex.Value.SourceSizeOverride == null && newTex.Value.SourceSizeModifer != 1)
+                    {
+                        newTex.Value.SourceSizeOverride = new Point(
+                            (int)(newTex.Value.TargetRect.Width * newTex.Value.SourceSizeModifer),
+                            (int)(newTex.Value.TargetRect.Height * newTex.Value.SourceSizeModifer)
+                        );
+                    }
                     if (existingOverrides.Contains(newTex))
                     {
                         if (texs[newTex.Key].GetHashCode() == newTex.Value.GetHashCode())
@@ -313,8 +327,6 @@ namespace SpaceCore.VanillaAssetExpansion
                     string localeTex = tex.Value.TargetTexture + localeStr;
                     if (Instance.Helper.GameContent.DoesAssetExist<Texture2D>(Instance.Helper.GameContent.ParseAssetName(localeTex)))
                         tex.Value.TargetTexture = localeTex;
-                    if (tex.Value.FullSheetModeScaleModifier <= 0)
-                        tex.Value.FullSheetModeScaleModifier = 1;
 
                     SpriteBatchPatcher.packOverrides[(tex.Value.TargetTexture, tex.Value.TargetRect)] = tex.Value;
                 }

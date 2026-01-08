@@ -26,7 +26,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
         public bool FullSheetMode { get; set; } = false;
 
-        public float FullSheetModeScaleModifier { get; set; } = 1f;
+        public float SourceSizeModifer { get; set; } = 1f;
 
         internal Texture2D sourceTex;
         internal TextureAnimation animation;
@@ -36,18 +36,13 @@ namespace SpaceCore.VanillaAssetExpansion
         internal Texture2D? targetTex;
         internal Point texturePosCache;
 
-        internal Rectangle GetDrawOverrideSourceRect(Rectangle originalRect, Rectangle targetRect)
-        {
-            return GetDrawOverrideSourceRect(originalRect, targetRect.Width / (float)originalRect.Width, targetRect.Height / (float)originalRect.Height);
-        }
-
-        internal Rectangle GetDrawOverrideSourceRect(Rectangle originalRect, float originalScaleX, float originalScaleY)
+        internal Rectangle GetDrawOverrideSourceRect(Rectangle originalRect)
         {
             return new Rectangle(
-                (int)((texturePosCache.X + originalRect.X) / FullSheetModeScaleModifier),
-                texturePosCache.Y + (int)(originalRect.Y / FullSheetModeScaleModifier),
-                (int)(originalRect.Width / FullSheetModeScaleModifier),
-                (int)(originalRect.Height / FullSheetModeScaleModifier)
+                (int)((texturePosCache.X + originalRect.X) * SourceSizeModifer),
+                texturePosCache.Y + (int)(originalRect.Y * SourceSizeModifer),
+                (int)(originalRect.Width * SourceSizeModifer),
+                (int)(originalRect.Height * SourceSizeModifer)
             );
         }
 
@@ -55,12 +50,17 @@ namespace SpaceCore.VanillaAssetExpansion
         {
             if (obj is not TextureOverridePackData other)
                 return false;
-            return TargetTexture == other.TargetTexture && TargetRect == other.TargetRect && SourceTexture == other.SourceTexture && FullSheetMode == other.FullSheetMode && FullSheetModeScaleModifier == other.FullSheetModeScaleModifier;
+            return TargetTexture == other.TargetTexture &&
+                TargetRect == other.TargetRect &&
+                SourceTexture == other.SourceTexture &&
+                SourceSizeOverride == other.SourceSizeOverride &&
+                SourceSizeModifer == other.SourceSizeModifer &&
+                FullSheetMode == other.FullSheetMode;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(TargetTexture, TargetRect, SourceTexture, FullSheetMode, FullSheetModeScaleModifier);
+            return HashCode.Combine(TargetTexture, TargetRect, SourceTexture, SourceSizeOverride, SourceSizeModifer,  FullSheetMode);
         }
 
         [OnDeserialized]
