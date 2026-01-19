@@ -323,6 +323,7 @@ namespace SpaceCore.Dungeons
 
             loc.name.Value = choice.region.LocationDataEntry;
             loc.mapPath.Value = choice.mapPath;
+            loc.updateMap();
 
             foreach (string triggerId in choice.region.TriggerActionsOnEntry)
             {
@@ -346,8 +347,6 @@ namespace SpaceCore.Dungeons
                         Game1.player.triggerActionsRun.Add(trigger.Data.Id);
                 }
             }
-
-            loc.updateMap();
 
             if (Game1.IsMasterGame)
             {
