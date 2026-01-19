@@ -37,6 +37,7 @@
     <!-- We're doing this kinda weird since publicizer doesn't seem to work with ProjectReference -->
     <ProjectReference Include="$(SolutionDir)_external\MonoScene\src\MonoScene.Pipeline.GLTF\MonoScene.Pipeline.GLTF.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="$(SolutionDir)_external\MonoScene\src\MonoScene.Runtime.Scene3D\MonoScene.Runtime.Scene3D.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="$(SolutionDir)\_external_helpers\GJKEPA_Project\GJKEPA_Project.csproj" />
 
     <Publicize Include="MonoScene.Runtime.Model3D" IncludeVirtualMembers="false" />
     <Publicize Include="MonoScene.Runtime.Scene3D" IncludeVirtualMembers="false" />

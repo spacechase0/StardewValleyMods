@@ -173,7 +173,7 @@ public abstract class VRGameHandler : CommonGameHandler
             if (err != EVRInputError.None) Log.Error($"Failed to get rotation action handle for OpenVR input: {err}");
 
             // We absolutely do not want the game to slow down when the window isn't active.
-            // That would cause comfort problems in vR
+            // That would cause comfort problems in VR
             oldInactiveSleepTime = GameRunner.instance.InactiveSleepTime;
             GameRunner.instance.InactiveSleepTime = TimeSpan.Zero;
 
