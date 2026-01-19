@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="$(SolutionDir)_external/GJKEPA/gjkepa.cs" />
-  </ItemGroup>
-
 </Project>

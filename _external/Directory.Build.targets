@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <ForceNetAndMonoGameVersions>$(MSBuildProjectName.Contains('MonoScene'))</ForceNetAndMonoGameVersions>
+    <ForceNetVersion>$(MSBuildProjectName.Contains('MonoScene'))</ForceNetVersion>
+    <ForceMonoGameVersion>true</ForceMonoGameVersion>
   </PropertyGroup>
   
   <!-- We only want this .net version, not any others that may be provided-->
-  <PropertyGroup Condition="$(ForceNetAndMonoGameVersions)">
+  <PropertyGroup Condition="$(ForceNetVersion)">
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <!-- MonoGame references should use the game one, not nuget -->
-  <ItemGroup Condition="$(ForceNetAndMonoGameVersions)">
+  <ItemGroup Condition="$(ForceMonoGameVersion)">
     <PackageReference Remove="MonoGame.Framework.DesktopGL" />
     <ProjectReference Include="$(SolutionDir)/_external_helpers/MonoGamePolyfill/MonoGamePolyfill.csproj" />
   </ItemGroup>
-  <Import Condition="$(ForceNetAndMonoGameVersions) AND ($(OS) != 'Windows_NT' AND Exists('$(HOME)\stardewvalley.targets'))" Project="$(HOME)\stardewvalley.targets" />
-  <Import Condition="$(ForceNetAndMonoGameVersions) AND ($(OS) == 'Windows_NT' AND Exists('$(USERPROFILE)\stardewvalley.targets'))" Project="$(USERPROFILE)\stardewvalley.targets" />
-  <ItemGroup Condition="$(ForceNetAndMonoGameVersions)">
+  <Import Condition="$(ForceMonoGameVersion) AND ($(OS) != 'Windows_NT' AND Exists('$(HOME)\stardewvalley.targets'))" Project="$(HOME)\stardewvalley.targets" />
+  <Import Condition="$(ForceMonoGameVersion) AND ($(OS) == 'Windows_NT' AND Exists('$(USERPROFILE)\stardewvalley.targets'))" Project="$(USERPROFILE)\stardewvalley.targets" />
+  <ItemGroup Condition="$(ForceMonoGameVersion)">
     <Reference Include="$(GamePath)/MonoGame.Framework.dll" />
   </ItemGroup>
 </Project>
