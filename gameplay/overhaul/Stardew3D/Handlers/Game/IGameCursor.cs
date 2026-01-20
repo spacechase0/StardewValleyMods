@@ -10,9 +10,40 @@ namespace Stardew3D.Handlers.Game;
 
 public interface IGameCursor
 {
-    public Vector3 Position { get; }
-    public Vector3 Facing { get; }
-    public Vector3 Up { get; }
+    public Matrix Pointer
+    {
+        get
+        {
+            Matrix transform = Matrix.Identity;
+            transform.Translation = PointerPosition;
+            transform.Forward = PointerFacing;
+            transform.Up = PointerUp;
+            transform.Right = Vector3.Cross(PointerFacing, PointerUp);
+            return transform;
+        }
+    }
+    public Vector3 PointerPosition { get; }
+    public Vector3 PointerFacing { get; }
+    public Vector3 PointerUp { get; }
+
+    public Matrix Grip
+    {
+        get
+        {
+            Matrix transform = Matrix.Identity;
+            transform.Translation = GripPosition;
+            transform.Forward = GripFacing;
+            transform.Up = GripUp;
+            transform.Right = Vector3.Cross(GripFacing, GripUp);
+            return transform;
+        }
+    }
+    public Vector3 GripPosition { get; }
+    public Vector3 GripFacing { get; }
+    public Vector3 GripUp { get; }
+
+    public Vector3 LinearVelocity { get; }
+    public Vector3 AngularVelocity { get; }
 
     // TODO: Abstract this into an input sets sort of thing
     public bool MenuLeftClickJustPressed { get; }

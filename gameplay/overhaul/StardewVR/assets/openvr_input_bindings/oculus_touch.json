@@ -12,6 +12,14 @@
                 {
                     "output": "/actions/global/in/pointer_primary",
                     "path": "/user/hand/right/pose/openxr_aim"
+                },
+                {
+                    "output": "/actions/global/in/grip_secondary",
+                    "path": "/user/hand/left/pose/grip"
+                },
+                {
+                    "output": "/actions/global/in/grip_primary",
+                    "path": "/user/hand/right/pose/grip"
                 }
             ],
             "skeleton": [],
@@ -19,14 +27,6 @@
         },
         "/actions/menu": {
             "poses": [
-                {
-                    "output": "/actions/global/in/pointer_primary",
-                    "path": "/user/hand/right/pose/aim"
-                },
-                {
-                    "output": "/actions/global/in/pointer_secondary",
-                    "path": "/user/hand/left/pose/aim"
-                }
             ],
             "skeleton": [],
             "sources": [

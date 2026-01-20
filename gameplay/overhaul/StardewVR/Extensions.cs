@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -19,6 +18,11 @@ namespace StardewVR
             var basisChange = Matrix.Identity;
             basisChange.M33 = -1;
             return basisChange * input * basisChange;
+        }
+
+        public static Vector3 ToMonogame(this HmdVector3_t vec)
+        {
+            return new Vector3( vec.v0, vec.v1, vec.v2);
         }
 
         public static Matrix ToMonogame(this HmdMatrix34_t mat)

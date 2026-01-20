@@ -80,6 +80,7 @@ namespace Stardew3D
                 State.SetRenderHandlerForGameHandlerTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
                 State.SetRenderHandlerForGameHandlerTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
                 State.SetRenderHandlerForGameHandlerTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
+                State.SetRenderHandlerForGameHandlerTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
                 State.SetRenderHandlerForGameHandlerTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
                 State.SetRenderHandlerForGameHandlerTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>($"({ModManifest.UniqueID}/TerrainFeature){obj.GetType().Name}", obj as TerrainFeature));
                 State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
@@ -138,12 +139,19 @@ namespace Stardew3D
             {
                 State.RenderDebugInteractions = !State.RenderDebugInteractions;
             }
+            // TODO: hook up to keybind
+            if (e.Pressed.Contains(SButton.Delete))
+            {
+                // Can clear render caches and stuff
+                State.ActiveHandler?.SwitchOff(State.ActiveHandler);
+                State.ActiveHandler?.SwitchOn(State.ActiveHandler);
+            }
         }
 
         private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
         {
             string mapsFolder = PathUtilities.NormalizeAssetName("Maps/meow"); // If we just do "Maps/" it removes the /, which is a big part of what we want
-            mapsFolder = mapsFolder.Substring( 0, mapsFolder.Length - 1 );
+            mapsFolder = mapsFolder.Substring( 0, mapsFolder.Length - "meow".Length );
             if (e.DataType == typeof(xTile.Map) && e.NameWithoutLocale.StartsWith(mapsFolder))
             {
                 string specific = e.NameWithoutLocale.Name.Substring(mapsFolder.Length);
@@ -278,8 +286,8 @@ namespace Stardew3D
                         [
                             new BoxInteractionArea()
                             {
-                                Size = new( 0.375f, 3, 0.375f ),
-                                Translation = new( 0, -1.5f, 0 ),
+                                Size = new( 0.5f, 3, 0.5f ),
+                                Translation = new( 0, 1.5f, 0 ),
                             }
                         ],
                     } },
@@ -289,8 +297,9 @@ namespace Stardew3D
                         [
                             new BoxInteractionArea()
                             {
-                                Size = new( 0.375f, 0.375f, 0.125f ),
-                                Translation = new( 0.25f, 0.5f, 0 ),
+                                Size = new( 0.375f/2, 0.5f, 0.125f ),
+                                Translation = new( -0.3125f, 0.625f, 0 ),
+                                Rotation = new( 0, 0, MathHelper.ToRadians( 45 ) ),
                             }
                         ],
                     } },

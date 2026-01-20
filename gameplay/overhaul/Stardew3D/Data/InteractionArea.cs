@@ -30,7 +30,7 @@ public abstract class InteractionArea
         return shape;
     }
 
-    public Vector3[] GetTriangleVertices()
+    public Vector3[] GetTransformedTriangleVertices()
     {
         Matrix transform = Matrix.Identity;
         transform *= Matrix.CreateRotationX(Rotation.X) * Matrix.CreateRotationY(Rotation.Y) * Matrix.CreateRotationZ(Rotation.Z);

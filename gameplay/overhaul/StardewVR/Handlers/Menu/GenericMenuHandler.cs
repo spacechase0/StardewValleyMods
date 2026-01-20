@@ -64,14 +64,14 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
         BoundingBox display = new(new(-DisplaySize.X / 2, -DisplaySize.Y / 2, 0), new(DisplaySize.X / 2, DisplaySize.Y / 2, 0.05f));
 
         Matrix cursorTransform = Matrix.CreateTranslation(-DisplayPosition) * BaseOrientation.Invert();
-        Vector3 cursorPos = Vector3.Transform(cursor.Position, cursorTransform);
-        Vector3 cursorDir = Vector3.TransformNormal(cursor.Facing, cursorTransform);
+        Vector3 cursorPos = Vector3.Transform(cursor.PointerPosition, cursorTransform);
+        Vector3 cursorDir = Vector3.TransformNormal(cursor.PointerFacing, cursorTransform);
         Ray cursorRay = new(cursorPos, cursorDir);
         var spot = cursorRay.Intersects(display);
         if (spot.HasValue)
         {
             var intersectionPoint = cursorRay.Position + cursorRay.Direction * spot.Value;
-            cursorTargetMapping[cursor] = Matrix.CreateTranslation(intersectionPoint) * Matrix.CreateLookAt(intersectionPoint, cursor.Position, cursor.Up);
+            cursorTargetMapping[cursor] = Matrix.CreateTranslation(intersectionPoint) * Matrix.CreateLookAt(intersectionPoint, cursor.PointerPosition, cursor.PointerUp);
 
             Vector2 clickableLocal = new((intersectionPoint.X - display.Min.X) / (display.Max.X - display.Min.X) * Game1.game1.uiScreen.Bounds.Width,
                                          Game1.game1.uiScreen.Bounds.Height - (intersectionPoint.Y - display.Min.Y) / (display.Max.Y - display.Min.Y) * Game1.game1.uiScreen.Bounds.Height);

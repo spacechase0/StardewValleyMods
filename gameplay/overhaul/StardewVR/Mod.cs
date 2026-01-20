@@ -13,6 +13,7 @@ using StardewValley;
 using StardewValley.Menus;
 using StardewVR.Handlers.Game;
 using StardewVR.Handlers.Game.FirstPerson;
+using StardewVR.Handlers.Gameplay;
 using StardewVR.Handlers.Menu;
 using Valve.VR;
 
@@ -77,6 +78,7 @@ namespace StardewVR
                 var state = sender as Stardew3D.State;
                 state.SetJointHandlerForGameHandlerTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameHandler, menu as IClickableMenu));
                 state.SetJointHandlerForGameHandlerTags<TitleMenu, TitleMenuHandler>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameHandler, menu as TitleMenu));
+                state.AddJointHandlerAddonForGameHandlerTags<Farmer, FarmerMotionControlsHandler>([IGameHandler.CategoryVR, IGameHandler.CategoryFirstPerson], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameHandler, obj as Farmer));
             };
         }
 

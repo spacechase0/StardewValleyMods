@@ -55,12 +55,22 @@ public abstract class VRGameHandler : CommonGameHandler
     private ulong primaryInput, secondaryInput;
     private ulong globalActionSetHandle, menuActionSetHandle, worldActionSetHandle;
     private ulong pointerPrimaryActionHandle, pointerSecondaryActionHandle;
+    private ulong gripPrimaryActionHandle, gripSecondaryActionHandle;
     private ulong leftClickActionHandle, rightClickActionHandle, scrollActionHandle;
     private ulong movementActionHandle, rotationActionHandle;
+
+    public Vector3 Global_PrimaryLinearVelocity { get; protected set; }
+    public Vector3 Global_PrimaryAngularVelocity { get; protected set; }
+    public Vector3 Global_SecondaryLinearVelocity { get; protected set; }
+    public Vector3 Global_SecondaryAngularVelocity { get; protected set; }
     public Vector3 Global_PrimaryPointerPosition { get; protected set; }
     public Matrix Global_PrimaryPointerOrientation { get; protected set; }
     public Vector3 Global_SecondaryPointerPosition { get; protected set; }
     public Matrix Global_SecondaryPointerOrientation { get; protected set; }
+    public Vector3 Global_PrimaryGripPosition { get; protected set; }
+    public Matrix Global_PrimaryGripOrientation { get; protected set; }
+    public Vector3 Global_SecondaryGripPosition { get; protected set; }
+    public Matrix Global_SecondaryGripOrientation { get; protected set; }
     public bool Menu_Primary_LeftClick { get; protected set; }
     public bool Menu_Primary_RightClick { get; protected set; }
     public Vector2 Menu_Primary_CurrentScroll { get; protected set; }
@@ -103,6 +113,8 @@ public abstract class VRGameHandler : CommonGameHandler
 
             pointerPrimaryActionHandle = vrHandler.pointerPrimaryActionHandle;
             pointerSecondaryActionHandle = vrHandler.pointerSecondaryActionHandle;
+            gripPrimaryActionHandle = vrHandler.gripPrimaryActionHandle;
+            gripSecondaryActionHandle = vrHandler.gripSecondaryActionHandle;
             leftClickActionHandle = vrHandler.leftClickActionHandle;
             rightClickActionHandle = vrHandler.rightClickActionHandle;
             scrollActionHandle = vrHandler.scrollActionHandle;
@@ -158,7 +170,11 @@ public abstract class VRGameHandler : CommonGameHandler
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/pointer_primary", ref pointerPrimaryActionHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get pointer primary action handle for OpenVR input: {err}");
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/pointer_secondary", ref pointerSecondaryActionHandle);
-            if (err != EVRInputError.None) Log.Error($"Failed to get pointer primary action handle for OpenVR input: {err}");
+            if (err != EVRInputError.None) Log.Error($"Failed to get pointer secondary action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/grip_primary", ref gripPrimaryActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get grip primary action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/global/in/grip_secondary", ref gripSecondaryActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get grip secondary action handle for OpenVR input: {err}");
 
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/menu/in/left_click", ref leftClickActionHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get left click action handle for OpenVR input: {err}");
@@ -347,11 +363,27 @@ public abstract class VRGameHandler : CommonGameHandler
                 Global_PrimaryPointerPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
                 Global_PrimaryPointerOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
                 //primaryInput = poseInput.activeOrigin;
+                Global_PrimaryLinearVelocity = poseInput.pose.vVelocity.ToMonogame();
+                Global_PrimaryAngularVelocity = poseInput.pose.vAngularVelocity.ToMonogame();
 
                 ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(pointerSecondaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
                 if (ierr != EVRInputError.None) Log.Error($"Failed to get second pointer action data for OpenVR input: {ierr}");
                 Global_SecondaryPointerPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
                 Global_SecondaryPointerOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
+                //secondaryInput = poseInput.activeOrigin;
+                Global_SecondaryLinearVelocity = poseInput.pose.vVelocity.ToMonogame();
+                Global_SecondaryAngularVelocity = poseInput.pose.vAngularVelocity.ToMonogame();
+
+                ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(gripPrimaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get primary grip action data for OpenVR input: {ierr}");
+                Global_PrimaryGripPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
+                Global_PrimaryGripOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
+                //secondaryInput = poseInput.activeOrigin;
+
+                ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(gripSecondaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get primary grip action data for OpenVR input: {ierr}");
+                Global_SecondaryGripPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
+                Global_SecondaryGripOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
                 //secondaryInput = poseInput.activeOrigin;
             }
 

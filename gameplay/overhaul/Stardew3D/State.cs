@@ -100,6 +100,11 @@ public class State
         GameHandlersFinalized?.Invoke(this, new());
     }
 
+    public void ClearHandlerState()
+    {
+        handlerData.Clear();
+    }
+
     public IEnumerable<IGameHandler> FindGameHandlersMatching(IReadOnlyCollection<string> requiredTags)
     {
         foreach (var handler in Handlers.Values)

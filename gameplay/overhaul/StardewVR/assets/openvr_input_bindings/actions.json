@@ -24,6 +24,16 @@
             "requirement": "mandatory",
             "type": "pose"
         },
+        {
+            "name": "/actions/global/in/grip_primary",
+            "requirement": "mandatory",
+            "type": "pose"
+        },
+        {
+            "name": "/actions/global/in/grip_secondary",
+            "requirement": "mandatory",
+            "type": "pose"
+        },
 
         {
             "name": "/actions/menu/in/left_click",

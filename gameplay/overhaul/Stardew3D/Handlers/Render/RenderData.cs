@@ -50,7 +50,7 @@ public class RenderData<TRenderer> : RenderDataBase
             instance = Model.Draw(Batch, Matrix.Identity, whichMatch: whichMatch);
         }
 
-        CheckForInteractions(Parent.QualifiedId);
+        CheckForInteractions();
     }
 
     public override void Update(RenderContext ctx)
@@ -60,48 +60,56 @@ public class RenderData<TRenderer> : RenderDataBase
             Model.Update(Batch, instance, ctx.WorldTransform);
         }
 
-        if (interactionInstances != null)
+        if (Mod.State.RenderDebugInteractions && interactionInstances != null)
         {
             foreach (var inst in interactionInstances)
-                Batch.UpdateInstanced(inst, ctx.WorldTransform, Color.Cyan * 0.5f);
+                Batch.UpdateInstanced(inst, ctx.WorldTransform, Color.Magenta * 0.5f);
         }
     }
 
-    protected void CheckForInteractions(string id)
+    protected virtual void CheckForInteractions()
     {
-        if (Interaction != null)
-            return;
+        if ( !CheckForInteractions(Parent.QualifiedId) )
+            CheckForInteractions(Parent.QualifiedId.Substring(0, Parent.QualifiedId.IndexOf(')') + 1));
+    }
 
+    protected bool CheckForInteractions(string id)
+    {
         Interaction = InteractionData.Get(id);
-        if (Interaction == null || Interaction.Areas.Count == 0)
-            return;
+        if (Interaction == null)
+            return false;
 
-        interactionInstances = new();
-        for (int i = 0; i < Interaction.Areas.Count; ++i)
+        if (Interaction.Areas.Count > 0)
         {
-            var area = Interaction.Areas[i];
-
-            string rid = $"Interaction/{id}/{i}";
-            if (!Batch.HasGenericData(rid))
+            interactionInstances = new();
+            for (int i = 0; i < Interaction.Areas.Count; ++i)
             {
-                var verts = area.GetTriangleVertices();
-                RenderBatcher.GenericRenderData data = new()
-                {
-                    Vertices = new(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), verts.Length, BufferUsage.WriteOnly),
-                    Indices = new(Game1.graphics.GraphicsDevice, IndexElementSize.SixteenBits, verts.Length, BufferUsage.WriteOnly),
-                    Effect = Mod.State.GenericModelEffect.Clone(),
-                    Blend = BlendState.AlphaBlend,
-                    Rasterizer = RasterizerState.CullNone,
-                };
-                data.Vertices.SetData(verts);
-                data.Indices.SetData(Enumerable.Range(0, verts.Length).Select(i => (short)i).ToArray());
-                (data.Effect as GenericModelEffect).Texture = Game1.staminaRect;
-                Batch.AddGenericData(rid, [data]);
-            }
+                var area = Interaction.Areas[i];
 
-            int instance = Batch.AddInstanced(rid, Matrix.Identity, Color.Cyan * 0.5f);
-            interactionInstances.Add(instance);
+                string rid = $"Interaction/{id}/{i}";
+                if (!Batch.HasGenericData(rid))
+                {
+                    var verts = area.GetTransformedTriangleVertices().Select( v3 => new SimpleVertex( v3, Vector2.Zero )).ToArray();
+                    RenderBatcher.GenericRenderData data = new()
+                    {
+                        Vertices = new(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), verts.Length, BufferUsage.WriteOnly),
+                        Indices = new(Game1.graphics.GraphicsDevice, IndexElementSize.SixteenBits, verts.Length, BufferUsage.WriteOnly),
+                        Effect = Mod.State.GenericModelEffect.Clone(),
+                        Blend = BlendState.AlphaBlend,
+                        Rasterizer = RasterizerState.CullNone,
+                    };
+                    data.Vertices.SetData(verts);
+                    data.Indices.SetData(Enumerable.Range(0, verts.Length).Select(i => (short)i).ToArray());
+                    (data.Effect as GenericModelEffect).Texture = Game1.staminaRect;
+                    Batch.AddGenericData(rid, [data]);
+                }
+
+                int instance = Batch.AddInstanced(rid, Matrix.Identity);
+                interactionInstances.Add(instance);
+            }
         }
+
+        return true;
     }
 }
 

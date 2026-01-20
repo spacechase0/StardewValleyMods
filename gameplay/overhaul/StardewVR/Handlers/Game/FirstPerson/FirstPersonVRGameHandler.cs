@@ -62,9 +62,13 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
         cursors =
         [
             new FirstPersonVRCursor(() => Global_PrimaryPointerPosition, () => Global_PrimaryPointerOrientation.Forward, () => Global_PrimaryPointerOrientation.Up,
+                                    () => Global_PrimaryGripPosition, () => Global_PrimaryGripOrientation.Forward, () => Global_PrimaryGripOrientation.Up,
+                                    () => Global_PrimaryLinearVelocity, () => Global_PrimaryAngularVelocity,
                                     () => Menu_Primary_LeftClick, () => Menu_Primary_RightClick, () => Menu_Primary_CurrentScroll,
                                     () => Game1.player.ActiveItem),
             new FirstPersonVRCursor(() => Global_SecondaryPointerPosition, () => Global_SecondaryPointerOrientation.Forward, () => Global_SecondaryPointerOrientation.Up,
+                                    () => Global_SecondaryGripPosition, () => Global_SecondaryGripOrientation.Forward, () => Global_SecondaryGripOrientation.Up,
+                                    () => Global_SecondaryLinearVelocity, () => Global_SecondaryAngularVelocity,
                                     () => Menu_Secondary_LeftClick, () => Menu_Secondary_RightClick, () => Menu_Secondary_CurrentScroll,
                                     () => null)
             {
@@ -116,12 +120,25 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
 
         Global_PrimaryPointerPosition += -Headset.CurrentPosition;
         Global_SecondaryPointerPosition += -Headset.CurrentPosition;
+        Global_PrimaryGripPosition += -Headset.CurrentPosition;
+        Global_SecondaryGripPosition += -Headset.CurrentPosition;
         Global_PrimaryPointerPosition = Vector3.Transform(Global_PrimaryPointerPosition, rotMatrix);
         Global_SecondaryPointerPosition = Vector3.Transform(Global_SecondaryPointerPosition, rotMatrix);
+        Global_PrimaryGripPosition = Vector3.Transform(Global_PrimaryGripPosition, rotMatrix);
+        Global_SecondaryGripPosition = Vector3.Transform(Global_SecondaryGripPosition, rotMatrix);
         Global_PrimaryPointerPosition += Camera.Position;
         Global_SecondaryPointerPosition += Camera.Position;
+        Global_PrimaryGripPosition += Camera.Position;
+        Global_SecondaryGripPosition += Camera.Position;
         Global_PrimaryPointerOrientation *= rotMatrix;
         Global_SecondaryPointerOrientation *= rotMatrix;
+        Global_PrimaryGripOrientation *= rotMatrix;
+        Global_SecondaryGripOrientation *= rotMatrix;
+        Global_PrimaryLinearVelocity = Vector3.Transform(Global_PrimaryLinearVelocity, rotMatrix);
+        Global_PrimaryAngularVelocity = Vector3.Transform(Global_PrimaryAngularVelocity, rotMatrix);
+        Global_SecondaryLinearVelocity = Vector3.Transform(Global_SecondaryLinearVelocity, rotMatrix);
+        Global_SecondaryAngularVelocity = Vector3.Transform(Global_SecondaryAngularVelocity, rotMatrix);
+        //*/
     }
 
     public override void AfterUpdate()
@@ -139,19 +156,13 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
         {
             extraBatch.ClearData();
 
+#if false
             IEnumerable<Color> cols = [Color.Blue, Color.Red];
             IEnumerator<Color> colIt = cols.GetEnumerator();
             foreach (var cursor_ in Cursors)
             {
                 var cursor = cursor_;
                 colIt.MoveNext();
-                var cursorTransform = Matrix.Identity;
-                cursorTransform.Translation = cursor.Position;
-                cursorTransform.Forward = cursor.Facing;
-                cursorTransform.Up = cursor.Up;
-                cursorTransform.Right = Vector3.Cross(cursor.Facing, cursor.Up);
-                //cursorTransform = Matrix.CreateBillboard(cursor.Position, cursor.Position + cursor.Facing, -cursor.Facing, cursor.Up);
-                Matrix pointerOrientation = cursorTransform.NoTranslation();
 
                 extraBatch.AddNonInstanced((env, col, world, view, proj) =>
                 {
@@ -163,18 +174,18 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
                     colBack.G = (byte)(colBack.G * 0.5f);
                     colBack.B = (byte)(colBack.B * 0.5f);
 
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Right * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Right, colSide, Vector3.Up, additionalTransform: world);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Left * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Left, colSide, Vector3.Up, additionalTransform: world);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Up * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Up, colSide, Vector3.Forward, additionalTransform: world);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Down * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Down, colSide, Vector3.Backward, additionalTransform: world);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Forward, colFront, Vector3.Up, additionalTransform: world);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Backward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Backward, colBack, Vector3.Up, additionalTransform: world);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Right * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Right, colSide, Vector3.Up, additionalTransform: cursor.Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Left * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Left, colSide, Vector3.Up, additionalTransform: cursor.Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Up * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Up, colSide, Vector3.Forward, additionalTransform: cursor.Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Down * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Down, colSide, Vector3.Backward, additionalTransform: cursor.Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Forward, colFront, Vector3.Up, additionalTransform: cursor.Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Backward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Backward, colBack, Vector3.Up, additionalTransform: cursor.Grip);
 
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Up, upOverride: Vector3.Forward, additionalTransform: world);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Down, upOverride: Vector3.Forward, additionalTransform: world);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Left, upOverride: Vector3.Forward, additionalTransform: world);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Right, upOverride: Vector3.Forward, additionalTransform: world);
-                }, cursorTransform, colIt.Current);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Up, upOverride: Vector3.Forward, additionalTransform: cursor.Pointer);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Down, upOverride: Vector3.Forward, additionalTransform: cursor.Pointer);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Left, upOverride: Vector3.Forward, additionalTransform: cursor.Pointer);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Right, upOverride: Vector3.Forward, additionalTransform: cursor.Pointer);
+                }, Matrix.Identity, colIt.Current);
 
                 if (cursor.Holding != null)
                 {
@@ -192,20 +203,37 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
                             WorldBatch = extraBatch,
                             WorldEnvironment = WorldRenderer.CurrentEnvironment,
                             WorldCamera = Camera,
-                            WorldTransform = Matrix.CreateScale(1f / 8)
+                            WorldTransform = Matrix.Identity
+                                * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
+                                * Matrix.CreateScale(1f / 3)
+                                //* Matrix.CreateTranslation(new Vector3(0.075f, 0.15f, -0.0f))
+                                * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
                                 * Matrix.CreateFromQuaternion // Was getting a gimbal lock otherwise
                                 (
-                                      Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationX(MathHelper.ToRadians(45)))
+                                      Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationX(MathHelper.ToRadians(-45)))
                                     * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(MathHelper.ToRadians(-90)))
                                     * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationZ(MathHelper.ToRadians(0)))
                                 )
-                                * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, -0.045f))
+                                * Matrix.CreateTranslation(new Vector3(0f, -0.125f, -0.0f))
+                                * cursor.Grip,
+                            /*
+                            WorldTransform = Matrix.CreateScale(1f / 3)
+                                * Matrix.CreateTranslation(new Vector3(0.075f, 0.15f, -0.0f))
+                                * Matrix.CreateFromQuaternion // Was getting a gimbal lock otherwise
+                                (
+                                      Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationX(MathHelper.ToRadians(0)))
+                                    * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(MathHelper.ToRadians(-90)))
+                                    * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationZ(MathHelper.ToRadians(0)))
+                                )
+                                * Matrix.CreateTranslation(new Vector3(0.0f, -0.20f, -0.145f))
                                 //* Matrix.CreateRotationX(MathHelper.ToRadians(90))
                                 //* Matrix.CreateRotationY(MathHelper.ToRadians(-88))
                                 //* Matrix.CreateRotationZ(MathHelper.ToRadians(0))
                                 * cursorTransform
                                 //* Matrix.CreateTranslation(cursorTransform.Translation)
                                 * Matrix.CreateTranslation(new Vector3(0.0f,0.0f,0.0f)),
+                            */
+
                             CanBillboard = false,
 
                             Reset = true,
@@ -215,6 +243,7 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
                 }
             }
             extraBatch.DrawBatched(WorldRenderer.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+#endif
         }
 
         return base.AfterRender(step, sb, time, targetScreen);

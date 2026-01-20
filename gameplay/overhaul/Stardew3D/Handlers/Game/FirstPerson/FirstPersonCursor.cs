@@ -12,9 +12,16 @@ public class FirstPersonCursor : IGameCursor
 {
     public FirstPersonGameHandler GameHandler { get; }
 
-    public Vector3 Position => GameHandler.Camera.Position;
-    public Vector3 Facing => GameHandler.Camera.Forward;
-    public Vector3 Up => GameHandler.Camera.Up;
+    public Vector3 PointerPosition => GameHandler.Camera.Position;
+    public Vector3 PointerFacing => GameHandler.Camera.Forward;
+    public Vector3 PointerUp => GameHandler.Camera.Up;
+
+    public Vector3 GripPosition => GameHandler.Camera.Position;
+    public Vector3 GripFacing => GameHandler.Camera.Forward;
+    public Vector3 GripUp => GameHandler.Camera.Up;
+
+    public Vector3 LinearVelocity => Vector3.Zero;
+    public Vector3 AngularVelocity => Vector3.Zero; // TODO: This one could probably be implemented in flatscreen too, just in case
 
     public bool MenuLeftClickJustPressed { get; set; }
     public bool MenuLeftClickHeld { get; set; }
