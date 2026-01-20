@@ -69,6 +69,10 @@ public class State
     public ModelManager ModelManager { get; } = new();
     public GenericModelEffect GenericModelEffect { get; }
 
+    public bool RenderDebugDraw { get; set; } = false;
+    public bool RenderDebugGrid { get; set; } = false;
+    public bool RenderDebugInteractions { get; set; } = false;
+
     private class GameHandlerSpecificData
     {
         public UpdateHandlerManager UpdateHandlerManager { get; } = new();

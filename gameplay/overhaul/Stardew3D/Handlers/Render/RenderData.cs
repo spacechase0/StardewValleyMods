@@ -34,7 +34,10 @@ public class RenderData<TRenderer> : RenderDataBase
 {
     protected TRenderer Parent { get; }
     protected ModelObject Model { get; }
+    protected InteractionData Interaction { get; private set; }
     protected ModelObject.ModelObjectInstance instance;
+
+    private List<int> interactionInstances;
 
     public RenderData(RenderContext ctx, TRenderer parent, int whichMatch = 0)
         : base(ctx)
@@ -46,6 +49,8 @@ public class RenderData<TRenderer> : RenderDataBase
         {
             instance = Model.Draw(Batch, Matrix.Identity, whichMatch: whichMatch);
         }
+
+        CheckForInteractions(Parent.QualifiedId);
     }
 
     public override void Update(RenderContext ctx)
@@ -53,6 +58,49 @@ public class RenderData<TRenderer> : RenderDataBase
         if (instance != null)
         {
             Model.Update(Batch, instance, ctx.WorldTransform);
+        }
+
+        if (interactionInstances != null)
+        {
+            foreach (var inst in interactionInstances)
+                Batch.UpdateInstanced(inst, ctx.WorldTransform, Color.Cyan * 0.5f);
+        }
+    }
+
+    protected void CheckForInteractions(string id)
+    {
+        if (Interaction != null)
+            return;
+
+        Interaction = InteractionData.Get(id);
+        if (Interaction == null || Interaction.Areas.Count == 0)
+            return;
+
+        interactionInstances = new();
+        for (int i = 0; i < Interaction.Areas.Count; ++i)
+        {
+            var area = Interaction.Areas[i];
+
+            string rid = $"Interaction/{id}/{i}";
+            if (!Batch.HasGenericData(rid))
+            {
+                var verts = area.GetTriangleVertices();
+                RenderBatcher.GenericRenderData data = new()
+                {
+                    Vertices = new(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), verts.Length, BufferUsage.WriteOnly),
+                    Indices = new(Game1.graphics.GraphicsDevice, IndexElementSize.SixteenBits, verts.Length, BufferUsage.WriteOnly),
+                    Effect = Mod.State.GenericModelEffect.Clone(),
+                    Blend = BlendState.AlphaBlend,
+                    Rasterizer = RasterizerState.CullNone,
+                };
+                data.Vertices.SetData(verts);
+                data.Indices.SetData(Enumerable.Range(0, verts.Length).Select(i => (short)i).ToArray());
+                (data.Effect as GenericModelEffect).Texture = Game1.staminaRect;
+                Batch.AddGenericData(rid, [data]);
+            }
+
+            int instance = Batch.AddInstanced(rid, Matrix.Identity, Color.Cyan * 0.5f);
+            interactionInstances.Add(instance);
         }
     }
 }
@@ -63,7 +111,7 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
 {
     protected ICamera lastCamera;
 
-    private List<int> placeholderInstances = new();
+    private List<int> placeholderInstances;
 
     public RenderDataWithPlaceholder(RenderContext ctx, RendererWithPlaceholder<TData, TObject> parent, int whichMatch = 0)
         : base(ctx, parent, whichMatch)

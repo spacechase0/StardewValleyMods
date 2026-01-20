@@ -29,6 +29,9 @@
     <ProjectReference Include="$(SolutionDir)gameplay\overhaul\Stardew3D\Stardew3D.csproj" Private="False">
       <Version_AppendConfiguration>false</Version_AppendConfiguration>
     </ProjectReference>
+
+    <ProjectReference Include="$(SolutionDir)_external\GJKEPA_Project\GJKEPA_Project.csproj" />
+
     <Reference Include="MonoGamePolyfill.dll">
       <HintPath>$(SolutionDir)_external_helpers\MonoGamePolyfill\bin\Debug\net6.0\MonoGamePolyfill.dll</HintPath>
     </Reference>

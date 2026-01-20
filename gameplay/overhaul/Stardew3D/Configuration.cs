@@ -14,8 +14,6 @@ namespace Stardew3D
         public int MultisampleCount { get; set; } = 0;
 
         public KeybindList ToggleThirdDimension { get; set; } = new(SButton.Home);
-
-        public bool RenderDebugDraw => false;
-        public bool RenderDebugGrid => false;
+        public KeybindList ToggleShowInteractionShapes { get; set; } = new(SButton.Insert);
     }
 }

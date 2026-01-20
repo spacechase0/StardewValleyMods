@@ -49,6 +49,7 @@ namespace Stardew3D
         public string DefaultHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
 
         internal Dictionary<string, ModelData> ModelDataDict => Helper.GameContent.Load<Dictionary<string, ModelData>>($"{ModManifest.UniqueID}/Models");
+        internal Dictionary<string, InteractionData> InteractionDataDict => Helper.GameContent.Load<Dictionary<string, InteractionData>>($"{ModManifest.UniqueID}/Interactions");
 
         protected override void ModEntry()
         {
@@ -132,6 +133,10 @@ namespace Stardew3D
                 }
 
                 State.ActiveHandler = targetHandler;
+            }
+            if (Config.ToggleShowInteractionShapes.JustPressed())
+            {
+                State.RenderDebugInteractions = !State.RenderDebugInteractions;
             }
         }
 
@@ -263,6 +268,32 @@ namespace Stardew3D
                     { $"{PathUtilities.NormalizeAssetName("Maps/spring_outdoorsTileSheet2")}:737", new() { WallDefinitionId = $"{ModManifest.UniqueID}/GenericCliffWall" } },
                     { $"{PathUtilities.NormalizeAssetName("Maps/spring_outdoorsTileSheet2")}:741", new() { WallDefinitionId = $"{ModManifest.UniqueID}/GenericCliffWall" } },
 #endif
+                }, AssetLoadPriority.Exclusive);
+            else if (e.NameWithoutLocale.IsEquivalentTo($"{ModManifest.UniqueID}/Interactions"))
+                e.LoadFrom(() => new Dictionary<string, InteractionData>
+                {
+                    { $"({ModManifest.UniqueID}/Tree)", new InteractionData() // No second ID part = default for that type
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Size = new( 0.375f, 3, 0.375f ),
+                                Translation = new( 0, -1.5f, 0 ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/ToolTypes)Axe", new InteractionData() // A specific tool can still override this with their normal qualified ID
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Size = new( 0.375f, 0.375f, 0.125f ),
+                                Translation = new( 0.25f, 0.5f, 0 ),
+                            }
+                        ],
+                    } },
                 }, AssetLoadPriority.Exclusive);
             else if (e.NameWithoutLocale.IsEquivalentTo($"{ModManifest.UniqueID}/Models"))
                 e.LoadFrom(() => new Dictionary<string, ModelData>

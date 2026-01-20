@@ -152,7 +152,15 @@ public class ModelObject
                                     results.Add(new(mesh, baseTransform * node.WorldMatrix.ToMonogame() * additionalTransform));
                                 }
                             }
-                            allResults.Add(name, results);
+
+                            if (!allResults.TryAdd(name, results))
+                            {
+                                for (int i = 1; i < 100; ++i)
+                                {
+                                    if (allResults.TryAdd($"{name}{i}", results))
+                                        break;
+                                }
+                            }
 
                             GetAllMeshes(node.VisualChildren);
                         }

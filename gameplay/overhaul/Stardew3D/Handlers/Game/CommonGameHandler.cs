@@ -87,9 +87,9 @@ public abstract partial class CommonGameHandler : IGameHandler
         Game1.graphics.GraphicsDevice.DepthStencilState = RenderHelper.DepthState;
         RenderHelper.GenericEffect.Projection = ProjectionMatrix;
 
-        if ( Mod.Config.RenderDebugDraw )
+        if ( Mod.State.RenderDebugDraw )
             RenderHelper.DebugRender(Camera);
-        if (Mod.Config.RenderDebugGrid)
+        if (Mod.State.RenderDebugGrid)
             RenderHelper.DebugRenderGrid();
 
         WorldRenderer.Render(ProjectionMatrix, Camera);

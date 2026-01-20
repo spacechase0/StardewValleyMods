@@ -35,20 +35,23 @@ public class TelevisionRenderData : RenderDataWithPlaceholder<ModelData, TV>
 
     public override void Update(RenderContext ctx)
     {
+        var mesh = Model.Matches[instance.WhichMatch];
         if (screenPart == null)
         {
-            var mesh = Model.Matches[instance.WhichMatch];
-
             var screenEntry = mesh.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE"));
             if (!string.IsNullOrEmpty(screenEntry.Key))
                 screenPart = screenEntry.Value.SelectMany(m => m.Mesh).FirstOrDefault();
 
-            var overlayEntry = mesh.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE_OVERLAY"));
-            if (!string.IsNullOrEmpty(overlayEntry.Key))
-                screenPart = overlayEntry.Value.SelectMany(m => m.Mesh).FirstOrDefault();
         }
 
-        if (screenPart != null)
+        if (screenOverlayPart == null)
+        {
+            var overlayEntry = mesh.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE_OVERLAY"));
+            if (!string.IsNullOrEmpty(overlayEntry.Key))
+                screenOverlayPart = overlayEntry.Value.SelectMany(m => m.Mesh).FirstOrDefault();
+        }
+
+        if (screenPart != null && screenOverlayPart != null)
         {
             (TemporaryAnimatedSprite Sprite, MeshPart Mesh, Holder<Texture2D> TmpScreen)[] parts =
             [
