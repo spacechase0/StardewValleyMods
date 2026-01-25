@@ -638,7 +638,7 @@ namespace Stardew3D
                             },
                         ],
                     } },
-                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu", new MenuModelData()
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu", new MenuModelData()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/title",
@@ -649,27 +649,27 @@ namespace Stardew3D
                         {
                             { "New", new()
                             {
-                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/New",
+                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu/Clickables/New",
                                 HoverAnimation = "hover",
                             } },
                             { "Load", new()
                             {
-                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Load",
+                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu/Clickables/Load",
                                 HoverAnimation = "hover",
                             } },
                             { "Co-op", new()
                             {
-                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Coop",
+                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu/Clickables/Coop",
                                 HoverAnimation = "hover",
                             } },
                             { "Exit", new()
                             {
-                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Exit",
+                                ModelId = $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu/Clickables/Exit",
                                 HoverAnimation = "hover",
                             } },
                         },
                     } },
-                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/New", new()
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu/Clickables/New", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/new",
@@ -687,7 +687,7 @@ namespace Stardew3D
                             } }
                         },
                     } },
-                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Load", new()
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu/Clickables/Load", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/load",
@@ -705,7 +705,7 @@ namespace Stardew3D
                             } }
                         },
                     } },
-                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Coop", new()
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu/Clickables/Coop", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/coop",
@@ -723,7 +723,7 @@ namespace Stardew3D
                             } }
                         },
                     } },
-                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)TitleMenu/Clickables/Exit", new()
+                    { $"({Mod.Instance.ModManifest.UniqueID}/Menu)StardewValley.Menus.TitleMenu/Clickables/Exit", new()
                     {
                         ModelFilePath = $"{ModManifest.UniqueID}:{Path.Combine( "assets", "menus", "Title.gltf")}",
                         SubModelPath = "/buttons/exit",

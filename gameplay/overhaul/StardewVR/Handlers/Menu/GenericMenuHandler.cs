@@ -83,7 +83,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
         return new RenderData(ctx, this);
     }
 
-    private class RenderData : RenderData<GenericMenuHandler<TMenu>>
+    protected class RenderData : RenderData<GenericMenuHandler<TMenu>>
     {
         private int menuInstance = -1;
         private int[] cursorInstances;
@@ -127,8 +127,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
 
             foreach (var cursor in Parent.GameHandler.Cursors.Reverse())
             {
-                var cursorTransform = Parent.cursorTargetMapping[cursor];
-                if (!cursorTransform.HasValue)
+                if (!Parent.cursorTargetMapping.TryGetValue(cursor, out var cursorTransform) || !cursorTransform.HasValue)
                     continue;
 
                 ctx.WorldBatch.UpdateNonInstanced(menuInstance, cursorTransform.Value);

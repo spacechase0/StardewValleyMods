@@ -110,7 +110,7 @@ public class ModelObject
                     var baseTransform = entry.WorldMatrix.ToMonogame().Inverted();
                     {
                         Node toApply = entry;
-                        for (int i = cachedData.UseExistingTransformHierarchy; i != 0 && entry != null; --i, toApply = entry.VisualParent)
+                        for (int i = cachedData.UseExistingTransformHierarchy; i != 0 && toApply != null; --i, toApply = entry.VisualParent)
                         {
                             baseTransform *= toApply.WorldMatrix.ToMonogame();
                         }
@@ -183,6 +183,7 @@ public class ModelObject
                     var model = Manager.RequestModel(entry.ModelId);
                     foreach (var match in model.Matches)
                     {
+                        Dictionary<string, List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)>> bakedMatch = new();
                         foreach (var matchEntry in match)
                         {
                             List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)> results = new();
@@ -190,8 +191,9 @@ public class ModelObject
                             {
                                 results.Add(new(submodel.Mesh, submodel.Transform * mat));
                             }
-                            bakedMatches.Add(new() { { $"{entry.ModelId}/{matchEntry.Key}", results } });
+                            bakedMatch.Add($"{entry.ModelId}/{matchEntry.Key}", results);
                         }
+                        bakedMatches.Add(bakedMatch);
                     }
                 }
                 finally
