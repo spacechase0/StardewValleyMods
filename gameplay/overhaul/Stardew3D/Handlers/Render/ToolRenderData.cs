@@ -24,15 +24,4 @@ public class ToolRenderData : RenderDataWithPlaceholder<ModelData, StardewValley
         : base( ctx, parent)
     {
     }
-
-    protected override void CheckForInteractions()
-    {
-        if (CheckForInteractions(Parent.QualifiedId))
-            return;
-
-        if (CheckForInteractions($"({Mod.Instance.ModManifest.UniqueID}/ToolTypes){Parent.Object.GetToolData()?.ClassName}"))
-            return;
-
-        CheckForInteractions(Parent.QualifiedId.Substring(0, Parent.QualifiedId.IndexOf(')') + 1));
-    }
 }

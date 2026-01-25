@@ -363,28 +363,28 @@ public abstract class VRGameHandler : CommonGameHandler
                 Global_PrimaryPointerPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
                 Global_PrimaryPointerOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
                 //primaryInput = poseInput.activeOrigin;
-                Global_PrimaryLinearVelocity = poseInput.pose.vVelocity.ToMonogame();
-                Global_PrimaryAngularVelocity = poseInput.pose.vAngularVelocity.ToMonogame();
 
                 ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(pointerSecondaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
                 if (ierr != EVRInputError.None) Log.Error($"Failed to get second pointer action data for OpenVR input: {ierr}");
                 Global_SecondaryPointerPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
                 Global_SecondaryPointerOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
                 //secondaryInput = poseInput.activeOrigin;
-                Global_SecondaryLinearVelocity = poseInput.pose.vVelocity.ToMonogame();
-                Global_SecondaryAngularVelocity = poseInput.pose.vAngularVelocity.ToMonogame();
 
                 ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(gripPrimaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
                 if (ierr != EVRInputError.None) Log.Error($"Failed to get primary grip action data for OpenVR input: {ierr}");
                 Global_PrimaryGripPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
                 Global_PrimaryGripOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
                 //secondaryInput = poseInput.activeOrigin;
+                Global_PrimaryLinearVelocity = poseInput.pose.vVelocity.ToMonogame();
+                Global_PrimaryAngularVelocity = poseInput.pose.vAngularVelocity.ToMonogame();
 
                 ierr = Valve.VR.OpenVR.Input.GetPoseActionDataRelativeToNow(gripSecondaryActionHandle, ETrackingUniverseOrigin.TrackingUniverseStanding, 0, ref poseInput, (uint)sizeof(InputPoseActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
                 if (ierr != EVRInputError.None) Log.Error($"Failed to get primary grip action data for OpenVR input: {ierr}");
                 Global_SecondaryGripPosition = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().Translation;
                 Global_SecondaryGripOrientation = poseInput.pose.mDeviceToAbsoluteTracking.ToMonogame().NoTranslation();
                 //secondaryInput = poseInput.activeOrigin;
+                Global_SecondaryLinearVelocity = poseInput.pose.vVelocity.ToMonogame();
+                Global_SecondaryAngularVelocity = poseInput.pose.vAngularVelocity.ToMonogame();
             }
 
             {
@@ -656,8 +656,8 @@ public abstract class VRGameHandler : CommonGameHandler
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;
 
         var baseProj = VR.GetProjectionMatrix(ActiveEye.Value, 0.1f, 10000).ToMonogame();
-        var eyeToHead = VR.GetEyeToHeadTransform(ActiveEye.Value).ToMonogame().Invert();
-        var headsetTransform = Camera.ViewMatrix.Invert();
+        var eyeToHead = VR.GetEyeToHeadTransform(ActiveEye.Value).ToMonogame().Inverted();
+        var headsetTransform = Camera.ViewMatrix.Inverted();
         //headsetTransform = (Headset.CurrentRotation * Matrix.CreateTranslation( Headset.CurrentPosition )).Invert();
         headsetTransform = Matrix.Identity;
         ProjectionMatrix = headsetTransform * eyeToHead * baseProj;

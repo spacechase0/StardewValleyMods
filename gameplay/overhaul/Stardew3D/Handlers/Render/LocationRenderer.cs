@@ -43,7 +43,7 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
     public PBREnvironment Environment = PBREnvironment.CreateDefault();
 
     public LocationRenderer(GameLocation obj)
-        : base($"({Mod.Instance.ModManifest.UniqueID}/Location){obj.Name}", obj)
+        : base(obj)
     {
     }
 

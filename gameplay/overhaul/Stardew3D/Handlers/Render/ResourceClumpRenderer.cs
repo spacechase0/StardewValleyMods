@@ -17,7 +17,7 @@ public class ResourceClumpRenderer : RendererWithPlaceholder<ModelData, Resource
     public override PlaceholderData[] Placeholders => placeholders;
 
     public ResourceClumpRenderer(ResourceClump obj)
-        : base($"({Mod.Instance.ModManifest.UniqueID}/ResourceClump){obj.textureName.Value ?? Game1.objectSpriteSheetName}:{obj.parentSheetIndex.Value}", obj)
+        : base(obj)
     {
         obj.loadSprite();
 

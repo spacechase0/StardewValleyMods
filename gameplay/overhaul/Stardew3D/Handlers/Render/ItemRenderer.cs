@@ -18,7 +18,7 @@ public class ItemRenderer<TData, TItem> : RendererWithPlaceholder<TData, TItem>
     public override PlaceholderData[] Placeholders => placeholders;
 
     public ItemRenderer(TItem item)
-        : base(item.QualifiedItemId, item)
+        : base(item)
     {
         placeholders =
         [

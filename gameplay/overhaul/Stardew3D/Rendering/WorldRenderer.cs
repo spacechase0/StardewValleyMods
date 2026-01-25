@@ -45,7 +45,7 @@ public class WorldRenderer : IDisposable
     public void Render(Matrix projectionMatrix, ICamera camera)
     {
         var drawCtx = Mod.State.ModelManager.DrawContext;
-        drawCtx.SetCamera(camera.ViewMatrix.Invert());
+        drawCtx.SetCamera(camera.ViewMatrix.Inverted());
         drawCtx.SetProjectionMatrix(projectionMatrix);
 
         skybox.Draw(env, Matrix.CreateTranslation(camera.Position));

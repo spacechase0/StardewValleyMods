@@ -19,7 +19,7 @@ public class TreeRenderer : RendererWithPlaceholder<ModelData, Tree>
     public override PlaceholderData[] Placeholders => placeholders;
 
     public TreeRenderer(Tree obj)
-        : base($"({Mod.Instance.ModManifest.UniqueID}/Tree){obj.treeType.Value}", obj)
+        : base(obj)
     {
         obj.loadSprite();
 

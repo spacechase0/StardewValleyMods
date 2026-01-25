@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -33,7 +34,7 @@ internal class FarmerMotionControlsHandler : RendererFor<ModelData, Farmer>, IUp
     public VRGameHandler GameHandler;
 
     public FarmerMotionControlsHandler(VRGameHandler handler, Farmer obj)
-        : base($"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)Farmer", obj)
+        : base(obj)
     {
         GameHandler = handler;
     }
@@ -67,61 +68,82 @@ internal class FarmerMotionControlsHandler : RendererFor<ModelData, Farmer>, IUp
     private ConditionalWeakTable<IGameCursor, Holder<Matrix>> lastGrips = new();
     protected virtual void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor)
     {
-        // TODO: more generic, support more things too
-        // TODO: and optimize
-        if (cursor.Holding is not Axe axe) return;
-        axe.lastUser = Game1.player;
+        // TODO: optimize
+        if (cursor.Holding is not Tool tool) return;
 
-        var interaction = InteractionData.Get(axe.QualifiedItemId);
-        interaction ??= InteractionData.Get($"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolTypes){axe.GetToolData()?.ClassName}");
-        interaction ??= InteractionData.Get(axe.QualifiedItemId.Substring(0, axe.QualifiedItemId.IndexOf(')') + 1));
+        InteractionData interaction = null;
+        foreach (var idEntry in tool.GetExtendedQualifiedIds())
+            interaction ??= InteractionData.Get(idEntry);
         if (interaction == null)
             return;
 
-        var transform = GetHeldTransformFor(cursor);
-        var prevTransform = lastGrips.GetOrCreateValue(cursor).Value;
-        var verts = interaction.Areas[0].GetTransformedShape();
-        var prevVerts = verts.ToArray();
-        for (int i = 0; i < verts.Length; ++i)
+        var baseTransform = GetHeldTransformFor(cursor);
+        var basePrevTransform = lastGrips.GetOrCreateValue(cursor).Value;
+
+        var check = Game1.player.currentLocation.terrainFeatures.Values.Concat(Game1.player.currentLocation.resourceClumps).ToArray();
+        foreach (var entry in check)
         {
-            verts[i] = Vector3.Transform(verts[i], transform);
-            prevVerts[i] = Vector3.Transform(prevVerts[i], prevTransform);
+            InteractionData tfInteraction = null;
+            foreach (var idEntry in entry.GetExtendedQualifiedIds())
+                tfInteraction ??= InteractionData.Get(idEntry);
+
+            if (tfInteraction == null)
+                continue;
+
+            var tfTransform = Matrix.CreateTranslation(entry.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation.Map));
+
+            foreach (var toolArea in interaction.Areas)
+            {
+                if (!toolArea.Purpose.StartsWith($"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolAction/"))
+                    continue;
+
+                var transform = toolArea.Transform * baseTransform;
+                var prevTransform = toolArea.Transform * basePrevTransform;
+                var verts = toolArea.GetShape().Transform(transform);
+                var prevVerts = toolArea.GetShape().Transform(prevTransform);
+
+                foreach (var tfArea in tfInteraction.Areas)
+                {
+                    if (tfArea.Purpose != $"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolAction")
+                        continue;
+
+                    var treeVerts = tfArea.GetTransformedShape().Transform(tfTransform);
+
+                    if (!GJK_EPA_BCP.CheckIntersection(verts, treeVerts, out var contact, out var depth, out var normal))
+                        continue;
+                    if (GJK_EPA_BCP.CheckIntersection(prevVerts, treeVerts, out _, out _, out _))
+                        continue;
+
+                    Vector3 vel = cursor.LinearVelocity;
+                    // TODO: Fix the following stuff for angular velocity
+                    //vel += cursor.AngularVelocity * Vector3.Distance( baseTransform.Translation, transform.Translation );
+                    //Log.Debug($"vel:{vel.Length()} {vel} - ({cursor.LinearVelocity} {cursor.AngularVelocity} {Vector3.Distance(baseTransform.Translation, transform.Translation)})");
+
+                    if (vel.Length() < 0.75f)
+                        continue;
+
+                    if (toolArea.Purpose == $"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolAction/Impact")
+                    {
+                        // Only allow hits that are going similarly angled to the tool's angle
+                        // If you hit it pointing the wrong way, the tool will be oriented the wrong way, so the hit will be ignored
+                        if (Vector3.Dot(transform.Left.Normalized(), vel.Normalized()) < 0.7) // about 45 degrees in any direction
+                            continue;
+                    }
+
+                    tool.lastUser = Game1.player;
+                    tool.swingTicker++;
+                    if (entry.performToolAction(tool, 0, entry.Tile))
+                    {
+                        if (Game1.player.currentLocation.resourceClumps.Contains(entry))
+                            Game1.player.currentLocation.resourceClumps.Remove(entry as ResourceClump);
+                        else
+                            Game1.player.currentLocation.terrainFeatures.Remove(entry.Tile);
+                    }
+                }
+            }
         }
 
-        foreach (var entry in Game1.player.currentLocation.terrainFeatures.Values)
-        {
-            if (entry is not Tree tree)
-                continue;
-
-            var treeInteraction = InteractionData.Get($"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Tree){tree.treeType.Value}");
-            treeInteraction ??= InteractionData.Get($"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Tree)");
-
-            var treeTransform = Matrix.CreateTranslation(tree.Tile.ToPoint().To3D(Game1.player.currentLocation.Map));
-            var treeVerts = treeInteraction.Areas[0].GetTransformedShape();
-            for (int i = 0; i < treeVerts.Length; ++i)
-            {
-                treeVerts[i] = Vector3.Transform(treeVerts[i], treeTransform);
-            }
-
-            if (Math.Abs(64 - tree.Tile.X) < 3 || Math.Abs(33 - tree.Tile.Y) < 3)
-            {
-                transform = transform;
-            }
-
-            if (!GJK_EPA_BCP.CheckIntersection(verts, treeVerts, out var contact, out var depth, out var normal))
-                continue;
-            if (GJK_EPA_BCP.CheckIntersection(prevVerts, treeVerts, out _, out _, out _))
-                continue;
-
-            if (cursor.LinearVelocity.Length() < 1) // TODO: take angular into account too?
-                continue;
-            Log.Debug("CHOP");
-
-            if (tree.performToolAction(axe, 0, tree.Tile))
-                Game1.player.currentLocation.terrainFeatures.Remove(tree.Tile);
-        }
-
-        lastGrips.AddOrUpdate(cursor, new(transform));
+        lastGrips.AddOrUpdate(cursor, new(baseTransform));
     }
 
     protected override RenderDataBase CreateInitialRenderData(IRenderHandler.RenderContext ctx)

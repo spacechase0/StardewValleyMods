@@ -12,7 +12,7 @@ public class BoxInteractionArea : InteractionArea
 
     public Vector3 Size { get; set; }
 
-    public override Vector3[] GetShapeWithoutTransform()
+    public override Vector3[] GetShape()
     {
         return
         [
@@ -27,7 +27,7 @@ public class BoxInteractionArea : InteractionArea
         ];
     }
 
-    public override Vector3[] GetTriangleVerticesWithoutTransform()
+    public override Vector3[] GetTriangleVertices()
     {
         return
         [

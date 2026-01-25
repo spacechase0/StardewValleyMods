@@ -112,12 +112,12 @@ public static class RenderHelper
 
     public static void DrawBillboard(ICamera camera, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null, SpriteEffects texCoordEffect = SpriteEffects.None)
     {
-        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(camera.Position, additionalTransform?.Invert() ?? Matrix.Identity ) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(camera.Up, additionalTransform?.Invert() ?? Matrix.Identity), additionalTransform: additionalTransform, texCoordEffect: texCoordEffect);
+        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(camera.Position, additionalTransform?.Inverted() ?? Matrix.Identity ) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(camera.Up, additionalTransform?.Inverted() ?? Matrix.Identity), additionalTransform: additionalTransform, texCoordEffect: texCoordEffect);
     }
 
     public static void DrawBillboard(Vector3 cameraPos, Vector3 cameraUp, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null, SpriteEffects texCoordEffect = SpriteEffects.None)
     {
-        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(cameraPos, additionalTransform?.Invert() ?? Matrix.Identity) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(cameraUp, additionalTransform?.Invert() ?? Matrix.Identity), additionalTransform: additionalTransform, texCoordEffect: texCoordEffect);
+        DrawQuad(tex, pos, displaySize, texCoords, (Vector3.Transform(cameraPos, additionalTransform?.Inverted() ?? Matrix.Identity) - pos).Normalized(), col: col, upOverride: Vector3.TransformNormal(cameraUp, additionalTransform?.Inverted() ?? Matrix.Identity), additionalTransform: additionalTransform, texCoordEffect: texCoordEffect);
     }
 
     public static void DebugRenderGrid()

@@ -107,7 +107,7 @@ public class ModelObject
                 additionalTransform *= Matrix.CreateTranslation(cachedData.Translation);
                 foreach (var entry in matches)
                 {
-                    var baseTransform = entry.WorldMatrix.ToMonogame().Invert();
+                    var baseTransform = entry.WorldMatrix.ToMonogame().Inverted();
                     {
                         Node toApply = entry;
                         for (int i = cachedData.UseExistingTransformHierarchy; i != 0 && entry != null; --i, toApply = entry.VisualParent)

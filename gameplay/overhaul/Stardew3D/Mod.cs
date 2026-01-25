@@ -82,7 +82,7 @@ namespace Stardew3D
                 State.SetRenderHandlerForGameHandlerTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
                 State.SetRenderHandlerForGameHandlerTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
                 State.SetRenderHandlerForGameHandlerTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
-                State.SetRenderHandlerForGameHandlerTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>($"({ModManifest.UniqueID}/TerrainFeature){obj.GetType().Name}", obj as TerrainFeature));
+                State.SetRenderHandlerForGameHandlerTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>(obj as TerrainFeature));
                 State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
                 State.SetRenderHandlerForGameHandlerTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
                 //State.SetRenderHandlerForGameHandlerTags<FruitTree>([], handler => obj => new FruitTreeRenderer(obj as FruitTree));
@@ -286,8 +286,21 @@ namespace Stardew3D
                         [
                             new BoxInteractionArea()
                             {
+                                Purpose = $"{ModManifest.UniqueID}/ToolAction",
                                 Size = new( 0.5f, 3, 0.5f ),
                                 Translation = new( 0, 1.5f, 0 ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/ResourceClump)Maps/springobjects:672", new InteractionData()
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/ToolAction",
+                                Size = new( 1.75f, 1, 1.75f ),
+                                Translation = new( 0, 0.5f, 0 ),
                             }
                         ],
                     } },
@@ -297,9 +310,30 @@ namespace Stardew3D
                         [
                             new BoxInteractionArea()
                             {
-                                Size = new( 0.375f/2, 0.5f, 0.125f ),
+                                Purpose = $"{ModManifest.UniqueID}/ToolAction/Impact",
+                                Size = new( 0.1875f, 0.5f, 0.125f ),
                                 Translation = new( -0.3125f, 0.625f, 0 ),
                                 Rotation = new( 0, 0, MathHelper.ToRadians( 45 ) ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/ToolTypes)Pickaxe", new InteractionData() // A specific tool can still override this with their normal qualified ID
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/ToolAction/Impact",
+                                Size = new( 0.1875f, 0.1875f, 0.125f ),
+                                Translation = new( -0.4375f, 0.3125f+1f/16, 0 ),
+                                Rotation = new( 0, 0, MathHelper.ToRadians( 75 ) ),
+                            },
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/ToolAction/Impact",
+                                Size = new( 0.1875f, 0.1875f, 0.125f ),
+                                Translation = new( -0.1875f+0.25f+1f/32, 0.9375f, 0 ),
+                                Rotation = new( 0, 0, MathHelper.ToRadians( 195 ) ),
                             }
                         ],
                     } },

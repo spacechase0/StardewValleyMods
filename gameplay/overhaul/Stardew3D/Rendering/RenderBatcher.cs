@@ -28,7 +28,7 @@ public class RenderBatcher : IDisposable
                                                                 new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2),
                                                                 new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3),
                                                                 new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 4),
-                                                                new VertexElement(64, VertexElementFormat.Color, VertexElementUsage.Color, 0));
+                                                                new VertexElement(64, VertexElementFormat.Color, VertexElementUsage.Color, 1));
             public VertexDeclaration VertexDeclaration => _vertexDecl;
 
             public Matrix Transform;
@@ -206,7 +206,7 @@ public class RenderBatcher : IDisposable
             foreach (var entry in data)
             {
                 var effect = entry.Effect;
-                if (effect is GenericModelEffect)
+                if (effect is GenericModelEffect generic)
                 {
                     effect.CurrentTechnique = effect.Techniques["InstancedDrawing"];
                 }

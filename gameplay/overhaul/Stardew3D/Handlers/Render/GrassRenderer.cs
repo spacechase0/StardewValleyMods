@@ -19,7 +19,7 @@ public class GrassRenderer : RendererWithPlaceholder<ModelData, Grass>
     public override PlaceholderData[] Placeholders => placeholders;
 
     public GrassRenderer(Grass obj)
-        : base($"({Mod.Instance.ModManifest.UniqueID}/Grass){obj.grassType.Value}", obj)
+        : base(obj)
     {
         obj.loadSprite();
 

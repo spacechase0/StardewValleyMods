@@ -5,42 +5,41 @@ public abstract class InteractionArea
 {
     public abstract string Type { get; }
 
-    //public string Purpose { get; set; } // "Interaction", ...
+    public string Purpose { get; set; }
 
     public Vector3 Rotation { get; set; }
     public Vector3 Translation { get; set; }
 
+    public Color DebugColor
+    {
+        get
+        {
+            if (Purpose == $"{Mod.Instance.ModManifest.UniqueID}/ToolAction")
+                return Color.Yellow;
+            if (Purpose.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/ToolAction/"))
+                return Color.Blue;
+
+            return Color.Magenta;
+        }
+    }
+
     // Must return vertices of the convex shape, ignoring the position and rotation
-    public abstract Vector3[] GetShapeWithoutTransform();
+    public abstract Vector3[] GetShape();
 
     // Must return triangles of the convex shape for debug rendering, ignoring the position and rotation, in CCW order
-    public abstract Vector3[] GetTriangleVerticesWithoutTransform();
+    public abstract Vector3[] GetTriangleVertices();
 
-    public Vector3[] GetTransformedShape()
+    public Matrix Transform
     {
-        Matrix transform = Matrix.Identity;
-        transform *= Matrix.CreateRotationX(Rotation.X) * Matrix.CreateRotationY(Rotation.Y) * Matrix.CreateRotationZ(Rotation.Z);
-        transform *= Matrix.CreateTranslation(Translation);
-
-        Vector3[] shape = GetShapeWithoutTransform();
-        for (int i = 0; i < shape.Length; ++i)
+        get
         {
-            shape[i] = Vector3.Transform(shape[i], transform);
+            Matrix transform = Matrix.Identity;
+            transform *= Matrix.CreateRotationX(Rotation.X) * Matrix.CreateRotationY(Rotation.Y) * Matrix.CreateRotationZ(Rotation.Z);
+            transform *= Matrix.CreateTranslation(Translation);
+            return transform;
         }
-        return shape;
     }
 
-    public Vector3[] GetTransformedTriangleVertices()
-    {
-        Matrix transform = Matrix.Identity;
-        transform *= Matrix.CreateRotationX(Rotation.X) * Matrix.CreateRotationY(Rotation.Y) * Matrix.CreateRotationZ(Rotation.Z);
-        transform *= Matrix.CreateTranslation(Translation);
-
-        Vector3[] verts = GetTriangleVerticesWithoutTransform();
-        for (int i = 0; i < verts.Length; ++i)
-        {
-            verts[i] = Vector3.Transform(verts[i], transform);
-        }
-        return verts;
-    }
+    public Vector3[] GetTransformedShape() => GetShape().Transform(Transform);
+    public Vector3[] GetTransformedTriangleVertices() => GetTriangleVertices().Transform(Transform);
 }

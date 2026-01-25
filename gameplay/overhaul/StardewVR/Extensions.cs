@@ -32,7 +32,7 @@ namespace StardewVR
                 mat.m4, mat.m5, mat.m6, mat.m7,
                 mat.m8, mat.m9, mat.m10, mat.m11,
                 0, 0, 0, 1.0f);
-            return m.Transpose();
+            return m.Transposed();
         }
 
         public static Matrix ToMonogame(this HmdMatrix44_t mat)
@@ -42,7 +42,7 @@ namespace StardewVR
                 mat.m4, mat.m5, mat.m6, mat.m7,
                 mat.m8, mat.m9, mat.m10, mat.m11,
                 mat.m12, mat.m13, mat.m14, mat.m15);
-            return m.Transpose();
+            return m.Transposed();
         }
     }
 }

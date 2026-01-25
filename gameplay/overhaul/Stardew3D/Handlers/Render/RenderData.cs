@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HarmonyLib;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,9 +35,10 @@ public class RenderData<TRenderer> : RenderDataBase
 {
     protected TRenderer Parent { get; }
     protected ModelObject Model { get; }
-    protected InteractionData Interaction { get; private set; }
+    protected InteractionData Interaction { get; }
     protected ModelObject.ModelObjectInstance instance;
 
+    private string interactionId;
     private List<int> interactionInstances;
 
     public RenderData(RenderContext ctx, TRenderer parent, int whichMatch = 0)
@@ -50,7 +52,16 @@ public class RenderData<TRenderer> : RenderDataBase
             instance = Model.Draw(Batch, Matrix.Identity, whichMatch: whichMatch);
         }
 
-        CheckForInteractions();
+        foreach (var entry in Parent.Object.GetExtendedQualifiedIds())
+        {
+            Interaction = InteractionData.Get(entry);
+            if (Interaction != null)
+            {
+                interactionId = entry;
+                break;
+            }
+        }
+        GenerateInteractionDebugView();
     }
 
     public override void Update(RenderContext ctx)
@@ -63,53 +74,60 @@ public class RenderData<TRenderer> : RenderDataBase
         if (Mod.State.RenderDebugInteractions && interactionInstances != null)
         {
             foreach (var inst in interactionInstances)
-                Batch.UpdateInstanced(inst, ctx.WorldTransform, Color.Magenta * 0.5f);
+                Batch.UpdateInstanced(inst, ctx.WorldTransform, Color.White * 0.5f);
         }
     }
 
-    protected virtual void CheckForInteractions()
+    private void GenerateInteractionDebugView()
     {
-        if ( !CheckForInteractions(Parent.QualifiedId) )
-            CheckForInteractions(Parent.QualifiedId.Substring(0, Parent.QualifiedId.IndexOf(')') + 1));
-    }
+        if (Interaction == null || Interaction.Areas.Count == 0)
+            return;
 
-    protected bool CheckForInteractions(string id)
-    {
-        Interaction = InteractionData.Get(id);
-        if (Interaction == null)
-            return false;
-
-        if (Interaction.Areas.Count > 0)
+        interactionInstances = new();
+        for (int i = 0; i < Interaction.Areas.Count; ++i)
         {
-            interactionInstances = new();
-            for (int i = 0; i < Interaction.Areas.Count; ++i)
+            var area = Interaction.Areas[i];
+
+            string rid = $"Interaction/{interactionId}/{i}";
+            if (!Batch.HasGenericData(rid))
             {
-                var area = Interaction.Areas[i];
-
-                string rid = $"Interaction/{id}/{i}";
-                if (!Batch.HasGenericData(rid))
+                var verts = area.GetTransformedTriangleVertices().Select( v3 => new SimpleVertex( v3, Vector2.One * 0.5f, area.DebugColor )).ToList();
+                verts.AddRange(new BoxInteractionArea()
                 {
-                    var verts = area.GetTransformedTriangleVertices().Select( v3 => new SimpleVertex( v3, Vector2.Zero )).ToArray();
-                    RenderBatcher.GenericRenderData data = new()
-                    {
-                        Vertices = new(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), verts.Length, BufferUsage.WriteOnly),
-                        Indices = new(Game1.graphics.GraphicsDevice, IndexElementSize.SixteenBits, verts.Length, BufferUsage.WriteOnly),
-                        Effect = Mod.State.GenericModelEffect.Clone(),
-                        Blend = BlendState.AlphaBlend,
-                        Rasterizer = RasterizerState.CullNone,
-                    };
-                    data.Vertices.SetData(verts);
-                    data.Indices.SetData(Enumerable.Range(0, verts.Length).Select(i => (short)i).ToArray());
-                    (data.Effect as GenericModelEffect).Texture = Game1.staminaRect;
-                    Batch.AddGenericData(rid, [data]);
-                }
-
-                int instance = Batch.AddInstanced(rid, Matrix.Identity);
-                interactionInstances.Add(instance);
+                    Size = new(1, 0.05f, 0.05f ),
+                    Translation = area.Translation + Vector3.Transform( new Vector3( 0.5f, 0, 0 ), area.Transform.NoTranslation() ),
+                    Rotation = area.Rotation,
+                }.GetTransformedTriangleVertices().Select(v3 => new SimpleVertex(v3, Vector2.Zero, Color.Red)));
+                verts.AddRange(new BoxInteractionArea()
+                {
+                    Size = new(0.05f, 1, 0.05f ),
+                    Translation = area.Translation + Vector3.Transform(new Vector3(0, 0.5f, 0), area.Transform.NoTranslation()),
+                    Rotation = area.Rotation,
+                }.GetTransformedTriangleVertices().Select(v3 => new SimpleVertex(v3, Vector2.Zero, Color.Green)));
+                verts.AddRange(new BoxInteractionArea()
+                {
+                    Size = new(0.05f, 0.05f, 1 ),
+                    Translation = area.Translation + Vector3.Transform(new Vector3(0, 0, 0.5f), area.Transform.NoTranslation()),
+                    Rotation = area.Rotation,
+                }.GetTransformedTriangleVertices().Select(v3 => new SimpleVertex(v3, Vector2.Zero, Color.Blue)));
+                RenderBatcher.GenericRenderData data = new()
+                {
+                    Vertices = new(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), verts.Count, BufferUsage.WriteOnly),
+                    Indices = new(Game1.graphics.GraphicsDevice, IndexElementSize.SixteenBits, verts.Count, BufferUsage.WriteOnly),
+                    Effect = Mod.State.GenericModelEffect.Clone(),
+                    Blend = BlendState.AlphaBlend,
+                    Rasterizer = RasterizerState.CullNone,
+                };
+                data.Vertices.SetData(verts.ToArray());
+                data.Indices.SetData(Enumerable.Range(0, verts.Count).Select(i => (short)i).ToArray());
+                (data.Effect as GenericModelEffect).Texture = Game1.staminaRect;
+                (data.Effect as GenericModelEffect).Color = Color.White;
+                Batch.AddGenericData(rid, [data]);
             }
-        }
 
-        return true;
+            int instance = Batch.AddInstanced(rid, Matrix.Identity);
+            interactionInstances.Add(instance);
+        }
     }
 }
 

@@ -14,6 +14,7 @@ using Stardew3D.Models;
 using StardewValley;
 using StardewValley.Extensions;
 using StardewValley.Menus;
+using StardewValley.TerrainFeatures;
 
 namespace Stardew3D
 {
@@ -202,8 +203,8 @@ namespace Stardew3D
         }
 
         public static Vector3 Normalized(this Vector3 v) => Vector3.Normalize(v);
-        public static Matrix Invert(this Matrix m) => Matrix.Invert(m);
-        public static Matrix Transpose(this Matrix m) => Matrix.Transpose(m);
+        public static Matrix Inverted(this Matrix m) => Matrix.Invert(m);
+        public static Matrix Transposed(this Matrix m) => Matrix.Transpose(m);
 
         // https://medium.com/data-science/change-of-basis-3909ef4bed43
         public static Matrix ChangeBasis(this Matrix input)
@@ -212,6 +213,57 @@ namespace Stardew3D
             basisChange[2, 2] = -1;
             var basisChangeInverse = basisChange;
             return basisChange * input * basisChangeInverse;
+        }
+
+        public static Vector3[] Transform(this Vector3[] verts, Matrix transform)
+        {
+            verts = verts.ToArray();
+            for (int i = 0; i < verts.Length; ++i)
+            {
+                verts[i] = Vector3.Transform(verts[i], transform);
+            }
+            return verts;
+        }
+
+        public static string GetExtendedQualifiedId(this object obj)
+        {
+            return (obj?.GetExtendedQualifiedIds() ?? [null])[0];
+        }
+
+        public static string[] GetExtendedQualifiedIds(this object obj)
+        {
+            // TODO: Dehardcode this
+            if (obj is Tool tool)
+                return
+                [
+                    tool.QualifiedItemId,
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolTypes){tool.GetToolData()?.ClassName}",
+                    tool.GetItemTypeId(),
+                ];
+            else if (obj is Item item)
+                return [item.QualifiedItemId, item.GetItemTypeId()];
+
+            else if (obj is GameLocation location)
+                return [$"({Mod.Instance.ModManifest.UniqueID}/Location){location.Name}", $"({Mod.Instance.ModManifest.UniqueID}/Location)"];
+
+            else if (obj is Grass grass)
+                return [$"({Mod.Instance.ModManifest.UniqueID}/Grass){grass.grassType.Value}", $"({Mod.Instance.ModManifest.UniqueID}/Grass)"];
+            else if (obj is ResourceClump clump)
+                return [$"({Mod.Instance.ModManifest.UniqueID}/ResourceClump){clump.textureName.Value ?? Game1.objectSpriteSheetName}:{clump.parentSheetIndex.Value}", $"({Mod.Instance.ModManifest.UniqueID}/ResourceClump)"];
+            else if (obj is Tree tree)
+                return [$"({Mod.Instance.ModManifest.UniqueID}/Tree){tree.treeType.Value}", $"({Mod.Instance.ModManifest.UniqueID}/Tree)"];
+            else if (obj is TerrainFeature)
+                return [$"({Mod.Instance.ModManifest.UniqueID}/TerrainFeature)"];
+
+            else if (obj is Farmer farmer)
+                return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer){farmer.Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer)"];
+            else if (obj is Character character)
+                return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"];
+
+            else if (obj is IClickableMenu menu)
+                return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu)"];
+
+            return null;
         }
     }
 }

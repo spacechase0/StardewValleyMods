@@ -16,13 +16,21 @@ using static Stardew3D.Handlers.IRenderHandler;
 namespace Stardew3D.Handlers.Render;
 public abstract class Renderer : IRenderHandler
 {
+    public object Object { get; }
     public string QualifiedId { get; }
     public ModelData BaseModelData { get; }
 
-    public Renderer(string qualifiedId)
+    public Renderer(object obj)
     {
-        QualifiedId = qualifiedId;
-        BaseModelData = ModelData.Get(QualifiedId);
+        Object = obj;
+        QualifiedId = obj.GetExtendedQualifiedId();
+
+        foreach (var entry in obj.GetExtendedQualifiedIds())
+        {
+            BaseModelData = ModelData.Get(entry);
+            if (BaseModelData != null)
+                break;
+        }
     }
 
     public abstract void Render(RenderContext ctx);
@@ -32,12 +40,12 @@ public class RendererFor<TData, TObject> : Renderer
     where TData : ModelData
 {
     public TData ModelData => BaseModelData as TData;
-    public TObject Object { get; }
+    public new TObject Object { get; }
 
     protected ConditionalWeakTable<RenderBatcher, RenderDataBase> renderData = new();
 
-    public RendererFor(string qualifiedId, TObject obj)
-        : base(qualifiedId)
+    public RendererFor(TObject obj)
+        : base(obj)
     {
         Object = obj;
     }
@@ -81,8 +89,8 @@ public abstract class RendererWithPlaceholder<TData, TObject> : RendererFor<TDat
 
     public abstract PlaceholderData[] Placeholders{ get; }
 
-    public RendererWithPlaceholder(string qualifiedId, TObject obj)
-        : base(qualifiedId, obj)
+    public RendererWithPlaceholder(TObject obj)
+        : base(obj)
     {
     }
 

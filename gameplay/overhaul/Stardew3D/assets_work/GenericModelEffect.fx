@@ -5,9 +5,9 @@ float4 Color;
 struct VertexShaderInput
 {
     float4 Position : POSITION0;
-    float3 Normal : NORMAL0;
-    float4 Color : COLOR0;
     float2 TextureCoordinates : TEXCOORD0;
+    float4 Color : COLOR0;
+    float3 Normal : NORMAL0;
 };
 
 struct InstanceInput
@@ -16,7 +16,7 @@ struct InstanceInput
     float4 MatRow2 : TEXCOORD2;
     float4 MatRow3 : TEXCOORD3;
     float4 MatRow4 : TEXCOORD4;
-    float4 Color : COLOR0;
+    float4 Color : COLOR1;
 };
 
 struct VertexShaderOutput
@@ -34,7 +34,7 @@ VertexShaderOutput MainInstancedVS(VertexShaderInput input, InstanceInput instan
     VertexShaderOutput ret;
     ret.Position = mul(input.Position, mul(instTransform, WorldViewProj));
     ret.TextureCoordinates = input.TextureCoordinates;
-    ret.Color = input.Color; // mul(input.Color, instance.Color);
+    ret.Color = input.Color * instance.Color;
     ret.Normal = input.Normal; // TOOD: Should this should be rotated with the instance transform?
     return ret;
 }

@@ -39,12 +39,12 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
     public Dictionary<IGameCursor, Matrix?> cursorTargetMapping = new();
 
     public GenericMenuHandler(VRGameHandler handler, TMenu menu)
-        : base($"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", menu)
+        : base(menu)
     {
         GameHandler = handler;
 
         var basePosition = handler.Camera.Position;
-        BaseOrientation = handler.Camera.ViewMatrix.NoTranslation().Invert();
+        BaseOrientation = handler.Camera.ViewMatrix.NoTranslation().Inverted();
 
         // TODO: Configurable distance for these menus
         DisplayPosition = basePosition + BaseOrientation.Forward * 5;
@@ -63,7 +63,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
     {
         BoundingBox display = new(new(-DisplaySize.X / 2, -DisplaySize.Y / 2, 0), new(DisplaySize.X / 2, DisplaySize.Y / 2, 0.05f));
 
-        Matrix cursorTransform = Matrix.CreateTranslation(-DisplayPosition) * BaseOrientation.Invert();
+        Matrix cursorTransform = Matrix.CreateTranslation(-DisplayPosition) * BaseOrientation.Inverted();
         Vector3 cursorPos = Vector3.Transform(cursor.PointerPosition, cursorTransform);
         Vector3 cursorDir = Vector3.TransformNormal(cursor.PointerFacing, cursorTransform);
         Ray cursorRay = new(cursorPos, cursorDir);
