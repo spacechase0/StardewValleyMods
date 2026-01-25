@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json.Linq;
 using Stardew3D.Data;
-using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Mods;

@@ -13,7 +13,6 @@ using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
-using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewValley;

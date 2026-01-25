@@ -14,7 +14,6 @@ using Stardew3D.Handlers;
 using Stardew3D.Handlers.Game;
 using Stardew3D.Handlers.Game.FirstPerson;
 using Stardew3D.Handlers.Game.ThirdPerson;
-using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewModdingAPI;

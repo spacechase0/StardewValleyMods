@@ -15,7 +15,7 @@ using StardewValley.ItemTypeDefinitions;
 using StardewValley.Mods;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Handlers.Render;
+namespace Stardew3D.Handlers;
 
 
 public abstract class RenderDataBase

@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.Data;
-using Stardew3D.Handlers;
 using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.Mods;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Handlers.Render;
+namespace Stardew3D.Handlers;
 public abstract class Renderer : IRenderHandler
 {
     public object Object { get; }
@@ -77,7 +76,7 @@ public abstract class RendererWithPlaceholder<TData, TObject> : RendererFor<TDat
         public Vector2? DisplaySizeOverride { get; set; }
         public float DefaultDisplaySizeScale { get; set; } = 1;
         public Vector3 Offset => OffsetOverride ?? DefaultOffset;
-        public Vector3 DefaultOffset => new(0, (DisplaySize.Y / (float)DisplaySize.X) / 2, 0);
+        public Vector3 DefaultOffset => new(0, DisplaySize.Y / DisplaySize.X / 2, 0);
         public Vector3? OffsetOverride { get; set; }
         public Color Color { get; set; } = Color.White;
         public SpriteEffects Effects { get; set; } = SpriteEffects.None;
