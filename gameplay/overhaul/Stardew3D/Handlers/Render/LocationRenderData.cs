@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
@@ -121,7 +122,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel3D) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }
@@ -131,7 +132,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel3D) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }
@@ -141,7 +142,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel3D) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }

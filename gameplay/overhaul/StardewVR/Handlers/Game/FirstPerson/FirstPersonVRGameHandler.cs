@@ -53,7 +53,14 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
             return joyDir;
         }
     }
-    public Vector2 MovementAmountForced => new Vector2(Headset.CurrentPosition.X, Headset.CurrentPosition.Z) - new Vector2(lastHeadsetPosition.X, lastHeadsetPosition.Z);
+    public Vector2 MovementAmountForced
+    {
+        get
+        {
+            Vector2 diff = (new Vector2(lastHeadsetPosition.X, lastHeadsetPosition.Z) - new Vector2(Headset.CurrentPosition.X, Headset.CurrentPosition.Z)) * Game1.tileSize;
+            return Vector2.Transform(diff, Matrix.CreateRotationZ(Camera.AdditionalRotationY));
+        }
+    }
     private FirstPersonVRCursor[] cursors;
     public override IReadOnlyList<IGameCursor> Cursors => cursors;
 
@@ -143,6 +150,9 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
 
     public override void AfterUpdate()
     {
+        //Log.Debug($"position {Game1.player.Position}");
+        //Log.Debug($"fractional? {Game1.player.Position.X % (1f / 64)} {Game1.player.Position.Y % (1f / 64)}");
+        //Log.Debug($"headset {(lastHeadsetPosition = Headset.CurrentPosition).X % (1f / 64)} {(lastHeadsetPosition = Headset.CurrentPosition).Z % (1f / 64)}");
         base.AfterUpdate();
         lastHeadsetPosition = Headset.CurrentPosition;
     }
@@ -253,7 +263,7 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
     {
         if (Context.IsWorldReady)
         {
-            Camera.Position = Game1.player.GetPosition3D();
+            Camera.Position = Game1.player.StandingPixel3D;
             Camera.Position += new Vector3(0, Headset.CurrentPosition.Y, 0);
         }
         else

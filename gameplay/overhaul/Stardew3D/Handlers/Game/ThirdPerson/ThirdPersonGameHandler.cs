@@ -52,7 +52,7 @@ public class ThirdPersonGameHandler : CommonGameHandler
 
     protected override void UpdateCamera()
     {
-        Camera.Target = Game1.player.GetPosition3D();
+        Camera.Target = Game1.player.StandingPixel3D;
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;
     }
 }

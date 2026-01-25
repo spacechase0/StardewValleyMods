@@ -114,7 +114,7 @@ public class FirstPersonGameHandler : CommonGameHandler, IFirstPersonGameHandler
 
     protected override void UpdateCamera()
     {
-        Camera.Position = Game1.player.GetPosition3D() + new Vector3( 0, 1.75f, 0 );
+        Camera.Position = Game1.player.StandingPixel3D + new Vector3( 0, 1.75f, 0 );
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;
     }
 }

@@ -20,6 +20,21 @@ namespace Stardew3D
 {
     public static class Extensions
     {
+        extension(Character character)
+        {
+            public Vector3 StandingPixel3D
+            {
+                get
+                {
+                    Vector2 pos = character.StandingPixel.ToVector2();
+                    pos += (character.Position - character.Position.ToPoint().ToVector2());
+                    pos.Y += -character.yJumpOffset;
+                    return pos.To3D(character.currentLocation.Map);
+
+                }
+            }
+        }
+
         public static Matrix NoTranslation(this Matrix m)
         {
             m.Translation = Microsoft.Xna.Framework.Vector3.Zero;
