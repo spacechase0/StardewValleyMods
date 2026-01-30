@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -58,6 +56,7 @@ public abstract class VRGameHandler : CommonGameHandler
     private ulong gripPrimaryActionHandle, gripSecondaryActionHandle;
     private ulong leftClickActionHandle, rightClickActionHandle, scrollActionHandle;
     private ulong movementActionHandle, rotationActionHandle;
+    private ulong hotbarLeftActionHandle, hotbarRightActionHandle;
 
     public Vector3 Global_PrimaryLinearVelocity { get; protected set; }
     public Vector3 Global_PrimaryAngularVelocity { get; protected set; }
@@ -79,11 +78,15 @@ public abstract class VRGameHandler : CommonGameHandler
     public Vector2 Menu_Secondary_CurrentScroll { get; protected set; }
     public Vector2 World_MovementJoystick { get; protected set; }
     public Vector2 World_RotationJoystick { get; protected set; }
+    public bool World_HotbarLeft { get; protected set; }
+    public bool World_HotbarRight { get; protected set; }
 
     public Point EmulatedCursor { get; set; }
 
     private TimeSpan oldInactiveSleepTime, oldMaxTime, oldTargetTime;
     private bool oldFixedTimestemp, oldVsync;
+    private bool oldGamepadControls;
+    private Options.GamepadModes oldGamepadMode;
 
     private IClickableMenu lastMenu = null;
     private ConditionalWeakTable<IClickableMenu, RenderBatcher> menuBatchers = new();
@@ -121,12 +124,16 @@ public abstract class VRGameHandler : CommonGameHandler
 
             movementActionHandle = vrHandler.movementActionHandle;
             rotationActionHandle = vrHandler.rotationActionHandle;
+            hotbarLeftActionHandle = vrHandler.hotbarLeftActionHandle;
+            hotbarRightActionHandle = vrHandler.hotbarRightActionHandle;
 
             oldInactiveSleepTime = vrHandler.oldInactiveSleepTime;
             oldFixedTimestemp = vrHandler.oldFixedTimestemp;
             oldMaxTime = vrHandler.oldMaxTime;
             oldTargetTime = vrHandler.oldTargetTime;
             oldVsync = vrHandler.oldVsync;
+            oldGamepadControls = vrHandler.oldGamepadControls;
+            oldGamepadMode = vrHandler.oldGamepadMode;
         }
         else
         {
@@ -157,6 +164,7 @@ public abstract class VRGameHandler : CommonGameHandler
             pointerPrimaryActionHandle = pointerSecondaryActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
             leftClickActionHandle = rightClickActionHandle = scrollActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
             movementActionHandle = rotationActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
+            hotbarLeftActionHandle = hotbarRightActionHandle = Valve.VR.OpenVR.k_ulInvalidActionHandle;
             var err = Valve.VR.OpenVR.Input.SetActionManifestPath(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "openvr_input_bindings", "actions.json"));
             if (err != EVRInputError.None) Log.Error($"Failed to set action manifest for OpenVR input: {err}");
 
@@ -187,6 +195,10 @@ public abstract class VRGameHandler : CommonGameHandler
             if (err != EVRInputError.None) Log.Error($"Failed to get movement action handle for OpenVR input: {err}");
             err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/world/in/rotation", ref rotationActionHandle);
             if (err != EVRInputError.None) Log.Error($"Failed to get rotation action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/world/in/hotbar_left", ref hotbarLeftActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get hotbar left action handle for OpenVR input: {err}");
+            err = Valve.VR.OpenVR.Input.GetActionHandle("/actions/world/in/hotbar_right", ref hotbarRightActionHandle);
+            if (err != EVRInputError.None) Log.Error($"Failed to get hotbar right action handle for OpenVR input: {err}");
 
             // We absolutely do not want the game to slow down when the window isn't active.
             // That would cause comfort problems in VR
@@ -207,6 +219,10 @@ public abstract class VRGameHandler : CommonGameHandler
             // Don't want to be limited by desktop FPS
             oldVsync = Game1.graphics.SynchronizeWithVerticalRetrace;
             Game1.graphics.SynchronizeWithVerticalRetrace = false;
+
+            // Sometimes we force gamepad input for convenience
+            oldGamepadControls = Game1.options.gamepadControls;
+            oldGamepadMode = Game1.options.gamepadMode;
         }
     }
 
@@ -232,6 +248,8 @@ public abstract class VRGameHandler : CommonGameHandler
             GameRunner.instance.MaxElapsedTime = oldMaxTime;
             GameRunner.instance.TargetElapsedTime = oldTargetTime;
             Game1.graphics.SynchronizeWithVerticalRetrace = oldVsync;
+            Game1.options.gamepadControls = oldGamepadControls;
+            Game1.options.gamepadMode = oldGamepadMode;
         }
 
         menuBatchers.Clear();
@@ -421,6 +439,16 @@ public abstract class VRGameHandler : CommonGameHandler
                 ierr = Valve.VR.OpenVR.Input.GetAnalogActionData(rotationActionHandle, ref analogInput, (uint)sizeof(InputAnalogActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
                 if (ierr != EVRInputError.None) Log.Error($"Failed to get rotation action data for OpenVR input: {ierr}");
                 World_RotationJoystick = new(analogInput.x, analogInput.y);
+
+                ierr = Valve.VR.OpenVR.Input.GetDigitalActionData(hotbarLeftActionHandle, ref digitalInput, (uint)sizeof(InputDigitalActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get hotbar left action data for OpenVR input: {ierr}");
+                World_HotbarLeft = digitalInput.bState;
+                //Log.Debug($"HMM? L {ierr} {digitalInput.bActive} {digitalInput.bState}");
+
+                ierr = Valve.VR.OpenVR.Input.GetDigitalActionData(hotbarRightActionHandle, ref digitalInput, (uint)sizeof(InputDigitalActionData_t), Valve.VR.OpenVR.k_ulInvalidInputValueHandle);
+                if (ierr != EVRInputError.None) Log.Error($"Failed to get hotbar right action data for OpenVR input: {ierr}");
+                World_HotbarRight = digitalInput.bState;
+                //Log.Debug($"HMM? R {ierr} {digitalInput.bActive}");
             }
         }
     }
@@ -438,6 +466,18 @@ public abstract class VRGameHandler : CommonGameHandler
 
         _vr.Update();
         UpdateInput();
+
+        // Gonna need a SMAPI update past 4.5.1 for Helper.Input.Press to work for controllers when one isn't connected
+        Game1.options.gamepadMode = Options.GamepadModes.ForceOn;
+        Game1.options.gamepadControls = true;
+        if (World_HotbarLeft)
+        {
+            Mod.Instance.Helper.Input.Press(SButton.LeftTrigger);
+        }
+        if (World_HotbarRight)
+        {
+            Mod.Instance.Helper.Input.Press(SButton.RightTrigger);
+        }
     }
     public override void AfterUpdate()
     {

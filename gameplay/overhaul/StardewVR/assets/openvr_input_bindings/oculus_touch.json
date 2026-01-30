@@ -15,11 +15,11 @@
                 },
                 {
                     "output": "/actions/global/in/grip_secondary",
-                    "path": "/user/hand/left/pose/grip"
+                    "path": "/user/hand/left/pose/openxr_grip"
                 },
                 {
                     "output": "/actions/global/in/grip_primary",
-                    "path": "/user/hand/right/pose/grip"
+                    "path": "/user/hand/right/pose/openxr_grip"
                 }
             ],
             "skeleton": [],
@@ -83,6 +83,26 @@
                     "mode": "joystick",
                     "parameters": {},
                     "path": "/user/hand/right/input/joystick"
+                },
+                {
+                    "inputs": {
+                        "click": {
+                            "output": "/actions/world/in/hotbar_left"
+                        }
+                    },
+                    "mode": "boolean",
+                    "parameters": {},
+                    "path": "/user/hand/left/input/grip"
+                },
+                {
+                    "inputs": {
+                        "click": {
+                            "output": "/actions/world/in/hotbar_right"
+                        }
+                    },
+                    "mode": "boolean",
+                    "parameters": {},
+                    "path": "/user/hand/right/input/grip"
                 }
             ]
         }

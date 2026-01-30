@@ -14,7 +14,9 @@ using Stardew3D.Models;
 using StardewValley;
 using StardewValley.Extensions;
 using StardewValley.Menus;
+using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 
 namespace Stardew3D
 {
@@ -29,10 +31,65 @@ namespace Stardew3D
                     Vector2 pos = character.StandingPixel.ToVector2();
                     pos += (character.Position - character.Position.ToPoint().ToVector2());
                     pos.Y += -character.yJumpOffset;
-                    return pos.To3D(character.currentLocation.Map);
 
+                    Vector3 ret = pos.To3D(character.currentLocation?.Map);
+                    if (character is Monster monster && monster.isGlider.Value)
+                    {
+                        ret.Y += 1.25f;
+                    }
+
+                    return ret;
                 }
             }
+        }
+
+        /// <summary>Assumes the points are counter-clockwise order with Y=up. Should also work with clockwise order and Y=down.</summary>
+        /// <remarks>If your input matches neither criteria, either the order can be reversed or the Y coordinate can be negated. </remarks>
+        public static Vector2[] ConcaveToConvex(this Vector2[] origPoints)
+        {
+            // I don't know a proper algorithm this, so I kinda just came up with a naive algorithm
+            // off the top of my head and tweaked it to work correctly.
+            // Probably inefficient, but won't be done very often so should be fine.
+            List<Vector2> points = [.. origPoints];
+            for (int startPointIndex = 0; startPointIndex < points.Count; startPointIndex++)
+            {
+                Vector2 startPoint = points[(points.Count + startPointIndex) % points.Count];
+
+                int prevPointIndex = (points.Count + startPointIndex - 1) % points.Count;
+                Vector2 prevPoint = points[prevPointIndex];
+
+                float prevAngle = MathF.Atan2( startPoint.Y - prevPoint.Y, startPoint.X - prevPoint.X );
+
+                int nextPointIndex = (points.Count + startPointIndex + 1) % points.Count;
+                Vector2 nextPoint = points[nextPointIndex];
+
+                float nextAngle = MathF.Atan2(nextPoint.Y - startPoint.Y, nextPoint.X - startPoint.X);
+                if (nextAngle < prevAngle - MathF.PI) nextAngle += MathF.PI * 2;
+                if (nextAngle > prevAngle + MathF.PI) nextAngle -= MathF.PI * 2;
+
+                if (nextAngle < prevAngle)
+                {
+                    // Went the wrong direction.
+                    float testAngle = MathF.Atan2(nextPoint.Y - prevPoint.Y, nextPoint.X - prevPoint.X);
+                    if (testAngle < prevAngle - MathF.PI) testAngle += MathF.PI * 2;
+                    if (testAngle > prevAngle + MathF.PI) testAngle -= MathF.PI * 2;
+
+                    if (testAngle > prevAngle)
+                    {
+                        // The current point is further out, so the next point is part of the concavity
+                        points.RemoveAt(nextPointIndex);
+                        startPointIndex -= 1;
+                    }
+                    else
+                    {
+                        // The next point is further out, so the current point is part of the concavity
+                        points.RemoveAt((points.Count + startPointIndex) % points.Count);
+                        startPointIndex -= 2;
+                    }
+                }
+            }
+
+            return points.ToArray();
         }
 
         public static Matrix NoTranslation(this Matrix m)
@@ -248,15 +305,20 @@ namespace Stardew3D
         public static string[] GetExtendedQualifiedIds(this object obj)
         {
             // TODO: Dehardcode this
-            if (obj is Tool tool)
+            if (obj is MeleeWeapon weapon)
                 return
                 [
-                    tool.QualifiedItemId,
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolTypes){tool.GetToolData()?.ClassName}",
-                    tool.GetItemTypeId(),
+                    weapon.QualifiedItemId,
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/{weapon.GetItemTypeId().Substring(1)}{weapon.type.Value}",
+                    weapon.GetItemTypeId(),
                 ];
             else if (obj is Item item)
-                return [item.QualifiedItemId, item.GetItemTypeId()];
+                return
+                [
+                    item.QualifiedItemId,
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/{item.GetItemTypeId().Substring(1)}{item.GetType().Name}",
+                    item.GetItemTypeId()
+                ];
 
             else if (obj is GameLocation location)
                 return [$"({Mod.Instance.ModManifest.UniqueID}/Location){location.Name}", $"({Mod.Instance.ModManifest.UniqueID}/Location)"];
@@ -272,8 +334,30 @@ namespace Stardew3D
 
             else if (obj is Farmer farmer)
                 return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer){farmer.Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer)"];
+            else if (obj is Monster monster)
+                return
+                [
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Monster){monster.Name}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){monster.GetType().Name}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Monster)",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+                ];
+            else if (obj is FarmAnimal animal)
+                return
+                [
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/FarmAnimal){animal.Name}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){animal.type.Value}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){animal.GetType().Name}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/FarmAnimal)",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+                ];
             else if (obj is Character character)
-                return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"];
+                return
+                [
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character){character.Name}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){character.GetType().Name}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+                ];
 
             else if (obj is IClickableMenu menu)
                 return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu)"];

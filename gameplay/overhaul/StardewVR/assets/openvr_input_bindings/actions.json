@@ -60,6 +60,16 @@
             "name": "/actions/world/in/rotation",
             "requirement": "mandatory",
             "type": "vector2"
+        },
+        {
+            "name": "/actions/world/in/hotbar_left",
+            "requirement": "mandatory",
+            "type": "boolean"
+        },
+        {
+            "name": "/actions/world/in/hotbar_right",
+            "requirement": "mandatory",
+            "type": "boolean"
         }
     ],
     "default_bindings": [
@@ -77,13 +87,17 @@
 
             "/actions/global/in/pointer_primary": "Primary Hand - Pointer",
             "/actions/global/in/pointer_secondary": "Second Hand - Pointer",
+            "/actions/global/in/grip_primary": "Second Hand - Grip",
+            "/actions/global/in/grip_secondary": "Second Hand - Grip",
 
             "/actions/menu/in/left_click": "Left Click",
             "/actions/menu/in/right_click": "Right Click",
             "/actions/menu/in/scroll": "Scroll",
 
             "/actions/world/in/movement": "Movement",
-            "/actions/world/in/rotation": "Rotation"
+            "/actions/world/in/rotation": "Rotation",
+            "/actions/world/in/hotbar_left": "Selected Tool - Scroll Left",
+            "/actions/world/in/hotbar_right": "Selected Tool - Scroll LefRight"
         }
     ]
 }

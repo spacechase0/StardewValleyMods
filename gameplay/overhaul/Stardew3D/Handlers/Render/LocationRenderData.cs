@@ -157,6 +157,39 @@ public class LocationRenderData : RenderData<LocationRenderer>
             }
         }
 
-        // TODO: debris
+        foreach (var debris in Parent.Object.debris)
+        {
+            // TODO: All of these
+            if (debris.item != null)
+            {
+                // TODO
+            }
+            else if (debris.debrisType.Value == Debris.DebrisType.LETTERS)
+            {
+                // TODO
+            }
+            else if (debris.debrisType.Value == Debris.DebrisType.NUMBERS)
+            {
+                // TODO
+            }
+            else if (debris.debrisType.Value == Debris.DebrisType.SPRITECHUNKS)
+            {
+                // TODO
+            }
+            else if (debris.itemId.Value != null)
+            {
+                foreach (var obj in debris.Chunks)
+                {
+                    // TODO
+                }
+            }
+            else
+            {
+                foreach (var obj in debris.Chunks)
+                {
+                    // TODO
+                }
+            }
+        }
     }
 }

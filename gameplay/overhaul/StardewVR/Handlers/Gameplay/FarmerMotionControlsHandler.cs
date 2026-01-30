@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -23,6 +24,7 @@ using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
+using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using StardewVR.Handlers.Game;
@@ -79,64 +81,120 @@ internal class FarmerMotionControlsHandler : RendererFor<ModelData, Farmer>, IUp
         var baseTransform = GetHeldTransformFor(cursor);
         var basePrevTransform = lastGrips.GetOrCreateValue(cursor).Value;
 
-        var check = Game1.player.currentLocation.terrainFeatures.Values.Concat(Game1.player.currentLocation.resourceClumps).ToArray();
-        foreach (var entry in check)
+        List<(IEnumerable Values, Func<object, Vector2> Position2D, Func<object, Vector3> Position, Action<object> PerformAction)> check =
+        [
+            new(Game1.player.currentLocation.terrainFeatures.Values.ToArray(),
+                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2(),
+                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation.Map),
+                obj =>
+                {
+                    var tf = obj as TerrainFeature;
+                    if ( tf.performToolAction( tool, 0, tf.Tile ) )
+                        Game1.player.currentLocation.terrainFeatures.Remove(tf.Tile);
+                }),
+            new(Game1.player.currentLocation.resourceClumps.ToArray(),
+                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2(),
+                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation.Map),
+                obj =>
+                {
+                    var rc = obj as ResourceClump;
+                    if ( rc.performToolAction( tool, 0, rc.Tile ) )
+                        Game1.player.currentLocation.resourceClumps.Remove(rc);
+                }),
+            new(Game1.player.currentLocation.Objects.Values.ToArray(),
+                (obj) => (obj as StardewValley.Object).TileLocation * Game1.tileSize + new Vector2( 0.5f, 0.5f ),
+                (obj) => (obj as StardewValley.Object).TileLocation.ToPoint().To3D(Game1.player.currentLocation.Map),
+                obj =>
+                {
+                    var o = obj as StardewValley.Object;
+                    if ( o.performToolAction( tool ) )
+                        Game1.player.currentLocation.Objects.Remove(o.TileLocation);
+                }),
+            new(Game1.player.currentLocation.characters.ToArray(),
+                (obj) => (obj as NPC).StandingPixel.ToVector2(),
+                (obj) => (obj as NPC).StandingPixel3D,
+                obj =>
+                {
+                    var n = obj as NPC;
+                    if ( n is Monster monster && tool is MeleeWeapon weapon )
+                    {
+                        // TODO: This whole thing should be reverse patched from MeleeWeapon.DoDamage...
+                        // And also GameLocation.damageMonster, considering we don't actually want to iterate over every monster here...
+                        float effectiveCritChance = weapon.critChance.Value;
+                        if (weapon.type.Value == 1)
+                        {
+                            effectiveCritChance += 0.005f;
+                            effectiveCritChance *= 1.12f;
+                        }
+                        Game1.player.currentLocation.damageMonster(monster.GetBoundingBox(), (int)(weapon.minDamage.Value * (1f + Game1.player.buffs.AttackMultiplier)), (int)(weapon.maxDamage.Value * (1f + Game1.player.buffs.AttackMultiplier)), isBomb: false, weapon.knockback.Value * (1f + Game1.player.buffs.KnockbackMultiplier), (int)(weapon.addedPrecision.Value * (1f + Game1.player.buffs.WeaponPrecisionMultiplier)), effectiveCritChance * (1f + Game1.player.buffs.CriticalChanceMultiplier), weapon.critMultiplier.Value * (1f + Game1.player.buffs.CriticalPowerMultiplier), weapon.type.Value != 1 || !weapon.isOnSpecial, Game1.player);
+                    }
+                    else
+                    {
+                        n.hitWithTool( tool );
+                    }
+                })
+        ];
+        foreach (var container in check)
         {
-            InteractionData tfInteraction = null;
-            foreach (var idEntry in entry.GetExtendedQualifiedIds())
-                tfInteraction ??= InteractionData.Get(idEntry);
-
-            if (tfInteraction == null)
-                continue;
-
-            var tfTransform = Matrix.CreateTranslation(entry.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation.Map));
-
-            foreach (var toolArea in interaction.Areas)
+            foreach (var entry in container.Values)
             {
-                if (!toolArea.Purpose.StartsWith($"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolAction/"))
+                if (Vector2.DistanceSquared(Game1.player.Position, container.Position2D(entry)) >= MathF.Pow(Game1.tileSize * 2, 2))
                     continue;
 
-                var transform = toolArea.Transform * baseTransform;
-                var prevTransform = toolArea.Transform * basePrevTransform;
-                var verts = toolArea.GetShape().Transform(transform);
-                var prevVerts = toolArea.GetShape().Transform(prevTransform);
+                InteractionData tfInteraction = null;
+                foreach (var idEntry in entry.GetExtendedQualifiedIds())
+                    tfInteraction ??= InteractionData.Get(idEntry);
 
-                foreach (var tfArea in tfInteraction.Areas)
+                if (tfInteraction == null)
+                    continue;
+
+                var tfTransform = Matrix.CreateTranslation(container.Position(entry));
+
+                foreach (var toolArea in interaction.Areas)
                 {
-                    if (tfArea.Purpose != $"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolAction")
+                    if (!toolArea.Purpose.StartsWith($"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolAction/"))
                         continue;
 
-                    var treeVerts = tfArea.GetTransformedShape().Transform(tfTransform);
+                    var transform = toolArea.Transform * baseTransform;
+                    var prevTransform = toolArea.Transform * basePrevTransform;
+                    var verts = toolArea.GetShape().Transform(transform);
+                    var prevVerts = toolArea.GetShape().Transform(prevTransform);
 
-                    if (!GJK_EPA_BCP.CheckIntersection(verts, treeVerts, out var contact, out var depth, out var normal))
-                        continue;
-                    if (GJK_EPA_BCP.CheckIntersection(prevVerts, treeVerts, out _, out _, out _))
-                        continue;
-
-                    Vector3 vel = cursor.LinearVelocity;
-                    // TODO: Fix the following stuff for angular velocity
-                    //vel += cursor.AngularVelocity * Vector3.Distance( baseTransform.Translation, transform.Translation );
-                    //Log.Debug($"vel:{vel.Length()} {vel} - ({cursor.LinearVelocity} {cursor.AngularVelocity} {Vector3.Distance(baseTransform.Translation, transform.Translation)})");
-
-                    if (vel.Length() < 0.75f)
-                        continue;
-
-                    if (toolArea.Purpose == $"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolAction/Impact")
+                    foreach (var tfArea in tfInteraction.Areas)
                     {
-                        // Only allow hits that are going similarly angled to the tool's angle
-                        // If you hit it pointing the wrong way, the tool will be oriented the wrong way, so the hit will be ignored
-                        if (Vector3.Dot(transform.Left.Normalized(), vel.Normalized()) < 0.7) // about 45 degrees in any direction
+                        if (tfArea.Purpose != $"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/Action")
                             continue;
-                    }
 
-                    tool.lastUser = Game1.player;
-                    tool.swingTicker++;
-                    if (entry.performToolAction(tool, 0, entry.Tile))
-                    {
-                        if (Game1.player.currentLocation.resourceClumps.Contains(entry))
-                            Game1.player.currentLocation.resourceClumps.Remove(entry as ResourceClump);
-                        else
-                            Game1.player.currentLocation.terrainFeatures.Remove(entry.Tile);
+                        var treeVerts = tfArea.GetTransformedShape().Transform(tfTransform);
+
+                        if (!GJK_EPA_BCP.CheckIntersection(verts, treeVerts, out var contact, out var depth, out var normal))
+                            continue;
+                        if (GJK_EPA_BCP.CheckIntersection(prevVerts, treeVerts, out _, out _, out _))
+                            continue;
+
+                        Vector2 objVel = Vector2.Zero;
+                        if (entry is Character c)
+                            objVel = new Vector2(c.xVelocity, c.yVelocity) / Game1.tileSize;
+
+                        Vector3 vel = cursor.LinearVelocity;// + new Vector3(objVel.X, 0, objVel.Y);
+                        // TODO: Fix the following stuff for angular velocity
+                        //vel += cursor.AngularVelocity * Vector3.Distance( baseTransform.Translation, transform.Translation );
+                        //Log.Debug($"vel:{vel.Length()} {vel} - ({cursor.LinearVelocity} {cursor.AngularVelocity} {Vector3.Distance(baseTransform.Translation, transform.Translation)})");
+
+                        if (vel.Length() < 0.625f)
+                            continue;
+
+                        if (toolArea.Purpose == $"{Stardew3D.Mod.Instance.ModManifest.UniqueID}/ToolAction/Impact")
+                        {
+                            // Only allow hits that are going similarly angled to the tool's angle
+                            // If you hit it pointing the wrong way, the tool will be oriented the wrong way, so the hit will be ignored
+                            if (Vector3.Dot(transform.Left.Normalized(), vel.Normalized()) < 0.5) // about 60 degrees in any direction
+                                continue;
+                        }
+
+                        tool.lastUser = Game1.player;
+                        tool.swingTicker++;
+                        container.PerformAction(entry);
                     }
                 }
             }

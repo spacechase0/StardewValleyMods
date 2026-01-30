@@ -91,6 +91,7 @@ namespace Stardew3D
                 State.SetRenderHandlerForGameHandlerTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
                 //State.SetRenderHandlerForGameHandlerTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
                 //State.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
+                State.SetRenderHandlerForGameHandlerTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
             };
 
             var hooks = AccessTools.Field(typeof(Game1), "hooks");
@@ -281,13 +282,85 @@ namespace Stardew3D
             else if (e.NameWithoutLocale.IsEquivalentTo($"{ModManifest.UniqueID}/Interactions"))
                 e.LoadFrom(() => new Dictionary<string, InteractionData>
                 {
+                    { $"({ModManifest.UniqueID}/NPC)", new InteractionData() // No second ID part = default for that type
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/Action",
+                                Size = new( 0.875f, 1.875f, 0.875f ),
+                                Translation = new( 0, 1.875f / 2, 0 ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/Monster)", new InteractionData() // No second ID part = default for that type
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/Action",
+                                Size = new( 0.875f, 1.875f, 0.875f ),
+                                Translation = new( 0, 1.875f / 2, 0 ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/CharacterType)Bat", new InteractionData() // A specific monster can still override this with their normal qualified ID
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/Action",
+                                Size = new( 0.875f, 0.875f, 0.875f ),
+                                Translation = new( 0, 0.875f/2, 0 ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/CharacterType)GreenSlime", new InteractionData() // A specific monster can still override this with their normal qualified ID
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/Action",
+                                Size = new( 0.875f, 0.875f, 0.875f ),
+                                Translation = new( 0, 0.875f / 2, 0 ),
+                            }
+                        ],
+                    } },
+                    { $"(O)", new InteractionData() // No second ID part = default for that type
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/Action",
+                                Size = new( 0.75f, 0.75f, 0.75f ),
+                                Translation = new( 0, 0.75f / 2, 0 ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/Grass)", new InteractionData() // No second ID part = default for that type
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/Action",
+                                Size = new( 0.875f, 0.875f, 0.875f ),
+                                Translation = new( 0, 0.875f / 2, 0 ),
+                            }
+                        ],
+                    } },
                     { $"({ModManifest.UniqueID}/Tree)", new InteractionData() // No second ID part = default for that type
                     {
                         Areas =
                         [
                             new BoxInteractionArea()
                             {
-                                Purpose = $"{ModManifest.UniqueID}/ToolAction",
+                                Purpose = $"{ModManifest.UniqueID}/Action",
                                 Size = new( 0.5f, 3, 0.5f ),
                                 Translation = new( 0, 1.5f, 0 ),
                             }
@@ -299,13 +372,26 @@ namespace Stardew3D
                         [
                             new BoxInteractionArea()
                             {
-                                Purpose = $"{ModManifest.UniqueID}/ToolAction",
+                                Purpose = $"{ModManifest.UniqueID}/Action",
                                 Size = new( 1.75f, 1, 1.75f ),
                                 Translation = new( 0, 0.5f, 0 ),
                             }
                         ],
                     } },
-                    { $"({ModManifest.UniqueID}/ToolTypes)Axe", new InteractionData() // A specific tool can still override this with their normal qualified ID
+                    { $"(W){MeleeWeapon.scytheId}", new InteractionData()
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/ToolAction/Impact",
+                                Size = new( 0.375f, 0.75f, 0.125f ),
+                                Translation = new( -0.25f, 0.6875f, 0 ),
+                                Rotation = new( 0, 0, MathHelper.ToRadians( 130 ) ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/T)Axe", new InteractionData() // A specific tool can still override this with their normal qualified ID
                     {
                         Areas =
                         [
@@ -318,7 +404,7 @@ namespace Stardew3D
                             }
                         ],
                     } },
-                    { $"({ModManifest.UniqueID}/ToolTypes)Pickaxe", new InteractionData() // A specific tool can still override this with their normal qualified ID
+                    { $"({ModManifest.UniqueID}/T)Pickaxe", new InteractionData() // A specific tool can still override this with their normal qualified ID
                     {
                         Areas =
                         [
@@ -335,6 +421,26 @@ namespace Stardew3D
                                 Size = new( 0.1875f, 0.1875f, 0.125f ),
                                 Translation = new( -0.1875f+0.25f+1f/32, 0.9375f, 0 ),
                                 Rotation = new( 0, 0, MathHelper.ToRadians( 195 ) ),
+                            }
+                        ],
+                    } },
+                    { $"({ModManifest.UniqueID}/W){MeleeWeapon.defenseSword}", new InteractionData() // A specific tool can still override this with their normal qualified ID
+                    {
+                        Areas =
+                        [
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/ToolAction/Impact",
+                                Size = new( 0.125f, 0.875f, 0.125f ),
+                                Translation = new( -4/16f, 10/16f, 0 ),
+                                Rotation = new( 0, 0, MathHelper.ToRadians( 45 ) ),
+                            },
+                            new BoxInteractionArea()
+                            {
+                                Purpose = $"{ModManifest.UniqueID}/ToolAction/Impact",
+                                Size = new( 0.125f, 0.875f, 0.125f ),
+                                Translation = new( -2/16f, 12/16f, 0 ),
+                                Rotation = new( 0, 0, MathHelper.ToRadians( 45 + 180 ) ),
                             }
                         ],
                     } },

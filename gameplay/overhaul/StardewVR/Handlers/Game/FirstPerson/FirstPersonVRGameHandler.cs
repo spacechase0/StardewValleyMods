@@ -57,6 +57,8 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
     {
         get
         {
+            // TODO: Fix. This is just incorrect and bad feeling at the moment, so disabled for now.
+            return Vector2.Zero;
             Vector2 diff = (new Vector2(lastHeadsetPosition.X, lastHeadsetPosition.Z) - new Vector2(Headset.CurrentPosition.X, Headset.CurrentPosition.Z)) * Game1.tileSize;
             return Vector2.Transform(diff, Matrix.CreateRotationZ(Camera.AdditionalRotationY));
         }

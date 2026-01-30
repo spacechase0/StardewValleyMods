@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Stardew3D.Data;
 public abstract class InteractionArea
@@ -10,11 +13,14 @@ public abstract class InteractionArea
     public Vector3 Rotation { get; set; }
     public Vector3 Translation { get; set; }
 
+    [JsonExtensionData]
+    public Dictionary<string, JToken> Parameters { get; set; } = new();
+
     public Color DebugColor
     {
         get
         {
-            if (Purpose == $"{Mod.Instance.ModManifest.UniqueID}/ToolAction")
+            if (Purpose == $"{Mod.Instance.ModManifest.UniqueID}/Action")
                 return Color.Yellow;
             if (Purpose.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/ToolAction/"))
                 return Color.Blue;
