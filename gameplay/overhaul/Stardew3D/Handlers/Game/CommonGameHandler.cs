@@ -46,16 +46,20 @@ public abstract partial class CommonGameHandler : IGameHandler
 
     public abstract Matrix ProjectionMatrix { get; protected set; }
     protected WorldRenderer WorldRenderer { get; set; }
+    protected RenderTarget2D RenderTarget { get; set; }
 
     public virtual void SwitchOn(IGameHandler previousHandler)
     {
         WorldRenderer = new();
+        //RenderTarget = new(Game1.graphics.GraphicsDevice, GameRunner.instance.Window.ClientBounds.Width, GameRunner.instance.Window.ClientBounds.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
     }
 
     public virtual void SwitchOff(IGameHandler nextHandler)
     {
         WorldRenderer?.Dispose();
         WorldRenderer = null;
+        RenderTarget?.Dispose();
+        RenderTarget = null;
     }
 
     protected abstract void UpdateCamera();
@@ -70,8 +74,13 @@ public abstract partial class CommonGameHandler : IGameHandler
 
     public virtual bool HandleRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Func<RenderSteps, SpriteBatch, GameTime, RenderTarget2D, bool> defaultRender)
     {
-        if (Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget != targetScreen)
-            Game1.graphics.GraphicsDevice.SetRenderTarget(targetScreen);
+        if (RenderTarget == null || RenderTarget.Width != targetScreen.Width || RenderTarget.Height != targetScreen.Height)
+        {
+            RenderTarget?.Dispose();
+            RenderTarget = new(Game1.graphics.GraphicsDevice, GameRunner.instance.Window.ClientBounds.Width, GameRunner.instance.Window.ClientBounds.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
+        }
+
+        Game1.graphics.GraphicsDevice.SetRenderTarget(RenderTarget);
 
         if (step >= RenderSteps.MenuBackground && step < RenderSteps.GlobalFade)
             return true;
@@ -93,6 +102,11 @@ public abstract partial class CommonGameHandler : IGameHandler
             RenderHelper.DebugRenderGrid();
 
         WorldRenderer.Render(ProjectionMatrix, Camera);
+
+        Game1.graphics.GraphicsDevice.SetRenderTarget(targetScreen);
+        sb.Begin();
+        sb.Draw(RenderTarget, Vector2.Zero, Color.White);
+        sb.End();
 
         return false;
     }
