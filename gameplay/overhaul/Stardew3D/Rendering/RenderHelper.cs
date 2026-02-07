@@ -100,6 +100,7 @@ public static class RenderHelper
 
         GenericEffect.Texture = tex;
         GenericEffect.World = additionalTransform_;
+        GenericEffect.CurrentTechnique = GenericEffect.Techniques["SingleDrawing"];
 
         Game1.graphics.GraphicsDevice.DepthStencilState = DepthState;
         Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState;

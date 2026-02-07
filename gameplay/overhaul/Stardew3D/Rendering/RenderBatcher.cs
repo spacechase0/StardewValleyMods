@@ -200,15 +200,19 @@ public class RenderBatcher : IDisposable
         bool isMirrorTransform = worldMatrix.Determinant() < 0;
 
         var oldDepth = graphics.DepthStencilState;
+        var oldRaster = graphics.RasterizerState;
 
-        void DoGenericBatch( List<GenericRenderData> data, VertexBuffer instanceVbo, int instanceCount)
+        void DoGenericBatch( List<GenericRenderData> data, VertexBuffer instanceVbo, int instanceCount, int? transparentTechnique = null)
         {
             foreach (var entry in data)
             {
                 var effect = entry.Effect;
                 if (effect is GenericModelEffect generic)
                 {
-                    effect.CurrentTechnique = effect.Techniques["InstancedDrawing"];
+                    if (transparentTechnique.HasValue)
+                        effect.CurrentTechnique = effect.Techniques[$"InstancedDrawing_Transparent_{transparentTechnique.Value}"];
+                    else
+                        effect.CurrentTechnique = effect.Techniques["InstancedDrawing"];
                 }
 
                 ModelInstance.UpdateProjViewTransforms(effect, projectionMatrix, viewMatrix);
@@ -227,13 +231,16 @@ public class RenderBatcher : IDisposable
             }
         }
 
-        void DoModelBatch(List<Effect> effects, List<MeshPart> parts, VertexBuffer instanceVbo, int instanceCount)
+        void DoModelBatch(List<Effect> effects, List<MeshPart> parts, VertexBuffer instanceVbo, int instanceCount, int? transparentTechnique = null)
         {
             foreach (var effect in effects)
             {
                 if (effect is GenericModelEffect)
                 {
-                    effect.CurrentTechnique = effect.Techniques["InstancedDrawing"];
+                    if (transparentTechnique.HasValue)
+                        effect.CurrentTechnique = effect.Techniques[$"InstancedDrawing_Transparent_{transparentTechnique.Value}"];
+                    else
+                        effect.CurrentTechnique = effect.Techniques["InstancedDrawing"];
                 }
 
                 ModelInstance.UpdateProjViewTransforms(effect, projectionMatrix, viewMatrix);
@@ -256,6 +263,7 @@ public class RenderBatcher : IDisposable
         }
 
         graphics.DepthStencilState = DepthStencilState.Default;
+        graphics.RasterizerState = RasterizerState.CullClockwise;
         foreach (var entry in modelBatchData)
         {
             if (entry.Value.instances.Count > 0)
@@ -294,21 +302,29 @@ public class RenderBatcher : IDisposable
         }
 
         // TODO: Sort transparent stuff by position?
-        //graphics.DepthStencilState = DepthStencilState.DepthRead;
         foreach (var entry in modelBatchData)
         {
-            DoModelBatch(entry.Value.transparentEffects, entry.Value.transparentParts, entry.Value.instanceVbo, entry.Value.instances.Count);
+            DoModelBatch(entry.Value.transparentEffects, entry.Value.transparentParts, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 1);
         }
         foreach (var entry in genericBatchData)
         {
-            DoGenericBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count);
+            DoGenericBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 1);
+        }
+        graphics.DepthStencilState = DepthStencilState.DepthRead;
+        foreach (var entry in modelBatchData)
+        {
+            DoModelBatch(entry.Value.transparentEffects, entry.Value.transparentParts, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 2);
+        }
+        foreach (var entry in genericBatchData)
+        {
+            DoGenericBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 2);
         }
         foreach (var entry in nonInstancedTransparent)
         {
             entry.Action( env, entry.color, entry.Transform * worldMatrix, viewMatrix, projectionMatrix );
         }
-
         graphics.DepthStencilState = oldDepth;
+        graphics.RasterizerState = oldRaster;
     }
 
     public void HideInstancesAfterFrame()
