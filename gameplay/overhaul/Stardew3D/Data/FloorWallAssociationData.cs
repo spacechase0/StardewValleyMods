@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpaceShared.Attributes;
 
 namespace Stardew3D.Data;
-public class FloorWallAssociationData
+
+[CustomDictionaryAsset("FloorWallAssociations")]
+public partial class FloorWallAssociationData
 {
     public string WallDefinitionId { get; set; }
 }

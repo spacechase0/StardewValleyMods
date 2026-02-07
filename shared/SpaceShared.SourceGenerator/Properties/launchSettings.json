@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Profile 1": {
+    "Stardew3D": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "..\\Stardew3D\\Stardew3D.csproj"
+      "targetProject": "..\\..\\gameplay\\overhaul\\Stardew3D\\Stardew3D.csproj"
     }
   }
 }

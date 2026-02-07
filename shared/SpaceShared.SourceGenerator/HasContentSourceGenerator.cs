@@ -6,14 +6,14 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace SpaceShared.SourceGenerator
 {
     [Generator]
-    public class HasConfigSourceGenerator : IIncrementalGenerator
+    public class HasContentSourceGenerator : IIncrementalGenerator
     {
-        private record struct GenerationData( string? Namespace, string Name, string ConfigType );
+        private record struct GenerationData( string? Namespace, string Name );
 
         public void Initialize(IncrementalGeneratorInitializationContext ctx)
         {
             var prov = ctx.SyntaxProvider.CreateSyntaxProvider(
-                static (s, _) => (s is ClassDeclarationSyntax classDecl && classDecl.AttributeLists.Any( al => al.Attributes.Any( a => a.Name.ToString().StartsWith( "HasConfig<" ) || a.Name.ToString().StartsWith( "SpaceShared.Attributes.HasConfig<" ) ) ) && classDecl.BaseList.Types.Any()),//static t => (t is SimpleBaseTypeSyntax simpleType && simpleType.Type is SimpleNameSyntax simpleName && ( simpleName.Identifier.ValueText?.StartsWith( "BaseMod<" ) ?? false )))),
+                static (s, _) => (s is ClassDeclarationSyntax classDecl && classDecl.AttributeLists.Any( al => al.Attributes.Any( a => a.Name.ToString().StartsWith("HasContent") || a.Name.ToString().StartsWith("SpaceShared.Attributes.HasContent") ) ) && classDecl.BaseList.Types.Any()),//static t => (t is SimpleBaseTypeSyntax simpleType && simpleType.Type is SimpleNameSyntax simpleName && ( simpleName.Identifier.ValueText?.StartsWith( "BaseMod<" ) ?? false )))),
                 static (ctx, _) =>
                 {
                     var classDecl = ctx.Node as ClassDeclarationSyntax;
@@ -47,11 +47,9 @@ namespace SpaceShared.SourceGenerator
                         checkNs = checkNs.ContainingNamespace;
                     }
                     string name = classSym.Name;
-                    var attr = classSym.GetAttributes().First(a => a.AttributeClass.Name == "HasConfigAttribute").AttributeClass; ;
-                    string? configNs = attr.TypeArguments[0].ContainingNamespace?.ToString();
-                    string config = ( configNs != null ? $"{configNs}." : "" ) + attr.TypeArguments[0].Name;
+                    var attr = classSym.GetAttributes().First(a => a.AttributeClass.Name == "HasContentAttribute").AttributeClass;
 
-                    return new GenerationData(ns, name, config);
+                    return new GenerationData(ns, name);
                 })
                 .Where( static data => !string.IsNullOrEmpty( data.Name ) );
 
@@ -64,20 +62,20 @@ namespace SpaceShared.SourceGenerator
 using System;
 using StardewModdingAPI;
 using SpaceShared;
+using SpaceShared.Content;
 
 namespace {data.Namespace};
 
 public partial class {data.Name}
 {{
-    public static {data.ConfigType} Config {{ get; private set; }}
-    protected override void SetupConfig()
+    protected override void SetupContent()
     {{
-        Config = Helper.ReadConfig< {data.ConfigType} >();
+        ContentRegistry.Init(this);
     }}
 }}
 ";
 
-            ctx.AddSource($"{data.Namespace}.{data.Name}.WithConfig.g.cs", code);
+            ctx.AddSource($"{data.Namespace}.{data.Name}.WithContent.g.cs", code);
         }
     }
 }

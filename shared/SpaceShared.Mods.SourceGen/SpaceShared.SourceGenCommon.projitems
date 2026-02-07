@@ -9,8 +9,18 @@
     <Import_RootNamespace>SpaceShared.SourceGenCommon</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\CustomDictionaryAssetAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\DictionaryAssetDataAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\DictionaryAssetDataKeyAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasContentAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasConfigAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasHarmonyAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasStateAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\BaseDictionaryAssetData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)content\ContentRegistry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)content\HotReloadHandler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Content\" />
   </ItemGroup>
 </Project>

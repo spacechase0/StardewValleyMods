@@ -39,6 +39,13 @@ namespace SpaceShared.SourceGenerator
                     }
 
                     string? ns = classSym.ContainingNamespace?.Name;
+                    var checkNs = classSym.ContainingNamespace;
+                    while (checkNs != null && checkNs.ContainingNamespace != null && !checkNs.ContainingNamespace.IsGlobalNamespace)
+                    {
+                        if (!string.IsNullOrEmpty(checkNs.ContainingNamespace.Name))
+                            ns = $"{checkNs.ContainingNamespace.Name}.{ns}";
+                        checkNs = checkNs.ContainingNamespace;
+                    }
                     string name = classSym.Name;
                     var attr = classSym.GetAttributes().First(a => a.AttributeClass.Name == "HasStateAttribute").AttributeClass;
                     string? configNs = attr.TypeArguments[0].ContainingNamespace?.ToString();

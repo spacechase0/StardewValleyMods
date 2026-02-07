@@ -9,22 +9,22 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using SpaceShared.Attributes;
 using Stardew3D.Models;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 
 namespace Stardew3D.Data
 {
-    public class InteractionData
+    [CustomDictionaryAsset("Interactions")]
+    public partial class InteractionData
     {
         public List<InteractionArea> Areas { get; set; } = new();
 
-        public static InteractionData Get(string id)
+        static partial void AfterRefreshData()
         {
-            id = id.Replace('\\', '/');
-            if (!Mod.Instance.InteractionDataDict.TryGetValue(id, out var data))
-                return null;
-            return data;
+            Mod.State.ActiveHandler?.SwitchOff(Mod.State.ActiveHandler);
+            Mod.State.ActiveHandler?.SwitchOn(Mod.State.ActiveHandler);
         }
     }
 }

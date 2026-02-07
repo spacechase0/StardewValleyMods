@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using SpaceShared.Attributes;
 using Stardew3D.Models;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 
 namespace Stardew3D.Data
 {
+    [CustomDictionaryAsset("Models")]
     [JsonConverter( typeof( ModelDataCreationConverter ) )]
-    public class ModelData : IModelMapping
+    public partial class ModelData : IModelMapping
     {
         public virtual string Type => $"{Mod.Instance.ModManifest.UniqueID}/Model";
 
@@ -80,15 +82,6 @@ namespace Stardew3D.Data
         public Vector3 Rotation { get; set; } = Vector3.Zero;
         public Vector3 Translation { get; set; } = Vector3.Zero;
 
-        public static ModelData Get(string id)
-        {
-            id = id.Replace('\\', '/');
-            var dict = Game1.content.Load<Dictionary<string, ModelData>>($"{Mod.Instance.ModManifest.UniqueID}/Models");
-            if (!Mod.Instance.ModelDataDict.TryGetValue(id, out var data))
-                return null;
-            return data;
-        }
-
         [OnDeserialized]
         private void OnDeserialized(StreamingContext ctx)
         {
@@ -98,6 +91,12 @@ namespace Stardew3D.Data
                 newTexMap.Add(PathUtilities.NormalizePath(entry.Key), PathUtilities.NormalizePath(entry.Value));
             }
             TextureMap = newTexMap;
+        }
+
+        static partial void AfterRefreshData()
+        {
+            Mod.State.ActiveHandler?.SwitchOff(Mod.State.ActiveHandler);
+            Mod.State.ActiveHandler?.SwitchOn(Mod.State.ActiveHandler);
         }
     }
 }

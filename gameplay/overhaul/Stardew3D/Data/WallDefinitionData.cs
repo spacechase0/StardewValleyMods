@@ -4,10 +4,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpaceShared.Attributes;
 
 namespace Stardew3D.Data;
 
-public class WallDefinitionData
+[CustomDictionaryAsset("WallDefinitions")]
+public partial class WallDefinitionData
 {
     public class WallSegmentData
     {
