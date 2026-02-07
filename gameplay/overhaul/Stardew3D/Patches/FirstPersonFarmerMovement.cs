@@ -42,6 +42,7 @@ internal static class FirstPersonFarmerMovementPatch1
         Vector2 right = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.ToRadians(90)));
 
         Vector2 movement = forward * handler.MovementAmount.Y + right * handler.MovementAmount.X;
+        movement *= __instance.getMovementSpeed();
         movement += handler.MovementAmountForced * Game1.tileSize;
 
         if (movement.X < 0.001)
