@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <ForceNetVersion>$(MSBuildProjectName.Contains('MonoScene'))</ForceNetVersion>
+    <ForceNetVersion>false</ForceNetVersion>
     <ForceMonoGameVersion>true</ForceMonoGameVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('MonoScene'))">
+    <ForceNetVersion>true</ForceNetVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('MLEM'))">
+    <ForceNetVersion>true</ForceNetVersion>
   </PropertyGroup>
   
   <!-- We only want this .net version, not any others that may be provided-->
@@ -11,6 +17,9 @@
   </PropertyGroup>
 
   <!-- MonoGame references should use the game one, not nuget -->
+  <PropertyGroup Condition="$(ForceMonoGameVersion)">
+    <LangVersion>preview</LangVersion> <!-- so we can do an extension properties -->
+  </PropertyGroup>
   <ItemGroup Condition="$(ForceMonoGameVersion)">
     <PackageReference Remove="MonoGame.Framework.DesktopGL" />
     <ProjectReference Include="$(SolutionDir)/_external_helpers/MonoGamePolyfill/MonoGamePolyfill.csproj" />
