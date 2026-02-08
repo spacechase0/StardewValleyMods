@@ -747,7 +747,6 @@ namespace SpaceCore.Dungeons
     }
 
     [HarmonyPatch(typeof(GameLocation), "resetLocalState")]
-    [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.MakeMapModifications))]
     public static class GameLocationApplySetPiecesPatch
     {
         public static void Postfix(GameLocation __instance)
