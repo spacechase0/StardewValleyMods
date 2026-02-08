@@ -17,6 +17,7 @@ using SpaceShared.Attributes;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
 using Stardew3D.Handlers.Game;
+using Stardew3D.Handlers.Game.Editor;
 using Stardew3D.Handlers.Game.FirstPerson;
 using Stardew3D.Handlers.Game.ThirdPerson;
 using Stardew3D.Handlers.Render;
@@ -73,6 +74,7 @@ namespace Stardew3D
             {
                 State.AddGameHandler(new FirstPersonGameHandler());
                 State.AddGameHandler(new ThirdPersonGameHandler());
+                State.AddGameHandler(new EditorGameHandler());
             };
             State.GameHandlersFinalized += (s, e) =>
             {
@@ -135,15 +137,26 @@ namespace Stardew3D
 
                 State.ActiveHandler = targetHandler;
             }
+
+            if (Config.ToggleEditor.JustPressed())
+            {
+                State.ActiveHandler = !(State.ActiveHandler?.Tags.Contains(IGameHandler.CategoryEditor) ?? false)
+                    ? State.FindGameHandlersMatching([IGameHandler.CategoryEditor]).FirstOrDefault()
+                    : null;
+            }
+
             if (Config.ToggleShowInteractionShapes.JustPressed())
             {
                 State.RenderDebugInteractions = !State.RenderDebugInteractions;
             }
+
+
             // TODO: hook up to keybind
             if (e.Pressed.Contains(SButton.Delete))
             {
                 // Can clear render caches and stuff
                 State.ActiveHandler?.SwitchOff(State.ActiveHandler);
+                //State.ClearHandlerState();
                 State.ActiveHandler?.SwitchOn(State.ActiveHandler);
             }
         }

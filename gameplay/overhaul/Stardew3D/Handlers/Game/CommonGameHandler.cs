@@ -74,6 +74,12 @@ public abstract partial class CommonGameHandler : IGameHandler
 
     public virtual bool HandleRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Func<RenderSteps, SpriteBatch, GameTime, RenderTarget2D, bool> defaultRender)
     {
+        if (step >= RenderSteps.MenuBackground && step < RenderSteps.GlobalFade)
+            return true;
+
+        if (step != RenderSteps.World)
+            return true;
+
         if (RenderTarget == null || RenderTarget.Width != targetScreen.Width || RenderTarget.Height != targetScreen.Height)
         {
             RenderTarget?.Dispose();
@@ -81,12 +87,6 @@ public abstract partial class CommonGameHandler : IGameHandler
         }
 
         Game1.graphics.GraphicsDevice.SetRenderTarget(RenderTarget);
-
-        if (step >= RenderSteps.MenuBackground && step < RenderSteps.GlobalFade)
-            return true;
-
-        if (step != RenderSteps.World)
-            return true;
 
         Game1.graphics.GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer | ClearOptions.Stencil, Color.CornflowerBlue, 1, 0);
 

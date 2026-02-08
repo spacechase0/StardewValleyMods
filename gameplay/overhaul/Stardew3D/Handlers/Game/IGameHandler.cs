@@ -19,6 +19,7 @@ public interface IGameHandler
     public const string CategoryVR = "VR";
     public const string CategoryFirstPerson = "FirstPerson";
     public const string CategoryThirdPerson = "ThirdPerson";
+    public const string CategoryEditor = "Editor"; // Causes the base game update functions to stop
 
     public string Id { get; }
     public string[] Tags { get; }

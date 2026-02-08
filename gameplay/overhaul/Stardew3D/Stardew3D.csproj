@@ -43,6 +43,9 @@
     <Publicize Include="MonoScene.Runtime.Scene3D" IncludeVirtualMembers="false" />
 
     <ProjectReference Include="$(SolutionDir)_external\GJKEPA_Project\GJKEPA_Project.csproj" />
+    
+    <ProjectReference Include="$(SolutionDir)_external\MLEM\MLEM\MLEM.csproj" />
+    <ProjectReference Include="$(SolutionDir)_external\MLEM\MLEM.Ui\MLEM.Ui.csproj" />
 
     <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0029" />
     <Reference Include="MonoGamePolyfill.dll">

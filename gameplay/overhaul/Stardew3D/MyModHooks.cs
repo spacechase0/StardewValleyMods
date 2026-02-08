@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Stardew3D.Handlers.Game;
 using StardewModdingAPI.Utilities;
 using StardewValley.Mods;
 
@@ -16,6 +17,14 @@ internal class MyModHooks : DelegatingModHooks
     public MyModHooks(ModHooks theParent)
         : base(theParent)
     {
+    }
+
+    public override void OnGame1_PerformTenMinuteClockUpdate(Action action)
+    {
+        if (Mod.State.ActiveHandler?.Tags.Contains(IGameHandler.CategoryEditor) ?? false)
+            return;
+
+        action();
     }
 
     public override void OnGame1_UpdateControlInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, Action action)
