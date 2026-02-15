@@ -26,10 +26,39 @@
             "sources": []
         },
         "/actions/menu": {
-            "poses": [
-            ],
+            "poses": [],
             "skeleton": [],
             "sources": [
+                {
+                    "inputs": {
+                        "click": {
+                            "output": "/actions/menu/in/scroll"
+                        }
+                    },
+                    "mode": "joystick",
+                    "parameters": {},
+                    "path": "/user/hand/right/input/thumbstick"
+                },
+                {
+                    "inputs": {
+                        "click": {
+                            "output": "/actions/menu/in/left_click"
+                        }
+                    },
+                    "mode": "button",
+                    "parameters": {},
+                    "path": "/user/hand/right/input/a"
+                },
+                {
+                    "inputs": {
+                        "click": {
+                            "output": "/actions/menu/in/right_click"
+                        }
+                    },
+                    "mode": "button",
+                    "parameters": {},
+                    "path": "/user/hand/right/input/b"
+                },
                 {
                     "inputs": {
                         "click": {
@@ -49,20 +78,12 @@
                     "mode": "button",
                     "parameters": {},
                     "path": "/user/hand/right/input/grip"
-                },
-                {
-                    "inputs": {
-                        "click": {
-                            "output": "/actions/menu/in/scroll"
-                        }
-                    },
-                    "mode": "joystick",
-                    "parameters": {},
-                    "path": "/user/hand/right/input/thumbstick"
                 }
             ]
         },
         "/actions/world": {
+            "poses": [],
+            "skeleton": [],
             "sources": [
                 {
                     "inputs": {
@@ -87,12 +108,22 @@
                 {
                     "inputs": {
                         "click": {
-                            "output": "/actions/world/in/hotbar_left"
+                            "output": "/actions/world/in/use_item"
                         }
                     },
-                    "mode": "boolean",
+                    "mode": "button",
                     "parameters": {},
-                    "path": "/user/hand/left/input/grip"
+                    "path": "/user/hand/right/input/joystick"
+                },
+                {
+                    "inputs": {
+                        "click": {
+                            "output": "/actions/world/in/interact"
+                        }
+                    },
+                    "mode": "button",
+                    "parameters": {},
+                    "path": "/user/hand/right/input/grip"
                 },
                 {
                     "inputs": {
@@ -100,16 +131,26 @@
                             "output": "/actions/world/in/hotbar_right"
                         }
                     },
-                    "mode": "boolean",
+                    "mode": "button",
                     "parameters": {},
-                    "path": "/user/hand/right/input/grip"
+                    "path": "/user/hand/right/input/a"
+                },
+                {
+                    "inputs": {
+                        "click": {
+                            "output": "/actions/world/in/hotbar_left"
+                        }
+                    },
+                    "mode": "button",
+                    "parameters": {},
+                    "path": "/user/hand/right/input/b"
                 }
             ]
         }
     },
     "category": "steamvr_input",
     "controller_type": "oculus_touch",
-    "description": "(auto-remapped from oculus_touch)",
+    "description": "default configuration",
     "interaction_profile": "",
     "name": "Stardew VR (mod for Stardew Valley) configuration for Oculus Touch Controller",
     "options": {

@@ -70,16 +70,14 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
     {
         cursors =
         [
-            new FirstPersonVRCursor(() => Global_PrimaryPointerPosition, () => Global_PrimaryPointerOrientation.Forward, () => Global_PrimaryPointerOrientation.Up,
-                                    () => Global_PrimaryGripPosition, () => Global_PrimaryGripOrientation.Forward, () => Global_PrimaryGripOrientation.Up,
-                                    () => Global_PrimaryLinearVelocity, () => Global_PrimaryAngularVelocity,
-                                    () => Menu_Primary_LeftClick, () => Menu_Primary_RightClick, () => Menu_Primary_CurrentScroll,
-                                    () => Game1.player.ActiveItem),
-            new FirstPersonVRCursor(() => Global_SecondaryPointerPosition, () => Global_SecondaryPointerOrientation.Forward, () => Global_SecondaryPointerOrientation.Up,
-                                    () => Global_SecondaryGripPosition, () => Global_SecondaryGripOrientation.Forward, () => Global_SecondaryGripOrientation.Up,
-                                    () => Global_SecondaryLinearVelocity, () => Global_SecondaryAngularVelocity,
-                                    () => Menu_Secondary_LeftClick, () => Menu_Secondary_RightClick, () => Menu_Secondary_CurrentScroll,
-                                    () => null)
+            new FirstPersonVRCursor(() => Pointer_Primary.Transform, () => Grip_Primary.Transform,
+                                    () => Grip_Primary.LinearVelocity, () => Grip_Primary.AngularVelocity,
+                                    () => Menu_LeftClick, () => Menu_RightClick, () => Menu_CurrentScroll,
+                                    () => Game1.player.ActiveItem, () => World_UseItem, () => World_Interact),
+            new FirstPersonVRCursor(() => Pointer_Secondary.Transform, () => Grip_Secondary.Transform,
+                                    () => Grip_Secondary.LinearVelocity, () => Grip_Secondary.AngularVelocity,
+                                    () => false, () => false, () => Vector2.Zero,
+                                    () => null, () => false, () => false)
             {
                 FlipMenuSprite = true,
             },
@@ -125,29 +123,12 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
         }
         //Camera.AdditionalRotationY = 0;
 
-        var rotMatrix = Matrix.CreateRotationY(Camera.AdditionalRotationY);
+        var rotMatrix = Matrix.CreateRotationY(Camera.AdditionalRotationY) * Matrix.CreateTranslation(Camera.Position);
 
-        Global_PrimaryPointerPosition += -Headset.CurrentPosition;
-        Global_SecondaryPointerPosition += -Headset.CurrentPosition;
-        Global_PrimaryGripPosition += -Headset.CurrentPosition;
-        Global_SecondaryGripPosition += -Headset.CurrentPosition;
-        Global_PrimaryPointerPosition = Vector3.Transform(Global_PrimaryPointerPosition, rotMatrix);
-        Global_SecondaryPointerPosition = Vector3.Transform(Global_SecondaryPointerPosition, rotMatrix);
-        Global_PrimaryGripPosition = Vector3.Transform(Global_PrimaryGripPosition, rotMatrix);
-        Global_SecondaryGripPosition = Vector3.Transform(Global_SecondaryGripPosition, rotMatrix);
-        Global_PrimaryPointerPosition += Camera.Position;
-        Global_SecondaryPointerPosition += Camera.Position;
-        Global_PrimaryGripPosition += Camera.Position;
-        Global_SecondaryGripPosition += Camera.Position;
-        Global_PrimaryPointerOrientation *= rotMatrix;
-        Global_SecondaryPointerOrientation *= rotMatrix;
-        Global_PrimaryGripOrientation *= rotMatrix;
-        Global_SecondaryGripOrientation *= rotMatrix;
-        Global_PrimaryLinearVelocity = Vector3.Transform(Global_PrimaryLinearVelocity, rotMatrix);
-        Global_PrimaryAngularVelocity = Vector3.Transform(Global_PrimaryAngularVelocity, rotMatrix);
-        Global_SecondaryLinearVelocity = Vector3.Transform(Global_SecondaryLinearVelocity, rotMatrix);
-        Global_SecondaryAngularVelocity = Vector3.Transform(Global_SecondaryAngularVelocity, rotMatrix);
-        //*/
+        Pointer_Primary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
+        Grip_Primary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
+        Pointer_Secondary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
+        Grip_Secondary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
     }
 
     public override void AfterUpdate()

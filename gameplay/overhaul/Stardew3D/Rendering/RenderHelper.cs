@@ -11,7 +11,7 @@ using StardewValley;
 namespace Stardew3D.Rendering;
 public static class RenderHelper
 {
-    public static AlphaTestEffect GenericEffect;
+    public static GenericModelEffect GenericEffect => Mod.State.GenericModelEffect;
     public static RasterizerState RasterizerState = RasterizerState.CullClockwise;
     public static DepthStencilState DepthState = new()
     {
@@ -101,7 +101,7 @@ public static class RenderHelper
         GenericEffect.Texture = tex;
         GenericEffect.World = additionalTransform_;
         GenericEffect.CurrentTechnique = GenericEffect.Techniques["SingleDrawing"];
-
+        
         Game1.graphics.GraphicsDevice.DepthStencilState = DepthState;
         Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState;
         foreach (var pass in GenericEffect.CurrentTechnique.Passes)

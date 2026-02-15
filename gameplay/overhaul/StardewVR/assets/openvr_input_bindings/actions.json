@@ -21,7 +21,7 @@
         },
         {
             "name": "/actions/global/in/pointer_secondary",
-            "requirement": "mandatory",
+            "requirement": "optional",
             "type": "pose"
         },
         {
@@ -31,7 +31,7 @@
         },
         {
             "name": "/actions/global/in/grip_secondary",
-            "requirement": "mandatory",
+            "requirement": "optional",
             "type": "pose"
         },
 
@@ -58,17 +58,27 @@
         },
         {
             "name": "/actions/world/in/rotation",
-            "requirement": "mandatory",
+            "requirement": "suggested",
             "type": "vector2"
         },
         {
             "name": "/actions/world/in/hotbar_left",
-            "requirement": "mandatory",
+            "requirement": "suggested",
             "type": "boolean"
         },
         {
             "name": "/actions/world/in/hotbar_right",
-            "requirement": "mandatory",
+            "requirement": "suggested",
+            "type": "boolean"
+        },
+        {
+            "name": "/actions/world/in/use_item",
+            "requirement": "suggested",
+            "type": "boolean"
+        },
+        {
+            "name": "/actions/world/in/interact",
+            "requirement": "suggested",
             "type": "boolean"
         }
     ],
@@ -85,10 +95,10 @@
             "/actions/global": "Global actions",
             "/actions/menu": "Menus",
 
-            "/actions/global/in/pointer_primary": "Primary Hand - Pointer",
-            "/actions/global/in/pointer_secondary": "Second Hand - Pointer",
-            "/actions/global/in/grip_primary": "Second Hand - Grip",
-            "/actions/global/in/grip_secondary": "Second Hand - Grip",
+            "/actions/global/in/pointer_primary": "Pointer (Primary)",
+            "/actions/global/in/pointer_secondary": "Pointer (Secondary)",
+            "/actions/global/in/grip_primary": "Grip (Primary)",
+            "/actions/global/in/grip_secondary": "Grip (Secondary)",
 
             "/actions/menu/in/left_click": "Left Click",
             "/actions/menu/in/right_click": "Right Click",
@@ -96,8 +106,10 @@
 
             "/actions/world/in/movement": "Movement",
             "/actions/world/in/rotation": "Rotation",
-            "/actions/world/in/hotbar_left": "Selected Tool - Scroll Left",
-            "/actions/world/in/hotbar_right": "Selected Tool - Scroll LefRight"
+            "/actions/world/in/hotbar_left": "Change Selected Item - Left",
+            "/actions/world/in/hotbar_right": "Change Selected Item - Right",
+            "/actions/world/in/use_item": "Use Selected Item",
+            "/actions/world/in/interact": "Interact"
         }
     ]
 }

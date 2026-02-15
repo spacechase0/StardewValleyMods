@@ -97,14 +97,6 @@ namespace Stardew3D
             var hooks = AccessTools.Field(typeof(Game1), "hooks");
             hooks.SetValue(null, new MyModHooks((ModHooks)hooks.GetValue(null)));
 
-            RenderHelper.GenericEffect = new(Game1.graphics.GraphicsDevice)
-            {
-                Alpha = 1,
-                VertexColorEnabled = true,
-                //LightingEnabled = false, // TODO
-                FogEnabled = false,
-                //TextureEnabled = true,
-            };
             RenderHelper.quadVbo = new VertexBuffer(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), 6, BufferUsage.WriteOnly);
 
             CharacterHandlers.ManualBootstrap(Harmony);

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewVR.Handlers.Game;
 using StardewVR.Handlers.Game.FirstPerson;
 using StardewVR.Hardware;
 
@@ -12,12 +13,8 @@ namespace Stardew3D.Handlers.Game.FirstPerson;
 
 internal class FirstPersonVRCursor : IGameCursor
 {
-    private Func<Vector3> pointerPositionFunc;
-    private Func<Vector3> pointerFacingFunc;
-    private Func<Vector3> pointerUpFunc;
-    private Func<Vector3> gripPositionFunc;
-    private Func<Vector3> gripFacingFunc;
-    private Func<Vector3> gripUpFunc;
+    private Func<Matrix> pointerFunc;
+    private Func<Matrix> gripFunc;
     private Func<Vector3> linearVelocityFunc;
     private Func<Vector3> angularVelocityFunc;
     private Func<bool> menuLeftClick;
@@ -25,17 +22,19 @@ internal class FirstPersonVRCursor : IGameCursor
     private Func<Vector2> menuScroll;
 
     private Func<Item> holdingFunc;
+    private Func<bool> useItem;
+    private Func<bool> interact;
 
-    private bool menuLeftClickState, menuRightClickState;
-    private bool prevMenuLeftClickState, prevMenuRightClickState;
+    private bool menuLeftClickState, menuRightClickState, useItemState, interactState;
+    private bool prevMenuLeftClickState, prevMenuRightClickState, prevUseItemState, prevInteractState;
 
-    public Vector3 PointerPosition => pointerPositionFunc();
-    public Vector3 PointerFacing => pointerFacingFunc();
-    public Vector3 PointerUp => pointerUpFunc();
+    public Vector3 PointerPosition => pointerFunc().Translation;
+    public Vector3 PointerFacing => pointerFunc().Forward;
+    public Vector3 PointerUp => pointerFunc().Up;
 
-    public Vector3 GripPosition => gripPositionFunc();
-    public Vector3 GripFacing => gripFacingFunc();
-    public Vector3 GripUp => gripUpFunc();
+    public Vector3 GripPosition => gripFunc().Translation;
+    public Vector3 GripFacing => gripFunc().Forward;
+    public Vector3 GripUp => gripFunc().Up;
 
     public Vector3 LinearVelocity => linearVelocityFunc();
     public Vector3 AngularVelocity => angularVelocityFunc();
@@ -49,34 +48,43 @@ internal class FirstPersonVRCursor : IGameCursor
     public Vector2 MenuScroll => menuScroll();
 
     public Item Holding => holdingFunc();
+    public bool UseItemJustPressed => !prevUseItemState && useItemState;
+    public bool UseItemHeld => useItemState;
+    public bool UseItemJustReleased => prevUseItemState && !useItemState;
+    public bool InteractJustPressed => !prevInteractState && interactState;
+    public bool InteractHeld => interactState;
+    public bool InteractJustReleased => prevInteractState && !interactState;
 
     public bool FlipMenuSprite { get; init; } = false;
 
     public FirstPersonVRCursor(
-        Func<Vector3> pointerPositionFunc, Func<Vector3> pointerFacingFunc, Func<Vector3> pointerUpFunc,
-        Func<Vector3> gripPositionFunc, Func<Vector3> gripFacingFunc, Func<Vector3> gripUpFunc,
+        Func<Matrix> pointerFunc, Func<Matrix> gripFunc,
         Func<Vector3> linearVelocityFunc, Func<Vector3> angularVelocityFunc,
-        Func<bool> menuLeftClick, Func<bool> menuRightClick, Func<Vector2> menuScroll, Func<Item> holdingFunc)
+        Func<bool> menuLeftClick, Func<bool> menuRightClick, Func<Vector2> menuScroll,
+        Func<Item> holdingFunc, Func<bool> useItem, Func<bool> interact)
     {
-        this.pointerPositionFunc = pointerPositionFunc;
-        this.pointerFacingFunc = pointerFacingFunc;
-        this.pointerUpFunc = pointerUpFunc;
-        this.gripPositionFunc = gripPositionFunc;
-        this.gripFacingFunc = gripFacingFunc;
-        this.gripUpFunc = gripUpFunc;
+        this.pointerFunc = pointerFunc;
+        this.gripFunc = gripFunc;
         this.linearVelocityFunc = linearVelocityFunc;
         this.angularVelocityFunc = angularVelocityFunc;
         this.menuLeftClick = menuLeftClick;
         this.menuRightClick = menuRightClick;
         this.menuScroll = menuScroll;
         this.holdingFunc = holdingFunc;
+        this.useItem = useItem;
+        this.interact = interact;
     }
 
     public void Update()
     {
         prevMenuLeftClickState = menuLeftClickState;
         prevMenuRightClickState = menuRightClickState;
+        prevUseItemState = useItemState;
+        prevInteractState = interactState;
+
         menuLeftClickState = menuLeftClick();
         menuRightClickState = menuRightClick();
+        useItemState = useItem();
+        interactState = interact();
     }
 }
