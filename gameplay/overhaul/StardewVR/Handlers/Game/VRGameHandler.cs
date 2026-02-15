@@ -31,6 +31,8 @@ public abstract partial class VRGameHandler : CommonGameHandler
     internal RenderTarget2D leftScreen, rightScreen;
     internal RenderTarget2D uiScreen => Game1.game1.uiScreen;
 
+    protected override bool NeedsRenderTargetHandling => false;
+
     public Point EmulatedCursor { get; set; }
 
     private TimeSpan oldInactiveSleepTime, oldMaxTime, oldTargetTime;

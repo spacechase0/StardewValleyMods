@@ -48,6 +48,8 @@ public abstract partial class CommonGameHandler : IGameHandler
     protected WorldRenderer WorldRenderer { get; set; }
     protected RenderTarget2D RenderTarget { get; set; }
 
+    protected virtual bool NeedsRenderTargetHandling => true;
+
     public virtual void SwitchOn(IGameHandler previousHandler)
     {
         WorldRenderer = new();
@@ -80,13 +82,21 @@ public abstract partial class CommonGameHandler : IGameHandler
         if (step != RenderSteps.World)
             return true;
 
-        if (RenderTarget == null || RenderTarget.Width != targetScreen.Width || RenderTarget.Height != targetScreen.Height)
+        if (!NeedsRenderTargetHandling)
         {
-            RenderTarget?.Dispose();
-            RenderTarget = new(Game1.graphics.GraphicsDevice, GameRunner.instance.Window.ClientBounds.Width, GameRunner.instance.Window.ClientBounds.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
+            if (Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget != targetScreen)
+                Game1.graphics.GraphicsDevice.SetRenderTarget(targetScreen);
         }
+        else
+        {
+            if (RenderTarget == null || RenderTarget.Width != targetScreen.Width || RenderTarget.Height != targetScreen.Height)
+            {
+                RenderTarget?.Dispose();
+                RenderTarget = new(Game1.graphics.GraphicsDevice, targetScreen.Width, targetScreen.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
+            }
 
-        Game1.graphics.GraphicsDevice.SetRenderTarget(RenderTarget);
+            Game1.graphics.GraphicsDevice.SetRenderTarget(RenderTarget);
+        }
 
         Game1.graphics.GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer | ClearOptions.Stencil, Color.CornflowerBlue, 1, 0);
 
@@ -103,10 +113,13 @@ public abstract partial class CommonGameHandler : IGameHandler
 
         WorldRenderer.Render(ProjectionMatrix, Camera);
 
-        Game1.graphics.GraphicsDevice.SetRenderTarget(targetScreen);
-        sb.Begin();
-        sb.Draw(RenderTarget, Vector2.Zero, Color.White);
-        sb.End();
+        if (NeedsRenderTargetHandling)
+        {
+            Game1.graphics.GraphicsDevice.SetRenderTarget(targetScreen);
+            sb.Begin();
+            sb.Draw(RenderTarget, Vector2.Zero, Color.White);
+            sb.End();
+        }
 
         return false;
     }
