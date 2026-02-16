@@ -137,7 +137,7 @@ public abstract partial class VRGameHandler
 
             if (data.bActive)
             {
-                Value = data.bActive;
+                Value = data.bState;
             }
         }
     }
