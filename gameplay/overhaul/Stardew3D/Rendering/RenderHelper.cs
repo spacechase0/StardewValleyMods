@@ -100,14 +100,23 @@ public static class RenderHelper
 
         GenericEffect.Texture = tex;
         GenericEffect.World = additionalTransform_;
-        GenericEffect.CurrentTechnique = GenericEffect.Techniques["SingleDrawing"];
-        
         Game1.graphics.GraphicsDevice.DepthStencilState = DepthState;
         Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState;
-        foreach (var pass in GenericEffect.CurrentTechnique.Passes)
         {
-            pass.Apply();
-            Game1.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
+            GenericEffect.CurrentTechnique = GenericEffect.Techniques["SingleDrawing_Transparent_1"];
+            foreach (var pass in GenericEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Game1.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
+            }
+        }
+        {
+            GenericEffect.CurrentTechnique = GenericEffect.Techniques["SingleDrawing_Transparent_2"];
+            foreach (var pass in GenericEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Game1.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
+            }
         }
     }
 
