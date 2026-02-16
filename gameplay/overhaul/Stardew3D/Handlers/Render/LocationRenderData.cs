@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -159,36 +160,12 @@ public class LocationRenderData : RenderData<LocationRenderer>
 
         foreach (var debris in Parent.Object.debris)
         {
-            // TODO: All of these
-            if (debris.item != null)
+            foreach (var renderer in Mod.State.GetRenderHandlersFor(debris))
             {
-                // TODO
-            }
-            else if (debris.debrisType.Value == Debris.DebrisType.LETTERS)
-            {
-                // TODO
-            }
-            else if (debris.debrisType.Value == Debris.DebrisType.NUMBERS)
-            {
-                // TODO
-            }
-            else if (debris.debrisType.Value == Debris.DebrisType.SPRITECHUNKS)
-            {
-                // TODO
-            }
-            else if (debris.itemId.Value != null)
-            {
-                foreach (var obj in debris.Chunks)
-                {
-                    // TODO
-                }
-            }
-            else
-            {
-                foreach (var obj in debris.Chunks)
-                {
-                    // TODO
-                }
+                if (renderer is DebrisRenderer debRender)
+                    debRender.ParentLocation = Parent.Object;
+
+                renderer?.Render(ctx);
             }
         }
     }

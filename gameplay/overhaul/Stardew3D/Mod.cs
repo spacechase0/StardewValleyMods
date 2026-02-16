@@ -92,6 +92,7 @@ namespace Stardew3D
                 //State.SetRenderHandlerForGameHandlerTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
                 //State.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
                 State.SetRenderHandlerForGameHandlerTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
+                State.SetRenderHandlerForGameHandlerTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
             };
 
             var hooks = AccessTools.Field(typeof(Game1), "hooks");

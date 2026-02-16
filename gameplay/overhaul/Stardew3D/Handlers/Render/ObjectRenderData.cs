@@ -42,6 +42,8 @@ public class ObjectRenderData : RenderDataWithPlaceholder<ModelData, StardewVall
 
     public override void Update(RenderContext ctx)
     {
+        // Why was this added?
+        /*
         if (Parent.Object.Location == null)
         {
             if (Model.Matches.Count == 0)
@@ -53,6 +55,7 @@ public class ObjectRenderData : RenderDataWithPlaceholder<ModelData, StardewVall
                 ctx.WorldTransform = Matrix.CreateTranslation(0.10f, 0.40f, 0.0f) * ctx.WorldTransform;
             }
         }
+        //*/
 
         base.Update(ctx);
 
