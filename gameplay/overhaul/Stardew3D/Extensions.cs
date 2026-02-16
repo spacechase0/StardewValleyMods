@@ -362,7 +362,7 @@ namespace Stardew3D
             else if (obj is IClickableMenu menu)
                 return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu)"];
 
-            return null;
+            return [obj?.GetType()?.FullName ?? "null"];
         }
     }
 }
