@@ -151,13 +151,14 @@ namespace GenericModConfigMenu
 
         /// <summary>Open the menu which shows a list of configurable mods.</summary>
         /// <param name="scrollRow">The initial scroll position, represented by the row index at the top of the visible area.</param>
-        private void OpenListMenuNew(int? scrollRow = null)
+        /// <param name="focusRow">The row to focus in the navigator (for restoring selection after returning from a mod config).</param>
+        private void OpenListMenuNew(int? scrollRow = null, int? focusRow = null)
         {
-            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew( currScrollRow ), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow);
+            Mod.ActiveConfigMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow, curFocusRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow, listFocusRow: curFocusRow), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew( currScrollRow ), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow, focusRow);
         }
         private void OpenListMenu(int? scrollRow = null)
         {
-            var newMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew(currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow); ;
+            var newMenu = new ModConfigMenu(this.Config.ScrollSpeed, openModMenu: (mod, curScrollRow, curFocusRow) => this.OpenModMenuNew(mod, page: null, listScrollRow: curScrollRow, listFocusRow: curFocusRow), openKeybindsMenu: currScrollRow => OpenKeybindsMenuNew(currScrollRow), this.ConfigManager, this.Helper.GameContent.Load<Texture2D>(AssetManager.KeyboardButton), scrollRow); ;
             if (Game1.activeClickableMenu is TitleMenu)
             {
                 TitleMenu.subMenu = newMenu;
@@ -175,10 +176,10 @@ namespace GenericModConfigMenu
                 scrollSpeed: this.Config.ScrollSpeed,
                 returnToList: () =>
                 {
-                    if (Game1.activeClickableMenu is TitleMenu)
-                        OpenListMenuNew(listScrollRow);
-                    else
+                    Mod.ActiveConfigMenu = null;
+                    if (!(Game1.activeClickableMenu is TitleMenu))
                         Mod.ActiveConfigMenu = null;
+                    OpenListMenuNew(listScrollRow);
                 }
             );
         }
@@ -208,7 +209,8 @@ namespace GenericModConfigMenu
         /// <param name="mod">The mod whose config menu to display.</param>
         /// <param name="page">The page to display within the mod's config menu.</param>
         /// <param name="listScrollRow">The scroll position to set in the mod list when returning to it, represented by the row index at the top of the visible area.</param>
-        private void OpenModMenuNew(IManifest mod, string page, int? listScrollRow)
+        /// <param name="listFocusRow">The row to focus in the mod list navigator when returning.</param>
+        private void OpenModMenuNew(IManifest mod, string page, int? listScrollRow, int listFocusRow = -1)
         {
             ModConfig config = this.ConfigManager.Get(mod, assert: true);
 
@@ -220,14 +222,18 @@ namespace GenericModConfigMenu
                 {
                     if (!(Game1.activeClickableMenu is TitleMenu))
                         Mod.ActiveConfigMenu = null;
-                    this.OpenModMenuNew(mod, newPage, listScrollRow);
+                    this.OpenModMenuNew(mod, newPage, listScrollRow, listFocusRow);
                 },
                 returnToList: () =>
                 {
-                    if (Game1.activeClickableMenu is TitleMenu)
-                        OpenListMenuNew(listScrollRow);
-                    else
+                    // Remove SpecificModConfigMenu from the chain
+                    Mod.ActiveConfigMenu = null;
+                    if (!(Game1.activeClickableMenu is TitleMenu))
+                        // In-game: also remove the stale ModConfigMenu whose navigator
+                        // has outdated PrevPad (wasn't updated while behind SpecificModConfigMenu)
                         Mod.ActiveConfigMenu = null;
+                    // Create fresh ModConfigMenu with synced PrevPad and restored focus
+                    OpenListMenuNew(listScrollRow, listFocusRow);
                 }
             );
         }
@@ -265,7 +271,7 @@ namespace GenericModConfigMenu
                 Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
                 this.ConfigButton = new Button(tex)
                 {
-                    LocalPosition = new Vector2(36, Game1.viewport.Height - 100),
+                    LocalPosition = new Vector2(36, Game1.uiViewport.Height - 100),
                     Callback = _ =>
                     {
                         Game1.playSound("newArtifact");
@@ -280,7 +286,7 @@ namespace GenericModConfigMenu
             {
                 // Gamepad support
                 Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
-                ClickableComponent button = new(new(0, Game1.viewport.Height - 100, tex.Width / 2, tex.Height / 2), "GMCM") // Why /2? Who knows
+                ClickableComponent button = new(new(0, Game1.uiViewport.Height - 100, tex.Width / 2, tex.Height / 2), "GMCM") // Why /2? Who knows
                 {
                     myID = 509800,
                     rightNeighborID = tm.buttons[0].myID,
@@ -315,7 +321,7 @@ namespace GenericModConfigMenu
 
             configMenu.Register(
                 mod: this.ModManifest,
-                reset: () => this.Config = new OwnModConfig(),
+                reset: () => { this.Config = new OwnModConfig(); TableNavigator.Enabled = this.Config.SnapNavigation; },
                 save: () => this.Helper.WriteConfig(this.Config),
                 titleScreenOnly: false
             );
@@ -338,6 +344,21 @@ namespace GenericModConfigMenu
                 getValue: () => this.Config.OpenMenuKey,
                 setValue: value => this.Config.OpenMenuKey = value
             );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: I18n.Options_SnapNavigation_Name,
+                tooltip: I18n.Options_SnapNavigation_Desc,
+                getValue: () => this.Config.SnapNavigation,
+                setValue: value =>
+                {
+                    this.Config.SnapNavigation = value;
+                    TableNavigator.Enabled = value;
+                }
+            );
+
+            // Sync static flag from config on startup
+            TableNavigator.Enabled = this.Config.SnapNavigation;
 
             var BetterGameMenu = this.Helper.ModRegistry.GetApi<IBetterGameMenuApi>("leclair.bettergamemenu");
             BetterGameMenu?.OnTabContextMenu(evt =>
@@ -371,7 +392,15 @@ namespace GenericModConfigMenu
             if (this.IsTitleMenuInteractable())
             {
                 SetupTitleMenuButton();
-                this.Ui?.Update();
+
+                // Update in UI mode so hover detection uses uiViewport coordinates
+                // (SMAPI's GenericModConfigFix redirects OnRendered to draw during
+                // RenderSteps.Menu which runs inside PushUIMode)
+                Game1.PushUIMode();
+                try { this.Ui?.Update(); }
+                finally { Game1.PopUIMode(); }
+
+
             }
 
             if (wasConfigMenu && TitleMenu.subMenu == null)
@@ -389,7 +418,7 @@ namespace GenericModConfigMenu
         private void OnWindowResized(object sender, WindowResizedEventArgs e)
         {
             if ( this.ConfigButton != null )
-                this.ConfigButton.LocalPosition = new Vector2(this.ConfigButton.Position.X, Game1.viewport.Height - 100);
+                this.ConfigButton.LocalPosition = new Vector2(this.ConfigButton.Position.X, Game1.uiViewport.Height - 100);
         }
 
         /// <inheritdoc cref="IDisplayEvents.Rendered"/>

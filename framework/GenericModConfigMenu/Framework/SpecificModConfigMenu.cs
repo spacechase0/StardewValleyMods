@@ -34,6 +34,7 @@ namespace GenericModConfigMenu.Framework
 
         private RootElement Ui = new();
         private readonly Table Table;
+        private TableNavigator Navigator;
         private readonly List<Label> OptHovers = new();
 
         /// <summary>Whether the user hit escape.</summary>
@@ -113,9 +114,6 @@ namespace GenericModConfigMenu.Framework
                     switch (opt)
                     {
                         case SimpleModOption<SButton> option:
-                            if (Constants.TargetPlatform == GamePlatform.Android)
-                                continue; // TODO: Support virtual keyboard input.
-
                             optionElement = new Label
                             {
                                 String = option.FormatValue(),
@@ -126,9 +124,6 @@ namespace GenericModConfigMenu.Framework
                             break;
 
                         case SimpleModOption<KeybindList> option:
-                            if (Constants.TargetPlatform == GamePlatform.Android)
-                                continue; // TODO: Support virtual keyboard input.
-
                             optionElement = new Label
                             {
                                 String = option.FormatValue(),
@@ -153,21 +148,28 @@ namespace GenericModConfigMenu.Framework
                     };
                     if (!string.IsNullOrEmpty(config.ModManifest.Description))
                         OptHovers.Add(header);
-                    Table.AddRow([header]);
+                    Table.AddRow(new Element[] { header });
 
                     foreach (var row in rows)
                         Table.AddRow(row);
 
-                    Table.AddRow([]);
+                    Table.AddRow(Array.Empty<Element>());
                 }
             }
             this.Ui.AddChild(this.Table);
-            this.AddDefaultLabels(null);
+            var bottomButtons = this.AddDefaultLabels(null);
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
 
             RefreshKeybindColor();
+
+            // Controller navigation
+            this.Navigator = new TableNavigator(this.Table)
+            {
+                OnBack = () => this.Cancel(),
+                BottomButtons = bottomButtons
+            };
         }
 
         public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
@@ -230,9 +232,6 @@ namespace GenericModConfigMenu.Framework
                         break;
 
                     case SimpleModOption<SButton> option:
-                        if (Constants.TargetPlatform == GamePlatform.Android)
-                            continue; // TODO: Support virtual keyboard input.
-
                         optionElement = new Label
                         {
                             String = option.FormatValue(),
@@ -242,9 +241,6 @@ namespace GenericModConfigMenu.Framework
                         break;
 
                     case SimpleModOption<KeybindList> option:
-                        if (Constants.TargetPlatform == GamePlatform.Android)
-                            continue; // TODO: Support virtual keyboard input.
-
                         optionElement = new Label
                         {
                             String = option.FormatValue(),
@@ -453,10 +449,17 @@ namespace GenericModConfigMenu.Framework
 
             }
             this.Ui.AddChild(this.Table);
-            this.AddDefaultLabels(this.Manifest);
+            var bottomButtons = this.AddDefaultLabels(this.Manifest);
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
+
+            // Controller navigation
+            this.Navigator = new TableNavigator(this.Table)
+            {
+                OnBack = () => this.Cancel(),
+                BottomButtons = bottomButtons
+            };
         }
 
         /// <inheritdoc />
@@ -490,23 +493,17 @@ namespace GenericModConfigMenu.Framework
             return false;
         }
 
-        private int scrollCounter = 0;
         /// <inheritdoc />
         public override void update(GameTime time)
         {
             base.update(time);
+            if (!this.IsBindingKey)
+                this.Navigator?.HandleInput();
             this.Ui.Update();
+            if (!this.IsBindingKey)
+                this.Navigator?.SnapAndScroll();
 
-            // TODO: This will be different if a dropdown is open
-            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0)
-            {
-                if (++scrollCounter == 5)
-                {
-                    scrollCounter = 0;
-                    this.Table.Scrollbar.ScrollBy(Math.Sign(Game1.input.GetGamePadState().ThumbSticks.Right.Y) * 120 / -this.ScrollSpeed);
-                }
-            }
-            else scrollCounter = 0;
+            // Right stick scrolling is handled by TableNavigator (navigates rows, EnsureFocusedVisible scrolls)
 
             if (this.ExitOnNextUpdate)
                 this.Cancel();
@@ -537,7 +534,7 @@ namespace GenericModConfigMenu.Framework
             this.drawMouse(b);
 
             // hover tooltips
-            if (Constants.TargetPlatform != GamePlatform.Android && GetChildMenu() == null)
+            if (GetChildMenu() == null)
             {
                 foreach (var label in this.OptHovers)
                 {
@@ -572,7 +569,9 @@ namespace GenericModConfigMenu.Framework
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
             this.Table.Scrollbar.Update();
             this.Ui.AddChild(this.Table);
-            this.AddDefaultLabels(this.Manifest);
+            var resizedButtons = this.AddDefaultLabels(this.Manifest);
+            if (this.Navigator != null)
+                this.Navigator.BottomButtons = resizedButtons;
 
             this.ActiveKeybindOverlay?.OnWindowResized();
         }
@@ -600,7 +599,7 @@ namespace GenericModConfigMenu.Framework
         /*********
         ** Private methods
         *********/
-        private void AddDefaultLabels(IManifest modManifest)
+        private Label[] AddDefaultLabels(IManifest modManifest)
         {
             // add page title
             {
@@ -674,6 +673,8 @@ namespace GenericModConfigMenu.Framework
                 // add to UI
                 foreach (var button in buttons)
                     this.Ui.AddChild(button);
+
+                return buttons;
             }
         }
 
@@ -778,7 +779,7 @@ namespace GenericModConfigMenu.Framework
             this.ActiveKeybindOverlay = option switch
             {
                 SimpleModOption<SButton> buttonOption => new KeybindOverlay(
-                    keybinds: [new Keybind(buttonOption.Value)],
+                    keybinds: new[] { new Keybind(buttonOption.Value) },
                     onlyAllowSingleButton: true,
                     name: option.Name(),
                     onSaved: keybinds =>
