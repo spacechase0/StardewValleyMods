@@ -47,6 +47,7 @@
     <Project Path="gameplay/unavoidable/FloodedValleyFarm/FloodedValleyFarm.csproj" />
     <Project Path="gameplay/unavoidable/FlourFestival/FlourFestival.csproj" />
     <Project Path="gameplay/unavoidable/GiantOmelet/GiantOmelet.csproj" />
+    <Project Path="gameplay/unavoidable/GreatCaveOffensive/GreatCaveOffensive.csproj" />
     <Project Path="gameplay/unavoidable/LewisNightmare/LewisNightmare.csproj" />
     <Project Path="gameplay/unavoidable/MisappliedPhysicalities/MisappliedPhysicalities.csproj" />
     <Project Path="gameplay/unavoidable/MoonMisadventures/MoonMisadventures.csproj" />
