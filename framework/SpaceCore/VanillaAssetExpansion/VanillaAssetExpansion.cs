@@ -278,6 +278,20 @@ namespace SpaceCore.VanillaAssetExpansion
 
                 foreach (var newTex in newTexs)
                 {
+                    // ensure no division by 0
+                    if (newTex.Value.SourceSizeModifer <= 0)
+                    {
+                        newTex.Value.SourceSizeModifer = 1;
+                    }
+                    // special case: when using SourceSizeModifer without SourceSizeOverride, compute the SourceSizeOverride
+                    // do so even in full sheet mode, for purpose of hash code
+                    if (newTex.Value.SourceSizeOverride == null && newTex.Value.SourceSizeModifer != 1)
+                    {
+                        newTex.Value.SourceSizeOverride = new Point(
+                            (int)(newTex.Value.TargetRect.Width * newTex.Value.SourceSizeModifer),
+                            (int)(newTex.Value.TargetRect.Height * newTex.Value.SourceSizeModifer)
+                        );
+                    }
                     if (existingOverrides.Contains(newTex))
                     {
                         if (texs[newTex.Key].GetHashCode() == newTex.Value.GetHashCode())
@@ -286,6 +300,7 @@ namespace SpaceCore.VanillaAssetExpansion
                             newTex.Value.currFrameTick = texs[newTex.Key].currFrameTick;
                             newTex.Value.sourceTex = texs[newTex.Key].sourceTex;
                             newTex.Value.sourceRectCache = texs[newTex.Key].sourceRectCache;
+                            newTex.Value.texturePosCache = texs[newTex.Key].texturePosCache;
                         }
                     }
                     else
@@ -298,6 +313,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
                         newTex.Value.sourceTex = sourceTex;
                         newTex.Value.sourceRectCache = new Rectangle(x, y, newTex.Value.SourceSizeOverride?.X ?? newTex.Value.TargetRect.Width, newTex.Value.SourceSizeOverride?.Y ?? newTex.Value.TargetRect.Height);
+                        newTex.Value.texturePosCache = new(0, 0);
                     }
                 }
 
@@ -311,9 +327,8 @@ namespace SpaceCore.VanillaAssetExpansion
                     string localeTex = tex.Value.TargetTexture + localeStr;
                     if (Instance.Helper.GameContent.DoesAssetExist<Texture2D>(Instance.Helper.GameContent.ParseAssetName(localeTex)))
                         tex.Value.TargetTexture = localeTex;
-                    if (!SpriteBatchPatcher.packOverrides.ContainsKey(tex.Value.TargetTexture))
-                        SpriteBatchPatcher.packOverrides.Add(tex.Value.TargetTexture, new());
-                    SpriteBatchPatcher.packOverrides[tex.Value.TargetTexture].Add(tex.Value.TargetRect, tex.Value);
+
+                    SpriteBatchPatcher.packOverrides[(tex.Value.TargetTexture, tex.Value.TargetRect)] = tex.Value;
                 }
             }
         }
@@ -357,19 +372,38 @@ namespace SpaceCore.VanillaAssetExpansion
                             continue;
                         }
 
+                        string previousFrameTx = kvp.Value.animation.Frames[texOverride.currFrame].FilePath;
+
                         if (++texOverride.currFrame >= texOverride.animation.Frames.Length)
                         {
                             texOverride.currFrame = 0;
                         }
 
-                        //Texture2D targetTex = Game1.content.Load<Texture2D>(kvp.Value.TargetTexture);
                         Texture2D sourceTex = Game1.content.Load<Texture2D>(kvp.Value.animation.Frames[texOverride.currFrame].FilePath);
-                        int ind = kvp.Value.animation.Frames[texOverride.currFrame].SpriteIndex;
-                        int x = (ind * (kvp.Value.SourceSizeOverride?.X ?? kvp.Value.TargetRect.Width)) % sourceTex.Width;
-                        int y = (ind * (kvp.Value.SourceSizeOverride?.X ?? kvp.Value.TargetRect.Width)) / sourceTex.Width * (kvp.Value.SourceSizeOverride?.Y ?? kvp.Value.TargetRect.Height);
-
                         kvp.Value.sourceTex = sourceTex;
-                        kvp.Value.sourceRectCache = new Rectangle(x, y, kvp.Value.SourceSizeOverride?.X ?? kvp.Value.TargetRect.Width, kvp.Value.SourceSizeOverride?.Y ?? kvp.Value.TargetRect.Height);
+                        int ind = kvp.Value.animation.Frames[texOverride.currFrame].SpriteIndex;
+
+                        if (kvp.Value.FullSheetMode)
+                        {
+                            if (previousFrameTx != kvp.Value.animation.Frames[texOverride.currFrame].FilePath)
+                            {
+                                kvp.Value.texturePosCache = new(0, 0);
+                            }
+                            else if ((kvp.Value.targetTex = Game1.content.DoesAssetExist<Texture2D>(kvp.Value.TargetTexture) ? Game1.content.Load<Texture2D>(kvp.Value.TargetTexture) : null) != null)
+                            {
+                                int px = ind * kvp.Value.targetTex.Width;
+                                int x = px % sourceTex.Width;
+                                int y = px / sourceTex.Width * sourceTex.Height;
+                                kvp.Value.texturePosCache = new Point(x, y);
+                            }
+                        }
+                        else if (kvp.Value.SourceSizeOverride != null || !kvp.Value.TargetRect.IsEmpty)
+                        {
+                            int x = (ind * (kvp.Value.SourceSizeOverride?.X ?? kvp.Value.TargetRect.Width)) % sourceTex.Width;
+                            int y = (ind * (kvp.Value.SourceSizeOverride?.X ?? kvp.Value.TargetRect.Width)) / sourceTex.Width * (kvp.Value.SourceSizeOverride?.Y ?? kvp.Value.TargetRect.Height);
+
+                            kvp.Value.sourceRectCache = new Rectangle(x, y, kvp.Value.SourceSizeOverride?.X ?? kvp.Value.TargetRect.Width, kvp.Value.SourceSizeOverride?.Y ?? kvp.Value.TargetRect.Height);
+                        }
                     }
                 }
             }

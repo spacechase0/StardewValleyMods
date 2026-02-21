@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,8 +21,11 @@ namespace SpaceCore.Patches
         /*********
         ** Accessors
         *********/
-        internal static Dictionary<string, Dictionary<Rectangle, TextureOverridePackData>> packOverrides = new();
-
+        internal static Dictionary<(string, Rectangle), TextureOverridePackData> packOverrides = new();
+        private static bool InDrawRedirection = false;
+        private delegate bool TryGetTextureOverrideDelegate(Texture2D tex, Rectangle? sourceRect, out TextureOverridePackData packData);
+        private static TryGetTextureOverrideDelegate TryGetTextureOverride = TryGetTextureOverride_Standard;
+        private static readonly HashSet<(string Texture, Rectangle? SourceRect)> RecordedDraws = [];
 
         /*********
         ** Public methods
@@ -41,123 +46,231 @@ namespace SpaceCore.Patches
                 prefix: this.GetHarmonyMethod(nameof(Before_Draw_3))
             );
             harmony.Patch(
-                original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color), typeof(float), typeof(Vector2), typeof(float), typeof(SpriteEffects), typeof(float) }),
+                original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Color) }),
                 prefix: this.GetHarmonyMethod(nameof(Before_Draw_4))
             );
             harmony.Patch(
                 original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Vector2), typeof(Rectangle?), typeof(Color) }),
                 prefix: this.GetHarmonyMethod(nameof(Before_Draw_5))
             );
+            harmony.Patch(
+                original: this.RequireMethod<SpriteBatch>(nameof(SpriteBatch.Draw), new[] { typeof(Texture2D), typeof(Rectangle), typeof(Color) }),
+                prefix: this.GetHarmonyMethod(nameof(Before_Draw_6))
+            );
         }
 
+        public static void ToggleSpriteBatchPatcherRecordingMode(IModHelper helper)
+        {
+            if (TryGetTextureOverride == TryGetTextureOverride_Standard)
+            {
+                TryGetTextureOverride = TryGetTextureOverride_Recording;
+                Log.Info($"Begun recording distinct draws.");
+            }
+            else
+            {
+                TryGetTextureOverride = TryGetTextureOverride_Standard;
+                helper.Data.WriteJsonFile("drawn_texture_and_sourcerect.json", RecordedDraws);
+                Log.Info($"Recorded {RecordedDraws.Count} distinct draws, wrote '{Path.Join(helper.DirectoryPath, "drawn_texture_and_sourcerect.json")}");
+                RecordedDraws.Clear();
+            }
+        }
 
         /*********
         ** Private methods
         *********/
         /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Rectangle,Rectangle?,Color,float,Vector2,SpriteEffects,float)"/>.</summary>
-        private static void Before_Draw_1(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, SpriteEffects effects, float layerDepth)
+        private static void Before_Draw_1(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color, float rotation, ref Vector2 origin, SpriteEffects effects, float layerDepth)
         {
-            if (sourceRectangle.HasValue)
+            if (TryGetTextureOverride(texture, sourceRectangle, out TextureOverridePackData packData))
             {
-                Rectangle rect = sourceRectangle.Value;
-                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
-                sourceRectangle = rect;
+                texture = packData.sourceTex;
+                Rectangle newRect = packData.FullSheetMode ? packData.GetDrawOverrideSourceRect(sourceRectangle.Value) : packData.sourceRectCache;
+                if (sourceRectangle != newRect)
+                {
+                    if (origin != Vector2.Zero)
+                    {
+                        origin = new(origin.X / sourceRectangle.Value.Width * newRect.Width, origin.Y / sourceRectangle.Value.Height * newRect.Height);
+                    }
+                    sourceRectangle = newRect;
+                }
             }
         }
 
         /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Rectangle,Rectangle?,Color)"/>.</summary>
         private static void Before_Draw_2(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, ref Rectangle? sourceRectangle, Color color)
         {
-            if (sourceRectangle.HasValue)
+            if (TryGetTextureOverride(texture, sourceRectangle, out TextureOverridePackData packData))
             {
-                Rectangle rect = sourceRectangle.Value;
-                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
-                sourceRectangle = rect;
+                texture = packData.sourceTex;
+                sourceRectangle = packData.FullSheetMode ? packData.GetDrawOverrideSourceRect(sourceRectangle.Value) : packData.sourceRectCache;
             }
         }
 
         /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Vector2,Rectangle?,Color,float,Vector2,Vector2,SpriteEffects,float)"/>.</summary>
-        private static void Before_Draw_3(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
+        private static void Before_Draw_3(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color, float rotation, ref Vector2 origin, ref Vector2 scale, SpriteEffects effects, float layerDepth)
         {
-            if (sourceRectangle.HasValue)
+            if (TryGetTextureOverride(texture, sourceRectangle, out TextureOverridePackData packData))
             {
-                Rectangle rect = sourceRectangle.Value;
-                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
-                if (sourceRectangle.Value.Width != rect.Width || sourceRectangle.Value.Height != rect.Height)
+                Rectangle newRect;
+                if (packData.FullSheetMode)
                 {
-                    scale = new(scale.X * (sourceRectangle.Value.Width / (float)rect.Width), scale.Y * (sourceRectangle.Value.Height / (float)rect.Height));
+                    newRect = packData.GetDrawOverrideSourceRect(sourceRectangle.Value);
+                    if (packData.SourceSizeModifer != 1)
+                        scale = new(scale.X / packData.SourceSizeModifer, scale.Y / packData.SourceSizeModifer);
                 }
-                sourceRectangle = rect;
+                else
+                {
+                    if (sourceRectangle.Value.Width != packData.sourceRectCache.Width || sourceRectangle.Value.Height != packData.sourceRectCache.Height)
+                    {
+                        scale = new(scale.X * (sourceRectangle.Value.Width / (float)packData.sourceRectCache.Width), scale.Y * (sourceRectangle.Value.Height / (float)packData.sourceRectCache.Height));
+                    }
+                    newRect = packData.sourceRectCache;
+                }
+                if (sourceRectangle != newRect)
+                {
+                    if (origin != Vector2.Zero)
+                    {
+                        origin = new(origin.X / sourceRectangle.Value.Width * newRect.Width, origin.Y / sourceRectangle.Value.Height * newRect.Height);
+                    }
+                    sourceRectangle = newRect;
+                }
+
+                texture = packData.sourceTex;
             }
         }
 
-        /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Vector2,Rectangle?,Color,float,Vector2,float,SpriteEffects,float)"/>.</summary>
-        private static bool Before_Draw_4(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
+        /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Vector2,Color)"/>.</summary>
+        private static bool Before_Draw_4(SpriteBatch __instance, ref Texture2D texture, Vector2 position, Color color)
         {
-            if (sourceRectangle.HasValue)
+            if (TryGetTextureOverride(texture, Rectangle.Empty, out TextureOverridePackData packData))
             {
-                Rectangle rect = sourceRectangle.Value;
-                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
-                if (sourceRectangle.Value.Width != rect.Width || sourceRectangle.Value.Height != rect.Height)
+                bool needDrawRedirect;
+                Rectangle overrideSourceRect;
+
+                if (packData.FullSheetMode)
                 {
-                    Vector2 newScale = new(scale * (sourceRectangle.Value.Width / (float)rect.Width), scale * (sourceRectangle.Value.Height / (float)rect.Height));
-                    __instance.Draw(texture, position, rect, color, rotation, origin, newScale, effects, layerDepth);
-                    // There'll be another FixTilesheetReference call on the new values due to the
-                    // patch on the variant just called... probably harmless though
+                    needDrawRedirect = packData.SourceSizeModifer != 1 || texture.Bounds != packData.sourceTex.Bounds;
+                    overrideSourceRect = packData.GetDrawOverrideSourceRect(texture.Bounds);
+                }
+                else
+                {
+                    needDrawRedirect = texture.Bounds.Width != packData.sourceRectCache.Width || texture.Bounds.Height != packData.sourceRectCache.Height;
+                    overrideSourceRect = packData.sourceRectCache;
+                }
+
+                if (needDrawRedirect)
+                {
+                    InDrawRedirection = true;
+                    __instance.Draw(packData.sourceTex, new Rectangle((int)position.X, (int)position.Y, texture.Bounds.Width, texture.Bounds.Height), overrideSourceRect, color);
+                    InDrawRedirection = false;
                     return false;
                 }
-                sourceRectangle = rect;
-            }
 
+                texture = packData.sourceTex;
+            }
             return true;
         }
 
         /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Vector2,Rectangle?,Color)"/>.</summary>
-        private static bool Before_Draw_5(SpriteBatch __instance, ref Texture2D texture, Vector2 position, ref Rectangle? sourceRectangle, Color color)
+        private static bool Before_Draw_5(SpriteBatch __instance, ref Texture2D texture, ref Vector2 position, ref Rectangle? sourceRectangle, Color color)
         {
-            if (sourceRectangle.HasValue)
+            if (TryGetTextureOverride(texture, sourceRectangle, out TextureOverridePackData packData))
             {
-                Rectangle rect = sourceRectangle.Value;
-                SpriteBatchPatcher.FixTilesheetReference(ref texture, ref rect);
-                if (sourceRectangle.Value.Width != rect.Width || sourceRectangle.Value.Height != rect.Height)
+                bool needDrawRedirect;
+                Rectangle overrideSourceRect;
+
+                if (packData.FullSheetMode)
                 {
-                    __instance.Draw(texture, new Rectangle( (int)position.X, (int)position.Y, sourceRectangle.Value.Width, sourceRectangle.Value.Height), rect, color);
-                    // There'll be another FixTilesheetReference call on the new values due to the
-                    // patch on the variant just called... probably harmless though
+                    needDrawRedirect = packData.SourceSizeModifer != 1;
+                    overrideSourceRect = packData.GetDrawOverrideSourceRect(sourceRectangle.Value);
+                }
+                else
+                {
+                    needDrawRedirect = sourceRectangle.Value.Width != packData.sourceRectCache.Width || sourceRectangle.Value.Height != packData.sourceRectCache.Height;
+                    overrideSourceRect = packData.sourceRectCache;
+                }
+
+                if (needDrawRedirect)
+                {
+                    InDrawRedirection = true;
+                    __instance.Draw(packData.sourceTex, new Rectangle((int)position.X, (int)position.Y, sourceRectangle.Value.Width, sourceRectangle.Value.Height), overrideSourceRect, color);
+                    InDrawRedirection = false;
                     return false;
                 }
-                sourceRectangle = rect;
-            }
 
+                sourceRectangle = overrideSourceRect;
+                texture = packData.sourceTex;
+            }
             return true;
         }
 
-        private static void FixTilesheetReference(ref Texture2D tex, ref Rectangle sourceRect)
+        /// <summary>The method to call before <see cref="SpriteBatch.Draw(Texture2D,Rectangle,Color)"/>.</summary>
+        private static bool Before_Draw_6(SpriteBatch __instance, ref Texture2D texture, Rectangle destinationRectangle, Color color)
         {
-            // override by name
-            if (tex?.Name != null && SpriteBatchPatcher.packOverrides.TryGetValue(tex.Name, out var overrides) && overrides.TryGetValue(sourceRect, out var packOverride))
+            if (TryGetTextureOverride(texture, Rectangle.Empty, out TextureOverridePackData packData))
             {
-                tex = packOverride.sourceTex;
-                sourceRect = packOverride.sourceRectCache;
+                bool needDrawRedirect;
+                Rectangle overrideSourceRect;
+
+                if (packData.FullSheetMode)
+                {
+                    needDrawRedirect = packData.SourceSizeModifer != 1 || texture.Bounds != packData.sourceTex.Bounds;
+                    overrideSourceRect = packData.GetDrawOverrideSourceRect(texture.Bounds);
+                }
+                else
+                {
+                    needDrawRedirect = texture.Bounds.Width != packData.sourceRectCache.Width || texture.Bounds.Height != packData.sourceRectCache.Height;
+                    overrideSourceRect = packData.sourceRectCache;
+                }
+
+                if (needDrawRedirect)
+                {
+                    InDrawRedirection = true;
+                    __instance.Draw(packData.sourceTex, destinationRectangle, overrideSourceRect, color);
+                    InDrawRedirection = false;
+                    return false;
+                }
+
+                texture = packData.sourceTex;
             }
+            else
+            {
+                if (texture.Name == "Animals/Error")
+                {
+                    Console.WriteLine($"{destinationRectangle}: {texture.Bounds}");
+                    Console.WriteLine(string.Join(' ', packOverrides.Select(value => value.ToString())));
+                }
+            }
+            return true;
         }
 
-        /// <summary>Override the texture being drawn if it matches a target texture and the source rectangle matches an override for that type.</summary>
-        /// <param name="currentTexture">The texture being drawn to the sprite batch.</param>
-        /// <param name="currentSourceRect">The source rectangle being drawn to the sprite batch.</param>
-        /// <param name="fromTexture">The target texture to detect.</param>
-        /// <param name="overrides">The texture overrides to apply.</param>
-        /// <returns>Returns whether the texture was overridden.</returns>
-        private static bool TryOverride(ref Texture2D currentTexture, ref Rectangle currentSourceRect, Texture2D fromTexture, IDictionary<Rectangle, TexturedRect> overrides)
+        /// <summary>Obtain pack data from cached pack overrides</summary>
+        /// <param name="tex"></param>
+        /// <param name="sourceRect"></param>
+        /// <param name="packData"></param>
+        /// <returns></returns>
+        private static bool TryGetTextureOverride_Standard(Texture2D tex, Rectangle? sourceRect, out TextureOverridePackData packData)
         {
-            if (currentTexture == fromTexture && overrides.TryGetValue(currentSourceRect, out TexturedRect packOverride))
+            packData = null;
+            if (InDrawRedirection || tex == null || tex.Name == null || sourceRect is null)
+                return false;
+            // override by name and rect
+            if (packOverrides.TryGetValue((tex.Name, sourceRect.Value), out packData))
             {
-                currentTexture = packOverride.Texture;
-                currentSourceRect = packOverride.Rect ?? new Rectangle(0, 0, currentSourceRect.Width, currentSourceRect.Height);
                 return true;
             }
-
+            // no specific override, fallback to empty
+            if (!sourceRect.Value.IsEmpty && packOverrides.TryGetValue((tex.Name, Rectangle.Empty), out packData))
+            {
+                return true;
+            }
             return false;
+        }
+
+        private static bool TryGetTextureOverride_Recording(Texture2D tex, Rectangle? sourceRect, out TextureOverridePackData packData)
+        {
+            RecordedDraws.Add((tex.Name, sourceRect));
+            return TryGetTextureOverride_Standard(tex, sourceRect, out packData);
         }
     }
 }

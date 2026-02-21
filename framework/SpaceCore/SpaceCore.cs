@@ -443,6 +443,11 @@ namespace SpaceCore
 
             new NpcQuestions().Entry(ModManifest, Helper);
 
+            helper.ConsoleCommands.Add("toggle_draw_recording", "Toggle recording drawn texture name and source rect.", (cmd, args) =>
+            {
+                SpriteBatchPatcher.ToggleSpriteBatchPatcherRecordingMode(helper);
+            });
+
             var serializerManager = new SerializerManager(helper.ModRegistry);
 
             this.Harmony = HarmonyPatcher.Apply(this,
