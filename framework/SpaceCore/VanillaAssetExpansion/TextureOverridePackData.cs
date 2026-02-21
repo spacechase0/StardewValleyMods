@@ -11,7 +11,7 @@ namespace SpaceCore.VanillaAssetExpansion
     public class TextureOverridePackData
     {
         public string TargetTexture { get; set; }
-        public Rectangle TargetRect { get; set; }
+        public Rectangle TargetRect { get; set; } = Rectangle.Empty;
 
         private string _sourcetex;
         public string SourceTexture
@@ -24,22 +24,43 @@ namespace SpaceCore.VanillaAssetExpansion
 
         public double? ChancePerTick { get; set; } = null;
 
+        public bool FullSheetMode { get; set; } = false;
+
+        public float SourceSizeModifer { get; set; } = 1f;
+
         internal Texture2D sourceTex;
         internal TextureAnimation animation;
         internal int currFrame = 0;
         internal int currFrameTick = 0;
         internal Rectangle sourceRectCache;
+        internal Texture2D? targetTex;
+        internal Point texturePosCache;
+
+        internal Rectangle GetDrawOverrideSourceRect(Rectangle originalRect)
+        {
+            return new Rectangle(
+                (int)((texturePosCache.X + originalRect.X) * SourceSizeModifer),
+                texturePosCache.Y + (int)(originalRect.Y * SourceSizeModifer),
+                (int)(originalRect.Width * SourceSizeModifer),
+                (int)(originalRect.Height * SourceSizeModifer)
+            );
+        }
 
         public override bool Equals(object obj)
         {
             if (obj is not TextureOverridePackData other)
                 return false;
-            return TargetTexture == other.TargetTexture && TargetRect == other.TargetRect && SourceTexture == other.SourceTexture;
+            return TargetTexture == other.TargetTexture &&
+                TargetRect == other.TargetRect &&
+                SourceTexture == other.SourceTexture &&
+                SourceSizeOverride == other.SourceSizeOverride &&
+                SourceSizeModifer == other.SourceSizeModifer &&
+                FullSheetMode == other.FullSheetMode;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(TargetTexture, TargetRect, SourceTexture);
+            return HashCode.Combine(TargetTexture, TargetRect, SourceTexture, SourceSizeOverride, SourceSizeModifer,  FullSheetMode);
         }
 
         [OnDeserialized]
