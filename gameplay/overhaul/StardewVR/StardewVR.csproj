@@ -1,16 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
-  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Name>Stardew Reality</Name>
     <Description>Stardew Valley... in VIRTUAL REALITY. (Incompatibility with other mods almost guarenteed.)</Description>
     <Version>0.1.0</Version>
     
-    <TargetFramework>net6.0</TargetFramework>
+
     
-    <EnableHarmony>true</EnableHarmony>
     <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>

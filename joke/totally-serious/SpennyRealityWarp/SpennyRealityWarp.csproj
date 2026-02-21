@@ -1,7 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
-  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Name>Spenny the Reality Warper</Name>
@@ -9,7 +8,6 @@
     <Version>1.0.0</Version>
     <UpdateKeys>Nexus:40111</UpdateKeys>
 
-    <TargetFramework>net6.0</TargetFramework>
-    <EnableHarmony>true</EnableHarmony>
+
   </PropertyGroup>
 </Project>

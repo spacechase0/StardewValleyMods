@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
-  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Name>Json Assets</Name>
@@ -9,10 +8,6 @@
     <Description>Lets content packs add custom content to the game.</Description>
     <Version>1.11.11</Version>
     <UpdateKeys>Nexus:1720</UpdateKeys>
-
-    <TargetFramework>net6.0</TargetFramework>
-
-    <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,9 +18,5 @@
   <ItemGroup>
     <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
     <SMAPIDependency Include="Cherry.ExpandedPreconditionsUtility" Required="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Utilities\" />
   </ItemGroup>
 </Project>

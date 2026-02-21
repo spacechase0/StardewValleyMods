@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
     <Name>Generic Mod Config Menu</Name>
@@ -8,8 +7,6 @@
     <Description>Adds an in-game UI to edit other mods' config options (for mods which support it).</Description>
     <Version>1.16.0</Version>
     <UpdateKeys>Nexus:5098</UpdateKeys>
-
-    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

@@ -6,9 +6,10 @@
     <UniqueId>kittycatcasey.$(AssemblyName)</UniqueId>
     <MinimumApiVersion_Behavior>Update</MinimumApiVersion_Behavior>
     <MinimumGameVersion_Behavior>UpdateFull</MinimumGameVersion_Behavior>
-    
+
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>preview</LangVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -21,8 +22,10 @@
   </ItemGroup>
 
   <!-- Why didn't I do this for SpaceShared in the first place? -->
-  <Import Project="$(SolutionDir)shared\SpaceShared.Common\SpaceShared.Common.projitems" Label="Shared" />
-  <Import Project="$(SolutionDir)shared\SpaceShared.Mods.SourceGen\SpaceShared.SourceGenCommon.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceShared.GameAgnostic\SpaceShared.GameAgnostic.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceShared.MonoGame\SpaceShared.MonoGame.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceShared.Mods\SpaceShared.Mods.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)shared\SpaceShared.SourceGen\SpaceShared.SourceGen.projitems" Label="Shared" />
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)shared\SpaceShared.SourceGenerator\SpaceShared.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>

@@ -5,4 +5,8 @@
       <Version_AppendConfiguration>false</Version_AppendConfiguration>
     </ProjectReference>
   </ItemGroup>
+  <PropertyGroup>
+    <!-- For some reason this isn't working like I expected, and is causing some build errors. -->
+    <!--<DefineConstants>DEPENDENCY_HAS_SPACESHARED</DefineConstants>-->
+  </PropertyGroup>
 </Project>

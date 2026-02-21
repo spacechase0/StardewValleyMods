@@ -1,0 +1,118 @@
+<Solution>
+  <Folder Name="/ContentEngine/">
+    <Project Path="ContentEngine/SpaceCore.Content.Engine/SpaceCore.Content.Engine.csproj" />
+    <Project Path="ContentEngine/SpaceCore.Content.LanguageServer/SpaceCore.Content.LanguageServer.csproj" />
+    <Project Path="ContentEngine/SpaceCore.Content.Parser/SpaceCore.Content.Parser.csproj" />
+    <Project Path="ContentEngine/SpaceCore.Content.VisualStudio/SpaceCore.Content.VisualStudio.csproj">
+      <BuildDependency Project="ContentEngine/SpaceCore.Content.LanguageServer/SpaceCore.Content.LanguageServer.csproj" />
+    </Project>
+  </Folder>
+  <Folder Name="/cosmetic/">
+    <Project Path="cosmetic/ExperienceBars/ExperienceBars.csproj" />
+    <Project Path="cosmetic/GradientHairColors/GradientHairColors.csproj" />
+    <Project Path="cosmetic/SizableFish/SizableFish.csproj" />
+  </Folder>
+  <Folder Name="/framework/">
+    <Project Path="framework/ConsoleCode/ConsoleCode.csproj" />
+    <Project Path="framework/GenericModConfigMenu/GenericModConfigMenu.csproj" />
+    <Project Path="framework/HybridCropEngine/HybridCropEngine.csproj" />
+    <Project Path="framework/JsonAssets/JsonAssets.csproj" />
+    <Project Path="framework/SpaceCore/SpaceCore.csproj" />
+    <Project Path="framework/YarnEvents/YarnEvents.csproj" />
+  </Folder>
+  <Folder Name="/gameplay/" />
+  <Folder Name="/gameplay/ignorable/">
+    <Project Path="gameplay/ignorable/DimensionalPockets/DimensionalPockets.csproj" />
+    <Project Path="gameplay/ignorable/JumpOver/JumpOver.csproj" />
+    <Project Path="gameplay/ignorable/JunimosAcceptCash/JunimosAcceptCash.csproj" />
+    <Project Path="gameplay/ignorable/NewGamePlus/NewGamePlus.csproj" />
+    <Project Path="gameplay/ignorable/PreexistingRelationship/PreexistingRelationship.csproj" />
+    <Project Path="gameplay/ignorable/RushOrders/RushOrders.csproj" />
+    <Project Path="gameplay/ignorable/Satchels/Satchels.csproj" />
+    <Project Path="gameplay/ignorable/SkillTraining/SkillTraining.csproj" />
+    <Project Path="gameplay/ignorable/ThreeHeartDancePartner/ThreeHeartDancePartner.csproj" />
+  </Folder>
+  <Folder Name="/gameplay/overhaul/">
+    <Project Path="gameplay/overhaul/CombatOverhaulMod/CombatOverhaulMod.csproj" />
+    <Project Path="gameplay/overhaul/SkyFarm/SkyFarm.csproj" />
+    <Project Path="gameplay/overhaul/Stardew3D/Stardew3D.csproj" />
+    <Project Path="gameplay/overhaul/StardewVR/StardewVR.csproj" />
+  </Folder>
+  <Folder Name="/gameplay/unavoidable/">
+    <Project Path="gameplay/unavoidable/AngrySeagulls/AngrySeagulls.csproj" />
+    <Project Path="gameplay/unavoidable/BlahajBlast/BlahajBlast.csproj" />
+    <Project Path="gameplay/unavoidable/CaveFarm/CaveFarm.csproj" />
+    <Project Path="gameplay/unavoidable/CavernMadness/CavernMadness.csproj" />
+    <Project Path="gameplay/unavoidable/DeepSeaFishing/DeepSeaFishing.csproj" />
+    <Project Path="gameplay/unavoidable/FloodedValleyFarm/FloodedValleyFarm.csproj" />
+    <Project Path="gameplay/unavoidable/FlourFestival/FlourFestival.csproj" />
+    <Project Path="gameplay/unavoidable/GiantOmelet/GiantOmelet.csproj" />
+    <Project Path="gameplay/unavoidable/LewisNightmare/LewisNightmare.csproj" />
+    <Project Path="gameplay/unavoidable/MisappliedPhysicalities/MisappliedPhysicalities.csproj" />
+    <Project Path="gameplay/unavoidable/MoonMisadventures/MoonMisadventures.csproj" />
+    <Project Path="gameplay/unavoidable/PersistentMines/PersistentMines.csproj" />
+    <Project Path="gameplay/unavoidable/Potioncraft/Potioncraft.csproj" />
+    <Project Path="gameplay/unavoidable/PyromancersJourney/PyromancersJourney.csproj" />
+    <Project Path="gameplay/unavoidable/RaiseJunimos/RaiseJunimos.csproj" />
+    <Project Path="gameplay/unavoidable/SurfingFestival/SurfingFestival.csproj" />
+    <Project Path="gameplay/unavoidable/TheftOfTheWinterStar/TheftOfTheWinterStar.csproj" />
+  </Folder>
+  <Folder Name="/joke/">
+    <Project Path="joke/AutocorrectValley/AutocorrectValley.csproj" />
+    <Project Path="joke/JsonShuffle/JsonShuffle.csproj" />
+    <Project Path="joke/MayoHats/MayoHats.csproj" />
+    <Project Path="joke/MayoRain/MayoRain.csproj" />
+    <Project Path="joke/RiverlandsFeatureAddition/RiverlandsFeatureAddition.csproj" />
+    <Project Path="joke/SharingIsCaring/SharingIsCaring.csproj" />
+    <Project Path="joke/UnhingedMayoCode/UnhingedMayoJar.csproj" />
+  </Folder>
+  <Folder Name="/joke/totally-serious/">
+    <Project Path="joke/totally-serious/RandomCatsInEvents/RandomCatsInEvents.csproj" />
+    <Project Path="joke/totally-serious/Spenny/Spenny.csproj" />
+    <Project Path="joke/totally-serious/SpennyDeluxe/SpennyDeluxe.csproj" />
+    <Project Path="joke/totally-serious/SpennyLite/SpennyLite.csproj" />
+    <Project Path="joke/totally-serious/SpennyRealityWarp/SpennyRealityWarp.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/SpaceShared.GameAgnostic/SpaceShared.GameAgnostic.shproj" />
+    <Project Path="shared/SpaceShared.SourceGen/SpaceShared.SourceGen.shproj" />
+    <Project Path="shared/SpaceShared.MonoGame/SpaceShared.MonoGame.shproj" />
+    <Project Path="shared/SpaceShared.SourceGenerator/SpaceShared.SourceGenerator.csproj" />
+    <Project Path="shared/SpaceShared.Mods/SpaceShared.Mods.shproj" />
+    <Project Path="shared/SpaceShared.Mods.Harmony/SpaceShared.Mods.Harmony.shproj" />
+  </Folder>
+  <Folder Name="/_external/">
+    <File Path="_external/Directory.Build.targets" />
+    <Project Path="_external/GJKEPA_Project/GJKEPA_Project.csproj" />
+  </Folder>
+  <Folder Name="/_external/MLEM/">
+    <Project Path="_external/MLEM/MLEM.Ui/MLEM.Ui.csproj" />
+    <Project Path="_external/MLEM/MLEM/MLEM.csproj" />
+  </Folder>
+  <Folder Name="/_external/MonoScene/">
+    <Project Path="_external/MonoScene/src/MonoScene.Pipeline.GLTF/MonoScene.Pipeline.GLTF.csproj" />
+    <Project Path="_external/MonoScene/src/MonoScene.Pipeline/MonoScene.Pipeline.csproj" />
+    <Project Path="_external/MonoScene/src/MonoScene.Runtime.Content/MonoScene.Runtime.Content.csproj" />
+    <Project Path="_external/MonoScene/src/MonoScene.Runtime.Effects.Classic/MonoScene.Runtime.Effects.Classic.csproj" />
+    <Project Path="_external/MonoScene/src/MonoScene.Runtime.Effects.PBR/MonoScene.Runtime.Effects.PBR.csproj" />
+    <Project Path="_external/MonoScene/src/MonoScene.Runtime.Model3D/MonoScene.Runtime.Model3D.csproj" />
+    <Project Path="_external/MonoScene/src/MonoScene.Runtime.Scene3D/MonoScene.Runtime.Scene3D.csproj" />
+  </Folder>
+  <Folder Name="/_external_helpers/">
+    <File Path="_external_helpers/Directory.Build.targets" />
+    <Project Path="_external_helpers/MonoGamePolyfill/MonoGamePolyfill.csproj" />
+  </Folder>
+  <Folder Name="/_root/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/_root/targets/">
+    <File Path="common.targets" />
+    <File Path="documentation-generation.targets" />
+    <File Path="harmony.targets" />
+    <File Path="spacecore.targets" />
+  </Folder>
+</Solution>

@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>

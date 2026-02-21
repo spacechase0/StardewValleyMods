@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Name>Random Cats in Events</Name>
@@ -9,8 +9,7 @@
     <Version>1.1.0</Version>
     <UpdateKeys>Nexus:26444</UpdateKeys>
 
-    <TargetFramework>net6.0</TargetFramework>
-    <EnableHarmony>true</EnableHarmony>
+
   </PropertyGroup>
 
   <ItemGroup>

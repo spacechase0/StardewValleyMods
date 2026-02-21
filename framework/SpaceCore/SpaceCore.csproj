@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
+  <Import Project="$(SolutionDir)harmony.targets" />
   <Import Project="$(SolutionDir)documentation-generation.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
-  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
 
   <PropertyGroup>
     <Name>SpaceCore</Name>
@@ -12,9 +11,6 @@
     <UpdateKeys>Nexus:1348</UpdateKeys>
     <Version_AppendConfiguration>false</Version_AppendConfiguration> <!-- Otherwise mods get confused about having 1.13.0-Debug, but needing 1.13.0 or newer -->
 
-    <TargetFramework>net6.0</TargetFramework>
-
-    <EnableHarmony>true</EnableHarmony>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 

@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
     <Name>Spenny Lite</Name>
@@ -9,6 +8,6 @@
     <Version>1.0.4</Version>
     <UpdateKeys>Nexus:14249</UpdateKeys>
     
-    <TargetFramework>net6.0</TargetFramework>
+
   </PropertyGroup>
 </Project>

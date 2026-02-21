@@ -12,6 +12,6 @@
 	  <ProjectReference Include="$(SolutionDir)ContentEngine\SpaceCore.Content.Parser\SpaceCore.Content.Parser.csproj" />
 	</ItemGroup>
 
-	<Import Project="$(SolutionDir)shared\SpaceShared.Common\SpaceShared.Common.projitems" Label="Shared" />
+	<Import Project="$(SolutionDir)shared\SpaceShared.GameAgnostic\SpaceShared.GameAgnostic.projitems" Label="Shared" />
 
 </Project>

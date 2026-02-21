@@ -1,13 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Name>New Game Plus</Name>
     <Version>1.0.2</Version>
-    <TargetFramework>net6.0</TargetFramework>
-    <EnableHarmony>true</EnableHarmony>
+
   </PropertyGroup>
 
   <ItemGroup>

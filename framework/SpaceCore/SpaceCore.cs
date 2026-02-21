@@ -1114,14 +1114,6 @@ namespace SpaceCore
                 configMenu.AddKeybindList(ModManifest, () => Config.SocialInteractions_TriggerModifier, (val) => Config.SocialInteractions_TriggerModifier = val, () => I18n.Config_TriggerModifier_Name(), () => I18n.Config_TriggerModifier_Description());
             }
 
-            var entoaroxFramework = this.Helper.ModRegistry.GetApi<IEntoaroxFrameworkApi>("Entoarox.EntoaroxFramework");
-            if (entoaroxFramework != null)
-            {
-                Log.Info("Telling EntoaroxFramework to let us handle the serializer");
-                entoaroxFramework.HoistSerializerOwnership();
-            }
-
-
             var cp = Helper.ModRegistry.GetApi<IContentPatcherApi>("Pathoschild.ContentPatcher");
             if (cp != null)
             {

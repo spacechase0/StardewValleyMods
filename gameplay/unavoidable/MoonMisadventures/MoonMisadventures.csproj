@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
-  <Import Project="$(SolutionDir)shared\SpaceSharedPatching\SpaceSharedPatching.projitems" Label="Shared" />
+  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Name>Moon Misadventures</Name>
@@ -10,8 +9,7 @@
     <Version>0.2.0</Version>
     <UpdateKeys>Nexus:10612</UpdateKeys>
     
-    <TargetFramework>net6.0</TargetFramework>
-    <EnableHarmony>true</EnableHarmony>
+
 
     <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
   </PropertyGroup>

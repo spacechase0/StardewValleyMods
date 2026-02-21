@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
     <Name>Autocorrect Valley</Name>
@@ -9,7 +8,7 @@
     <Version>1.0.1</Version>
     <UpdateKeys>Nexus:</UpdateKeys>
 
-    <TargetFramework>net6.0</TargetFramework>
+
 
     <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
   </PropertyGroup>

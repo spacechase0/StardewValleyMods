@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)shared\SpaceShared\SpaceShared.projitems" Label="Shared" />
 
   <PropertyGroup>
     <Name>Hybrid Crop Engine</Name>
@@ -8,8 +7,6 @@
     <Description>Lets content packs add hybrid crops, which have a chance of appearing between two fully-grown parent crops.</Description>
     <Version>1.1.5</Version>
     <UpdateKeys>Nexus:6577</UpdateKeys>
-    
-    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

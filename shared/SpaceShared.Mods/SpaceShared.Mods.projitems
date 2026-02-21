@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>061610a4-7d02-4f52-a921-f59ed123c2a9</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SpaceShared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)apis\IBetterGameMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IFashionSenseApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IContentPatcherApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IExperienceBarsApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IGenericModConfigMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\ISpaceCoreApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BaseMod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CommonHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\ConsoleCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\ConsoleCommandHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommands\IConsoleCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DiagnosticMessages.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Log.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Migrations\PyTkMigrator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModDataHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PositionAnchor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SpaceUtility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Button.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Checkbox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Container.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Dropdown.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Element.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\ISingleTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ItemSlot.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ItemWithBorder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Label.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\RootElement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Scrollbar.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\ScrollContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Slider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\StaticContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Table.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Textbox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util.cs" />
+  </ItemGroup>
+</Project>
