@@ -483,6 +483,11 @@ namespace SpaceShared.UI
             if (this.OpenDropdown == null)
                 return;
 
+            // Prevent Dropdown.Update() mouse hit-test from overwriting our selection every frame.
+            // Without this, the hit-test runs on frames between D-pad presses and can pick a
+            // different choice based on stale getOldMouseY(), causing cursor flicker.
+            this.OpenDropdown.GamepadNavigated = true;
+
             int selected = this.OpenDropdown.ActiveChoice;
             int activePos = this.OpenDropdown.ActivePosition;
             int itemHeight = this.OpenDropdown.Height;
