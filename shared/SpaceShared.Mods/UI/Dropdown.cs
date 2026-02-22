@@ -1,5 +1,6 @@
 #if !DEPENDENCY_HAS_SPACESHARED
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -31,7 +32,14 @@ namespace SpaceShared.UI
         public string Value
         {
             get => this.Choices[this.ActiveChoice];
-            set { if (this.Choices.Contains(value)) this.ActiveChoice = Array.IndexOf(this.Choices, value); }
+            set
+            {
+                if (!this.Choices.Contains(value))
+                    return;
+
+                this.ActiveChoice = Array.IndexOf(this.Choices, value);
+                ScreenReaderText = Labels[ActiveChoice];
+            }
         }
 
         public string Label => this.Labels[this.ActiveChoice];
@@ -74,6 +82,7 @@ namespace SpaceShared.UI
                 justClicked = true;
                 this.Dropped = true;
                 this.Parent.RenderLast = this;
+                GetRoot().GamepadMovementRegionsDirty = true;
             }
 
             if (this.Dropped)
@@ -89,6 +98,7 @@ namespace SpaceShared.UI
                         this.Dropped = false;
                         if (this.Parent.RenderLast == this)
                             this.Parent.RenderLast = null;
+                        GetRoot().GamepadMovementRegionsDirty = true;
                     }
                 }
                 else
@@ -101,6 +111,7 @@ namespace SpaceShared.UI
                         this.Dropped = false;
                         if (this.Parent.RenderLast == this)
                             this.Parent.RenderLast = null;
+                        GetRoot().GamepadMovementRegionsDirty = true;
                     }
                 }
 
@@ -113,6 +124,8 @@ namespace SpaceShared.UI
                     this.ActiveChoice = choice + this.ActivePosition;
 
                     this.Callback?.Invoke(this);
+
+                    ScreenReaderText = Labels[ActiveChoice];
                 }
             }
 
@@ -180,6 +193,39 @@ namespace SpaceShared.UI
                     b.DrawString(Game1.smallFont, this.Labels[i], new Vector2(this.Position.X + 4, drawY + (i - this.ActivePosition) * this.Height + 8), Game1.textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
                 }
             }
+        }
+
+        public override IEnumerable<ClickableComponent> GetGamepadMovementRegions()
+        {
+            if (!Dropped)
+            {
+                foreach (var val in base.GetGamepadMovementRegions())
+                    yield return val;
+                yield break;
+            }
+
+            int maxValues = MaxValuesAtOnce;
+            int start = ActivePosition;
+            int end = Math.Min(Choices.Length, start + maxValues);
+            int tall = Math.Min(maxValues, this.Choices.Length - this.ActivePosition) * this.Height;
+            int drawY = Math.Min((int)this.Position.Y, Game1.uiViewport.Height - tall);
+            for (int i = Math.Max(start - 1, 0); i < Math.Min(end + 1, Choices.Length); ++i)
+            {
+                yield return new ElementClickableComponent(this, new Rectangle((int)this.Position.X + 4, drawY + (i - this.ActivePosition) * this.Height, this.Width - 48 - 8, this.Height), Choices[i])
+                {
+                    leftNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                    rightNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                    upNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                    downNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                    ScreenReaderText = Labels[i],
+                };
+            }
+        }
+
+        public override bool CurrentlyUsingGamepadMovement(out bool allowSnappyMovement)
+        {
+            allowSnappyMovement = true;
+            return Dropped;
         }
     }
 }

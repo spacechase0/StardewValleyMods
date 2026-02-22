@@ -1,10 +1,12 @@
 #if !DEPENDENCY_HAS_SPACESHARED
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
 
 #if IS_SPACECORE
 namespace SpaceCore.UI
@@ -15,7 +17,7 @@ namespace SpaceShared.UI
 {
     internal
 #endif
-         abstract class Element
+         abstract class Element : IScreenReadable
     {
         /*********
         ** Accessors
@@ -57,6 +59,9 @@ namespace SpaceShared.UI
         public virtual void Update(bool isOffScreen = false)
         {
             bool hidden = this.IsHidden(isOffScreen);
+
+            if (defaultClickable != null)
+                defaultClickable.bounds = Bounds;
 
             if (hidden)
             {
@@ -112,6 +117,33 @@ namespace SpaceShared.UI
         public bool IsHidden(bool isOffScreen = false)
         {
             return isOffScreen || this.ForceHide?.Invoke() == true;
+        }
+
+        public string ScreenReaderText { get; set; }
+        public string ScreenReaderDescription { get; set; }
+        public bool ScreenReaderIgnore { get; set; } = false;
+
+        private ClickableComponent defaultClickable;
+        public virtual IEnumerable<ClickableComponent> GetGamepadMovementRegions()
+        {
+            if (ScreenReaderIgnore)
+                yield break;
+
+            defaultClickable ??= new ElementClickableComponent(this, Bounds)
+            {
+                leftNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                rightNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                upNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                downNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+            };
+
+            yield return defaultClickable;
+        }
+
+        public virtual bool CurrentlyUsingGamepadMovement(out bool allowSnappyMovement)
+        {
+            allowSnappyMovement = true;
+            return false;
         }
     }
 }

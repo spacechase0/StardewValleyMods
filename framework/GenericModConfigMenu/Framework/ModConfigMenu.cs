@@ -105,6 +105,8 @@ namespace GenericModConfigMenu.Framework
         /// <summary>All mod configs available for display.</summary>
         private readonly ModConfigManager AllConfigs;
 
+        private Button KeybindsButton;
+
 
         /*********
         ** Accessors
@@ -134,7 +136,7 @@ namespace GenericModConfigMenu.Framework
             this.AllConfigs = configs;
 
             // init UI
-            this.Ui = new RootElement();
+            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
 
             // Table width (standard size)
             int tableWidth = 800;
@@ -146,12 +148,14 @@ namespace GenericModConfigMenu.Framework
             {
                 LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2, 16),
                 String = "",
-                Callback = _ => this.OnSearchChanged()
+                Callback = _ => this.OnSearchChanged(),
+                ScreenReaderIgnore = true,
             };
             this.Ui.AddChild(this.SearchBox);
-            
+
             // Automatically activate textbox so user can type immediately
-            this.SearchBox.Selected = true;
+            if (!Game1.options.gamepadControls || Game1.lastCursorMotionWasMouse)
+                this.SearchBox.Selected = true;
 
             // Create search placeholder (will be hidden when typing) - black text
             this.SearchPlaceholder = new Label
@@ -160,7 +164,7 @@ namespace GenericModConfigMenu.Framework
                 LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2 + 20, 20),
                 NonBoldScale = 0.8f,
                 IdleTextColor = Color.Black * 0.6f,
-                HoverTextColor = Color.Black * 0.6f
+                HoverTextColor = Color.Black * 0.6f,
             };
             this.Ui.AddChild(this.SearchPlaceholder);
 
@@ -176,12 +180,13 @@ namespace GenericModConfigMenu.Framework
 
             this.Ui.AddChild(this.Table);
 
-            var button = new Button(keybindsTexture)
+            KeybindsButton = new Button(keybindsTexture)
             {
                 LocalPosition = this.Table.LocalPosition - new Vector2( keybindsTexture.Width / 2 + 32, 0 ),
                 Callback = _ => openKeybindsMenu( this.ScrollRow),
+                ScreenReaderText = I18n.List_Keybinds(),
             };
-            this.Ui.AddChild(button);
+            this.Ui.AddChild(KeybindsButton);
 
             if (Constants.TargetPlatform == GamePlatform.Android)
                 this.initializeUpperRightCloseButton();
@@ -191,11 +196,7 @@ namespace GenericModConfigMenu.Framework
             if (scrollTo != null)
                 this.ScrollRow = scrollTo.Value;
 
-            if (!InGame)
-            {
-                // This hack lets gamepad cursor movement work without a harmony patch
-                Mod.instance.Helper.Reflection.GetField<bool>(Game1.activeClickableMenu, "titleInPosition").SetValue(false);
-            }
+            populateClickableComponentList();
         }
 
         /// <inheritdoc />
@@ -239,6 +240,12 @@ namespace GenericModConfigMenu.Framework
             if (key == Keys.Escape)
             {
                 Mod.ActiveConfigMenu = null;
+                return;
+            }
+
+            if (Game1.options.snappyMenus && Game1.options.gamepadControls && !overrideSnappyMenuCursorMovementBan())
+            {
+                applyMovementKey(key);
             }
         }
 
@@ -246,6 +253,7 @@ namespace GenericModConfigMenu.Framework
         public override void receiveScrollWheelAction(int direction)
         {
             this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
+            snapCursorToCurrentSnappedComponent();
         }
 
         private int scrollCounter = 0;
@@ -270,6 +278,9 @@ namespace GenericModConfigMenu.Framework
                 }
             }
             else scrollCounter = 0;
+
+            if (Ui.GamepadMovementRegionsDirty)
+                populateClickableComponentList();
         }
 
         /// <inheritdoc />
@@ -304,7 +315,7 @@ namespace GenericModConfigMenu.Framework
         {
             var oldUi = this.Ui;
 
-            this.Ui = new RootElement();
+            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
 
             // Table width (standard size)
             int tableWidth = 800;
@@ -332,12 +343,36 @@ namespace GenericModConfigMenu.Framework
             oldUi.RemoveChild(b);
             b.LocalPosition = this.Table.LocalPosition - new Vector2(b.Width / 2 + 32, 0);
             this.Ui.AddChild(b);
+
+            populateClickableComponentList();
+        }
+
+        public override void populateClickableComponentList()
+        {
+            base.populateClickableComponentList();
+
+            foreach (var entry in Ui.GetGamepadMovementRegions().ToArray())
+            {
+                if (entry.leftNeighborID == -1)
+                    entry.leftNeighborID = KeybindsButton.GetGamepadMovementRegions().First().myID;
+                allClickableComponents.Add(entry);
+            }
+            Ui.GamepadMovementRegionsDirty = false;
+
+            if (allClickableComponents.Contains(currentlySnappedComponent))
+                snapToDefaultClickableComponent();
         }
 
         /// <inheritdoc/>
         public override bool overrideSnappyMenuCursorMovementBan()
         {
-            return true;
+            return (Ui.CurrentSnappedElement?.CurrentlyUsingGamepadMovement(out bool snappy) ?? false) ? !snappy : false;
+        }
+
+        public override void snapToDefaultClickableComponent()
+        {
+            currentlySnappedComponent = SearchBox.GetGamepadMovementRegions().FirstOrDefault();
+            snapCursorToCurrentSnappedComponent();
         }
 
         /*********
@@ -361,6 +396,7 @@ namespace GenericModConfigMenu.Framework
             {
                 this.LastProcessedSearchQuery = this.CurrentSearchQuery;
                 this.RebuildModList();
+                populateClickableComponentList();
             }
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using GenericModConfigMenu.Framework.ModOption;
 using GenericModConfigMenu.Framework.Overlays;
 using Microsoft.Xna.Framework;
@@ -32,7 +33,7 @@ namespace GenericModConfigMenu.Framework
         private readonly int ScrollSpeed;
         private bool IsSubPage => !string.IsNullOrEmpty(this.CurrPage);
 
-        private RootElement Ui = new();
+        private RootElement Ui;
         private readonly Table Table;
         private readonly List<Label> OptHovers = new();
 
@@ -74,6 +75,7 @@ namespace GenericModConfigMenu.Framework
             ScrollSpeed = scrollSpeed;
             ReturnToList = returnToList;
 
+            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
             this.Table = new Table(fixedRowHeight: false)
             {
                 RowHeight = 50,
@@ -99,7 +101,8 @@ namespace GenericModConfigMenu.Framework
                     Label label = new Label
                     {
                         String = name,
-                        UserData = tooltip
+                        UserData = tooltip,
+                        ScreenReaderDescription = tooltip,
                     };
                     if (!string.IsNullOrEmpty(tooltip))
                         this.OptHovers.Add(label);
@@ -107,7 +110,8 @@ namespace GenericModConfigMenu.Framework
                     Element optionElement = new Label
                     {
                         String = "TODO",
-                        LocalPosition = new Vector2(500, 0)
+                        LocalPosition = new Vector2(500, 0),
+                        ScreenReaderIgnore = true,
                     };
                     Label rightLabel = null;
                     switch (opt)
@@ -122,6 +126,7 @@ namespace GenericModConfigMenu.Framework
                                 LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
                                 Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
                                 UserData = opt,
+                                ScreenReaderText = option.FormatValue(),
                             };
                             break;
 
@@ -135,6 +140,7 @@ namespace GenericModConfigMenu.Framework
                                 LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
                                 Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
                                 UserData = opt,
+                                ScreenReaderText = option.FormatValue(),
                             };
                             break;
                     }
@@ -150,6 +156,7 @@ namespace GenericModConfigMenu.Framework
                         String = config.ModName,
                         UserData = config.ModManifest.Description,
                         Bold = true,
+                        ScreenReaderDescription = config.ModManifest.Description,
                     };
                     if (!string.IsNullOrEmpty(config.ModManifest.Description))
                         OptHovers.Add(header);
@@ -168,6 +175,9 @@ namespace GenericModConfigMenu.Framework
             this.Table.ForceUpdateEvenHidden();
 
             RefreshKeybindColor();
+
+            populateClickableComponentList();
+            snapToDefaultClickableComponent();
         }
 
         public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
@@ -181,6 +191,7 @@ namespace GenericModConfigMenu.Framework
 
             this.ModConfig.ActiveDisplayPage = this.ModConfig.Pages[this.CurrPage];
 
+            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
             this.Table = new Table(fixedRowHeight: false)
             {
                 RowHeight = 50,
@@ -200,7 +211,8 @@ namespace GenericModConfigMenu.Framework
                 Label label = new Label
                 {
                     String = name,
-                    UserData = tooltip
+                    UserData = tooltip,
+                    ScreenReaderDescription = tooltip,
                 };
                 if (!string.IsNullOrEmpty(tooltip))
                     this.OptHovers.Add(label);
@@ -208,7 +220,8 @@ namespace GenericModConfigMenu.Framework
                 Element optionElement = new Label
                 {
                     String = "TODO",
-                    LocalPosition = new Vector2(500, 0)
+                    LocalPosition = new Vector2(500, 0),
+                    ScreenReaderIgnore = true,
                 };
                 Label rightLabel = null;
                 switch (opt)
@@ -225,7 +238,7 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
                             Checked = option.Value,
-                            Callback = (Element e) => option.Value = (e as Checkbox).Checked
+                            Callback = (Element e) => option.Value = (e as Checkbox).Checked,
                         };
                         break;
 
@@ -457,6 +470,9 @@ namespace GenericModConfigMenu.Framework
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
+
+            populateClickableComponentList();
+            snapToDefaultClickableComponent();
         }
 
         /// <inheritdoc />
@@ -466,7 +482,9 @@ namespace GenericModConfigMenu.Framework
             {
                 this.ActiveKeybindOverlay.OnLeftClick(x, y);
                 if (this.ActiveKeybindOverlay.IsFinished)
+                {
                     this.CloseKeybindOverlay();
+                }
             }
         }
 
@@ -475,13 +493,21 @@ namespace GenericModConfigMenu.Framework
         {
             if (key == Keys.Escape && !this.IsBindingKey)
                 this.ExitOnNextUpdate = true;
+
+            if (Game1.options.snappyMenus && Game1.options.gamepadControls && !overrideSnappyMenuCursorMovementBan())
+            {
+                applyMovementKey(key);
+            }
         }
 
         /// <inheritdoc />
         public override void receiveScrollWheelAction(int direction)
         {
             if (Dropdown.ActiveDropdown == null)
+            {
                 this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
+                snapCursorToCurrentSnappedComponent();
+            }
         }
 
         /// <inheritdoc />
@@ -495,10 +521,12 @@ namespace GenericModConfigMenu.Framework
         public override void update(GameTime time)
         {
             base.update(time);
+            if (Ui.GamepadMovementRegionsDirty)
+                populateClickableComponentList();
             this.Ui.Update();
 
             // TODO: This will be different if a dropdown is open
-            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0)
+            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0 && Dropdown.ActiveDropdown == null)
             {
                 if (++scrollCounter == 5)
                 {
@@ -507,6 +535,7 @@ namespace GenericModConfigMenu.Framework
                 }
             }
             else scrollCounter = 0;
+
 
             if (this.ExitOnNextUpdate)
                 this.Cancel();
@@ -557,7 +586,7 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
-            this.Ui = new RootElement();
+            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
 
             Vector2 newSize = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116);
 
@@ -575,14 +604,68 @@ namespace GenericModConfigMenu.Framework
             this.AddDefaultLabels(this.Manifest);
 
             this.ActiveKeybindOverlay?.OnWindowResized();
+
+            populateClickableComponentList();
+        }
+
+        public override void populateClickableComponentList()
+        {
+            base.populateClickableComponentList();
+
+            if (ActiveKeybindOverlay != null)
+                return;
+
+            allClickableComponents.AddRange(Ui.GetGamepadMovementRegions());
+            Ui.GamepadMovementRegionsDirty = false;
+
+            if (allClickableComponents.Contains(currentlySnappedComponent))
+                snapToDefaultClickableComponent();
         }
 
         /// <inheritdoc/>
         public override bool overrideSnappyMenuCursorMovementBan()
         {
-            return true;
+            if (ActiveKeybindOverlay != null)
+                return true;
+
+            return (Ui.CurrentSnappedElement?.CurrentlyUsingGamepadMovement(out bool snappy) ?? false) ? !snappy : false;
         }
 
+        public override void snapToDefaultClickableComponent()
+        {
+            if (ActiveKeybindOverlay != null)
+                return;
+
+            var allTable = Table.Children.SelectMany(c => c.GetGamepadMovementRegions()).ToArray();
+            currentlySnappedComponent = allClickableComponents.FirstOrDefault(c => c.visible && allTable.Contains(c));
+            currentlySnappedComponent ??= allClickableComponents.FirstOrDefault(c => c.visible);
+            snapCursorToCurrentSnappedComponent();
+        }
+
+        protected override void noSnappedComponentFound(int direction, int oldRegion, int oldID)
+        {
+            var oldComp = getComponentWithID(oldID);
+            if (oldComp == null)
+            {
+                snapToDefaultClickableComponent();
+                return;
+            }
+
+            int neighbor = direction switch
+            {
+                Game1.up => oldComp.upNeighborID,
+                Game1.down => oldComp.downNeighborID,
+                _ => int.MinValue
+            };
+            if (neighbor == int.MinValue)
+                return;
+
+            if (neighbor != ClickableComponent.SNAP_AUTOMATIC)
+            {
+                currentlySnappedComponent = oldComp;
+                automaticSnapBehavior(direction, oldComp.region, oldComp.myID);
+            }
+        }
 
         /// <summary>Raised when any buttons are pressed or released.</summary>
         /// <param name="e">The event arguments.</param>
@@ -803,6 +886,9 @@ namespace GenericModConfigMenu.Framework
             };
 
             this.Ui.Obscured = true;
+
+            populateClickableComponentList();
+            snapToDefaultClickableComponent();
         }
 
         /// <summary>Close the current keybind overlay.</summary>
@@ -812,6 +898,8 @@ namespace GenericModConfigMenu.Framework
             this.Ui.Obscured = false;
 
             RefreshKeybindColor();
+
+            populateClickableComponentList();
         }
 
         private void RefreshKeybindColor()

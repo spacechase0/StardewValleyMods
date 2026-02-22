@@ -1,16 +1,16 @@
 using System;
-using GenericModConfigMenu.Framework; // DELETE THIS LINE WHEN COPIED INTO YOUR MOD CODE
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace GenericModConfigMenu
 {
     /// <summary>The API which lets other mods add a config UI through Generic Mod Config Menu.</summary>
-    public interface IGenericModConfigMenuApi
-        : IGenericModConfigMenuApiWithObsoleteMethods // DELETE THIS LINE WHEN COPIED INTO YOUR MOD CODE
+    public interface IGenericModConfigMenuApi // Obsolete methods can be found in Framework/IGenericModConfigMenuApiWithObsoleteMethods
     {
         /*********
         ** Methods
@@ -151,10 +151,21 @@ namespace GenericModConfigMenu
         /// <param name="beforeReset">A callback raised before the form is reset to its default values (i.e. before the <c>reset</c> callback passed to <see cref="Register"/>).</param>
         /// <param name="afterReset">A callback raised after the form is reset to its default values (i.e. after the <c>reset</c> callback passed to <see cref="Register"/>).</param>
         /// <param name="beforeMenuClosed">A callback raised just before the menu containing this option is closed.</param>
+        /// <param name="snapRegionsOverride">Override the snap regions of your widget, enabling snappy gamepad movement for it. The returned clickable components's ID and neighbor IDs (if set to ClickableComponent.SNAP_AUTOMATIC) may be modified by GMCM as needed.</param>
+        /// <param name="snapRegionsNeedRefreshing">Return true if either the list provided from the previous call of <paramref name="snapRegionsOverride"/> or the result of <paramref name="usingGamepadMovement"/> has changed, and false otherwise.</param>
+        /// <param name="usingGamepadMovement">
+        ///     <para>Allows keeping gamepad input from moving to other widgets.</para>
+        ///     <para>If <c>null</c> is returned (or this callback is not supplied), the gamepad can move to other widgets like normal.</para>
+        ///     <para>If <c>true</c> is returned, only your elements will be accessible (similar to an active dropdown box).</para>
+        ///     <para>If <c>false</c> is returned, snappy movement will be disabled (similar to an active slider).</para>
+        /// </param>
         /// <param name="height">The pixel height to allocate for the option in the form, or <c>null</c> for a standard input-sized option. This is called and cached each time the form is opened.</param>
         /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
         /// <remarks>The custom logic represented by the callback parameters is responsible for managing its own state if needed. For example, you can store state in a static field or use closures to use a state variable.</remarks>
-        void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeMenuOpened = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Action beforeMenuClosed = null, Func<int> height = null, string fieldId = null);
+        void AddComplexOptionWithGamepadSupport(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null,
+            Action beforeMenuOpened = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Action beforeMenuClosed = null,
+            Func<IEnumerable<ClickableComponent>> snapRegionsOverride = null, Func<bool> snapRegionsNeedRefreshing = null, Func<bool?> usingGamepadMovement = null,
+            Func<int> height = null, string fieldId = null);
 
         /// <summary>Set whether the options registered after this point can only be edited from the title screen.</summary>
         /// <param name="mod">The mod's manifest.</param>

@@ -39,7 +39,24 @@ namespace SpaceShared.UI
 
                 this.SelectedImpl = value;
                 if (this.SelectedImpl)
+                {
                     Game1.keyboardDispatcher.Subscriber = this;
+                    if ( Game1.options.gamepadControls && !Game1.lastCursorMotionWasMouse )
+                    {
+                        var dummy = new StardewValley.Menus.TextBox(null, null, Game1.dialogueFont, Game1.textColor);
+                        dummy.Width = Bounds.Width;
+                        dummy.limitWidth = false;
+                        dummy.Text = String;
+                        dummy.Selected = true;
+                        dummy.OnEnterPressed += _ =>
+                        {
+                            String = dummy.Text;
+                            Callback?.Invoke(this);
+                            ScreenReaderText = String;
+                        };
+                        Game1.showTextEntry(dummy);
+                    }
+                }
                 else
                 {
                     if (Game1.keyboardDispatcher.Subscriber == this)
@@ -141,6 +158,7 @@ namespace SpaceShared.UI
                 Game1.playSound("tinyWhip");
                 this.String = this.String.Substring(0, this.String.Length - 1);
                 this.Callback?.Invoke(this);
+                ScreenReaderText = String;
             }
         }
 
@@ -155,6 +173,7 @@ namespace SpaceShared.UI
         {
             this.String += str;
             this.Callback?.Invoke(this);
+            ScreenReaderText = String;
         }
     }
 }

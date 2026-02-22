@@ -1,6 +1,9 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewValley.Menus;
 
 namespace GenericModConfigMenu.Framework.ModOption
 {
@@ -10,7 +13,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         /*********
         ** Fields
         *********/
-        /// <summary>Draw the option in the config UI. This is called with the sprite batch being rendered, the pixel position at which to start drawing, and the current option value. This should return the new value.</summary>
+        /// <summary>Draw the option in the config UI. This is called with the sprite batch being rendered, the pixel position at which to start drawing, and the current option value.</summary>
         private readonly Action<SpriteBatch, Vector2> DrawImpl;
 
         /// <summary>A callback raised before the form's current values are saved to the config.</summary>
@@ -30,6 +33,10 @@ namespace GenericModConfigMenu.Framework.ModOption
 
         /// <summary>A callback raised before the menu is closed.</summary>
         private readonly Action BeforeMenuClosedImpl;
+
+        private readonly Func<IEnumerable<ClickableComponent>> SnapRegionsOverride;
+        private readonly Func<bool> SnapRegionsNeedRefreshing;
+        private readonly Func<bool?> UsingGamepadMovement;
 
 
         /*********
@@ -55,7 +62,10 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="beforeReset">A callback raised before the form is reset to its default values.</param>
         /// <param name="afterReset">A callback raised after the form is reset to its default values.</param>
         /// <param name="beforeMenuClosed">A callback raised just before the menu is closed.</param>
-        public ComplexModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<int> height, Action<SpriteBatch, Vector2> draw, Action beforeMenuOpened, Action beforeSave, Action afterSave, Action beforeReset, Action afterReset, Action beforeMenuClosed)
+        public ComplexModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod,
+            Func<int> height, Action<SpriteBatch, Vector2> draw,
+            Action beforeMenuOpened, Action beforeSave, Action afterSave, Action beforeReset, Action afterReset, Action beforeMenuClosed,
+            Func<IEnumerable<ClickableComponent>> snapRegionsOverride, Func<bool> snapRegionsNeedRefreshing, Func<bool?> usingGamepadMovement)
             : base(fieldId, name, tooltip, mod)
         {
             height ??= () => 0; // UI will ignore values below the minimum one row
@@ -68,6 +78,9 @@ namespace GenericModConfigMenu.Framework.ModOption
             this.BeforeResetImpl = beforeReset;
             this.AfterResetImpl = afterReset;
             this.BeforeMenuClosedImpl = beforeMenuClosed;
+            this.SnapRegionsOverride = snapRegionsOverride;
+            this.SnapRegionsNeedRefreshing = snapRegionsNeedRefreshing;
+            this.UsingGamepadMovement = usingGamepadMovement;
         }
 
         /// <inheritdoc />
@@ -109,9 +122,31 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>Draw the option to the form.</summary>
         /// <param name="spriteBatch">The sprite batch being rendered.</param>
         /// <param name="position">The pixel position at which to start drawing.</param>
-        public void Draw(SpriteBatch spriteBatch, Vector2 position)
+        public bool? Draw(SpriteBatch spriteBatch, Vector2 position)
         {
             this.DrawImpl(spriteBatch, position);
+            return SnapRegionsNeedRefreshing?.Invoke() ?? false;
+        }
+
+        public bool HasSnappySupport()
+        {
+            return SnapRegionsNeedRefreshing != null;
+        }
+
+        public IEnumerable<ClickableComponent> GetGamepadMovementRegions()
+        {
+            return SnapRegionsOverride?.Invoke();
+        }
+
+        public bool CurrentlyUsingGamepadMovement(out bool allowSnappyMovement)
+        {
+            allowSnappyMovement = true;
+            bool? result = UsingGamepadMovement?.Invoke();
+            if (!result.HasValue)
+                return false;
+
+            allowSnappyMovement = result.Value;
+            return true;
         }
     }
 }

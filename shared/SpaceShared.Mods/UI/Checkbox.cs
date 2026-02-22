@@ -57,6 +57,7 @@ namespace SpaceShared.UI
                 this.Checked = !this.Checked;
                 this.Callback.Invoke(this);
             }
+            ScreenReaderText = Checked ? "true" : "false";
         }
 
         /// <inheritdoc />

@@ -43,6 +43,7 @@ namespace SpaceShared.UI
 
             this.String += str;
             this.Callback?.Invoke(this);
+            ScreenReaderText = String;
         }
     }
 }

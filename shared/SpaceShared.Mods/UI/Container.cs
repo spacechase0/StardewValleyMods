@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Graphics;
+using StardewValley.Menus;
 
 #if IS_SPACECORE
 namespace SpaceCore.UI
@@ -81,7 +83,15 @@ namespace SpaceShared.UI
             if (this.UpdateChildren)
             {
                 foreach (var element in this.ChildrenImpl)
+                {
                     element.Update(isOffScreen);
+
+                    if (element is Container)
+                        continue;
+
+                    foreach (var region in element.GetGamepadMovementRegions())
+                        region.visible = !isOffScreen;
+                }
             }
         }
 
@@ -98,6 +108,38 @@ namespace SpaceShared.UI
                 child.Draw(b);
             }
             this.RenderLast?.Draw(b);
+        }
+
+        private ConditionalWeakTable<ClickableComponent, SpaceShared.Holder<bool>> modifiedRegions = new();
+        public override IEnumerable<ClickableComponent> GetGamepadMovementRegions()
+        {
+            int[] idSkip = [ClickableComponent.SNAP_AUTOMATIC, ClickableComponent.CUSTOM_SNAP_BEHAVIOR, ClickableComponent.SNAP_TO_DEFAULT, -1];
+            int childCounter = 0;
+            foreach (var child in this.ChildrenImpl)
+            {
+                int idCounter = 0;
+                foreach (var region in child.GetGamepadMovementRegions().ToArray())
+                {
+                    ++idCounter; // TODO: This won't work right if a refresh makes new ones appear
+
+                    var didMod = modifiedRegions.GetOrCreateValue(region);
+                    if (!didMod.Value)
+                    {
+                        didMod.Value = true;
+
+                        if (region.myID == ClickableComponent.ID_ignore)
+                            region.myID = idCounter;
+
+                        region.myID += childCounter * 1000;
+                        if (!idSkip.Contains(region.leftNeighborID)) region.leftNeighborID += childCounter * 1000;
+                        if (!idSkip.Contains(region.rightNeighborID)) region.rightNeighborID += childCounter * 1000;
+                        if (!idSkip.Contains(region.upNeighborID)) region.upNeighborID += childCounter * 1000;
+                        if (!idSkip.Contains(region.downNeighborID)) region.downNeighborID += childCounter * 1000;
+                    }
+                    yield return region;
+                }
+                ++childCounter;
+            }
         }
     }
 }

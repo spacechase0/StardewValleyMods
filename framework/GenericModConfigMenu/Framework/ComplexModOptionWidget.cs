@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using GenericModConfigMenu.Framework.ModOption;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared.UI;
+using StardewValley.Menus;
 
 namespace GenericModConfigMenu.Framework
 {
@@ -39,6 +41,22 @@ namespace GenericModConfigMenu.Framework
                 return;
 
             this.ModOption.Draw(b, this.Position);
+        }
+
+        public override IEnumerable<ClickableComponent> GetGamepadMovementRegions()
+        {
+            return ModOption.GetGamepadMovementRegions();
+        }
+
+        public override bool CurrentlyUsingGamepadMovement(out bool allowSnappyMovement)
+        {
+            if (!ModOption.HasSnappySupport())
+            {
+                allowSnappyMovement = false;
+                return true;
+            }
+
+            return ModOption.CurrentlyUsingGamepadMovement(out allowSnappyMovement);
         }
     }
 }

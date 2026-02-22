@@ -36,8 +36,9 @@ namespace SpaceShared.UI
             this.UpdateChildren = false; // table will update children itself
             this.Scrollbar = new Scrollbar
             {
-                LocalPosition = new Vector2(0, 0)
+                LocalPosition = new Vector2(0, 0),
             };
+            Scrollbar.OnScrolled += (_, _, _) => GetRoot().GamepadMovementRegionsDirty = true;
             this.AddChild(this.Scrollbar);
         }
         public override void OnChildrenChanged()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -9,11 +10,12 @@ using SpaceShared;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Menus;
 
 namespace GenericModConfigMenu.Framework
 {
     /// <inheritdoc cref="IGenericModConfigMenuApi" />
-    public class Api : IGenericModConfigMenuApi
+    public class Api : IGenericModConfigMenuApiWithObsoleteMethods
     {
         /*********
         ** Fields
@@ -177,11 +179,16 @@ namespace GenericModConfigMenu.Framework
         ** Advanced
         ****/
         /// <inheritdoc />
-        public void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeMenuOpened = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Action beforeMenuClosed = null, Func<int> height = null, string fieldId = null)
+        public void AddComplexOptionWithGamepadSupport(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null,
+            Action beforeMenuOpened = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Action beforeMenuClosed = null,
+            Func<IEnumerable<ClickableComponent>> snapRegionsOverride = null, Func<bool> snapRegionsNeedRefreshing = null, Func<bool?> usingGamepadMovement = null,
+            Func<int> height = null, string fieldId = null)
         {
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
 
-            modConfig.AddOption(new ComplexModOption(fieldId: fieldId, name: name, tooltip: tooltip, mod: modConfig, height: height, draw: draw, beforeMenuOpened: beforeMenuOpened, beforeSave: beforeSave, afterSave: afterSave, beforeReset: beforeReset, afterReset: afterReset, beforeMenuClosed: beforeMenuClosed));
+            modConfig.AddOption(new ComplexModOption(fieldId: fieldId, name: name, tooltip: tooltip, mod: modConfig, height: height, draw: draw,
+                beforeMenuOpened: beforeMenuOpened, beforeSave: beforeSave, afterSave: afterSave, beforeReset: beforeReset, afterReset: afterReset, beforeMenuClosed: beforeMenuClosed,
+                snapRegionsOverride: snapRegionsOverride, snapRegionsNeedRefreshing: snapRegionsNeedRefreshing, usingGamepadMovement: usingGamepadMovement));
         }
 
         /// <inheritdoc />
@@ -511,6 +518,14 @@ namespace GenericModConfigMenu.Framework
         {
             this.LogDeprecation(mod, nameof(SubscribeToChange) + "(IManifest mod, Action<string, string> changeHandler)");
             this.SubscribeToChange<string>(mod, changeHandler);
+        }
+
+        /// <inheritdoc />
+        [Obsolete]
+        public void AddComplexOption(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip = null, Action beforeMenuOpened = null, Action beforeSave = null, Action afterSave = null, Action beforeReset = null, Action afterReset = null, Action beforeMenuClosed = null, Func<int> height = null, string fieldId = null)
+        {
+            this.LogDeprecation(mod, nameof(AddComplexOption) + "(IManifest mod, Func<string> name, Action<SpriteBatch, Vector2> draw, Func<string> tooltip, Action beforeMenuOpened, Action beforeSave, Action afterSave, Action beforeReset, Action afterReset, Action beforeMenuClosed, Func<int> height, string fieldId)");
+            AddComplexOptionWithGamepadSupport(mod, name, draw, tooltip, beforeMenuOpened, beforeSave, afterSave, beforeReset, afterReset, beforeMenuClosed, null, null, null, height, fieldId);
         }
 
 

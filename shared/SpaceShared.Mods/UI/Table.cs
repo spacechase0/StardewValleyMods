@@ -1,6 +1,9 @@
 #if !DEPENDENCY_HAS_SPACESHARED
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -75,6 +78,7 @@ namespace SpaceShared.UI
             {
                 LocalPosition = new Vector2(0, 0)
             };
+            Scrollbar.OnScrolled += (_, _, _) => GetRoot().GamepadMovementRegionsDirty = true;
             this.AddChild(this.Scrollbar);
         }
 
@@ -89,6 +93,131 @@ namespace SpaceShared.UI
             }
             this.ContentHeight += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
             this.UpdateScrollbar();
+        }
+
+        private ConditionalWeakTable<ClickableComponent, SpaceShared.Holder<bool>> modifiedRegions = new();
+        public override IEnumerable<ClickableComponent> GetGamepadMovementRegions()
+        {
+            {
+                var scroll = Scrollbar.GetGamepadMovementRegions().ToArray();
+                int idCounter = 0;
+                foreach (var entry in scroll)
+                {
+                    entry.myID = idCounter++;
+                    yield return entry;
+                }
+            }
+
+            int rowCounter = 0;
+            List<ClickableComponent> prevRow = new();
+            List<ClickableComponent> currRow = new();
+            foreach (var row in Rows)
+            {
+                ++rowCounter;
+                currRow.Clear();
+
+                int idCounter = 0;
+                foreach (var elem in row)
+                {
+                    var regions = elem.GetGamepadMovementRegions().ToArray();
+                    foreach (var entry in regions)
+                    {
+                        var didMod = modifiedRegions.GetOrCreateValue(entry);
+                        if (!didMod.Value)
+                        {
+                            didMod.Value = true;
+                            entry.myID = rowCounter * 10 + idCounter++; // TODO: This won't work right if a refresh makes new ones appear
+                        }
+
+                        // TODO: May not work right with some row configurations
+                        if (entry.leftNeighborID == ClickableComponent.SNAP_AUTOMATIC)
+                            entry.leftNeighborID = (idCounter > 1) ? (entry.myID - 1) : -1;
+                        if (entry.rightNeighborID == ClickableComponent.SNAP_AUTOMATIC)
+                            entry.rightNeighborID = (elem != row.Last() || entry != regions.Last()) ? (entry.myID + 1) : -1;
+
+                        if (entry.upNeighborID == ClickableComponent.SNAP_AUTOMATIC && rowCounter > 1)
+                        {
+                            int bestOverlapScore = int.MinValue;
+                            int bestDiffScore = int.MaxValue;
+                            foreach (var prevEntry in prevRow)
+                            {
+                                Rectangle a = new(prevEntry.bounds.Left, 0, prevEntry.bounds.Width, 10);
+                                Rectangle b = new(entry.bounds.Left, 0, entry.bounds.Width, 10);
+
+                                Rectangle overlap = Rectangle.Intersect(a, b);
+                                if (overlap.Width > 0)
+                                {
+                                    if (overlap.Width > bestOverlapScore)
+                                    {
+                                        bestOverlapScore = overlap.Width;
+                                        entry.upNeighborID = prevEntry.myID;
+                                    }
+                                    continue;
+                                }
+                                if (bestOverlapScore > 0)
+                                    continue;
+
+                                int diff = Math.Max(0, prevEntry.bounds.Left - entry.bounds.Right);
+                                diff = Math.Min(diff, Math.Max(0, entry.bounds.Left - prevEntry.bounds.Right));
+
+                                if (diff < bestDiffScore)
+                                {
+                                    bestDiffScore = diff;
+                                    entry.upNeighborID = prevEntry.myID;
+                                }
+                            }
+                        }
+
+                        foreach (var prevEntry in prevRow)
+                        {
+                            ClickableComponent existing = currRow.FirstOrDefault(c => c.myID == prevEntry.downNeighborID);
+                            if (prevEntry.downNeighborID != ClickableComponent.SNAP_AUTOMATIC && existing != null)
+                                continue;
+
+                            if (existing != null)
+                            {
+                                Rectangle a = new(prevEntry.bounds.Left, 0, prevEntry.bounds.Width, 10);
+                                Rectangle b = new(existing.bounds.Left, 0, existing.bounds.Width, 10);
+                                int overlapScore = Rectangle.Intersect(a, b).Width;
+                                if (overlapScore == 0) overlapScore = int.MinValue;
+
+                                Rectangle c = new(entry.bounds.Left, 0, entry.bounds.Width, 10);
+                                int newOverlapScore = Rectangle.Intersect(a, c).Width;
+                                if (newOverlapScore == 0) overlapScore = int.MinValue;
+
+                                if (newOverlapScore > overlapScore)
+                                {
+                                    prevEntry.downNeighborID = entry.myID;
+                                    continue;
+                                }
+                                if (newOverlapScore > 0 || overlapScore > 0)
+                                    continue;
+
+                                int diffScore = Math.Max(0, prevEntry.bounds.Left - existing.bounds.Right);
+                                diffScore = Math.Min(diffScore, Math.Max(0, existing.bounds.Left - prevEntry.bounds.Right));
+
+                                int newDiffScore = Math.Max(0, prevEntry.bounds.Left - entry.bounds.Right);
+                                newDiffScore = Math.Min(newDiffScore, Math.Max(0, entry.bounds.Left - prevEntry.bounds.Right));
+
+                                if (newDiffScore > diffScore)
+                                {
+                                    prevEntry.downNeighborID = entry.myID;
+                                }
+                            }
+                            else
+                            {
+                                prevEntry.downNeighborID = entry.myID;
+                            }
+                        }
+
+                        currRow.Add(entry);
+                        yield return entry;
+                    }
+                }
+
+                prevRow.Clear();
+                prevRow.AddRange(currRow);
+            }
         }
 
         /// <inheritdoc />
@@ -109,6 +238,8 @@ namespace SpaceShared.UI
 
                     if (!isChildOffScreen || element is Label) // Labels must update anyway to get rid of hovertext on scrollwheel
                         element.Update(isOffScreen: isChildOffScreen);
+                    foreach (var region in element.GetGamepadMovementRegions())
+                        region.visible = !isChildOffScreen;
                     maxElementHeight = Math.Max(maxElementHeight, element.Height);
                 }
                 topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;
@@ -134,6 +265,8 @@ namespace SpaceShared.UI
                     bool isChildOffScreen = isOffScreen || this.IsElementOffScreen(element);
 
                     element.Update(isOffScreen: isChildOffScreen);
+                    foreach (var region in element.GetGamepadMovementRegions())
+                        region.visible = !isChildOffScreen;
                     maxElementHeight = Math.Max(maxElementHeight, element.Height);
                 }
                 topPx += this.FixedRowHeight ? this.RowHeight : maxElementHeight + RowPadding;

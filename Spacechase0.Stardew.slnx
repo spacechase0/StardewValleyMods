@@ -76,11 +76,11 @@
   </Folder>
   <Folder Name="/shared/">
     <Project Path="shared/SpaceShared.GameAgnostic/SpaceShared.GameAgnostic.shproj" />
-    <Project Path="shared/SpaceShared.SourceGen/SpaceShared.SourceGen.shproj" />
-    <Project Path="shared/SpaceShared.MonoGame/SpaceShared.MonoGame.shproj" />
-    <Project Path="shared/SpaceShared.SourceGenerator/SpaceShared.SourceGenerator.csproj" />
-    <Project Path="shared/SpaceShared.Mods/SpaceShared.Mods.shproj" />
     <Project Path="shared/SpaceShared.Mods.Harmony/SpaceShared.Mods.Harmony.shproj" />
+    <Project Path="shared/SpaceShared.Mods/SpaceShared.Mods.shproj" />
+    <Project Path="shared/SpaceShared.MonoGame/SpaceShared.MonoGame.shproj" />
+    <Project Path="shared/SpaceShared.SourceGen/SpaceShared.SourceGen.shproj" />
+    <Project Path="shared/SpaceShared.SourceGenerator/SpaceShared.SourceGenerator.csproj" />
   </Folder>
   <Folder Name="/_external/">
     <File Path="_external/Directory.Build.targets" />

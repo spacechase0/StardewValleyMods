@@ -260,7 +260,7 @@ namespace GenericModConfigMenu
         {
             if (this.Ui == null)
             {
-                this.Ui = new RootElement();
+                this.Ui = new RootElement(() => Game1.activeClickableMenu?.currentlySnappedComponent, dir => Game1.activeClickableMenu?.moveCursorInDirection(dir));
 
                 Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
                 this.ConfigButton = new Button(tex)
@@ -270,7 +270,8 @@ namespace GenericModConfigMenu
                     {
                         Game1.playSound("newArtifact");
                         this.OpenListMenuNew();
-                    }
+                    },
+                    ScreenReaderText = I18n.Button_ModOptions(),
                 };
 
                 this.Ui.AddChild(this.ConfigButton);
@@ -284,6 +285,7 @@ namespace GenericModConfigMenu
                 {
                     myID = 509800,
                     rightNeighborID = tm.buttons[0].myID,
+                    ScreenReaderText = I18n.Button_ModOptions(),
                 };
                 tm.allClickableComponents?.Add(button);
                 tm.buttons[0].leftNeighborID = 509800;
@@ -374,12 +376,6 @@ namespace GenericModConfigMenu
                 this.Ui?.Update();
             }
 
-            if (wasConfigMenu && TitleMenu.subMenu == null)
-            {
-                var f = Helper.Reflection.GetField<bool>(Game1.activeClickableMenu, "titleInPosition");
-                if (!f.GetValue())
-                    f.SetValue(true);
-            }
             wasConfigMenu = TitleMenu.subMenu is ModConfigMenu || TitleMenu.subMenu is SpecificModConfigMenu;
         }
 

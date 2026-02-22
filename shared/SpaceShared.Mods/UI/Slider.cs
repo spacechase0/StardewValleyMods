@@ -1,5 +1,6 @@
 #if !DEPENDENCY_HAS_SPACESHARED
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -79,6 +80,11 @@ namespace SpaceShared.UI
                     this.Dragging = false;
             }
 
+            if ( Dragging )
+                GetRoot().GamepadMovementRegionsDirty = true;
+
+            if (valueMarkerRegion != null)
+                valueMarkerRegion.bounds = Bounds;
 
             if (this.Dragging)
             {
@@ -95,6 +101,7 @@ namespace SpaceShared.UI
             }
         }
 
+        private ElementClickableComponent valueMarkerRegion;
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
@@ -110,9 +117,33 @@ namespace SpaceShared.UI
 
             Rectangle back = new Rectangle((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
             Rectangle front = new Rectangle((int)(this.Position.X + perc * (this.Width - 40)), (int)this.Position.Y, 40, this.Height);
+            if (valueMarkerRegion != null)
+                valueMarkerRegion.bounds = front;
 
             IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), back.X, back.Y, back.Width, back.Height, Color.White, Game1.pixelZoom, false);
             b.Draw(Game1.mouseCursors, new Vector2(front.X, front.Y), new Rectangle(420, 441, 10, 6), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.9f);
+        }
+
+        public override IEnumerable<ClickableComponent> GetGamepadMovementRegions()
+        {
+            valueMarkerRegion ??= new ElementClickableComponent(this, Rectangle.Empty)
+            {
+                leftNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                rightNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                upNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                downNeighborID = ClickableComponent.SNAP_AUTOMATIC,
+                ScreenReaderText = Value.ToString(),
+            };
+            yield return valueMarkerRegion;
+        }
+
+        public override bool CurrentlyUsingGamepadMovement(out bool allowSnappyMovement)
+        {
+            if (!Dragging)
+                return base.CurrentlyUsingGamepadMovement(out allowSnappyMovement);
+
+            allowSnappyMovement = false;
+            return true;
         }
     }
 }

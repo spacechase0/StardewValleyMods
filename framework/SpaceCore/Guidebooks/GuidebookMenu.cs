@@ -63,7 +63,7 @@ internal class GuidebookMenu : IClickableMenu
         height += 200;
         xPositionOnScreen = (Game1.uiViewport.Width - width) / 2;
         yPositionOnScreen = (Game1.uiViewport.Height - height) / 2;
-        Ui = new RootElement()
+        Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir))
         {
             LocalPosition = new(xPositionOnScreen, yPositionOnScreen),
         };
@@ -95,9 +95,9 @@ internal class GuidebookMenu : IClickableMenu
 
         PreviousPageButton = new()
         {
-            LocalPosition = new Vector2( 16, height - ( 50 - 11*Game1.pixelZoom / 2)),
+            LocalPosition = new Vector2(16, height - (50 - 11 * Game1.pixelZoom / 2)),
             Texture = Game1.mouseCursors,
-            TexturePixelArea = new Rectangle( 352, 495, 12, 11 ),
+            TexturePixelArea = new Rectangle(352, 495, 12, 11),
             Scale = Game1.pixelZoom,
             Callback = (_) =>
             {
@@ -106,7 +106,8 @@ internal class GuidebookMenu : IClickableMenu
                     CurrentPage -= 1;
                     RefreshPage();
                 }
-            }
+            },
+            ScreenReaderText = I18n.Guidebook_PreviousPage()
         };
         Ui.AddChild(PreviousPageButton);
         NextPageButton = new()
@@ -122,7 +123,8 @@ internal class GuidebookMenu : IClickableMenu
                     CurrentPage += 1;
                     RefreshPage();
                 }
-            }
+            },
+            ScreenReaderText = I18n.Guidebook_NextPage()
         };
         Ui.AddChild(NextPageButton);
 
@@ -147,6 +149,7 @@ internal class GuidebookMenu : IClickableMenu
                 TexturePixelArea = chapData.TabIconRect,
                 Scale = chapData.TabIconScale,
                 Callback = (_) => GotoChapter(chapter, null),
+                ScreenReaderText = chapData.Name,
             };
             tab.LocalPosition = new Vector2(-tab.Width, PageContainer.LocalPosition.Y + y);
             Ui.AddChild(tab);
@@ -278,6 +281,7 @@ internal class GuidebookMenu : IClickableMenu
                                 String = str,
                                 LocalPosition = pos,
                                 UserData = elem.Hover,
+                                ScreenReaderText = str,
                             };
 
                             if (elem.Tags.TryGetValue("center", out string centerStr))
@@ -302,6 +306,7 @@ internal class GuidebookMenu : IClickableMenu
                                         Type = GuidebookParser.HoverData.HoverType.Text,
                                         HoverValue = elem.OnClick.Value,
                                     };
+                                    label.ScreenReaderDescription = elem.OnClick.Value;
                                 }
                             }
 
@@ -348,6 +353,7 @@ internal class GuidebookMenu : IClickableMenu
                         string imagePath = parts[0];
                         Rectangle? rect = null;
                         int scale = elem.Type == GuidebookParser.Element.ElementType.InlineImage ? 2 : 4;
+                        string altText = elem.Type == GuidebookParser.Element.ElementType.InlineImage ? null : imagePath;
                         if (parts.Length >= 2 && parts[1] != "null")
                         {
                             string[] rectParts = parts[1].Split(',');
@@ -375,6 +381,10 @@ internal class GuidebookMenu : IClickableMenu
                                 Log.Warn($"Failed to parse \"{elem.Value}\" image scale: Must be an integer");
                             }
                         }
+                        if (parts.Length >= 4)
+                        {
+                            altText = parts[3];
+                        }
 
                         Image img = new Image()
                         {
@@ -383,6 +393,8 @@ internal class GuidebookMenu : IClickableMenu
                             Scale = scale,
                             LocalPosition = new(x, y),
                             UserData = elem.Hover,
+                            ScreenReaderText = altText,
+                            ScreenReaderIgnore = altText == null,
                         };
                         if (!elem.Tags.ContainsKey("nospacing"))
                         {
@@ -448,6 +460,8 @@ internal class GuidebookMenu : IClickableMenu
         PageLabel.LocalPosition = new((width - 64) / 2 - PageLabel.Width / 2 + 20, height - 50 + 16);
         PageContainer.Scrollbar.ScrollTo(0);
         PageContainer.lastScroll = 0;
+
+        populateClickableComponentList();
     }
 
     private List<Element> RemoveBecauseClicked = new();
@@ -477,6 +491,7 @@ internal class GuidebookMenu : IClickableMenu
     public override void receiveScrollWheelAction(int direction)
     {
         PageContainer.Scrollbar.ScrollBy(direction / -120);
+        snapCursorToCurrentSnappedComponent();
     }
 
     private int scrollCounter = 0;
@@ -529,6 +544,9 @@ internal class GuidebookMenu : IClickableMenu
             }
         }
         else scrollCounter = 0;
+
+        if (Ui.GamepadMovementRegionsDirty)
+            populateClickableComponentList();
     }
 
     public override void draw(SpriteBatch b)
@@ -650,8 +668,20 @@ internal class GuidebookMenu : IClickableMenu
 
         drawMouse(b);
     }
+
     public override bool overrideSnappyMenuCursorMovementBan()
     {
-        return true;
+        return (Ui.CurrentSnappedElement?.CurrentlyUsingGamepadMovement(out bool snappy) ?? false) ? !snappy : false;
     }
+    public override void populateClickableComponentList()
+    {
+        base.populateClickableComponentList();
+
+        allClickableComponents.AddRange(Ui.GetGamepadMovementRegions());
+        Ui.GamepadMovementRegionsDirty = false; ;
+
+        if (allClickableComponents.Contains(currentlySnappedComponent))
+            snapToDefaultClickableComponent();
+    }
+
 }

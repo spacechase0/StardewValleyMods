@@ -58,6 +58,8 @@ namespace SpaceShared.UI
 
             if (this.Clicked)
                 this.Callback?.Invoke(this);
+
+            ScreenReaderText = String;
         }
 
         /// <summary>Measure the label's rendered dialogue text size.</summary>

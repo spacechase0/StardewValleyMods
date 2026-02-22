@@ -1,7 +1,11 @@
 #if !DEPENDENCY_HAS_SPACESHARED
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewValley.Menus;
+using StardewValley.Objects;
 
 #if IS_SPACECORE
 namespace SpaceCore.UI
@@ -58,6 +62,13 @@ namespace SpaceShared.UI
                 return;
 
             b.Draw(this.Texture, this.Position, this.TexturePixelArea, DrawColor, 0, Vector2.Zero, this.Scale, SpriteEffects.None, 1);
+        }
+
+        public override IEnumerable<ClickableComponent> GetGamepadMovementRegions()
+        {
+            if (ScreenReaderIgnore)
+                return Enumerable.Empty<ClickableComponent>();
+            return base.GetGamepadMovementRegions();
         }
 
 

@@ -9,6 +9,7 @@
     <Import_RootNamespace>SpaceShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IStardewAccessApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)apis\IBetterGameMenuApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IFashionSenseApi.cs" />
@@ -33,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Dropdown.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Element.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\ElementClickableComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />

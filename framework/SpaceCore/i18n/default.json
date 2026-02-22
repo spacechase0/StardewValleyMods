@@ -21,4 +21,7 @@
     "stamina-regen": "Stamina per second",
 
     "resource-clump.bad-tool-tier": "Your tool isn't strong enough to break this.",
+
+    "guidebook.previous-page": "Previous Page",
+    "guidebook.next-page": "Next Page",
 }

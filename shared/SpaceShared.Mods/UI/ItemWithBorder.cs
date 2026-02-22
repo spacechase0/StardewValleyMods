@@ -48,11 +48,13 @@ namespace SpaceShared.UI
             if ( Clicked && Callback != null )
                 Callback.Invoke( this );
 
-
             bool SecondaryClickGestured = (Game1.input.GetMouseState().RightButton == ButtonState.Pressed && Game1.oldMouseState.RightButton == ButtonState.Released);
             SecondaryClickGestured = SecondaryClickGestured || (Game1.options.gamepadControls && (Game1.input.GetGamePadState().IsButtonDown(Buttons.B) && !Game1.oldPadState.IsButtonDown(Buttons.B)));
             if (Hover && SecondaryClickGestured && SecondaryCallback != null)
                 SecondaryCallback.Invoke(this);
+
+            ScreenReaderText = ItemDisplay.DisplayName;
+            ScreenReaderDescription = ItemDisplay.getDescription();
         }
 
         public override void Draw( SpriteBatch b )

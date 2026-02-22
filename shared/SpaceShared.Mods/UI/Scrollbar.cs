@@ -33,7 +33,23 @@ namespace SpaceShared.UI
         public int Rows { get; set; }
         public int FrameSize { get; set; }
 
-        public int TopRow { get; private set; }
+        public delegate void OnScrollDelegate(Scrollbar from, int oldValue, int newValue);
+        public event OnScrollDelegate OnScrolled;
+
+        private int _topRow;
+        public int TopRow
+        {
+            get => _topRow;
+            set
+            {
+                if (_topRow == value)
+                    return;
+
+                int oldValue = _topRow;
+                _topRow = value;
+                OnScrolled?.Invoke(this, oldValue, value);
+            }
+        }
         public int MaxTopRow => Math.Max(0, this.Rows - this.FrameSize);
 
         public float ScrollPercent => (this.MaxTopRow > 0) ? this.TopRow / (float)this.MaxTopRow : 0f;
