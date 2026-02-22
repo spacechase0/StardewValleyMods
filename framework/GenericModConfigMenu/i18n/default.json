@@ -31,6 +31,8 @@
     "options.open-menu-key.desc": "A keybind which opens the menu.",
     "options.scroll-speed.name": "Scroll speed",
     "options.scroll-speed.desc": "The number of field rows to offset when scrolling a config menu.",
+    "options.snap-navigation.name": "Snap navigation",
+    "options.snap-navigation.desc": "Enable D-pad and thumbstick snap navigation in config menus when using a controller. Disable to use the free cursor instead.",
 
      //Search Box
     "list.search-label": "Search:",

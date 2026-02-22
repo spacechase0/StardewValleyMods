@@ -13,5 +13,8 @@ namespace GenericModConfigMenu.Framework
 
         /// <summary>The number of field rows to offset when scrolling a config menu.</summary>
         public int ScrollSpeed { get; set; } = 120;
+
+        /// <summary>Whether to enable D-pad/thumbstick snap navigation in config menus when using a controller.</summary>
+        public bool SnapNavigation { get; set; } = true;
     }
 }

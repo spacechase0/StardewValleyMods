@@ -49,6 +49,9 @@ namespace SpaceShared.UI
         public static Dropdown ActiveDropdown;
         public static int SinceDropdownWasActive = 0;
 
+        /// <summary>Set by TableNavigator when gamepad changes ActiveChoice. Prevents mouse hit-test from overwriting the selection for one frame.</summary>
+        public bool GamepadNavigated;
+
         /// <inheritdoc />
         public override int Width => Math.Max(300, Math.Min(500, this.RequestWidth));
 
@@ -106,7 +109,11 @@ namespace SpaceShared.UI
                 int tall = Math.Min(this.MaxValuesAtOnce, this.Choices.Length - this.ActivePosition) * this.Height;
                 int drawY = Math.Min((int)this.Position.Y, Game1.uiViewport.Height - tall);
                 var bounds2 = new Rectangle((int)this.Position.X, drawY, this.Width, this.Height * this.MaxValuesAtOnce);
-                if (bounds2.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
+                if (this.GamepadNavigated)
+                {
+                    this.GamepadNavigated = false;
+                }
+                else if (bounds2.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
                 {
                     int choice = (Game1.getOldMouseY() - drawY) / this.Height;
                     this.ActiveChoice = choice + this.ActivePosition;

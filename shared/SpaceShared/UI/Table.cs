@@ -54,6 +54,9 @@ namespace SpaceShared.UI
 
         public int RowCount => this.Rows.Count;
 
+        /// <summary>Read-only access to row data for navigation.</summary>
+        public IReadOnlyList<Element[]> RowData => this.Rows;
+
         public Scrollbar Scrollbar { get; }
 
         /// <inheritdoc />
