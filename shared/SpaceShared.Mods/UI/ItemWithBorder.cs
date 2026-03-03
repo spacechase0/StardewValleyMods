@@ -21,7 +21,6 @@ namespace SpaceShared.UI
 #endif
     class ItemWithBorder : Element
     {
-        public static ItemWithBorder HoveredElement { get; private set; }
 
         public Item ItemDisplay { get; set; }
 
@@ -41,9 +40,9 @@ namespace SpaceShared.UI
             base.Update( hidden );
 
             if ( Hover )
-                HoveredElement = this;
-            else if ( HoveredElement == this )
-                HoveredElement = null;
+                GetRoot()?.HoveredElement = this;
+            else if (GetRoot()?.HoveredElement == this )
+                GetRoot()?.HoveredElement = null;
 
             if ( Clicked && Callback != null )
                 Callback.Invoke( this );

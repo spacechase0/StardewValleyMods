@@ -64,6 +64,11 @@ namespace SpaceShared.UI
         /*********
         ** Public methods
         *********/
+        public Scrollbar()
+        {
+            ScreenReaderIgnore = true;
+        }
+
         public void ScrollBy(int amount)
         {
             int row = Util.Clamp(0, this.TopRow + amount, this.MaxTopRow);

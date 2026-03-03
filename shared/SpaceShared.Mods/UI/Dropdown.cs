@@ -55,9 +55,6 @@ namespace SpaceShared.UI
 
         public Action<Element> Callback;
 
-        public static Dropdown ActiveDropdown;
-        public static int SinceDropdownWasActive = 0;
-
         /// <inheritdoc />
         public override int Width => Math.Max(300, Math.Min(500, this.RequestWidth));
 
@@ -77,7 +74,7 @@ namespace SpaceShared.UI
             base.Update(isOffScreen);
 
             bool justClicked = false;
-            if (this.Clicked && ActiveDropdown == null)
+            if (this.Clicked && GetRoot()?.ActiveDropdown == null)
             {
                 justClicked = true;
                 this.Dropped = true;
@@ -131,13 +128,13 @@ namespace SpaceShared.UI
 
             if (this.Dropped)
             {
-                Dropdown.ActiveDropdown = this;
-                Dropdown.SinceDropdownWasActive = 3;
+                GetRoot()?.ActiveDropdown = this;
+                GetRoot()?.SinceDropdownWasActive = 3;
             }
             else
             {
-                if (Dropdown.ActiveDropdown == this)
-                    Dropdown.ActiveDropdown = null;
+                if (GetRoot()?.ActiveDropdown == this)
+                    GetRoot()?.ActiveDropdown = null;
                 this.ActivePosition = Math.Min(this.ActiveChoice, this.Choices.Length - this.MaxValuesAtOnce);
             }
         }
@@ -147,7 +144,7 @@ namespace SpaceShared.UI
             if (this.Dropped)
                 this.ActivePosition = Math.Min(Math.Max(this.ActivePosition - (direction / 120), 0), this.Choices.Length - this.MaxValuesAtOnce);
             else
-                Dropdown.ActiveDropdown = null;
+                GetRoot()?.ActiveDropdown = null;
         }
 
         public void DrawOld(SpriteBatch b)

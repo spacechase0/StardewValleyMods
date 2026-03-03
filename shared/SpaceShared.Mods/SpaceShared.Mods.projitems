@@ -35,6 +35,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Dropdown.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Element.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ui\ElementClickableComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ui\ElementMenu.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />

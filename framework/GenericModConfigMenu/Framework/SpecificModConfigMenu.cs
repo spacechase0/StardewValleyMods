@@ -503,7 +503,7 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void receiveScrollWheelAction(int direction)
         {
-            if (Dropdown.ActiveDropdown == null)
+            if (Get == null)
             {
                 this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
                 snapCursorToCurrentSnappedComponent();

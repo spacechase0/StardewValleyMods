@@ -33,6 +33,14 @@ namespace SpaceShared.UI
         private Action<int> ForceSnapInDirection;
         public Element CurrentSnappedElement => (CurrentSnapped?.Invoke() as ElementClickableComponent)?.Parent;
 
+
+        public Dropdown ActiveDropdown { get; set; }
+        public int SinceDropdownWasActive { get; set; } = 0;
+
+        // TODO: Currently only set by ItemWithBorder elements
+        //       Need to make it handle nested items properly before adding elsewhere
+        public Element HoveredElement { get; set; }
+
         /*********
         ** Public methods
         *********/
@@ -47,13 +55,13 @@ namespace SpaceShared.UI
         public override void Update(bool isOffScreen = false)
         {
             base.Update(isOffScreen || this.Obscured);
-            if (Dropdown.ActiveDropdown?.GetRoot() != this)
+            if (ActiveDropdown?.GetRoot() != this)
             {
-                Dropdown.ActiveDropdown = null;
+                ActiveDropdown = null;
             }
-            if ( Dropdown.SinceDropdownWasActive > 0 )
+            if (SinceDropdownWasActive > 0 )
             {
-                Dropdown.SinceDropdownWasActive--;
+                SinceDropdownWasActive--;
             }
 
             if (Game1.options.gamepadControls && !Game1.lastCursorMotionWasMouse)

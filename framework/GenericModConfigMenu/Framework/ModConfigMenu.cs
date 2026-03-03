@@ -153,10 +153,6 @@ namespace GenericModConfigMenu.Framework
             };
             this.Ui.AddChild(this.SearchBox);
 
-            // Automatically activate textbox so user can type immediately
-            if (!Game1.options.gamepadControls || Game1.lastCursorMotionWasMouse)
-                this.SearchBox.Selected = true;
-
             // Create search placeholder (will be hidden when typing) - black text
             this.SearchPlaceholder = new Label
             {
@@ -371,8 +367,19 @@ namespace GenericModConfigMenu.Framework
 
         public override void snapToDefaultClickableComponent()
         {
-            currentlySnappedComponent = SearchBox.GetGamepadMovementRegions().FirstOrDefault();
-            snapCursorToCurrentSnappedComponent();
+            if (Game1.options.gamepadControls && !Game1.lastCursorMotionWasMouse)
+            {
+                var allTable = Table.Children.SelectMany(c => c.GetGamepadMovementRegions()).ToArray();
+                currentlySnappedComponent = allClickableComponents.FirstOrDefault(c => c.visible && allTable.Contains(c));
+                currentlySnappedComponent ??= allClickableComponents.FirstOrDefault(c => c.visible);
+                snapCursorToCurrentSnappedComponent();
+            }
+            else
+            {
+                currentlySnappedComponent = SearchBox.GetGamepadMovementRegions().FirstOrDefault();
+                snapCursorToCurrentSnappedComponent();
+                SearchBox.Selected = true;
+            }
         }
 
         /*********
