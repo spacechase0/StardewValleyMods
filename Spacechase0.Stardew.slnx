@@ -1,12 +1,4 @@
 <Solution>
-  <Folder Name="/ContentEngine/">
-    <Project Path="ContentEngine/SpaceCore.Content.Engine/SpaceCore.Content.Engine.csproj" />
-    <Project Path="ContentEngine/SpaceCore.Content.LanguageServer/SpaceCore.Content.LanguageServer.csproj" />
-    <Project Path="ContentEngine/SpaceCore.Content.Parser/SpaceCore.Content.Parser.csproj" />
-    <Project Path="ContentEngine/SpaceCore.Content.VisualStudio/SpaceCore.Content.VisualStudio.csproj" Id="299a22f4-6af1-4242-9fc3-8a029a8f868b">
-      <BuildDependency Project="ContentEngine/SpaceCore.Content.LanguageServer/SpaceCore.Content.LanguageServer.csproj" />
-    </Project>
-  </Folder>
   <Folder Name="/cosmetic/">
     <Project Path="cosmetic/ExperienceBars/ExperienceBars.csproj" />
     <Project Path="cosmetic/GradientHairColors/GradientHairColors.csproj" />

@@ -11,6 +11,7 @@
     
     <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <DefineConstants>DEPENDENCY_HAS_SPACESHARED</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,6 +7,6 @@
   </ItemGroup>
   <PropertyGroup>
     <!-- For some reason this isn't working like I expected, and is causing some build errors. -->
-    <!--<DefineConstants>DEPENDENCY_HAS_SPACESHARED</DefineConstants>-->
+    <DefineConstants>DEPENDENCY_HAS_SPACESHARED</DefineConstants>
   </PropertyGroup>
 </Project>

@@ -1,3 +1,4 @@
+#if !DEPENDENCY_HAS_SPACESHARED
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 
@@ -38,3 +39,4 @@ class ElementClickableComponent : ClickableComponent, IScreenReadable
         set => screenReaderIgnoreVal = value;
     }
 }
+#endif

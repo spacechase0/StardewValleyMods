@@ -28,11 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)ContentEngine\SpaceCore.Content.Engine\SpaceCore.Content.Engine.csproj" />
-    <ProjectReference Include="$(SolutionDir)ContentEngine\SpaceCore.Content.Parser\SpaceCore.Content.Parser.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
   </ItemGroup>
 
