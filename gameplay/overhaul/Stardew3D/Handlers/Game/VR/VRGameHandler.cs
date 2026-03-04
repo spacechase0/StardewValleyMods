@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using Stardew3D;
-using Stardew3D.Handlers.Game;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
@@ -18,11 +17,12 @@ using StardewValley.Mods;
 using Stardew3D.Hardware;
 using Valve.VR;
 using static Stardew3D.Handlers.Game.IGameHandler;
+using Stardew3D.Handlers.Game.VR;
 
 namespace Stardew3D.Handlers.Game;
 public abstract partial class VRGameHandler : CommonGameHandler
 {
-    public override CameraVR Camera { get; } = new();
+    public override Camera Camera { get; } = new();
     public override Matrix ProjectionMatrix { get; protected set; }
 
     protected OpenVR.NET.VR _vr;

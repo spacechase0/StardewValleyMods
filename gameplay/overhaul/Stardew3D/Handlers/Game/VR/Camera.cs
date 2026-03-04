@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Stardew3D;
 using Stardew3D.Rendering;
 
-namespace Stardew3D.Handlers.Game;
-public class CameraVR : ICamera
+namespace Stardew3D.Handlers.Game.VR;
+public class Camera : ICamera
 {
     public Vector3 Position { get; set; }
 
