@@ -15,11 +15,13 @@ namespace Stardew3D.Handlers.Game;
 
 public interface IGameHandler
 {
-    public const string CategoryFlatscreen = "Flatscreen";
-    public const string CategoryVR = "VR";
-    public const string CategoryFirstPerson = "FirstPerson";
-    public const string CategoryThirdPerson = "ThirdPerson";
-    public const string CategoryEditor = "Editor"; // Causes the base game update functions to stop
+    public const string CategoryFlatscreen = "Category/Flatscreen";
+    public const string CategoryVR = "Category/VR";
+    public const string CategoryFirstPerson = "Category/FirstPerson";
+    public const string CategoryThirdPerson = "Category/ThirdPerson";
+    public const string CategoryEditor = "Category/Editor"; // Causes the base game update functions to stop
+
+    public const string FeatureMotionControls = "Feature/MotionControls";
 
     public string Id { get; }
     public string[] Tags { get; }

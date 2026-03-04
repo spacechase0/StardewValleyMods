@@ -34,7 +34,7 @@ namespace Stardew3D.Handlers.Game.FirstPersonVR;
 public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
-    public override string[] Tags => [CategoryVR, CategoryFirstPerson];
+    public override string[] Tags => [CategoryVR, CategoryFirstPerson, FeatureMotionControls];
 
     public Vector3 MovementFacing => Camera.Forward;
     public Vector2 MovementAmount

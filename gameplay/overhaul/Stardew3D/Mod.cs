@@ -135,7 +135,7 @@ namespace Stardew3D
 
                 State.SetJointHandlerForGameHandlerTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameHandler, menu as IClickableMenu));
                 State.SetJointHandlerForGameHandlerTags<TitleMenu, TitleMenuHandler>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameHandler, menu as TitleMenu));
-                State.AddJointHandlerAddonForGameHandlerTags<Farmer, FarmerMotionControlsHandler>([IGameHandler.CategoryVR, IGameHandler.CategoryFirstPerson], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameHandler, obj as Farmer));
+                State.AddJointHandlerAddonForGameHandlerTags<Farmer, FarmerMotionControlsHandler>([IGameHandler.CategoryVR, IGameHandler.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameHandler, obj as Farmer));
             };
 
             var hooks = AccessTools.Field(typeof(Game1), "hooks");
