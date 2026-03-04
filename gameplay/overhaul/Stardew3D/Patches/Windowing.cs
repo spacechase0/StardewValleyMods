@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
-using StardewVR.Handlers.Game;
+using Stardew3D.Handlers.Game;
 
-namespace StardewVR.Patches;
+namespace Stardew3D.Patches;
 
 [HarmonyPatch(typeof(Game), nameof(Game.IsActive), MethodType.Getter)]
 internal static class WindowAlwaysActiveInVRPatch

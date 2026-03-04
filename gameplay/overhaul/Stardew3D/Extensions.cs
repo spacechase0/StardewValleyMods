@@ -17,6 +17,7 @@ using StardewValley.Menus;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using Valve.VR;
 
 namespace Stardew3D
 {
@@ -41,6 +42,39 @@ namespace Stardew3D
                     return ret;
                 }
             }
+        }
+
+        // https://medium.com/data-science/change-of-basis-3909ef4bed43
+        public static Matrix ChangeBasis(this Matrix input)
+        {
+            var basisChange = Matrix.Identity;
+            basisChange.M33 = -1;
+            return basisChange * input * basisChange;
+        }
+
+        public static Vector3 ToMonogame(this HmdVector3_t vec)
+        {
+            return new Vector3(vec.v0, vec.v1, vec.v2);
+        }
+
+        public static Matrix ToMonogame(this HmdMatrix34_t mat)
+        {
+            var m = new Matrix(
+                mat.m0, mat.m1, mat.m2, mat.m3,
+                mat.m4, mat.m5, mat.m6, mat.m7,
+                mat.m8, mat.m9, mat.m10, mat.m11,
+                0, 0, 0, 1.0f);
+            return m.Transposed();
+        }
+
+        public static Matrix ToMonogame(this HmdMatrix44_t mat)
+        {
+            var m = new Matrix(
+                mat.m0, mat.m1, mat.m2, mat.m3,
+                mat.m4, mat.m5, mat.m6, mat.m7,
+                mat.m8, mat.m9, mat.m10, mat.m11,
+                mat.m12, mat.m13, mat.m14, mat.m15);
+            return m.Transposed();
         }
 
         /// <summary>Assumes the points are counter-clockwise order with Y=up. Should also work with clockwise order and Y=down.</summary>
@@ -277,15 +311,6 @@ namespace Stardew3D
         public static Vector3 Normalized(this Vector3 v) => Vector3.Normalize(v);
         public static Matrix Inverted(this Matrix m) => Matrix.Invert(m);
         public static Matrix Transposed(this Matrix m) => Matrix.Transpose(m);
-
-        // https://medium.com/data-science/change-of-basis-3909ef4bed43
-        public static Matrix ChangeBasis(this Matrix input)
-        {
-            var basisChange = Matrix.Identity;
-            basisChange[2, 2] = -1;
-            var basisChangeInverse = basisChange;
-            return basisChange * input * basisChangeInverse;
-        }
 
         public static Vector3[] Transform(this Vector3[] verts, Matrix transform)
         {

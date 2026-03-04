@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Valve.VR;
 
-namespace StardewVR.Hardware;
+namespace Stardew3D.Hardware;
 public class TrackedController : TrackedDevice
 {
     internal ulong[] _buttonMasks;

@@ -21,7 +21,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using StardewVR.Hardware;
+using Stardew3D.Hardware;
 using Valve.VR;
 using static OpenVR.NET.Devices.VrDevice;
 using static Stardew3D.Handlers.Game.IGameHandler;
@@ -29,7 +29,7 @@ using static Stardew3D.Handlers.IRenderHandler;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
-namespace StardewVR.Handlers.Game.FirstPerson;
+namespace Stardew3D.Handlers.Game.FirstPersonVR;
 
 public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
 {

@@ -18,11 +18,11 @@ using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using StardewVR.Handlers.Game;
+using Stardew3D.Handlers.Game;
 using static Stardew3D.Handlers.IRenderHandler;
 using static Stardew3D.Models.ModelObject;
 
-namespace StardewVR.Handlers.Menu;
+namespace Stardew3D.Handlers.Menu;
 internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
 {
     public TitleMenuHandler(VRGameHandler handler, TitleMenu menu)

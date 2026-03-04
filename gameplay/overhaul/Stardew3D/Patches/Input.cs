@@ -7,9 +7,9 @@ using HarmonyLib;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using StardewValley;
-using StardewVR.Handlers.Game;
+using Stardew3D.Handlers.Game;
 
-namespace StardewVR.Patches;
+namespace Stardew3D.Patches;
 
 // We have to patch these because SMAPI cries when we override Game1.input with our type
 // And SInputState isn't public so we can't inherit from it

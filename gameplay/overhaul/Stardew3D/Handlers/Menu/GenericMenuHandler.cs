@@ -21,9 +21,10 @@ using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using StardewVR.Handlers.Game;
+using Stardew3D.Handlers.Game;
+using Stardew3D.Handlers.Game.FirstPersonVR;
 
-namespace StardewVR.Handlers.Menu;
+namespace Stardew3D.Handlers.Menu;
 internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IUpdateHandler
     where TMenu : IClickableMenu
 {

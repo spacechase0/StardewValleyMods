@@ -7,9 +7,10 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using StardewVR.Handlers.Game.FirstPerson;
+using Stardew3D.Handlers.Game.FirstPerson;
+using Stardew3D.Handlers.Game.FirstPersonVR;
 
-namespace StardewVR.Patches;
+namespace Stardew3D.Patches;
 
 [HarmonyPatch(typeof(Game1), "renderScreenBuffer")]
 internal static class SuppressDrawingUiAfterFramePatch

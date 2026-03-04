@@ -7,8 +7,8 @@ using Microsoft.Xna.Framework;
 using Stardew3D;
 using Stardew3D.Rendering;
 
-namespace StardewVR.Handlers.Game;
-public class Camera : ICamera
+namespace Stardew3D.Handlers.Game;
+public class CameraVR : ICamera
 {
     public Vector3 Position { get; set; }
 

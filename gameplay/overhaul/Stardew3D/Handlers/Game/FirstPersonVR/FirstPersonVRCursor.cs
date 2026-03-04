@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewValley;
-using StardewVR.Handlers.Game;
-using StardewVR.Handlers.Game.FirstPerson;
-using StardewVR.Hardware;
+using Stardew3D.Handlers.Game;
+using Stardew3D.Handlers.Game.FirstPerson;
+using Stardew3D.Hardware;
 
-namespace Stardew3D.Handlers.Game.FirstPerson;
+namespace Stardew3D.Handlers.Game.FirstPersonVR;
 
 internal class FirstPersonVRCursor : IGameCursor
 {

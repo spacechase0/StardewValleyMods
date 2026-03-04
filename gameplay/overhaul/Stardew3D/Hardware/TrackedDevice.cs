@@ -9,7 +9,7 @@ using SpaceShared;
 using StardewValley;
 using Valve.VR;
 
-namespace StardewVR.Hardware;
+namespace Stardew3D.Hardware;
 public class TrackedDevice
 {
     public uint DeviceIndex { get; }

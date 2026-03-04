@@ -27,9 +27,9 @@ using StardewValley.Mods;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using StardewVR.Handlers.Game;
+using Stardew3D.Handlers.Game;
 
-namespace StardewVR.Handlers.Gameplay;
+namespace Stardew3D.Handlers.Gameplay;
 internal class FarmerMotionControlsHandler : RendererFor<ModelData, Farmer>, IUpdateHandler
 {
     public VRGameHandler GameHandler;
@@ -240,7 +240,7 @@ internal class FarmerMotionControlsHandler : RendererFor<ModelData, Farmer>, IUp
                     RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Left, upOverride: Vector3.Forward, additionalTransform: Parent.GameHandler.Cursors[i].Pointer);
                     RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * 12.5f, new(0.01f, 25), new(0, 0, 1, 1), Vector3.Right, upOverride: Vector3.Forward, additionalTransform: Parent.GameHandler.Cursors[i].Pointer);
                 }, Matrix.Identity, staysVisibleAfterFrame: true);
-                gripInstances[i] = Batch.AddNonInstanced((env, color, world, view, proj) =>
+                gripInstances[i] = Batch.AddNonInstanced((RenderBatcher.RenderNonInstanced)((env, color, world, view, proj) =>
                 {
                     Color colFront = col, colSide = col, colBack = col;
                     colSide.R = (byte)(colSide.R * 0.75f);
@@ -279,7 +279,7 @@ internal class FarmerMotionControlsHandler : RendererFor<ModelData, Farmer>, IUp
                         }
 #endif
                     }
-                }, Matrix.Identity, staysVisibleAfterFrame: true);
+                }), Matrix.Identity, staysVisibleAfterFrame: true);
             }
         }
 

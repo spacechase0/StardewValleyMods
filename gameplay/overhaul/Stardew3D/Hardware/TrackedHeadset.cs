@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using StardewValley;
 using Valve.VR;
 
-namespace StardewVR.Hardware;
+namespace Stardew3D.Hardware;
 public class TrackedHeadset : TrackedDevice
 {
     public float? RefreshRate { get; }

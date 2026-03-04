@@ -15,14 +15,14 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using StardewVR.Hardware;
+using Stardew3D.Hardware;
 using Valve.VR;
 using static Stardew3D.Handlers.Game.IGameHandler;
 
-namespace StardewVR.Handlers.Game;
+namespace Stardew3D.Handlers.Game;
 public abstract partial class VRGameHandler : CommonGameHandler
 {
-    public override Camera Camera { get; } = new();
+    public override CameraVR Camera { get; } = new();
     public override Matrix ProjectionMatrix { get; protected set; }
 
     protected OpenVR.NET.VR _vr;

@@ -16,11 +16,11 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using StardewVR.Hardware;
+using Stardew3D.Hardware;
 using Valve.VR;
 using static Stardew3D.Handlers.Game.IGameHandler;
 
-namespace StardewVR.Handlers.Game;
+namespace Stardew3D.Handlers.Game;
 public abstract partial class VRGameHandler
 {
     private delegate TrackedDevice TrackedDeviceFactoryFunction(uint deviceIndex);
