@@ -50,7 +50,6 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
         if (sel.Selected != null)
         {
-            //SpaceShared.Log.Debug($"meow! {sel.Selected} {sel.Distance} {cursor.UseItemHeld} {cursor.InteractHeld}");
             if (cursor.UseItemJustReleased)
             {
                 Use(cursor, sel.Selected);

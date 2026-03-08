@@ -173,7 +173,7 @@ public abstract partial class VRGameHandler : CommonGameHandler
     }
     public override void AfterUpdate()
     {
-        base.BeforeUpdate();
+        base.AfterUpdate();
         if (VR == null) return;
     }
 
