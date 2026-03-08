@@ -72,7 +72,7 @@ public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Fa
         {
             foreach (var entry in container.Values)
             {
-                if (Vector2.DistanceSquared(Game1.player.Position, container.Position2D(entry)) >= MathF.Pow(Game1.tileSize * CullRange, 2))
+                if (Vector2.DistanceSquared(Game1.player.Position, container.Position2D(entry)) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
                     continue;
 
                 InteractionData interaction = null;
@@ -87,6 +87,12 @@ public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Fa
                 foreach (var area in interaction.Areas)
                 {
                     if (!CheckInteractionPurpose(area.Purpose))
+                        continue;
+
+                    Vector3 size3 = area.GetBoundingBox().Max - area.GetBoundingBox().Min;
+                    float size = Math.Max( size3.X, size3.Z );
+
+                    if (Vector3.DistanceSquared(cursor.PointerPosition, objTransform.Translation + area.Translation) >= MathF.Pow(CullRange + size / 2, 2))
                         continue;
 
                     HandleCursor(ctx, cursor, entry, objTransform, interaction, area);
