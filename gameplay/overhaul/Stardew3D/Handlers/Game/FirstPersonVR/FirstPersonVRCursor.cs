@@ -75,7 +75,7 @@ internal class FirstPersonVRCursor : IGameCursor
         this.interact = interact;
     }
 
-    public void Update()
+    public void Update(IGameHandler parent)
     {
         prevMenuLeftClickState = menuLeftClickState;
         prevMenuRightClickState = menuRightClickState;

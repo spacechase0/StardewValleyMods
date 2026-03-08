@@ -40,6 +40,64 @@ internal static class InputStateOverridesInVRPatch
     }
 }
 
+[HarmonyPatch(typeof(Game1), nameof(Game1.didPlayerJustLeftClick))]
+internal static class LeftClickDetectionPatch
+{
+    public static void Postfix(ref bool __result)
+    {
+        if (Mod.State.ActiveHandler == null)
+            return;
+
+        __result = false;
+        foreach (var cursor in Mod.State.ActiveHandler.Cursors)
+        {
+            if (cursor.UseItemHeld)
+                __result = true;
+        }
+    }
+}
+
+[HarmonyPatch(typeof(Game1), nameof(Game1.didPlayerJustRightClick))]
+internal static class RightClickDetectionPatch
+{
+    public static void Postfix(ref bool __result)
+    {
+        if (Mod.State.ActiveHandler == null)
+            return;
+
+        __result = false;
+        foreach (var cursor in Mod.State.ActiveHandler.Cursors)
+        {
+            if (cursor.InteractJustPressed)
+                __result = true;
+        }
+    }
+}
+
+[HarmonyPatch(typeof(Game1), nameof(Game1.pressUseToolButton))]
+internal static class LeftClickPreventionPatch
+{
+    public static bool Prefix()
+    {
+        if (Mod.State.ActiveHandler == null)
+            return true;
+
+        return false;
+    }
+}
+
+[HarmonyPatch(typeof(Game1), nameof(Game1.pressActionButton))]
+internal static class RightClickPreventionPatch
+{
+    public static bool Prefix()
+    {
+        if (Mod.State.ActiveHandler == null)
+            return true;
+
+        return false;
+    }
+}
+
 [HarmonyPatch(typeof(InputState), nameof(InputState.SetMousePosition))]
 internal static class SetMousePositionOverrideInVRPatch
 {

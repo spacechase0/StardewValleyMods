@@ -133,10 +133,11 @@ namespace Stardew3D
                 State.SetRenderHandlerForGameHandlerTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
                 State.SetRenderHandlerForGameHandlerTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
 
+                State.AddJointHandlerAddonForGameHandlerTags<Farmer, FarmerPointAndClickControlsHandler>([IGameHandler.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
+                
                 State.SetJointHandlerForGameHandlerTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameHandler, menu as IClickableMenu));
                 State.SetJointHandlerForGameHandlerTags<TitleMenu, TitleMenuHandler>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameHandler, menu as TitleMenu));
                 State.AddUpdateHandlerAddonForGameHandlerTags<Farmer>([IGameHandler.CategoryVR, IGameHandler.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameHandler, obj as Farmer));
-                State.AddJointHandlerAddonForGameHandlerTags<Farmer, FarmerPointAndClickControlsHandler>([IGameHandler.CategoryVR, IGameHandler.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler as VRGameHandler, obj as Farmer));
             };
 
             var hooks = AccessTools.Field(typeof(Game1), "hooks");

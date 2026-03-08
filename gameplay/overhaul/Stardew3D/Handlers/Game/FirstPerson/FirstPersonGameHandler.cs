@@ -14,7 +14,7 @@ namespace Stardew3D.Handlers.Game.FirstPerson;
 public class FirstPersonGameHandler : CommonGameHandler, IFirstPersonGameHandler
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
-    public override string[] Tags => [CategoryFlatscreen, CategoryFirstPerson];
+    public override string[] Tags => [CategoryFlatscreen, CategoryFirstPerson, FeaturePointAndClick];
 
     public override Matrix ProjectionMatrix { get; protected set; }
     public override Camera Camera { get; } = new();
@@ -62,7 +62,14 @@ public class FirstPersonGameHandler : CommonGameHandler, IFirstPersonGameHandler
         }
     }
     public Vector2 MovementAmountForced => Vector2.Zero;
-    public override IReadOnlyList<IGameCursor> Cursors => [new FirstPersonCursor(this)];
+
+    private FirstPersonCursor[] cursors;
+    public override IReadOnlyList<IGameCursor> Cursors => cursors;
+
+    public FirstPersonGameHandler()
+    {
+        cursors = [new FirstPersonCursor(this)];
+    }
 
     public override void SwitchOn(IGameHandler previousHandler)
     {

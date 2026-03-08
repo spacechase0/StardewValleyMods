@@ -5,8 +5,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Force.DeepCloner;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Stardew3D.Data;
 using Stardew3D.Handlers.Game;
 using Stardew3D.Rendering;
@@ -48,11 +50,12 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
         if (sel.Selected != null)
         {
+            //SpaceShared.Log.Debug($"meow! {sel.Selected} {sel.Distance} {cursor.UseItemHeld} {cursor.InteractHeld}");
             if (cursor.UseItemJustReleased)
             {
                 Use(cursor, sel.Selected);
             }
-            else if (cursor.InteractJustReleased)
+            else if (cursor.InteractJustPressed)
             {
                 Interact(cursor, sel.Selected);
             }
@@ -174,7 +177,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
         [
             cursor.PointerPosition,
             cursor.PointerPosition + cursor.PointerFacing * CullRange,
-            cursor.PointerPosition + cursor.PointerUp
+            cursor.PointerPosition + cursor.PointerUp * (1f / 16)
         ];
         Vector3[] areaVerts = area.GetTransformedShape().Transform(transform);
         if (!GJK_EPA_BCP.CheckIntersection(myVerts, areaVerts, out Vector3 contactPoint, out _, out _))
@@ -235,8 +238,6 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
                         RenderHelper.GenericEffect.Texture = Game1.staminaRect;
                         RenderHelper.GenericEffect.World = Matrix.Identity;
-                        Game1.graphics.GraphicsDevice.DepthStencilState = RenderHelper.DepthState;
-                        Game1.graphics.GraphicsDevice.RasterizerState = RenderHelper.RasterizerState;
                         {
                             RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing_Transparent_1"];
                             foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
@@ -254,7 +255,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                             }
                         }
                     }
-                }, Matrix.Identity, staysVisibleAfterFrame: true);
+                }, Matrix.Identity, staysVisibleAfterFrame: true, hasTransparency: true);
                 gripInstances[i] = Batch.AddNonInstanced((RenderBatcher.RenderNonInstanced)((env, color, world, view, proj) =>
                 {
                     Color colFront = col, colSide = col, colBack = col;

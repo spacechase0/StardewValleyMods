@@ -61,4 +61,6 @@ public interface IGameCursor
     public bool InteractJustPressed { get; }
     public bool InteractHeld { get; }
     public bool InteractJustReleased { get; }
+
+    public void Update(IGameHandler parent);
 }

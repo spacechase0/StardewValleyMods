@@ -454,6 +454,15 @@ namespace Stardew3D
                     $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/FarmAnimal)",
                     $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
                 ];
+            else if (obj is NPC npc)
+                return
+                [
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC){npc.Name}/{npc.LastAppearanceId}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC){npc.Name}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){npc.GetType().Name}",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC)",
+                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+                ];
             else if (obj is Character character)
                 return
                 [

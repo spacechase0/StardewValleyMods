@@ -100,6 +100,8 @@ public static class RenderHelper
 
         GenericEffect.Texture = tex;
         GenericEffect.World = additionalTransform_;
+        var oldDepth = Game1.graphics.GraphicsDevice.DepthStencilState;
+        var oldRaster = Game1.graphics.GraphicsDevice.RasterizerState;
         Game1.graphics.GraphicsDevice.DepthStencilState = DepthState;
         Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState;
         {
@@ -118,6 +120,8 @@ public static class RenderHelper
                 Game1.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
             }
         }
+        Game1.graphics.GraphicsDevice.DepthStencilState = oldDepth;
+        Game1.graphics.GraphicsDevice.RasterizerState = oldRaster;
     }
 
     public static void DrawBillboard(ICamera camera, Texture2D tex, Vector3 pos, Vector2 displaySize, Rectangle texCoords, Color? col = null, Matrix? additionalTransform = null, SpriteEffects texCoordEffect = SpriteEffects.None)

@@ -8,7 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Stardew3D.Handlers.Game;
 using StardewModdingAPI.Utilities;
+using StardewValley;
 using StardewValley.Mods;
+using xTile.Dimensions;
 
 namespace Stardew3D;
 
@@ -25,6 +27,17 @@ internal class MyModHooks : DelegatingModHooks
             return;
 
         action();
+    }
+
+    public override bool OnGameLocation_CheckAction(GameLocation location, Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who, Func<bool> action)
+    {
+        var handler = Mod.State.ActiveHandler;
+        if (handler == null)
+        {
+            return Parent.OnGameLocation_CheckAction(location, tileLocation, viewport, who, action);
+        }
+
+        return false;
     }
 
     public override void OnGame1_UpdateControlInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, Action action)

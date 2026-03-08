@@ -18,7 +18,7 @@ namespace Stardew3D.Handlers.Game.ThirdPerson;
 public class ThirdPersonGameHandler : CommonGameHandler
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/ThirdPerson";
-    public override string[] Tags => [CategoryFlatscreen, CategoryThirdPerson];
+    public override string[] Tags => [CategoryFlatscreen, CategoryThirdPerson, FeaturePointAndClick];
 
     public override Matrix ProjectionMatrix { get; protected set; }
     public override Camera Camera { get; } = new();

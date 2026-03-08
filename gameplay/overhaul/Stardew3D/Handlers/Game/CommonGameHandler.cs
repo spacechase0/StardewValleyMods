@@ -70,6 +70,9 @@ public abstract partial class CommonGameHandler : IGameHandler
 
     public virtual void BeforeUpdate()
     {
+        foreach (IGameCursor cursor in Cursors)
+            cursor?.Update(this);
+
         WorldRenderer.UpdateState();
     }
     public virtual void AfterUpdate() { }
