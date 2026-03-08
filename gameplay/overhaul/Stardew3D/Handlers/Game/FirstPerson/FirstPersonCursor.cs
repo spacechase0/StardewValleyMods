@@ -34,23 +34,26 @@ public class FirstPersonCursor : IGameCursor
     public Vector2 MenuScroll { get; set; }
 
     public Item Holding => Game1.player.CurrentItem;
-    public bool UseItemJustPressed => !Game1.isOneOfTheseKeysDown(prevKeyboardState, Game1.options.useToolButton) && Game1.isOneOfTheseKeysDown(currKeyboardState, Game1.options.useToolButton);
-    public bool UseItemHeld => Game1.isOneOfTheseKeysDown(currKeyboardState, Game1.options.useToolButton);
-    public bool UseItemJustReleased => Game1.isOneOfTheseKeysDown(prevKeyboardState, Game1.options.useToolButton) && !Game1.isOneOfTheseKeysDown(currKeyboardState, Game1.options.useToolButton);
-    public bool InteractJustPressed => !Game1.isOneOfTheseKeysDown(prevKeyboardState, Game1.options.actionButton) && Game1.isOneOfTheseKeysDown(currKeyboardState, Game1.options.actionButton);
-    public bool InteractHeld => Game1.isOneOfTheseKeysDown(currKeyboardState, Game1.options.actionButton);
-    public bool InteractJustReleased => Game1.isOneOfTheseKeysDown(prevKeyboardState, Game1.options.actionButton) && !Game1.isOneOfTheseKeysDown(currKeyboardState, Game1.options.actionButton);
+    public bool UseItemJustPressed => !prevUseItemState && useItemState;
+    public bool UseItemHeld => useItemState;
+    public bool UseItemJustReleased => prevUseItemState && !useItemState;
+    public bool InteractJustPressed => !prevInteractState && interactState;
+    public bool InteractHeld => interactState;
+    public bool InteractJustReleased => prevInteractState && !interactState;
 
     public FirstPersonCursor(FirstPersonGameHandler gameHandler)
     {
         GameHandler = gameHandler;
     }
 
-    private KeyboardState currKeyboardState;
-    private KeyboardState prevKeyboardState;
+    private bool useItemState, prevUseItemState;
+    private bool interactState, prevInteractState;
     public void Update(IGameHandler parent)
     {
-        prevKeyboardState = currKeyboardState;
-        currKeyboardState = Game1.GetKeyboardState();
+        prevUseItemState = useItemState;
+        prevInteractState = interactState;
+
+        useItemState = Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.useToolButton) || Game1.input.GetMouseState().LeftButton == ButtonState.Pressed;
+        interactState = Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.actionButton) || Game1.input.GetMouseState().RightButton == ButtonState.Pressed;
     }
 }
