@@ -7,7 +7,7 @@
     <Name>SpaceCore</Name>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>The space-iest of cores. (Framework mod)</Description>
-    <Version>1.29.0-alpha</Version>
+    <Version>1.29.0</Version>
     <UpdateKeys>Nexus:1348</UpdateKeys>
     <Version_AppendConfiguration>false</Version_AppendConfiguration> <!-- Otherwise mods get confused about having 1.13.0-Debug, but needing 1.13.0 or newer -->
 

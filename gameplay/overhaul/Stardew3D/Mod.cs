@@ -87,7 +87,7 @@ namespace Stardew3D
     public partial class Mod : BaseMod<Mod>
     {
         public string DefaultHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
-        public string DefaultVrHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
+        public string DefaultVrHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPersonVR";
 
         protected override void ModEntry()
         {
