@@ -44,6 +44,83 @@ namespace Stardew3D
             }
         }
 
+        extension(Rectangle rect)
+        {
+            // I'm kinda tired when writing this, so who knows if it is correct.
+            // Probably is much sloer than normal solutions, at least.
+            public bool LineSegmentIntersects(Vector2 start, Vector2 end, out Vector2 intersection)
+            {
+                Vector2 minBounds = new Vector2(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y));
+                Vector2 maxBounds = new Vector2(Math.Max(start.X, end.X), Math.Max(start.Y, end.Y));
+
+                // The extremes of the segment don't approach the rect
+                if (maxBounds.X < rect.Left || maxBounds.Y < rect.Top || minBounds.X >= rect.Right || minBounds.Y >= rect.Bottom)
+                {
+                    intersection = Vector2.Zero;
+                    return false;
+                }
+
+                Vector2 left = start.X < end.X ? start : end;
+                Vector2 right = start.X < end.X ? end : start;
+                Vector2 up = start.Y < end.Y ? start : end;
+                Vector2 down = start.Y < end.Y ? end : start;
+
+                Vector2 segmentDiff = end - start;
+                Vector2 norm = segmentDiff.Normalized();
+                float len = segmentDiff.Length();
+
+                if (norm.X != 0)
+                {
+                    if (left.X < rect.Left)
+                    {
+                        Vector2 diff = new Vector2(rect.Left - left.X, 0);
+                        diff.Y = (diff.X / norm.X) * norm.Y;
+                        if (left.Y + diff.Y >= rect.Top && left.Y + diff.Y < rect.Bottom)
+                        {
+                            intersection = left + diff;
+                            return true;
+                        }
+                    }
+                    if (right.X > rect.Right)
+                    {
+                        Vector2 diff = new Vector2(rect.Right - right.X, 0);
+                        diff.Y = (diff.X / norm.X) * norm.Y;
+                        if (right.Y + diff.Y >= rect.Top && right.Y + diff.Y < rect.Bottom)
+                        {
+                            intersection = right + diff;
+                            return true;
+                        }
+                    }
+                }
+                if (norm.Y != 0)
+                {
+                    if (up.Y < rect.Top)
+                    {
+                        Vector2 diff = new Vector2(0, rect.Top - up.Y);
+                        diff.X = (diff.Y / norm.Y) * norm.X;
+                        if (up.X + diff.X >= rect.Left && up.X + diff.X < rect.Right)
+                        {
+                            intersection = up + diff;
+                            return true;
+                        }
+                    }
+                    if (down.Y > rect.Bottom)
+                    {
+                        Vector2 diff = new Vector2(0, rect.Bottom - down.Y);
+                        diff.X = (diff.Y / norm.Y) * norm.X;
+                        if (down.X + diff.X >= rect.Left && down.X + diff.X < rect.Right)
+                        {
+                            intersection = down + diff;
+                            return true;
+                        }
+                    }
+                }
+
+                intersection = Vector2.Zero;
+                return false;
+            }
+        }
+
         // https://medium.com/data-science/change-of-basis-3909ef4bed43
         public static Matrix ChangeBasis(this Matrix input)
         {
@@ -308,6 +385,7 @@ namespace Stardew3D
             return m;
         }
 
+        public static Vector2 Normalized(this Vector2 v) => Vector2.Normalize(v);
         public static Vector3 Normalized(this Vector3 v) => Vector3.Normalize(v);
         public static Matrix Inverted(this Matrix m) => Matrix.Invert(m);
         public static Matrix Transposed(this Matrix m) => Matrix.Transpose(m);

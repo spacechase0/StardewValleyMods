@@ -29,6 +29,9 @@ public abstract class InteractionArea
         }
     }
 
+    // Bounding box, ignoring the position and rotation
+    public abstract BoundingBox GetBoundingBox();
+
     // Must return vertices of the convex shape, ignoring the position and rotation
     public abstract Vector3[] GetShape();
 

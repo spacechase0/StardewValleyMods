@@ -12,6 +12,11 @@ public class BoxInteractionArea : InteractionArea
 
     public Vector3 Size { get; set; }
 
+    public override BoundingBox GetBoundingBox()
+    {
+        return new BoundingBox(-Size / 2, Size / 2);
+    }
+
     public override Vector3[] GetShape()
     {
         return

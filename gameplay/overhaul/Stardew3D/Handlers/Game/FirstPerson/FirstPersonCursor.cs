@@ -32,6 +32,12 @@ public class FirstPersonCursor : IGameCursor
     public Vector2 MenuScroll { get; set; }
 
     public Item Holding => Game1.player.CurrentItem;
+    public bool UseItemJustPressed => !Game1.isOneOfTheseKeysDown(Game1.oldKBState, Game1.options.useToolButton) && Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.useToolButton);
+    public bool UseItemHeld => Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.useToolButton);
+    public bool UseItemJustReleased => Game1.isOneOfTheseKeysDown(Game1.oldKBState, Game1.options.useToolButton) && !Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.useToolButton);
+    public bool InteractJustPressed => !Game1.isOneOfTheseKeysDown(Game1.oldKBState, Game1.options.actionButton) && Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.actionButton);
+    public bool InteractHeld => Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.actionButton);
+    public bool InteractJustReleased => Game1.isOneOfTheseKeysDown(Game1.oldKBState, Game1.options.actionButton) && !Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.actionButton);
 
     public FirstPersonCursor(FirstPersonGameHandler gameHandler)
     {

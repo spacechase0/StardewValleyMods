@@ -55,4 +55,10 @@ public interface IGameCursor
     public Vector2 MenuScroll { get; }
 
     public Item Holding { get; }
+    public bool UseItemJustPressed { get; }
+    public bool UseItemHeld { get; }
+    public bool UseItemJustReleased { get; }
+    public bool InteractJustPressed { get; }
+    public bool InteractHeld { get; }
+    public bool InteractJustReleased { get; }
 }

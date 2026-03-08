@@ -22,6 +22,7 @@ public interface IGameHandler
     public const string CategoryEditor = "Category/Editor"; // Causes the base game update functions to stop
 
     public const string FeatureMotionControls = "Feature/MotionControls";
+    public const string FeaturePointAndClick = "Feature/PointAndClick";
 
     public string Id { get; }
     public string[] Tags { get; }
