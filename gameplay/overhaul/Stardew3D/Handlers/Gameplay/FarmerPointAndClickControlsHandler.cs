@@ -68,99 +68,112 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
     private void Interact(IGameCursor cursor, object sel)
     {
-        switch (sel)
+        Item oldTemp = Object.TemporaryItem;
+        if (Object.ActiveItem != cursor.Holding)
         {
-            case TerrainFeature tf:
-                tf.performUseAction(tf.Tile);
-                break;
-            case Building b:
-                //b.doAction(???, Object);
-                break;
-            case Furniture f:
-                // TODO: Reverse patch from GameLocation.checkAction
-                if (cursor.Holding is StardewValley.Object heldObj && f.performObjectDropInAction(heldObj, probe: false, Object))
+            Object.TemporaryItem = cursor.Holding;
+        }
+
+        try
+        {
+            switch (sel)
+            {
+                case TerrainFeature tf:
+                    tf.performUseAction(tf.Tile);
                     break;
-                f.checkForAction(Object);
-                break;
-            case StardewValley.Object o:
-                // TODO: Reverse patch from GameLocation.checkAction
-                if (o.Type is "Crafting" or "interactive")
-                {
-                    if (cursor.Holding is not StardewValley.Object && o.checkForAction(Object))
+                case Building b:
+                    //b.doAction(???, Object);
+                    break;
+                case Furniture f:
+                    // TODO: Reverse patch from GameLocation.checkAction
+                    if (cursor.Holding is StardewValley.Object heldObj && f.performObjectDropInAction(heldObj, probe: false, Object))
                         break;
-
-                    if (cursor.Holding != null)
+                    f.checkForAction(Object);
+                    break;
+                case StardewValley.Object o:
+                    // TODO: Reverse patch from GameLocation.checkAction
+                    if (o.Type is "Crafting" or "interactive")
                     {
-                        var oldHeld = o.heldObject.Value;
-                        o.heldObject.Value = null;
-                        bool probe = o.performObjectDropInAction(cursor.Holding, probe: true, Object);
-                        o.heldObject.Value = oldHeld;
-                        bool perform = o.performObjectDropInAction(cursor.Holding, probe: false, Object, returnFalseIfItemConsumed: true);
-
-                        if (!Object.ignoreItemConsumptionThisFrame && perform)
-                        {
-                            Object.reduceActiveItemByOne();
+                        if (cursor.Holding is not StardewValley.Object && o.checkForAction(Object))
                             break;
-                        }
-                    }
 
-                    o.checkForAction(Object);
-                }
-                else if ( o.IsSpawnedObject )
-                {
-                    int oldQual = o.quality.Value;
-                    Random rand = Utility.CreateDaySaveRandom(o.TileLocation.X, o.TileLocation.Y * 777);
-                    if (o.isForage())
-                        o.Quality = o.Location.GetHarvestSpawnedObjectQuality(Object, o.isForage(), o.TileLocation, rand);
-
-                    if (o.questItem.Value && o.questId != null && o.questId.Value != "0" && !Object.hasQuest(o.questId.Value))
-                        break;
-
-                    if (Object.couldInventoryAcceptThisItem(o))
-                    {
-                        Object.currentLocation.localSound("pickUpItem");
-                        DelayedAction.playSoundAfterDelay("coin", 300);
-
-                        if (!Object.currentLocation.isFarmBuildingInterior())
+                        if (cursor.Holding != null)
                         {
-                            if (o.isForage())
-                                Object.currentLocation.OnHarvestedForage(Object, o);
+                            var oldHeld = o.heldObject.Value;
+                            o.heldObject.Value = null;
+                            bool probe = o.performObjectDropInAction(cursor.Holding, probe: true, Object);
+                            o.heldObject.Value = oldHeld;
+                            bool perform = o.performObjectDropInAction(cursor.Holding, probe: false, Object, returnFalseIfItemConsumed: true);
 
-                            if (o.ItemId == "789" && Object.currentLocation.Name == "LewisBasement")
+                            if (!Object.ignoreItemConsumptionThisFrame && perform)
                             {
-                                Bat bat = new Bat(Vector2.Zero, -789);
-                                bat.focusedOnFarmers = true;
-                                Game1.changeMusicTrack("none");
-                                Object.currentLocation.playSound("cursed_mannequin");
-                                Object.currentLocation.characters.Add(bat);
+                                Object.reduceActiveItemByOne();
+                                break;
                             }
                         }
-                        else
-                        {
-                            Object.gainExperience(0, 5);
-                        }
 
-                        Object.addItemToInventoryBool(o.getOne());
-                        Game1.stats.ItemsForaged++;
-                        if (Object.professions.Contains(13) && rand.NextDouble() < 0.2 && !o.questItem.Value && Object.couldInventoryAcceptThisItem(o) && !Object.currentLocation.isFarmBuildingInterior())
-                        {
-                            Object.addItemToInventoryBool(o.getOne());
-                            Object.gainExperience(2, 7);
-                        }
-
-                        Object.currentLocation.objects.Remove(o.TileLocation);
-                        break;
+                        o.checkForAction(Object);
                     }
-                    o.Quality = oldQual;
-                }
-                break;
-            case NPC n:
-                n.checkAction(Object, n.currentLocation);
-                break;
-            case FarmAnimal f:
-                if (!f.wasPet.Value)
-                    f.pet(Object);
-                break;
+                    else if (o.IsSpawnedObject)
+                    {
+                        int oldQual = o.quality.Value;
+                        Random rand = Utility.CreateDaySaveRandom(o.TileLocation.X, o.TileLocation.Y * 777);
+                        if (o.isForage())
+                            o.Quality = o.Location.GetHarvestSpawnedObjectQuality(Object, o.isForage(), o.TileLocation, rand);
+
+                        if (o.questItem.Value && o.questId != null && o.questId.Value != "0" && !Object.hasQuest(o.questId.Value))
+                            break;
+
+                        if (Object.couldInventoryAcceptThisItem(o))
+                        {
+                            Object.currentLocation.localSound("pickUpItem");
+                            DelayedAction.playSoundAfterDelay("coin", 300);
+
+                            if (!Object.currentLocation.isFarmBuildingInterior())
+                            {
+                                if (o.isForage())
+                                    Object.currentLocation.OnHarvestedForage(Object, o);
+
+                                if (o.ItemId == "789" && Object.currentLocation.Name == "LewisBasement")
+                                {
+                                    Bat bat = new Bat(Vector2.Zero, -789);
+                                    bat.focusedOnFarmers = true;
+                                    Game1.changeMusicTrack("none");
+                                    Object.currentLocation.playSound("cursed_mannequin");
+                                    Object.currentLocation.characters.Add(bat);
+                                }
+                            }
+                            else
+                            {
+                                Object.gainExperience(0, 5);
+                            }
+
+                            Object.addItemToInventoryBool(o.getOne());
+                            Game1.stats.ItemsForaged++;
+                            if (Object.professions.Contains(13) && rand.NextDouble() < 0.2 && !o.questItem.Value && Object.couldInventoryAcceptThisItem(o) && !Object.currentLocation.isFarmBuildingInterior())
+                            {
+                                Object.addItemToInventoryBool(o.getOne());
+                                Object.gainExperience(2, 7);
+                            }
+
+                            Object.currentLocation.objects.Remove(o.TileLocation);
+                            break;
+                        }
+                        o.Quality = oldQual;
+                    }
+                    break;
+                case NPC n:
+                    n.checkAction(Object, n.currentLocation);
+                    break;
+                case FarmAnimal f:
+                    if (!f.wasPet.Value)
+                        f.pet(Object);
+                    break;
+            }
+        }
+        finally
+        {
+            Object.TemporaryItem = oldTemp;
         }
     }
 
