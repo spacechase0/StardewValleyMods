@@ -86,7 +86,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
     * MP support would be tricky
 
 # Polish
-* Optional highlight/outline for when a cursor is pointing at something
+* Make optional the highlight/outline for when a cursor is pointing at something
 * [VR] Swipe sound when swinging weapons
 * Button on title screen for changing current mode (including turning off VR with your PC mouse, even while VR is active)
 * [VR] A full scene for the title menu
