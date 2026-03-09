@@ -26,91 +26,66 @@ namespace SpaceShared.UI
 
         public Container Parent { get; internal set; }
         public Vector2 LocalPosition { get; set; }
-        public Vector2 Position
-        {
-            get
-            {
-                if (this.Parent != null)
-                    return this.Parent.Position + this.LocalPosition;
-                return this.LocalPosition;
-            }
-        }
+        public Vector2 Position => (Parent?.Position ?? Vector2.Zero) + LocalPosition;
 
         public abstract int Width { get; }
         public abstract int Height { get; }
         public Rectangle Bounds => new((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
 
-        public bool Hover { get; private set; }
+        public bool Hover => Root?.HoveredElement == this;
         public virtual string HoveredSound => null;
 
-        public bool ClickGestured { get; private set; }
-        public bool Clicked => this.Hover && this.ClickGestured;
         public virtual string ClickedSound => null;
 
         /// <summary>Whether to disable the element so it's invisible and can't be interacted with.</summary>
         public Func<bool> ForceHide;
 
-
         /*********
         ** Public methods
         *********/
+        public virtual void MouseHover(Point mousePos)
+        {
+            if (new Rectangle(0, 0, Width, Height).Contains(mousePos))
+                Root?.HoveredElement = this;
+        }
+        public virtual bool VerticalScroll(int amount) => false;
+        public virtual bool LeftClick(Point mousePos, bool pressed)
+        {
+            if (ClickedSound != null)
+                Game1.playSound(ClickedSound);
+
+            return false;
+        }
+        public virtual bool RightClick(Point mousePos, bool pressed) => false;
+        public virtual bool KeyPress(Keys key) => false;
+
+        // TODO: Is isOffScreen still needed?
         /// <summary>Update the element for the current game tick.</summary>
         /// <param name="isOffScreen">Whether the element is currently off-screen.</param>
         public virtual void Update(bool isOffScreen = false)
         {
-            bool hidden = this.IsHidden(isOffScreen);
+            defaultClickable?.bounds = Bounds;
 
-            if (defaultClickable != null)
-                defaultClickable.bounds = Bounds;
-
-            if (hidden)
+            if (Root.HoveredElement == this && Root.PreviousHoveredElement != this)
             {
-                this.Hover = false;
-                this.ClickGestured = false;
-                return;
+                if (HoveredSound != null)
+                    Game1.playSound(HoveredSound);
             }
-
-            int mouseX;
-            int mouseY;
-            if (Constants.TargetPlatform == GamePlatform.Android)
-            {
-                mouseX = Game1.getMouseX();
-                mouseY = Game1.getMouseY();
-            }
-            else
-            {
-                mouseX = Game1.getOldMouseX();
-                mouseY = Game1.getOldMouseY();
-            }
-
-            bool newHover = !hidden && !this.GetRoot().Obscured && this.Bounds.Contains(mouseX, mouseY);
-            if (newHover && !this.Hover && this.HoveredSound != null)
-                Game1.playSound(this.HoveredSound);
-            this.Hover = newHover;
-
-            this.ClickGestured = (Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released);
-            this.ClickGestured = this.ClickGestured || (Game1.options.gamepadControls && (Game1.input.GetGamePadState().IsButtonDown(Buttons.A) && !Game1.oldPadState.IsButtonDown(Buttons.A)));
-            if (this.ClickGestured && (Dropdown.SinceDropdownWasActive > 0 || Dropdown.ActiveDropdown != null))
-            {
-                this.ClickGestured = false;
-            }
-            if (this.Clicked && this.ClickedSound != null)
-                Game1.playSound(this.ClickedSound);
         }
 
         public abstract void Draw(SpriteBatch b);
 
-        public RootElement GetRoot()
+        public Container Tooltip { get; set; }
+        public virtual void DrawTooltip(SpriteBatch b)
         {
-            return this.GetRootImpl();
+            if (Tooltip == null)
+                return;
+
+            Tooltip.LocalPosition = Root.LastMousePosition.ToVector2();
+            Tooltip.Draw(b);
         }
 
-        internal virtual RootElement GetRootImpl()
-        {
-            if (this.Parent == null)
-                throw new Exception("Element must have a parent.");
-            return this.Parent.GetRoot();
-        }
+        public virtual RootElement Root => Parent?.Root;
 
         /// <summary>Get whether the element is hidden based on <see cref="ForceHide"/> or its position relative to the screen.</summary>
         /// <param name="isOffScreen">Whether the element is currently off-screen.</param>

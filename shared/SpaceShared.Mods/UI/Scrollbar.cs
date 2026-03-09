@@ -88,39 +88,26 @@ namespace SpaceShared.UI
             }
         }
 
-        /// <inheritdoc />
-        public override void Update(bool isOffScreen = false)
+        public override void MouseHover(Point mousePos)
         {
-            base.Update(isOffScreen);
+            base.MouseHover(mousePos);
 
-            if (this.Clicked)
-                this.DragScroll = true;
-            if (Constants.TargetPlatform != GamePlatform.Android)
-            {
-                if (this.DragScroll && Mouse.GetState().LeftButton == ButtonState.Released)
-                    this.DragScroll = false;
-            }
-            else
-            {
-                if (this.DragScroll && Game1.input.GetMouseState().LeftButton == ButtonState.Released)
-                    this.DragScroll = false;
-            }
+            if (!DragScroll)
+                return;
 
+            ScrollTo((int)Math.Round((mousePos.Y - 40 / 2) / (float)(Height - 40) * MaxTopRow));
+        }
 
-            if (this.DragScroll)
-            {
-                int my = Game1.getMouseY();
-                int relY = (int)(my - this.Position.Y - 40 / 2);
-                this.ScrollTo((int)Math.Round(relY / (float)(this.Height - 40) * this.MaxTopRow));
-            }
+        public override bool LeftClick(Point mousePos, bool pressed)
+        {
+            base.LeftClick(mousePos, pressed);
+            DragScroll = pressed;
+            return true;
         }
 
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             // Don't draw a scrollbar if scrolling is (currently) not possible.
             if (this.MaxTopRow == 0)
                 return;

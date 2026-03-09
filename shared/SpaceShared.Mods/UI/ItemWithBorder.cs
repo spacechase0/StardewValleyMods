@@ -22,7 +22,17 @@ namespace SpaceShared.UI
     class ItemWithBorder : Element
     {
 
-        public Item ItemDisplay { get; set; }
+        public Item ItemDisplay
+        {
+            get => field;
+            set
+            {
+                field = value;
+
+                ScreenReaderText = ItemDisplay.DisplayName;
+                ScreenReaderDescription = ItemDisplay.getDescription();
+            }
+        }
 
         public bool TransparentItemDisplay { get; set; } = false;
 
@@ -35,25 +45,19 @@ namespace SpaceShared.UI
         public override int Width => Game1.tileSize + (BoxIsThin ? 0 : 16) * 2;
         public override int Height => Game1.tileSize + (BoxIsThin ? 0 : 16) * 2;
 
-        public override void Update( bool hidden = false )
+        public override bool LeftClick(Point mousePos, bool pressed)
         {
-            base.Update( hidden );
+            base.LeftClick(mousePos, pressed);
+            Callback?.Invoke(this);
+            return true;
+        }
 
-            if ( Hover )
-                GetRoot()?.HoveredElement = this;
-            else if (GetRoot()?.HoveredElement == this )
-                GetRoot()?.HoveredElement = null;
-
-            if ( Clicked && Callback != null )
-                Callback.Invoke( this );
-
-            bool SecondaryClickGestured = (Game1.input.GetMouseState().RightButton == ButtonState.Pressed && Game1.oldMouseState.RightButton == ButtonState.Released);
-            SecondaryClickGestured = SecondaryClickGestured || (Game1.options.gamepadControls && (Game1.input.GetGamePadState().IsButtonDown(Buttons.B) && !Game1.oldPadState.IsButtonDown(Buttons.B)));
-            if (Hover && SecondaryClickGestured && SecondaryCallback != null)
-                SecondaryCallback.Invoke(this);
-
-            ScreenReaderText = ItemDisplay.DisplayName;
-            ScreenReaderDescription = ItemDisplay.getDescription();
+        public override bool RightClick(Point mousePos, bool pressed)
+        {
+            base.RightClick(mousePos, pressed);
+            if (pressed)
+                SecondaryCallback?.Invoke(this);
+            return true;
         }
 
         public override void Draw( SpriteBatch b )

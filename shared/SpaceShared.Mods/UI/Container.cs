@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StardewValley.Menus;
 
 #if IS_SPACECORE
@@ -22,31 +24,10 @@ namespace SpaceShared.UI
         *********/
         private readonly IList<Element> ChildrenImpl = new List<Element>();
 
-        /// <summary>Whether to update the <see cref="Children"/> when <see cref="Update"/> is called.</summary>
-        protected bool UpdateChildren { get; set; } = true;
-
 
         /*********
         ** Accessors
         *********/
-        private Element renderLast = null;
-        public Element RenderLast
-        {
-            get => renderLast;
-            set {
-                renderLast = value;
-                if (this.Parent is not null) {
-                    if (value is null) {
-                        if (this.Parent.RenderLast == this) {
-                            this.Parent.RenderLast = null;
-                        }
-                    } else {
-                        this.Parent.RenderLast = this;
-                    }
-                }
-            }
-        }
-
         public Element[] Children => this.ChildrenImpl.ToArray();
 
 
@@ -72,42 +53,63 @@ namespace SpaceShared.UI
             OnChildrenChanged();
         }
 
-        public virtual void OnChildrenChanged()
+        public virtual void OnChildrenChanged(bool transitive = false)
         {
+            Parent?.OnChildrenChanged(true);
+        }
+
+        public override void MouseHover(Point mousePos)
+        {
+            foreach (var child in ChildrenImpl)
+                child.MouseHover(mousePos);
+        }
+
+        public override bool VerticalScroll(int amount)
+        {
+            foreach (var elem in Children)
+            {
+                if (elem.VerticalScroll(amount))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public override bool KeyPress(Keys key)
+        {
+            foreach (var child in ChildrenImpl)
+            {
+                if (child.KeyPress(key))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <inheritdoc />
         public override void Update(bool isOffScreen = false)
         {
-            base.Update(isOffScreen);
-            if (this.UpdateChildren)
+            foreach (var element in this.ChildrenImpl)
             {
-                foreach (var element in this.ChildrenImpl)
-                {
-                    element.Update(isOffScreen);
+                element.Update(isOffScreen || !element.Bounds.Intersects(Bounds));
 
-                    if (element is Container)
-                        continue;
+                if (element is Container)
+                    continue;
 
-                    foreach (var region in element.GetGamepadMovementRegions())
-                        region.visible = !isOffScreen;
-                }
+                foreach (var region in element.GetGamepadMovementRegions())
+                    region.visible = !isOffScreen;
             }
         }
 
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             foreach (var child in this.ChildrenImpl)
             {
-                if (child == this.RenderLast)
+                if (child.IsHidden() || child == Root?.RenderLast)
                     continue;
                 child.Draw(b);
             }
-            this.RenderLast?.Draw(b);
         }
 
         private ConditionalWeakTable<ClickableComponent, SpaceShared.Holder<bool>> modifiedRegions = new();

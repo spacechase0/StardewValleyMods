@@ -34,7 +34,15 @@ namespace SpaceShared.UI
 
         public float Scale { get; set; } = 1.0f;
 
-        public string String { get; set; }
+        public string String
+        {
+            get => field;
+            set
+            {
+                field = value;
+                ScreenReaderText = String;
+            }
+        }
 
         public Action<Element> Callback { get; set; }
 
@@ -51,15 +59,12 @@ namespace SpaceShared.UI
         /*********
         ** Public methods
         *********/
-        /// <inheritdoc />
-        public override void Update(bool isOffScreen = false)
+        public override bool LeftClick(Point mousePos, bool pressed)
         {
-            base.Update(isOffScreen);
-
-            if (this.Clicked)
-                this.Callback?.Invoke(this);
-
-            ScreenReaderText = String;
+            base.LeftClick(mousePos, pressed);
+            if (pressed)
+                Callback?.Invoke(this);
+            return true;
         }
 
         /// <summary>Measure the label's rendered dialogue text size.</summary>
@@ -71,9 +76,6 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             bool altColor = this.Hover && this.Callback != null;
             if (this.Bold)
             {

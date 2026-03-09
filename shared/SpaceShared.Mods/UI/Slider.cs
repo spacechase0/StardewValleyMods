@@ -62,52 +62,51 @@ namespace SpaceShared.UI
         /*********
         ** Public methods
         *********/
+        public override void MouseHover(Point mousePos)
+        {
+            base.MouseHover(mousePos);
+
+            if (Dragging)
+            {
+                float perc = mousePos.X / (float) Width;
+                Value = Util.Adjust(Value, Interval);
+                Value = Value switch
+                {
+                    int => Util.Clamp<T>(Minimum, (T)(object)(int)(perc * ((int)(object)Maximum - (int)(object)Minimum) + (int)(object)Minimum), Maximum),
+                    float => Util.Clamp<T>(Minimum, (T)(object)(perc * ((float)(object)Maximum - (float)(object)Minimum) + (float)(object)Minimum), Maximum),
+                    _ => Value
+                };
+
+                Callback?.Invoke(this);
+                Root.GamepadMovementRegionsDirty = true;
+            }
+        }
+
+        public override bool LeftClick(Point mousePos, bool pressed)
+        {
+            base.LeftClick(mousePos, pressed);
+            if ( Dragging != pressed)
+            {
+                Dragging = pressed;
+                Root.GamepadMovementRegionsDirty = true;
+            }
+            return true;
+        }
+
         /// <inheritdoc />
         public override void Update(bool isOffScreen = false)
         {
             base.Update(isOffScreen);
 
-            if (this.Clicked)
-                this.Dragging = true;
-            if (Constants.TargetPlatform != GamePlatform.Android)
-            {
-                if (Mouse.GetState().LeftButton == ButtonState.Released && Game1.input.GetGamePadState().Buttons.A == ButtonState.Released)
-                    this.Dragging = false;
-            }
-            else
-            {
-                if (Game1.input.GetMouseState().LeftButton == ButtonState.Released && Game1.input.GetGamePadState().Buttons.A == ButtonState.Released)
-                    this.Dragging = false;
-            }
-
-            if ( Dragging )
-                GetRoot().GamepadMovementRegionsDirty = true;
-
             if (valueMarkerRegion != null)
                 valueMarkerRegion.bounds = Bounds;
 
-            if (this.Dragging)
-            {
-                float perc = (Game1.getOldMouseX() - this.Position.X) / this.Width;
-                this.Value = Util.Adjust(this.Value, this.Interval);
-                this.Value = this.Value switch
-                {
-                    int => Util.Clamp<T>(this.Minimum, (T)(object)(int)(perc * ((int)(object)this.Maximum - (int)(object)this.Minimum) + (int)(object)this.Minimum), this.Maximum),
-                    float => Util.Clamp<T>(this.Minimum, (T)(object)(perc * ((float)(object)this.Maximum - (float)(object)this.Minimum) + (float)(object)this.Minimum), this.Maximum),
-                    _ => this.Value
-                };
-
-                this.Callback?.Invoke(this);
-            }
         }
 
         private ElementClickableComponent valueMarkerRegion;
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             float perc = this.Value switch
             {
                 int => ((int)(object)this.Value - (int)(object)this.Minimum) / (float)((int)(object)this.Maximum - (int)(object)this.Minimum),

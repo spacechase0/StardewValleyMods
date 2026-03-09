@@ -98,7 +98,6 @@ namespace GenericModConfigMenu
             helper.Events.Display.WindowResized += this.OnWindowResized;
             helper.Events.Display.Rendered += this.OnRendered;
             helper.Events.Display.MenuChanged += this.OnMenuChanged;
-            helper.Events.Input.MouseWheelScrolled += this.OnMouseWheelScrolled;
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             helper.Events.Input.ButtonsChanged += this.OnButtonChanged;
 
@@ -260,7 +259,11 @@ namespace GenericModConfigMenu
         {
             if (this.Ui == null)
             {
-                this.Ui = new RootElement(() => Game1.activeClickableMenu?.currentlySnappedComponent, dir => Game1.activeClickableMenu?.moveCursorInDirection(dir));
+                this.Ui = new RootElement(() => Game1.activeClickableMenu?.currentlySnappedComponent, c =>
+                {
+                    Game1.activeClickableMenu?.currentlySnappedComponent = c;
+                    Game1.activeClickableMenu?.snapCursorToCurrentSnappedComponent();
+                });
 
                 Texture2D tex = this.Helper.GameContent.Load<Texture2D>(AssetManager.ConfigButton);
                 this.ConfigButton = new Button(tex)
@@ -431,14 +434,6 @@ namespace GenericModConfigMenu
             // pass to menu for keybind
             if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu)
                 menu.OnButtonsChanged(e);
-        }
-
-        /// <inheritdoc cref="IInputEvents.MouseWheelScrolled"/>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
-        {
-            Dropdown.ActiveDropdown?.ReceiveScrollWheelAction(e.Delta);
         }
     }
 }

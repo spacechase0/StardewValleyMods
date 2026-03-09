@@ -503,7 +503,7 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void receiveScrollWheelAction(int direction)
         {
-            if (Get == null)
+            if (Ui.ActiveDropdown == null)
             {
                 this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
                 snapCursorToCurrentSnappedComponent();
@@ -526,7 +526,7 @@ namespace GenericModConfigMenu.Framework
             this.Ui.Update();
 
             // TODO: This will be different if a dropdown is open
-            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0 && Dropdown.ActiveDropdown == null)
+            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0 && Ui.ActiveDropdown == null)
             {
                 if (++scrollCounter == 5)
                 {

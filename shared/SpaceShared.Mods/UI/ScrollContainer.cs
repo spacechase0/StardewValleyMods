@@ -1,6 +1,7 @@
 #if !DEPENDENCY_HAS_SPACESHARED
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -33,15 +34,15 @@ namespace SpaceShared.UI
         *********/
         public ScrollContainer()
         {
-            this.UpdateChildren = false; // table will update children itself
             this.Scrollbar = new Scrollbar
             {
                 LocalPosition = new Vector2(0, 0),
             };
-            Scrollbar.OnScrolled += (_, _, _) => GetRoot().GamepadMovementRegionsDirty = true;
+            Scrollbar.OnScrolled += (_, _, _) => Root.GamepadMovementRegionsDirty = true;
             this.AddChild(this.Scrollbar);
         }
-        public override void OnChildrenChanged()
+
+        public override void OnChildrenChanged(bool transitive = false)
         {
             int topPx = 0;
             foreach (var child in Children)
@@ -59,13 +60,36 @@ namespace SpaceShared.UI
             }
 
             UpdateScrollbar();
+
+            base.OnChildrenChanged(transitive);
+        }
+
+        public override bool VerticalScroll(int amount)
+        {
+            if (base.VerticalScroll(amount))
+                return true;
+
+            Scrollbar.ScrollBy(amount);
+
+            bool us = false;
+            for (var elem = Root.CurrentSnappedElement; elem != null; elem = elem.Parent)
+            {
+                if (elem == this)
+                {
+                    us = true;
+                    break;
+                }
+            }
+            if (us)
+                Root.SnapTo(Root.CurrentSnapped());
+
+            return true;
         }
 
         public int lastScroll = 0; // Feeling lazy, make this public for now and do a proper solution later
         /// <inheritdoc />
         public override void Update(bool isOffScreen = false)
         {
-            base.Update(isOffScreen);
             if (this.IsHidden(isOffScreen))
                 return;
 
@@ -126,9 +150,6 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             if (this.OutlineColor.HasValue)
             {
                 IClickableMenu.drawTextureBox(b, (int)this.Position.X - 12, (int)this.Position.Y - 12, this.Width + 24, this.Height + 24, this.OutlineColor.Value);
@@ -142,24 +163,17 @@ namespace SpaceShared.UI
             // draw table contents
             // This uses a scissor rectangle to clip content taller than one row that might be
             // drawn past the bottom of the UI, like images or complex options.
-            Element? renderLast = null;
             this.InScissorRectangle(b, contentArea, contentBatch =>
             {
                 foreach (var child in Children)
                 {
                     if (child == Scrollbar)
                         continue;
-                    if (this.IsElementOffScreen(child))
+                    if (this.IsElementOffScreen(child) || child.IsHidden() || child == Root.RenderLast)
                         continue;
-                    if (child == this.RenderLast)
-                    {
-                        renderLast = child;
-                        continue;
-                    }
                     child.Draw(contentBatch);
                 }
             });
-            renderLast?.Draw(b);
 
             this.Scrollbar.Draw(b);
         }

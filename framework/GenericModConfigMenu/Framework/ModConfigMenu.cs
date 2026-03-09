@@ -15,7 +15,7 @@ namespace GenericModConfigMenu.Framework
     /// <summary>Textbox with customizable width for search functionality.</summary>
     internal class WideTextbox : Textbox
     {
-        private readonly int CustomWidth;
+        public readonly int CustomWidth;
 
         public WideTextbox(int width)
         {
@@ -23,19 +23,6 @@ namespace GenericModConfigMenu.Framework
         }
 
         public override int Width => this.CustomWidth;
-
-        public override void Update(bool isOffScreen = false)
-        {
-            base.Update(isOffScreen);
-
-            // Handle click to select/deselect
-            if (this.ClickGestured)
-            {
-                this.Selected = this.Hover;
-                if (this.Callback != null)
-                    this.Callback(this);
-            }
-        }
 
         public override void Draw(SpriteBatch b)
         {
@@ -67,12 +54,11 @@ namespace GenericModConfigMenu.Framework
         }
     }
 
-    internal class ModConfigMenu : IClickableMenu
+    internal class ModConfigMenu : ElementMenu
     {
         /*********
         ** Fields
         *********/
-        private RootElement Ui;
         private readonly Table Table;
 
         /*********
@@ -81,9 +67,6 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Whether the search textbox is currently active (typing).</summary>
         public bool IsTypingInSearchBox => this.SearchBox != null && this.SearchBox.Selected;
 
-        /// <summary>The number of field rows to offset when scrolling a config menu.</summary>
-        private readonly int ScrollSpeed;
-
         /// <summary>Open the config UI for a specific mod.</summary>
         private readonly Action<IManifest, int> OpenModMenu;
         private bool InGame => Context.IsWorldReady;
@@ -91,7 +74,7 @@ namespace GenericModConfigMenu.Framework
         private List<Label> LabelsWithTooltips = new();
 
         /// <summary>The search textbox for filtering mods.</summary>
-        private Textbox SearchBox;
+        private WideTextbox SearchBox;
 
         /// <summary>The current search query.</summary>
         private string CurrentSearchQuery = "";
@@ -130,40 +113,13 @@ namespace GenericModConfigMenu.Framework
         /// <param name="configs">The mod configurations to display.</param>
         /// <param name="scrollTo">The initial scroll position, represented by the row index at the top of the visible area.</param>
         public ModConfigMenu(int scrollSpeed, Action<IManifest, int> openModMenu, Action<int> openKeybindsMenu, ModConfigManager configs, Texture2D keybindsTexture, int? scrollTo = null)
+            : base(scrollSpeed)
         {
-            this.ScrollSpeed = scrollSpeed;
             this.OpenModMenu = openModMenu;
             this.AllConfigs = configs;
 
-            // init UI
-            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
-
             // Table width (standard size)
             int tableWidth = 800;
-            // Search bar width = full UI width (table + 64px borders on each side)
-            int searchWidth = tableWidth + 128;
-
-            // Create search box (at the top, same width as full UI with margin)
-            this.SearchBox = new WideTextbox(searchWidth)
-            {
-                LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2, 16),
-                String = "",
-                Callback = _ => this.OnSearchChanged(),
-                ScreenReaderIgnore = true,
-            };
-            this.Ui.AddChild(this.SearchBox);
-
-            // Create search placeholder (will be hidden when typing) - black text
-            this.SearchPlaceholder = new Label
-            {
-                String = I18n.List_SearchLabel(),
-                LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2 + 20, 20),
-                NonBoldScale = 0.8f,
-                IdleTextColor = Color.Black * 0.6f,
-                HoverTextColor = Color.Black * 0.6f,
-            };
-            this.Ui.AddChild(this.SearchPlaceholder);
-
             this.Table = new Table
             {
                 RowHeight = 50,
@@ -171,125 +127,69 @@ namespace GenericModConfigMenu.Framework
                 Size = new Vector2(tableWidth, Game1.uiViewport.Height - 128 - 50)
             };
 
-            // Populate initial list
-            this.RebuildModList();
-
-            this.Ui.AddChild(this.Table);
+            // Create search box (at the top, same width as full UI with margin)
+            // Search bar width = full UI width (table + 64px borders on each side)
+            int searchWidth = tableWidth + 128;
+            this.SearchBox = new WideTextbox(searchWidth)
+            {
+                LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2, 16),
+                String = "",
+                Callback = _ => this.OnSearchChanged(),
+                ScreenReaderIgnore = true,
+            };
 
             KeybindsButton = new Button(keybindsTexture)
             {
-                LocalPosition = this.Table.LocalPosition - new Vector2( keybindsTexture.Width / 2 + 32, 0 ),
-                Callback = _ => openKeybindsMenu( this.ScrollRow),
+                LocalPosition = this.Table.LocalPosition - new Vector2(keybindsTexture.Width / 2 + 32, 0),
+                Callback = _ => openKeybindsMenu(this.ScrollRow),
                 ScreenReaderText = I18n.List_Keybinds(),
             };
-            this.Ui.AddChild(KeybindsButton);
 
-            if (Constants.TargetPlatform == GamePlatform.Android)
-                this.initializeUpperRightCloseButton();
-            else
-                this.upperRightCloseButton = null;
+            // Create search placeholder (will be hidden when typing) - black text
+            this.SearchPlaceholder = new Label
+            {
+                String = I18n.List_SearchLabel(),
+                LocalPosition = new Vector2((Game1.uiViewport.Width - SearchBox.CustomWidth) / 2 + 20, 20),
+                NonBoldScale = 0.8f,
+                IdleTextColor = Color.Black * 0.6f,
+                HoverTextColor = Color.Black * 0.6f,
+                ForceHide = () => !string.IsNullOrEmpty(this.SearchBox.String)
+            };
 
+            MakeUi();
             if (scrollTo != null)
                 this.ScrollRow = scrollTo.Value;
-
-            populateClickableComponentList();
         }
 
-        /// <inheritdoc />
-        public override void receiveLeftClick(int x, int y, bool playSound = true)
+        protected override void AddUiContents()
         {
-            if (this.upperRightCloseButton?.containsPoint(x, y) == true && this.readyToClose())
-            {
-                if (playSound)
-                    Game1.playSound("bigDeSelect");
+            Ui.AddChild(Table);
+            Ui.AddChild(SearchBox);
+            Ui.AddChild(KeybindsButton);
+            Ui.AddChild(SearchPlaceholder);
 
-                Mod.ActiveConfigMenu = null;
-                return;
-            }
-
-            // If clicked outside the textbox, deselect it
-            if (this.SearchBox != null && this.SearchBox.Selected)
-            {
-                Rectangle searchBoxBounds = new Rectangle(
-                    (int)this.SearchBox.Position.X,
-                    (int)this.SearchBox.Position.Y,
-                    this.SearchBox.Width,
-                    this.SearchBox.Height
-                );
-
-                if (!searchBoxBounds.Contains(x, y))
-                {
-                    this.SearchBox.Selected = false;
-                }
-            }
+            // Populate initial list
+            this.RebuildModList();
         }
 
-        /// <inheritdoc />
-        public override void receiveKeyPress(Keys key)
+        protected override void UnhandledKeyPress(Keys key)
         {
-            // If textbox is active, don't process escape key here
-            // The textbox will handle its own input through Game1.keyboardDispatcher
-            if (this.SearchBox != null && this.SearchBox.Selected)
-                return;
-
-            // Only process Escape when not typing
             if (key == Keys.Escape)
             {
                 Mod.ActiveConfigMenu = null;
                 return;
             }
 
-            if (Game1.options.snappyMenus && Game1.options.gamepadControls && !overrideSnappyMenuCursorMovementBan())
-            {
-                applyMovementKey(key);
-            }
-        }
-
-        /// <inheritdoc />
-        public override void receiveScrollWheelAction(int direction)
-        {
-            this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
-            snapCursorToCurrentSnappedComponent();
-        }
-
-        private int scrollCounter = 0;
-        /// <inheritdoc />
-        public override void update(GameTime time)
-        {
-            base.update(time);
-            this.Ui.Update();
-
-            // Hide placeholder when typing
-            if (this.SearchPlaceholder != null)
-            {
-                this.SearchPlaceholder.ForceHide = () => !string.IsNullOrEmpty(this.SearchBox.String);
-            }
-
-            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0)
-            {
-                if (++scrollCounter == 5)
-                {
-                    scrollCounter = 0;
-                    this.Table.Scrollbar.ScrollBy(Math.Sign(Game1.input.GetGamePadState().ThumbSticks.Right.Y) * 120 / -this.ScrollSpeed);
-                }
-            }
-            else scrollCounter = 0;
-
-            if (Ui.GamepadMovementRegionsDirty)
-                populateClickableComponentList();
+            base.UnhandledKeyPress(key);
         }
 
         /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
-            base.draw(b);
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
-            this.Ui.Draw(b);
-            this.upperRightCloseButton?.draw(b); // bring it above the backdrop
-            if (this.InGame)
-                this.drawMouse(b);
+            base.draw(b);
 
-            if (Constants.TargetPlatform != GamePlatform.Android && GetChildMenu() == null)
+            if (GetChildMenu() == null)
             {
                 foreach (var label in this.LabelsWithTooltips)
                 {
@@ -309,60 +209,32 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
-            var oldUi = this.Ui;
-
-            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
-
             // Table width (standard size)
             int tableWidth = 800;
-            // Search bar width = full UI width (table + 64px borders on each side)
-            int searchWidth = tableWidth + 128;
-
-            // Reposition search box (at the top, same width as full UI with margin)
-            this.SearchBox.LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2, 16);
-            this.Ui.AddChild(this.SearchBox);
-
-            // Re-add search placeholder
-            this.SearchPlaceholder.LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2 + 20, 20);
-            this.Ui.AddChild(this.SearchPlaceholder);
+            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - tableWidth) / 2, 64 + 50);
 
             Vector2 newSize = new Vector2(tableWidth, Game1.uiViewport.Height - 128 - 50);
-            this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - tableWidth) / 2, 64 + 50);
-            foreach (Element opt in this.Table.Children)
-                opt.LocalPosition = new Vector2(newSize.X / (this.Table.Size.X / opt.LocalPosition.X), opt.LocalPosition.Y);
-
             this.Table.Size = newSize;
             this.Table.Scrollbar.Update();
-            this.Ui.AddChild(this.Table);
 
-            var b = oldUi.Children.First(e => e is Button);
-            oldUi.RemoveChild(b);
-            b.LocalPosition = this.Table.LocalPosition - new Vector2(b.Width / 2 + 32, 0);
-            this.Ui.AddChild(b);
+            // Reposition search box (at the top, same width as full UI with margin)
+            this.SearchBox.LocalPosition = new Vector2((Game1.uiViewport.Width - SearchBox.CustomWidth) / 2, 16);
+            this.SearchPlaceholder.LocalPosition = new Vector2((Game1.uiViewport.Width - SearchBox.CustomWidth) / 2 + 20, 20);
 
-            populateClickableComponentList();
+            KeybindsButton.LocalPosition = this.Table.LocalPosition - new Vector2(KeybindsButton.Width / 2 + 32, 0);
+
+            base.gameWindowSizeChanged(oldBounds, newBounds);
         }
 
         public override void populateClickableComponentList()
         {
-            base.populateClickableComponentList();
-
             foreach (var entry in Ui.GetGamepadMovementRegions().ToArray())
             {
                 if (entry.leftNeighborID == -1)
                     entry.leftNeighborID = KeybindsButton.GetGamepadMovementRegions().First().myID;
-                allClickableComponents.Add(entry);
             }
-            Ui.GamepadMovementRegionsDirty = false;
 
-            if (allClickableComponents.Contains(currentlySnappedComponent))
-                snapToDefaultClickableComponent();
-        }
-
-        /// <inheritdoc/>
-        public override bool overrideSnappyMenuCursorMovementBan()
-        {
-            return (Ui.CurrentSnappedElement?.CurrentlyUsingGamepadMovement(out bool snappy) ?? false) ? !snappy : false;
+            base.populateClickableComponentList();
         }
 
         public override void snapToDefaultClickableComponent()

@@ -73,12 +73,11 @@ namespace SpaceShared.UI
         public Table(bool fixedRowHeight = true)
         {
             this.FixedRowHeight = fixedRowHeight;
-            this.UpdateChildren = false; // table will update children itself
             this.Scrollbar = new Scrollbar
             {
                 LocalPosition = new Vector2(0, 0)
             };
-            Scrollbar.OnScrolled += (_, _, _) => GetRoot().GamepadMovementRegionsDirty = true;
+            Scrollbar.OnScrolled += (_, _, _) => Root.GamepadMovementRegionsDirty = true;
             this.AddChild(this.Scrollbar);
         }
 
@@ -220,10 +219,31 @@ namespace SpaceShared.UI
             }
         }
 
+        public override bool VerticalScroll(int amount)
+        {
+            if (base.VerticalScroll(amount))
+                return true;
+
+            Scrollbar.ScrollBy(amount);
+
+            bool us = false;
+            for (var elem = Root.CurrentSnappedElement; elem != null; elem = elem.Parent)
+            {
+                if (elem == this)
+                {
+                    us = true;
+                    break;
+                }
+            }
+            if (us)
+                Root.SnapTo(Root.CurrentSnapped());
+
+            return true;
+        }
+
         /// <inheritdoc />
         public override void Update(bool isOffScreen = false)
         {
-            base.Update(isOffScreen);
             if (this.IsHidden(isOffScreen))
                 return;
 
@@ -278,9 +298,6 @@ namespace SpaceShared.UI
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             // calculate draw area
             var backgroundArea = new Rectangle((int)this.Position.X - 32, (int)this.Position.Y - 32, (int)this.Size.X + 64, (int)this.Size.Y + 64);
             int contentPadding = 12;
@@ -293,24 +310,18 @@ namespace SpaceShared.UI
             // draw table contents
             // This uses a scissor rectangle to clip content taller than one row that might be
             // drawn past the bottom of the UI, like images or complex options.
-            Element? renderLast = null;
             this.InScissorRectangle(b, contentArea, contentBatch =>
             {
                 foreach (var row in this.Rows)
                 {
                     foreach (var element in row)
                     {
-                        if (this.IsElementOffScreen(element))
+                        if (this.IsElementOffScreen(element) || element.IsHidden() || element == Root.RenderLast)
                             continue;
-                        if (element == this.RenderLast) {
-                            renderLast = element;
-                            continue;
-                        }
                         element.Draw(contentBatch);
                     }
                 }
             });
-            renderLast?.Draw(b);
 
             this.Scrollbar.Draw(b);
         }

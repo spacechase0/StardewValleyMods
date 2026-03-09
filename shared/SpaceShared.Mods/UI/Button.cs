@@ -53,27 +53,28 @@ namespace SpaceShared.UI
             this.HoverTextureRect = new Rectangle(tex.Width / 2, 0, tex.Width / 2, tex.Height);
         }
 
+        public override bool LeftClick(Point mousePos, bool pressed)
+        {
+            base.LeftClick(mousePos, pressed);
+            if (pressed)
+                Callback?.Invoke(this);
+            return true;
+        }
+
         /// <inheritdoc />
         public override void Update(bool isOffScreen = false)
         {
             base.Update(isOffScreen);
 
             this.Scale = this.Hover ? Math.Min(this.Scale + 0.013f, 1.083f) : Math.Max(this.Scale - 0.013f, 1f);
-
-            if (this.Clicked)
-                this.Callback?.Invoke(this);
         }
 
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             var texRect = this.Hover ? this.HoverTextureRect : this.IdleTextureRect;
             Vector2 origin = new Vector2(texRect.Width / 2f, texRect.Height / 2f);
             b.Draw(this.Texture, this.Position + origin, texRect, Color.White, 0f, origin, this.Scale, SpriteEffects.None, 0f);
-            Game1.activeClickableMenu?.drawMouse(b);
         }
     }
 }

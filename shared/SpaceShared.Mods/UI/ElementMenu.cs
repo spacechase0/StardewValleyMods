@@ -1,3 +1,4 @@
+#if !DEPENDENCY_HAS_SPACESHARED
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -19,18 +20,20 @@ abstract class ElementMenu : IClickableMenu
 {
     protected RootElement Ui { get; set; }
 
-    private readonly int ScrollSpeed;
+    public readonly int ScrollSpeed;
 
     public ElementMenu(int scrollSpeed)
     {
         ScrollSpeed = scrollSpeed;
-
-        MakeUi();
     }
 
-    private void MakeUi()
+    protected void MakeUi()
     {
-        Ui = new RootElement(() => currentlySnappedComponent, moveCursorInDirection);
+        Ui = new RootElement(() => currentlySnappedComponent, c =>
+        {
+            currentlySnappedComponent = c;
+            snapCursorToCurrentSnappedComponent();
+        });
         AddUiContents();
         populateClickableComponentList();
     }
@@ -42,37 +45,67 @@ abstract class ElementMenu : IClickableMenu
         base.performHoverAction(x, y);
     }
 
+    protected virtual void UnhandledScroll(int direction)
+    {
+        base.receiveScrollWheelAction(direction);
+    }
+
+    protected virtual void UnhandledLeftClick(int x, int y, bool pressed, bool playSound = true)
+    {
+        if (pressed)
+            base.receiveLeftClick(x, y, playSound);
+        else
+            base.releaseLeftClick(x, y);
+    }
+
+    protected virtual void UnhandledRightClick(int x, int y, bool pressed, bool playSound = true)
+    {
+        if (pressed)
+            base.receiveRightClick(x, y, playSound);
+    }
+
+    protected virtual void UnhandledKeyPress(int x, int y, bool pressed, bool playSound = true)
+    {
+        if (pressed)
+            base.receiveRightClick(x, y, playSound);
+    }
+
+    protected virtual void UnhandledKeyPress(Keys key)
+    {
+        base.receiveKeyPress(key);
+    }
+
     public override void receiveLeftClick(int x, int y, bool playSound = true)
     {
         if (!Ui.LeftClick(new Point(x, y), pressed: true))
-            base.receiveLeftClick(x, y, playSound);
+            UnhandledLeftClick(x, y, true, playSound);
     }
 
     public override void releaseLeftClick(int x, int y)
     {
         if (!Ui.LeftClick(new Point(x, y), pressed: false))
-            base.releaseLeftClick(x, y);
+            UnhandledLeftClick(x, y, false);
     }
 
     public override void receiveRightClick(int x, int y, bool playSound = true)
     {
         if (!Ui.RightClick(new Point(x, y), pressed: true))
-            base.receiveRightClick(x, y, playSound);
+            UnhandledRightClick(x, y, playSound);
     }
 
     public override void receiveKeyPress(Keys key)
     {
-        if (Game1.keyboardDispatcher! != null)
+        if (Game1.keyboardDispatcher != null)
             return;
 
-        if (!Ui.KeyPress(key, pressed: true))
-            base.receiveKeyPress(key);
+        if (!Ui.KeyPress(key))
+            UnhandledKeyPress(key);
     }
 
     public override void receiveScrollWheelAction(int direction)
     {
         if (!Ui.VerticalScroll(direction / -ScrollSpeed))
-          base.receiveScrollWheelAction(direction);
+          UnhandledScroll(direction);
     }
 
     private int scrollCounter = 0;
@@ -96,6 +129,7 @@ abstract class ElementMenu : IClickableMenu
                 Ui.VerticalScroll(Math.Sign(Game1.input.GetGamePadState().ThumbSticks.Right.Y) * 120 / -ScrollSpeed);
             }
         }
+        else scrollCounter = 0;
 
         if (Ui.GamepadMovementRegionsDirty)
             populateClickableComponentList();
@@ -107,8 +141,12 @@ abstract class ElementMenu : IClickableMenu
         Ui.Draw(b);
         upperRightCloseButton?.draw(b);
 
-        Ui.HoveredElement?.DrawTooltip(b);
         drawMouse(b);
+    }
+
+    public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
+    {
+        MakeUi();
     }
 
     public override void populateClickableComponentList()
@@ -119,12 +157,15 @@ abstract class ElementMenu : IClickableMenu
             allClickableComponents.Add(entry);
         Ui.GamepadMovementRegionsDirty = false;
 
-        if (allClickableComponents.Contains(currentlySnappedComponent))
+        if (!allClickableComponents.Contains(currentlySnappedComponent))
             snapToDefaultClickableComponent();
+        else
+            snapCursorToCurrentSnappedComponent();
     }
 
-    public override void snapCursorToCurrentSnappedComponent()
+    public override bool overrideSnappyMenuCursorMovementBan()
     {
         return (Ui.CurrentSnappedElement?.CurrentlyUsingGamepadMovement(out bool snappy) ?? false) ? !snappy : false;
     }
 }
+#endif

@@ -40,6 +40,8 @@ namespace SpaceShared.UI
                 this.SelectedImpl = value;
                 if (this.SelectedImpl)
                 {
+                    Root.RenderLast = this;
+
                     Game1.keyboardDispatcher.Subscriber = this;
                     if ( Game1.options.gamepadControls && !Game1.lastCursorMotionWasMouse )
                     {
@@ -59,6 +61,9 @@ namespace SpaceShared.UI
                 }
                 else
                 {
+                    if (Root.RenderLast == this)
+                        Root.RenderLast = null;
+
                     if (Game1.keyboardDispatcher.Subscriber == this)
                         Game1.keyboardDispatcher.Subscriber = null;
                 }
@@ -83,15 +88,12 @@ namespace SpaceShared.UI
             this.Font = Game1.smallFont;
         }
 
-        /// <inheritdoc />
-        public override void Update(bool isOffScreen = false)
+        public override bool LeftClick(Point mousePos, bool pressed)
         {
-            base.Update(isOffScreen);
+            base.LeftClick(mousePos, pressed);
 
-            if (this.ClickGestured && this.Callback != null)
-            {
-                this.Selected = this.Hover;
-            }
+            Selected = pressed;
+            return Selected;
         }
 
         /// <inheritdoc />

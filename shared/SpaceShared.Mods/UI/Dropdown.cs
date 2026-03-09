@@ -68,109 +68,60 @@ namespace SpaceShared.UI
         /*********
         ** Public methods
         *********/
+        public override bool LeftClick(Point mousePos, bool pressed)
+        {
+            if (pressed)
+            {
+                if (Dropped)
+                {
+                    Game1.playSound("drumkit6");
+                    Dropped = false;
+                    if (Root.RenderLast == this)
+                        Root.RenderLast = null;
+
+                    int tall = Math.Min(this.MaxValuesAtOnce, this.Choices.Length - this.ActivePosition) * this.Height;
+                    int drawY = Math.Min((int)Position.Y, Game1.uiViewport.Height - tall);
+                    int choiceRelativeMouseY = (int)Position.Y + mousePos.Y - drawY;
+                    if (new Rectangle(0, 0, Width, Height * MaxValuesAtOnce).Contains(mousePos.X, choiceRelativeMouseY))
+                    {
+                        this.ActiveChoice = (choiceRelativeMouseY - drawY) / Height + this.ActivePosition;
+                        Callback?.Invoke(this);
+
+                        ScreenReaderText = Labels[ActiveChoice];
+                    }
+                }
+                else
+                {
+                    Game1.playSound("shwip");
+                    Dropped = true;
+                    Root.RenderLast = this;
+                }
+                Root.GamepadMovementRegionsDirty = true;
+            }
+            return true;
+        }
+
+        public override bool VerticalScroll(int amount)
+        {
+            base.VerticalScroll(amount);
+            if (Dropped)
+            {
+                ActivePosition = Math.Min(Math.Max(ActivePosition - (amount / 120), 0), Choices.Length - MaxValuesAtOnce);
+            }
+            return true;
+        }
+
         /// <inheritdoc />
         public override void Update(bool isOffScreen = false)
         {
             base.Update(isOffScreen);
 
-            bool justClicked = false;
-            if (this.Clicked && GetRoot()?.ActiveDropdown == null)
-            {
-                justClicked = true;
-                this.Dropped = true;
-                this.Parent.RenderLast = this;
-                GetRoot().GamepadMovementRegionsDirty = true;
-            }
-
-            if (this.Dropped)
-            {
-                //if (Mouse.GetState().LeftButton == ButtonState.Released)
-                if (Constants.TargetPlatform != GamePlatform.Android)
-                {
-                    if ((Mouse.GetState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released ||
-                         Game1.input.GetGamePadState().Buttons.A == ButtonState.Pressed && Game1.oldPadState.Buttons.A == ButtonState.Released)
-                        && !justClicked)
-                    {
-                        Game1.playSound("drumkit6");
-                        this.Dropped = false;
-                        if (this.Parent.RenderLast == this)
-                            this.Parent.RenderLast = null;
-                        GetRoot().GamepadMovementRegionsDirty = true;
-                    }
-                }
-                else
-                {
-                    if ((Game1.input.GetMouseState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released ||
-                         Game1.input.GetGamePadState().Buttons.A == ButtonState.Pressed && Game1.oldPadState.Buttons.A == ButtonState.Released)
-                        && !justClicked)
-                    {
-                        Game1.playSound("drumkit6");
-                        this.Dropped = false;
-                        if (this.Parent.RenderLast == this)
-                            this.Parent.RenderLast = null;
-                        GetRoot().GamepadMovementRegionsDirty = true;
-                    }
-                }
-
-                int tall = Math.Min(this.MaxValuesAtOnce, this.Choices.Length - this.ActivePosition) * this.Height;
-                int drawY = Math.Min((int)this.Position.Y, Game1.uiViewport.Height - tall);
-                var bounds2 = new Rectangle((int)this.Position.X, drawY, this.Width, this.Height * this.MaxValuesAtOnce);
-                if (bounds2.Contains(Game1.getOldMouseX(), Game1.getOldMouseY()))
-                {
-                    int choice = (Game1.getOldMouseY() - drawY) / this.Height;
-                    this.ActiveChoice = choice + this.ActivePosition;
-
-                    this.Callback?.Invoke(this);
-
-                    ScreenReaderText = Labels[ActiveChoice];
-                }
-            }
-
-            if (this.Dropped)
-            {
-                GetRoot()?.ActiveDropdown = this;
-                GetRoot()?.SinceDropdownWasActive = 3;
-            }
-            else
-            {
-                if (GetRoot()?.ActiveDropdown == this)
-                    GetRoot()?.ActiveDropdown = null;
-                this.ActivePosition = Math.Min(this.ActiveChoice, this.Choices.Length - this.MaxValuesAtOnce);
-            }
-        }
-
-        public void ReceiveScrollWheelAction(int direction)
-        {
-            if (this.Dropped)
-                this.ActivePosition = Math.Min(Math.Max(this.ActivePosition - (direction / 120), 0), this.Choices.Length - this.MaxValuesAtOnce);
-            else
-                GetRoot()?.ActiveDropdown = null;
-        }
-
-        public void DrawOld(SpriteBatch b)
-        {
-            IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, this.Height, Color.White, 4, false);
-            b.DrawString(Game1.smallFont, this.Value, new Vector2(this.Position.X + 4, this.Position.Y + 8), Game1.textColor);
-            b.Draw(this.Texture, new Vector2(this.Position.X + this.Width - 48, this.Position.Y), this.ButtonTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
-
-            if (this.Dropped)
-            {
-                int tall = this.Choices.Length * this.Height;
-                IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, tall, Color.White, 4, false);
-                for (int i = 0; i < this.Choices.Length; ++i)
-                {
-                    if (i == this.ActiveChoice)
-                        b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 4, (int)this.Position.Y + i * this.Height, this.Width - 48 - 8, this.Height), null, Color.Wheat, 0, Vector2.Zero, SpriteEffects.None, 0.98f);
-                    b.DrawString(Game1.smallFont, this.Choices[i], new Vector2(this.Position.X + 4, this.Position.Y + i * this.Height + 8), Game1.textColor, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
-                }
-            }
+            if (!Dropped)
+                ActivePosition = Math.Min(ActiveChoice, Choices.Length - MaxValuesAtOnce);
         }
 
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             IClickableMenu.drawTextureBox(b, this.Texture, this.BackgroundTextureRect, (int)this.Position.X, (int)this.Position.Y, this.Width - 48, this.Height, Color.White, 4, false);
             b.DrawString(Game1.smallFont, this.Label, new Vector2(this.Position.X + 4, this.Position.Y + 8), Game1.textColor);
             b.Draw(this.Texture, new Vector2(this.Position.X + this.Width - 48, this.Position.Y), this.ButtonTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);

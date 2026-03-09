@@ -25,7 +25,15 @@ namespace SpaceShared.UI
 
         public Action<Element> Callback { get; set; }
 
-        public bool Checked { get; set; } = true;
+        public bool Checked
+        {
+            get => field;
+            set
+            {
+                field = value;
+                ScreenReaderText = value ? "true" : "false";
+            }
+        }
 
         /// <inheritdoc />
         public override int Width => this.CheckedTextureRect.Width * 4;
@@ -47,27 +55,21 @@ namespace SpaceShared.UI
             this.UncheckedTextureRect = OptionsCheckbox.sourceRectUnchecked;
         }
 
-        /// <inheritdoc />
-        public override void Update(bool isOffScreen = false)
+        public override bool LeftClick(Point mousePos, bool pressed)
         {
-            base.Update(isOffScreen);
-
-            if (this.Clicked && this.Callback != null)
+            base.LeftClick(mousePos, pressed);
+            if (pressed)
             {
-                this.Checked = !this.Checked;
-                this.Callback.Invoke(this);
+                Checked = !Checked;
+                Callback?.Invoke(this);
             }
-            ScreenReaderText = Checked ? "true" : "false";
+            return true;
         }
 
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             b.Draw(this.Texture, this.Position, this.Checked ? this.CheckedTextureRect : this.UncheckedTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
-            Game1.activeClickableMenu?.drawMouse(b);
         }
     }
 }

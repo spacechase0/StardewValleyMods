@@ -46,21 +46,17 @@ namespace SpaceShared.UI
         /*********
         ** Public methods
         *********/
-        /// <inheritdoc />
-        public override void Update(bool isOffScreen = false)
+        public override bool LeftClick(Point mousePos, bool pressed)
         {
-            base.Update(isOffScreen);
-
-            if (this.Clicked)
-                this.Callback?.Invoke(this);
+            base.LeftClick(mousePos, pressed);
+            if (pressed)
+                Callback?.Invoke(this);
+            return true;
         }
 
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
-            if (this.IsHidden())
-                return;
-
             b.Draw(this.Texture, this.Position, this.TexturePixelArea, DrawColor, 0, Vector2.Zero, this.Scale, SpriteEffects.None, 1);
         }
 
