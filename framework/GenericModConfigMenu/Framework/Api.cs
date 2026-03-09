@@ -15,7 +15,7 @@ using StardewValley.Menus;
 namespace GenericModConfigMenu.Framework
 {
     /// <inheritdoc cref="IGenericModConfigMenuApi" />
-    public class Api : IGenericModConfigMenuApiWithObsoleteMethods
+    public class Api : ILegacyGenericModConfigMenuApi_DO_NOT_USE
     {
         /*********
         ** Fields
