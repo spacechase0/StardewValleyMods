@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Menus;
 
 #nullable enable
 
@@ -34,6 +35,9 @@ public interface IModConfigElementCustomImplementation
     public Point Size { get; }
     public bool HasUnsavedChanges { get; }
 
+    public IEnumerable<ClickableComponent> GamepadSnapRegions { get; }
+    public bool UsingGamepadMovement { get; }
+
     /// <summary>
     /// Called upon cursor release, if the press also happened on this element.
     /// 
@@ -45,7 +49,9 @@ public interface IModConfigElementCustomImplementation
     public bool HandleCursorClick(Point cursorPos, CursorClickType type);
     public bool HandleCursorPress(Point cursorPos, CursorClickType type);
     public bool HandleCursorRelease(Point cursorPos, CursorClickType type);
-    public void Update(GameTime gameTime);
+
+    /// <returns><c>true</c> if <see cref="GamepadSnapRegions"/> or <see cref="UsingGamepadMovement"/> has changed, <c>false</c> otherwise.</returns>
+    public bool Update(GameTime gameTime);
     public void Draw(SpriteBatch sb, GameTime gameTime);
 
     public void BeforeMenuOpened();
