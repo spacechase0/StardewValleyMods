@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Stardew3D.Data;
-using Stardew3D.Handlers.Game;
+using Stardew3D.GameModes;
 using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.Buildings;
@@ -22,12 +22,12 @@ using Valve.VR;
 namespace Stardew3D.Handlers.Gameplay;
 internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandler
 {
-    public readonly IGameHandler GameHandler;
+    public readonly IGameMode GameMode;
 
-    public FarmerPointAndClickControlsHandler(IGameHandler handler, Farmer obj)
-        : base(handler, obj, 4)
+    public FarmerPointAndClickControlsHandler(IGameMode mode, Farmer obj)
+        : base(mode, obj, 4)
     {
-        GameHandler = handler;
+        GameMode = mode;
     }
 
     public class SelectionData
@@ -222,12 +222,12 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
             if (ctx.TargetScreen == Game1.game1.uiScreen)
                 return;
 
-            rayInstances = new int[Parent.GameHandler.Cursors.Count];
-            gripInstances = new int[Parent.GameHandler.Cursors.Count];
+            rayInstances = new int[Parent.GameMode.Cursors.Count];
+            gripInstances = new int[Parent.GameMode.Cursors.Count];
             for (int i_ = 0; i_ < rayInstances.Length; ++i_)
             {
                 int i = i_;
-                var cursor = Parent.GameHandler.Cursors[i];
+                var cursor = Parent.GameMode.Cursors[i];
                 var sel = Parent.lastHovered.GetOrCreateValue(cursor);
                 Color col = i == 0 ? Color.Blue : Color.Red;
                 var handSize = 0.125f / 4;
@@ -239,10 +239,10 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
                     RenderHelper.GenericEffect.View = view;
                     RenderHelper.GenericEffect.Projection = proj;
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Up, upOverride: Vector3.Forward, additionalTransform: Parent.GameHandler.Cursors[i].Pointer);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Down, upOverride: Vector3.Forward, additionalTransform: Parent.GameHandler.Cursors[i].Pointer);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Left, upOverride: Vector3.Forward, additionalTransform: Parent.GameHandler.Cursors[i].Pointer);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Right, upOverride: Vector3.Forward, additionalTransform: Parent.GameHandler.Cursors[i].Pointer);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Up, upOverride: Vector3.Forward, additionalTransform: Parent.GameMode.Cursors[i].Pointer);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Down, upOverride: Vector3.Forward, additionalTransform: Parent.GameMode.Cursors[i].Pointer);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Left, upOverride: Vector3.Forward, additionalTransform: Parent.GameMode.Cursors[i].Pointer);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Right, upOverride: Vector3.Forward, additionalTransform: Parent.GameMode.Cursors[i].Pointer);
 
                     if (sel.Selected != null)
                     {
@@ -280,12 +280,12 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
                     RenderHelper.GenericEffect.View = view;
                     RenderHelper.GenericEffect.Projection = proj;
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Right * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Right, colSide, Vector3.Up, additionalTransform: Parent.GameHandler.Cursors[i].Grip);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Left * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Left, colSide, Vector3.Up, additionalTransform: Parent.GameHandler.Cursors[i].Grip);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Up * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Up, colSide, Vector3.Forward, additionalTransform: Parent.GameHandler.Cursors[i].Grip);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Down * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Down, colSide, Vector3.Backward, additionalTransform: Parent.GameHandler.Cursors[i].Grip);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Forward, colFront, Vector3.Up, additionalTransform: Parent.GameHandler.Cursors[i].Grip);
-                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Backward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Backward, colBack, Vector3.Up, additionalTransform: Parent.GameHandler.Cursors[i].Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Right * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Right, colSide, Vector3.Up, additionalTransform: Parent.GameMode.Cursors[i].Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Left * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Left, colSide, Vector3.Up, additionalTransform: Parent.GameMode.Cursors[i].Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Up * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Up, colSide, Vector3.Forward, additionalTransform: Parent.GameMode.Cursors[i].Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Down * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Down, colSide, Vector3.Backward, additionalTransform: Parent.GameMode.Cursors[i].Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Forward, colFront, Vector3.Up, additionalTransform: Parent.GameMode.Cursors[i].Grip);
+                    RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Backward * handSize / 2, Vector2.One * handSize, Game1.staminaRect.Bounds, Vector3.Backward, colBack, Vector3.Up, additionalTransform: Parent.GameMode.Cursors[i].Grip);
 
                     if (Stardew3D.Mod.State.RenderDebugInteractions)
                     {

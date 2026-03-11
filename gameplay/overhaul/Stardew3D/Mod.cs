@@ -16,11 +16,10 @@ using SpaceShared;
 using SpaceShared.Attributes;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
-using Stardew3D.Handlers.Game;
-using Stardew3D.Handlers.Game.Editor;
-using Stardew3D.Handlers.Game.FirstPerson;
-using Stardew3D.Handlers.Game.FirstPersonVR;
-using Stardew3D.Handlers.Game.ThirdPerson;
+using Stardew3D.GameModes.Editor;
+using Stardew3D.GameModes.FirstPerson;
+using Stardew3D.GameModes.FirstPersonVR;
+using Stardew3D.GameModes.ThirdPerson;
 using Stardew3D.Handlers.Gameplay;
 using Stardew3D.Handlers.Menu;
 using Stardew3D.Handlers.Render;
@@ -44,6 +43,8 @@ using StardewValley.Util;
 using Valve.VR;
 using xTile.Layers;
 using xTile.Tiles;
+using Stardew3D.GameModes;
+using Stardew3D.GameModes.VR;
 
 // This might be incorrect since I don't understand matrices super well, but:
 //
@@ -106,38 +107,38 @@ namespace Stardew3D
             Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
             Helper.Events.Content.AssetRequested += this.Content_AssetRequested;
             Helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
-            Helper.Events.GameLoop.UpdateTicking += (s, e) => State.ActiveHandler?.BeforeUpdate();
-            Helper.Events.GameLoop.UpdateTicked += (s, e) => State.ActiveHandler?.AfterUpdate();
-            State.AddingGameHandlers += (s, e) =>
+            Helper.Events.GameLoop.UpdateTicking += (s, e) => State.ActiveMode?.BeforeUpdate();
+            Helper.Events.GameLoop.UpdateTicked += (s, e) => State.ActiveMode?.AfterUpdate();
+            State.AddingGameModes += (s, e) =>
             {
-                State.AddGameHandler(new FirstPersonGameHandler());
-                State.AddGameHandler(new ThirdPersonGameHandler());
-                State.AddGameHandler(new FirstPersonVRGameHandler());
-                State.AddGameHandler(new EditorGameHandler());
+                State.AddGameMode(new FirstPersonGameMode());
+                State.AddGameMode(new ThirdPersonGameMode());
+                State.AddGameMode(new FirstPersonVRGameMode());
+                State.AddGameMode(new EditorGameMode());
             };
-            State.GameHandlersFinalized += (s, e) =>
+            State.GameModesFinalized += (s, e) =>
             {
-                State.SetRenderHandlerForGameHandlerTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
-                State.SetRenderHandlerForGameHandlerTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
-                State.SetRenderHandlerForGameHandlerTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
-                State.SetRenderHandlerForGameHandlerTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
-                State.SetRenderHandlerForGameHandlerTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
-                State.SetRenderHandlerForGameHandlerTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>(obj as TerrainFeature));
-                State.SetRenderHandlerForGameHandlerTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
-                State.SetRenderHandlerForGameHandlerTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
+                State.SetRenderHandlerForGameModeTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
+                State.SetRenderHandlerForGameModeTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
+                State.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
+                State.SetRenderHandlerForGameModeTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
+                State.SetRenderHandlerForGameModeTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
+                State.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>(obj as TerrainFeature));
+                State.SetRenderHandlerForGameModeTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
+                State.SetRenderHandlerForGameModeTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
                 //State.SetRenderHandlerForGameHandlerTags<FruitTree>([], handler => obj => new FruitTreeRenderer(obj as FruitTree));
                 //State.SetRenderHandlerForGameHandlerTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
-                State.SetRenderHandlerForGameHandlerTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
+                State.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
                 //State.SetRenderHandlerForGameHandlerTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
                 //State.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
-                State.SetRenderHandlerForGameHandlerTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
-                State.SetRenderHandlerForGameHandlerTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
+                State.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
+                State.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
 
-                State.AddJointHandlerAddonForGameHandlerTags<Farmer, FarmerPointAndClickControlsHandler>([IGameHandler.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
+                State.AddJointHandlerAddonForGameModeTags<Farmer, FarmerPointAndClickControlsHandler>([IGameMode.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
                 
-                State.SetJointHandlerForGameHandlerTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameHandler.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameHandler, menu as IClickableMenu));
-                State.SetJointHandlerForGameHandlerTags<TitleMenu, TitleMenuHandler>([IGameHandler.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameHandler, menu as TitleMenu));
-                State.AddUpdateHandlerAddonForGameHandlerTags<Farmer>([IGameHandler.CategoryVR, IGameHandler.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameHandler, obj as Farmer));
+                State.SetJointHandlerForGameModeTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameMode.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameMode, menu as IClickableMenu));
+                State.SetJointHandlerForGameModeTags<TitleMenu, TitleMenuHandler>([IGameMode.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameMode, menu as TitleMenu));
+                State.AddUpdateHandlerAddonForGameModeTags<Farmer>([IGameMode.CategoryVR, IGameMode.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameMode, obj as Farmer));
             };
 
             var hooks = AccessTools.Field(typeof(Game1), "hooks");
@@ -151,21 +152,21 @@ namespace Stardew3D
         [EventPriority(EventPriority.Low)]
         private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            State.InvokeAddingGameHandlers();
+            State.InvokeAddingGameModes();
         }
 
         private void Input_ButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
             if (Config.ToggleThirdDimension.JustPressed())
             {
-                var currHandler = State.ActiveHandler;
-                var targetHandler = State.GetGameHandler(DefaultHandler);
+                var currHandler = State.ActiveMode;
+                var targetHandler = State.GetGameMode(DefaultHandler);
                 if (currHandler != null)
                 {
-                    if (currHandler.Tags.Contains(IGameHandler.CategoryFirstPerson))
+                    if (currHandler.Tags.Contains(IGameMode.CategoryFirstPerson))
                     {
-                        string[] tags = currHandler.Tags.Select(t => t == IGameHandler.CategoryFirstPerson ? IGameHandler.CategoryThirdPerson : t).ToArray();
-                        targetHandler = State.FindGameHandlersMatching(tags).FirstOrDefault() ?? targetHandler;
+                        string[] tags = currHandler.Tags.Select(t => t == IGameMode.CategoryFirstPerson ? IGameMode.CategoryThirdPerson : t).ToArray();
+                        targetHandler = State.FindGameModesMatching(tags).FirstOrDefault() ?? targetHandler;
                     }
                     else
                     {
@@ -173,19 +174,19 @@ namespace Stardew3D
                     }
                 }
 
-                State.ActiveHandler = targetHandler;
+                State.ActiveMode = targetHandler;
             }
 
             if (Config.ToggleVirtualReality.JustPressed())
             {
-                var currHandler = State.ActiveHandler;
-                var targetHandler = State.GetGameHandler(DefaultVrHandler);
+                var currHandler = State.ActiveMode;
+                var targetHandler = State.GetGameMode(DefaultVrHandler);
                 if (currHandler != null)
                 {
-                    if (!currHandler.Tags.Contains(IGameHandler.CategoryVR))
+                    if (!currHandler.Tags.Contains(IGameMode.CategoryVR))
                     {
-                        string[] tags = currHandler.Tags.Select(t => t == IGameHandler.CategoryFlatscreen ? IGameHandler.CategoryVR : t).ToArray();
-                        targetHandler = State.FindGameHandlersMatching(tags).FirstOrDefault() ?? targetHandler;
+                        string[] tags = currHandler.Tags.Select(t => t == IGameMode.CategoryFlatscreen ? IGameMode.CategoryVR : t).ToArray();
+                        targetHandler = State.FindGameModesMatching(tags).FirstOrDefault() ?? targetHandler;
                     }
                     else
                     {
@@ -193,13 +194,13 @@ namespace Stardew3D
                     }
                 }
 
-                State.ActiveHandler = targetHandler;
+                State.ActiveMode = targetHandler;
             }
 
             if (Config.ToggleEditor.JustPressed())
             {
-                State.ActiveHandler = !(State.ActiveHandler?.Tags.Contains(IGameHandler.CategoryEditor) ?? false)
-                    ? State.FindGameHandlersMatching([IGameHandler.CategoryEditor]).FirstOrDefault()
+                State.ActiveMode = !(State.ActiveMode?.Tags.Contains(IGameMode.CategoryEditor) ?? false)
+                    ? State.FindGameModesMatching([IGameMode.CategoryEditor]).FirstOrDefault()
                     : null;
             }
 
@@ -213,9 +214,9 @@ namespace Stardew3D
             if (e.Pressed.Contains(SButton.Delete))
             {
                 // Can clear render caches and stuff
-                State.ActiveHandler?.SwitchOff(State.ActiveHandler);
+                State.ActiveMode?.SwitchOff(State.ActiveMode);
                 //State.ClearHandlerState();
-                State.ActiveHandler?.SwitchOn(State.ActiveHandler);
+                State.ActiveMode?.SwitchOn(State.ActiveMode);
             }
         }
 

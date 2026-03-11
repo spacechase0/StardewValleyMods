@@ -134,12 +134,12 @@ internal static class CharacterHandlers
             IRenderHandler.RenderContext ctx = new()
             {
                 Time = Game1.currentGameTime,
-                TargetScreen = Mod.State.ActiveHandler?.CurrentTargetScreen,
+                TargetScreen = Mod.State.ActiveMode?.CurrentTargetScreen,
 
                 WorldBatch = null,
-                WorldEnvironment = Mod.State.ActiveHandler?.GetCurrentEnvironmentFor( __instance.currentLocation ),
-                WorldCamera = Mod.State.ActiveHandler?.Camera,
-                WorldTransform = Mod.State.ActiveHandler?.GetCurrentTransformFor( __instance.currentLocation ) ?? Matrix.Identity,
+                WorldEnvironment = Mod.State.ActiveMode?.GetCurrentEnvironmentFor( __instance.currentLocation ),
+                WorldCamera = Mod.State.ActiveMode?.Camera,
+                WorldTransform = Mod.State.ActiveMode?.GetCurrentTransformFor( __instance.currentLocation ) ?? Matrix.Identity,
 
                 ForceRenderIfNotAlreadyRun = forceRenderIfNotAlreadyRun,
             };
@@ -173,12 +173,12 @@ internal static class CharacterHandlers
             IRenderHandler.RenderContext ctx = new()
             {
                 Time = Game1.currentGameTime,
-                TargetScreen = Mod.State.ActiveHandler?.CurrentTargetScreen,
+                TargetScreen = Mod.State.ActiveMode?.CurrentTargetScreen,
 
                 WorldBatch = null,
-                WorldEnvironment = Mod.State.ActiveHandler?.GetCurrentEnvironmentFor(__instance.currentLocation),
-                WorldCamera = Mod.State.ActiveHandler?.Camera,
-                WorldTransform = Mod.State.ActiveHandler?.GetCurrentTransformFor(__instance.currentLocation) ?? Matrix.Identity,
+                WorldEnvironment = Mod.State.ActiveMode?.GetCurrentEnvironmentFor(__instance.currentLocation),
+                WorldCamera = Mod.State.ActiveMode?.Camera,
+                WorldTransform = Mod.State.ActiveMode?.GetCurrentTransformFor(__instance.currentLocation) ?? Matrix.Identity,
 
                 ForceRenderIfNotAlreadyRun = forceRenderIfNotAlreadyRun,
             };

@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
+using Stardew3D.GameModes;
 using Stardew3D.Rendering;
 using StardewValley;
-using static Stardew3D.Handlers.Game.IGameHandler;
+using static Stardew3D.GameModes.IGameMode;
 
-namespace Stardew3D.Handlers.Game.FirstPerson;
-public class FirstPersonGameHandler : CommonGameHandler, IFirstPersonGameHandler
+namespace Stardew3D.GameModes.FirstPerson;
+public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
     public override string[] Tags => [CategoryFlatscreen, CategoryFirstPerson, FeaturePointAndClick];
@@ -29,10 +30,10 @@ public class FirstPersonGameHandler : CommonGameHandler, IFirstPersonGameHandler
             if (Game1.options.gamepadControls)
             {
                 Vector2 dpadDir = Vector2.Zero;
-                if (Game1.input.GetGamePadState().IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.DPadUp)) dir.Y += 1;
-                if (Game1.input.GetGamePadState().IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.DPadDown)) dir.Y -= 1;
-                if (Game1.input.GetGamePadState().IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.DPadRight)) dir.X += 1;
-                if (Game1.input.GetGamePadState().IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.DPadLeft)) dir.X -= 1;
+                if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadUp)) dir.Y += 1;
+                if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadDown)) dir.Y -= 1;
+                if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadRight)) dir.X += 1;
+                if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadLeft)) dir.X -= 1;
 
                 Vector2 joyDir = Game1.input.GetGamePadState().ThumbSticks.Left;
                 joyDir.Y = -joyDir.Y;
@@ -66,20 +67,20 @@ public class FirstPersonGameHandler : CommonGameHandler, IFirstPersonGameHandler
     private FirstPersonCursor[] cursors;
     public override IReadOnlyList<IGameCursor> Cursors => cursors;
 
-    public FirstPersonGameHandler()
+    public FirstPersonGameMode()
     {
         cursors = [new FirstPersonCursor(this)];
     }
 
-    public override void SwitchOn(IGameHandler previousHandler)
+    public override void SwitchOn(IGameMode previousMode)
     {
-        base.SwitchOn(previousHandler);
+        base.SwitchOn(previousMode);
         ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Mod.Config.FieldOfViewDegrees), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.1f, 10000);
     }
 
-    public override void SwitchOff(IGameHandler nextHandler)
+    public override void SwitchOff(IGameMode nextMode)
     {
-        base.SwitchOff(nextHandler);
+        base.SwitchOff(nextMode);
         Game1.game1.IsMouseVisible = Game1.options.hardwareCursor;
     }
 

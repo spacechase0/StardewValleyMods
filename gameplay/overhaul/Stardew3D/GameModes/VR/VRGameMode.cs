@@ -16,11 +16,12 @@ using StardewValley.Menus;
 using StardewValley.Mods;
 using Stardew3D.Hardware;
 using Valve.VR;
-using static Stardew3D.Handlers.Game.IGameHandler;
-using Stardew3D.Handlers.Game.VR;
+using static Stardew3D.GameModes.IGameMode;
+using Stardew3D.GameModes;
+using Stardew3D.GameModes.VR;
 
-namespace Stardew3D.Handlers.Game;
-public abstract partial class VRGameHandler : CommonGameHandler
+namespace Stardew3D.GameModes.VR;
+public abstract partial class VRGameMode : BaseGameMode
 {
     public override Camera Camera { get; } = new();
     public override Matrix ProjectionMatrix { get; protected set; }
@@ -43,11 +44,11 @@ public abstract partial class VRGameHandler : CommonGameHandler
     private IClickableMenu lastMenu = null;
     private ConditionalWeakTable<IClickableMenu, RenderBatcher> menuBatchers = new();
 
-    public override void SwitchOn(IGameHandler previousHandler)
+    public override void SwitchOn(IGameMode previousMode)
     {
-        base.SwitchOn(previousHandler);
+        base.SwitchOn(previousMode);
 
-        if (previousHandler is VRGameHandler vrHandler)
+        if (previousMode is VRGameMode vrHandler)
         {
             _vr = vrHandler._vr;
             VR = vrHandler.VR;
@@ -71,7 +72,7 @@ public abstract partial class VRGameHandler : CommonGameHandler
             {
                 Log.Error("Failed to start VR");
                 _vr = null;
-                Stardew3D.Mod.State.ActiveHandler = null;
+                Stardew3D.Mod.State.ActiveMode = null;
                 return;
             }
             VR = _vr.CVR;
@@ -112,12 +113,12 @@ public abstract partial class VRGameHandler : CommonGameHandler
             oldGamepadMode = Game1.options.gamepadMode;
         }
 
-        SwitchOnInput(previousHandler);
+        SwitchOnInput(previousMode);
     }
 
-    public override void SwitchOff(IGameHandler nextHandler)
+    public override void SwitchOff(IGameMode nextMode)
     {
-        if (_vr != null && nextHandler is not VRGameHandler)
+        if (_vr != null && nextMode is not VRGameMode)
         {
             _vr.GracefullyExit();
             _vr = null;
@@ -143,7 +144,7 @@ public abstract partial class VRGameHandler : CommonGameHandler
 
         menuBatchers.Clear();
 
-        base.SwitchOff(nextHandler);
+        base.SwitchOff(nextMode);
     }
     public override void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, DefaultInputHandling defaultInputHandling)
     {

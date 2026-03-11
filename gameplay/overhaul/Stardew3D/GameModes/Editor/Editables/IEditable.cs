@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MLEM.Ui.Elements;
 
-namespace Stardew3D.Handlers.Game.Editor.Editables;
+namespace Stardew3D.GameModes.Editor.Editables;
 public interface IEditable : IDisposable
 {
     public string Id { get; }

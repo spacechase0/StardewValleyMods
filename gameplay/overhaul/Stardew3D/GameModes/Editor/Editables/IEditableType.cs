@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Stardew3D.GameModes.Editor;
 
-namespace Stardew3D.Handlers.Game.Editor.Editables;
+namespace Stardew3D.GameModes.Editor.Editables;
 
 public interface IEditableType
 {
@@ -14,5 +15,5 @@ public interface IEditableType
 
     public EditableTree GetListing();
 
-    public void OnRequestNew(EditorGameHandler editor);
+    public void OnRequestNew(EditorGameMode editor);
 }

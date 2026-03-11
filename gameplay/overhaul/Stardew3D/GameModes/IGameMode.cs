@@ -11,9 +11,9 @@ using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
 
-namespace Stardew3D.Handlers.Game;
+namespace Stardew3D.GameModes;
 
-public interface IGameHandler
+public interface IGameMode
 {
     public const string CategoryFlatscreen = "Category/Flatscreen";
     public const string CategoryVR = "Category/VR";
@@ -34,8 +34,8 @@ public interface IGameHandler
     public PBREnvironment GetCurrentEnvironmentFor(GameLocation location);
     public Matrix GetCurrentTransformFor(GameLocation location);
 
-    public void SwitchOn( IGameHandler previousHandler );
-    public void SwitchOff( IGameHandler nextHandler );
+    public void SwitchOn( IGameMode previousMode );
+    public void SwitchOff( IGameMode nextMode );
 
     delegate void DefaultInputHandling(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState);
     public void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, DefaultInputHandling defaultInputHandling);

@@ -14,21 +14,20 @@ using SpaceShared;
 using Stardew3D;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
-using Stardew3D.Handlers.Game;
-using Stardew3D.Handlers.Game.FirstPerson;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using Stardew3D.Handlers.Game;
-using Stardew3D.Handlers.Game.FirstPersonVR;
+using Stardew3D.GameModes;
+using Stardew3D.GameModes.FirstPersonVR;
+using Stardew3D.GameModes.VR;
 
 namespace Stardew3D.Handlers.Menu;
 internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IUpdateHandler
     where TMenu : IClickableMenu
 {
-    public VRGameHandler GameHandler;
+    public VRGameMode GameMode;
 
     public Matrix BaseOrientation;
     public Vector3 DisplayPosition;
@@ -38,13 +37,13 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
 
     public Dictionary<IGameCursor, Matrix?> cursorTargetMapping = new();
 
-    public GenericMenuHandler(VRGameHandler handler, TMenu menu)
+    public GenericMenuHandler(VRGameMode mode, TMenu menu)
         : base(menu)
     {
-        GameHandler = handler;
+        GameMode = mode;
 
-        var basePosition = handler.Camera.Position;
-        BaseOrientation = handler.Camera.ViewMatrix.NoTranslation().Inverted();
+        var basePosition = mode.Camera.Position;
+        BaseOrientation = mode.Camera.ViewMatrix.NoTranslation().Inverted();
 
         // TODO: Configurable distance for these menus
         DisplayPosition = basePosition + BaseOrientation.Forward * 5;
@@ -55,7 +54,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
     {
         ctx.ForceUpdateIfNotAlreadyRun(ctx);
 
-        foreach ( var cursor in GameHandler.Cursors.Reverse() )
+        foreach ( var cursor in GameMode.Cursors.Reverse() )
             HandleCursor(ctx, cursor);
     }
 
@@ -100,10 +99,10 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
                 RenderHelper.DrawQuad(Game1.game1.uiScreen, Vector3.Zero, Parent.DisplaySize, Game1.game1.uiScreen.Bounds, Parent.BaseOrientation.Backward, upOverride: Parent.BaseOrientation.Up, col: color, additionalTransform: world);
             }, Matrix.Identity, hasTransparency: true);
 
-            cursorInstances = new int[Parent.GameHandler.Cursors.Count];
+            cursorInstances = new int[Parent.GameMode.Cursors.Count];
             for (int i = cursorInstances.Length - 1; i >= 0; --i)
             {
-                bool flip = (parent.GameHandler.Cursors[i] as FirstPersonVRCursor)?.FlipMenuSprite ?? false;
+                bool flip = (parent.GameMode.Cursors[i] as FirstPersonVRCursor)?.FlipMenuSprite ?? false;
                 cursorInstances[i] = Batch.AddNonInstanced((env, color, world, view, proj) =>
                 {
                     var size = new Vector2(16f / Game1.game1.uiScreen.Width, 16f / Game1.game1.uiScreen.Height) * Game1.pixelZoom * Parent.DisplaySize * 4;
@@ -126,7 +125,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
 
             ctx.WorldBatch.UpdateNonInstanced(menuInstance, Matrix.CreateTranslation(Parent.DisplayPosition));
 
-            foreach (var cursor in Parent.GameHandler.Cursors.Reverse())
+            foreach (var cursor in Parent.GameMode.Cursors.Reverse())
             {
                 if (!Parent.cursorTargetMapping.TryGetValue(cursor, out var cursorTransform) || !cursorTransform.HasValue)
                     continue;

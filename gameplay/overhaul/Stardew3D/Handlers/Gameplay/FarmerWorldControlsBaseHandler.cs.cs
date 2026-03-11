@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Stardew3D.Data;
-using Stardew3D.Handlers.Game;
+using Stardew3D.GameModes;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Objects;
@@ -19,13 +19,13 @@ namespace Stardew3D.Handlers.Gameplay;
 // they won't trigger unless registered as a renderer anyways
 public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Farmer>, IUpdateHandler
 {
-    public readonly IGameHandler GameHandler;
+    public readonly IGameMode GameMode;
     public readonly int CullRange;
 
-    public FarmerWorldControlsBaseHandler(IGameHandler handler, Farmer obj, int cullRange)
+    public FarmerWorldControlsBaseHandler(IGameMode mode, Farmer obj, int cullRange)
         : base( obj )
     {
-        GameHandler = handler;
+        GameMode = mode;
         CullRange = cullRange;
     }
     public virtual void Update(IUpdateHandler.UpdateContext ctx)
@@ -33,7 +33,7 @@ public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Fa
         if (this.Object != Game1.player || Game1.player.currentLocation != Game1.currentLocation)
             return;
 
-        foreach (var cursor in GameHandler.Cursors)
+        foreach (var cursor in GameMode.Cursors)
             HandleCursor(ctx, cursor);
     }
 

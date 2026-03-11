@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Stardew3D.Rendering;
 using static StardewValley.Minigames.TargetGame;
 
-namespace Stardew3D.Handlers.Game.FirstPerson
+namespace Stardew3D.GameModes.FirstPerson
 {
     public class Camera : ICamera
     {

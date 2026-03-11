@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
+using Stardew3D.GameModes.VR;
 using StardewValley;
-using Stardew3D.Handlers.Game;
 
 namespace Stardew3D.Patches;
 
@@ -20,7 +20,7 @@ internal static class InputStateOverridesInVRPatch
     private static float scrollX, scrollY;
     public static void Postfix(InputState __instance, ref KeyboardState ____currentKeyboardState, ref MouseState ____currentMouseState, GamePadState ____currentGamepadState)
     {
-        if (Stardew3D.Mod.State.ActiveHandler is not VRGameHandler vr)
+        if (Stardew3D.Mod.State.ActiveMode is not VRGameMode vr)
         {
             return;
         }
@@ -45,11 +45,11 @@ internal static class LeftClickDetectionPatch
 {
     public static void Postfix(ref bool __result)
     {
-        if (Mod.State.ActiveHandler == null)
+        if (Mod.State.ActiveMode == null)
             return;
 
         __result = false;
-        foreach (var cursor in Mod.State.ActiveHandler.Cursors)
+        foreach (var cursor in Mod.State.ActiveMode.Cursors)
         {
             if (cursor.UseItemHeld)
                 __result = true;
@@ -62,11 +62,11 @@ internal static class RightClickDetectionPatch
 {
     public static void Postfix(ref bool __result)
     {
-        if (Mod.State.ActiveHandler == null)
+        if (Mod.State.ActiveMode == null)
             return;
 
         __result = false;
-        foreach (var cursor in Mod.State.ActiveHandler.Cursors)
+        foreach (var cursor in Mod.State.ActiveMode.Cursors)
         {
             if (cursor.InteractJustPressed)
                 __result = true;
@@ -79,7 +79,7 @@ internal static class LeftClickPreventionPatch
 {
     public static bool Prefix()
     {
-        if (Mod.State.ActiveHandler == null)
+        if (Mod.State.ActiveMode == null)
             return true;
 
         return false;
@@ -91,7 +91,7 @@ internal static class RightClickPreventionPatch
 {
     public static bool Prefix()
     {
-        if (Mod.State.ActiveHandler == null)
+        if (Mod.State.ActiveMode == null)
             return true;
 
         return false;
@@ -103,7 +103,7 @@ internal static class SetMousePositionOverrideInVRPatch
 {
     public static bool Prefix(int x, int y)
     {
-        if (Stardew3D.Mod.State.ActiveHandler is not VRGameHandler vr)
+        if (Stardew3D.Mod.State.ActiveMode is not VRGameMode vr)
         {
             return true;
         }

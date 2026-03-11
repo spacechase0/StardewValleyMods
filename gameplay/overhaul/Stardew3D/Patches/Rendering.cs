@@ -7,8 +7,7 @@ using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using Stardew3D.Handlers.Game.FirstPerson;
-using Stardew3D.Handlers.Game.FirstPersonVR;
+using Stardew3D.GameModes.FirstPersonVR;
 
 namespace Stardew3D.Patches;
 
@@ -17,7 +16,7 @@ internal static class SuppressDrawingUiAfterFramePatch
 {
     public static bool Prefix(Game1 __instance, RenderTarget2D target_screen)
     {
-        if (Stardew3D.Mod.State.ActiveHandler is FirstPersonVRGameHandler)
+        if (Stardew3D.Mod.State.ActiveMode is FirstPersonVRGameMode)
         {
             renderScreenBuffer(__instance, target_screen);
             return false;

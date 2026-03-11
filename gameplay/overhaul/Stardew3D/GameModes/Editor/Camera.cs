@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Stardew3D.Rendering;
 
-namespace Stardew3D.Handlers.Game.Editor;
+namespace Stardew3D.GameModes.Editor;
 
 internal class Camera : ICamera
 {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Stardew3D.Rendering;
 
-namespace Stardew3D.Handlers.Game.VR;
+namespace Stardew3D.GameModes.VR;
 public class Camera : ICamera
 {
     public Vector3 Position { get; set; }

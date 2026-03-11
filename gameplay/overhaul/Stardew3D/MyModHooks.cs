@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Stardew3D.Handlers.Game;
+using Stardew3D.GameModes;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Mods;
@@ -23,7 +23,7 @@ internal class MyModHooks : DelegatingModHooks
 
     public override void OnGame1_PerformTenMinuteClockUpdate(Action action)
     {
-        if (Mod.State.ActiveHandler?.Tags.Contains(IGameHandler.CategoryEditor) ?? false)
+        if (Mod.State.ActiveMode?.Tags.Contains(IGameMode.CategoryEditor) ?? false)
             return;
 
         action();
@@ -31,7 +31,7 @@ internal class MyModHooks : DelegatingModHooks
 
     public override bool OnGameLocation_CheckAction(GameLocation location, Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who, Func<bool> action)
     {
-        var handler = Mod.State.ActiveHandler;
+        var handler = Mod.State.ActiveMode;
         if (handler == null)
         {
             return Parent.OnGameLocation_CheckAction(location, tileLocation, viewport, who, action);
@@ -42,7 +42,7 @@ internal class MyModHooks : DelegatingModHooks
 
     public override void OnGame1_UpdateControlInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, Action action)
     {
-        var handler = Mod.State.ActiveHandler;
+        var handler = Mod.State.ActiveMode;
         if (handler == null)
         {
             Parent.OnGame1_UpdateControlInput(ref keyboardState, ref mouseState, ref gamePadState, action);
@@ -54,7 +54,7 @@ internal class MyModHooks : DelegatingModHooks
 
     public override bool OnRendering(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D target_screen)
     {
-        var handler = Mod.State.ActiveHandler;
+        var handler = Mod.State.ActiveMode;
         if (handler == null)
             return Parent.OnRendering(step, sb, time, target_screen);
 
@@ -66,7 +66,7 @@ internal class MyModHooks : DelegatingModHooks
 
     public override void OnRendered(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D target_screen)
     {
-        var handler = Mod.State.ActiveHandler;
+        var handler = Mod.State.ActiveMode;
         if (handler == null)
         {
             Parent.OnRendered(step, sb, time, target_screen);

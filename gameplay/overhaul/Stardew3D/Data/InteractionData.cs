@@ -23,8 +23,8 @@ namespace Stardew3D.Data
 
         static partial void AfterRefreshData()
         {
-            Mod.State.ActiveHandler?.SwitchOff(Mod.State.ActiveHandler);
-            Mod.State.ActiveHandler?.SwitchOn(Mod.State.ActiveHandler);
+            Mod.State.ActiveMode?.SwitchOff(Mod.State.ActiveMode);
+            Mod.State.ActiveMode?.SwitchOn(Mod.State.ActiveMode);
         }
     }
 }

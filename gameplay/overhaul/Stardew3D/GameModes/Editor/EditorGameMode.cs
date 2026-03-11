@@ -10,18 +10,20 @@ using MLEM.Font;
 using MLEM.Ui;
 using MLEM.Ui.Elements;
 using MLEM.Ui.Style;
-using Stardew3D.Handlers.Game.Editor.Editables;
-using Stardew3D.Handlers.Game.Editor.Editables.Map;
+using Stardew3D;
+using Stardew3D.GameModes;
+using Stardew3D.GameModes.Editor.Editables;
+using Stardew3D.GameModes.Editor.Editables.Map;
 using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.Mods;
 
-namespace Stardew3D.Handlers.Game.Editor;
+namespace Stardew3D.GameModes.Editor;
 
-public class EditorGameHandler : CommonGameHandler
+public class EditorGameMode : BaseGameMode
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/Editor";
-    public override string[] Tags => [ IGameHandler.CategoryEditor ];
+    public override string[] Tags => [ IGameMode.CategoryEditor ];
 
     public override ICamera Camera { get; } = new Camera();
     public override Matrix ProjectionMatrix { get; protected set; }
@@ -37,9 +39,9 @@ public class EditorGameHandler : CommonGameHandler
 
     private float oldUiScale;
 
-    public override void SwitchOn(IGameHandler previousHandler)
+    public override void SwitchOn(IGameMode previousMode)
     {
-        base.SwitchOn(previousHandler);
+        base.SwitchOn(previousMode);
         ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Mod.Config.FieldOfViewDegrees), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.1f, 10000);
 
         oldUiScale = Game1.options.baseUIScale;
@@ -127,7 +129,7 @@ public class EditorGameHandler : CommonGameHandler
                 });
             }
 
-            var firstTab = (editableTypesTabs.Children.Where(e => e is Button).FirstOrDefault() as Button);
+            var firstTab = editableTypesTabs.Children.Where(e => e is Button).FirstOrDefault() as Button;
             firstTab?.OnPressed(firstTab);
         }
         Ui.Add("Editable Types", editableTypesPanel);
@@ -140,15 +142,15 @@ public class EditorGameHandler : CommonGameHandler
 
     }
 
-    public override void SwitchOff(IGameHandler nextHandler)
+    public override void SwitchOff(IGameMode nextMode)
     {
-        base.SwitchOff(nextHandler);
+        base.SwitchOff(nextMode);
         Game1.options.baseUIScale = oldUiScale;
         Ui?.Dispose();
         Ui = null;
     }
 
-    public override void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, IGameHandler.DefaultInputHandling defaultInputHandling)
+    public override void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, IGameMode.DefaultInputHandling defaultInputHandling)
     {
         keyboardState = default;
         mouseState = default;

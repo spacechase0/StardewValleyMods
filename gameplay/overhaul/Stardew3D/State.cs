@@ -10,10 +10,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SharpGLTF.Schema2;
 using SpaceShared;
+using Stardew3D.GameModes;
 using Stardew3D.Handlers;
-using Stardew3D.Handlers.Game;
-using Stardew3D.Handlers.Game.FirstPerson;
-using Stardew3D.Handlers.Game.ThirdPerson;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
@@ -23,47 +21,47 @@ using StardewValley.Menus;
 namespace Stardew3D;
 public class State
 {
-    private Dictionary<string, IGameHandler> Handlers { get; } = [];
-    internal string ActiveHandlerId = null;
+    private Dictionary<string, IGameMode> Modes { get; } = [];
+    internal string ActiveModeId = null;
 
-    public IGameHandler ActiveHandler
+    public IGameMode ActiveMode
     {
-        get => ActiveHandlerId == null ? null : Handlers[ActiveHandlerId];
+        get => ActiveModeId == null ? null : Modes[ActiveModeId];
         set
         {
-            if (value != null && (!Handlers.ContainsKey(value.Id) || !Handlers.Values.Contains(value) || Handlers[value.Id] != value))
-                throw new ArgumentException($"Given handler {value} wasn't registered", nameof(ActiveHandler));
-            Log.Debug($"Switching to game handler \"{value?.Id ?? "null"}\" (from \"{ActiveHandlerId ?? "null"}\")");
+            if (value != null && (!Modes.ContainsKey(value.Id) || !Modes.Values.Contains(value) || Modes[value.Id] != value))
+                throw new ArgumentException($"Given handler {value} wasn't registered", nameof(ActiveMode));
+            Log.Debug($"Switching to game handler \"{value?.Id ?? "null"}\" (from \"{ActiveModeId ?? "null"}\")");
 
             if (value == null)
             {
-                ActiveHandler?.SwitchOff(null);
-                ActiveHandlerId = null;
+                ActiveMode?.SwitchOff(null);
+                ActiveModeId = null;
                 return;
             }
 
-            var oldHandler = ActiveHandler;
-            ActiveHandlerId = value?.Id;
+            var oldHandler = ActiveMode;
+            ActiveModeId = value?.Id;
 
-            oldHandler?.SwitchOff(ActiveHandler);
-            ActiveHandlerId = value?.Id;
-            ActiveHandler?.SwitchOn(oldHandler);
+            oldHandler?.SwitchOff(ActiveMode);
+            ActiveModeId = value?.Id;
+            ActiveMode?.SwitchOn(oldHandler);
         }
     }
-    public void AddGameHandler(IGameHandler handler)
+    public void AddGameMode(IGameMode mode)
     {
-        if (finishedAddingGameHandlers)
+        if (finishedAddingGameModes)
             throw new InvalidOperationException("Game handler registration has already finished");
 
-        Handlers.Add(handler.Id, handler);
+        Modes.Add(mode.Id, mode);
     }
-    public IGameHandler GetGameHandler(string id) => Handlers.GetOrDefault(id, null);
-    public IEnumerable<string> HandlerIds => Handlers.Keys;
+    public IGameMode GetGameMode(string id) => Modes.GetOrDefault(id, null);
+    public IEnumerable<string> HandlerIds => Modes.Keys;
 
-    public static event EventHandler AddingGameHandlers;
-    public static event EventHandler GameHandlersFinalized;
+    public static event EventHandler AddingGameModes;
+    public static event EventHandler GameModesFinalized;
     private bool invokedEventsForThis = false;
-    private bool finishedAddingGameHandlers = false;
+    private bool finishedAddingGameModes = false;
 
     public ModelManager ModelManager { get; } = new();
     public GenericModelEffect GenericModelEffect { get; }
@@ -72,124 +70,124 @@ public class State
     public bool RenderDebugGrid { get; set; } = false;
     public bool RenderDebugInteractions { get; set; } = false;
 
-    private class GameHandlerSpecificData
+    private class GameModeSpecificData
     {
         public UpdateHandlerManager UpdateHandlerManager { get; } = new();
         public RenderHandlerManager RenderHandlerManager { get; } = new();
         public ConditionalWeakTable<object, object> JointHandlers { get; } = new();
     }
-    private ConditionalWeakTable<IGameHandler, GameHandlerSpecificData> handlerData = new();
+    private ConditionalWeakTable<IGameMode, GameModeSpecificData> modeData = new();
 
     internal State()
     {
         GenericModelEffect = new(Game1.graphics.GraphicsDevice, File.ReadAllBytes(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "GenericModelEffect.mgfxo")));
 
         if (Context.IsGameLaunched)
-            InvokeAddingGameHandlers();
+            InvokeAddingGameModes();
     }
 
-    internal void InvokeAddingGameHandlers()
+    internal void InvokeAddingGameModes()
     {
         if (invokedEventsForThis)
             return;
 
         invokedEventsForThis = true;
-        AddingGameHandlers?.Invoke(this, new());
-        finishedAddingGameHandlers = true;
-        GameHandlersFinalized?.Invoke(this, new());
+        AddingGameModes?.Invoke(this, new());
+        finishedAddingGameModes = true;
+        GameModesFinalized?.Invoke(this, new());
     }
 
     public void ClearHandlerState()
     {
-        handlerData.Clear();
+        modeData.Clear();
     }
 
-    public IEnumerable<IGameHandler> FindGameHandlersMatching(IReadOnlyCollection<string> requiredTags)
+    public IEnumerable<IGameMode> FindGameModesMatching(IReadOnlyCollection<string> requiredTags)
     {
-        foreach (var handler in Handlers.Values)
+        foreach (var mode in Modes.Values)
         {
-            if (handler == null)
+            if (mode == null)
                 continue;
 
-            if (!requiredTags.All(requiredTag => handler.Tags.Contains(requiredTag)))
+            if (!requiredTags.All(requiredTag => mode.Tags.Contains(requiredTag)))
                 continue;
 
-            yield return handler;
+            yield return mode;
         }
         yield break;
     }
 
-    public void SetJointHandlerForGameHandlerTags<ObjectType, THandlerType>(IReadOnlyCollection<string> requiredTags, Func<IGameHandler, Func<object, THandlerType>> createHandlerFunc, bool forSubclassesToo = true)
+    public void SetJointHandlerForGameModeTags<ObjectType, THandlerType>(IReadOnlyCollection<string> requiredTags, Func<IGameMode, Func<object, THandlerType>> createHandlerFunc, bool forSubclassesToo = true)
         where ObjectType : class
         where THandlerType : IUpdateHandler, IRenderHandler
     {
-        foreach (var handler in FindGameHandlersMatching(requiredTags))
+        foreach (var handler in FindGameModesMatching(requiredTags))
         {
             var createHandler = createHandlerFunc(handler);
-            var data = handlerData.GetOrCreateValue(handler);
+            var data = modeData.GetOrCreateValue(handler);
             data.UpdateHandlerManager.SetHandler<ObjectType>(obj => (IUpdateHandler) data.JointHandlers.GetValue(obj, _ => createHandler(obj)), forSubclassesToo);
             data.RenderHandlerManager.SetHandler<ObjectType>(obj => (IRenderHandler) data.JointHandlers.GetValue(obj, _ => createHandler(obj)), forSubclassesToo);
         }
     }
-    public void AddJointHandlerAddonForGameHandlerTags<ObjectType, THandlerType>(IReadOnlyCollection<string> requiredTags, Func<IGameHandler, Func<object, THandlerType>> createHandlerFunc, bool forSubclassesToo = true)
+    public void AddJointHandlerAddonForGameModeTags<ObjectType, THandlerType>(IReadOnlyCollection<string> requiredTags, Func<IGameMode, Func<object, THandlerType>> createHandlerFunc, bool forSubclassesToo = true)
         where ObjectType : class
         where THandlerType : IUpdateHandler, IRenderHandler
     {
-        foreach (var handler in FindGameHandlersMatching(requiredTags))
+        foreach (var handler in FindGameModesMatching(requiredTags))
         {
             var createHandler = createHandlerFunc(handler);
-            var data = handlerData.GetOrCreateValue(handler);
+            var data = modeData.GetOrCreateValue(handler);
             data.UpdateHandlerManager.AddHandlerAddon<ObjectType>(obj => (IUpdateHandler)data.JointHandlers.GetValue(obj, _ => createHandler(obj)), forSubclassesToo);
             data.RenderHandlerManager.AddHandlerAddon<ObjectType>(obj => (IRenderHandler)data.JointHandlers.GetValue(obj, _ => createHandler(obj)), forSubclassesToo);
         }
     }
 
-    public void SetUpdateHandlerForGameHandlerTags<InputType>(IReadOnlyCollection<string> requiredTags, Func<IGameHandler, Func<object, IUpdateHandler>> createHandlerFunc, bool forSubclassesToo = true)
+    public void SetUpdateHandlerForGameModeTags<InputType>(IReadOnlyCollection<string> requiredTags, Func<IGameMode, Func<object, IUpdateHandler>> createHandlerFunc, bool forSubclassesToo = true)
         where InputType : class
     {
-        foreach (var handler in FindGameHandlersMatching(requiredTags))
+        foreach (var handler in FindGameModesMatching(requiredTags))
         {
-            handlerData.GetOrCreateValue(handler).UpdateHandlerManager.SetHandler<InputType>(createHandlerFunc(handler), forSubclassesToo);
+            modeData.GetOrCreateValue(handler).UpdateHandlerManager.SetHandler<InputType>(createHandlerFunc(handler), forSubclassesToo);
         }
     }
-    public void AddUpdateHandlerAddonForGameHandlerTags<InputType>(IReadOnlyCollection<string> requiredTags, Func<IGameHandler, Func<object, IUpdateHandler>> createHandlerFunc, bool forSubclassesToo = true)
+    public void AddUpdateHandlerAddonForGameModeTags<InputType>(IReadOnlyCollection<string> requiredTags, Func<IGameMode, Func<object, IUpdateHandler>> createHandlerFunc, bool forSubclassesToo = true)
          where InputType : class
     {
-        foreach (var handler in FindGameHandlersMatching(requiredTags))
+        foreach (var handler in FindGameModesMatching(requiredTags))
         {
-            handlerData.GetOrCreateValue(handler).UpdateHandlerManager.AddHandlerAddon<InputType>(createHandlerFunc(handler), forSubclassesToo);
+            modeData.GetOrCreateValue(handler).UpdateHandlerManager.AddHandlerAddon<InputType>(createHandlerFunc(handler), forSubclassesToo);
         }
     }
     public IUpdateHandler[] GetUpdateHandlersFor(object obj)
     {
-        if (ActiveHandler == null || obj == null)
+        if (ActiveMode == null || obj == null)
             return [null];
 
-        return handlerData.GetOrCreateValue(ActiveHandler).UpdateHandlerManager.GetHandlersFor(obj);
+        return modeData.GetOrCreateValue(ActiveMode).UpdateHandlerManager.GetHandlersFor(obj);
     }
 
-    public void SetRenderHandlerForGameHandlerTags<RenderType>(IReadOnlyCollection<string> requiredTags, Func<IGameHandler, Func<object, Renderer>> createHandlerFunc, bool forSubclassesToo = true)
+    public void SetRenderHandlerForGameModeTags<RenderType>(IReadOnlyCollection<string> requiredTags, Func<IGameMode, Func<object, Renderer>> createHandlerFunc, bool forSubclassesToo = true)
         where RenderType : class
     {
-        foreach (var handler in FindGameHandlersMatching(requiredTags))
+        foreach (var handler in FindGameModesMatching(requiredTags))
         {
-            handlerData.GetOrCreateValue(handler).RenderHandlerManager.SetHandler<RenderType>(createHandlerFunc(handler), forSubclassesToo);
+            modeData.GetOrCreateValue(handler).RenderHandlerManager.SetHandler<RenderType>(createHandlerFunc(handler), forSubclassesToo);
         }
     }
-    public void AddRenderHandlerAddonForGameHandlerTags<RenderType>(IReadOnlyCollection<string> requiredTags, Func<IGameHandler, Func<object, Renderer>> createHandlerFunc, bool forSubclassesToo = true)
+    public void AddRenderHandlerAddonForGameModeTags<RenderType>(IReadOnlyCollection<string> requiredTags, Func<IGameMode, Func<object, Renderer>> createHandlerFunc, bool forSubclassesToo = true)
          where RenderType : class
     {
-        foreach (var handler in FindGameHandlersMatching(requiredTags))
+        foreach (var handler in FindGameModesMatching(requiredTags))
         {
-            handlerData.GetOrCreateValue(handler).RenderHandlerManager.AddHandlerAddon<RenderType>(createHandlerFunc(handler), forSubclassesToo);
+            modeData.GetOrCreateValue(handler).RenderHandlerManager.AddHandlerAddon<RenderType>(createHandlerFunc(handler), forSubclassesToo);
         }
     }
     public IRenderHandler[] GetRenderHandlersFor(object obj)
     {
-        if (ActiveHandler == null || obj == null)
+        if (ActiveMode == null || obj == null)
             return [null];
 
-        return handlerData.GetOrCreateValue(ActiveHandler).RenderHandlerManager.GetHandlersFor(obj);
+        return modeData.GetOrCreateValue(ActiveMode).RenderHandlerManager.GetHandlersFor(obj);
     }
 }
 

@@ -17,8 +17,6 @@ using SpaceShared;
 using Stardew3D;
 using Stardew3D.Data;
 using Stardew3D.Handlers;
-using Stardew3D.Handlers.Game;
-using Stardew3D.Handlers.Game.FirstPerson;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewValley;
@@ -27,14 +25,15 @@ using StardewValley.Mods;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using Stardew3D.Handlers.Game;
+using Stardew3D.GameModes;
+using Stardew3D.GameModes.VR;
 
 namespace Stardew3D.Handlers.Gameplay;
 
 public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
 {
-    public FarmerMotionControlsHandler(VRGameHandler handler, Farmer player)
-        : base( handler, player, 2 )
+    public FarmerMotionControlsHandler(VRGameMode mode, Farmer player)
+        : base( mode, player, 2 )
     {
     }
 

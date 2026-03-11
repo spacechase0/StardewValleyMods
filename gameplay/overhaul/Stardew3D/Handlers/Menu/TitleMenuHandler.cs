@@ -12,21 +12,21 @@ using MonoScene.Graphics;
 using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D.Data;
+using Stardew3D.GameModes.VR;
 using Stardew3D.Handlers;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Mods;
-using Stardew3D.Handlers.Game;
 using static Stardew3D.Handlers.IRenderHandler;
 using static Stardew3D.Models.ModelObject;
 
 namespace Stardew3D.Handlers.Menu;
 internal class TitleMenuHandler : GenericMenuHandler<TitleMenu>
 {
-    public TitleMenuHandler(VRGameHandler handler, TitleMenu menu)
-        : base(handler, menu )
+    public TitleMenuHandler(VRGameMode mode, TitleMenu menu)
+        : base(mode, menu )
     {
     }
 

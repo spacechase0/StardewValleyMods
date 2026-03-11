@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using Stardew3D;
-using Stardew3D.Handlers.Game;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
@@ -18,10 +17,11 @@ using StardewValley.Menus;
 using StardewValley.Mods;
 using Stardew3D.Hardware;
 using Valve.VR;
-using static Stardew3D.Handlers.Game.IGameHandler;
+using static Stardew3D.GameModes.IGameMode;
+using Stardew3D.GameModes;
 
-namespace Stardew3D.Handlers.Game;
-public abstract partial class VRGameHandler
+namespace Stardew3D.GameModes.VR;
+public abstract partial class VRGameMode
 {
     private delegate TrackedDevice TrackedDeviceFactoryFunction(uint deviceIndex);
     private static TrackedDeviceFactoryFunction[] TrackedDeviceFactory =
@@ -194,9 +194,9 @@ public abstract partial class VRGameHandler
     public DigitalAction World_UseItem { get; } = new("world", "use_item");
     public DigitalAction World_Interact { get; } = new("world", "interact");
 
-    private void SwitchOnInput(IGameHandler previousHandler)
+    private void SwitchOnInput(IGameMode previousMode)
     {
-        if (previousHandler is VRGameHandler vrHandler)
+        if (previousMode is VRGameMode vrHandler)
         {
             _devices = vrHandler._devices;
             headsetIndex = vrHandler.headsetIndex;

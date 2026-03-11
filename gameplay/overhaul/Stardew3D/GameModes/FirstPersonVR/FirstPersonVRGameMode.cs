@@ -13,9 +13,6 @@ using Microsoft.Xna.Framework.Input;
 using Netcode;
 using SixLabors.ImageSharp.Processing;
 using SpaceShared;
-using Stardew3D;
-using Stardew3D.Handlers.Game;
-using Stardew3D.Handlers.Game.FirstPerson;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
@@ -24,14 +21,17 @@ using StardewValley.Mods;
 using Stardew3D.Hardware;
 using Valve.VR;
 using static OpenVR.NET.Devices.VrDevice;
-using static Stardew3D.Handlers.Game.IGameHandler;
+using static Stardew3D.GameModes.IGameMode;
 using static Stardew3D.Handlers.IRenderHandler;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
+using Stardew3D.GameModes;
+using Stardew3D.GameModes.FirstPerson;
+using Stardew3D.GameModes.VR;
 
-namespace Stardew3D.Handlers.Game.FirstPersonVR;
+namespace Stardew3D.GameModes.FirstPersonVR;
 
-public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
+public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/FirstPersonVR";
     public override string[] Tags => [CategoryVR, CategoryFirstPerson, FeatureMotionControls, FeaturePointAndClick];
@@ -66,7 +66,7 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
     private FirstPersonVRCursor[] cursors;
     public override IReadOnlyList<IGameCursor> Cursors => cursors;
 
-    public FirstPersonVRGameHandler()
+    public FirstPersonVRGameMode()
     {
         cursors =
         [
@@ -110,8 +110,8 @@ public class FirstPersonVRGameHandler : VRGameHandler, IFirstPersonGameHandler
         float rotMargin = MathHelper.ToRadians(30);
         float rotRight = MathHelper.ToRadians(0 + 90);
         float rotLeft = MathHelper.ToRadians(180 + 90);
-        if (Math.Abs(World_RotationJoystick.X) >= 0.2 && ((rotJoyAngle >= rotLeft - rotMargin && rotJoyAngle <= rotLeft + rotMargin) ||
-                                                           (rotJoyAngle >= rotRight - rotMargin && rotJoyAngle <= rotRight + rotMargin)))
+        if (Math.Abs(World_RotationJoystick.X) >= 0.2 && (rotJoyAngle >= rotLeft - rotMargin && rotJoyAngle <= rotLeft + rotMargin ||
+                                                           rotJoyAngle >= rotRight - rotMargin && rotJoyAngle <= rotRight + rotMargin))
         {
             float turnAmt = World_RotationJoystick.X + 0.2f * -MathF.Sign(World_RotationJoystick.X);
             Camera.AdditionalRotationY += MathHelper.ToRadians(-turnAmt);

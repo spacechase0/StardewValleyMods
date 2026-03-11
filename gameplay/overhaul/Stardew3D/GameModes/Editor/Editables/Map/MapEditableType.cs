@@ -5,9 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Content;
+using Stardew3D;
+using Stardew3D.GameModes.Editor;
+using Stardew3D.GameModes.Editor.Editables;
 using StardewValley;
 
-namespace Stardew3D.Handlers.Game.Editor.Editables.Map;
+namespace Stardew3D.GameModes.Editor.Editables.Map;
 internal class MapEditableType : IEditableType
 {
     internal static LocalizedContentManager vanillaOnlyContent;
@@ -53,7 +56,7 @@ internal class MapEditableType : IEditableType
         return ret;
     }
 
-    public void OnRequestNew(EditorGameHandler editor)
+    public void OnRequestNew(EditorGameMode editor)
     {
         throw new NotImplementedException();
     }

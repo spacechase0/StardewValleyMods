@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewValley;
-using Stardew3D.Handlers.Game;
-using Stardew3D.Handlers.Game.FirstPerson;
 using Stardew3D.Hardware;
+using Stardew3D.GameModes;
 
-namespace Stardew3D.Handlers.Game.FirstPersonVR;
+namespace Stardew3D.GameModes.FirstPersonVR;
 
 internal class FirstPersonVRCursor : IGameCursor
 {
@@ -75,7 +74,7 @@ internal class FirstPersonVRCursor : IGameCursor
         this.interact = interact;
     }
 
-    public void Update(IGameHandler parent)
+    public void Update(IGameMode parent)
     {
         prevMenuLeftClickState = menuLeftClickState;
         prevMenuRightClickState = menuRightClickState;

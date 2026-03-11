@@ -8,14 +8,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
+using Stardew3D.GameModes;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
-using static Stardew3D.Handlers.Game.IGameHandler;
+using static Stardew3D.GameModes.IGameMode;
 using static StardewValley.Minigames.MineCart.MapJunimo;
 
-namespace Stardew3D.Handlers.Game.ThirdPerson;
-public class ThirdPersonGameHandler : CommonGameHandler
+namespace Stardew3D.GameModes.ThirdPerson;
+public class ThirdPersonGameMode : BaseGameMode
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/ThirdPerson";
     public override string[] Tags => [CategoryFlatscreen, CategoryThirdPerson, FeaturePointAndClick];
@@ -25,9 +26,9 @@ public class ThirdPersonGameHandler : CommonGameHandler
 
     public override IReadOnlyList<IGameCursor> Cursors => []; // TODO
 
-    public override void SwitchOn(IGameHandler previousHandler)
+    public override void SwitchOn(IGameMode previousMode)
     {
-        base.SwitchOn(previousHandler);
+        base.SwitchOn(previousMode);
         ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Mod.Config.FieldOfViewDegrees), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.1f, 10000);
     }
 

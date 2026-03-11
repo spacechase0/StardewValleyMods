@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewValley;
 
-namespace Stardew3D.Handlers.Game;
+namespace Stardew3D.GameModes;
 
 public interface IGameCursor
 {
@@ -62,5 +62,5 @@ public interface IGameCursor
     public bool InteractHeld { get; }
     public bool InteractJustReleased { get; }
 
-    public void Update(IGameHandler parent);
+    public void Update(IGameMode parent);
 }

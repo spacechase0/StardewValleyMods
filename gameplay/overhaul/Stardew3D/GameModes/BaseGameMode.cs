@@ -12,7 +12,6 @@ using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using SpaceShared;
 using Stardew3D.Data;
-using Stardew3D.Handlers;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
@@ -28,11 +27,11 @@ using StardewValley.Projectiles;
 using StardewValley.Util;
 using xTile;
 using xTile.Tiles;
-using static Stardew3D.Handlers.Game.IGameHandler;
+using static Stardew3D.GameModes.IGameMode;
 
-namespace Stardew3D.Handlers.Game;
+namespace Stardew3D.GameModes;
 
-public abstract partial class CommonGameHandler : IGameHandler
+public abstract partial class BaseGameMode : IGameMode
 {
     public abstract string Id { get; }
     public abstract string[] Tags { get; }
@@ -50,13 +49,13 @@ public abstract partial class CommonGameHandler : IGameHandler
 
     protected virtual bool NeedsRenderTargetHandling => true;
 
-    public virtual void SwitchOn(IGameHandler previousHandler)
+    public virtual void SwitchOn(IGameMode previousMode)
     {
         WorldRenderer = new();
         //RenderTarget = new(Game1.graphics.GraphicsDevice, GameRunner.instance.Window.ClientBounds.Width, GameRunner.instance.Window.ClientBounds.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
     }
 
-    public virtual void SwitchOff(IGameHandler nextHandler)
+    public virtual void SwitchOff(IGameMode nextMode)
     {
         WorldRenderer?.Dispose();
         WorldRenderer = null;

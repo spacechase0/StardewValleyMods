@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using MLEM.Ui.Elements;
+using Stardew3D.GameModes.Editor.Editables;
 
-namespace Stardew3D.Handlers.Game.Editor.Editables.Map;
+namespace Stardew3D.GameModes.Editor.Editables.Map;
 
 internal class MapEditable : IEditable
 {

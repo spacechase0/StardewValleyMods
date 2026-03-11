@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MLEM.Font;
 
-namespace Stardew3D.Handlers.Game.Editor;
+namespace Stardew3D.GameModes.Editor;
 public class ScaledGenericSpriteFont : GenericSpriteFont
 {
     // TODO: Better implementation of everything
