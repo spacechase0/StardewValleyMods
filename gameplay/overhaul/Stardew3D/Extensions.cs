@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using Stardew3D.Models;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Extensions;
 using StardewValley.Menus;
 using StardewValley.Monsters;
@@ -432,8 +433,22 @@ namespace Stardew3D
                 return [$"({Mod.Instance.ModManifest.UniqueID}/ResourceClump){clump.textureName.Value ?? Game1.objectSpriteSheetName}:{clump.parentSheetIndex.Value}", $"({Mod.Instance.ModManifest.UniqueID}/ResourceClump)"];
             else if (obj is Tree tree)
                 return [$"({Mod.Instance.ModManifest.UniqueID}/Tree){tree.treeType.Value}", $"({Mod.Instance.ModManifest.UniqueID}/Tree)"];
+            else if (obj is HoeDirt hoeDirt)
+                return
+                [
+                    $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt){hoeDirt.sourceRectPosition}/{hoeDirt.fertilizer.Value}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt){hoeDirt.sourceRectPosition}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt)"
+                ];
+            else if (obj is Flooring flooring)
+                return
+                [
+                    $"({Mod.Instance.ModManifest.UniqueID}/Flooring){flooring.whichFloor.Value}/{flooring.whichView.Value}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/Flooring){flooring.whichFloor.Value}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/Flooring)"
+                ];
             else if (obj is TerrainFeature)
-                return [$"({Mod.Instance.ModManifest.UniqueID}/TerrainFeature)"];
+                return [$"({Mod.Instance.ModManifest.UniqueID}/TerrainFeatureType){obj.GetType().Name}", $"({Mod.Instance.ModManifest.UniqueID}/TerrainFeatureType)"];
 
             else if (obj is Farmer farmer)
                 return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer){farmer.Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer)"];
@@ -469,6 +484,23 @@ namespace Stardew3D
                     $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character){character.Name}",
                     $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){character.GetType().Name}",
                     $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+                ];
+
+            else if (obj is Building building)
+                return
+                [
+                    $"({Mod.Instance.ModManifest.UniqueID}/Building){building.id}/{building.skinId}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/Building){building.id}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/BuildingType){building.GetType().Name}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/Building)"
+                ];
+
+            else if (obj is Crop crop)
+                return
+                [
+                    $"({Mod.Instance.ModManifest.UniqueID}/Crop){crop.netSeedIndex}/{crop.currentPhase.Value}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/Crop){crop.netSeedIndex}",
+                    $"({Mod.Instance.ModManifest.UniqueID}/Crop)"
                 ];
 
             else if (obj is IClickableMenu menu)

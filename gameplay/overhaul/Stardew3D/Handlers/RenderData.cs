@@ -186,12 +186,12 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
                 if (!Parent.Placeholders[ip].DisplayCondition())
                     continue;
 
-                Matrix billboard = Matrix.Identity;
-                if (ctx.CanBillboard)
+                Matrix transform = Parent.Placeholders[ip].OrientationIfNotBillboard;
+                if (Parent.Placeholders[ip].Billboard && ctx.CanBillboard)
                 {
-                    billboard *= Matrix.CreateConstrainedBillboard(Vector3.Zero, lastCamera.Position - ctx.WorldTransform.Translation, Vector3.Up, lastCamera.Forward, Vector3.Forward);
+                    transform *= Matrix.CreateConstrainedBillboard(Vector3.Zero, lastCamera.Position - ctx.WorldTransform.Translation, Vector3.Up, lastCamera.Forward, Vector3.Forward);
                 }
-                Batch.UpdateInstanced(placeholderInstances[ip], billboard * ctx.WorldTransform, Parent.Placeholders[ip].Color);
+                Batch.UpdateInstanced(placeholderInstances[ip], transform * ctx.WorldTransform, Parent.Placeholders[ip].Color);
             }
         }
     }

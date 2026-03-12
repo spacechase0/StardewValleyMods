@@ -67,6 +67,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * [VR] Allow desktop window to show any of the other renderers (3d or even 2d)
 
 # Graphics
+* Much better (potential) idea to replace placeholder system: Reverse patch the draw methods and redirect SpriteBatch into a custom thing
 * Animation support for models
 * Lighting
     * Ambient light

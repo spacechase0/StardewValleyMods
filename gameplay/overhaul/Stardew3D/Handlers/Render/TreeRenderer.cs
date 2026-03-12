@@ -55,7 +55,7 @@ public class TreeRenderer : RendererWithPlaceholder<ModelData, Tree>
                         _ => new Rectangle(0, 96, 16, 32),
                     };
                     //growing.Color = Object.fertilized.Value ? Color.HotPink : Color.White;
-                    growing.DefaultDisplaySizeScale = growing.TextureRegion.Width / (float)16;
+                    //growing.DefaultDisplaySizeScale = growing.TextureRegion.Width / (float)16;
                     growing.DisplayCondition = () => Object.flipped.Value == flippedVal && Object.growthStage.Value == i;
                     placeholders.Add(growing);
                 }
@@ -64,7 +64,7 @@ public class TreeRenderer : RendererWithPlaceholder<ModelData, Tree>
                 stump.TextureRegion = Tree.stumpSourceRect;
                 if (Object.hasMoss.Value)
                     stump.TextureRegion = new(new(stump.TextureRegion.X + 96, stump.TextureRegion.Y), stump.TextureRegion.Size);
-                stump.DefaultDisplaySizeScale = stump.TextureRegion.Width / (float)16;
+                //stump.DefaultDisplaySizeScale = stump.TextureRegion.Width / (float)16;
                 //stump.Offset = new Vector3(0, -32 + 96, 0) / Game1.tileSize;
                 stump.DisplayCondition = () => Object.flipped.Value == flippedVal && Object.growthStage.Value >= 5 && (Object.health.Value > 1 || (!Object.falling.Value && Object.health.Value > -99));
                 placeholders.Add(stump);
@@ -79,8 +79,8 @@ public class TreeRenderer : RendererWithPlaceholder<ModelData, Tree>
                 if (Object.hasMoss.Value)
                     topRectX = 96;
                 top.TextureRegion = new(new(topRectX, top.TextureRegion.Y), top.TextureRegion.Size);
-                top.DefaultDisplaySizeScale = top.TextureRegion.Width / (float)16;
-                top.OffsetOverride = top.DefaultOffset + new Vector3(0, stump.DisplaySize.Y, 0);
+                //top.DefaultDisplaySizeScale = top.TextureRegion.Width / (float)16;
+                top.OffsetOverride = top.DefaultOffset + new Vector3(0, stump.DisplaySize.Y / 2*0, 0);
                 top.DisplayCondition = () => Object.flipped.Value == flippedVal && Object.growthStage.Value >= 5 && (!Object.stump.Value || Object.falling.Value);
                 placeholders.Add(top);
             }

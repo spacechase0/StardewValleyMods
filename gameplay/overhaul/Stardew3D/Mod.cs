@@ -45,6 +45,7 @@ using xTile.Layers;
 using xTile.Tiles;
 using Stardew3D.GameModes;
 using Stardew3D.GameModes.VR;
+using StardewValley.Buildings;
 
 // This might be incorrect since I don't understand matrices super well, but:
 //
@@ -127,12 +128,14 @@ namespace Stardew3D
                 State.SetRenderHandlerForGameModeTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
                 State.SetRenderHandlerForGameModeTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
                 //State.SetRenderHandlerForGameHandlerTags<FruitTree>([], handler => obj => new FruitTreeRenderer(obj as FruitTree));
-                //State.SetRenderHandlerForGameHandlerTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
+                State.SetRenderHandlerForGameModeTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
                 State.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
-                //State.SetRenderHandlerForGameHandlerTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
+                State.SetRenderHandlerForGameModeTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
                 //State.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
                 State.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
                 State.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
+                State.SetRenderHandlerForGameModeTags<Building>([], handler => obj => new BuildingRenderer(obj as Building));
+                State.SetRenderHandlerForGameModeTags<Crop>([], handler => obj => new CropRenderer(obj as Crop));
 
                 State.AddJointHandlerAddonForGameModeTags<Farmer, FarmerPointAndClickControlsHandler>([IGameMode.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
                 

@@ -40,7 +40,7 @@ public class GrassRenderer : RendererWithPlaceholder<ModelData, Grass>
 
             PlaceholderData weed = template;
             weed.TextureRegion = new(Object.whichWeed[i] * 15, Object.grassSourceOffset.Value, 15, 20);
-            weed.DefaultDisplaySizeScale = weed.TextureRegion.Width / (float)16;
+            //weed.DefaultDisplaySizeScale = weed.TextureRegion.Width / (float)16;
             weed.OffsetOverride = weed.DefaultOffset + new Vector3(pos.X + -7.5f / Game1.tileSize, 0, pos.Y + -17.5f / Game1.tileSize);
             weed.DisplayCondition = () => i < Object.numberOfWeeds.Value && !Object.flip[i];
             placeholders.Add(weed);
