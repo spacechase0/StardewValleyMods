@@ -76,7 +76,8 @@ public abstract partial class BaseGameMode : IGameMode
     }
     public virtual void AfterUpdate() { }
 
-    public virtual bool HandleRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Func<RenderSteps, SpriteBatch, GameTime, RenderTarget2D, bool> defaultRender)
+    protected virtual WorldRenderer.RenderMode WorldRenderMode => WorldRenderer.RenderMode.Default;
+    public virtual bool HandleRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Func<RenderSteps, SpriteBatch, GameTime, RenderTarget2D, bool> defaultRender )
     {
         if (step >= RenderSteps.MenuBackground && step < RenderSteps.GlobalFade)
             return true;
@@ -113,7 +114,7 @@ public abstract partial class BaseGameMode : IGameMode
         if (Mod.State.RenderDebugGrid)
             RenderHelper.DebugRenderGrid();
 
-        WorldRenderer.Render(ProjectionMatrix, Camera);
+        WorldRenderer.Render(ProjectionMatrix, Camera, WorldRenderMode);
 
         if (NeedsRenderTargetHandling)
         {

@@ -182,6 +182,19 @@ public abstract partial class VRGameMode : BaseGameMode
     protected EVREye? ActiveEye = null;
     private xTile.Dimensions.Rectangle oldViewport;
     private xTile.Dimensions.Rectangle oldUiViewport;
+    protected override WorldRenderer.RenderMode WorldRenderMode
+    {
+        get
+        {
+            if (ActiveEye == EVREye.Eye_Left)
+                return WorldRenderer.RenderMode.RecreateRenderData;
+
+            if (ActiveEye == EVREye.Eye_Right)
+                return WorldRenderer.RenderMode.ClearDataAfterRendering;
+
+            return base.WorldRenderMode;
+        }
+    }
     public override bool HandleRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Func<RenderSteps, SpriteBatch, GameTime, RenderTarget2D, bool> defaultRender)
     {
         if (_vr == null) return true;

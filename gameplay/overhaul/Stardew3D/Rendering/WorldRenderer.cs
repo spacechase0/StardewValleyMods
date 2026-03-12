@@ -42,7 +42,16 @@ public class WorldRenderer : IDisposable
         builtLocationRecently = false;
     }
 
-    public void Render(Matrix projectionMatrix, ICamera camera)
+    [Flags]
+    public enum RenderMode
+    {
+        RecreateRenderData = 1 << 0,
+        ClearDataAfterRendering = 1 << 1,
+
+        Default = RecreateRenderData | ClearDataAfterRendering,
+    }
+
+    public void Render(Matrix projectionMatrix, ICamera camera, RenderMode renderMode = RenderMode.Default)
     {
         var drawCtx = Mod.State.ModelManager.DrawContext;
         drawCtx.SetCamera(camera.ViewMatrix.Inverted());
@@ -107,30 +116,36 @@ public class WorldRenderer : IDisposable
             lastLoc = loc;
         }
 
-        foreach (var other in adjacencies)
+        if (renderMode.HasFlag(RenderMode.RecreateRenderData))
         {
-            if ((other.Renderers[0] as LocationRenderer)?.Object != null)
+            foreach (var other in adjacencies)
             {
-                locationTransforms.AddOrUpdate((other.Renderers[0] as LocationRenderer)?.Object, new(other.TransformFromCurrent));
-             }
-            var env = (other.Renderers[0] as LocationRenderer).Environment;
-            foreach (var renderer in other.Renderers)
-            {
-                renderer.Render(new()
+                if ((other.Renderers[0] as LocationRenderer)?.Object != null)
                 {
-                    Time = Game1.currentGameTime,
-                    TargetScreen = Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D,
+                    locationTransforms.AddOrUpdate((other.Renderers[0] as LocationRenderer)?.Object, new(other.TransformFromCurrent));
+                }
+                var env = (other.Renderers[0] as LocationRenderer).Environment;
+                foreach (var renderer in other.Renderers)
+                {
+                    renderer.Render(new()
+                    {
+                        Time = Game1.currentGameTime,
+                        TargetScreen = Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D,
 
-                    MenuSpriteBatch = Game1.spriteBatch,
+                        MenuSpriteBatch = Game1.spriteBatch,
 
-                    WorldBatch = worldBatch,
-                    WorldEnvironment = env,
-                    WorldCamera = camera,
-                    WorldTransform = other.TransformFromCurrent
-                });
+                        WorldBatch = worldBatch,
+                        WorldEnvironment = env,
+                        WorldCamera = camera,
+                        WorldTransform = other.TransformFromCurrent
+                    });
+                }
             }
         }
+
         worldBatch.DrawBatched(env, Matrix.Identity, camera.ViewMatrix, projectionMatrix);
-        worldBatch.HideInstancesAfterFrame();
+
+        if (renderMode.HasFlag( RenderMode.ClearDataAfterRendering ) )
+            worldBatch.HideInstancesAfterFrame();
     }
 }
