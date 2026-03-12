@@ -48,7 +48,7 @@ public class TrackedDevice
                 ret = (T?)(object)Valve.VR.OpenVR.System.GetMatrix34TrackedDeviceProperty(DeviceIndex, prop, ref err);
                 break;
             case Type t when t == typeof(string):
-                StringBuilder buffer = new();
+                StringBuilder buffer = new((int)Valve.VR.OpenVR.k_unMaxPropertyStringSize + 1);
                 var len = Valve.VR.OpenVR.System.GetStringTrackedDeviceProperty(DeviceIndex, prop, buffer, Valve.VR.OpenVR.k_unMaxPropertyStringSize, ref err);
                 if ( err == ETrackedPropertyError.TrackedProp_Success )
                     ret = (T)(object)buffer.ToString();
