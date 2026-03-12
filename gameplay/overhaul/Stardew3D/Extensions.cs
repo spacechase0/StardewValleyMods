@@ -268,10 +268,10 @@ namespace Stardew3D
         public static (Vector3 Position, Vector3 QuadFacingNormal, Vector3 QuadVert00, Vector3 QuadVert10, Vector3 QuadVert01, Vector3 QuadVert11, float HeightBoundingSize) GetPositionForTile(xTile.Map map, Point tile, bool forCeiling = false)
         {
             if (map == null)
-                return new(new Vector3(tile.X + 0.5f, float.NaN, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+                return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
             if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Layers[0].LayerWidth || tile.Y >= map.Layers[0].TileHeight)
-                return new(new Vector3(tile.X + 0.5f, float.NaN, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+                return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
             string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}Data";
             string dataModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}ModifierData";
@@ -280,7 +280,7 @@ namespace Stardew3D
             var modifiers = map.Layers.Where(l => l.Id == dataModifierLayer || l.Id.StartsWith( $"{dataModifierLayer}_" ));
 
             if (data == null)
-                return new(new Vector3(tile.X + 0.5f, float.NaN, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+                return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
             float baseHeight = GetValueForDataTileIndex(data.GetTileIndexAt(tile.X, tile.Y));
             float topLeft = baseHeight;
