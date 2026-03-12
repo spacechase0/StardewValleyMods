@@ -35,13 +35,18 @@ public class TelevisionRenderData : RenderDataWithPlaceholder<ModelData, TV>
 
     public override void Update(RenderContext ctx)
     {
+        if (instance == null || instance.WhichMatch >= Model?.Matches.Count)
+        {
+            base.Update(ctx);
+            return;
+        }
+
         var mesh = Model.Matches[instance.WhichMatch];
         if (screenPart == null)
         {
             var screenEntry = mesh.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE"));
             if (!string.IsNullOrEmpty(screenEntry.Key))
                 screenPart = screenEntry.Value.SelectMany(m => m.Mesh).FirstOrDefault();
-
         }
 
         if (screenOverlayPart == null)
