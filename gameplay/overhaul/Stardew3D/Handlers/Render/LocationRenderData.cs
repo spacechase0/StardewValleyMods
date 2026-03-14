@@ -34,7 +34,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             Mod.State.GenericModelEffect.Color = color;
             foreach (var entry in Parent.vbos)
             {
-                if (entry.Value.Vertices.VertexCount == 0)
+                if (entry.Value.Vertices.VertexCount == 0 || entry.Value.IndexData.Length == 0)
                     continue;
 
                 foreach (var anim in entry.Value.Animations)
@@ -55,7 +55,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
                 foreach (var pass in Mod.State.GenericModelEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    Game1.graphics.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, entry.Value.Indices.IndexCount / 3);
+                    Game1.graphics.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, entry.Value.IndexData.Length / 3);
                 }
             }
             Mod.State.GenericModelEffect.Color = Color.White;

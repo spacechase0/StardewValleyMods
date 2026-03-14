@@ -80,6 +80,13 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
         BuildFloorsAndCeiling(vertices);
         BuildWalls(vertices);
 
+        foreach (var key in vbos.Keys)
+        {
+            var existing = vbos[key];
+            existing.IndexData = Array.Empty<int>();
+            vbos[key] = existing;
+        }
+
         foreach (var entry in vertices)
         {
             if (entry.Value.Verts.Count == 0)
