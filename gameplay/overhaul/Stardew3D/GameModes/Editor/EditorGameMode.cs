@@ -213,6 +213,12 @@ public class EditorGameMode : BaseGameMode
             camera.Forward = dir.Value;
     }
 
+    public void DoAfterConfirm(Action action)
+    {
+        // TODO
+        action();
+    }
+
     private bool Rotating = false;
     private Point rotateOrigin;
     public override void AfterUpdate()

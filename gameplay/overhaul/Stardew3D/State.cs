@@ -107,6 +107,16 @@ public class State
         }
     }
 
+    public void ClearHandlerStateFor(object obj)
+    {
+        foreach (var entry in modeData)
+        {
+            entry.Value.UpdateHandlerManager.ActiveHandlers.Remove(obj);
+            entry.Value.RenderHandlerManager.ActiveHandlers.Remove(obj);
+            entry.Value.JointHandlers.Remove(obj);
+        }
+    }
+
     public IEnumerable<IGameMode> FindGameModesMatching(IReadOnlyCollection<string> requiredTags)
     {
         foreach (var mode in Modes.Values)
