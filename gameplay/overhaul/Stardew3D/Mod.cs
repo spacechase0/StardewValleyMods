@@ -218,7 +218,7 @@ namespace Stardew3D
             {
                 // Can clear render caches and stuff
                 State.ActiveMode?.SwitchOff(State.ActiveMode);
-                //State.ClearHandlerState();
+                State.ClearHandlerState();
                 State.ActiveMode?.SwitchOn(State.ActiveMode);
             }
         }

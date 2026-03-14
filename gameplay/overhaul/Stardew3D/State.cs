@@ -99,7 +99,12 @@ public class State
 
     public void ClearHandlerState()
     {
-        modeData.Clear();
+        foreach (var entry in modeData)
+        {
+            entry.Value.UpdateHandlerManager.ActiveHandlers.Clear();
+            entry.Value.RenderHandlerManager.ActiveHandlers.Clear();
+            entry.Value.JointHandlers.Clear();
+        }
     }
 
     public IEnumerable<IGameMode> FindGameModesMatching(IReadOnlyCollection<string> requiredTags)
