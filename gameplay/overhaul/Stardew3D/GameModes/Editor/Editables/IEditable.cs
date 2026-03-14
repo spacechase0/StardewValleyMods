@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 using MLEM.Ui.Elements;
+using Stardew3D.Rendering;
 
 namespace Stardew3D.GameModes.Editor.Editables;
 public interface IEditable : IDisposable
 {
     public string Id { get; }
 
-    public Element PopulatePanelContents();
+    public ICollection<Element> PopulatePanelContents();
     public void BeforeHidePanelContents() { }
 
-    // TODO: Callback for handling/drawing the non-UI contents
+    public void Update() { }
+    public void RenderMenu(SpriteBatch sb) { }
+    public void RenderWorld(RenderBatcher b) { }
 
     public bool HasUnsavedChanges { get; }
     public Dictionary<string, string> Save(); // format -> contents, ex. ".tmx" -> "..."

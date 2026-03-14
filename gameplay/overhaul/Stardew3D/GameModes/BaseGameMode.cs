@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
+using SpaceCore.VanillaAssetExpansion;
 using SpaceShared;
 using Stardew3D.Data;
 using Stardew3D.Models;
@@ -114,7 +115,7 @@ public abstract partial class BaseGameMode : IGameMode
         if (Mod.State.RenderDebugGrid)
             RenderHelper.DebugRenderGrid();
 
-        WorldRenderer.Render(ProjectionMatrix, Camera, WorldRenderMode);
+        RenderWorld();
 
         if (NeedsRenderTargetHandling)
         {
@@ -125,6 +126,11 @@ public abstract partial class BaseGameMode : IGameMode
         }
 
         return false;
+    }
+
+    public virtual void RenderWorld()
+    {
+        WorldRenderer.Render(ProjectionMatrix, Camera, WorldRenderMode);
     }
 
     public virtual bool AfterRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen)

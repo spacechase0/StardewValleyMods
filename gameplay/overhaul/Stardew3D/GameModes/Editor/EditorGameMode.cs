@@ -3,20 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MLEM.Font;
+using MLEM.Input;
+using MLEM.Maths;
 using MLEM.Ui;
 using MLEM.Ui.Elements;
 using MLEM.Ui.Style;
+using SpaceShared;
 using Stardew3D;
 using Stardew3D.GameModes;
 using Stardew3D.GameModes.Editor.Editables;
 using Stardew3D.GameModes.Editor.Editables.Map;
 using Stardew3D.Rendering;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Mods;
+using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.GameModes.Editor;
 
@@ -25,19 +31,47 @@ public class EditorGameMode : BaseGameMode
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/Editor";
     public override string[] Tags => [ IGameMode.CategoryEditor ];
 
-    public override ICamera Camera { get; } = new Camera();
+    private Camera camera = new();
+    public override ICamera Camera => camera;
     public override Matrix ProjectionMatrix { get; protected set; }
     public override IReadOnlyList<IGameCursor> Cursors => [];
 
     public SpriteBatch SpriteBatch { get; private set; }
+    private InputHandler _input { get; set; }
     public UiSystem Ui { get; private set; }
+    private Panel EditableDataPanel { get; set; }
+
+    public PBREnvironment EditorEnvironment { get; set; }
+    public RenderBatcher EditorWorldBatch { get; private set; }
 
     public List<IEditableType> EditableTypes =
     [
         new MapEditableType(),
     ];
 
+    private IEditable ActiveEditable
+    {
+        get => field;
+        set
+        {
+            field?.BeforeHidePanelContents();
+            EditableDataPanel.RemoveChildren();
+            Mod.State.ClearHandlerState();
+            EditorWorldBatch.ClearData();
+
+            field = value;
+
+            if (field == null)
+                return;
+
+            var newChildren = field.PopulatePanelContents();
+            foreach ( var child in newChildren)
+                EditableDataPanel.AddChild( child );
+        }
+    }
+
     private float oldUiScale;
+    private bool oldHardwareCursor;
 
     public override void SwitchOn(IGameMode previousMode)
     {
@@ -45,9 +79,12 @@ public class EditorGameMode : BaseGameMode
         ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(Mod.Config.FieldOfViewDegrees), Game1.graphics.GraphicsDevice.DisplayMode.AspectRatio, 0.1f, 10000);
 
         oldUiScale = Game1.options.baseUIScale;
+        oldHardwareCursor = Game1.options.hardwareCursor;
         Game1.options.baseUIScale = 1;
+        Game1.options.hardwareCursor = true;
 
         SpriteBatch = new(Game1.graphics.GraphicsDevice);
+        _input = new InputHandler(GameRunner.instance);
         Ui = new(GameRunner.instance, new UntexturedStyle(SpriteBatch)
         {
             Font = new GenericSpriteFont( Game1.smallFont ),
@@ -64,7 +101,7 @@ public class EditorGameMode : BaseGameMode
             },
             TooltipTextWidth = 640,
             TooltipOffset = new( 32, 32 ),
-        }, automaticViewport: false);
+        }, _input, automaticViewport: false);
 
         var root = new Group(Anchor.Center, new Vector2(1, 1));
         Ui.Add("Root", root);
@@ -72,7 +109,10 @@ public class EditorGameMode : BaseGameMode
         Panel editableTypesPanel = new Panel(Anchor.CenterLeft, new Vector2(0.2f, 1));
         Panel editableTypesTabs = new Panel(Anchor.TopCenter, new Vector2(1, 48), setHeightBasedOnChildren: true, scrollOverflow: true);
         editableTypesPanel.AddChild(editableTypesTabs);
-        Panel editableTypesListing = new Panel(Anchor.AutoCenter, new Vector2(1, 1), scrollOverflow: true);
+        Panel editableTypesListing = new Panel(Anchor.AutoCenter, new Vector2(1, 1), scrollOverflow: true)
+        {
+            PreventParentSpill = true,
+        };
         editableTypesPanel.AddChild(editableTypesListing);
         {
             foreach (var editableType_ in EditableTypes)
@@ -98,7 +138,7 @@ public class EditorGameMode : BaseGameMode
                             entries.AddRange(tree.Entries.Select(kvp => new KeyValuePair<string, IEditable>($"{baseStr}{kvp.Key}", kvp.Value)));
                             foreach (var entry in tree.SubTrees)
                             {
-                                AddListing(entry.Value, $"{baseStr}{entry.Key}/");
+                                AddListing(entry.Value, $"{baseStr}{entry.Key}\\");
                             }
                         }
                         AddListing(editableType.GetListing(), "");
@@ -110,17 +150,18 @@ public class EditorGameMode : BaseGameMode
                             var entry = entry_;
 
                             string str = entry.Key;
-                            int levels = str.Count(c => c == '/');
-                            if (str.EndsWith('/'))
+                            int levels = str.Count(c => c == '\\');
+                            if (str.EndsWith('\\'))
                                 levels -= 1;
-                            str = levels > 0 ? str.Substring(str.LastIndexOf('/', str.Length - 2) + 1) : str;
+                            str = levels > 0 ? str.Substring(str.LastIndexOf('\\', str.Length - 2) + 1) : str;
 
-                            // TODO: Make these buttons with no background for highlight and click and such
-                            editableTypesListing.AddChild(new Paragraph(Anchor.AutoLeft, 1, $"<f Default 0.5>{str}")
+                            Button button = new(Anchor.AutoLeft, new Vector2(1, 24), $"<f Default 0.5>{str}")
                             {
+                                AutoSizeAddedAbsolute = new Vector2(-levels * 16, 0),
                                 PositionOffset = new Vector2(levels * 16, 0),
-                                OnPressed = _ => { }
-                            });
+                                OnPressed = _ => ActiveEditable = entry.Value,
+                            };
+                            editableTypesListing.AddChild(button);
                         }
 
                         var b = e as Button;
@@ -134,20 +175,26 @@ public class EditorGameMode : BaseGameMode
         }
         Ui.Add("Editable Types", editableTypesPanel);
 
-        root.AddChild(new Paragraph(Anchor.AutoCenter, 1, "<f Default 0.5><c Green>meow</c> <c Red>kitty</c>", autoAdjustWidth: true));
-        root.AddChild(new Button(Anchor.AutoCenter, new Vector2(0.25f, 50), "MEOW", "<a wobbly>kitties</a> go <i><b>meow</b></i>")
-        {
-            OnPressed = _ => root.AddChild( new Paragraph( Anchor.AutoCenter, 1, "<s><f Dialogue>MORE</f></s> <o>kitties</o>", autoAdjustWidth: true ) ),
-        });
+        EditableDataPanel = new Panel(Anchor.CenterRight, new Vector2(0.2f, 1));
+        Ui.Add("Editable Data", EditableDataPanel);
 
+        EditorEnvironment = PBREnvironment.CreateDefault();
+        EditorWorldBatch = new RenderBatcher(Game1.graphics.GraphicsDevice);
     }
 
     public override void SwitchOff(IGameMode nextMode)
     {
         base.SwitchOff(nextMode);
+
         Game1.options.baseUIScale = oldUiScale;
+        Game1.options.hardwareCursor = oldHardwareCursor;
+
         Ui?.Dispose();
         Ui = null;
+
+        EditorEnvironment = null;
+        EditorWorldBatch?.Dispose();
+        EditorWorldBatch = null;
     }
 
     public override void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, IGameMode.DefaultInputHandling defaultInputHandling)
@@ -157,12 +204,86 @@ public class EditorGameMode : BaseGameMode
         gamePadState = default;
     }
 
+    public void SetCamera(Vector3? position = null, Vector3? dir = null)
+    {
+        if (position.HasValue)
+            camera.Position = position.Value;
+
+        if (dir.HasValue)
+            camera.Forward = dir.Value;
+    }
+
+    private bool Rotating = false;
+    private Point rotateOrigin;
     public override void AfterUpdate()
     {
         base.AfterUpdate();
 
+        _input.Update();
+        if (Rotating)
+        {
+            Point mousePos = Ui.Controls.Input.MousePosition;
+            Game1.setMousePositionRaw(rotateOrigin.X, rotateOrigin.Y);
+            Point mouseDiff = rotateOrigin - mousePos;
+
+            Vector3 facing = Camera.Forward;
+            facing = Vector3.Transform(facing, Matrix.CreateRotationY(mouseDiff.X / 250f));
+            Vector3 moreVert = Vector3.Transform(facing, Matrix.CreateFromAxisAngle(Vector3.Cross(facing, Camera.Up), mouseDiff.Y / 250f));
+            moreVert.Y = Utility.Clamp(moreVert.Y, -0.9f, 0.9f);
+            facing = moreVert.Normalized();
+
+            camera.Forward = facing;
+
+            Vector3 movement = Vector3.Zero;
+            if (_input.IsDown(Keys.W)) movement += Vector3.UnitZ;
+            if (_input.IsDown(Keys.S)) movement -= Vector3.UnitZ;
+            if (_input.IsDown(Keys.D)) movement += Vector3.UnitX;
+            if (_input.IsDown(Keys.A)) movement -= Vector3.UnitX;
+            if (_input.IsDown(Keys.Space)) movement += Vector3.UnitY;
+            if (_input.IsDown(Keys.LeftShift)) movement -= Vector3.UnitY;
+            _input.TryConsumePressed(Keys.W);
+            _input.TryConsumePressed(Keys.S);
+            _input.TryConsumePressed(Keys.D);
+            _input.TryConsumePressed(Keys.A);
+            _input.TryConsumePressed(Keys.Space);
+            _input.TryConsumePressed(Keys.LeftShift);
+
+            float movementSpeed = 0.2f;
+            if (movement.X != 0)
+                camera.Position += Vector3.Cross(camera.Forward, camera.Up) * movement.X * movementSpeed;
+            if (movement.Y != 0)
+                camera.Position += Vector3.Up * movement.Y * movementSpeed;
+            if (movement.Z != 0)
+                camera.Position += camera.Forward * movement.Z * movementSpeed;
+        }
+
         Ui.Viewport = new(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height);
         Ui.Update(Game1.currentGameTime);
+        ActiveEditable?.Update();
+
+        if (Ui.Controls.Input.TryConsumePressed(MouseButton.Middle))
+        {
+            Rotating = true;
+            rotateOrigin = Ui.Controls.Input.MousePosition;
+        }
+        else if (Rotating && !Ui.Controls.Input.IsDown(MouseButton.Middle))
+            Rotating = false;
+    }
+
+    public override void RenderWorld()
+    {
+        ActiveEditable?.RenderWorld(EditorWorldBatch);
+        EditorWorldBatch.DrawBatched(EditorEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+        EditorWorldBatch.HideInstancesAfterFrame();
+    }
+
+    public override bool HandleRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Func<RenderSteps, SpriteBatch, GameTime, RenderTarget2D, bool> defaultRender)
+    {
+        if (step < RenderSteps.MenuBackground)
+            return base.HandleRender(step, sb, time, targetScreen, defaultRender);
+
+        // Don't want the vanilla UI to show
+        return false;
     }
 
     public override bool AfterRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen)
@@ -172,6 +293,7 @@ public class EditorGameMode : BaseGameMode
         else if (step > RenderSteps.Menu)
             return false;
 
+        ActiveEditable?.RenderMenu(sb);
         Ui.Draw(Game1.currentGameTime, SpriteBatch);
 
         return false;

@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Content;
 using Stardew3D;
 using Stardew3D.GameModes.Editor;
 using Stardew3D.GameModes.Editor.Editables;
+using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 
 namespace Stardew3D.GameModes.Editor.Editables.Map;
@@ -26,32 +28,18 @@ internal class MapEditableType : IEditableType
 
 
         EditableTree vanilla = new();
-        foreach (var entry in Directory.GetFiles(Path.Combine(Game1.content.RootDirectory, "Maps"), "*.xnb", SearchOption.AllDirectories))
+        foreach (var entry in DataLoader.Locations(vanillaOnlyContent))
         {
-            if (!entry.EndsWith(".xnb"))
+            string path = PathUtilities.NormalizeAssetName(entry.Value.CreateOnLoad?.MapPath);
+            if (path == null)
                 continue;
-            string assetName = entry.Replace('\\', '/');
-            assetName = assetName.Substring(0, assetName.Length - 4);
-            assetName = assetName.Substring(assetName.IndexOf("Maps/"));
 
-            string assetFileName = assetName.Substring(5);
-
-            string[] parts = assetFileName.Split('/');
-
-            IEditable editable = new MapEditable(assetName);
-
-            EditableTree curr = vanilla;
-            for (int i = 0; i < parts.Length - 1; ++i)
-            {
-                if (!curr.SubTrees.TryGetValue(parts[i], out var subtree))
-                    curr.SubTrees.Add(parts[i], subtree = new());
-                curr = subtree;
-            }
-            curr.Entries.Add(parts.Last(), editable);
+            IEditable editable = new MapEditable(Game1.game1.xTileContent, entry.Key, entry.Value.CreateOnLoad.MapPath);
+            vanilla.Entries.Add(entry.Value.CreateOnLoad.MapPath, editable);
         }
 
         EditableTree ret = new();
-        ret.SubTrees.Add("Stardew Valley", vanilla);
+        ret.SubTrees.Add("Stardew Valley (Unmodded)", vanilla);
         // TODO: Populate with modded maps
         return ret;
     }
