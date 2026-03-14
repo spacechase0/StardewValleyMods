@@ -76,7 +76,6 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * Show indoor locations while outside, through windows/doors? (and vice versa)
 * IK for player in first person
 * The endless journey of optimization
-    * Could we just reuse the RenderBatcher data without clearing for the second eye in VR?
 
 # Movement / Traversal
 * "Regions" thing? For stretching/squishing certains portions of the map when in 3D
