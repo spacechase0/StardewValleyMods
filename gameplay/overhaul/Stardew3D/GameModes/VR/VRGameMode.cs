@@ -82,11 +82,11 @@ public abstract partial class VRGameMode : BaseGameMode
 
             uint screenWidth = 0, screenHeight = 0;
             VR.GetRecommendedRenderTargetSize(ref screenWidth, ref screenHeight);
-            leftScreen = new(Game1.graphics.GraphicsDevice, (int)screenWidth, (int)screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
+            leftScreen = new(Game1.graphics.GraphicsDevice, (int)screenWidth, (int)screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, Mod.Config.MultisampleCount, RenderTargetUsage.PreserveContents);
             leftScreen.Name = "VR Headset (Left Eye)";
-            rightScreen = new(Game1.graphics.GraphicsDevice, (int)screenWidth, (int)screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
+            rightScreen = new(Game1.graphics.GraphicsDevice, (int)screenWidth, (int)screenHeight, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, Mod.Config.MultisampleCount, RenderTargetUsage.PreserveContents);
             rightScreen.Name = "VR Headset (Right Eye)";
-            //uiScreen = new(Game1.graphics.GraphicsDevice, Game1.viewport.Width, Game1.viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            //uiScreen = new(Game1.graphics.GraphicsDevice, Game1.viewport.Width, Game1.viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, Mod.Config.MultisampleCount, RenderTargetUsage.PreserveContents);
 
             // We absolutely do not want the game to slow down when the window isn't active.
             // That would cause comfort problems in VR

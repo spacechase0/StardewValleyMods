@@ -96,7 +96,7 @@ public abstract partial class BaseGameMode : IGameMode
             if (RenderTarget == null || RenderTarget.Width != targetScreen.Width || RenderTarget.Height != targetScreen.Height)
             {
                 RenderTarget?.Dispose();
-                RenderTarget = new(Game1.graphics.GraphicsDevice, targetScreen.Width, targetScreen.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
+                RenderTarget = new(Game1.graphics.GraphicsDevice, targetScreen.Width, targetScreen.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, Mod.Config.MultisampleCount, RenderTargetUsage.PreserveContents);
             }
 
             Game1.graphics.GraphicsDevice.SetRenderTarget(RenderTarget);
