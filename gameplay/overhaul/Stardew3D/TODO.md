@@ -15,6 +15,10 @@ No particular order of priority. Some of these definitely fall into "feature cre
     * NonInstanced -> Direct
     * + Dedicated billboarding system (for proper optimized use of tilesheets)
 * Better system for menu handling
+* Migrate from OpenVR.Net to the official bindings at https://github.com/ValveSoftware/openvr
+    * OpenVR.Net hasn't been updated in years, and I'm not even sure if it used the latest version for when it did.
+    * I'm already ignoring most of what it provides on top and just use base OpenVR directly, since I couldn't get the added stuff working right
+    * I remember having other problems with whatever binding I used before OpenVR.Net
 
 # Asset Workflow
 * In-game editors for:

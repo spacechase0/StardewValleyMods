@@ -47,6 +47,17 @@ using Stardew3D.GameModes;
 using Stardew3D.GameModes.VR;
 using StardewValley.Buildings;
 
+// TODO: Stop using OpenVR.NET and remove this
+[HarmonyPatch(typeof(Valve.VR.OpenVR), nameof(Valve.VR.OpenVR.InitInternal2))]
+public static class WorkaroundMaybeBugInOpenVRDotNet
+{
+    public static bool Prefix(ref EVRInitError peError, EVRApplicationType eApplicationType, string pchStartupInfo, ref uint __result)
+    {
+        __result = Valve.VR.OpenVR.InitInternal(ref peError, eApplicationType);
+        return false;
+    }
+}
+
 // This might be incorrect since I don't understand matrices super well, but:
 //
 // MonoGame docs and code say (or seem to say) the following: Row major, pre-multiplication, right handed, forward = -Z
