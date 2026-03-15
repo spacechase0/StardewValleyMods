@@ -76,6 +76,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * Show indoor locations while outside, through windows/doors? (and vice versa)
 * IK for player in first person
 * The endless journey of optimization
+    * Optimize building maps, especially rebuilding an existing one with not many changes. Currently, the editor lags on larger maps while doing edits.
 
 # Movement / Traversal
 * "Regions" thing? For stretching/squishing certains portions of the map when in 3D
