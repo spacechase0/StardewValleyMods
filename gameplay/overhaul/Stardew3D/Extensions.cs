@@ -76,7 +76,7 @@ namespace Stardew3D
                     {
                         Vector2 diff = new Vector2(rect.Left - left.X, 0);
                         diff.Y = (diff.X / norm.X) * norm.Y;
-                        if (left.Y + diff.Y >= rect.Top && left.Y + diff.Y < rect.Bottom)
+                        if (left.Y + diff.Y >= rect.Top && left.Y + diff.Y <= rect.Bottom)
                         {
                             intersection = left + diff;
                             return true;
@@ -86,7 +86,7 @@ namespace Stardew3D
                     {
                         Vector2 diff = new Vector2(rect.Right - right.X, 0);
                         diff.Y = (diff.X / norm.X) * norm.Y;
-                        if (right.Y + diff.Y >= rect.Top && right.Y + diff.Y < rect.Bottom)
+                        if (right.Y + diff.Y >= rect.Top && right.Y + diff.Y <= rect.Bottom)
                         {
                             intersection = right + diff;
                             return true;
@@ -99,7 +99,7 @@ namespace Stardew3D
                     {
                         Vector2 diff = new Vector2(0, rect.Top - up.Y);
                         diff.X = (diff.Y / norm.Y) * norm.X;
-                        if (up.X + diff.X >= rect.Left && up.X + diff.X < rect.Right)
+                        if (up.X + diff.X >= rect.Left && up.X + diff.X <= rect.Right)
                         {
                             intersection = up + diff;
                             return true;
@@ -109,7 +109,7 @@ namespace Stardew3D
                     {
                         Vector2 diff = new Vector2(0, rect.Bottom - down.Y);
                         diff.X = (diff.Y / norm.Y) * norm.X;
-                        if (down.X + diff.X >= rect.Left && down.X + diff.X < rect.Right)
+                        if (down.X + diff.X >= rect.Left && down.X + diff.X <= rect.Right)
                         {
                             intersection = down + diff;
                             return true;
@@ -233,6 +233,22 @@ namespace Stardew3D
             // TODO: Map resulting X/Z for "region" thing
 
             return new(tile.X + subTile.X, ret, tile.Y + subTile.Y);
+        }
+
+        public static int GetDataTileIndexForValue(float value)
+        {
+            if (float.IsNaN(value))
+                return -1;
+            if (value > 10) value = 10;
+            if (value < -10) value = -10;
+
+            int num = (int) Math.Round(Math.Abs(value) * 10);
+            int x = num % 10;
+            int y = num / 10;
+            if (value < 0)
+                x += 10;
+
+            return x + y * 20;
         }
 
         public static float GetValueForDataTileIndex(int index)

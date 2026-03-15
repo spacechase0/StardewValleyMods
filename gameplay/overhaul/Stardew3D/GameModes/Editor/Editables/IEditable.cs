@@ -18,6 +18,7 @@ public interface IEditable : IDisposable
     public void Update() { }
     public void RenderMenu(SpriteBatch sb) { }
     public void RenderWorld(RenderBatcher b) { }
+    public void AfterRenderWorld() { }
 
     public bool HasUnsavedChanges { get; }
     public Dictionary<string, string> Save(); // format -> contents, ex. ".tmx" -> "..."

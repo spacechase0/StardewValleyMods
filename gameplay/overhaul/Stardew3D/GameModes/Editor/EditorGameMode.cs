@@ -281,6 +281,7 @@ public class EditorGameMode : BaseGameMode
         ActiveEditable?.RenderWorld(EditorWorldBatch);
         EditorWorldBatch.DrawBatched(EditorEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
         EditorWorldBatch.HideInstancesAfterFrame();
+        ActiveEditable?.AfterRenderWorld();
     }
 
     public override bool HandleRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen, Func<RenderSteps, SpriteBatch, GameTime, RenderTarget2D, bool> defaultRender)

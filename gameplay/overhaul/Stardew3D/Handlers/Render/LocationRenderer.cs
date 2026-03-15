@@ -42,6 +42,8 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
 
     public PBREnvironment Environment = PBREnvironment.CreateDefault();
 
+    public bool EvenMissing = false;
+
     public LocationRenderer(GameLocation obj)
         : base(obj)
     {
@@ -151,9 +153,24 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                     if (tile == null)
                         continue;
 
+                    Color col = Color.White;
                     var tilePos = Extensions.GetPositionForTile(Object.Map, new(ix, iy), isCeiling);
                     if (float.IsNaN(tilePos.Position.Y))
-                        continue;
+                    {
+                        if (EvenMissing)
+                        {
+                            tilePos.Position.Y = 0;
+                            tilePos.QuadFacingNormal = Vector3.Up;
+                            tilePos.QuadVert00.Y = 0;
+                            tilePos.QuadVert10.Y = 0;
+                            tilePos.QuadVert01.Y = 0;
+                            tilePos.QuadVert11.Y = 0;
+                            tilePos.HeightBoundingSize = 0;
+                            col *= 0.25f;
+                        }
+                        else
+                            continue;
+                    }
 
                     (VertexData Data, int FirstVert) DoTile(StaticTile tile)
                     {
@@ -173,10 +190,10 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                         float theight = thIncr - tuck * 2;
 
                         int layerNum = applicableLayers.IndexOf(layer);
-                        SimpleVertex v00 = new(tilePos.Position + tilePos.QuadVert00, new Vector2(tx, ty));
-                        SimpleVertex v10 = new(tilePos.Position + tilePos.QuadVert10, new Vector2(tx + twidth, ty));
-                        SimpleVertex v01 = new(tilePos.Position + tilePos.QuadVert01, new Vector2(tx, ty + theight));
-                        SimpleVertex v11 = new(tilePos.Position + tilePos.QuadVert11, new Vector2(tx + twidth, ty + theight));
+                        SimpleVertex v00 = new(tilePos.Position + tilePos.QuadVert00, new Vector2(tx, ty), col);
+                        SimpleVertex v10 = new(tilePos.Position + tilePos.QuadVert10, new Vector2(tx + twidth, ty), col);
+                        SimpleVertex v01 = new(tilePos.Position + tilePos.QuadVert01, new Vector2(tx, ty + theight), col);
+                        SimpleVertex v11 = new(tilePos.Position + tilePos.QuadVert11, new Vector2(tx + twidth, ty + theight), col);
                         int startInd = verts.Verts.Count;
                         if (isCeiling)
                         {
