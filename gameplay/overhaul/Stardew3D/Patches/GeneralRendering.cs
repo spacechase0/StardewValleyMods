@@ -14,7 +14,8 @@ public static class Game1ForceRenderOnBufferPatch
 {
     public static void Postfix(ref bool __result)
     {
-        __result = true;
+        if (Mod.State.ActiveMode != null)
+            __result = true;
     }
 }
 
