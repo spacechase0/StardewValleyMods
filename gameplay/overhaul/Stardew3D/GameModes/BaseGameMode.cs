@@ -93,10 +93,10 @@ public abstract partial class BaseGameMode : IGameMode
         }
         else
         {
-            if (RenderTarget == null || RenderTarget.Width != targetScreen.Width || RenderTarget.Height != targetScreen.Height)
+            if (RenderTarget == null || RenderTarget.Width != Game1.game1.localMultiplayerWindow.Width || RenderTarget.Height != Game1.game1.localMultiplayerWindow.Height)
             {
                 RenderTarget?.Dispose();
-                RenderTarget = new(Game1.graphics.GraphicsDevice, targetScreen.Width, targetScreen.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, Mod.Config.MultisampleCount, RenderTargetUsage.PreserveContents);
+                RenderTarget = new(Game1.graphics.GraphicsDevice, Game1.game1.localMultiplayerWindow.Width, Game1.game1.localMultiplayerWindow.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, Mod.Config.MultisampleCount, RenderTargetUsage.PreserveContents);
             }
 
             Game1.graphics.GraphicsDevice.SetRenderTarget(RenderTarget);
