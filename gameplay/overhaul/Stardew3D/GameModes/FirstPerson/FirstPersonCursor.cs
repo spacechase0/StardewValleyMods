@@ -54,7 +54,7 @@ public class FirstPersonCursor : IGameCursor
         prevUseItemState = useItemState;
         prevInteractState = interactState;
 
-        useItemState = Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.useToolButton) || Game1.input.GetMouseState().LeftButton == ButtonState.Pressed;
-        interactState = Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.actionButton) || Game1.input.GetMouseState().RightButton == ButtonState.Pressed;
+        useItemState = Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.useToolButton) || Game1.input.GetGamePadState().Buttons.X == ButtonState.Pressed || Game1.input.GetMouseState().LeftButton == ButtonState.Pressed;
+        interactState = Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.actionButton) || Game1.input.GetGamePadState().Buttons.A == ButtonState.Pressed || Game1.input.GetMouseState().RightButton == ButtonState.Pressed;
     }
 }

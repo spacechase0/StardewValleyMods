@@ -36,14 +36,15 @@ public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
                 if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadLeft)) dir.X -= 1;
 
                 Vector2 joyDir = Game1.input.GetGamePadState().ThumbSticks.Left;
-                joyDir.Y = -joyDir.Y;
                 float joyLen = joyDir.Length();
                 if (joyLen < 0.2)
                     joyDir = Vector2.Zero;
                 else
                 {
-                    joyDir.X -= joyDir.X * 0.2f;
-                    joyDir.Y -= joyDir.Y * 0.2f;
+                    if (joyLen > 0.8f)
+                        joyDir = joyDir.Normalized() * 0.8f;
+                    joyDir -= joyDir * 0.2f;
+                    joyDir *= 1f / 0.6f;
                 }
 
                 dir = dpadDir + joyDir;
@@ -89,27 +90,35 @@ public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
     public override void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, DefaultInputHandling defaultInputHandling)
     {
         Game1.game1.IsMouseVisible = Game1.activeClickableMenu != null && Game1.options.hardwareCursor;
-        if (Game1.activeClickableMenu == null)
-        {
-            // TODO: gamepad support
-            Point center = new(Game1.game1.Window.ClientBounds.Width / 2, Game1.game1.Window.ClientBounds.Height / 2);
-            Point diff = Mouse.GetState().Position - center;
-            if (GameRunner.instance.IsActive)
-            {
-                Mouse.SetPosition(center.X, center.Y);
-
-                if (!hadMenuOpen && wasActive)
-                {
-                    // TODO: sensitivity settings and invert axis
-                    Camera.RotationForHorizontal = Util.Wrap(Camera.RotationForHorizontal + diff.X * -0.005f, 0, MathHelper.ToRadians(360));
-                    Camera.RotationForVertical = Util.Clamp(MathHelper.ToRadians(-89), Camera.RotationForVertical + diff.Y * -0.005f, MathHelper.ToRadians(89));
-                }
-            }
-        }
-
-        // ...
 
         defaultInputHandling( ref keyboardState, ref mouseState, ref gamePadState);
+
+        if (Game1.activeClickableMenu == null)
+        {
+            Point center = new(Game1.game1.localMultiplayerWindow.Width / 2, Game1.game1.localMultiplayerWindow.Height / 2);
+            Point diff;
+            if (Game1.options.gamepadControls)
+            {
+                diff = (gamePadState.ThumbSticks.Right * 20).ToPoint();
+                diff.Y = -diff.Y;
+
+                Game1.setMousePositionRaw(center.X, center.Y);
+            }
+            else
+            {
+                diff = mouseState.Position - center;
+
+                if (GameRunner.instance.IsActive)
+                    Mouse.SetPosition(center.X, center.Y);
+            }
+
+            if (!hadMenuOpen && wasActive)
+            {
+                // TODO: sensitivity settings and invert axis
+                Camera.RotationForHorizontal = Util.Wrap(Camera.RotationForHorizontal + diff.X * -0.005f, 0, MathHelper.ToRadians(360));
+                Camera.RotationForVertical = Util.Clamp(MathHelper.ToRadians(-89), Camera.RotationForVertical + diff.Y * -0.005f, MathHelper.ToRadians(89));
+            }
+        }
     }
 
     public override void AfterUpdate()
