@@ -121,7 +121,7 @@ public abstract partial class BaseGameMode : IGameMode
         {
             Game1.graphics.GraphicsDevice.SetRenderTarget(targetScreen);
             sb.Begin();
-            sb.Draw(RenderTarget, Vector2.Zero, Color.White);
+            sb.Draw(RenderTarget, new Rectangle(0, 0, targetScreen.Width, targetScreen.Height), Color.White);
             sb.End();
         }
 

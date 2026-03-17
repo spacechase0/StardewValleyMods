@@ -46,6 +46,7 @@ using xTile.Tiles;
 using Stardew3D.GameModes;
 using Stardew3D.GameModes.VR;
 using StardewValley.Buildings;
+using Force.DeepCloner;
 
 // TODO: Stop using OpenVR.NET and remove this
 [HarmonyPatch(typeof(Valve.VR.OpenVR), nameof(Valve.VR.OpenVR.InitInternal2))]
@@ -119,48 +120,67 @@ namespace Stardew3D
             Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
             Helper.Events.Content.AssetRequested += this.Content_AssetRequested;
             Helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
+            Helper.Events.GameLoop.UpdateTicking += GameLoop_UpdateTicking;
             Helper.Events.GameLoop.UpdateTicking += (s, e) => State.ActiveMode?.BeforeUpdate();
             Helper.Events.GameLoop.UpdateTicked += (s, e) => State.ActiveMode?.AfterUpdate();
             State.AddingGameModes += (s, e) =>
             {
-                State.AddGameMode(new FirstPersonGameMode());
-                State.AddGameMode(new ThirdPersonGameMode());
-                State.AddGameMode(new FirstPersonVRGameMode());
-                State.AddGameMode(new EditorGameMode());
+                var state = s as State;
+                state.AddGameMode(new FirstPersonGameMode());
+                state.AddGameMode(new ThirdPersonGameMode());
+                state.AddGameMode(new FirstPersonVRGameMode());
+                state.AddGameMode(new EditorGameMode());
             };
             State.GameModesFinalized += (s, e) =>
             {
-                State.SetRenderHandlerForGameModeTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
-                State.SetRenderHandlerForGameModeTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
-                State.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
-                State.SetRenderHandlerForGameModeTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
-                State.SetRenderHandlerForGameModeTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
-                State.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>(obj as TerrainFeature));
-                State.SetRenderHandlerForGameModeTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
-                State.SetRenderHandlerForGameModeTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
-                //State.SetRenderHandlerForGameHandlerTags<FruitTree>([], handler => obj => new FruitTreeRenderer(obj as FruitTree));
-                State.SetRenderHandlerForGameModeTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
-                State.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
-                State.SetRenderHandlerForGameModeTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
-                //State.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
-                State.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
-                State.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
-                State.SetRenderHandlerForGameModeTags<Building>([], handler => obj => new BuildingRenderer(obj as Building));
-                State.SetRenderHandlerForGameModeTags<Crop>([], handler => obj => new CropRenderer(obj as Crop));
+                var state = s as State;
+                state.SetRenderHandlerForGameModeTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
+                state.SetRenderHandlerForGameModeTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
+                state.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
+                state.SetRenderHandlerForGameModeTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
+                state.SetRenderHandlerForGameModeTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
+                state.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>(obj as TerrainFeature));
+                state.SetRenderHandlerForGameModeTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
+                state.SetRenderHandlerForGameModeTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
+                //state.SetRenderHandlerForGameHandlerTags<FruitTree>([], handler => obj => new FruitTreeRenderer(obj as FruitTree));
+                state.SetRenderHandlerForGameModeTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
+                state.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
+                state.SetRenderHandlerForGameModeTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
+                //state.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
+                state.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
+                state.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
+                state.SetRenderHandlerForGameModeTags<Building>([], handler => obj => new BuildingRenderer(obj as Building));
+                state.SetRenderHandlerForGameModeTags<Crop>([], handler => obj => new CropRenderer(obj as Crop));
 
-                State.AddJointHandlerAddonForGameModeTags<Farmer, FarmerPointAndClickControlsHandler>([IGameMode.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
+                state.AddJointHandlerAddonForGameModeTags<Farmer, FarmerPointAndClickControlsHandler>([IGameMode.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
                 
-                State.SetJointHandlerForGameModeTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameMode.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameMode, menu as IClickableMenu));
-                State.SetJointHandlerForGameModeTags<TitleMenu, TitleMenuHandler>([IGameMode.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameMode, menu as TitleMenu));
-                State.AddUpdateHandlerAddonForGameModeTags<Farmer>([IGameMode.CategoryVR, IGameMode.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameMode, obj as Farmer));
+                state.SetJointHandlerForGameModeTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameMode.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameMode, menu as IClickableMenu));
+                state.SetJointHandlerForGameModeTags<TitleMenu, TitleMenuHandler>([IGameMode.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameMode, menu as TitleMenu));
+                state.AddUpdateHandlerAddonForGameModeTags<Farmer>([IGameMode.CategoryVR, IGameMode.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameMode, obj as Farmer));
             };
-
-            var hooks = AccessTools.Field(typeof(Game1), "hooks");
-            hooks.SetValue(null, new MyModHooks((ModHooks)hooks.GetValue(null)));
 
             RenderHelper.quadVbo = new VertexBuffer(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), 6, BufferUsage.WriteOnly);
 
             CharacterHandlers.ManualBootstrap(Harmony);
+
+            Helper.ConsoleCommands.Add("stardew3d_setmode", "...", (cmd, args) =>
+            {
+                if (!ArgUtility.TryGet(args, 0, out string modeId, out string error))
+                {
+                    Log.Error($"Error: {error}");
+                    return;
+                }
+
+                var mode = State.GetGameMode(modeId);
+                if (mode == null && modeId != "null")
+                {
+                    Log.Error($"Unknown mode: {modeId}");
+                    Log.Info("Options are: ");
+                    // ...
+                    return;
+                }
+                State.ActiveMode = mode;
+            });
         }
 
         [EventPriority(EventPriority.Low)]
@@ -232,6 +252,13 @@ namespace Stardew3D
                 State.ClearHandlerState();
                 State.ActiveMode?.SwitchOn(State.ActiveMode);
             }
+        }
+
+        private void GameLoop_UpdateTicking(object sender, UpdateTickingEventArgs e)
+        {
+            // TODO: A better way of doing this. Is there an event for splitscreen start/end ing?
+            if (Game1.hooks.GetType().Name == "SModHooks")
+                Game1.hooks = new MyModHooks(Game1.hooks);
         }
 
         private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)

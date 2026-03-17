@@ -27,12 +27,14 @@ internal static class CharacterHandlers
             harmony.CreateReversePatcher(orig, new HarmonyMethod(concreteType.GetMethod("OriginalUpdateMethod")) { priority = Priority.VeryLow, reversePatchType = HarmonyReversePatchType.Snapshot });
             harmony.Patch(orig, prefix: new HarmonyMethod(concreteType.GetMethod(orig.DeclaringType == typeof(Farmer) ? "UpdatePrefix_Farmer" : "UpdatePrefix")) { priority = Priority.Last });
         }
+#if false
         foreach (var orig in DrawTargetMethods())
         {
             Type concreteType = typeof(Impl<>).MakeGenericType(orig.DeclaringType);
             harmony.CreateReversePatcher(orig, new HarmonyMethod(concreteType.GetMethod($"OriginalDrawMethod_{orig.GetParameters().Length}")) { priority = Priority.VeryLow, reversePatchType = HarmonyReversePatchType.Snapshot });
             harmony.Patch(orig, prefix: new HarmonyMethod(concreteType.GetMethod($"DrawPrefix_{orig.GetParameters().Length}")) { priority = Priority.Last });
         }
+#endif
     }
     public static IEnumerable<MethodBase> UpdateTargetMethods()
     {
