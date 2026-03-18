@@ -11,6 +11,7 @@
 
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
