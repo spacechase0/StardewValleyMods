@@ -103,8 +103,9 @@
   </Folder>
   <Folder Name="/_root/targets/">
     <File Path="common.targets" />
-    <File Path="documentation-generation.targets" />
-    <File Path="harmony.targets" />
-    <File Path="spacecore.targets" />
+    <File Path="shared/documentation-generation.targets" />
+    <File Path="shared/harmony.targets" />
+    <File Path="shared/spacecore.targets" />
+    <File Path="shared/translations.targets" />
   </Folder>
 </Solution>

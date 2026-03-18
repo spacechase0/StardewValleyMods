@@ -1,24 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <RequireSpaceCore>true</RequireSpaceCore>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Name>SkyFarm</Name>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>A challenge map in the sky.</Description>
     <Version>1.0.0</Version>
-
-
-
-    <TranslationClassBuilder_AddGetByKey>true</TranslationClassBuilder_AddGetByKey>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="i18n\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" PrivateAssets="all" />
-  </ItemGroup>
-
-  <Import Project="$(SolutionDir)spacecore.targets" /></Project>
+</Project>

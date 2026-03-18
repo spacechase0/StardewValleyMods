@@ -1,24 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <RequireSpaceCore>true</RequireSpaceCore>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Version>1.0.0</Version>
-
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="i18n\default.json" />
-  </ItemGroup>
-
-  <Import Project="$(SolutionDir)spacecore.targets" />
-  <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="assets\ja\Objects\" />
-    <Folder Include="i18n\" />
-  </ItemGroup>
 </Project>

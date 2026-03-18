@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RequireSpaceCore>true</RequireSpaceCore>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
 
   <PropertyGroup>
@@ -7,7 +10,5 @@
     <Description>Adds a new Doom-style arcade game.</Description>
     <Version>1.0.4</Version>
     <UpdateKeys>Nexus:7455</UpdateKeys>
-    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
-  <Import Project="$(SolutionDir)spacecore.targets" /></Project>
+</Project>

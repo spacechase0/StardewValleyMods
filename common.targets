@@ -1,4 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- This *could* be a Directory.Build.props/targets, but I'd have to -->
+  <!-- move the folders of every mod again (because of the non-mod stuff like shared projects and submodules)... -->
+  
   <!--common project properties-->
   <PropertyGroup>
     <Authors>kittycatcasey</Authors>
@@ -16,13 +19,27 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
 
-  <!--import mod build package-->
-  <ItemGroup>
+  <!-- Reference packages/projects that everything uses -->
+  <ItemGroup> 
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.2-casey" />
     <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.4.0" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GamePath)/smapi-internal/Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
-  <!-- Why didn't I do this for SpaceShared in the first place? -->
+  <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
+    <Publicize Include="Stardew Valley" IncludeVirtualMembers="false" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
+    <Publicize Include="StardewValley" IncludeVirtualMembers="false" />
+  </ItemGroup>
+
+  <!-- Include SpaceShared for everything -->
   <Import Project="$(SolutionDir)shared\SpaceShared.GameAgnostic\SpaceShared.GameAgnostic.projitems" Label="Shared" />
   <Import Project="$(SolutionDir)shared\SpaceShared.MonoGame\SpaceShared.MonoGame.projitems" Label="Shared" />
   <Import Project="$(SolutionDir)shared\SpaceShared.Mods\SpaceShared.Mods.projitems" Label="Shared" />
@@ -30,6 +47,12 @@
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)shared\SpaceShared.SourceGenerator\SpaceShared.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
+
+  <!-- Optional but commonly used configuration additions -->
+  <Import Condition="'$(EnableHarmony)' == 'true'" Project="$(SolutionDir)shared/harmony.targets" />
+  <Import Condition="'$(RequireSpaceCore)' == 'true'" Project="$(SolutionDir)shared/spacecore.targets" />
+  <Import Condition="'$(GenerateDocumentation)' == 'true'" Project="$(SolutionDir)shared/documentation-generation.targets" />
+  <Import Condition="'$(HasTranslations)' == 'true'" Project="$(SolutionDir)shared/translations.targets" />
 
   <!--common mod build package options-->
   <PropertyGroup>

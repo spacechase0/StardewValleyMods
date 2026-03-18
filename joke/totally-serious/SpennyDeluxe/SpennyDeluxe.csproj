@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Name>Spenny Deluxe</Name>
@@ -8,7 +10,5 @@
     <Description>Spenny - Delxue edition</Description>
     <Version>1.0.0</Version>
     <UpdateKeys>Nexus:14984</UpdateKeys>
-    
-
   </PropertyGroup>
 </Project>

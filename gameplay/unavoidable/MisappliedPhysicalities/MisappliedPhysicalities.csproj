@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <RequireSpaceCore>true</RequireSpaceCore>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Version>1.0.0</Version>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
-
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DynamicGameAssets\DynamicGameAssets.csproj" />
-    <ProjectReference Include="..\SpaceCore\SpaceCore.csproj" Private="false" />
   </ItemGroup>
 </Project>
