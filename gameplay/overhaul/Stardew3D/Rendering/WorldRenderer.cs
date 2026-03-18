@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using Stardew3D.Handlers;
 using Stardew3D.Handlers.Render;
 using Stardew3D.Models;

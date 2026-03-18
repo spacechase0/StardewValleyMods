@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using SpaceShared.Attributes;
 using SpaceShared.Content;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 
 namespace Stardew3D.Content.Models;
 

@@ -9,7 +9,7 @@ using Force.DeepCloner;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using Stardew3D.GameModes;
 using Stardew3D.Rendering;
 using StardewValley;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewValley;
 
-namespace Stardew3D.Data;
+namespace Stardew3D.DataModels;
 public class LocationModelData : ModelData
 {
     public override string Type => $"{Mod.Instance.ModManifest.UniqueID}/Location";

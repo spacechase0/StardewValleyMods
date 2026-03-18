@@ -14,7 +14,7 @@ using MonoScene.Graphics;
 using MonoScene.Graphics.Pipeline;
 using SpaceShared;
 using SpaceShared.Attributes;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using Stardew3D.Handlers;
 using Stardew3D.GameModes.Editor;
 using Stardew3D.GameModes.FirstPerson;

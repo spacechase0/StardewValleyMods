@@ -14,7 +14,7 @@ using Stardew3D.Models;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 
-namespace Stardew3D.Data
+namespace Stardew3D.DataModels
 {
     [CustomDictionaryAsset("Interactions")]
     public partial class InteractionData

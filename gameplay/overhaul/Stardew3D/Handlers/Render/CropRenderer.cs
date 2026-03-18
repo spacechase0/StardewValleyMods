@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.GameData.Buildings;

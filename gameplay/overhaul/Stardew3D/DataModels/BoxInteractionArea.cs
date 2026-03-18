@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace Stardew3D.Data;
+namespace Stardew3D.DataModels;
 public class BoxInteractionArea : InteractionArea
 {
     public override string Type => "Box";

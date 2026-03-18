@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpaceShared.Attributes;
 
-namespace Stardew3D.Data;
+namespace Stardew3D.DataModels;
 
 [CustomDictionaryAsset("FloorWallAssociations")]
 public partial class FloorWallAssociationData

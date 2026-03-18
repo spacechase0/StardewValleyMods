@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SpaceShared.Attributes;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 
 namespace Stardew3D.Content.FloorWallAssociations;
 

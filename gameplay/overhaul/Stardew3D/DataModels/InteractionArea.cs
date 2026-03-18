@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Stardew3D.Data;
+namespace Stardew3D.DataModels;
 public abstract class InteractionArea
 {
     public abstract string Type { get; }

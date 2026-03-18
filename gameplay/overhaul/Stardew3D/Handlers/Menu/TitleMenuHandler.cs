@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoScene.Graphics;
 using SharpGLTF.Schema2;
 using SpaceShared;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using Stardew3D.GameModes.VR;
 using Stardew3D.Handlers;
 using Stardew3D.Models;

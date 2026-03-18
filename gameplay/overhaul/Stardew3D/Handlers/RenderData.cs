@@ -7,7 +7,7 @@ using HarmonyLib;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewValley;

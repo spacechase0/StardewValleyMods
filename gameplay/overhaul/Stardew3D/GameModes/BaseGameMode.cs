@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using SpaceCore.VanillaAssetExpansion;
 using SpaceShared;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewModdingAPI;

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoScene.Graphics;
 using Newtonsoft.Json.Linq;
 using SpaceShared;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;

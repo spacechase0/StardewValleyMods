@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
-namespace Stardew3D.Data;
+namespace Stardew3D.DataModels;
 
 internal class InteractionAreaCreationConverter : JsonConverter
 {

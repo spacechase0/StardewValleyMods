@@ -9,14 +9,14 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using Stardew3D.Rendering;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.TerrainFeatures;
 using static Stardew3D.Handlers.IRenderHandler;
 
-using PlaceholderData = Stardew3D.Handlers.RendererWithPlaceholder<Stardew3D.Data.ModelData, StardewValley.Debris>.PlaceholderData;
+using PlaceholderData = Stardew3D.Handlers.RendererWithPlaceholder<Stardew3D.DataModels.ModelData, StardewValley.Debris>.PlaceholderData;
 
 namespace Stardew3D.Handlers.Render;
 

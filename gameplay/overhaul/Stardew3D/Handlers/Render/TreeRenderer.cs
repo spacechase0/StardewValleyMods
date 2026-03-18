@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Stardew3D.Data;
+using Stardew3D.DataModels;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.TerrainFeatures;
