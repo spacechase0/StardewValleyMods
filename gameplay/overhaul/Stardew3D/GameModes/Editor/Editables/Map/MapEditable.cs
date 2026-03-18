@@ -1,10 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MLEM.Input;
 using MLEM.Ui.Elements;
+using SpaceShared;
+using Stardew3D.GameModes.Editor.Editables;
 using Stardew3D.Handlers.Render;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using StardewValley;
+using StardewValley.Extensions;
 using xTile.Tiles;
 using static Stardew3D.Handlers.IRenderHandler;
 
@@ -51,7 +58,7 @@ internal class MapEditable : IEditable
             if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
                 return;
 
-            float val = Extensions.GetValueForDataTileIndex(layer.Tiles[tile.X, tile.Y]?.TileIndex ?? -1);
+            float val = DimensionUtils.GetValueForDataTileIndex(layer.Tiles[tile.X, tile.Y]?.TileIndex ?? -1);
             if (float.IsNaN(val))
                 val = 0;
             val += amount;
@@ -60,7 +67,7 @@ internal class MapEditable : IEditable
             if (ts == null)
                 Map.AddTileSheet(ts = new("dataValues", Map, "ThirdDimensionData\\floor", new(20, 10), new(16, 16)));
 
-            layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, Extensions.GetDataTileIndexForValue(val));
+            layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, DimensionUtils.GetDataTileIndexForValue(val));
         }
 
 #if false
@@ -119,7 +126,7 @@ internal class MapEditable : IEditable
                         if (layer.Tiles[ix, iy] is not StaticTile tile)
                             continue;
 
-                        data[i] = Extensions.GetValueForDataTileIndex(tile.TileIndex);
+                        data[i] = DimensionUtils.GetValueForDataTileIndex(tile.TileIndex);
                     }
                 }
                 int[][] arr;
@@ -267,7 +274,7 @@ internal class MapEditable : IEditable
             Rectangle tileRect = new(cursorPosTile2d.X, cursorPosTile2d.Y, 1, 1);
 
             Vector2 tile = cursorPosTile2d.ToVector2();
-            var quad = Extensions.GetPositionForTile(Location.Map, cursorPosTile2d);
+            var quad = DimensionUtils.GetPositionForTile(Location.Map, cursorPosTile2d);
             if (float.IsNaN(quad.Position.Y))
             {
                 quad.Position.Y = 0;

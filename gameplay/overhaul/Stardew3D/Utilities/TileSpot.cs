@@ -1,4 +1,5 @@
-namespace Stardew3D;
+namespace Stardew3D.Utilities;
+
 public enum TileSpot
 {
     West,

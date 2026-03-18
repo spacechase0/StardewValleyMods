@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
-using Stardew3D;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
@@ -19,6 +18,7 @@ using Valve.VR;
 using static Stardew3D.GameModes.IGameMode;
 using Stardew3D.GameModes;
 using Stardew3D.GameModes.VR.Hardware;
+using Stardew3D.Utilities;
 
 namespace Stardew3D.GameModes.VR;
 public abstract partial class VRGameMode

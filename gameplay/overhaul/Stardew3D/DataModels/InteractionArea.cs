@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Stardew3D.Utilities;
 
 namespace Stardew3D.DataModels;
 public abstract class InteractionArea

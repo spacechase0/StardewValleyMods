@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.DataModels;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers;

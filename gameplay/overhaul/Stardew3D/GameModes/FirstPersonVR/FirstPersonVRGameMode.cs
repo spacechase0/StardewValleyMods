@@ -4,6 +4,7 @@ using SpaceShared;
 using Stardew3D.GameModes.FirstPerson;
 using Stardew3D.GameModes.VR;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Mods;

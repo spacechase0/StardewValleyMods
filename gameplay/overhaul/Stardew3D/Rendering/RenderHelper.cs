@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
+using Stardew3D.Utilities;
 using StardewValley;
 
 namespace Stardew3D.Rendering;

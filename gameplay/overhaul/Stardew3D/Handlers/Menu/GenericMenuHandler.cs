@@ -5,6 +5,7 @@ using Stardew3D.GameModes;
 using Stardew3D.GameModes.FirstPersonVR;
 using Stardew3D.GameModes.VR;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using StardewValley;
 using StardewValley.Menus;
 

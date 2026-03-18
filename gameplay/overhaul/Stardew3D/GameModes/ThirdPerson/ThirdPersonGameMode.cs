@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using StardewModdingAPI;
 using StardewValley;
 using static Stardew3D.GameModes.IGameMode;

@@ -4,6 +4,7 @@ using SpaceShared;
 using Stardew3D.DataModels;
 using Stardew3D.GameModes;
 using Stardew3D.GameModes.VR;
+using Stardew3D.Utilities;
 using StardewValley;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;

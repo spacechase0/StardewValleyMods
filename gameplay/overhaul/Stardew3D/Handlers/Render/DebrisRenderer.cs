@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.DataModels;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using StardewValley;
 using static Stardew3D.Handlers.IRenderHandler;
 

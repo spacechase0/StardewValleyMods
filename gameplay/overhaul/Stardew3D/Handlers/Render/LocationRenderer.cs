@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using Stardew3D.DataModels;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Extensions;
@@ -144,7 +145,7 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                         continue;
 
                     Color col = Color.White;
-                    var tilePos = Extensions.GetPositionForTile(Object.Map, new(ix, iy), isCeiling);
+                    var tilePos = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), isCeiling);
                     if (float.IsNaN(tilePos.Position.Y))
                     {
                         if (EvenMissing)
@@ -265,46 +266,46 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                 wallDefs.TryGetValue(assocData?.WallDefinitionId ?? "", out wallDef_);
                 //if (assocData != null)
                 {
-                    Vector3 floorWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.West, forCeiling: false);
-                    Vector3 floorNorth = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.North, forCeiling: false);
-                    Vector3 floorEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.East, forCeiling: false);
-                    Vector3 floorSouth = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.South, forCeiling: false);
-                    Vector3 otherFloorWest = Extensions.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.East, forCeiling: false);
-                    Vector3 otherFloorNorth = Extensions.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.South, forCeiling: false);
-                    Vector3 otherFloorEast = Extensions.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.West, forCeiling: false);
-                    Vector3 otherFloorSouth = Extensions.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.North, forCeiling: false);
-                    float floorNorthWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthWest, forCeiling: false).Y;
-                    float otherHorizontalSpotForFloorNorthWest = Extensions.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.NorthEast, forCeiling: false).Y;
-                    float otherVerticalSpotForFloorNorthWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthWest, forCeiling: false).Y;
-                    float floorNorthEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthEast, forCeiling: false).Y;
-                    float otherHorizontalSpotForFloorNorthEast = Extensions.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.NorthWest, forCeiling: false).Y;
-                    float otherVerticalSpotForFloorNorthEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthEast, forCeiling: false).Y;
-                    float floorSouthWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthWest, forCeiling: false).Y;
-                    float otherHorizontalSpotForFloorSouthWest = Extensions.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.SouthEast, forCeiling: false).Y;
-                    float otherVerticalSpotForFloorSouthWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthWest, forCeiling: false).Y;
-                    float floorSouthEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthEast, forCeiling: false).Y;
-                    float otherHorizontalSpotForFloorSouthEast = Extensions.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.SouthWest, forCeiling: false).Y;
-                    float otherVerticalSpotForFloorSouthEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthEast, forCeiling: false).Y;
-                    Vector3 ceilingWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.West, forCeiling: true);
-                    Vector3 ceilingNorth = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.North, forCeiling: true);
-                    Vector3 ceilingEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.East, forCeiling: true);
-                    Vector3 ceilingSouth = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.South, forCeiling: true);
-                    Vector3 otherCeilingWest = Extensions.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.East, forCeiling: true);
-                    Vector3 otherCeilingNorth = Extensions.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.South, forCeiling: true);
-                    Vector3 otherCeilingEast = Extensions.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.West, forCeiling: true);
-                    Vector3 otherCeilingSouth = Extensions.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.North, forCeiling: true);
-                    float ceilingNorthWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthWest, forCeiling: true).Y;
-                    float otherHorizontalSpotForCeilingNorthWest = Extensions.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.NorthEast, forCeiling: true).Y;
-                    float otherVerticalSpotForCeilingNorthWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthWest, forCeiling: true).Y;
-                    float ceilingNorthEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthEast, forCeiling: true).Y;
-                    float otherHorizontalSpotForCeilingNorthEast = Extensions.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.NorthWest, forCeiling: true).Y;
-                    float otherVerticalSpotForCeilingNorthEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthEast, forCeiling: true).Y;
-                    float ceilingSouthWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthWest, forCeiling: true).Y;
-                    float otherHorizontalSpotForCeilingSouthWest = Extensions.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.SouthEast, forCeiling: true).Y;
-                    float otherVerticalSpotForCeilingSouthWest = Extensions.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthWest, forCeiling: true).Y;
-                    float ceilingSouthEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthEast, forCeiling: true).Y;
-                    float otherHorizontalSpotForCeilingSouthEast = Extensions.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.SouthWest, forCeiling: true).Y;
-                    float otherVerticalSpotForCeilingSouthEast = Extensions.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthEast, forCeiling: true).Y;
+                    Vector3 floorWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.West, forCeiling: false);
+                    Vector3 floorNorth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.North, forCeiling: false);
+                    Vector3 floorEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.East, forCeiling: false);
+                    Vector3 floorSouth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.South, forCeiling: false);
+                    Vector3 otherFloorWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.East, forCeiling: false);
+                    Vector3 otherFloorNorth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.South, forCeiling: false);
+                    Vector3 otherFloorEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.West, forCeiling: false);
+                    Vector3 otherFloorSouth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.North, forCeiling: false);
+                    float floorNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthWest, forCeiling: false).Y;
+                    float otherHorizontalSpotForFloorNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.NorthEast, forCeiling: false).Y;
+                    float otherVerticalSpotForFloorNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthWest, forCeiling: false).Y;
+                    float floorNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthEast, forCeiling: false).Y;
+                    float otherHorizontalSpotForFloorNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.NorthWest, forCeiling: false).Y;
+                    float otherVerticalSpotForFloorNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthEast, forCeiling: false).Y;
+                    float floorSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthWest, forCeiling: false).Y;
+                    float otherHorizontalSpotForFloorSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.SouthEast, forCeiling: false).Y;
+                    float otherVerticalSpotForFloorSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthWest, forCeiling: false).Y;
+                    float floorSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthEast, forCeiling: false).Y;
+                    float otherHorizontalSpotForFloorSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.SouthWest, forCeiling: false).Y;
+                    float otherVerticalSpotForFloorSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthEast, forCeiling: false).Y;
+                    Vector3 ceilingWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.West, forCeiling: true);
+                    Vector3 ceilingNorth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.North, forCeiling: true);
+                    Vector3 ceilingEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.East, forCeiling: true);
+                    Vector3 ceilingSouth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.South, forCeiling: true);
+                    Vector3 otherCeilingWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.East, forCeiling: true);
+                    Vector3 otherCeilingNorth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.South, forCeiling: true);
+                    Vector3 otherCeilingEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.West, forCeiling: true);
+                    Vector3 otherCeilingSouth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.North, forCeiling: true);
+                    float ceilingNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthWest, forCeiling: true).Y;
+                    float otherHorizontalSpotForCeilingNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.NorthEast, forCeiling: true).Y;
+                    float otherVerticalSpotForCeilingNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthWest, forCeiling: true).Y;
+                    float ceilingNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthEast, forCeiling: true).Y;
+                    float otherHorizontalSpotForCeilingNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.NorthWest, forCeiling: true).Y;
+                    float otherVerticalSpotForCeilingNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthEast, forCeiling: true).Y;
+                    float ceilingSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthWest, forCeiling: true).Y;
+                    float otherHorizontalSpotForCeilingSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.SouthEast, forCeiling: true).Y;
+                    float otherVerticalSpotForCeilingSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthWest, forCeiling: true).Y;
+                    float ceilingSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthEast, forCeiling: true).Y;
+                    float otherHorizontalSpotForCeilingSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.SouthWest, forCeiling: true).Y;
+                    float otherVerticalSpotForCeilingSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthEast, forCeiling: true).Y;
 
                     var customWallSize = new float?[4];
                     var customWallOffset = new float?[4];
@@ -318,8 +319,8 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                         var dataSize = Object.Map.GetLayer(dataSizeLayer);
                         var dataOffset = Object.Map.GetLayer(dataOffsetLayer);
 
-                        customWallSize[i] = Extensions.GetValueForDataTileIndex(dataSize?.GetTileIndexAt(ix, iy) ?? -1);
-                        customWallOffset[i] = Extensions.GetValueForDataTileIndex(dataOffset?.GetTileIndexAt(ix, iy) ?? -1);
+                        customWallSize[i] = DimensionUtils.GetValueForDataTileIndex(dataSize?.GetTileIndexAt(ix, iy) ?? -1);
+                        customWallOffset[i] = DimensionUtils.GetValueForDataTileIndex(dataOffset?.GetTileIndexAt(ix, iy) ?? -1);
 
                         if ((dataSize?.Tiles[ix, iy]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var wallDefId) ?? false) &&
                             wallDefs.TryGetValue(wallDefId, out WallDefinitionData wallDef))
@@ -338,11 +339,11 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                     var dataOffsetModifiers = Object.Map.Layers.Where(l => l.Id == dataOffsetModifierLayer || l.Id.StartsWith($"{dataOffsetModifierLayer}_"));
                     foreach (var modifier in dataSizeModifiers)
                     {
-                        Extensions.ModifyValueForDataTileIndex(modifier.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
+                        DimensionUtils.ModifyValueForDataTileIndex(modifier.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
                     }
                     foreach (var modifier in dataOffsetModifiers)
                     {
-                        Extensions.ModifyValueForDataTileIndex(modifier.GetTileIndexAt(ix, iy), ref customWallOffsetMods[0], ref customWallOffsetMods[1], ref customWallOffsetMods[3], ref customWallOffsetMods[2]);
+                        DimensionUtils.ModifyValueForDataTileIndex(modifier.GetTileIndexAt(ix, iy), ref customWallOffsetMods[0], ref customWallOffsetMods[1], ref customWallOffsetMods[3], ref customWallOffsetMods[2]);
                     }
 
                     TileSpot[] walls = [TileSpot.West, TileSpot.North, TileSpot.East, TileSpot.South];

@@ -4,6 +4,7 @@ using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D.DataModels;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using StardewValley;
 
 namespace Stardew3D.Models;

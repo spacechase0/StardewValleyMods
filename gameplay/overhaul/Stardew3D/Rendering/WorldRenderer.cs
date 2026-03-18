@@ -6,6 +6,7 @@ using Stardew3D.DataModels;
 using Stardew3D.Handlers;
 using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
+using Stardew3D.Utilities;
 using StardewValley;
 
 namespace Stardew3D.Rendering;
