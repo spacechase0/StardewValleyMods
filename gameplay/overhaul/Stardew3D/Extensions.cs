@@ -8,509 +8,508 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using Valve.VR;
 
-namespace Stardew3D
+namespace Stardew3D;
+
+public static class Extensions
 {
-    public static class Extensions
+    extension(Character character)
     {
-        extension(Character character)
+        public Vector3 StandingPixel3D
         {
-            public Vector3 StandingPixel3D
+            get
             {
-                get
+                Vector2 pos = character.StandingPixel.ToVector2();
+                pos += (character.Position - character.Position.ToPoint().ToVector2());
+                pos.Y += -character.yJumpOffset;
+
+                Vector3 ret = pos.To3D(character.currentLocation?.Map);
+                if (character is Monster monster && monster.isGlider.Value)
                 {
-                    Vector2 pos = character.StandingPixel.ToVector2();
-                    pos += (character.Position - character.Position.ToPoint().ToVector2());
-                    pos.Y += -character.yJumpOffset;
-
-                    Vector3 ret = pos.To3D(character.currentLocation?.Map);
-                    if (character is Monster monster && monster.isGlider.Value)
-                    {
-                        ret.Y += 1.25f;
-                    }
-
-                    return ret;
+                    ret.Y += 1.25f;
                 }
+
+                return ret;
             }
         }
+    }
 
-        extension(Rectangle rect)
+    extension(Rectangle rect)
+    {
+        // I'm kinda tired when writing this, so who knows if it is correct.
+        // Probably is much sloer than normal solutions, at least.
+        public bool LineSegmentIntersects(Vector2 start, Vector2 end, out Vector2 intersection)
         {
-            // I'm kinda tired when writing this, so who knows if it is correct.
-            // Probably is much sloer than normal solutions, at least.
-            public bool LineSegmentIntersects(Vector2 start, Vector2 end, out Vector2 intersection)
+            Vector2 minBounds = new Vector2(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y));
+            Vector2 maxBounds = new Vector2(Math.Max(start.X, end.X), Math.Max(start.Y, end.Y));
+
+            // The extremes of the segment don't approach the rect
+            if (maxBounds.X < rect.Left || maxBounds.Y < rect.Top || minBounds.X >= rect.Right || minBounds.Y >= rect.Bottom)
             {
-                Vector2 minBounds = new Vector2(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y));
-                Vector2 maxBounds = new Vector2(Math.Max(start.X, end.X), Math.Max(start.Y, end.Y));
-
-                // The extremes of the segment don't approach the rect
-                if (maxBounds.X < rect.Left || maxBounds.Y < rect.Top || minBounds.X >= rect.Right || minBounds.Y >= rect.Bottom)
-                {
-                    intersection = Vector2.Zero;
-                    return false;
-                }
-
-                Vector2 left = start.X < end.X ? start : end;
-                Vector2 right = start.X < end.X ? end : start;
-                Vector2 up = start.Y < end.Y ? start : end;
-                Vector2 down = start.Y < end.Y ? end : start;
-
-                Vector2 segmentDiff = end - start;
-                Vector2 norm = segmentDiff.Normalized();
-                float len = segmentDiff.Length();
-
-                if (norm.X != 0)
-                {
-                    if (left.X < rect.Left)
-                    {
-                        Vector2 diff = new Vector2(rect.Left - left.X, 0);
-                        diff.Y = (diff.X / norm.X) * norm.Y;
-                        if (left.Y + diff.Y >= rect.Top && left.Y + diff.Y <= rect.Bottom)
-                        {
-                            intersection = left + diff;
-                            return true;
-                        }
-                    }
-                    if (right.X > rect.Right)
-                    {
-                        Vector2 diff = new Vector2(rect.Right - right.X, 0);
-                        diff.Y = (diff.X / norm.X) * norm.Y;
-                        if (right.Y + diff.Y >= rect.Top && right.Y + diff.Y <= rect.Bottom)
-                        {
-                            intersection = right + diff;
-                            return true;
-                        }
-                    }
-                }
-                if (norm.Y != 0)
-                {
-                    if (up.Y < rect.Top)
-                    {
-                        Vector2 diff = new Vector2(0, rect.Top - up.Y);
-                        diff.X = (diff.Y / norm.Y) * norm.X;
-                        if (up.X + diff.X >= rect.Left && up.X + diff.X <= rect.Right)
-                        {
-                            intersection = up + diff;
-                            return true;
-                        }
-                    }
-                    if (down.Y > rect.Bottom)
-                    {
-                        Vector2 diff = new Vector2(0, rect.Bottom - down.Y);
-                        diff.X = (diff.Y / norm.Y) * norm.X;
-                        if (down.X + diff.X >= rect.Left && down.X + diff.X <= rect.Right)
-                        {
-                            intersection = down + diff;
-                            return true;
-                        }
-                    }
-                }
-
                 intersection = Vector2.Zero;
                 return false;
             }
-        }
 
-        // https://medium.com/data-science/change-of-basis-3909ef4bed43
-        public static Matrix ChangeBasis(this Matrix input)
-        {
-            var basisChange = Matrix.Identity;
-            basisChange.M33 = -1;
-            return basisChange * input * basisChange;
-        }
+            Vector2 left = start.X < end.X ? start : end;
+            Vector2 right = start.X < end.X ? end : start;
+            Vector2 up = start.Y < end.Y ? start : end;
+            Vector2 down = start.Y < end.Y ? end : start;
 
-        public static Vector3 ToMonogame(this HmdVector3_t vec)
-        {
-            return new Vector3(vec.v0, vec.v1, vec.v2);
-        }
+            Vector2 segmentDiff = end - start;
+            Vector2 norm = segmentDiff.Normalized();
+            float len = segmentDiff.Length();
 
-        public static Matrix ToMonogame(this HmdMatrix34_t mat)
-        {
-            var m = new Matrix(
-                mat.m0, mat.m1, mat.m2, mat.m3,
-                mat.m4, mat.m5, mat.m6, mat.m7,
-                mat.m8, mat.m9, mat.m10, mat.m11,
-                0, 0, 0, 1.0f);
-            return m.Transposed();
-        }
-
-        public static Matrix ToMonogame(this HmdMatrix44_t mat)
-        {
-            var m = new Matrix(
-                mat.m0, mat.m1, mat.m2, mat.m3,
-                mat.m4, mat.m5, mat.m6, mat.m7,
-                mat.m8, mat.m9, mat.m10, mat.m11,
-                mat.m12, mat.m13, mat.m14, mat.m15);
-            return m.Transposed();
-        }
-
-        /// <summary>Assumes the points are counter-clockwise order with Y=up. Should also work with clockwise order and Y=down.</summary>
-        /// <remarks>If your input matches neither criteria, either the order can be reversed or the Y coordinate can be negated. </remarks>
-        public static Vector2[] ConcaveToConvex(this Vector2[] origPoints)
-        {
-            // I don't know a proper algorithm this, so I kinda just came up with a naive algorithm
-            // off the top of my head and tweaked it to work correctly.
-            // Probably inefficient, but won't be done very often so should be fine.
-            List<Vector2> points = [.. origPoints];
-            for (int startPointIndex = 0; startPointIndex < points.Count; startPointIndex++)
+            if (norm.X != 0)
             {
-                Vector2 startPoint = points[(points.Count + startPointIndex) % points.Count];
-
-                int prevPointIndex = (points.Count + startPointIndex - 1) % points.Count;
-                Vector2 prevPoint = points[prevPointIndex];
-
-                float prevAngle = MathF.Atan2( startPoint.Y - prevPoint.Y, startPoint.X - prevPoint.X );
-
-                int nextPointIndex = (points.Count + startPointIndex + 1) % points.Count;
-                Vector2 nextPoint = points[nextPointIndex];
-
-                float nextAngle = MathF.Atan2(nextPoint.Y - startPoint.Y, nextPoint.X - startPoint.X);
-                if (nextAngle < prevAngle - MathF.PI) nextAngle += MathF.PI * 2;
-                if (nextAngle > prevAngle + MathF.PI) nextAngle -= MathF.PI * 2;
-
-                if (nextAngle < prevAngle)
+                if (left.X < rect.Left)
                 {
-                    // Went the wrong direction.
-                    float testAngle = MathF.Atan2(nextPoint.Y - prevPoint.Y, nextPoint.X - prevPoint.X);
-                    if (testAngle < prevAngle - MathF.PI) testAngle += MathF.PI * 2;
-                    if (testAngle > prevAngle + MathF.PI) testAngle -= MathF.PI * 2;
-
-                    if (testAngle > prevAngle)
+                    Vector2 diff = new Vector2(rect.Left - left.X, 0);
+                    diff.Y = (diff.X / norm.X) * norm.Y;
+                    if (left.Y + diff.Y >= rect.Top && left.Y + diff.Y <= rect.Bottom)
                     {
-                        // The current point is further out, so the next point is part of the concavity
-                        points.RemoveAt(nextPointIndex);
-                        startPointIndex -= 1;
+                        intersection = left + diff;
+                        return true;
                     }
-                    else
+                }
+                if (right.X > rect.Right)
+                {
+                    Vector2 diff = new Vector2(rect.Right - right.X, 0);
+                    diff.Y = (diff.X / norm.X) * norm.Y;
+                    if (right.Y + diff.Y >= rect.Top && right.Y + diff.Y <= rect.Bottom)
                     {
-                        // The next point is further out, so the current point is part of the concavity
-                        points.RemoveAt((points.Count + startPointIndex) % points.Count);
-                        startPointIndex -= 2;
+                        intersection = right + diff;
+                        return true;
+                    }
+                }
+            }
+            if (norm.Y != 0)
+            {
+                if (up.Y < rect.Top)
+                {
+                    Vector2 diff = new Vector2(0, rect.Top - up.Y);
+                    diff.X = (diff.Y / norm.Y) * norm.X;
+                    if (up.X + diff.X >= rect.Left && up.X + diff.X <= rect.Right)
+                    {
+                        intersection = up + diff;
+                        return true;
+                    }
+                }
+                if (down.Y > rect.Bottom)
+                {
+                    Vector2 diff = new Vector2(0, rect.Bottom - down.Y);
+                    diff.X = (diff.Y / norm.Y) * norm.X;
+                    if (down.X + diff.X >= rect.Left && down.X + diff.X <= rect.Right)
+                    {
+                        intersection = down + diff;
+                        return true;
                     }
                 }
             }
 
-            return points.ToArray();
+            intersection = Vector2.Zero;
+            return false;
         }
+    }
 
-        public static Matrix NoTranslation(this Matrix m)
+    // https://medium.com/data-science/change-of-basis-3909ef4bed43
+    public static Matrix ChangeBasis(this Matrix input)
+    {
+        var basisChange = Matrix.Identity;
+        basisChange.M33 = -1;
+        return basisChange * input * basisChange;
+    }
+
+    public static Vector3 ToMonogame(this HmdVector3_t vec)
+    {
+        return new Vector3(vec.v0, vec.v1, vec.v2);
+    }
+
+    public static Matrix ToMonogame(this HmdMatrix34_t mat)
+    {
+        var m = new Matrix(
+            mat.m0, mat.m1, mat.m2, mat.m3,
+            mat.m4, mat.m5, mat.m6, mat.m7,
+            mat.m8, mat.m9, mat.m10, mat.m11,
+            0, 0, 0, 1.0f);
+        return m.Transposed();
+    }
+
+    public static Matrix ToMonogame(this HmdMatrix44_t mat)
+    {
+        var m = new Matrix(
+            mat.m0, mat.m1, mat.m2, mat.m3,
+            mat.m4, mat.m5, mat.m6, mat.m7,
+            mat.m8, mat.m9, mat.m10, mat.m11,
+            mat.m12, mat.m13, mat.m14, mat.m15);
+        return m.Transposed();
+    }
+
+    /// <summary>Assumes the points are counter-clockwise order with Y=up. Should also work with clockwise order and Y=down.</summary>
+    /// <remarks>If your input matches neither criteria, either the order can be reversed or the Y coordinate can be negated. </remarks>
+    public static Vector2[] ConcaveToConvex(this Vector2[] origPoints)
+    {
+        // I don't know a proper algorithm this, so I kinda just came up with a naive algorithm
+        // off the top of my head and tweaked it to work correctly.
+        // Probably inefficient, but won't be done very often so should be fine.
+        List<Vector2> points = [.. origPoints];
+        for (int startPointIndex = 0; startPointIndex < points.Count; startPointIndex++)
         {
-            m.Translation = Microsoft.Xna.Framework.Vector3.Zero;
-            return m;
-        }
+            Vector2 startPoint = points[(points.Count + startPointIndex) % points.Count];
 
-        public static Matrix ToMonogame(this System.Numerics.Matrix4x4 mat)
-        {
-            return new(mat.M11, mat.M12, mat.M13, mat.M14,
-                mat.M21, mat.M22, mat.M23, mat.M24,
-                mat.M31, mat.M32, mat.M33, mat.M34,
-                mat.M41, mat.M42, mat.M43, mat.M44);
-        }
+            int prevPointIndex = (points.Count + startPointIndex - 1) % points.Count;
+            Vector2 prevPoint = points[prevPointIndex];
 
-        public static Vector3 GetPositionAtTile(xTile.Map map, Point tile, Vector2 subTile, bool forCeiling = false)
-        {
-            var data = GetPositionForTile(map, tile, forCeiling);
-            if (float.IsNaN(data.Position.Y))
-                return data.Position;
+            float prevAngle = MathF.Atan2( startPoint.Y - prevPoint.Y, startPoint.X - prevPoint.X );
 
-            Plane plane = new(data.Position, data.QuadFacingNormal);
+            int nextPointIndex = (points.Count + startPointIndex + 1) % points.Count;
+            Vector2 nextPoint = points[nextPointIndex];
 
-            float dist = 100000;
-            Ray test = new(new(data.Position.X + subTile.X - 0.5f, dist, data.Position.Z + subTile.Y - 0.5f), Vector3.Down);
-            float ret = dist - test.Intersects(plane).Value;
+            float nextAngle = MathF.Atan2(nextPoint.Y - startPoint.Y, nextPoint.X - startPoint.X);
+            if (nextAngle < prevAngle - MathF.PI) nextAngle += MathF.PI * 2;
+            if (nextAngle > prevAngle + MathF.PI) nextAngle -= MathF.PI * 2;
 
-            // TODO: Map resulting X/Z for "region" thing
-
-            return new(tile.X + subTile.X, ret, tile.Y + subTile.Y);
-        }
-
-        public static int GetDataTileIndexForValue(float value)
-        {
-            if (float.IsNaN(value))
-                return -1;
-            if (value > 10) value = 10;
-            if (value < -10) value = -10;
-
-            int num = (int) Math.Round(Math.Abs(value) * 10);
-            int x = num % 10;
-            int y = num / 10;
-            if (value < 0)
-                x += 10;
-
-            return x + y * 20;
-        }
-
-        public static float GetValueForDataTileIndex(int index)
-        {
-            if (index == -1)
-                return float.NaN;
-
-            float ret = (index % 10) / 10f + (index / 20);
-            if (index % 20 >= 10)
-                ret = -ret;
-            return ret;
-        }
-
-        public static void ModifyValueForDataTileIndex(int index, ref float topLeft, ref float topRight, ref float bottomRight, ref float bottomLeft)
-        {
-            if (index == -1)
-                return;
-            TileSpot whichType = (TileSpot)(index / 200);
-
-            float modAmount = GetValueForDataTileIndex(index % 200);
-            switch (whichType)
+            if (nextAngle < prevAngle)
             {
-                case TileSpot.West: topLeft += modAmount; bottomLeft += modAmount; break;
-                case TileSpot.North: topLeft += modAmount; topRight += modAmount; break;
-                case TileSpot.East: topRight += modAmount; bottomRight += modAmount; break;
-                case TileSpot.South: bottomLeft += modAmount; bottomRight += modAmount; break;
-                case TileSpot.NorthWest: topLeft += modAmount; break;
-                case TileSpot.NorthEast: topRight += modAmount; break;
-                case TileSpot.SouthEast: bottomRight += modAmount; break;
-                case TileSpot.SouthWest: bottomLeft += modAmount; break;
+                // Went the wrong direction.
+                float testAngle = MathF.Atan2(nextPoint.Y - prevPoint.Y, nextPoint.X - prevPoint.X);
+                if (testAngle < prevAngle - MathF.PI) testAngle += MathF.PI * 2;
+                if (testAngle > prevAngle + MathF.PI) testAngle -= MathF.PI * 2;
+
+                if (testAngle > prevAngle)
+                {
+                    // The current point is further out, so the next point is part of the concavity
+                    points.RemoveAt(nextPointIndex);
+                    startPointIndex -= 1;
+                }
+                else
+                {
+                    // The next point is further out, so the current point is part of the concavity
+                    points.RemoveAt((points.Count + startPointIndex) % points.Count);
+                    startPointIndex -= 2;
+                }
             }
         }
 
-        public static (Vector3 Position, Vector3 QuadFacingNormal, Vector3 QuadVert00, Vector3 QuadVert10, Vector3 QuadVert01, Vector3 QuadVert11, float HeightBoundingSize) GetPositionForTile(xTile.Map map, Point tile, bool forCeiling = false)
+        return points.ToArray();
+    }
+
+    public static Matrix NoTranslation(this Matrix m)
+    {
+        m.Translation = Microsoft.Xna.Framework.Vector3.Zero;
+        return m;
+    }
+
+    public static Matrix ToMonogame(this System.Numerics.Matrix4x4 mat)
+    {
+        return new(mat.M11, mat.M12, mat.M13, mat.M14,
+            mat.M21, mat.M22, mat.M23, mat.M24,
+            mat.M31, mat.M32, mat.M33, mat.M34,
+            mat.M41, mat.M42, mat.M43, mat.M44);
+    }
+
+    public static Vector3 GetPositionAtTile(xTile.Map map, Point tile, Vector2 subTile, bool forCeiling = false)
+    {
+        var data = GetPositionForTile(map, tile, forCeiling);
+        if (float.IsNaN(data.Position.Y))
+            return data.Position;
+
+        Plane plane = new(data.Position, data.QuadFacingNormal);
+
+        float dist = 100000;
+        Ray test = new(new(data.Position.X + subTile.X - 0.5f, dist, data.Position.Z + subTile.Y - 0.5f), Vector3.Down);
+        float ret = dist - test.Intersects(plane).Value;
+
+        // TODO: Map resulting X/Z for "region" thing
+
+        return new(tile.X + subTile.X, ret, tile.Y + subTile.Y);
+    }
+
+    public static int GetDataTileIndexForValue(float value)
+    {
+        if (float.IsNaN(value))
+            return -1;
+        if (value > 10) value = 10;
+        if (value < -10) value = -10;
+
+        int num = (int) Math.Round(Math.Abs(value) * 10);
+        int x = num % 10;
+        int y = num / 10;
+        if (value < 0)
+            x += 10;
+
+        return x + y * 20;
+    }
+
+    public static float GetValueForDataTileIndex(int index)
+    {
+        if (index == -1)
+            return float.NaN;
+
+        float ret = (index % 10) / 10f + (index / 20);
+        if (index % 20 >= 10)
+            ret = -ret;
+        return ret;
+    }
+
+    public static void ModifyValueForDataTileIndex(int index, ref float topLeft, ref float topRight, ref float bottomRight, ref float bottomLeft)
+    {
+        if (index == -1)
+            return;
+        TileSpot whichType = (TileSpot)(index / 200);
+
+        float modAmount = GetValueForDataTileIndex(index % 200);
+        switch (whichType)
         {
-            if (map == null)
-                return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+            case TileSpot.West: topLeft += modAmount; bottomLeft += modAmount; break;
+            case TileSpot.North: topLeft += modAmount; topRight += modAmount; break;
+            case TileSpot.East: topRight += modAmount; bottomRight += modAmount; break;
+            case TileSpot.South: bottomLeft += modAmount; bottomRight += modAmount; break;
+            case TileSpot.NorthWest: topLeft += modAmount; break;
+            case TileSpot.NorthEast: topRight += modAmount; break;
+            case TileSpot.SouthEast: bottomRight += modAmount; break;
+            case TileSpot.SouthWest: bottomLeft += modAmount; break;
+        }
+    }
 
-            if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Layers[0].LayerWidth || tile.Y >= map.Layers[0].TileHeight)
-                return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+    public static (Vector3 Position, Vector3 QuadFacingNormal, Vector3 QuadVert00, Vector3 QuadVert10, Vector3 QuadVert01, Vector3 QuadVert11, float HeightBoundingSize) GetPositionForTile(xTile.Map map, Point tile, bool forCeiling = false)
+    {
+        if (map == null)
+            return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
-            string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}Data";
-            string dataModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}ModifierData";
+        if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Layers[0].LayerWidth || tile.Y >= map.Layers[0].TileHeight)
+            return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
-            var data = map.GetLayer(dataLayer);
-            var modifiers = map.Layers.Where(l => l.Id == dataModifierLayer || l.Id.StartsWith( $"{dataModifierLayer}_" ));
+        string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}Data";
+        string dataModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}ModifierData";
 
-            if (data == null)
-                return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+        var data = map.GetLayer(dataLayer);
+        var modifiers = map.Layers.Where(l => l.Id == dataModifierLayer || l.Id.StartsWith( $"{dataModifierLayer}_" ));
 
-            float baseHeight = GetValueForDataTileIndex(data.GetTileIndexAt(tile.X, tile.Y));
-            float topLeft = baseHeight;
-            float topRight = baseHeight;
-            float bottomRight = baseHeight;
-            float bottomLeft = baseHeight;
+        if (data == null)
+            return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
-            foreach (var modifier in modifiers)
-            {
-                ModifyValueForDataTileIndex(modifier.GetTileIndexAt(tile.X, tile.Y), ref topLeft, ref topRight, ref bottomRight, ref bottomLeft);
-            }
+        float baseHeight = GetValueForDataTileIndex(data.GetTileIndexAt(tile.X, tile.Y));
+        float topLeft = baseHeight;
+        float topRight = baseHeight;
+        float bottomRight = baseHeight;
+        float bottomLeft = baseHeight;
 
-            // Probably incorrect implementation, just cobbled something together myself
-            float top = MathF.Max(MathF.Max(topLeft, topRight), MathF.Max(bottomRight, bottomRight));
-            float bottom = MathF.Min(MathF.Min(topLeft, topRight), MathF.Min(bottomRight, bottomRight));
-            float center = (topLeft + topRight + bottomLeft + bottomRight) / 4;
-
-            float posX = (topRight + bottomRight) / 2;
-            float negX = (topLeft + bottomLeft) / 2;
-            float xDiff = posX - negX;
-            float xLen = MathF.Sqrt(1 + xDiff * xDiff);
-
-            float posZ = (topLeft + topRight) / 2;
-            float negZ = (bottomLeft + bottomRight) / 2;
-            float zDiff = posZ - negZ;
-            float zLen = MathF.Sqrt(1 + zDiff * zDiff);
-
-            float rotX = MathF.Asin(zDiff / zLen);
-            float rotZ = MathF.Asin(xDiff / xLen);
-
-            float leftSize = MathF.Sqrt( 1 + MathF.Pow(topLeft - bottomLeft, 2) );
-            float topSize = MathF.Sqrt(1 + MathF.Pow(topLeft - topRight, 2));
-            float rightSize = MathF.Sqrt(1 + MathF.Pow(topRight - bottomRight, 2));
-            float bottomSize = MathF.Sqrt(1 + MathF.Pow(bottomLeft - bottomRight, 2));
-
-            return new(new Vector3(tile.X + 0.5f, center, tile.Y + 0.5f),
-                       Vector3.TransformNormal(forCeiling ? Vector3.Down : Vector3.Up, Matrix.CreateRotationX(rotX) * Matrix.CreateRotationZ(rotZ)),
-                       new(-0.5f, topLeft - center, -0.5f),
-                       new(0.5f, topRight - center, -0.5f),
-                       new(-0.5f, bottomLeft - center, 0.5f),
-                       new(0.5f, bottomRight - center, 0.5f),
-                       top - bottom);
+        foreach (var modifier in modifiers)
+        {
+            ModifyValueForDataTileIndex(modifier.GetTileIndexAt(tile.X, tile.Y), ref topLeft, ref topRight, ref bottomRight, ref bottomLeft);
         }
 
-        public static Vector3 GetPositionAtTile(xTile.Map map, Point pt, TileSpot spot = TileSpot.Center, bool forCeiling = false)
+        // Probably incorrect implementation, just cobbled something together myself
+        float top = MathF.Max(MathF.Max(topLeft, topRight), MathF.Max(bottomRight, bottomRight));
+        float bottom = MathF.Min(MathF.Min(topLeft, topRight), MathF.Min(bottomRight, bottomRight));
+        float center = (topLeft + topRight + bottomLeft + bottomRight) / 4;
+
+        float posX = (topRight + bottomRight) / 2;
+        float negX = (topLeft + bottomLeft) / 2;
+        float xDiff = posX - negX;
+        float xLen = MathF.Sqrt(1 + xDiff * xDiff);
+
+        float posZ = (topLeft + topRight) / 2;
+        float negZ = (bottomLeft + bottomRight) / 2;
+        float zDiff = posZ - negZ;
+        float zLen = MathF.Sqrt(1 + zDiff * zDiff);
+
+        float rotX = MathF.Asin(zDiff / zLen);
+        float rotZ = MathF.Asin(xDiff / xLen);
+
+        float leftSize = MathF.Sqrt( 1 + MathF.Pow(topLeft - bottomLeft, 2) );
+        float topSize = MathF.Sqrt(1 + MathF.Pow(topLeft - topRight, 2));
+        float rightSize = MathF.Sqrt(1 + MathF.Pow(topRight - bottomRight, 2));
+        float bottomSize = MathF.Sqrt(1 + MathF.Pow(bottomLeft - bottomRight, 2));
+
+        return new(new Vector3(tile.X + 0.5f, center, tile.Y + 0.5f),
+            Vector3.TransformNormal(forCeiling ? Vector3.Down : Vector3.Up, Matrix.CreateRotationX(rotX) * Matrix.CreateRotationZ(rotZ)),
+            new(-0.5f, topLeft - center, -0.5f),
+            new(0.5f, topRight - center, -0.5f),
+            new(-0.5f, bottomLeft - center, 0.5f),
+            new(0.5f, bottomRight - center, 0.5f),
+            top - bottom);
+    }
+
+    public static Vector3 GetPositionAtTile(xTile.Map map, Point pt, TileSpot spot = TileSpot.Center, bool forCeiling = false)
+    {
+        Vector2[] spotMapping =
+        [
+            new(0.0f, 0.5f),
+            new(0.5f, 0.0f),
+            new(1.0f, 0.5f),
+            new(0.5f, 1.0f),
+            new(0.0f, 0.0f),
+            new(1.0f, 0.0f),
+            new(1.0f, 1.0f),
+            new(0.0f, 1.0f),
+            new(0.5f, 0.5f),
+        ];
+        return GetPositionAtTile(map, pt, spotMapping[(int)spot], forCeiling);
+    }
+
+    public static Vector3 GetPosition3D( this Character character )
+    {
+        var tilePos = character.GetBoundingBox().Center.ToVector2();
+        var ret = tilePos.To3D( character.currentLocation.Map ) + new Vector3(0, -character.yJumpOffset, 0);
+        if (float.IsNaN(ret.Y))
+            ret.Y = 0;
+        return ret;
+    }
+
+    public static float GetFacing3D(this Character character)
+    {
+        switch (character.FacingDirection)
         {
-            Vector2[] spotMapping =
+            case Game1.down: return 0;
+            case Game1.up: return MathF.PI;
+            case Game1.left: return -MathF.PI / 2;
+            case Game1.right: return MathF.PI / 2;
+        }
+        return 0;
+    }
+
+    public static Vector3 To3D(this Vector2 vec, xTile.Map map, bool forCeiling = false)
+    {
+        Point tile = new((int)(vec.X / Game1.tileSize), (int)(vec.Y / Game1.tileSize));
+        Vector2 subTile = new Vector2(vec.X / Game1.tileSize, vec.Y / Game1.tileSize) - tile.ToVector2();
+        return GetPositionAtTile(map, tile, subTile, forCeiling);
+    }
+
+    public static Vector3 To3D(this Point pt, xTile.Map map, bool forCeiling = false)
+    {
+        Vector2 subTile = new Vector2(0.5f, 0.5f);
+        return GetPositionAtTile(map, pt, subTile, forCeiling);
+    }
+
+    public static Matrix Reverse(this Matrix m)
+    {
+        m.Right = -m.Right;
+        m.Up = -m.Up;
+        m.Forward = -m.Forward;
+        m.Translation = -m.Translation;
+        return m;
+    }
+
+    public static Vector2 Normalized(this Vector2 v) => Vector2.Normalize(v);
+    public static Vector3 Normalized(this Vector3 v) => Vector3.Normalize(v);
+    public static Matrix Inverted(this Matrix m) => Matrix.Invert(m);
+    public static Matrix Transposed(this Matrix m) => Matrix.Transpose(m);
+
+    public static Vector3[] Transform(this Vector3[] verts, Matrix transform)
+    {
+        verts = verts.ToArray();
+        for (int i = 0; i < verts.Length; ++i)
+        {
+            verts[i] = Vector3.Transform(verts[i], transform);
+        }
+        return verts;
+    }
+
+    public static string GetExtendedQualifiedId(this object obj)
+    {
+        return (obj?.GetExtendedQualifiedIds() ?? [null])[0];
+    }
+
+    public static string[] GetExtendedQualifiedIds(this object obj)
+    {
+        // TODO: Dehardcode this
+        if (obj is MeleeWeapon weapon)
+            return
             [
-                new(0.0f, 0.5f),
-                new(0.5f, 0.0f),
-                new(1.0f, 0.5f),
-                new(0.5f, 1.0f),
-                new(0.0f, 0.0f),
-                new(1.0f, 0.0f),
-                new(1.0f, 1.0f),
-                new(0.0f, 1.0f),
-                new(0.5f, 0.5f),
+                weapon.QualifiedItemId,
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/{weapon.GetItemTypeId().Substring(1)}{weapon.type.Value}",
+                weapon.GetItemTypeId(),
             ];
-            return GetPositionAtTile(map, pt, spotMapping[(int)spot], forCeiling);
-        }
+        else if (obj is Item item)
+            return
+            [
+                item.QualifiedItemId,
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/{item.GetItemTypeId().Substring(1)}{item.GetType().Name}",
+                item.GetItemTypeId()
+            ];
 
-        public static Vector3 GetPosition3D( this Character character )
-        {
-            var tilePos = character.GetBoundingBox().Center.ToVector2();
-            var ret = tilePos.To3D( character.currentLocation.Map ) + new Vector3(0, -character.yJumpOffset, 0);
-            if (float.IsNaN(ret.Y))
-                ret.Y = 0;
-            return ret;
-        }
+        else if (obj is GameLocation location)
+            return [$"({Mod.Instance.ModManifest.UniqueID}/Location){location.Name}", $"({Mod.Instance.ModManifest.UniqueID}/Location)"];
 
-        public static float GetFacing3D(this Character character)
-        {
-            switch (character.FacingDirection)
-            {
-                case Game1.down: return 0;
-                case Game1.up: return MathF.PI;
-                case Game1.left: return -MathF.PI / 2;
-                case Game1.right: return MathF.PI / 2;
-            }
-            return 0;
-        }
+        else if (obj is Grass grass)
+            return [$"({Mod.Instance.ModManifest.UniqueID}/Grass){grass.grassType.Value}", $"({Mod.Instance.ModManifest.UniqueID}/Grass)"];
+        else if (obj is ResourceClump clump)
+            return [$"({Mod.Instance.ModManifest.UniqueID}/ResourceClump){clump.textureName.Value ?? Game1.objectSpriteSheetName}:{clump.parentSheetIndex.Value}", $"({Mod.Instance.ModManifest.UniqueID}/ResourceClump)"];
+        else if (obj is Tree tree)
+            return [$"({Mod.Instance.ModManifest.UniqueID}/Tree){tree.treeType.Value}", $"({Mod.Instance.ModManifest.UniqueID}/Tree)"];
+        else if (obj is HoeDirt hoeDirt)
+            return
+            [
+                $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt){hoeDirt.sourceRectPosition}/{hoeDirt.fertilizer.Value}",
+                $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt){hoeDirt.sourceRectPosition}",
+                $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt)"
+            ];
+        else if (obj is Flooring flooring)
+            return
+            [
+                $"({Mod.Instance.ModManifest.UniqueID}/Flooring){flooring.whichFloor.Value}/{flooring.whichView.Value}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Flooring){flooring.whichFloor.Value}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Flooring)"
+            ];
+        else if (obj is TerrainFeature)
+            return [$"({Mod.Instance.ModManifest.UniqueID}/TerrainFeatureType){obj.GetType().Name}", $"({Mod.Instance.ModManifest.UniqueID}/TerrainFeatureType)"];
 
-        public static Vector3 To3D(this Vector2 vec, xTile.Map map, bool forCeiling = false)
-        {
-            Point tile = new((int)(vec.X / Game1.tileSize), (int)(vec.Y / Game1.tileSize));
-            Vector2 subTile = new Vector2(vec.X / Game1.tileSize, vec.Y / Game1.tileSize) - tile.ToVector2();
-            return GetPositionAtTile(map, tile, subTile, forCeiling);
-        }
+        else if (obj is Farmer farmer)
+            return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer){farmer.Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer)"];
+        else if (obj is Monster monster)
+            return
+            [
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Monster){monster.Name}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){monster.GetType().Name}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Monster)",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+            ];
+        else if (obj is FarmAnimal animal)
+            return
+            [
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/FarmAnimal){animal.Name}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){animal.type.Value}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){animal.GetType().Name}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/FarmAnimal)",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+            ];
+        else if (obj is NPC npc)
+            return
+            [
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC){npc.Name}/{npc.LastAppearanceId}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC){npc.Name}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){npc.GetType().Name}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC)",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+            ];
+        else if (obj is Character character)
+            return
+            [
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character){character.Name}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){character.GetType().Name}",
+                $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
+            ];
 
-        public static Vector3 To3D(this Point pt, xTile.Map map, bool forCeiling = false)
-        {
-            Vector2 subTile = new Vector2(0.5f, 0.5f);
-            return GetPositionAtTile(map, pt, subTile, forCeiling);
-        }
+        else if (obj is Building building)
+            return
+            [
+                $"({Mod.Instance.ModManifest.UniqueID}/Building){building.id}/{building.skinId}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Building){building.id}",
+                $"({Mod.Instance.ModManifest.UniqueID}/BuildingType){building.GetType().Name}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Building)"
+            ];
 
-        public static Matrix Reverse(this Matrix m)
-        {
-            m.Right = -m.Right;
-            m.Up = -m.Up;
-            m.Forward = -m.Forward;
-            m.Translation = -m.Translation;
-            return m;
-        }
+        else if (obj is Crop crop)
+            return
+            [
+                $"({Mod.Instance.ModManifest.UniqueID}/Crop){crop.netSeedIndex}/{crop.currentPhase.Value}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Crop){crop.netSeedIndex}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Crop)"
+            ];
 
-        public static Vector2 Normalized(this Vector2 v) => Vector2.Normalize(v);
-        public static Vector3 Normalized(this Vector3 v) => Vector3.Normalize(v);
-        public static Matrix Inverted(this Matrix m) => Matrix.Invert(m);
-        public static Matrix Transposed(this Matrix m) => Matrix.Transpose(m);
+        else if (obj is IClickableMenu menu)
+            return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu)"];
 
-        public static Vector3[] Transform(this Vector3[] verts, Matrix transform)
-        {
-            verts = verts.ToArray();
-            for (int i = 0; i < verts.Length; ++i)
-            {
-                verts[i] = Vector3.Transform(verts[i], transform);
-            }
-            return verts;
-        }
-
-        public static string GetExtendedQualifiedId(this object obj)
-        {
-            return (obj?.GetExtendedQualifiedIds() ?? [null])[0];
-        }
-
-        public static string[] GetExtendedQualifiedIds(this object obj)
-        {
-            // TODO: Dehardcode this
-            if (obj is MeleeWeapon weapon)
-                return
-                [
-                    weapon.QualifiedItemId,
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/{weapon.GetItemTypeId().Substring(1)}{weapon.type.Value}",
-                    weapon.GetItemTypeId(),
-                ];
-            else if (obj is Item item)
-                return
-                [
-                    item.QualifiedItemId,
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/{item.GetItemTypeId().Substring(1)}{item.GetType().Name}",
-                    item.GetItemTypeId()
-                ];
-
-            else if (obj is GameLocation location)
-                return [$"({Mod.Instance.ModManifest.UniqueID}/Location){location.Name}", $"({Mod.Instance.ModManifest.UniqueID}/Location)"];
-
-            else if (obj is Grass grass)
-                return [$"({Mod.Instance.ModManifest.UniqueID}/Grass){grass.grassType.Value}", $"({Mod.Instance.ModManifest.UniqueID}/Grass)"];
-            else if (obj is ResourceClump clump)
-                return [$"({Mod.Instance.ModManifest.UniqueID}/ResourceClump){clump.textureName.Value ?? Game1.objectSpriteSheetName}:{clump.parentSheetIndex.Value}", $"({Mod.Instance.ModManifest.UniqueID}/ResourceClump)"];
-            else if (obj is Tree tree)
-                return [$"({Mod.Instance.ModManifest.UniqueID}/Tree){tree.treeType.Value}", $"({Mod.Instance.ModManifest.UniqueID}/Tree)"];
-            else if (obj is HoeDirt hoeDirt)
-                return
-                [
-                    $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt){hoeDirt.sourceRectPosition}/{hoeDirt.fertilizer.Value}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt){hoeDirt.sourceRectPosition}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/HoeDirt)"
-                ];
-            else if (obj is Flooring flooring)
-                return
-                [
-                    $"({Mod.Instance.ModManifest.UniqueID}/Flooring){flooring.whichFloor.Value}/{flooring.whichView.Value}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/Flooring){flooring.whichFloor.Value}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/Flooring)"
-                ];
-            else if (obj is TerrainFeature)
-                return [$"({Mod.Instance.ModManifest.UniqueID}/TerrainFeatureType){obj.GetType().Name}", $"({Mod.Instance.ModManifest.UniqueID}/TerrainFeatureType)"];
-
-            else if (obj is Farmer farmer)
-                return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer){farmer.Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Farmer)"];
-            else if (obj is Monster monster)
-                return
-                [
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Monster){monster.Name}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){monster.GetType().Name}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Monster)",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
-                ];
-            else if (obj is FarmAnimal animal)
-                return
-                [
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/FarmAnimal){animal.Name}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){animal.type.Value}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){animal.GetType().Name}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/FarmAnimal)",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
-                ];
-            else if (obj is NPC npc)
-                return
-                [
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC){npc.Name}/{npc.LastAppearanceId}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC){npc.Name}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){npc.GetType().Name}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/NPC)",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
-                ];
-            else if (obj is Character character)
-                return
-                [
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character){character.Name}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/CharacterType){character.GetType().Name}",
-                    $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
-                ];
-
-            else if (obj is Building building)
-                return
-                [
-                    $"({Mod.Instance.ModManifest.UniqueID}/Building){building.id}/{building.skinId}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/Building){building.id}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/BuildingType){building.GetType().Name}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/Building)"
-                ];
-
-            else if (obj is Crop crop)
-                return
-                [
-                    $"({Mod.Instance.ModManifest.UniqueID}/Crop){crop.netSeedIndex}/{crop.currentPhase.Value}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/Crop){crop.netSeedIndex}",
-                    $"({Mod.Instance.ModManifest.UniqueID}/Crop)"
-                ];
-
-            else if (obj is IClickableMenu menu)
-                return [$"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu){menu.GetType().Namespace}.{menu.GetType().Name}", $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Menu)"];
-
-            return [obj?.GetType()?.FullName ?? "null"];
-        }
+        return [obj?.GetType()?.FullName ?? "null"];
     }
 }
