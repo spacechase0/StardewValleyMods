@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using SpaceShared;
 using Valve.VR;
 
-namespace Stardew3D.Hardware;
+namespace Stardew3D.GameModes.VR.Hardware;
 public class TrackedDevice
 {
     public uint DeviceIndex { get; }

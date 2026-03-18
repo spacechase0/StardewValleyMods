@@ -1,8 +1,24 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SpaceShared;
-using Stardew3D.Hardware;
+using Stardew3D;
+using Stardew3D.Rendering;
+using StardewModdingAPI;
+using StardewValley;
+using StardewValley.Menus;
+using StardewValley.Mods;
 using Valve.VR;
+using static Stardew3D.GameModes.IGameMode;
+using Stardew3D.GameModes;
+using Stardew3D.GameModes.VR.Hardware;
 
 namespace Stardew3D.GameModes.VR;
 public abstract partial class VRGameMode
