@@ -69,9 +69,9 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
     private void Interact(IGameCursor cursor, object sel)
     {
         Item oldTemp = Object.TemporaryItem;
-        if (Object.ActiveItem != cursor.Holding)
+        if (cursor.Holding is Item && Object.ActiveItem != cursor.Holding)
         {
-            Object.TemporaryItem = cursor.Holding;
+            Object.TemporaryItem = cursor.Holding as Item;
         }
 
         try
@@ -86,9 +86,11 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                     break;
                 case Furniture f:
                     // TODO: Reverse patch from GameLocation.checkAction
-                    if (cursor.Holding is StardewValley.Object heldObj && f.performObjectDropInAction(heldObj, probe: false, Object))
-                        break;
-                    f.checkForAction(Object);
+                    {
+                        if (cursor.Holding is StardewValley.Object heldObj && f.performObjectDropInAction(heldObj, probe: false, Object))
+                            break;
+                        f.checkForAction(Object);
+                    }
                     break;
                 case StardewValley.Object o:
                     // TODO: Reverse patch from GameLocation.checkAction
@@ -97,13 +99,13 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                         if (cursor.Holding is not StardewValley.Object && o.checkForAction(Object))
                             break;
 
-                        if (cursor.Holding != null)
+                        if (cursor.Holding is Item heldItem)
                         {
                             var oldHeld = o.heldObject.Value;
                             o.heldObject.Value = null;
-                            bool probe = o.performObjectDropInAction(cursor.Holding, probe: true, Object);
+                            bool probe = o.performObjectDropInAction(heldItem, probe: true, Object);
                             o.heldObject.Value = oldHeld;
-                            bool perform = o.performObjectDropInAction(cursor.Holding, probe: false, Object, returnFalseIfItemConsumed: true);
+                            bool perform = o.performObjectDropInAction(heldItem, probe: false, Object, returnFalseIfItemConsumed: true);
 
                             if (!Object.ignoreItemConsumptionThisFrame && perform)
                             {

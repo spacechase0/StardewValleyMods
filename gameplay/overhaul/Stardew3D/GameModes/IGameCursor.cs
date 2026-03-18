@@ -54,7 +54,7 @@ public interface IGameCursor
     public bool MenuRightClickJustReleased { get; }
     public Vector2 MenuScroll { get; }
 
-    public Item Holding { get; }
+    public ISalable Holding { get; }
     public bool UseItemJustPressed { get; }
     public bool UseItemHeld { get; }
     public bool UseItemJustReleased { get; }

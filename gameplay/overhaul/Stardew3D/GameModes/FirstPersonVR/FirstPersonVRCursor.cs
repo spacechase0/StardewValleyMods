@@ -46,7 +46,7 @@ internal class FirstPersonVRCursor : IGameCursor
     public bool MenuRightClickJustReleased => prevMenuRightClickState && !menuRightClickState;
     public Vector2 MenuScroll => menuScroll();
 
-    public Item Holding => holdingFunc();
+    public ISalable Holding => holdingFunc();
     public bool UseItemJustPressed => !prevUseItemState && useItemState;
     public bool UseItemHeld => useItemState;
     public bool UseItemJustReleased => prevUseItemState && !useItemState;

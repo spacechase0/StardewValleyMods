@@ -34,7 +34,7 @@ public class FirstPersonCursor : IGameCursor
     public bool MenuRightClickJustReleased { get; set; }
     public Vector2 MenuScroll { get; set; }
 
-    public Item Holding => Game1.player.CurrentItem;
+    public ISalable Holding => Game1.player.CurrentItem;
     public bool UseItemJustPressed => !prevUseItemState && useItemState;
     public bool UseItemHeld => useItemState;
     public bool UseItemJustReleased => prevUseItemState && !useItemState;
