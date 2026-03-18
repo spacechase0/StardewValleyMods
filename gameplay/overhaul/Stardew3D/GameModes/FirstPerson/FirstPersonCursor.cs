@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Force.DeepCloner;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Stardew3D.GameModes;
 using StardewValley;
 
 namespace Stardew3D.GameModes.FirstPerson;

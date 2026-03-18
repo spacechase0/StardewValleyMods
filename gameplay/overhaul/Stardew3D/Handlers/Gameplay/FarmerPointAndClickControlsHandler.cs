@@ -1,14 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Force.DeepCloner;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Stardew3D.DataModels;
 using Stardew3D.GameModes;
 using Stardew3D.Rendering;
@@ -17,7 +9,6 @@ using StardewValley.Buildings;
 using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using Valve.VR;
 
 namespace Stardew3D.Handlers.Gameplay;
 internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandler

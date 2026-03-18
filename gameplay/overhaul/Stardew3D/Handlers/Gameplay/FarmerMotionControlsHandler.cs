@@ -1,32 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using HarmonyLib;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoScene.Graphics;
-using SharpGLTF.Schema2;
 using SpaceShared;
-using Stardew3D;
 using Stardew3D.DataModels;
-using Stardew3D.Handlers;
-using Stardew3D.Models;
-using Stardew3D.Rendering;
+using Stardew3D.GameModes;
+using Stardew3D.GameModes.VR;
 using StardewValley;
-using StardewValley.Menus;
-using StardewValley.Mods;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using Stardew3D.GameModes;
-using Stardew3D.GameModes.VR;
 
 namespace Stardew3D.Handlers.Gameplay;
 

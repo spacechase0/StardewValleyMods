@@ -1,18 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HarmonyLib;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.DataModels;
 using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewValley;
-using StardewValley.ItemTypeDefinitions;
-using StardewValley.Mods;
 using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers;

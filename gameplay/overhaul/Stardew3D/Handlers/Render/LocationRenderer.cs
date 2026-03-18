@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -13,9 +6,6 @@ using Stardew3D.Rendering;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Extensions;
-using StardewValley.ItemTypeDefinitions;
-using StardewValley.Mods;
-using xTile;
 using xTile.Tiles;
 using static Stardew3D.Handlers.IRenderHandler;
 

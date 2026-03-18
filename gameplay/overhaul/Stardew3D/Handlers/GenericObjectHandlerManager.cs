@@ -1,13 +1,6 @@
 global using UpdateHandlerManager = Stardew3D.Handlers.GenericObjectHandlerManager<object, Stardew3D.Handlers.IUpdateHandler>;
 global using RenderHandlerManager = Stardew3D.Handlers.GenericObjectHandlerManager<object, Stardew3D.Handlers.IRenderHandler>;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using StardewValley.Menus;
 
 namespace Stardew3D.Handlers;
 

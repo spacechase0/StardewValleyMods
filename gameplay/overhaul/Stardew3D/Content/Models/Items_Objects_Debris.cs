@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using SpaceShared.Attributes;
-using SpaceShared.Content;
 using Stardew3D.DataModels;
 
 namespace Stardew3D.Content.Models;

@@ -1,28 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MLEM.Font;
 using MLEM.Input;
-using MLEM.Maths;
 using MLEM.Ui;
 using MLEM.Ui.Elements;
 using MLEM.Ui.Style;
-using SpaceShared;
-using Stardew3D;
-using Stardew3D.GameModes;
 using Stardew3D.GameModes.Editor.Editables;
 using Stardew3D.GameModes.Editor.Editables.Map;
 using Stardew3D.Rendering;
 using StardewValley;
-using StardewValley.Menus;
 using StardewValley.Mods;
-using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.GameModes.Editor;
 

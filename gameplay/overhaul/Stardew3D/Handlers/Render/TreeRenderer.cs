@@ -1,16 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.DataModels;
 using StardewValley;
-using StardewValley.ItemTypeDefinitions;
 using StardewValley.TerrainFeatures;
-using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers.Render;
 public class TreeRenderer : RendererWithPlaceholder<ModelData, Tree>

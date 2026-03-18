@@ -1,19 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using Stardew3D.DataModels;
 using Stardew3D.Rendering;
 using StardewValley;
-using StardewValley.ItemTypeDefinitions;
-using StardewValley.TerrainFeatures;
 using static Stardew3D.Handlers.IRenderHandler;
 
 using PlaceholderData = Stardew3D.Handlers.RendererWithPlaceholder<Stardew3D.DataModels.ModelData, StardewValley.Debris>.PlaceholderData;

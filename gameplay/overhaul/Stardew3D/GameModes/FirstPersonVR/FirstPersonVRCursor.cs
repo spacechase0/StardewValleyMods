@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewValley;
-using Stardew3D.Hardware;
-using Stardew3D.GameModes;
 
 namespace Stardew3D.GameModes.FirstPersonVR;
 

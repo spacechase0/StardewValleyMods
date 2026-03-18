@@ -1,19 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HarmonyLib;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared;
-using Stardew3D.GameModes;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
 using static Stardew3D.GameModes.IGameMode;
-using static StardewValley.Minigames.MineCart.MapJunimo;
 
 namespace Stardew3D.GameModes.ThirdPerson;
 public class ThirdPersonGameMode : BaseGameMode

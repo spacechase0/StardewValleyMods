@@ -1,33 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Netcode;
-using SixLabors.ImageSharp.Processing;
 using SpaceShared;
+using Stardew3D.GameModes.FirstPerson;
+using Stardew3D.GameModes.VR;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Menus;
 using StardewValley.Mods;
-using Stardew3D.Hardware;
-using Valve.VR;
-using static OpenVR.NET.Devices.VrDevice;
 using static Stardew3D.GameModes.IGameMode;
-using static Stardew3D.Handlers.IRenderHandler;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
-using Stardew3D.GameModes;
-using Stardew3D.GameModes.FirstPerson;
-using Stardew3D.GameModes.VR;
 
 namespace Stardew3D.GameModes.FirstPersonVR;
 

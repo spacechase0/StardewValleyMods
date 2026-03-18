@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Stardew3D.Rendering;
 using StardewValley;
-using StardewValley.Menus;
 using StardewValley.Mods;
 
 namespace Stardew3D.GameModes;

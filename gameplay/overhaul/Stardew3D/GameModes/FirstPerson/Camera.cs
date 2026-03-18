@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Stardew3D.Rendering;
-using static StardewValley.Minigames.TargetGame;
 
 namespace Stardew3D.GameModes.FirstPerson
 {

@@ -1,27 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoScene.Graphics;
-using SharpGLTF.Schema2;
-using SpaceShared;
-using Stardew3D;
 using Stardew3D.DataModels;
-using Stardew3D.Handlers;
-using Stardew3D.Models;
-using Stardew3D.Rendering;
-using StardewValley;
-using StardewValley.Menus;
-using StardewValley.Mods;
 using Stardew3D.GameModes;
 using Stardew3D.GameModes.FirstPersonVR;
 using Stardew3D.GameModes.VR;
+using Stardew3D.Rendering;
+using StardewValley;
+using StardewValley.Menus;
 
 namespace Stardew3D.Handlers.Menu;
 internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IUpdateHandler

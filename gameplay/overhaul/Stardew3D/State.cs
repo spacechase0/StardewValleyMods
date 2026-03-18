@@ -1,14 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D.GameModes;
 using Stardew3D.Handlers;
@@ -16,7 +6,6 @@ using Stardew3D.Models;
 using Stardew3D.Rendering;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Menus;
 
 namespace Stardew3D;
 public class State

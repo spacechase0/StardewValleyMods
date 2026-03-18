@@ -1,20 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoScene.Graphics;
 using SharpGLTF.Schema2;
 using SpaceShared;
 using Stardew3D.DataModels;
 using Stardew3D.Rendering;
 using StardewValley;
-using StardewValley.Characters;
 
 namespace Stardew3D.Models;
 public class ModelObject

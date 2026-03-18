@@ -1,19 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoScene.Graphics;
-using Newtonsoft.Json.Linq;
 using SpaceShared;
 using Stardew3D.DataModels;
 using Stardew3D.Rendering;
 using StardewValley;
-using StardewValley.ItemTypeDefinitions;
-using StardewValley.Mods;
-using StardewValley.Network.NetEvents;
 using StardewValley.Objects;
 using static Stardew3D.Handlers.IRenderHandler;
 

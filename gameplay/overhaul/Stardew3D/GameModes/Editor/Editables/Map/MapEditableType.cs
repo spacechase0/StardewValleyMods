@@ -1,14 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Content;
-using Stardew3D;
-using Stardew3D.GameModes.Editor;
-using Stardew3D.GameModes.Editor.Editables;
-using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 
