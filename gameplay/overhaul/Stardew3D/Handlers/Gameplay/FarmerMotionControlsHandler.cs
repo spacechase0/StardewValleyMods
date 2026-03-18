@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using SpaceShared;
 using Stardew3D.DataModels;
 using Stardew3D.GameModes;
-using Stardew3D.GameModes.VR;
 using Stardew3D.Utilities;
 using StardewValley;
 using StardewValley.Monsters;
@@ -14,7 +13,7 @@ namespace Stardew3D.Handlers.Gameplay;
 
 public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
 {
-    public FarmerMotionControlsHandler(VRGameMode mode, Farmer player)
+    public FarmerMotionControlsHandler(IGameMode mode, Farmer player)
         : base( mode, player, 2 )
     {
     }
