@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Stardew3D;
+namespace Stardew3D.Rendering;
 
 public struct SimpleVertex : IVertexType
 {
