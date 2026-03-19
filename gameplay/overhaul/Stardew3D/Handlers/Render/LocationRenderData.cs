@@ -74,6 +74,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj.Value))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.Key.ToPoint().To3D(Parent.Object.Map)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
@@ -84,6 +85,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj.Value))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.Value.getBoundingBox().Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
@@ -94,6 +96,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.getBoundingBox().Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
@@ -104,6 +107,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.getBoundingBox().Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
@@ -114,6 +118,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.boundingBox.Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
@@ -124,6 +129,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel3D) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
@@ -134,6 +140,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel3D) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
@@ -144,6 +151,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel3D) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
@@ -154,6 +162,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
             {
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.CreateTranslation(obj.GetBoundingBox().Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }

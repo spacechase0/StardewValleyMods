@@ -58,6 +58,7 @@ public class RendererFor<TData, TObject> : Renderer
     }
 }
 
+#if true
 public abstract class RendererWithPlaceholder<TData, TObject> : RendererFor<TData, TObject>
     where TData : ModelData
 {
@@ -95,3 +96,4 @@ public abstract class RendererWithPlaceholder<TData, TObject> : RendererFor<TDat
         return new RenderDataWithPlaceholder<TData, TObject>(ctx, this);
     }
 }
+#endif

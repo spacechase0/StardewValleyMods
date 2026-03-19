@@ -279,6 +279,7 @@ public class EditorGameMode : BaseGameMode
     public override void RenderWorld()
     {
         ActiveEditable?.RenderWorld(EditorWorldBatch);
+        EditorWorldBatch.PrepareSprites(Matrix.Identity, Camera);
         EditorWorldBatch.DrawBatched(EditorEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
         EditorWorldBatch.HideInstancesAfterFrame();
         ActiveEditable?.AfterRenderWorld();

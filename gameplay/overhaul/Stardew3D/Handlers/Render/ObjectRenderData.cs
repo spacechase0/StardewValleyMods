@@ -1,13 +1,16 @@
 using Microsoft.Xna.Framework;
 using Stardew3D.DataModels;
 using Stardew3D.Rendering;
+using Stardew3D.Utilities;
 using StardewValley;
+using StardewValley.Objects;
 using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers.Render;
 
-public class ObjectRenderData : RenderDataWithPlaceholder<ModelData, StardewValley.Object>
+public class ObjectRenderData : RenderData<ObjectRenderer>
 {
+    protected ICamera lastCamera;
     private int nonInstanced = -1;
 
     public ObjectRenderData(RenderContext ctx, ObjectRenderer parent)
@@ -18,6 +21,7 @@ public class ObjectRenderData : RenderDataWithPlaceholder<ModelData, StardewVall
         {
             nonInstanced = Batch.AddNonInstanced((env, color, world, view, proj) =>
             {
+                return;
                 if (Parent.Object.readyForHarvest.Value)
                 {
                     var pos = new Vector3(0, 2.5f, 0);
@@ -32,6 +36,7 @@ public class ObjectRenderData : RenderDataWithPlaceholder<ModelData, StardewVall
 
     public override void Update(RenderContext ctx)
     {
+        lastCamera = ctx.WorldCamera;
         // Why was this added?
         /*
         if (Parent.Object.Location == null)
@@ -48,6 +53,25 @@ public class ObjectRenderData : RenderDataWithPlaceholder<ModelData, StardewVall
         //*/
 
         base.Update(ctx);
+
+        if (instance == null)
+        {
+            if (Parent.Object is Furniture f && f.furniture_type.Value == Furniture.rug )
+                ctx.WorldSpriteBatch.Begin(Parent.Object.TileLocation * Game1.tileSize, ctx.WorldTransform, orientationOverride: Matrix.CreateLookAt(Vector3.Zero, Vector3.Up, Vector3.Forward) * Matrix.CreateTranslation(Vector3.Up*0.01f), sameY3d: false);
+            else
+                ctx.WorldSpriteBatch.Begin(Parent.Object.TileLocation * Game1.tileSize, ctx.WorldTransform);
+
+            if (Parent.Object.Location != null)
+                Parent.Object.draw(ctx.WorldSpriteBatch, (int)Parent.Object.TileLocation.X, (int) Parent.Object.TileLocation.Y);
+            else
+                Parent.Object.draw(ctx.WorldSpriteBatch, 0, 0, 0);
+
+            ctx.WorldSpriteBatch.End(ctx.WorldBatch);
+
+            var thing = new Vector2(100, 100);
+            var thing2 = Game1.GlobalToLocal(thing);
+            var thing3 = Game1.GlobalToLocal(Game1.viewport, thing);
+        }
 
         if (nonInstanced != -1)
         {

@@ -1,8 +1,10 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoScene.Graphics;
+using SpaceShared;
 
 namespace Stardew3D.Rendering;
 
@@ -90,12 +92,34 @@ public class RenderBatcher : IDisposable
         }
         //*/
     }
+
+    private class SpriteData : IDisposable
+    {
+        public struct SpriteInstance
+        {
+            public Vector3 Position;
+            public int Layer;
+            public Matrix? Orientation;
+        }
+        public List<SpriteInstance> Instances { get; set; } = new();
+        public List<SimpleVertex> Vertices { get; set; } = new();
+
+        public Effect Effect { get; set; } = RenderHelper.GenericEffect.Clone();
+
+        public void Dispose()
+        {
+            Effect?.Dispose();
+            Effect = null;
+        }
+    }
+
     private ConditionalWeakTable<Mesh, ModelBatchData> modelBatchData = new();
     private Dictionary<string, GenericBatchData> genericBatchData = new();
     private List<(BatchData Batch, int Instance)> instances = new();
     private List<(RenderNonInstanced Action, Matrix Transform, Color color, byte StaysVisibleAfterFrame)> nonInstancedOpaque = new();
     private List<(RenderNonInstanced Action, Matrix Transform, Color color, byte StaysVisibleAfterFrame)> nonInstancedTransparent = new();
     private List<(bool HasTransparency, int Instance)> nonInstanced = new();
+    private ConditionalWeakTable<Texture2D, SpriteData> sprites = new();
 
     public RenderBatcher(GraphicsDevice graphics)
     {
@@ -168,6 +192,43 @@ public class RenderBatcher : IDisposable
         return nonInstanced.Count - 1;
     }
 
+    internal void AddBillboardSprite(Vector2 pos2d, Vector3 pos, int layer, SpriteBatchItem item)
+    {
+        var data = sprites.GetOrCreateValue(item.Texture);
+        data.Instances.Add(new()
+        {
+            Position = pos,
+            Layer = layer,
+        });
+
+        SimpleVertex tl = SimpleVertex.From2D(item.vertexTL, pos2d, Vector3.Zero);
+        SimpleVertex tr = SimpleVertex.From2D(item.vertexTR, pos2d, Vector3.Zero);
+        SimpleVertex bl = SimpleVertex.From2D(item.vertexBL, pos2d, Vector3.Zero);
+        SimpleVertex br = SimpleVertex.From2D(item.vertexBR, pos2d, Vector3.Zero);
+        Util.Swap(ref tl.TexCoord, ref tr.TexCoord);
+        Util.Swap(ref bl.TexCoord, ref br.TexCoord);
+        data.Vertices.AddRange([tl, tr, bl, br, bl, tr]);
+    }
+
+    internal void AddSprite(Vector2 pos2d, Vector3 pos, Matrix orientation, int layer, SpriteBatchItem item)
+    {
+        var data = sprites.GetOrCreateValue(item.Texture);
+        data.Instances.Add(new()
+        {
+            Position = pos,
+            Layer = layer,
+            Orientation = orientation,
+        });
+
+        SimpleVertex tl = SimpleVertex.From2D(item.vertexTL, pos2d, Vector3.Zero);
+        SimpleVertex tr = SimpleVertex.From2D(item.vertexTR, pos2d, Vector3.Zero);
+        SimpleVertex bl = SimpleVertex.From2D(item.vertexBL, pos2d, Vector3.Zero);
+        SimpleVertex br = SimpleVertex.From2D(item.vertexBR, pos2d, Vector3.Zero);
+        Util.Swap(ref tl.TexCoord, ref tr.TexCoord);
+        Util.Swap(ref bl.TexCoord, ref br.TexCoord);
+        data.Vertices.AddRange([tl, tr, bl, br, bl, tr]);
+    }
+
     public void UpdateInstanced(int instanceId, Matrix transform, Color? color = null)
     {
         color ??= Color.White;
@@ -187,6 +248,27 @@ public class RenderBatcher : IDisposable
         var container = (nonInstanced[instanceId].HasTransparency ? nonInstancedTransparent : nonInstancedOpaque);
         int inst = nonInstanced[instanceId].Instance;
         container[inst] = new(container[inst].Action, transform, color.Value, container[inst].StaysVisibleAfterFrame);
+    }
+
+    public void PrepareSprites(Matrix worldMatrix, ICamera cam)
+    {
+        foreach (var sprite in sprites)
+        {
+            for (int i = 0; i < sprite.Value.Instances.Count; ++i)
+            {
+                var inst = sprite.Value.Instances[i];
+
+                var pos = inst.Position;
+                Matrix transform = inst.Orientation ?? Matrix.CreateConstrainedBillboard(pos, cam.Position - worldMatrix.Translation, Vector3.Up, cam.Forward, Vector3.Backward);
+                for (int iv = 0; iv < 6; ++iv)
+                {
+                    var v = sprite.Value.Vertices[i * 6 + iv];
+                    v.Position = Vector3.Transform(v.Position, transform);
+                    v.Position += transform.Forward * (inst.Layer * 0.001f);
+                    sprite.Value.Vertices[i * 6 + iv] = v;
+                }
+            }
+        }
     }
 
     public void DrawBatched(PBREnvironment env, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix)
@@ -256,6 +338,32 @@ public class RenderBatcher : IDisposable
             }
         }
 
+        void DoSpritesBatch(Texture2D tex, SpriteData sprite, int? transparentTechnique = null)
+        {
+            var effect = sprite.Effect;
+            if (effect is GenericModelEffect generic)
+            {
+                if (transparentTechnique.HasValue)
+                    effect.CurrentTechnique = effect.Techniques[$"SingleDrawing_Transparent_{transparentTechnique.Value}"];
+                else
+                    effect.CurrentTechnique = effect.Techniques["SingleDrawing"];
+
+                generic.Texture = tex;
+            }
+
+            ModelInstance.UpdateProjViewTransforms(effect, projectionMatrix, viewMatrix);
+            ModelInstance.UpdateWorldTransforms(effect, worldMatrix);
+            env.ApplyTo(effect);
+
+            graphics.BlendState = BlendState.AlphaBlend;
+            graphics.RasterizerState = RasterizerState.CullClockwise;
+            foreach (var pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                graphics.DrawUserPrimitives(PrimitiveType.TriangleList, sprite.Vertices.ToArray(), 0, sprite.Vertices.Count / 3);
+            }
+        }
+
         graphics.DepthStencilState = DepthStencilState.Default;
         graphics.RasterizerState = RasterizerState.CullClockwise;
         foreach (var entry in modelBatchData)
@@ -304,6 +412,13 @@ public class RenderBatcher : IDisposable
         {
             DoGenericBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 1);
         }
+
+        foreach (var entry in sprites)
+        {
+            if (entry.Value.Instances.Count == 0)
+                continue;
+            DoSpritesBatch(entry.Key, entry.Value, transparentTechnique: 1);
+        }
         graphics.DepthStencilState = DepthStencilState.DepthRead;
         foreach (var entry in modelBatchData)
         {
@@ -316,6 +431,12 @@ public class RenderBatcher : IDisposable
         foreach (var entry in nonInstancedTransparent)
         {
             entry.Action( env, entry.color, entry.Transform * worldMatrix, viewMatrix, projectionMatrix );
+        }
+        foreach (var entry in sprites)
+        {
+            if (entry.Value.Instances.Count == 0)
+                continue;
+            DoSpritesBatch(entry.Key, entry.Value, transparentTechnique: 2);
         }
         graphics.DepthStencilState = oldDepth;
         graphics.RasterizerState = oldRaster;
@@ -346,6 +467,11 @@ public class RenderBatcher : IDisposable
                                                 container[entry.Instance].StaysVisibleAfterFrame);
             }
         }
+        foreach (var entry in sprites)
+        {
+            entry.Value.Instances.Clear();
+            entry.Value.Vertices.Clear();
+        }
     }
 
     public void ClearData()
@@ -357,6 +483,11 @@ public class RenderBatcher : IDisposable
         foreach (var entry in genericBatchData)
         {
             entry.Value.instances.Clear();
+        }
+        foreach (var entry in sprites)
+        {
+            entry.Value.Instances.Clear();
+            entry.Value.Vertices.Clear();
         }
         instances.Clear();
         nonInstancedOpaque.Clear();
@@ -370,6 +501,8 @@ public class RenderBatcher : IDisposable
             entry.Value.Dispose();
         foreach (var entry in genericBatchData)
             entry.Value.Dispose();
+        foreach (var entry in sprites)
+            entry.Value.Dispose();
 
         modelBatchData.Clear();
         genericBatchData.Clear();
@@ -377,5 +510,6 @@ public class RenderBatcher : IDisposable
         nonInstancedOpaque.Clear();
         nonInstancedTransparent.Clear();
         nonInstanced.Clear();
+        sprites.Clear();
     }
 }

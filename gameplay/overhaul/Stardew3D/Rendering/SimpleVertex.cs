@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewValley;
 
 namespace Stardew3D.Rendering;
 
@@ -25,6 +26,17 @@ public struct SimpleVertex : IVertexType
         Position = pos;
         TexCoord = texCoords;
         Color = col;
+    }
+
+    public static SimpleVertex From2D(VertexPositionColorTexture orig, Vector2 pos2d, Vector3 basePos3d)
+    {
+        Vector3 pos = orig.Position;
+        pos.X -= pos2d.X;
+        pos.Y -= pos2d.Y;
+        pos /= Game1.tileSize;
+        pos.Y = -pos.Y;
+
+        return new SimpleVertex(pos + basePos3d, orig.TextureCoordinate, orig.Color);
     }
 
     static SimpleVertex()

@@ -300,6 +300,7 @@ public abstract partial class VRGameMode : BaseGameMode
                             WorldTransform = Matrix.Identity
                         });
                     }
+                    menuBatch.PrepareSprites(Matrix.Identity, Camera);
                     menuBatch.DrawBatched(WorldRenderer.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
                     menuBatch.HideInstancesAfterFrame();
                 }
@@ -352,6 +353,7 @@ public abstract partial class VRGameMode : BaseGameMode
                             WorldTransform = Matrix.Identity
                         });
                     }
+                    menuBatch.PrepareSprites(Matrix.Identity, Camera);
                     menuBatch.DrawBatched(WorldRenderer.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
                     menuBatch.HideInstancesAfterFrame();
                 }

@@ -146,7 +146,7 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
 
                     Color col = Color.White;
                     var tilePos = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), isCeiling);
-                    if (float.IsNaN(tilePos.Position.Y))
+                    if (tilePos.ShouldHide)
                     {
                         if (EvenMissing)
                         {
@@ -328,8 +328,8 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                             customWallDefs[i] = wallDef;
                         }
 
-                        if (float.IsNaN(customWallSize[i].Value)) customWallSize[i] = null;
-                        if (float.IsNaN(customWallOffset[i].Value)) customWallOffset[i] = null;
+                        if (customWallSize[i].Value == 0) customWallSize[i] = null;
+                        if (customWallOffset[i].Value == 0) customWallOffset[i] = null;
                     }
                     var customWallSizeMods = new float[4];
                     var customWallOffsetMods = new float[4];
@@ -352,28 +352,28 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                     bool[,] valid = // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, adjacent_floor_to_adjacent_ceiling=3]
                     {
                         {
-                            !float.IsNaN( floorWest.Y  ) && !float.IsNaN( ceilingWest.Y  ) && float.IsNaN( otherFloorWest.Y  ) || customWallSize[0].HasValue,
-                            !float.IsNaN( floorWest.Y  ) && !float.IsNaN( otherFloorWest.Y  ) && Math.Abs(floorWest.Y - otherFloorWest.Y) >= 0.1,
-                            !float.IsNaN( ceilingWest.Y ) && !float.IsNaN( otherCeilingWest.Y ),
-                            !float.IsNaN( otherFloorWest.Y  ) && !float.IsNaN( otherCeilingWest.Y  ),
+                            floorWest.Y != 0 && ceilingWest.Y != 0 && otherFloorWest.Y == 0 || customWallSize[0].HasValue,
+                            floorWest.Y != 0 && otherFloorWest.Y != 0 && Math.Abs(floorWest.Y - otherFloorWest.Y) >= 0.1,
+                            ceilingWest.Y != 0 && otherCeilingWest.Y != 0,
+                            otherFloorWest.Y != 0 && otherCeilingWest.Y != 0,
                         },
                         {
-                            !float.IsNaN( floorNorth.Y ) && !float.IsNaN( ceilingNorth.Y ) && float.IsNaN( otherFloorNorth.Y ) || customWallSize[1].HasValue,
-                            !float.IsNaN( floorNorth.Y ) && !float.IsNaN( otherFloorNorth.Y ) && Math.Abs(floorNorth.Y - otherFloorNorth.Y) >= 0.1,
-                            !float.IsNaN( ceilingNorth.Y ) && !float.IsNaN( otherCeilingNorth.Y ),
-                            !float.IsNaN( otherFloorNorth.Y ) && !float.IsNaN( otherCeilingNorth.Y ),
+                            floorNorth.Y != 0 && ceilingNorth.Y != 0 && otherFloorNorth.Y == 0 || customWallSize[1].HasValue,
+                            floorNorth.Y != 0 && otherFloorNorth.Y != 0 && Math.Abs(floorNorth.Y - otherFloorNorth.Y) >= 0.1,
+                            ceilingNorth.Y != 0 && otherCeilingNorth.Y != 0,
+                            otherFloorNorth.Y != 0 && otherCeilingNorth.Y != 0,
                         },
                         {
-                            !float.IsNaN( floorEast.Y  ) && !float.IsNaN( ceilingEast.Y  ) && float.IsNaN( otherFloorEast.Y  ) || customWallSize[2].HasValue,
-                            !float.IsNaN( floorEast.Y  ) && !float.IsNaN( otherFloorEast.Y  ) && Math.Abs(floorEast.Y - otherFloorEast.Y) >= 0.1,
-                            !float.IsNaN( ceilingEast.Y ) && !float.IsNaN( otherCeilingEast.Y ),
-                            !float.IsNaN( otherFloorEast.Y  ) && !float.IsNaN( otherCeilingEast.Y  ),
+                            floorEast.Y != 0 && ceilingEast.Y != 0 && otherFloorEast.Y == 0 || customWallSize[2].HasValue,
+                            floorEast.Y != 0 && otherFloorEast.Y != 0 && Math.Abs(floorEast.Y - otherFloorEast.Y) >= 0.1,
+                            ceilingEast.Y != 0 && otherCeilingEast.Y != 0,
+                            otherFloorEast.Y != 0 && otherCeilingEast.Y != 0,
                         },
                         {
-                            !float.IsNaN( floorSouth.Y ) && !float.IsNaN( ceilingSouth.Y ) && float.IsNaN( otherFloorSouth.Y ) || customWallSize[3].HasValue,
-                            !float.IsNaN( floorSouth.Y ) && !float.IsNaN( otherFloorSouth.Y ) && Math.Abs(floorSouth.Y - otherFloorSouth.Y) >= 0.1,
-                            !float.IsNaN( ceilingSouth.Y ) && !float.IsNaN( otherCeilingSouth.Y ),
-                            !float.IsNaN( otherFloorSouth.Y ) && !float.IsNaN( otherCeilingSouth.Y ),
+                            floorSouth.Y != 0 && ceilingSouth.Y != 0 && otherFloorSouth.Y == 0 || customWallSize[3].HasValue,
+                            floorSouth.Y != 0 && otherFloorSouth.Y != 0 && Math.Abs(floorSouth.Y - otherFloorSouth.Y) >= 0.1,
+                            ceilingSouth.Y != 0 && otherCeilingSouth.Y != 0,
+                            otherFloorSouth.Y != 0 && otherCeilingSouth.Y != 0,
                         },
                     };
                     float[,] edges = // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, adjacent_floor_to_adjacent_ceiling=3, custom=4]
@@ -486,7 +486,7 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                         int whichForWallBase = 0;
                         for (; whichForWallBase < edges.GetLength(1); ++whichForWallBase)
                         {
-                            if (valid[iwall, whichForWallBase] && !float.IsNaN(edges[iwall, whichForWallBase]))
+                            if (valid[iwall, whichForWallBase] && edges[iwall, whichForWallBase] != 0)
                                 break;
                         }
                         if (whichForWallBase == edges.GetLength(1))

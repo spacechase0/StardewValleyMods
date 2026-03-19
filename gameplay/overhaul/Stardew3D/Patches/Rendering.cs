@@ -48,3 +48,33 @@ internal static class SuppressDrawingUiAfterFramePatch
         }
     }
 }
+
+[HarmonyPatch(typeof(Game1), nameof(Game1.GlobalToLocal), typeof(Vector2))]
+public static class NullifyGlobalToLocalPatch1
+{
+    public static void Postfix(Vector2 globalPosition, ref Vector2 __result)
+    {
+        if (Mod.State.ActiveMode != null)
+            __result = globalPosition;
+    }
+}
+
+[HarmonyPatch(typeof(Game1), nameof(Game1.GlobalToLocal), typeof(xTile.Dimensions.Rectangle), typeof(Vector2))]
+public static class NullifyGlobalToLocalPatch2
+{
+    public static void Postfix(Vector2 globalPosition, ref Vector2 __result)
+    {
+        if (Mod.State.ActiveMode != null)
+            __result = globalPosition;
+    }
+}
+
+[HarmonyPatch(typeof(Game1), nameof(Game1.GlobalToLocal), typeof(xTile.Dimensions.Rectangle), typeof(Rectangle))]
+public static class NullifyGlobalToLocalPatch3
+{
+    public static void Postfix(Rectangle globalPosition, ref Rectangle __result)
+    {
+        if (Mod.State.ActiveMode != null)
+            __result = globalPosition;
+    }
+}

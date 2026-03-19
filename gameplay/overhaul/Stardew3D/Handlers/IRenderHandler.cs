@@ -11,11 +11,13 @@ public interface IRenderHandler
         public RenderTarget2D TargetScreen;
 
         public SpriteBatch MenuSpriteBatch;
+        public SpriteBatchProxy WorldSpriteBatch;
 
         public RenderBatcher WorldBatch;
         public PBREnvironment WorldEnvironment;
         public ICamera WorldCamera;
-        public Matrix WorldTransform;
+        public Matrix ParentWorldTransform = Matrix.Identity;
+        public Matrix WorldTransform = Matrix.Identity;
         public bool CanBillboard = true;
 
         public bool Reset = false;

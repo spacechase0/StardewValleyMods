@@ -59,8 +59,6 @@ internal class MapEditable : IEditable
                 return;
 
             float val = DimensionUtils.GetValueForDataTileIndex(layer.Tiles[tile.X, tile.Y]?.TileIndex ?? -1);
-            if (float.IsNaN(val))
-                val = 0;
             val += amount;
 
             TileSheet ts = Map.GetTileSheet("dataValues");
@@ -200,8 +198,6 @@ internal class MapEditable : IEditable
             for (int iy = 0; iy < mapSize.Y; ++iy)
             {
                 float y = new Point(ix, iy).To3D(Location.Map).Y;
-                if (float.IsNaN(y))
-                    continue;
                 maxHeight = Math.Max(maxHeight, y);
             }
         }
@@ -275,6 +271,7 @@ internal class MapEditable : IEditable
 
             Vector2 tile = cursorPosTile2d.ToVector2();
             var quad = DimensionUtils.GetPositionForTile(Location.Map, cursorPosTile2d);
+            /*
             if (float.IsNaN(quad.Position.Y))
             {
                 quad.Position.Y = 0;
@@ -285,6 +282,7 @@ internal class MapEditable : IEditable
                 quad.QuadVert11.Y = 0;
                 quad.HeightBoundingSize = 0;
             }
+            */
 
             Plane plane = new Plane(quad.Position, quad.QuadFacingNormal);
             cursor.Intersects(ref plane, out var dist);
@@ -351,6 +349,8 @@ internal class MapEditable : IEditable
         {
             Time = Game1.currentGameTime,
             TargetScreen = null,
+
+            WorldSpriteBatch = new(Location),
 
             WorldBatch = b,
             WorldEnvironment = editor.EditorEnvironment,

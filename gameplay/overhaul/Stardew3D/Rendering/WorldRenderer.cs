@@ -57,8 +57,8 @@ public class WorldRenderer : IDisposable
 
         var loc = Game1.currentLocation;
 
-        List<(string LocationName, IRenderHandler[] Renderers, Matrix TransformFromCurrent)> adjacencies = new();
-        adjacencies.Add(new(loc.NameOrUniqueName, Mod.State.GetRenderHandlersFor(loc), Matrix.Identity));
+        List<(GameLocation Location, IRenderHandler[] Renderers, Matrix TransformFromCurrent)> adjacencies = new();
+        adjacencies.Add(new(loc, Mod.State.GetRenderHandlersFor(loc), Matrix.Identity));
 
         void AddAdjacenciesForPortals(LocationModelData locModel, Matrix prevTransform)
         {
@@ -67,7 +67,7 @@ public class WorldRenderer : IDisposable
 
             foreach (var entry in locModel.Portals)
             {
-                if (adjacencies.Any(p => p.LocationName == entry.Value.OtherLocation))
+                if (adjacencies.Any(p => p.Location.NameOrUniqueName == entry.Value.OtherLocation))
                     continue;
 
                 var loc = Game1.getLocationFromName(entry.Value.OtherLocation);
@@ -89,7 +89,7 @@ public class WorldRenderer : IDisposable
                                       Matrix.CreateTranslation(entry.Value.Position) *
                                       Matrix.CreateTranslation(-match.Position);
 
-                adjacencies.Add(new(entry.Value.OtherLocation, renderers, oursToTheirs));
+                adjacencies.Add(new(loc, renderers, oursToTheirs));
             }
         }
 
@@ -129,14 +129,18 @@ public class WorldRenderer : IDisposable
                         TargetScreen = Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D,
 
                         MenuSpriteBatch = Game1.spriteBatch,
+                        WorldSpriteBatch = new(other.Location),
 
                         WorldBatch = worldBatch,
                         WorldEnvironment = env,
                         WorldCamera = camera,
+                        ParentWorldTransform = Matrix.Identity,
                         WorldTransform = other.TransformFromCurrent
                     });
                 }
             }
+
+            worldBatch.PrepareSprites(Matrix.Identity, camera);
         }
 
         worldBatch.DrawBatched(env, Matrix.Identity, camera.ViewMatrix, projectionMatrix);

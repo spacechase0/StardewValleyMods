@@ -130,6 +130,7 @@ public class DebrisRenderer : RendererFor<ModelData, Debris>
                     pos3d.Y += (finalY - chunk.position.Y) / 64f;
 
                 RenderContext subCtx = ctx;
+                subCtx.ParentWorldTransform = ctx.WorldTransform;
                 subCtx.WorldTransform = Matrix.Identity;
                 subCtx.WorldTransform *= Matrix.CreateScale(0.5f);
                 subCtx.WorldTransform *= Matrix.CreateTranslation(pos3d);

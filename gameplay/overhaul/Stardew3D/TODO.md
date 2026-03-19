@@ -81,6 +81,12 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * IK for player in first person
 * The endless journey of optimization
     * Optimize building maps, especially rebuilding an existing one with not many changes. Currently, the editor lags on larger maps while doing edits.
+    * Could I possibly make the heightmap into a Texture2D, and then have the vertex shader offset things based on that?
+        * Almost everything being rendered would no longer need to get heightmap data and apply it, so those calculations could be skipped each time.
+        * It would need to be per-game-location, which might interfere with batching performance.
+        * Gameplay stuff could perhaps use the heightmap too to avoid the constant relevant calculations,
+          however there'd be a higher risk of mismatch between gameplay and graphics.
+        * Actually, a general cache for this would be greatly preferred and might give the needed optimization on its own.
 
 # Movement / Traversal
 * "Regions" thing? For stretching/squishing certains portions of the map when in 3D

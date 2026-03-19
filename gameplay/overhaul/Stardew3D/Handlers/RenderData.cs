@@ -123,7 +123,7 @@ public class RenderData<TRenderer> : RenderDataBase
     }
 }
 
-
+#if true
 public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWithPlaceholder< TData, TObject >>
     where TData : ModelData
 {
@@ -188,3 +188,4 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
         }
     }
 }
+#endif

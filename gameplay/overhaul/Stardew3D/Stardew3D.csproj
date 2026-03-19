@@ -33,6 +33,9 @@
   <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
     <Publicize Include="StardewValley" IncludeVirtualMembers="false" />
   </ItemGroup>
+  <ItemGroup>
+    <Publicize Include="MonoGame.Framework" IncludeVirtualMembers="false" />
+  </ItemGroup>
   
   <ItemGroup>
     <!-- We're doing this kinda weird since publicizer doesn't seem to work with ProjectReference -->

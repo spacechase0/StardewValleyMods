@@ -33,10 +33,10 @@ public static class DimensionUtils
         }
     }
 
-    public static Vector3 GetPositionAtTile(xTile.Map map, Point tile, Vector2 subTile, bool forCeiling = false)
+    public static Vector3 GetPositionAtTile(xTile.Map map, Point tile, Vector2 subTile, bool? forCeiling = null)
     {
         var data = GetPositionForTile(map, tile, forCeiling);
-        if (float.IsNaN(data.Position.Y))
+        if (data.ShouldHide)
             return data.Position;
 
         Plane plane = new(data.Position, data.QuadFacingNormal);
@@ -52,8 +52,6 @@ public static class DimensionUtils
 
     public static int GetDataTileIndexForValue(float value)
     {
-        if (float.IsNaN(value))
-            return -1;
         if (value > 10) value = 10;
         if (value < -10) value = -10;
 
@@ -69,7 +67,7 @@ public static class DimensionUtils
     public static float GetValueForDataTileIndex(int index)
     {
         if (index == -1)
-            return float.NaN;
+            return 0;
 
         float ret = (index % 10) / 10f + (index / 20);
         if (index % 20 >= 10)
@@ -97,8 +95,34 @@ public static class DimensionUtils
         }
     }
 
-    public static (Vector3 Position, Vector3 QuadFacingNormal, Vector3 QuadVert00, Vector3 QuadVert10, Vector3 QuadVert01, Vector3 QuadVert11, float HeightBoundingSize) GetPositionForTile(xTile.Map map, Point tile, bool forCeiling = false)
+    public struct PositionResult
     {
+        public Vector3 Position;
+        public Vector3 QuadFacingNormal;
+        public Vector3 QuadVert00;
+        public Vector3 QuadVert10;
+        public Vector3 QuadVert01;
+        public Vector3 QuadVert11;
+        public float HeightBoundingSize;
+        public bool ShouldHide;
+
+        public PositionResult(Vector3 pos, Vector3 quadNormal, Vector3 quadTL, Vector3 quadTR, Vector3 quadBL, Vector3 quadBR, float heightBounding, bool shouldHide = false)
+        {
+            Position = pos;
+            QuadFacingNormal = quadNormal;
+            QuadVert00 = quadTL;
+            QuadVert10 = quadTR;
+            QuadVert01 = quadBL;
+            QuadVert11 = quadBR;
+            HeightBoundingSize = heightBounding;
+            ShouldHide = shouldHide;
+        }
+    }
+
+    public static PositionResult GetPositionForTile(xTile.Map map, Point tile, bool? forCeiling_ = null)
+    {
+        bool forCeiling = forCeiling_ ?? false;
+
         if (map == null)
             return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
 
@@ -111,10 +135,11 @@ public static class DimensionUtils
         var data = map.GetLayer(dataLayer);
         var modifiers = map.Layers.Where(l => l.Id == dataModifierLayer || l.Id.StartsWith( $"{dataModifierLayer}_" ));
 
-        if (data == null)
-            return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+        int tileInd = data?.GetTileIndexAt(tile.X, tile.Y) ?? -1;
+        if (data == null || tileInd == -1)
+            return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0, data != null);
 
-        float baseHeight = GetValueForDataTileIndex(data.GetTileIndexAt(tile.X, tile.Y));
+        float baseHeight = GetValueForDataTileIndex(tileInd);
         float topLeft = baseHeight;
         float topRight = baseHeight;
         float bottomRight = baseHeight;
@@ -157,7 +182,7 @@ public static class DimensionUtils
             top - bottom);
     }
 
-    public static Vector3 GetPositionAtTile(xTile.Map map, Point pt, TileSpot spot = TileSpot.Center, bool forCeiling = false)
+    public static Vector3 GetPositionAtTile(xTile.Map map, Point pt, TileSpot spot = TileSpot.Center, bool? forCeiling = null)
     {
         Vector2[] spotMapping =
         [
@@ -178,8 +203,6 @@ public static class DimensionUtils
     {
         var tilePos = character.GetBoundingBox().Center.ToVector2();
         var ret = tilePos.To3D( character.currentLocation.Map ) + new Vector3(0, -character.yJumpOffset, 0);
-        if (float.IsNaN(ret.Y))
-            ret.Y = 0;
         return ret;
     }
 
@@ -195,14 +218,14 @@ public static class DimensionUtils
         return 0;
     }
 
-    public static Vector3 To3D(this Vector2 vec, xTile.Map map, bool forCeiling = false)
+    public static Vector3 To3D(this Vector2 vec, xTile.Map map, bool? forCeiling = null)
     {
         Point tile = new((int)(vec.X / Game1.tileSize), (int)(vec.Y / Game1.tileSize));
         Vector2 subTile = new Vector2(vec.X / Game1.tileSize, vec.Y / Game1.tileSize) - tile.ToVector2();
         return GetPositionAtTile(map, tile, subTile, forCeiling);
     }
 
-    public static Vector3 To3D(this Point pt, xTile.Map map, bool forCeiling = false)
+    public static Vector3 To3D(this Point pt, xTile.Map map, bool? forCeiling = null)
     {
         Vector2 subTile = new Vector2(0.5f, 0.5f);
         return GetPositionAtTile(map, pt, subTile, forCeiling);
