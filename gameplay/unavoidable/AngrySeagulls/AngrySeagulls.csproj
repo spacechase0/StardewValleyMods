@@ -1,14 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Name>Angry Seagulls</Name>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Version>1.0.1</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="assets\" />
-  </ItemGroup>
 </Project>

@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
 
   <PropertyGroup>
@@ -8,14 +11,4 @@
     <Version>1.17.0-alpha</Version>
     <UpdateKeys>Nexus:5098</UpdateKeys>
   </PropertyGroup>
-
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-    <_Parameter1>ControllerRadialKeybindings</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
-  </ItemGroup>
 </Project>

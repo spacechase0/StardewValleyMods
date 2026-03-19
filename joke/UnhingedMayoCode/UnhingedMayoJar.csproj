@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <RequireSpaceCore>true</RequireSpaceCore>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <Version>1.0.0</Version>
@@ -8,7 +11,6 @@
 
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)spacecore.targets" />
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" PrivateAssets="all" />
   </ItemGroup>

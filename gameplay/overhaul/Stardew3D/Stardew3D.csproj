@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <RequireSpaceCore>true</RequireSpaceCore>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
-  <Import Project="$(SolutionDir)spacecore.targets" />
 
   <PropertyGroup>
     <Name>The Third Dimension</Name>
@@ -13,12 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
     <PackageReference Include="OpenVR.NET" Version="0.8.5" IncludeAssets="all" GeneratePathProperty="true" />
     <None Include="$(PkgOpenVR_Net)/content/openvr_api.dll" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
@@ -26,13 +23,7 @@
   <Target Name="CheckForOpenvrApi" BeforeTargets="Build">
     <Error Condition=" !Exists( '$(PkgOpenVR_Net)/content/openvr_api.dll' ) " Text="OpenVR API didn't exist in $(PkgOpenVR_Net)" />
   </Target>
-
-  <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
-    <Publicize Include="Stardew Valley" IncludeVirtualMembers="false" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
-    <Publicize Include="StardewValley" IncludeVirtualMembers="false" />
-  </ItemGroup>
+  
   <ItemGroup>
     <Publicize Include="MonoGame.Framework" IncludeVirtualMembers="false" />
   </ItemGroup>

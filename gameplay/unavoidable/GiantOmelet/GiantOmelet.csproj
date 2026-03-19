@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RequireSpaceCore>true</RequireSpaceCore>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
 
   <PropertyGroup>
@@ -7,12 +10,5 @@
     <Description>Giant omelet! Free food! (Once a day only)</Description>
     <Version>1.0.0</Version>
     <UpdateKeys>Nexus:13852</UpdateKeys>
-    
-    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
-  <Import Project="$(SolutionDir)spacecore.targets" />
-  <ItemGroup>
-    <Folder Include="assets\" />
-  </ItemGroup>
 </Project>

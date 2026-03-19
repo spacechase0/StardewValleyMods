@@ -1,17 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <RequireSpaceCore>true</RequireSpaceCore>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Version>1.2.4</Version>
 
-
     <IgnoreModFilePaths>assets/_empty.tmx</IgnoreModFilePaths>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
-  </ItemGroup>
-
-  <Import Project="$(SolutionDir)spacecore.targets" /></Project>
+</Project>

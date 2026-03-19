@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
 
   <PropertyGroup>
@@ -7,9 +10,7 @@
     <Description>Corrects your item names for you.</Description>
     <Version>1.0.1</Version>
     <UpdateKeys>Nexus:</UpdateKeys>
-
-
-
+    
     <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
   </PropertyGroup>
 
@@ -19,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
     <PackageReference Include="SymSpell" Version="6.7.3" />
   </ItemGroup>
 </Project>
