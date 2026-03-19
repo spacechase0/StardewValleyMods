@@ -257,9 +257,14 @@ public class RenderBatcher : IDisposable
             for (int i = 0; i < sprite.Value.Instances.Count; ++i)
             {
                 var inst = sprite.Value.Instances[i];
-
                 var pos = inst.Position;
-                Matrix transform = inst.Orientation ?? Matrix.CreateConstrainedBillboard(pos, cam.Position - worldMatrix.Translation, Vector3.Up, cam.Forward, Vector3.Backward);
+
+                Matrix transform;
+                if (inst.Orientation.HasValue)
+                    transform = inst.Orientation.Value * Matrix.CreateTranslation(pos);
+                else
+                    transform = Matrix.CreateConstrainedBillboard(pos, cam.Position - worldMatrix.Translation, Vector3.Up, cam.Forward, Vector3.Backward);
+
                 for (int iv = 0; iv < 6; ++iv)
                 {
                     var v = sprite.Value.Vertices[i * 6 + iv];
