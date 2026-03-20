@@ -29,7 +29,7 @@ internal static class FirstPersonFarmerMovementPatch1
         __instance.movementDirections.Clear();
 
         Vector2 forward = new(handler.MovementFacing.X, handler.MovementFacing.Z);
-        if (forward == Vector2.Zero)
+        if (forward == Vector2.Zero || handler.MovementAmount == Vector2.Zero)
             return;
         forward.Normalize();
         Vector2 right = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.ToRadians(90)));
@@ -60,7 +60,7 @@ internal static class FirstPersonFarmerMovementPatch2
             return;
 
         Vector2 forward = new(handler.MovementFacing.X, handler.MovementFacing.Z);
-        if (forward == Vector2.Zero)
+        if (forward == Vector2.Zero || handler.MovementAmount == Vector2.Zero)
             return;
         forward.Normalize();
         Vector2 right = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.ToRadians(90)));
@@ -91,7 +91,7 @@ internal static class FirstPersonFarmerMovementPatch2
             return;
 
         Vector2 forward = new(handler.MovementFacing.X, handler.MovementFacing.Z);
-        if (forward == Vector2.Zero)
+        if (forward == Vector2.Zero || handler.MovementAmount == Vector2.Zero)
             return;
 
         //Log.Debug("AFTER: " + __instance.Position+"\n");
@@ -109,7 +109,7 @@ internal static class FirstPersonFarmerMovementPatch3
             return;
 
         Vector2 forward = new(handler.MovementFacing.X, handler.MovementFacing.Z);
-        if (forward == Vector2.Zero)
+        if (forward == Vector2.Zero || handler.MovementAmount == Vector2.Zero)
             return;
         forward.Normalize();
         Vector2 right = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.ToRadians(90)));
