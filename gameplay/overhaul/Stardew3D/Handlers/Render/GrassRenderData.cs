@@ -1,12 +1,13 @@
+using Microsoft.Xna.Framework;
 using Stardew3D.DataModels;
 using StardewValley;
 using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers.Render;
 
-public class TreeRenderData : RenderData<TreeRenderer>
+public class GrassRenderData : RenderData<GrassRenderer>
 {
-    public TreeRenderData(RenderContext ctx, TreeRenderer parent)
+    public GrassRenderData(RenderContext ctx, GrassRenderer parent)
         : base( ctx, parent)
     {
     }
@@ -17,7 +18,7 @@ public class TreeRenderData : RenderData<TreeRenderer>
 
         if (instance == null)
         {
-            ctx.WorldSpriteBatch.Begin(Parent.Object.getBoundingBox().Center.ToVector2(), ctx.WorldTransform);
+            ctx.WorldSpriteBatch.Begin(Parent.Object.getBoundingBox().Center.ToVector2(), Matrix.CreateTranslation(0, 0, -0.5f) * ctx.WorldTransform, sameY3d: false);
             Parent.Object.draw(ctx.WorldSpriteBatch);
             ctx.WorldSpriteBatch.End(ctx.WorldBatch);
         }

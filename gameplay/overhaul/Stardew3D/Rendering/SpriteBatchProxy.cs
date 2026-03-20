@@ -74,15 +74,27 @@ public class SpriteBatchProxy : SpriteBatch
             float pos2dY = Math.Max(Math.Max(item.vertexTL.Position.Y, item.vertexTR.Position.Y), Math.Max(item.vertexBL.Position.Y, item.vertexBR.Position.Y));
             Vector2 basePos = new Vector2(pos2dX, sameY3d ? sameY : pos2dY);
             float yFromLayer = basePos.Y - ((sameY3d ? sameLayer : item.SortKey) * 10000);
-            /*basePos.Y -= yFromLayer;
-            
+            /*if (!sameY3d)
+                basePos.Y -= yFromLayer;// / Game1.tileSize;
+            /*
             Vector3 pos = new Vector3(basePos.X - base2d.X, 0, basePos.Y - base2d.Y) / Game1.tileSize;
             pos.Y = base2d.To3D(relevantLocation?.Map).Y;
             pos.Y += yFromLayer / Game1.tileSize;
             pos.Z -= yFromLayer / Game1.tileSize;
             //*/
             Vector3 pos = Vector3.Zero;
-
+#if true
+            Vector3 base3dFrom2d = base2d.To3D(relevantLocation?.Map);
+            pos.X += basePos.X / Game1.tileSize - base3dFrom2d.X;
+            if (!sameY3d)
+            {
+                if (item.SortKey < 1f / 10000)
+                    pos.Z += (basePos.Y) / Game1.tileSize - base3dFrom2d.Z;
+                else
+                    pos.Z += (basePos.Y - yFromLayer) / Game1.tileSize - base3dFrom2d.Z;
+            }
+#endif
+            //pos.Z -= yFromLayer / Game1.tileSize;
             if (orientationOverride.HasValue)
                 output.AddSprite(basePos, pos + baseTransform.Translation, orientationOverride.Value * baseTransform.NoTranslation(), i, item);
             else

@@ -26,7 +26,7 @@ public class FlooringRenderer : RendererWithPlaceholder<ModelData, Flooring>
         placeholder.TextureRegion = new Rectangle(textureCorner.X + num2 * 16 % 256, num2 / 16 * 16 + textureCorner.Y, 16, 16);
         placeholder.Billboard = false;
         placeholder.OrientationIfNotBillboard = Matrix.CreateLookAt(Vector3.Zero, Vector3.Up, Vector3.Forward);
-        placeholder.OrientationIfNotBillboard *= Matrix.CreateTranslation(Vector3.UnitY * 0.0025f);
+        placeholder.OrientationIfNotBillboard *= Matrix.CreateTranslation(0, 0.0025f, 0.5f);
         placeholders = [placeholder];
     }
 }
