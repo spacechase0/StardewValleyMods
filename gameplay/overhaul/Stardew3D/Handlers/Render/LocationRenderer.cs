@@ -29,6 +29,9 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
     }
     internal Dictionary<Texture2D, (VertexBuffer Vertices, IndexBuffer Indices, int[] IndexData, List<AnimationData> Animations)> vbos = new();
 
+    internal VertexBuffer waterVbo;
+    internal List<SimpleVertex> waterVertices = new();
+
     private bool dirty = true;
     public bool IsDirty => dirty;
 
@@ -72,18 +75,20 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
     {
         DimensionUtils.PositionResult[] floorData = new DimensionUtils.PositionResult[Object.Map.Layers[0].LayerWidth * Object.Map.Layers[0].LayerHeight];
         DimensionUtils.PositionResult[] ceilingData = new DimensionUtils.PositionResult[floorData.Length];
+        DimensionUtils.PositionResult[] waterData = new DimensionUtils.PositionResult[floorData.Length];
         for (int iy = 0, ind = 0; iy < Object.Map.Layers[0].LayerHeight; iy++)
         {
             for (int ix = 0; ix < Object.Map.Layers[0].LayerWidth; ++ix, ++ind)
             {
-                floorData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), forCeiling_: false);
-                ceilingData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), forCeiling_: true);
+                floorData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Floor);
+                ceilingData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Ceiling);
+                waterData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Water);
             }
         }
 
         Dictionary<Texture2D, VertexData> vertices = new();
-        BuildFloorsAndCeiling(floorData, ceilingData, vertices);
-        BuildWalls(floorData, ceilingData, vertices);
+        BuildFloorsAndCeiling(floorData, ceilingData, waterData, vertices);
+        BuildWalls(floorData, ceilingData, waterData, vertices);
 
         foreach (var key in vbos.Keys)
         {
@@ -130,9 +135,11 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
         dirty = false;
     }
 
-    private void BuildFloorsAndCeiling(DimensionUtils.PositionResult[] floorData, DimensionUtils.PositionResult[] ceilingData, Dictionary<Texture2D, VertexData> output)
+    private void BuildFloorsAndCeiling(DimensionUtils.PositionResult[] floorData, DimensionUtils.PositionResult[] ceilingData, DimensionUtils.PositionResult[] waterData, Dictionary<Texture2D, VertexData> output)
     {
         const float tuck = 0.00001f;
+
+        waterVertices.Clear();
 
         Dictionary<string, Texture2D> texLookup = new();
 
@@ -257,17 +264,28 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                             break;
                     }
                 }
+
+                var water = waterData[ind];
+                if (Object.isWaterTile(ix, iy))
+                {
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2( 0, 0 ), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2( 0, 1 ), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2( 1, 0 ), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert11, new Vector2( 1, 1 ), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2( 1, 0 ), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2( 0, 1 ), Object.waterColor.Value));
+                }
             }
         }
     }
 
-    private void BuildWalls(DimensionUtils.PositionResult[] floorData, DimensionUtils.PositionResult[] ceilingData, Dictionary<Texture2D, VertexData> output)
+    private void BuildWalls(DimensionUtils.PositionResult[] floorData, DimensionUtils.PositionResult[] ceilingData, DimensionUtils.PositionResult[] waterData, Dictionary<Texture2D, VertexData> output)
     {
         int mapWidth = Object.Map.Layers[0].LayerWidth, mapHeight = Object.Map.Layers[0].LayerHeight;
         DimensionUtils.PositionResult LookupPosition(bool ceiling, int x, int y)
         {
             if (x < 0 || y < 0 || x >= mapWidth || y >= mapHeight)
-                return new DimensionUtils.PositionResult(new Point(x, y), ceiling);
+                return new DimensionUtils.PositionResult(new Point(x, y), ceiling ? DimensionUtils.TileType.Ceiling : DimensionUtils.TileType.Floor);
 
             var data = ceiling ? ceilingData : floorData;
             return data[ x + y * mapWidth ];

@@ -33,9 +33,9 @@ public static class DimensionUtils
         }
     }
 
-    public static Vector3 GetPositionAtTile(xTile.Map map, Point tile, Vector2 subTile, bool? forCeiling = null)
+    public static Vector3 GetPositionAtTile(xTile.Map map, Point tile, Vector2 subTile, TileType tileType = TileType.Floor)
     {
-        var data = GetPositionForTile(map, tile, forCeiling);
+        var data = GetPositionForTile(map, tile, tileType);
         if (data.ShouldHide)
             return data.Position;
 
@@ -95,6 +95,13 @@ public static class DimensionUtils
         }
     }
 
+    public enum TileType
+    {
+        Floor,
+        Ceiling,
+        Water,
+    }
+
     public struct PositionResult
     {
         public Vector3 Position;
@@ -106,9 +113,14 @@ public static class DimensionUtils
         public float HeightBoundingSize;
         public bool ShouldHide;
 
-        public PositionResult(Point tilePos, bool forCeiling = false)
+        public PositionResult(Point tilePos, TileType tileType = TileType.Floor)
         : this(new Vector3(tilePos.X + 0.5f, 0, tilePos.Y + 0.5f),
-                forCeiling ? Vector3.Down : Vector3.Up,
+                tileType switch
+                {
+                    TileType.Floor => Vector3.Up,
+                    TileType.Ceiling => Vector3.Down,
+                    TileType.Water => Vector3.Up,
+                },
                 new Vector3(-0.5f, 0, -0.5f),
                 new Vector3(0.5f, 0, -0.5f),
                 new Vector3(-0.5f, 0, 0.5f),
@@ -130,25 +142,23 @@ public static class DimensionUtils
         }
     }
 
-    public static PositionResult GetPositionForTile(xTile.Map map, Point tile, bool? forCeiling_ = null)
+    public static PositionResult GetPositionForTile(xTile.Map map, Point tile, TileType tileType = TileType.Floor)
     {
-        bool forCeiling = forCeiling_ ?? false;
-
         if (map == null)
-            return new(tile);
+            return new(tile, tileType);
 
         if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Layers[0].LayerWidth || tile.Y >= map.Layers[0].LayerHeight)
-            return new(tile);
+            return new(tile, tileType);
 
-        string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}Data";
-        string dataModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}ModifierData";
+        string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data";
+        string dataModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}ModifierData";
 
         var data = map.GetLayer(dataLayer);
         var modifiers = map.Layers.Where(l => l.Id == dataModifierLayer || l.Id.StartsWith( $"{dataModifierLayer}_" ));
 
         int tileInd = data?.GetTileIndexAt(tile.X, tile.Y) ?? -1;
         if (data == null || tileInd == -1)
-            return new(tile) { ShouldHide = (data != null) };
+            return new(tile, tileType) { ShouldHide = (data != null) };
 
         float baseHeight = GetValueForDataTileIndex(tileInd);
         float topLeft = baseHeight;
@@ -185,29 +195,17 @@ public static class DimensionUtils
         float bottomSize = MathF.Sqrt(1 + MathF.Pow(bottomLeft - bottomRight, 2));
 
         return new(new Vector3(tile.X + 0.5f, center, tile.Y + 0.5f),
-            Vector3.TransformNormal(forCeiling ? Vector3.Down : Vector3.Up, Matrix.CreateRotationX(rotX) * Matrix.CreateRotationZ(rotZ)),
+            Vector3.TransformNormal(tileType switch
+            {
+                TileType.Floor => Vector3.Up,
+                TileType.Ceiling => Vector3.Down,
+                TileType.Water => Vector3.Up,
+            }, Matrix.CreateRotationX(rotX) * Matrix.CreateRotationZ(rotZ)),
             new(-0.5f, topLeft - center, -0.5f),
             new(0.5f, topRight - center, -0.5f),
             new(-0.5f, bottomLeft - center, 0.5f),
             new(0.5f, bottomRight - center, 0.5f),
             top - bottom);
-    }
-
-    public static Vector3 GetPositionAtTile(xTile.Map map, Point pt, TileSpot spot = TileSpot.Center, bool? forCeiling = null)
-    {
-        Vector2[] spotMapping =
-        [
-            new(0.0f, 0.5f),
-            new(0.5f, 0.0f),
-            new(1.0f, 0.5f),
-            new(0.5f, 1.0f),
-            new(0.0f, 0.0f),
-            new(1.0f, 0.0f),
-            new(1.0f, 1.0f),
-            new(0.0f, 1.0f),
-            new(0.5f, 0.5f),
-        ];
-        return GetPositionAtTile(map, pt, spotMapping[(int)spot], forCeiling);
     }
 
     public static Vector3 GetPosition3D( this Character character )
@@ -229,16 +227,16 @@ public static class DimensionUtils
         return 0;
     }
 
-    public static Vector3 To3D(this Vector2 vec, xTile.Map map, bool? forCeiling = null)
+    public static Vector3 To3D(this Vector2 vec, xTile.Map map, TileType tileType = TileType.Floor)
     {
         Point tile = new((int)(vec.X / Game1.tileSize), (int)(vec.Y / Game1.tileSize));
         Vector2 subTile = new Vector2(vec.X / Game1.tileSize, vec.Y / Game1.tileSize) - tile.ToVector2();
-        return GetPositionAtTile(map, tile, subTile, forCeiling);
+        return GetPositionAtTile(map, tile, subTile, tileType);
     }
 
-    public static Vector3 To3D(this Point pt, xTile.Map map, bool? forCeiling = null)
+    public static Vector3 To3D(this Point pt, xTile.Map map, TileType tileType = TileType.Floor)
     {
         Vector2 subTile = new Vector2(0.5f, 0.5f);
-        return GetPositionAtTile(map, pt, subTile, forCeiling);
+        return GetPositionAtTile(map, pt, subTile, tileType);
     }
 }
