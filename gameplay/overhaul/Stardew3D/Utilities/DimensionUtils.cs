@@ -106,6 +106,17 @@ public static class DimensionUtils
         public float HeightBoundingSize;
         public bool ShouldHide;
 
+        public PositionResult(Point tilePos, bool forCeiling = false)
+        : this(new Vector3(tilePos.X + 0.5f, 0, tilePos.Y + 0.5f),
+                forCeiling ? Vector3.Down : Vector3.Up,
+                new Vector3(-0.5f, 0, -0.5f),
+                new Vector3(0.5f, 0, -0.5f),
+                new Vector3(-0.5f, 0, 0.5f),
+                new Vector3(0.5f, 0, 0.5f),
+                0, true)
+        {
+        }
+
         public PositionResult(Vector3 pos, Vector3 quadNormal, Vector3 quadTL, Vector3 quadTR, Vector3 quadBL, Vector3 quadBR, float heightBounding, bool shouldHide = false)
         {
             Position = pos;
@@ -124,10 +135,10 @@ public static class DimensionUtils
         bool forCeiling = forCeiling_ ?? false;
 
         if (map == null)
-            return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+            return new(tile);
 
         if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Layers[0].LayerWidth || tile.Y >= map.Layers[0].TileHeight)
-            return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0);
+            return new(tile);
 
         string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}Data";
         string dataModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/{(forCeiling ? "Ceiling" : "Floor")}ModifierData";
@@ -137,7 +148,7 @@ public static class DimensionUtils
 
         int tileInd = data?.GetTileIndexAt(tile.X, tile.Y) ?? -1;
         if (data == null || tileInd == -1)
-            return new(new Vector3(tile.X + 0.5f, 0, tile.Y + 0.5f), forCeiling ? Vector3.Down : Vector3.Up, new(-0.5f, 0, -0.5f), new(0.5f, 0, -0.5f), new(-0.5f, 0, 0.5f), new(0.5f, 0, 0.5f), 0, data != null);
+            return new(tile) { ShouldHide = (data != null) };
 
         float baseHeight = GetValueForDataTileIndex(tileInd);
         float topLeft = baseHeight;

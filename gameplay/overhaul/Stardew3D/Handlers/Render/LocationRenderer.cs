@@ -1,3 +1,4 @@
+using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
@@ -69,9 +70,20 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
 
     private void RefreshVertices()
     {
+        DimensionUtils.PositionResult[] floorData = new DimensionUtils.PositionResult[Object.Map.Layers[0].LayerWidth * Object.Map.Layers[0].LayerHeight];
+        DimensionUtils.PositionResult[] ceilingData = new DimensionUtils.PositionResult[floorData.Length];
+        for (int iy = 0, ind = 0; iy < Object.Map.Layers[0].LayerHeight; iy++)
+        {
+            for (int ix = 0; ix < Object.Map.Layers[0].LayerWidth; ++ix, ++ind)
+            {
+                floorData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), forCeiling_: false);
+                ceilingData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), forCeiling_: true);
+            }
+        }
+
         Dictionary<Texture2D, VertexData> vertices = new();
-        BuildFloorsAndCeiling(vertices);
-        BuildWalls(vertices);
+        BuildFloorsAndCeiling(floorData, ceilingData, vertices);
+        BuildWalls(floorData, ceilingData, vertices);
 
         foreach (var key in vbos.Keys)
         {
@@ -118,9 +130,11 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
         dirty = false;
     }
 
-    private void BuildFloorsAndCeiling(Dictionary<Texture2D, VertexData> output)
+    private void BuildFloorsAndCeiling(DimensionUtils.PositionResult[] floorData, DimensionUtils.PositionResult[] ceilingData, Dictionary<Texture2D, VertexData> output)
     {
         const float tuck = 0.00001f;
+
+        Dictionary<string, Texture2D> texLookup = new();
 
         List<xTile.Layers.Layer> applicableLayers = new();
         List<xTile.Layers.Layer> ceilingLayers = new();
@@ -132,9 +146,9 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
         ceilingLayers.Sort((l1, l2) => (l1.Id.StartsWith("kittycatcasey.Stardew3D/Ceiling_") ? int.Parse(l1.Id.Substring("kittycatcasey.Stardew3D/Ceiling_".Length)) : 0) -
                                        (l2.Id.StartsWith("kittycatcasey.Stardew3D/Ceiling_") ? int.Parse(l2.Id.Substring("kittycatcasey.Stardew3D/Ceiling_".Length)) : 0));
         applicableLayers.AddRange(ceilingLayers);
-        for (int ix = 0; ix < Object.Map.Layers[0].LayerSize.Width; ++ix)
+        for (int iy = 0, ind = 0; iy < Object.Map.Layers[0].LayerSize.Height; ++iy)
         {
-            for (int iy = 0; iy < Object.Map.Layers[0].LayerSize.Height; ++iy)
+            for (int ix = 0; ix < Object.Map.Layers[0].LayerSize.Width; ++ix, ++ind)
             {
                 foreach (var layer in applicableLayers)
                 {
@@ -145,7 +159,7 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                         continue;
 
                     Color col = Color.White;
-                    var tilePos = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), isCeiling);
+                    var tilePos = isCeiling ? ceilingData[ind] : floorData[ind];
                     if (tilePos.ShouldHide)
                     {
                         if (EvenMissing)
@@ -165,7 +179,10 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
 
                     (VertexData Data, int FirstVert) DoTile(StaticTile tile)
                     {
-                        var tex = Game1.content.Load<Texture2D>(PathUtilities.NormalizeAssetName(tile.TileSheet.ImageSource));
+                        string texKey = PathUtilities.NormalizeAssetName(tile.TileSheet.ImageSource);
+                        if (!texLookup.TryGetValue(texKey, out var tex))
+                            texLookup.Add(texKey, tex = Game1.content.Load<Texture2D>(texKey));
+
                         if (!output.TryGetValue(tex, out var verts))
                             output.Add(tex, verts = new());
 
@@ -244,68 +261,63 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
         }
     }
 
-    private void BuildWalls(Dictionary<Texture2D, VertexData> output)
+    private void BuildWalls(DimensionUtils.PositionResult[] floorData, DimensionUtils.PositionResult[] ceilingData, Dictionary<Texture2D, VertexData> output)
     {
-        const float tuck = 0.00001f;
+        int mapWidth = Object.Map.Layers[0].LayerWidth, mapHeight = Object.Map.Layers[0].LayerHeight;
+        DimensionUtils.PositionResult LookupPosition(bool ceiling, int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= mapWidth || y >= mapHeight)
+                return new DimensionUtils.PositionResult(new Point(x, y), ceiling);
 
-        var floorWalls = Game1.content.Load<Dictionary<string, FloorWallAssociationData>>($"{Mod.Instance.ModManifest.UniqueID}/FloorWallAssociations");
-        var wallDefs = Game1.content.Load<Dictionary<string, WallDefinitionData>>($"{Mod.Instance.ModManifest.UniqueID}/WallDefinitions");
+            var data = ceiling ? ceilingData : floorData;
+            return data[ x + y * mapWidth ];
+        }
+
+        const float tuck = 0.00001f;
 
         for (int ix = 0; ix < Object.Map.Layers[0].LayerSize.Width; ++ix)
         {
             for (int iy = 0; iy < Object.Map.Layers[0].LayerSize.Height; ++iy)
             {
-                floorWalls.TryGetValue($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Back")}", out var assocData);
+                var assocData = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Back")}");
                 if (assocData == null)
                 {
                     string type = Object.doesTileHaveProperty(ix, iy, "Type", "Back") ?? "Default";
-                    floorWalls.TryGetValue(type, out assocData);
+                    assocData = FloorWallAssociationData.Get(type);
                 }
 
-                WallDefinitionData wallDef_ = null;
-                wallDefs.TryGetValue(assocData?.WallDefinitionId ?? "", out wallDef_);
+                WallDefinitionData wallDef_ = WallDefinitionData.Get(assocData?.WallDefinitionId ?? "");
                 //if (assocData != null)
                 {
-                    Vector3 floorWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.West, forCeiling: false);
-                    Vector3 floorNorth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.North, forCeiling: false);
-                    Vector3 floorEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.East, forCeiling: false);
-                    Vector3 floorSouth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.South, forCeiling: false);
-                    Vector3 otherFloorWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.East, forCeiling: false);
-                    Vector3 otherFloorNorth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.South, forCeiling: false);
-                    Vector3 otherFloorEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.West, forCeiling: false);
-                    Vector3 otherFloorSouth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.North, forCeiling: false);
-                    float floorNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthWest, forCeiling: false).Y;
-                    float otherHorizontalSpotForFloorNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.NorthEast, forCeiling: false).Y;
-                    float otherVerticalSpotForFloorNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthWest, forCeiling: false).Y;
-                    float floorNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthEast, forCeiling: false).Y;
-                    float otherHorizontalSpotForFloorNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.NorthWest, forCeiling: false).Y;
-                    float otherVerticalSpotForFloorNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthEast, forCeiling: false).Y;
-                    float floorSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthWest, forCeiling: false).Y;
-                    float otherHorizontalSpotForFloorSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.SouthEast, forCeiling: false).Y;
-                    float otherVerticalSpotForFloorSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthWest, forCeiling: false).Y;
-                    float floorSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthEast, forCeiling: false).Y;
-                    float otherHorizontalSpotForFloorSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.SouthWest, forCeiling: false).Y;
-                    float otherVerticalSpotForFloorSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthEast, forCeiling: false).Y;
-                    Vector3 ceilingWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.West, forCeiling: true);
-                    Vector3 ceilingNorth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.North, forCeiling: true);
-                    Vector3 ceilingEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.East, forCeiling: true);
-                    Vector3 ceilingSouth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.South, forCeiling: true);
-                    Vector3 otherCeilingWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.East, forCeiling: true);
-                    Vector3 otherCeilingNorth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.South, forCeiling: true);
-                    Vector3 otherCeilingEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.West, forCeiling: true);
-                    Vector3 otherCeilingSouth = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.North, forCeiling: true);
-                    float ceilingNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthWest, forCeiling: true).Y;
-                    float otherHorizontalSpotForCeilingNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.NorthEast, forCeiling: true).Y;
-                    float otherVerticalSpotForCeilingNorthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthWest, forCeiling: true).Y;
-                    float ceilingNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.NorthEast, forCeiling: true).Y;
-                    float otherHorizontalSpotForCeilingNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.NorthWest, forCeiling: true).Y;
-                    float otherVerticalSpotForCeilingNorthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy - 1), TileSpot.SouthEast, forCeiling: true).Y;
-                    float ceilingSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthWest, forCeiling: true).Y;
-                    float otherHorizontalSpotForCeilingSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix - 1, iy), TileSpot.SouthEast, forCeiling: true).Y;
-                    float otherVerticalSpotForCeilingSouthWest = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthWest, forCeiling: true).Y;
-                    float ceilingSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy), TileSpot.SouthEast, forCeiling: true).Y;
-                    float otherHorizontalSpotForCeilingSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix + 1, iy), TileSpot.SouthWest, forCeiling: true).Y;
-                    float otherVerticalSpotForCeilingSouthEast = DimensionUtils.GetPositionAtTile(Object.Map, new(ix, iy + 1), TileSpot.NorthEast, forCeiling: true).Y;
+                    var tileFloor = LookupPosition(ceiling: false, ix, iy);
+                    var tileOtherFloorWest = LookupPosition(ceiling: false, ix - 1, iy);
+                    var tileOtherFloorNorth = LookupPosition(ceiling: false, ix, iy - 1);
+                    var tileOtherFloorEast = LookupPosition(ceiling: false, ix + 1, iy);
+                    var tileOtherFloorSouth = LookupPosition(ceiling: false, ix, iy + 1);
+
+                    var tileCeiling = LookupPosition(ceiling: true, ix, iy);
+                    var tileOtherCeilingWest = LookupPosition(ceiling: true, ix - 1, iy);
+                    var tileOtherCeilingNorth = LookupPosition(ceiling: true, ix, iy - 1);
+                    var tileOtherCeilingEast = LookupPosition(ceiling: true, ix + 1, iy);
+                    var tileOtherCeilingSouth = LookupPosition(ceiling: true, ix, iy + 1);
+
+                    Vector3 floorWest = tileFloor.Position + new Vector3(-0.5f, (tileFloor.QuadVert00.Y + tileFloor.QuadVert01.Y) / 2, 0);
+                    Vector3 floorNorth = tileFloor.Position + new Vector3(0, (tileFloor.QuadVert00.Y + tileFloor.QuadVert10.Y) / 2, -0.5f);
+                    Vector3 floorEast = tileFloor.Position + new Vector3(0.5f, (tileFloor.QuadVert10.Y + tileFloor.QuadVert11.Y) / 2, 0);
+                    Vector3 floorSouth = tileFloor.Position + new Vector3(0, (tileFloor.QuadVert01.Y + tileFloor.QuadVert11.Y) / 2, 0.5f);
+                    Vector3 otherFloorWest = tileOtherFloorWest.Position + new Vector3(0.5f, (tileFloor.QuadVert10.Y + tileFloor.QuadVert11.Y) / 2, 0);
+                    Vector3 otherFloorNorth = tileOtherFloorNorth.Position + new Vector3(0, (tileFloor.QuadVert01.Y + tileFloor.QuadVert11.Y) / 2, -0.5f);
+                    Vector3 otherFloorEast = tileOtherFloorEast.Position + new Vector3(-0.5f, (tileFloor.QuadVert00.Y + tileFloor.QuadVert01.Y) / 2, 0);
+                    Vector3 otherFloorSouth = tileOtherFloorSouth.Position + new Vector3(0, (tileFloor.QuadVert00.Y + tileFloor.QuadVert10.Y) / 2, 0.5f);
+
+                    Vector3 ceilingWest = tileCeiling.Position + new Vector3(-0.5f, (tileCeiling.QuadVert00.Y + tileCeiling.QuadVert01.Y) / 2, 0);
+                    Vector3 ceilingNorth = tileCeiling.Position + new Vector3(0, (tileCeiling.QuadVert00.Y + tileCeiling.QuadVert10.Y) / 2, -0.5f);
+                    Vector3 ceilingEast = tileCeiling.Position + new Vector3(0.5f, (tileCeiling.QuadVert10.Y + tileCeiling.QuadVert11.Y) / 2, 0);
+                    Vector3 ceilingSouth = tileCeiling.Position + new Vector3(0, (tileCeiling.QuadVert01.Y + tileCeiling.QuadVert11.Y) / 2, 0.5f);
+                    Vector3 otherCeilingWest = tileOtherCeilingWest.Position + new Vector3(0.5f, (tileCeiling.QuadVert10.Y + tileCeiling.QuadVert11.Y) / 2, 0);
+                    Vector3 otherCeilingNorth = tileOtherCeilingNorth.Position + new Vector3(0, (tileCeiling.QuadVert01.Y + tileCeiling.QuadVert11.Y) / 2, -0.5f);
+                    Vector3 otherCeilingEast = tileOtherCeilingEast.Position + new Vector3(-0.5f, (tileCeiling.QuadVert00.Y + tileCeiling.QuadVert01.Y) / 2, 0);
+                    Vector3 otherCeilingSouth = tileOtherCeilingSouth.Position + new Vector3(0, (tileCeiling.QuadVert00.Y + tileCeiling.QuadVert10.Y) / 2, 0.5f);
 
                     var customWallSize = new float?[4];
                     var customWallOffset = new float?[4];
@@ -319,17 +331,17 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                         var dataSize = Object.Map.GetLayer(dataSizeLayer);
                         var dataOffset = Object.Map.GetLayer(dataOffsetLayer);
 
-                        customWallSize[i] = DimensionUtils.GetValueForDataTileIndex(dataSize?.GetTileIndexAt(ix, iy) ?? -1);
-                        customWallOffset[i] = DimensionUtils.GetValueForDataTileIndex(dataOffset?.GetTileIndexAt(ix, iy) ?? -1);
+                        int sizeInd = dataSize?.GetTileIndexAt(ix, iy) ?? -1;
+                        int offsetInd = dataOffset?.GetTileIndexAt(ix, iy) ?? -1;
+
+                        customWallSize[i] = sizeInd != -1 ? DimensionUtils.GetValueForDataTileIndex(sizeInd) : null;
+                        customWallOffset[i] = offsetInd != -1 ? DimensionUtils.GetValueForDataTileIndex(offsetInd) : null;
 
                         if ((dataSize?.Tiles[ix, iy]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var wallDefId) ?? false) &&
-                            wallDefs.TryGetValue(wallDefId, out WallDefinitionData wallDef))
+                            WallDefinitionData.Get(wallDefId) is WallDefinitionData wallDef)
                         {
                             customWallDefs[i] = wallDef;
                         }
-
-                        if (customWallSize[i].Value == 0) customWallSize[i] = null;
-                        if (customWallOffset[i].Value == 0) customWallOffset[i] = null;
                     }
                     var customWallSizeMods = new float[4];
                     var customWallOffsetMods = new float[4];
@@ -349,39 +361,35 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                     TileSpot[] walls = [TileSpot.West, TileSpot.North, TileSpot.East, TileSpot.South];
                     Vector3[] wallsFacing = [Vector3.Right, Vector3.Backward, Vector3.Left, Vector3.Forward];
                     Vector3[] wallOffsets = [Vector3.Left * 0.5f, Vector3.Forward * 0.5f, Vector3.Right * 0.5f, Vector3.Backward * 0.5f];
-                    bool[,] valid = // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, adjacent_floor_to_adjacent_ceiling=3]
+                    bool[,] valid = // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2]
                     {
                         {
-                            floorWest.Y != 0 && ceilingWest.Y != 0 && otherFloorWest.Y == 0 || customWallSize[0].HasValue,
-                            floorWest.Y != 0 && otherFloorWest.Y != 0 && Math.Abs(floorWest.Y - otherFloorWest.Y) >= 0.1,
-                            ceilingWest.Y != 0 && otherCeilingWest.Y != 0,
-                            otherFloorWest.Y != 0 && otherCeilingWest.Y != 0,
+                            floorWest.Y < ceilingWest.Y && tileOtherFloorWest.ShouldHide || customWallSize[0].HasValue,
+                            floorWest.Y < otherFloorWest.Y && Math.Abs(floorWest.Y - otherFloorWest.Y) >= 0.1,
+                            ceilingWest.Y != otherCeilingWest.Y,
                         },
                         {
-                            floorNorth.Y != 0 && ceilingNorth.Y != 0 && otherFloorNorth.Y == 0 || customWallSize[1].HasValue,
-                            floorNorth.Y != 0 && otherFloorNorth.Y != 0 && Math.Abs(floorNorth.Y - otherFloorNorth.Y) >= 0.1,
-                            ceilingNorth.Y != 0 && otherCeilingNorth.Y != 0,
-                            otherFloorNorth.Y != 0 && otherCeilingNorth.Y != 0,
+                            floorNorth.Y < ceilingNorth.Y && tileOtherFloorNorth.ShouldHide || customWallSize[1].HasValue,
+                            floorNorth.Y < otherFloorNorth.Y && Math.Abs(floorNorth.Y - otherFloorNorth.Y) >= 0.1,
+                            ceilingNorth.Y != otherCeilingNorth.Y,
                         },
                         {
-                            floorEast.Y != 0 && ceilingEast.Y != 0 && otherFloorEast.Y == 0 || customWallSize[2].HasValue,
-                            floorEast.Y != 0 && otherFloorEast.Y != 0 && Math.Abs(floorEast.Y - otherFloorEast.Y) >= 0.1,
-                            ceilingEast.Y != 0 && otherCeilingEast.Y != 0,
-                            otherFloorEast.Y != 0 && otherCeilingEast.Y != 0,
+                            floorEast.Y < ceilingEast.Y && tileOtherFloorEast.ShouldHide || customWallSize[2].HasValue,
+                            floorEast.Y < otherFloorEast.Y && Math.Abs(floorEast.Y - otherFloorEast.Y) >= 0.1,
+                            ceilingEast.Y != otherCeilingEast.Y,
                         },
                         {
-                            floorSouth.Y != 0 && ceilingSouth.Y != 0 && otherFloorSouth.Y == 0 || customWallSize[3].HasValue,
-                            floorSouth.Y != 0 && otherFloorSouth.Y != 0 && Math.Abs(floorSouth.Y - otherFloorSouth.Y) >= 0.1,
-                            ceilingSouth.Y != 0 && otherCeilingSouth.Y != 0,
-                            otherFloorSouth.Y != 0 && otherCeilingSouth.Y != 0,
+                            floorSouth.Y < ceilingSouth.Y && tileOtherFloorSouth.ShouldHide || customWallSize[3].HasValue,
+                            floorSouth.Y < otherFloorSouth.Y && Math.Abs(floorSouth.Y - otherFloorSouth.Y) >= 0.1,
+                            ceilingSouth.Y != otherCeilingSouth.Y,
                         },
                     };
-                    float[,] edges = // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, adjacent_floor_to_adjacent_ceiling=3, custom=4]
+                    float[,] edges = // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, custom=3]
                     {
-                        { floorWest.Y, floorWest.Y, ceilingWest.Y, otherFloorWest.Y },
-                        { floorNorth.Y, floorNorth.Y, ceilingNorth.Y, otherFloorNorth.Y },
-                        { floorEast.Y, floorEast.Y, ceilingEast.Y, otherFloorEast.Y },
-                        { floorSouth.Y, floorSouth.Y, ceilingSouth.Y, otherFloorSouth.Y },
+                        { floorWest.Y, floorWest.Y, ceilingWest.Y },
+                        { floorNorth.Y, floorNorth.Y, ceilingNorth.Y },
+                        { floorEast.Y, floorEast.Y, ceilingEast.Y },
+                        { floorSouth.Y, floorSouth.Y, ceilingSouth.Y },
                     };
                     for (int ioffset = 0; ioffset < customWallOffset.Length; ++ioffset)
                     {
@@ -391,31 +399,27 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                                 edges[ioffset, iedge] += customWallOffset[ioffset].Value;
                         }
                     }
-                    float[,,] yForWalls = // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, adjacent_floor_to_adjacent_ceiling=3, custom=4][leftWallBase=0, rightWallBase=0, leftWallTarget=2, rightWallTarget=3]
+                    float[,,] yForWalls = // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, custom=3][leftWallBase=0, rightWallBase=0, leftWallTarget=2, rightWallTarget=3]
                     {
                         {
-                            { floorSouthWest, floorNorthWest, ceilingSouthWest, ceilingNorthWest },
-                            { floorSouthWest, floorNorthWest, otherHorizontalSpotForFloorSouthWest, otherHorizontalSpotForFloorNorthWest },
-                            { ceilingSouthWest, ceilingNorthWest, otherHorizontalSpotForCeilingSouthWest, otherHorizontalSpotForCeilingNorthWest },
-                            { otherHorizontalSpotForFloorSouthWest, otherHorizontalSpotForFloorNorthWest, otherHorizontalSpotForCeilingSouthWest, otherHorizontalSpotForCeilingNorthWest }
+                            { tileFloor.Position.Y + tileFloor.QuadVert01.Y, tileFloor.Position.Y + tileFloor.QuadVert00.Y, tileCeiling.Position.Y + tileCeiling.QuadVert01.Y, tileCeiling.Position.Y + tileCeiling.QuadVert00.Y },
+                            { tileFloor.Position.Y + tileFloor.QuadVert01.Y, tileFloor.Position.Y + tileFloor.QuadVert00.Y, tileOtherFloorWest.Position.Y + tileOtherFloorWest.QuadVert11.Y, tileOtherFloorWest.Position.Y + tileOtherFloorWest.QuadVert10.Y },
+                            { tileCeiling.Position.Y + tileCeiling.QuadVert01.Y, tileCeiling.Position.Y + tileCeiling.QuadVert00.Y, tileOtherCeilingWest.Position.Y + tileOtherCeilingWest.QuadVert10.Y, tileOtherCeilingWest.Position.Y + tileOtherCeilingWest.QuadVert11.Y },
                         },
                         {
-                            { floorNorthWest, floorNorthEast, ceilingNorthWest, ceilingNorthEast },
-                            { floorNorthWest, floorNorthEast, otherVerticalSpotForFloorNorthWest, otherVerticalSpotForFloorNorthEast },
-                            { ceilingNorthWest, ceilingNorthEast, otherVerticalSpotForCeilingNorthWest, otherVerticalSpotForCeilingNorthEast },
-                            { otherVerticalSpotForFloorNorthWest, otherVerticalSpotForFloorNorthEast, otherVerticalSpotForCeilingNorthWest, otherVerticalSpotForCeilingNorthEast },
+                            { tileFloor.Position.Y + tileFloor.QuadVert00.Y, tileFloor.Position.Y + tileFloor.QuadVert10.Y, tileCeiling.Position.Y + tileCeiling.QuadVert00.Y, tileCeiling.Position.Y + tileCeiling.QuadVert10.Y },
+                            { tileFloor.Position.Y + tileFloor.QuadVert00.Y, tileFloor.Position.Y + tileFloor.QuadVert10.Y, tileOtherFloorNorth.Position.Y + tileOtherFloorNorth.QuadVert01.Y, tileOtherFloorNorth.Position.Y + tileOtherFloorNorth.QuadVert11.Y },
+                            { tileCeiling.Position.Y + tileCeiling.QuadVert00.Y, tileCeiling.Position.Y + tileCeiling.QuadVert10.Y, tileOtherCeilingNorth.Position.Y + tileOtherCeilingNorth.QuadVert01.Y, tileOtherCeilingNorth.Position.Y + tileOtherCeilingNorth.QuadVert11.Y },
                         },
                         {
-                            { floorNorthEast, floorSouthEast, ceilingNorthEast, ceilingSouthEast },
-                            { floorNorthEast, floorSouthEast, otherHorizontalSpotForFloorNorthEast, otherHorizontalSpotForFloorSouthEast },
-                            { ceilingNorthEast, ceilingSouthEast, otherHorizontalSpotForCeilingNorthEast, otherHorizontalSpotForCeilingSouthEast },
-                            { otherHorizontalSpotForFloorNorthEast, otherHorizontalSpotForFloorSouthEast, otherHorizontalSpotForCeilingNorthEast, otherHorizontalSpotForCeilingSouthEast },
+                            { tileFloor.Position.Y + tileFloor.QuadVert10.Y, tileFloor.Position.Y + tileFloor.QuadVert11.Y, tileCeiling.Position.Y + tileCeiling.QuadVert10.Y, tileCeiling.Position.Y + tileCeiling.QuadVert11.Y },
+                            { tileFloor.Position.Y + tileFloor.QuadVert10.Y, tileFloor.Position.Y + tileFloor.QuadVert11.Y, tileOtherFloorEast.Position.Y + tileOtherFloorEast.QuadVert00.Y, tileOtherFloorEast.Position.Y + tileOtherFloorEast.QuadVert01.Y },
+                            { tileCeiling.Position.Y + tileCeiling.QuadVert10.Y, tileCeiling.Position.Y + tileCeiling.QuadVert11.Y, tileOtherCeilingEast.Position.Y + tileOtherCeilingEast.QuadVert01.Y, tileOtherCeilingEast.Position.Y + tileOtherCeilingEast.QuadVert00.Y },
                         },
                         {
-                            { floorSouthEast, floorSouthWest, ceilingSouthEast, ceilingSouthWest },
-                            { floorSouthEast, floorSouthWest, otherVerticalSpotForFloorSouthEast, otherVerticalSpotForFloorSouthWest },
-                            { ceilingSouthEast, ceilingSouthWest, otherVerticalSpotForCeilingSouthEast, otherVerticalSpotForCeilingSouthWest },
-                            { otherVerticalSpotForFloorSouthEast, otherVerticalSpotForFloorSouthWest, otherVerticalSpotForCeilingSouthEast, otherVerticalSpotForCeilingSouthWest },
+                            { tileFloor.Position.Y + tileFloor.QuadVert11.Y, tileFloor.Position.Y + tileFloor.QuadVert01.Y, tileCeiling.Position.Y + tileCeiling.QuadVert11.Y, tileCeiling.Position.Y + tileCeiling.QuadVert01.Y },
+                            { tileFloor.Position.Y + tileFloor.QuadVert11.Y, tileFloor.Position.Y + tileFloor.QuadVert01.Y, tileOtherFloorSouth.Position.Y + tileOtherFloorSouth.QuadVert10.Y, tileOtherFloorSouth.Position.Y + tileOtherFloorSouth.QuadVert00.Y },
+                            { tileCeiling.Position.Y + tileCeiling.QuadVert11.Y, tileCeiling.Position.Y + tileCeiling.QuadVert01.Y, tileOtherCeilingSouth.Position.Y + tileOtherCeilingSouth.QuadVert10.Y, tileOtherCeilingSouth.Position.Y + tileOtherCeilingSouth.QuadVert00.Y },
                         },
                     };
                     for (int ioffset = 0; ioffset < customWallOffset.Length; ++ioffset)
@@ -435,7 +439,7 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                         }
                     }
 
-                    float[,,] heightsForWalls = new float[yForWalls.GetLength(0), yForWalls.GetLength(1), 2]; // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, adjacent_floor_to_adjacent_ceiling=3, custom=4][left=0, right=1]
+                    float[,,] heightsForWalls = new float[yForWalls.GetLength(0), yForWalls.GetLength(1), 2]; // [direction][floor_to_ceiling=0, floor_to_adjacent_floor=1, ceiling_to_adjacent_ceiling=2, custom=3][left=0, right=1]
                     for (int idir = 0; idir < yForWalls.GetLength(0); ++idir)
                     {
                         for (int itype = 0; itype < yForWalls.GetLength(1); ++itype)
@@ -486,7 +490,7 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
                         int whichForWallBase = 0;
                         for (; whichForWallBase < edges.GetLength(1); ++whichForWallBase)
                         {
-                            if (valid[iwall, whichForWallBase] && edges[iwall, whichForWallBase] != 0)
+                            if (valid[iwall, whichForWallBase])
                                 break;
                         }
                         if (whichForWallBase == edges.GetLength(1))
