@@ -8,6 +8,7 @@ using Stardew3D.Utilities;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Extensions;
+using xTile.Layers;
 using xTile.Tiles;
 using static Stardew3D.Handlers.IRenderHandler;
 
@@ -422,17 +423,16 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                     }
                     var customWallSizeMods = new float[4];
                     var customWallOffsetMods = new float[4];
-                    string dataSizeModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallSizeModifierData";
-                    string dataOffsetModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallOffsetModifierData";
-                    var dataSizeModifiers = Object.Map.Layers.Where(l => l.Id == dataSizeModifierLayer || l.Id.StartsWith($"{dataSizeModifierLayer}_"));
-                    var dataOffsetModifiers = Object.Map.Layers.Where(l => l.Id == dataOffsetModifierLayer || l.Id.StartsWith($"{dataOffsetModifierLayer}_"));
-                    foreach (var modifier in dataSizeModifiers)
+                    foreach (var spot in Enum.GetValues<TileSpot>())
                     {
-                        DimensionUtils.ModifyValueForDataTileIndex(modifier.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
-                    }
-                    foreach (var modifier in dataOffsetModifiers)
-                    {
-                        DimensionUtils.ModifyValueForDataTileIndex(modifier.GetTileIndexAt(ix, iy), ref customWallOffsetMods[0], ref customWallOffsetMods[1], ref customWallOffsetMods[3], ref customWallOffsetMods[2]);
+                        string dataSizeModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallSizeData_{spot}";
+                        string dataOffsetModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallOffsetData_{spot}";
+
+                        if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataSizeModifierLayer) is Layer sizeLayer)
+                            DimensionUtils.ModifyValueForDataTileIndex(spot, sizeLayer.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
+
+                        if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataOffsetModifierLayer) is Layer offsetLayer)
+                            DimensionUtils.ModifyValueForDataTileIndex(spot, offsetLayer.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
                     }
 
                     TileSpot[] walls = [TileSpot.West, TileSpot.North, TileSpot.East, TileSpot.South];

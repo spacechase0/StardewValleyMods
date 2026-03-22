@@ -97,7 +97,7 @@ public abstract partial class BaseGameMode : IGameMode
         {
             Game1.graphics.GraphicsDevice.SetRenderTarget(targetScreen);
             sb.Begin();
-            sb.Draw(RenderTarget, new Rectangle(0, 0, targetScreen.Width, targetScreen.Height), Color.White);
+            sb.Draw(RenderTarget, new Rectangle(0, 0, targetScreen?.Width ?? GameRunner.instance.graphicsDeviceManager.PreferredBackBufferWidth, targetScreen?.Height ?? GameRunner.instance.graphicsDeviceManager.PreferredBackBufferHeight), Color.White);
             sb.End();
         }
 

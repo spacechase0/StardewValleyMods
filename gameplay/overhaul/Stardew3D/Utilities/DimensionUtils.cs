@@ -7,6 +7,7 @@ using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using Valve.VR;
+using xTile.Layers;
 
 namespace Stardew3D.Utilities;
 
@@ -52,16 +53,16 @@ public static class DimensionUtils
 
     public static int GetDataTileIndexForValue(float value)
     {
-        if (value > 10) value = 10;
-        if (value < -10) value = -10;
+        if (value > 16) value = 16;
+        if (value < -16) value = -16;
 
-        int num = (int) Math.Round(Math.Abs(value) * 10);
-        int x = num % 10;
-        int y = num / 10;
+        int num = (int) Math.Round(Math.Abs(value) * 16);
+        int x = num % 16;
+        int y = num / 16;
         if (value < 0)
-            x += 10;
+            x += 16;
 
-        return x + y * 20;
+        return x + y * 32;
     }
 
     public static float GetValueForDataTileIndex(int index)
@@ -69,29 +70,15 @@ public static class DimensionUtils
         if (index == -1)
             return 0;
 
-        float ret = (index % 10) / 10f + (index / 20);
-        if (index % 20 >= 10)
+        float ret = (index % 16) / 16f + (index / 32);
+        if (index % 32 >= 16)
             ret = -ret;
         return ret;
     }
 
-    public static int GetDataTileIndexForModifierValue(TileSpot whichType, float val)
+    public static void ModifyValueForDataTileIndex(TileSpot whichType, int index, ref float topLeft, ref float topRight, ref float bottomRight, ref float bottomLeft)
     {
-        return (int)whichType * 200 + GetDataTileIndexForValue(val);
-    }
-
-    public static float GetModifierValueForDataTileIndex(int index, out TileSpot whichType)
-    {
-        whichType = (TileSpot)(index / 200);
-        if (index == -1)
-            return 0;
-
-        return GetValueForDataTileIndex(index % 200);
-    }
-
-    public static void ModifyValueForDataTileIndex(int index, ref float topLeft, ref float topRight, ref float bottomRight, ref float bottomLeft)
-    {
-        float modAmount = GetModifierValueForDataTileIndex(index, out var whichType);
+        float modAmount = GetValueForDataTileIndex(index);
         switch (whichType)
         {
             case TileSpot.West: topLeft += modAmount; bottomLeft += modAmount; break;
@@ -161,10 +148,8 @@ public static class DimensionUtils
             return new(tile, tileType);
 
         string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data";
-        string dataModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}ModifierData";
 
-        var data = map.GetLayer(dataLayer);
-        var modifiers = map.Layers.Where(l => l.Id == dataModifierLayer || l.Id.StartsWith( $"{dataModifierLayer}_" ));
+        var data = map.GetLayer($"{dataLayer}_Center");
 
         int tileInd = data?.GetTileIndexAt(tile.X, tile.Y) ?? -1;
         if (data == null || tileInd == -1)
@@ -176,9 +161,12 @@ public static class DimensionUtils
         float bottomRight = baseHeight;
         float bottomLeft = baseHeight;
 
-        foreach (var modifier in modifiers)
+        foreach ( var spot in Enum.GetValues<TileSpot>() )
         {
-            ModifyValueForDataTileIndex(modifier.GetTileIndexAt(tile.X, tile.Y), ref topLeft, ref topRight, ref bottomRight, ref bottomLeft);
+            if (spot == TileSpot.Center || map.Layers.FirstOrDefault(l => l.Id.StartsWith( $"{dataLayer}_{spot}")) is not Layer layer)
+                continue;
+
+            ModifyValueForDataTileIndex(spot, layer.GetTileIndexAt(tile.X, tile.Y), ref topLeft, ref topRight, ref bottomRight, ref bottomLeft);
         }
 
         // Probably incorrect implementation, just cobbled something together myself

@@ -280,8 +280,13 @@ public class EditorGameMode : BaseGameMode
             Log.Info($"Saving {ActiveEditable.Id}...");
             var formats = ActiveEditable.Save();
 
-            string path = Path.Combine(Mod.Instance.Helper.DirectoryPath, "EditorOutput", ActiveEditable.Id);
-            Log.Info($"Saving  to {path}...");
+            string path = Path.Combine(Mod.Instance.Helper.DirectoryPath, "EditorOutput");
+#if DEBUG
+            path = Mod.GetDevAssetsFolder();
+#endif
+            path = Path.Combine(path, ActiveEditable.Id);
+
+            Log.Info($"Saving to {path}...");
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             foreach (var format in formats)
                 File.WriteAllText($"{path}.{format.Key}", format.Value);

@@ -262,12 +262,11 @@ public class TileDataEditingMode : BaseEditingMode
                 visited.Add(check);
 
                 var data = DimensionUtils.GetPositionForTile(Editable.Location.Map, check, TileType);
-                if (data.Position.Y + data.HeightBoundingSize / 2 < min ||
+                if (data.ShouldHide != baseData.ShouldHide ||
+                    data.Position.Y + data.HeightBoundingSize / 2 < min ||
                     data.Position.Y - data.HeightBoundingSize / 2 > max)
                     continue;
                 matching.Add(check);
-
-                if (check.Y == 3) check = check;
 
                 void TryCheck(Point pt)
                 {
@@ -345,9 +344,9 @@ public class TileDataEditingMode : BaseEditingMode
         {
             float incr = 1f;
             if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Shift))
-                incr = 0.5f;
+                incr = 1f / 4;
             else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
-                incr = 0.1f;
+                incr = 1f / 16;
 
             incr *= scrollAmt;
 

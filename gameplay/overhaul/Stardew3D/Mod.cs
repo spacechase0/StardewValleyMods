@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -80,6 +81,18 @@ namespace Stardew3D
     {
         public string DefaultHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
         public string DefaultVrHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPersonVR";
+
+#if DEBUG
+        public static string GetDevAssetsFolder()
+        {
+            return Path.Combine(GetDevModFolderImpl(), "assets");
+        }
+
+        private static string GetDevModFolderImpl([CallerFilePath]string path = "")
+        {
+            return Path.GetDirectoryName(path);
+        }
+#endif
 
         protected override void ModEntry()
         {
