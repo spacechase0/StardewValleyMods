@@ -31,6 +31,16 @@ public class TileDataEditingMode : BaseEditingMode
     private List<Vector3> pendingBounds = new List<Vector3>();
     private bool selDirty = false;
     private bool pendingDirty = false;
+    private TileSpot tileEditType
+    {
+        get => field;
+        set
+        {
+            field = value;
+            selDirty = true;
+            pendingDirty = true;
+        }
+    } = TileSpot.Center;
 
     public TileDataEditingMode(MapEditable editable, DimensionUtils.TileType tileType)
         : base(editable)
@@ -48,7 +58,46 @@ public class TileDataEditingMode : BaseEditingMode
 
     public override ICollection<Element> PopulatePanelContents()
     {
-        return [];
+        List<Element> elems = new();
+        elems.Add(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, _ => $"Mode: {tileEditType}"));
+
+        TileSpot[] vals =
+        [
+            TileSpot.NorthWest,
+            TileSpot.North,
+            TileSpot.NorthEast,
+            TileSpot.West,
+            TileSpot.Center,
+            TileSpot.East,
+            TileSpot.SouthWest,
+            TileSpot.South,
+            TileSpot.SouthEast,
+        ];
+        for ( int i = 0; i < vals.Length; ++i )
+        {
+            var val = vals[i];
+            string str = val switch
+            {
+                TileSpot.Center => "*",
+                TileSpot.North => "N",
+                TileSpot.South => "S",
+                TileSpot.East => "E",
+                TileSpot.West => "W",
+                TileSpot.NorthWest => "NW",
+                TileSpot.NorthEast => "NE",
+                TileSpot.SouthEast => "SE",
+                TileSpot.SouthWest => "NW",
+            };
+            var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(48, 48), str)
+            {
+                OnPressed = _ => tileEditType = val,
+            };
+
+            if (i % 3 == 0)
+                button.Anchor = MLEM.Ui.Anchor.AutoLeft;
+            elems.Add(button);
+        }
+        return elems;
     }
 
     private void UpdateHover()
@@ -114,17 +163,6 @@ public class TileDataEditingMode : BaseEditingMode
         bool hoverDirty = hoverTile != lastHoverTile;
         if (hoverDirty)
         {
-            pendingTiles.Clear();
-            if (pendingStartTile.HasValue && hoverTile.HasValue)
-            {
-                for (int ix = Math.Min(pendingStartTile.Value.X, hoverTile.Value.X); ix <= Math.Max(pendingStartTile.Value.X, hoverTile.Value.X); ++ix)
-                {
-                    for (int iy = Math.Min(pendingStartTile.Value.Y, hoverTile.Value.Y); iy <= Math.Max(pendingStartTile.Value.Y, hoverTile.Value.Y); ++iy)
-                    {
-                        pendingTiles.Add(new(ix, iy));
-                    }
-                }
-            }
             lastHoverTile = hoverTile;
             pendingDirty = true;
         }
@@ -223,6 +261,7 @@ public class TileDataEditingMode : BaseEditingMode
             DoSelect(pending);
 
             pendingStartTile = null;
+            pendingDirty = true;
         }
 
         if (rightMouse && !editor.Ui.Controls.Input.IsDown(MouseButton.Right))
@@ -265,7 +304,7 @@ public class TileDataEditingMode : BaseEditingMode
                 incr = 0.1f;
 
             foreach (var tile in selectedTiles)
-                Editable.Location.ModifyBaseData(TileType, tile, incr * scrollAmt);
+                Editable.Location.ModifyData(TileType, tile, incr * scrollAmt, tileEditType);
 
             MapModified();
         }
@@ -273,7 +312,7 @@ public class TileDataEditingMode : BaseEditingMode
         if (editor.Ui.Controls.Input.TryConsumePressed(Keys.Delete))
         {
             foreach (var tile in selectedTiles)
-                Editable.Location.SetBaseData(TileType, tile, null);
+                Editable.Location.SetData(TileType, tile, null, tileEditType);
 
             MapModified();
         }
@@ -286,38 +325,112 @@ public class TileDataEditingMode : BaseEditingMode
         UpdateModifications();
     }
 
+    private void MakeQuad(List<Vector3> verts, DimensionUtils.PositionResult quad)
+    {
+        float adjustL = 0, adjustR = 0;
+        float adjustU = 0, adjustD = 0;
+        switch (tileEditType)
+        {
+            case TileSpot.West: adjustR -= 0.5f; break;
+            case TileSpot.North: adjustD -= 0.5f; break;
+            case TileSpot.East: adjustL += 0.5f; break;
+            case TileSpot.South: adjustU += 0.5f; break;
+            case TileSpot.NorthWest:
+                adjustR -= 0.5f;
+                adjustD -= 0.5f;
+                break;
+            case TileSpot.NorthEast:
+                adjustL += 0.5f;
+                adjustD -= 0.5f;
+                break;
+            case TileSpot.SouthWest:
+                adjustR -= 0.5f;
+                adjustU += 0.5f;
+                break;
+            case TileSpot.SouthEast:
+                adjustL += 0.5f;
+                adjustU += 0.5f;
+                break;
+        }
+
+        Vector3 adjust00 = quad.QuadVert00 + new Vector3(adjustL, 0, adjustU);
+        Vector3 adjust10 = quad.QuadVert10 + new Vector3(adjustR, 0, adjustU);
+        Vector3 adjust01 = quad.QuadVert01 + new Vector3(adjustL, 0, adjustD);
+        Vector3 adjust11 = quad.QuadVert11 + new Vector3(adjustR, 0, adjustD);
+        switch (tileEditType)
+        {
+            case TileSpot.West:
+                adjust10.Y = Utility.Lerp(adjust00.Y, adjust10.Y, 0.5f);
+                adjust11.Y = Utility.Lerp(adjust01.Y, adjust11.Y, 0.5f);
+                break;
+            case TileSpot.North:
+                adjust01.Y = Utility.Lerp(adjust00.Y, adjust01.Y, 0.5f);
+                adjust11.Y = Utility.Lerp(adjust10.Y, adjust11.Y, 0.5f);
+                break;
+            case TileSpot.East:
+                adjust00.Y = Utility.Lerp(adjust00.Y, adjust10.Y, 0.5f);
+                adjust01.Y = Utility.Lerp(adjust01.Y, adjust11.Y, 0.5f);
+                break;
+            case TileSpot.South:
+                adjust00.Y = Utility.Lerp(adjust00.Y, adjust01.Y, 0.5f);
+                adjust10.Y = Utility.Lerp(adjust10.Y, adjust11.Y, 0.5f);
+                break;
+            case TileSpot.NorthWest:
+                adjust10.Y = Utility.Lerp(adjust00.Y, adjust10.Y, 0.5f);
+                adjust01.Y = Utility.Lerp(adjust00.Y, adjust01.Y, 0.5f);
+                adjust11.Y = Utility.Lerp(adjust00.Y, adjust11.Y, 0.5f);
+                break;
+            case TileSpot.NorthEast:
+                adjust00.Y = Utility.Lerp(adjust10.Y, adjust00.Y, 0.5f);
+                adjust01.Y = Utility.Lerp(adjust10.Y, adjust01.Y, 0.5f);
+                adjust11.Y = Utility.Lerp(adjust10.Y, adjust11.Y, 0.5f);
+                break;
+            case TileSpot.SouthWest:
+                adjust00.Y = Utility.Lerp(adjust01.Y, adjust00.Y, 0.5f);
+                adjust10.Y = Utility.Lerp(adjust01.Y, adjust10.Y, 0.5f);
+                adjust11.Y = Utility.Lerp(adjust01.Y, adjust11.Y, 0.5f);
+                break;
+            case TileSpot.SouthEast:
+                adjust00.Y = Utility.Lerp(adjust11.Y, adjust00.Y, 0.5f);
+                adjust10.Y = Utility.Lerp(adjust11.Y, adjust10.Y, 0.5f);
+                adjust01.Y = Utility.Lerp(adjust11.Y, adjust01.Y, 0.5f);
+                break;
+        }
+
+        verts.Add(quad.Position + adjust00 + quad.QuadFacingNormal * 0.02f);
+        verts.Add(quad.Position + adjust01 + quad.QuadFacingNormal * 0.02f);
+        verts.Add(quad.Position + adjust10 + quad.QuadFacingNormal * 0.02f);
+        verts.Add(quad.Position + adjust11 + quad.QuadFacingNormal * 0.02f);
+        verts.Add(quad.Position + adjust10 + quad.QuadFacingNormal * 0.02f);
+        verts.Add(quad.Position + adjust01 + quad.QuadFacingNormal * 0.02f);
+    }
+
     private void UpdateSelectionDisplay()
     {
         if (pendingDirty)
         {
             pendingDirty = false;
 
+            pendingTiles.Clear();
+            if (pendingStartTile.HasValue && lastHoverTile.HasValue)
+            {
+                for (int ix = Math.Min(pendingStartTile.Value.X, lastHoverTile.Value.X); ix <= Math.Max(pendingStartTile.Value.X, lastHoverTile.Value.X); ++ix)
+                {
+                    for (int iy = Math.Min(pendingStartTile.Value.Y, lastHoverTile.Value.Y); iy <= Math.Max(pendingStartTile.Value.Y, lastHoverTile.Value.Y); ++iy)
+                    {
+                        pendingTiles.Add(new(ix, iy));
+                    }
+                }
+            }
+
             pendingBounds.Clear();
             if (pendingSelectMode == SelectMode.Replace || pendingSelectMode == SelectMode.Add)
             {
                 foreach (var tile in pendingTiles)
-                {
-                    var quad = DimensionUtils.GetPositionForTile(Editable.Location.Map, tile, TileType);
-                    pendingBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
-                    pendingBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-                    pendingBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                    pendingBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
-                    pendingBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                    pendingBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-                }
+                    MakeQuad(pendingBounds, DimensionUtils.GetPositionForTile(Editable.Location.Map, tile, TileType));
             }
 
-            if (lastHoverTile.HasValue && pendingSelectMode != SelectMode.Remove)
-            {
-                var quad = DimensionUtils.GetPositionForTile(Editable.Location.Map, lastHoverTile.Value, TileType);
-                pendingBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
-                pendingBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-                pendingBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                pendingBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
-                pendingBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                pendingBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-            }
-
+            
             selDirty = true;
         }
 
@@ -333,13 +446,7 @@ public class TileDataEditingMode : BaseEditingMode
                     if (pendingSelectMode == SelectMode.Remove && pendingTiles.Contains(tile))
                         continue;
 
-                    var quad = DimensionUtils.GetPositionForTile(Editable.Location.Map, tile, TileType);
-                    selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
-                    selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-                    selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                    selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
-                    selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                    selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+                    MakeQuad(selBounds, DimensionUtils.GetPositionForTile(Editable.Location.Map, tile, TileType));
                 }
             }
         }
@@ -349,54 +456,57 @@ public class TileDataEditingMode : BaseEditingMode
     {
         UpdateSelectionDisplay();
 
+        Game1.graphics.GraphicsDevice.BlendState = new BlendState()
+        {
+            ColorSourceBlend = Blend.One,
+            AlphaSourceBlend = Blend.One,
+
+            ColorDestinationBlend = Blend.One,
+            AlphaDestinationBlend = Blend.One,
+
+            ColorBlendFunction = BlendFunction.Subtract,
+            AlphaBlendFunction = BlendFunction.Add,
+
+            //BlendFactor = Color.White * 0.5f,
+        };
+        Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+        //Game1.graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
+        RenderHelper.GenericEffect.Texture = Game1.staminaRect;
+        RenderHelper.GenericEffect.World = Matrix.Identity;
+
+        if (lastHoverTile.HasValue && pendingSelectMode != SelectMode.Remove)
+        {
+            List<Vector3> hover = new();
+            MakeQuad(hover, DimensionUtils.GetPositionForTile(Editable.Location.Map, lastHoverTile.Value, TileType));
+            SimpleVertex[] v = hover.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.Gray)).ToArray();
+
+            RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing"];
+            foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
+            }
+        }
         if (pendingBounds.Count > 0)
         {
-            SimpleVertex[] v = pendingBounds.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.LightGray * 0.75f)).ToArray();
+            SimpleVertex[] v = pendingBounds.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.LightGray)).ToArray();
 
-            Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            //Game1.graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            RenderHelper.GenericEffect.Texture = Game1.staminaRect;
-            RenderHelper.GenericEffect.World = Matrix.Identity;
+            RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing"];
+            foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
             {
-                RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing_Transparent_1"];
-                foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
-                }
-            }
-            {
-                RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing_Transparent_2"];
-                foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
-                }
+                pass.Apply();
+                Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
             }
         }
         if (selBounds.Count > 0)
         {
-            SimpleVertex[] v = selBounds.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.LightGray * 0.75f)).ToArray();
+            SimpleVertex[] v = selBounds.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.DarkGray)).ToArray();
 
-            Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            //Game1.graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            RenderHelper.GenericEffect.Texture = Game1.staminaRect;
-            RenderHelper.GenericEffect.World = Matrix.Identity;
+            RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing"];
+            foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
             {
-                RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing_Transparent_1"];
-                foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
-                }
-            }
-            {
-                RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing_Transparent_2"];
-                foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
-                }
+                pass.Apply();
+                Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
             }
         }
     }

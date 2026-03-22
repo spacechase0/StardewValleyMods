@@ -35,9 +35,9 @@ public class DummyLocation : GameLocation
         return MapLoader.CreateTemporary();
     }
 
-    public void ModifyBaseData(DimensionUtils.TileType tileType, Point tile, float amount)
+    public void ModifyData(DimensionUtils.TileType tileType, Point tile, float amount, TileSpot modType = TileSpot.Center)
     {
-        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data";
+        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}{(modType != TileSpot.Center ? $"ModifierData_{(int)modType}0" : "Data")}";
         var layer = Map.GetLayer(layerName);
         if (layer == null)
             Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
@@ -45,19 +45,24 @@ public class DummyLocation : GameLocation
         if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
             return;
 
-        float val = DimensionUtils.GetValueForDataTileIndex(layer.Tiles[tile.X, tile.Y]?.TileIndex ?? -1);
+        int ind = layer.Tiles[tile.X, tile.Y]?.TileIndex ?? -1;
+        float val = modType != TileSpot.Center ? DimensionUtils.GetModifierValueForDataTileIndex(ind, out _) : DimensionUtils.GetValueForDataTileIndex(ind);
         val += amount;
+        ind = modType != TileSpot.Center ? DimensionUtils.GetDataTileIndexForModifierValue(modType, val) : DimensionUtils.GetDataTileIndexForValue(val);
 
-        TileSheet ts = Map.GetTileSheet("dataValues");
+        string tsName = modType != TileSpot.Center ? "modifierDataValues" : "dataValues";
+        TileSheet ts = Map.GetTileSheet(tsName);
         if (ts == null)
-            Map.AddTileSheet(ts = new("dataValues", Map, "ThirdDimensionData\\floor", new(20, 10), new(16, 16)));
+            Map.AddTileSheet(ts = new(tsName, Map,
+                modType != TileSpot.Center ? "ThirdDimensionData\\floor_modifier" : "ThirdDimensionData\\floor",
+                new(modType != TileSpot.Center ? 160 : 20, 10), new(16, 16)));
 
-        layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, DimensionUtils.GetDataTileIndexForValue(val));
+        layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, ind);
     }
 
-    public void SetBaseData(DimensionUtils.TileType tileType, Point tile, float? value)
+    public void SetData(DimensionUtils.TileType tileType, Point tile, float? value, TileSpot modType = TileSpot.Center)
     {
-        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data";
+        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}{(modType != TileSpot.Center ? $"ModifierData_{(int)modType}" : "Data")}";
         var layer = Map.GetLayer(layerName);
         if (layer == null)
             Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
@@ -65,11 +70,22 @@ public class DummyLocation : GameLocation
         if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
             return;
 
-        TileSheet ts = Map.GetTileSheet("dataValues");
+        string tsName = modType != TileSpot.Center ? "modifierDataValues" : "dataValues";
+        TileSheet ts = Map.GetTileSheet(tsName);
         if (ts == null)
-            Map.AddTileSheet(ts = new("dataValues", Map, "ThirdDimensionData\\floor", new(20, 10), new(16, 16)));
+            Map.AddTileSheet(ts = new(tsName, Map,
+                modType != TileSpot.Center ? "ThirdDimensionData\\floor_modifier" : "ThirdDimensionData\\floor",
+                new(modType != TileSpot.Center ? 160 : 20, 10), new(16, 16)));
 
-        layer.Tiles[tile.X, tile.Y] = value.HasValue ? new StaticTile(layer, ts, BlendMode.Alpha, DimensionUtils.GetDataTileIndexForValue(value.Value)) : null;
+        if (value.HasValue)
+        {
+            int ind = modType != TileSpot.Center ? DimensionUtils.GetDataTileIndexForModifierValue(modType, value.Value) : DimensionUtils.GetDataTileIndexForValue(value.Value);
+            layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, ind);
+        }
+        else
+        {
+            layer.Tiles[tile.X, tile.Y] = null;
+        }
     }
 
 #if false

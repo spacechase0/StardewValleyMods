@@ -75,13 +75,23 @@ public static class DimensionUtils
         return ret;
     }
 
+    public static int GetDataTileIndexForModifierValue(TileSpot whichType, float val)
+    {
+        return (int)whichType * 200 + GetDataTileIndexForValue(val);
+    }
+
+    public static float GetModifierValueForDataTileIndex(int index, out TileSpot whichType)
+    {
+        whichType = (TileSpot)(index / 200);
+        if (index == -1)
+            return 0;
+
+        return GetValueForDataTileIndex(index % 200);
+    }
+
     public static void ModifyValueForDataTileIndex(int index, ref float topLeft, ref float topRight, ref float bottomRight, ref float bottomLeft)
     {
-        if (index == -1)
-            return;
-        TileSpot whichType = (TileSpot)(index / 200);
-
-        float modAmount = GetValueForDataTileIndex(index % 200);
+        float modAmount = GetModifierValueForDataTileIndex(index, out var whichType);
         switch (whichType)
         {
             case TileSpot.West: topLeft += modAmount; bottomLeft += modAmount; break;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Xsl;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -36,7 +37,23 @@ public class MapEditable : IEditable
     private LocalizedContentManager ToLoadContentFrom;
     public DummyLocation Location;
 
-    public BaseEditingMode EditingMode { get; set; }
+    public BaseEditingMode EditingMode
+    {
+        get => field;
+        set
+        {
+            field = value;
+
+            editModeGroup.RemoveChildren();
+            if (value == null)
+                return;
+
+            var newChildren = value.PopulatePanelContents();
+            foreach ( var child in newChildren )
+                editModeGroup.AddChild(child);
+        }
+    }
+    private Group editModeGroup { get; set; }
 
     public MapEditable(LocalizedContentManager toLoadContentFrom, string locName, string assetName)
     {
@@ -92,6 +109,9 @@ public class MapEditable : IEditable
                 OnPressed = _ => EditingMode = factoryFunc(this),
             });
         }
+        modeButtons.AddChild(new VerticalSpace(24));
+
+        editModeGroup = new(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 32), setHeightBasedOnChildren: true);
 
         Group dangerButtons = new(MLEM.Ui.Anchor.BottomCenter, new Vector2(1, 0), setHeightBasedOnChildren: true);
         dangerButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoCenter, new Vector2(1, 32), "Reset")
@@ -117,6 +137,7 @@ public class MapEditable : IEditable
         [
             new Paragraph(MLEM.Ui.Anchor.TopLeft, 1, Id),
             modeButtons,
+            editModeGroup,
             dangerButtons,
         ];
     }
