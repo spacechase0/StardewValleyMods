@@ -40,7 +40,7 @@ public class DummyLocation : GameLocation
         string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}{(modType != TileSpot.Center ? $"ModifierData_{(int)modType}0" : "Data")}";
         var layer = Map.GetLayer(layerName);
         if (layer == null)
-            Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
+            return 0;
 
         if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
             return 0;
@@ -69,7 +69,7 @@ public class DummyLocation : GameLocation
         if (ts == null)
             Map.AddTileSheet(ts = new(tsName, Map,
                 modType != TileSpot.Center ? "ThirdDimensionData\\floor_modifier" : "ThirdDimensionData\\floor",
-                new(modType != TileSpot.Center ? 160 : 20, 10), new(16, 16)));
+                new(20, modType != TileSpot.Center ? 80 : 10), new(16, 16)));
 
         layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, ind);
     }
@@ -89,7 +89,7 @@ public class DummyLocation : GameLocation
         if (ts == null)
             Map.AddTileSheet(ts = new(tsName, Map,
                 modType != TileSpot.Center ? "ThirdDimensionData\\floor_modifier" : "ThirdDimensionData\\floor",
-                new(modType != TileSpot.Center ? 160 : 20, 10), new(16, 16)));
+                new(20, modType != TileSpot.Center ? 80 : 10), new(16, 16)));
 
         if (value.HasValue)
         {

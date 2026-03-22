@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Xsl;
+using Force.DeepCloner;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,8 +15,10 @@ using Stardew3D.GameModes.Editor.Editables.Map.EditingModes;
 using Stardew3D.Handlers.Render;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Extensions;
+using TMXTile;
 using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.GameModes.Editor.Editables.Map;
@@ -120,19 +123,20 @@ public class MapEditable : IEditable
         modeButtons.AddChild(new VerticalSpace(24));
 
         editModeGroup = new(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 32), setHeightBasedOnChildren: true);
-
-        Group dangerButtons = new(MLEM.Ui.Anchor.BottomCenter, new Vector2(1, 0), setHeightBasedOnChildren: true);
-        dangerButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoCenter, new Vector2(1, 32), "Reset")
+        Group finalButtons = new(MLEM.Ui.Anchor.BottomCenter, new Vector2(1, 0), setHeightBasedOnChildren: true);
+        finalButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoCenter, new Vector2(1, 32), "Clear Changes")
         {
-            AutoSizeAddedAbsolute = new Vector2(-32, 0),
+            AutoSizeAddedAbsolute = new Vector2(-16, 0),
+            NormalColor = Color.Red,
+            HoveredColor = Color.DarkRed,
             OnPressed = _ =>
             {
                 (Mod.State.ActiveMode as EditorGameMode).DoAfterConfirm(Reset);
             },
         });
-        dangerButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoCenter, new Vector2(1, 32), "Clear")
+        finalButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoCenter, new Vector2(1, 32), "Clear All")
         {
-            AutoSizeAddedAbsolute = new Vector2(-64, 0),
+            AutoSizeAddedAbsolute = new Vector2(-16, 0),
             NormalColor = Color.Red,
             HoveredColor = Color.DarkRed,
             OnPressed = _ =>
@@ -144,9 +148,11 @@ public class MapEditable : IEditable
         return
         [
             new Paragraph(MLEM.Ui.Anchor.TopLeft, 1, Id),
+            new VerticalSpace(24),
+            new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, _ => $"Editing: {EditingMode?.Id ?? "none"}"),
             modeButtons,
             editModeGroup,
-            dangerButtons,
+            finalButtons,
         ];
     }
 
@@ -215,7 +221,56 @@ public class MapEditable : IEditable
 
     public Dictionary<string, string> Save()
     {
-        throw new System.NotImplementedException();
+        var format = new TMXFormat(16, 16, 4, 4);
+        var map = Location.Map.DeepClone();
+
+        // Remove things irrelevant to us
+        foreach (var prop in map.Properties.ToArray())
+        {
+            if (!prop.Key.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/"))
+                map.Properties.Remove(prop.Key);
+        }
+        foreach (var layer in map.Layers.ToArray())
+        {
+            if (!layer.Id.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/"))
+                map.RemoveLayer(layer);
+        }
+
+        // Fix layers
+        foreach (var layer in map.Layers)
+        {
+            layer.TileSize = format.FixedTileSize;
+            for (int iy = 0; iy < layer.LayerSize.Height; ++iy)
+            {
+                for (int ix = 0; ix < layer.LayerSize.Width; ++ix)
+                {
+                    var tile = layer.Tiles[ix, iy];
+                    if (tile == null)
+                        continue;
+
+                    if (tile.Properties.TryGetValue("@Rotation", out string str) && str == "0")
+                        tile.Properties.Remove("@Rotation");
+                    if (tile.Properties.TryGetValue("@Flip", out str) && str == "0")
+                        tile.Properties.Remove("@Flip");
+                }
+            }
+        }
+        map.m_displaySize = new xTile.Dimensions.Size(map.Layers[0].LayerSize.Width * 64, map.Layers[0].LayerSize.Height * 64);
+
+        // Fix tilesheets
+        foreach (var ts in map.TileSheets)
+        {
+            string[] parts = PathUtilities.NormalizePath(ts.ImageSource).Split('\\');
+            if (parts[0] == "Maps")
+                parts = parts.Skip(1).ToArray();
+
+            ts.ImageSource = string.Join('/', parts);
+        }
+
         HasUnsavedChanges = false;
+        return new Dictionary<string, string>()
+        {
+            ["tmx"] = format.StoreAsString(map, DataEncodingType.CSV),
+        };
     }
 }

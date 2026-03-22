@@ -26,6 +26,7 @@
   
   <ItemGroup>
     <Publicize Include="MonoGame.Framework" IncludeVirtualMembers="false" />
+    <Publicize Include="xTile" IncludeVirtualMemebers="false" />
   </ItemGroup>
   
   <ItemGroup>
@@ -40,6 +41,10 @@
     
     <ProjectReference Include="$(SolutionDir)_external\MLEM\MLEM\MLEM.csproj" />
     <ProjectReference Include="$(SolutionDir)_external\MLEM\MLEM.Ui\MLEM.Ui.csproj" />
+
+    <Reference Include="TMXTile">
+      <HintPath>$(GamePath)/smapi-internal/TMXTile.dll</HintPath>
+    </Reference>
 
     <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0029" />
     <Reference Include="MonoGamePolyfill.dll">

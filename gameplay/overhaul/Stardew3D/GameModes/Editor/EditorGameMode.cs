@@ -274,6 +274,18 @@ public class EditorGameMode : BaseGameMode
         }
         else if (Rotating && !Ui.Controls.Input.IsDown(MouseButton.Middle))
             Rotating = false;
+
+        if (Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control) && Ui.Controls.Input.TryConsumePressed(Keys.S) && ActiveEditable != null)
+        {
+            Log.Info($"Saving {ActiveEditable.Id}...");
+            var formats = ActiveEditable.Save();
+
+            string path = Path.Combine(Mod.Instance.Helper.DirectoryPath, "EditorOutput", ActiveEditable.Id);
+            Log.Info($"Saving  to {path}...");
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            foreach (var format in formats)
+                File.WriteAllText($"{path}.{format.Key}", format.Value);
+        }
     }
 
     public override void RenderWorld()

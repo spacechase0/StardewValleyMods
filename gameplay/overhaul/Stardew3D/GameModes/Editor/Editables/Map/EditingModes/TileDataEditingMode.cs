@@ -55,6 +55,11 @@ public class TileDataEditingMode : BaseEditingMode
         : base(editable)
     {
         TileType = tileType;
+        if (editable.EditingMode is TileDataEditingMode other)
+        {
+            selectedTiles = other.selectedTiles;
+            selBounds = other.selBounds;
+        }
     }
 
     private void MapModified()

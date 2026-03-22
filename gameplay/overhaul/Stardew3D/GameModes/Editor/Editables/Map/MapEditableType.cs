@@ -15,16 +15,17 @@ internal class MapEditableType : IEditableType
         if (vanillaOnlyContent == null)
             vanillaOnlyContent = new(GameRunner.instance.Services, Game1.content.RootDirectory);
 
+        string[] vanillaMaps = File.ReadAllLines(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "vanillamaps.txt"));
 
         EditableTree vanilla = new();
-        foreach (var entry in DataLoader.Locations(vanillaOnlyContent))
+        foreach (var entry in vanillaMaps)
         {
-            string path = PathUtilities.NormalizeAssetName(entry.Value.CreateOnLoad?.MapPath);
+            string path = PathUtilities.NormalizeAssetName($"Maps/{entry}");
             if (path == null)
                 continue;
 
-            IEditable editable = new MapEditable(Game1.game1.xTileContent, entry.Key, entry.Value.CreateOnLoad.MapPath);
-            vanilla.Entries.Add(entry.Value.CreateOnLoad.MapPath, editable);
+            IEditable editable = new MapEditable(Game1.game1.xTileContent, entry, path);
+            vanilla.Entries.Add(entry, editable);
         }
 
         EditableTree ret = new();
