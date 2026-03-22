@@ -348,6 +348,7 @@ public class TileDataEditingMode : BaseEditingMode
             SimpleVertex[] v = pendingBounds.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.LightGray * 0.75f)).ToArray();
 
             Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            //Game1.graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             RenderHelper.GenericEffect.Texture = Game1.staminaRect;
             RenderHelper.GenericEffect.World = Matrix.Identity;
             {
@@ -372,6 +373,7 @@ public class TileDataEditingMode : BaseEditingMode
             SimpleVertex[] v = selBounds.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.LightGray * 0.75f)).ToArray();
 
             Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            //Game1.graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             RenderHelper.GenericEffect.Texture = Game1.staminaRect;
             RenderHelper.GenericEffect.World = Matrix.Identity;
             {

@@ -8,6 +8,7 @@ using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
 using Stardew3D.Utilities;
 using StardewValley;
+using StardewValley.Extensions;
 
 namespace Stardew3D.Rendering;
 
@@ -60,36 +61,31 @@ public class WorldRenderer : IDisposable
         List<(GameLocation Location, IRenderHandler[] Renderers, Matrix TransformFromCurrent)> adjacencies = new();
         adjacencies.Add(new(loc, Mod.State.GetRenderHandlersFor(loc), Matrix.Identity));
 
-        void AddAdjacenciesForPortals(LocationModelData locModel, Matrix prevTransform)
+        void AddAdjacenciesForPortals(GameLocation loc, Matrix prevTransform)
         {
-            if (locModel == null)
+            if (loc == null || !loc.TryGetMapProperty($"{Mod.Instance.ModManifest.UniqueID}/Portals", out string mapProp))
                 return;
 
-            foreach (var entry in locModel.Portals)
+            var portals = Portal.From(mapProp);
+            foreach (var portal in portals)
             {
-                if (adjacencies.Any(p => p.Location.NameOrUniqueName == entry.Value.OtherLocation))
+                if (adjacencies.Any(p => p.Location.NameOrUniqueName == portal.Value.OtherLocation))
                     continue;
 
-                var loc = Game1.getLocationFromName(entry.Value.OtherLocation);
-                if (loc == null)
+                var otherLoc = Game1.getLocationFromName(portal.Value.OtherLocation);
+                if (otherLoc == null || !otherLoc.TryGetMapProperty($"{Mod.Instance.ModManifest.UniqueID}/Portals", out string otherMapProp))
                     continue;
 
-                var renderers = Mod.State.GetRenderHandlersFor(loc);
-                var mainRenderer = renderers[0] as LocationRenderer;
-
-                LocationModelData.Portal match = null;
-                if (mainRenderer != null)
-                {
-                    if (!mainRenderer.ModelData.Portals.TryGetValue(entry.Value.MatchingPortal, out match))
-                        match = null;
-                }
+                var otherPortals = Portal.From(otherMapProp);
+                if (!otherPortals.TryGetValue(portal.Value.MatchingPortal, out var match))
+                    continue;
 
                 // TODO: Support non-opposite facing portals
                 Matrix oursToTheirs = prevTransform *
-                                      Matrix.CreateTranslation(entry.Value.Position) *
+                                      Matrix.CreateTranslation(portal.Value.Position) *
                                       Matrix.CreateTranslation(-match.Position);
 
-                adjacencies.Add(new(loc, renderers, oursToTheirs));
+                adjacencies.Add(new(otherLoc, Mod.State.GetRenderHandlersFor(otherLoc), oursToTheirs));
             }
         }
 
@@ -97,7 +93,7 @@ public class WorldRenderer : IDisposable
         {
             var renderers = adjacencies[i].Renderers;
             var mainRenderer = renderers[0] as LocationRenderer;
-            AddAdjacenciesForPortals(mainRenderer.ModelData, adjacencies[i].TransformFromCurrent);
+            AddAdjacenciesForPortals(adjacencies[i].Location, adjacencies[i].TransformFromCurrent);
 
             if (mainRenderer.IsDirty && !builtLocationRecently)
             {

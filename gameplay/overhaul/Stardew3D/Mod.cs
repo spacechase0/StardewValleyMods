@@ -249,7 +249,14 @@ namespace Stardew3D
                 string ours = Path.Combine("assets", "maps", $"{specific}.tmx");
                 if (Helper.ModContent.DoesAssetExist<xTile.Map>(ours))
                 {
-                    e.Edit(a => a.AsMap().PatchMap(Helper.ModContent.Load<xTile.Map>(ours)), AssetEditPriority.Early);
+                    e.Edit(a =>
+                    {
+                        var ourMap = Helper.ModContent.Load<xTile.Map>(ours);
+                        var theirMap = a.AsMap();
+                        theirMap.PatchMap(ourMap);
+                        foreach (var prop in ourMap.Properties)
+                            theirMap.Data.Properties.Add(prop.Key, prop.Value);
+                    }, AssetEditPriority.Early);
                 }
             }
         }

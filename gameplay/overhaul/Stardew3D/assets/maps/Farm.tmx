@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="2026.02.20" orientation="orthogonal" renderorder="right-down" width="80" height="65" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="1">
+ <properties>
+  <property name="kittycatcasey.Stardew3D/Portals" value="Backwoods Backwoods Farm 41 0 0 south BusStop BusStop Farm 80 0 17 west"/>
+ </properties>
  <tileset firstgid="1" name="floor" tilewidth="16" tileheight="16" tilecount="200" columns="20">
   <image source="ThirdDimensionData/floor.png" width="320" height="160"/>
  </tileset>

@@ -13,7 +13,7 @@ using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers.Render;
 
-public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
+public class LocationRenderer : RendererFor<ModelData, GameLocation>
 {
     internal class AnimationData
     {
