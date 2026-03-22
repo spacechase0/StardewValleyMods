@@ -35,7 +35,21 @@ public class DummyLocation : GameLocation
         return MapLoader.CreateTemporary();
     }
 
-    public void ModifyData(DimensionUtils.TileType tileType, Point tile, float amount, TileSpot modType = TileSpot.Center)
+    public float GetDimensionData(DimensionUtils.TileType tileType, Point tile, TileSpot modType = TileSpot.Center)
+    {
+        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}{(modType != TileSpot.Center ? $"ModifierData_{(int)modType}0" : "Data")}";
+        var layer = Map.GetLayer(layerName);
+        if (layer == null)
+            Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
+
+        if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
+            return 0;
+
+        int ind = layer.Tiles[tile.X, tile.Y]?.TileIndex ?? -1;
+        return modType != TileSpot.Center ? DimensionUtils.GetModifierValueForDataTileIndex(ind, out _) : DimensionUtils.GetValueForDataTileIndex(ind);
+    }
+
+    public void ModifyDimensionData(DimensionUtils.TileType tileType, Point tile, float amount, TileSpot modType = TileSpot.Center)
     {
         string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}{(modType != TileSpot.Center ? $"ModifierData_{(int)modType}0" : "Data")}";
         var layer = Map.GetLayer(layerName);
@@ -60,9 +74,9 @@ public class DummyLocation : GameLocation
         layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, ind);
     }
 
-    public void SetData(DimensionUtils.TileType tileType, Point tile, float? value, TileSpot modType = TileSpot.Center)
+    public void SetDimensionData(DimensionUtils.TileType tileType, Point tile, float? value, TileSpot modType = TileSpot.Center)
     {
-        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}{(modType != TileSpot.Center ? $"ModifierData_{(int)modType}" : "Data")}";
+        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}{(modType != TileSpot.Center ? $"ModifierData_{(int)modType}0" : "Data")}";
         var layer = Map.GetLayer(layerName);
         if (layer == null)
             Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));

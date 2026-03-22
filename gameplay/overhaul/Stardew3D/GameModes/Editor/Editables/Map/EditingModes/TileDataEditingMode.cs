@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MLEM.Input;
 using MLEM.Ui.Elements;
+using SpaceShared;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
 using StardewValley;
@@ -41,6 +42,7 @@ public class TileDataEditingMode : BaseEditingMode
             pendingDirty = true;
         }
     } = TileSpot.Center;
+    public bool smartSlopeEdit = false;
 
     public TileDataEditingMode(MapEditable editable, DimensionUtils.TileType tileType)
         : base(editable)
@@ -59,7 +61,7 @@ public class TileDataEditingMode : BaseEditingMode
     public override ICollection<Element> PopulatePanelContents()
     {
         List<Element> elems = new();
-        elems.Add(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, _ => $"Mode: {tileEditType}"));
+        elems.Add(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, _ => $"Mode: {tileEditType}{(smartSlopeEdit ? " (Smart)" : "")}"));
 
         TileSpot[] vals =
         [
@@ -90,13 +92,45 @@ public class TileDataEditingMode : BaseEditingMode
             };
             var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(48, 48), str)
             {
-                OnPressed = _ => tileEditType = val,
+                OnPressed = _ =>
+                {
+                    tileEditType = val;
+                    smartSlopeEdit = false;
+                }
             };
 
             if (i % 3 == 0)
                 button.Anchor = MLEM.Ui.Anchor.AutoLeft;
             elems.Add(button);
         }
+
+        elems.Add(new VerticalSpace(24));
+
+        elems.Add(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, "Smart Slope"));
+        vals =
+        [
+            TileSpot.North,
+            TileSpot.South,
+            TileSpot.West,
+            TileSpot.East,
+        ];
+        for (int i = 0; i < vals.Length; ++i)
+        {
+            var val = vals[i];
+            var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(0.5f, 32), val.ToString())
+            {
+                OnPressed = _ =>
+                {
+                    tileEditType = val;
+                    smartSlopeEdit = true;
+                }
+            };
+            if (i % 2 == 0)
+                button.Anchor = MLEM.Ui.Anchor.AutoLeft;
+
+            elems.Add(button);
+        }
+
         return elems;
     }
 
@@ -303,8 +337,67 @@ public class TileDataEditingMode : BaseEditingMode
             else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
                 incr = 0.1f;
 
-            foreach (var tile in selectedTiles)
-                Editable.Location.ModifyData(TileType, tile, incr * scrollAmt, tileEditType);
+            incr *= scrollAmt;
+
+            if (smartSlopeEdit && selectedTiles.Count > 0)
+            {
+                List<Point> tiles = selectedTiles.ToList();
+
+                TileSpot opposite = tileEditType switch
+                {
+                    TileSpot.East => TileSpot.West,
+                    TileSpot.West => TileSpot.East,
+                    TileSpot.South => TileSpot.North,
+                    TileSpot.North => TileSpot.South,
+                };
+                Point min = Point.Zero, max = Point.Zero;
+                int steps = 0;
+                switch (tileEditType)
+                {
+                    case TileSpot.West:
+                    case TileSpot.East:
+                        tiles.Sort((a, b) => Comparer<int>.Default.Compare(a.X, b.X));
+                        min = tiles.First();
+                        max = tiles.Last();
+                        if (tileEditType == TileSpot.West)
+                            Util.Swap(ref min, ref max);
+                        steps = Math.Abs(min.X - max.X);
+                        break;
+                    case TileSpot.North:
+                    case TileSpot.South:
+                        tiles.Sort((a, b) => Comparer<int>.Default.Compare(a.Y, b.Y));
+                        min = tiles.First();
+                        max= tiles.Last();
+                        if (tileEditType == TileSpot.North)
+                            Util.Swap(ref min, ref max);
+                        steps = Math.Abs(min.Y - max.Y);
+                        break;
+                }
+
+                float baseHeight = Editable.Location.GetDimensionData(TileType, min, TileSpot.Center);
+                float endHeight = Editable.Location.GetDimensionData(TileType, max, TileSpot.Center);
+                endHeight += Editable.Location.GetDimensionData(TileType, max, tileEditType);
+                endHeight += incr * (steps + 1);
+
+                incr = (endHeight - baseHeight) / (steps + 1);
+                foreach (var tile in tiles)
+                {
+                    int amt = tileEditType switch
+                    {
+                        TileSpot.West => Math.Abs(min.X - tile.X),
+                        TileSpot.East => Math.Abs(min.X - tile.X),
+                        TileSpot.North => Math.Abs(min.Y - tile.Y),
+                        TileSpot.South => Math.Abs(min.Y - tile.Y),
+                    };
+                    Editable.Location.SetDimensionData(TileType, tile, baseHeight + incr * amt, TileSpot.Center);
+                    Editable.Location.SetDimensionData(TileType, tile, incr, tileEditType);
+                }
+            }
+            else
+            {
+                foreach (var tile in selectedTiles)
+                    Editable.Location.ModifyDimensionData(TileType, tile, incr, tileEditType);
+            }
 
             MapModified();
         }
@@ -312,7 +405,10 @@ public class TileDataEditingMode : BaseEditingMode
         if (editor.Ui.Controls.Input.TryConsumePressed(Keys.Delete))
         {
             foreach (var tile in selectedTiles)
-                Editable.Location.SetData(TileType, tile, null, tileEditType);
+            {
+                foreach ( var type in Enum.GetValues<TileSpot>() )
+                    Editable.Location.SetDimensionData(TileType, tile, null, type);
+            }
 
             MapModified();
         }
