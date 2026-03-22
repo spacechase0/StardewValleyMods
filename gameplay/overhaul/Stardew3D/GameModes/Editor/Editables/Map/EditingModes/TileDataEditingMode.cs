@@ -58,16 +58,12 @@ public class TileDataEditingMode : BaseEditingMode
         Vector3 far = Game1.graphics.GraphicsDevice.Viewport.Unproject(new Vector3(editor.Ui.Controls.Input.MousePosition.ToVector2(), 1), editor.ProjectionMatrix, editor.Camera.ViewMatrix, Matrix.Identity);
         Ray cursor = new(near, (far - near).Normalized());
 
-        pendingSelectMode = SelectMode.Replace;
-        if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Shift))
-            pendingSelectMode = SelectMode.Add;
-        else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Alt))
-            pendingSelectMode = SelectMode.Remove;
-
         Vector2 cursorPos2d = new(cursor.Position.X, cursor.Position.Z);
         Vector2 cursorDir2d = new(cursor.Direction.X, cursor.Direction.Z);
 
         Point? hoverTile = null;
+        if (leftMouse)
+            hoverTile = hoverTile;
         for (int i = 0; i < 1000; i += 1)
         {
             Point cursorPosTile2d = new Vector2(MathF.Floor(cursorPos2d.X), MathF.Floor(cursorPos2d.Y)).ToPoint();
@@ -119,7 +115,7 @@ public class TileDataEditingMode : BaseEditingMode
         if (hoverDirty)
         {
             pendingTiles.Clear();
-            if (pendingStartTile.HasValue)
+            if (pendingStartTile.HasValue && hoverTile.HasValue)
             {
                 for (int ix = Math.Min(pendingStartTile.Value.X, hoverTile.Value.X); ix <= Math.Max(pendingStartTile.Value.X, hoverTile.Value.X); ++ix)
                 {
@@ -143,21 +139,29 @@ public class TileDataEditingMode : BaseEditingMode
         if (editor.Ui.Controls.Input.TryConsumePressed(MouseButton.Right))
             rightMouse = justPressedRight = true;
 
+        // Selection mode
+        pendingSelectMode = SelectMode.Replace;
+        if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Shift))
+            pendingSelectMode = SelectMode.Add;
+        else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Alt))
+            pendingSelectMode = SelectMode.Remove;
+
+        // Select all
         if (editor.Ui.Controls.Input.TryConsumePressed(Keys.A) && editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
         {
-            selectedTiles.Clear();
+            HashSet<Point> pending = new();
             for (int ix = 0; ix < Editable.Location.Map.Layers[0].LayerWidth; ++ix)
             {
                 for (int iy = 0; iy < Editable.Location.Map.Layers[0].LayerHeight; ++iy)
                 {
-                    selectedTiles.Add(new(ix, iy));
+                    pending.Add(new(ix, iy));
                 }
             }
-            selDirty = true;
+            DoSelect(pending);
         }
 
-        if (editor.Ui.Controls.Input.TryConsumePressed(Keys.F) && editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control) &&
-            lastHoverTile.HasValue)
+        // Flood fill
+        if (editor.Ui.Controls.Input.TryConsumePressed(Keys.F) && lastHoverTile.HasValue)
         {
             var baseData = DimensionUtils.GetPositionForTile(Editable.Location.Map, lastHoverTile.Value, TileType);
             float min = baseData.Position.Y - baseData.HeightBoundingSize / 2;
@@ -197,42 +201,30 @@ public class TileDataEditingMode : BaseEditingMode
                 TryCheck(check + new Point(0, 1));
             }
 
-            if (pendingSelectMode == SelectMode.Replace)
-                selectedTiles.Clear();
-            foreach (var sel in matching)
-            {
-                if (pendingSelectMode == SelectMode.Remove)
-                    selectedTiles.Remove(sel);
-                else
-                    selectedTiles.Add(sel);
-            }
-            selDirty = true;
+            DoSelect(matching);
         }
 
+        // Drag select has finished
         if (leftMouse && !editor.Ui.Controls.Input.IsDown(MouseButton.Left))
         {
             leftMouse = false;
 
+            HashSet<Point> pending = new();
             if (pendingStartTile.HasValue && lastHoverTile.HasValue)
             {
-                if (pendingSelectMode == SelectMode.Replace)
-                    selectedTiles.Clear();
-
                 for (int ix = Math.Min(pendingStartTile.Value.X, lastHoverTile.Value.X); ix <= Math.Max(pendingStartTile.Value.X, lastHoverTile.Value.X); ++ix)
                 {
                     for (int iy = Math.Min(pendingStartTile.Value.Y, lastHoverTile.Value.Y); iy <= Math.Max(pendingStartTile.Value.Y, lastHoverTile.Value.Y); ++iy)
                     {
-                        if (pendingSelectMode == SelectMode.Remove)
-                            selectedTiles.Remove(new(ix, iy));
-                        else
-                            selectedTiles.Add(new(ix, iy));
+                        pending.Add(new(ix, iy));
                     }
                 }
-                selDirty = true;
-
-                pendingStartTile = null;
             }
+            DoSelect(pending);
+
+            pendingStartTile = null;
         }
+
         if (rightMouse && !editor.Ui.Controls.Input.IsDown(MouseButton.Right))
             rightMouse = false;
 
@@ -243,6 +235,20 @@ public class TileDataEditingMode : BaseEditingMode
         {
             pendingStartTile = lastHoverTile;
         }
+    }
+
+    private void DoSelect(ICollection<Point> tiles)
+    {
+        if (pendingSelectMode == SelectMode.Replace)
+            selectedTiles.Clear();
+        foreach (var sel in tiles)
+        {
+            if (pendingSelectMode == SelectMode.Remove)
+                selectedTiles.Remove(sel);
+            else
+                selectedTiles.Add(sel);
+        }
+        selDirty = true;
     }
 
     private void UpdateModifications()
