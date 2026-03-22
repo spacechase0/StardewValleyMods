@@ -51,6 +51,14 @@ public class MapEditable : IEditable
             var newChildren = value.PopulatePanelContents();
             foreach ( var child in newChildren )
                 editModeGroup.AddChild(child);
+
+            foreach (var renderer in Mod.State.GetRenderHandlersFor(Location))
+            {
+                if (renderer is not LocationRenderer locRenderer)
+                    continue;
+
+                locRenderer.MarkDirty();
+            }
         }
     }
     private Group editModeGroup { get; set; }
@@ -192,7 +200,7 @@ public class MapEditable : IEditable
         {
             if (renderer is LocationRenderer locRenderer)
             {
-                locRenderer.EvenMissing = true;
+                locRenderer.ShowMissing = EditingMode?.ShowMissingInLocation ?? LocationRenderer.ShowMissingType.None;
                 locRenderer.Build();
             }
 

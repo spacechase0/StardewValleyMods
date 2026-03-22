@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using MLEM.Input;
 using MLEM.Ui.Elements;
 using SpaceShared;
+using Stardew3D.Handlers.Render;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
 using StardewValley;
@@ -20,6 +21,12 @@ public class TileDataEditingMode : BaseEditingMode
     public readonly DimensionUtils.TileType TileType;
 
     public override string Id => TileType.ToString();
+    public override LocationRenderer.ShowMissingType ShowMissingInLocation => TileType switch
+    {
+        DimensionUtils.TileType.Floor => LocationRenderer.ShowMissingType.Floor,
+        DimensionUtils.TileType.Ceiling => LocationRenderer.ShowMissingType.Ceiling,
+        DimensionUtils.TileType.Water => LocationRenderer.ShowMissingType.Water,
+    };
 
     private bool leftMouse, rightMouse;
     private float mouseHoldTimer = 0;

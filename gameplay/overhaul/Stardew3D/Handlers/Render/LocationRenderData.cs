@@ -72,10 +72,14 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 for (int ix = 0; ix < Parent.Object.Map.Layers[0].LayerSize.Width; ++ix)
                 {
-                    if (!Parent.Object.isWaterTile(ix, iy))
+                    bool hasWater = Parent.Object.isWaterTile(ix, iy);
+                    if (!hasWater && !Parent.ShowMissing.HasFlag(LocationRenderer.ShowMissingType.Water))
                         continue;
 
                     var srcRect = new Rectangle(Parent.Object.waterAnimationIndex * 64, 2064 + (((ix + iy) % 2 != 0) ? ((!Parent.Object.waterTileFlip) ? 128 : 0) : (Parent.Object.waterTileFlip ? 128 : 0)) + (false ? ((int)Parent.Object.waterPosition) : 0), 64, 64 + (false ? ((int)(0f - Parent.Object.waterPosition)) : 0));
+                    if (!hasWater)
+                        srcRect = new(320, 496, 16, 16);
+
                     Parent.waterVertices[ind * 6 + 0] = new(Parent.waterVertices[ind * 6 + 0].Position, (srcRect.Location.ToVector2() + new Vector2(0, 0)) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 0].Color);
                     Parent.waterVertices[ind * 6 + 1] = new(Parent.waterVertices[ind * 6 + 1].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 1].Color);
                     Parent.waterVertices[ind * 6 + 2] = new(Parent.waterVertices[ind * 6 + 2].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 2].Color);

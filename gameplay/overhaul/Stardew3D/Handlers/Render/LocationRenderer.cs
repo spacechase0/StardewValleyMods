@@ -37,7 +37,17 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
 
     public PBREnvironment Environment = PBREnvironment.CreateDefault();
 
-    public bool EvenMissing = false;
+    [Flags]
+    public enum ShowMissingType
+    {
+        None = 0,
+
+        Floor = 1 << 0,
+        Ceiling = 1 << 1,
+        Water = 1 << 2,
+        Walls = 1 << 3,
+    }
+    public ShowMissingType ShowMissing = ShowMissingType.None;
 
     public LocationRenderer(GameLocation obj)
         : base(obj)
@@ -143,6 +153,13 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
 
         Dictionary<string, Texture2D> texLookup = new();
 
+        ShowMissingType[,] missing = new ShowMissingType[Object.Map.Layers[0].LayerWidth, Object.Map.Layers[0].LayerHeight];
+        for (int iy = 0; iy < missing.GetLength(1); ++iy)
+        {
+            for (int ix = 0; ix < missing.GetLength(0); ++ix)
+                missing[ix, iy] = ShowMissingType.Ceiling | ShowMissingType.Floor;
+        }
+
         List<xTile.Layers.Layer> applicableLayers = new();
         List<xTile.Layers.Layer> ceilingLayers = new();
         applicableLayers.AddRange(Object.backgroundLayers.Select(kvp => kvp.Key));
@@ -152,27 +169,32 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
         ceilingLayers.AddRange(Object.Map.Layers.Where(l => l.Id == "kittycatcasey.Stardew3D/Ceiling" || l.Id.StartsWith("kittycatcasey.Stardew3D/Ceiling_")));
         ceilingLayers.Sort((l1, l2) => (l1.Id.StartsWith("kittycatcasey.Stardew3D/Ceiling_") ? int.Parse(l1.Id.Substring("kittycatcasey.Stardew3D/Ceiling_".Length)) : 0) -
                                        (l2.Id.StartsWith("kittycatcasey.Stardew3D/Ceiling_") ? int.Parse(l2.Id.Substring("kittycatcasey.Stardew3D/Ceiling_".Length)) : 0));
+        ceilingLayers.Add(new("___dummyceilinglayer", Object.Map, Object.map.Layers[0].LayerSize, Object.map.Layers[0].TileSize));
         applicableLayers.AddRange(ceilingLayers);
+        ceilingLayers.Add(new("___dummyfloorlayer", Object.Map, Object.map.Layers[0].LayerSize, Object.map.Layers[0].TileSize));
         for (int iy = 0, ind = 0; iy < Object.Map.Layers[0].LayerSize.Height; ++iy)
         {
             for (int ix = 0; ix < Object.Map.Layers[0].LayerSize.Width; ++ix, ++ind)
             {
                 foreach (var layer in applicableLayers)
                 {
-                    bool isCeiling = ceilingLayers.Contains(layer);
+                    ShowMissingType type = ceilingLayers.Contains(layer) ? ShowMissingType.Ceiling : ShowMissingType.Floor;
+                    bool showError = false;
+                    if (missing[ix, iy].HasFlag(type) && ShowMissing.HasFlag(type))
+                        showError = layer.Id is "___dummyfloorlayer" or "___dummyceilinglayer";
 
                     var tile = layer.Tiles[ix, iy];
-                    if (tile == null)
+                    if (tile == null && !showError)
                         continue;
 
                     Color col = Color.White;
-                    var tilePos = isCeiling ? ceilingData[ind] : floorData[ind];
+                    var tilePos = type == ShowMissingType.Ceiling ? ceilingData[ind] : floorData[ind];
                     if (tilePos.ShouldHide)
                     {
-                        if (EvenMissing)
+                        if (ShowMissing.HasFlag(type))
                         {
                             tilePos.Position.Y = 0;
-                            tilePos.QuadFacingNormal = Vector3.Up;
+                            tilePos.QuadFacingNormal = type == ShowMissingType.Ceiling ? Vector3.Down : Vector3.Up;
                             tilePos.QuadVert00.Y = 0;
                             tilePos.QuadVert10.Y = 0;
                             tilePos.QuadVert01.Y = 0;
@@ -183,24 +205,34 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                         else
                             continue;
                     }
+                    missing[ix, iy] &= ~type;
 
                     (VertexData Data, int FirstVert) DoTile(StaticTile tile)
                     {
-                        string texKey = PathUtilities.NormalizeAssetName(tile.TileSheet.ImageSource);
-                        if (!texLookup.TryGetValue(texKey, out var tex))
-                            texLookup.Add(texKey, tex = Game1.content.Load<Texture2D>(texKey));
+                        Texture2D tex = Game1.mouseCursors;
+                        int tileInd = 20 + 31 * 44, tr = 44;
+                        if (tile != null)
+                        {
+                            tileInd = tile.TileIndex;
+
+                            string texKey = PathUtilities.NormalizeAssetName(tile.TileSheet.ImageSource);
+                            if (!texLookup.TryGetValue(texKey, out tex))
+                                texLookup.Add(texKey, tex = Game1.content.Load<Texture2D>(texKey));
+
+                            tr = tile.TileSheet.SheetWidth;
+                        }
+
 
                         if (!output.TryGetValue(tex, out var verts))
                             output.Add(tex, verts = new());
 
-                        int tr = tile.TileSheet.SheetWidth;
                         float tw = tex.ActualWidth;
                         float twIncr = Game1.smallestTileSize / tw;
                         float th = tex.ActualHeight;
                         float thIncr = Game1.smallestTileSize / th;
 
-                        float tx = tile.TileIndex % tr * twIncr + tuck;
-                        float ty = tile.TileIndex / tr * thIncr + tuck;
+                        float tx = tileInd % tr * twIncr + tuck;
+                        float ty = tileInd / tr * thIncr + tuck;
                         float twidth = twIncr - tuck * 2;
                         float theight = thIncr - tuck * 2;
 
@@ -210,7 +242,7 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                         SimpleVertex v01 = new(tilePos.Position + tilePos.QuadVert01, new Vector2(tx, ty + theight), col);
                         SimpleVertex v11 = new(tilePos.Position + tilePos.QuadVert11, new Vector2(tx + twidth, ty + theight), col);
                         int startInd = verts.Verts.Count;
-                        if (isCeiling)
+                        if (type == ShowMissingType.Ceiling)
                         {
                             verts.Verts.Add(v00);
                             verts.Verts.Add(v10);
@@ -239,8 +271,9 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
 
                     switch (tile)
                     {
-                        case StaticTile staticTile:
-                            var data = DoTile(staticTile);
+                        case null:
+                        case StaticTile:
+                            var data = DoTile(tile as StaticTile);
                             AddIndices(data.Data, data.FirstVert);
                             break;
                         case AnimatedTile animTile:
@@ -265,15 +298,20 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                     }
                 }
 
-                var water = waterData[ind];
-                if (Object.isWaterTile(ix, iy))
+                bool hasWater = Object.isWaterTile(ix, iy);
+                if (hasWater || ShowMissing.HasFlag(ShowMissingType.Water))
                 {
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2( 0, 0 ), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2( 0, 1 ), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2( 1, 0 ), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert11, new Vector2( 1, 1 ), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2( 1, 0 ), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2( 0, 1 ), Object.waterColor.Value));
+                    Rectangle texRect = new Rectangle(320, 496, 16, 16);
+                    if (!hasWater)
+                        texRect = new(320, 496, 16, 16);
+
+                    var water = waterData[ind];
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2(texRect.X, texRect.Y) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert11, new Vector2(texRect.X + texRect.Width, texRect.Y + texRect.Height) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
+                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
                 }
             }
         }
