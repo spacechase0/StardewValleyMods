@@ -51,8 +51,9 @@ internal class MapEditable : IEditable
             return MapLoader.CreateTemporary();
         }
 
-        public void ModifyBaseData(string layerName, Point tile, float amount)
+        public void ModifyBaseData(DimensionUtils.TileType tileType, Point tile, float amount)
         {
+            string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data";
             var layer = Map.GetLayer(layerName);
             if (layer == null)
                 Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
@@ -68,6 +69,23 @@ internal class MapEditable : IEditable
                 Map.AddTileSheet(ts = new("dataValues", Map, "ThirdDimensionData\\floor", new(20, 10), new(16, 16)));
 
             layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, DimensionUtils.GetDataTileIndexForValue(val));
+        }
+
+        public void SetBaseData(DimensionUtils.TileType tileType, Point tile, float? value)
+        {
+            string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data";
+            var layer = Map.GetLayer(layerName);
+            if (layer == null)
+                Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
+
+            if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
+                return;
+
+            TileSheet ts = Map.GetTileSheet("dataValues");
+            if (ts == null)
+                Map.AddTileSheet(ts = new("dataValues", Map, "ThirdDimensionData\\floor", new(20, 10), new(16, 16)));
+
+            layer.Tiles[tile.X, tile.Y] = value.HasValue ? new StaticTile(layer, ts, BlendMode.Alpha, DimensionUtils.GetDataTileIndexForValue(value.Value)) : null;
         }
 
 #if false
@@ -171,6 +189,8 @@ internal class MapEditable : IEditable
 
             locRenderer.MarkDirty();
         }
+        selDirty = true;
+        pendingDirty = true;
     }
 
     public void Reset()
@@ -254,6 +274,9 @@ internal class MapEditable : IEditable
     private HashSet<Point> pendingTiles = new();
     private HashSet<Point> selectedTiles = new();
     private List<Vector3> selBounds = new List<Vector3>();
+    private List<Vector3> pendingBounds = new List<Vector3>();
+    private bool selDirty = false;
+    private bool pendingDirty = false;
     public void Update()
     {
         var editor = Mod.State.ActiveMode as EditorGameMode;
@@ -286,6 +309,60 @@ internal class MapEditable : IEditable
                     selectedTiles.Add(new(ix, iy));
                 }
             }
+            selDirty = true;
+        }
+
+        if (editor.Ui.Controls.Input.TryConsumePressed(Keys.F) && editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control) &&
+            lastHoverTile.HasValue)
+        {
+            var baseData = DimensionUtils.GetPositionForTile(Location.Map, lastHoverTile.Value);
+            float min = baseData.Position.Y - baseData.HeightBoundingSize / 2;
+            float max= baseData.Position.Y + baseData.HeightBoundingSize / 2;
+
+            HashSet<Point> matching = new();
+            HashSet<Point> visited = new();
+            Queue<Point> toVisit = new();
+            toVisit.Enqueue(lastHoverTile.Value);
+            while (toVisit.TryDequeue(out Point check))
+            {
+                if (visited.Contains(check))
+                    continue;
+                visited.Add(check);
+
+                var data = DimensionUtils.GetPositionForTile(Location.Map, check);
+                if (data.Position.Y + data.HeightBoundingSize / 2 < min ||
+                    data.Position.Y - data.HeightBoundingSize / 2 > max)
+                    continue;
+                matching.Add(check);
+
+                if (check.Y == 3) check = check;
+
+                void TryCheck(Point pt)
+                {
+                    if (visited.Contains(pt))
+                        return;
+                    if (pt.X < 0 || pt.Y < 0 || pt.X >= Location.Map.Layers[0].LayerWidth || pt.Y >= Location.Map.Layers[0].LayerHeight)
+                        return;
+
+                    toVisit.Enqueue(pt);
+                }
+
+                TryCheck(check + new Point(-1, 0));
+                TryCheck(check + new Point(1, 0));
+                TryCheck(check + new Point(0, -1));
+                TryCheck(check + new Point(0, 1));
+            }
+
+            if (pendingSelectMode == SelectMode.Replace)
+                selectedTiles.Clear();
+            foreach (var sel in matching)
+            {
+                if (pendingSelectMode == SelectMode.Remove)
+                    selectedTiles.Remove(sel);
+                else
+                    selectedTiles.Add(sel);
+            }
+            selDirty = true;
         }
 
         if (leftMouse && !editor.Ui.Controls.Input.IsDown(MouseButton.Left))
@@ -307,6 +384,7 @@ internal class MapEditable : IEditable
                             selectedTiles.Add(new(ix, iy));
                     }
                 }
+                selDirty = true;
 
                 pendingStartTile = null;
             }
@@ -325,16 +403,25 @@ internal class MapEditable : IEditable
         int scrollAmt = (editor.Ui.Controls.Input.ScrollWheel - editor.Ui.Controls.Input.LastScrollWheel) / 120;
         if (scrollAmt != 0)
         {
-            float incr = 0.5f;
+            float incr = 1f;
             if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Shift))
-                incr = 1f;
+                incr = 0.5f;
             else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
                 incr = 0.1f;
 
             foreach (var tile in selectedTiles)
-                Location.ModifyBaseData($"{Mod.Instance.ModManifest.UniqueID}/FloorData", tile, incr * scrollAmt);
+                Location.ModifyBaseData(DimensionUtils.TileType.Floor, tile, incr * scrollAmt);
 
             MapModified();
+        }
+
+        if (editor.Ui.Controls.Input.TryConsumePressed(Keys.Delete))
+        {
+            foreach (var tile in selectedTiles)
+                Location.SetBaseData(DimensionUtils.TileType.Floor, tile, null);
+
+            MapModified();
+
         }
 
         Point? hoverTile = null;
@@ -385,62 +472,79 @@ internal class MapEditable : IEditable
                 cursorPos2d.Y += 0.001f;
         }
 
-        pendingTiles.Clear();
-        if (pendingStartTile.HasValue)
+        bool hoverDirty = hoverTile != lastHoverTile;
+        if (hoverDirty)
         {
-            for (int ix = Math.Min(pendingStartTile.Value.X, hoverTile.Value.X); ix <= Math.Max(pendingStartTile.Value.X, hoverTile.Value.X); ++ix)
+            pendingTiles.Clear();
+            if (pendingStartTile.HasValue)
             {
-                for (int iy = Math.Min(pendingStartTile.Value.Y, hoverTile.Value.Y); iy <= Math.Max(pendingStartTile.Value.Y, hoverTile.Value.Y); ++iy)
+                for (int ix = Math.Min(pendingStartTile.Value.X, hoverTile.Value.X); ix <= Math.Max(pendingStartTile.Value.X, hoverTile.Value.X); ++ix)
                 {
-                    pendingTiles.Add(new(ix, iy));
+                    for (int iy = Math.Min(pendingStartTile.Value.Y, hoverTile.Value.Y); iy <= Math.Max(pendingStartTile.Value.Y, hoverTile.Value.Y); ++iy)
+                    {
+                        pendingTiles.Add(new(ix, iy));
+                    }
+                }
+            }
+            lastHoverTile = hoverTile;
+            pendingDirty = true;
+        }
+
+        if (pendingDirty)
+        {
+            pendingDirty = false;
+
+            pendingBounds.Clear();
+            if (pendingSelectMode == SelectMode.Replace || pendingSelectMode == SelectMode.Add)
+            {
+                foreach (var tile in pendingTiles)
+                {
+                    var quad = DimensionUtils.GetPositionForTile(Location.Map, tile);
+                    pendingBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
+                    pendingBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+                    pendingBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                    pendingBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
+                    pendingBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                    pendingBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+                }
+            }
+
+            if (hoverTile.HasValue && pendingSelectMode != SelectMode.Remove)
+            {
+                var quad = DimensionUtils.GetPositionForTile(Location.Map, hoverTile.Value);
+                pendingBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
+                pendingBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+                pendingBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                pendingBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
+                pendingBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                pendingBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+            }
+
+            selDirty = true;
+        }
+
+        if (selDirty)
+        {
+            selDirty = false;
+
+            selBounds.Clear();
+            if (!pendingStartTile.HasValue || pendingSelectMode != SelectMode.Replace)
+            {
+                foreach (var tile in selectedTiles)
+                {
+                    if (pendingSelectMode == SelectMode.Remove && pendingTiles.Contains(tile))
+                        continue;
+
+                    var quad = DimensionUtils.GetPositionForTile(Location.Map, tile);
+                    selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
+                    selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+                    selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                    selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
+                    selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                    selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
                 }
             }
         }
-
-        selBounds.Clear();
-        if (pendingSelectMode == SelectMode.Replace || pendingSelectMode == SelectMode.Add)
-        {
-            foreach (var tile in pendingTiles)
-            {
-                var quad = DimensionUtils.GetPositionForTile(Location.Map, tile);
-                selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-            }
-        }
-
-        if (!pendingStartTile.HasValue || pendingSelectMode != SelectMode.Replace)
-        {
-            foreach (var tile in selectedTiles)
-            {
-                if (pendingSelectMode == SelectMode.Remove && pendingTiles.Contains(tile))
-                    continue;
-
-                var quad = DimensionUtils.GetPositionForTile(Location.Map, tile);
-                selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-            }
-        }
-
-        if (hoverTile.HasValue && pendingSelectMode != SelectMode.Remove)
-        {
-            var quad = DimensionUtils.GetPositionForTile(Location.Map, hoverTile.Value);
-            selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
-            selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-            selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-            selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
-            selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-            selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-        }
-
-        lastHoverTile = hoverTile;
     }
 
     public void RenderWorld(RenderBatcher b)
@@ -473,6 +577,29 @@ internal class MapEditable : IEditable
 
     public void AfterRenderWorld()
     {
+        if (pendingBounds.Count > 0)
+        {
+            SimpleVertex[] v = pendingBounds.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.LightGray * 0.75f)).ToArray();
+
+            RenderHelper.GenericEffect.Texture = Game1.staminaRect;
+            RenderHelper.GenericEffect.World = Matrix.Identity;
+            {
+                RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing_Transparent_1"];
+                foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
+                }
+            }
+            {
+                RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing_Transparent_2"];
+                foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    Game1.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
+                }
+            }
+        }
         if (selBounds.Count > 0)
         {
             SimpleVertex[] v = selBounds.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.LightGray * 0.75f)).ToArray();

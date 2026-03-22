@@ -56,10 +56,8 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
 
     public override void Render(RenderContext ctx)
     {
-        if (ctx.Reset || Game1.GetKeyboardState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Delete))
-        {
+        if (ctx.Reset)
             dirty = true;
-        }
 
         Game1.graphics.GraphicsDevice.RasterizerState = RenderHelper.RasterizerState;
         Game1.graphics.GraphicsDevice.DepthStencilState = RenderHelper.DepthState;

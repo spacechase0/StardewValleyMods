@@ -223,7 +223,7 @@ namespace Stardew3D
 
 
             // TODO: hook up to keybind
-            if (e.Pressed.Contains(SButton.Delete))
+            if (e.Pressed.Contains(SButton.Delete) && e.Pressed.Contains(SButton.LeftControl))
             {
                 // Can clear render caches and stuff
                 State.ActiveMode?.SwitchOff(State.ActiveMode);
