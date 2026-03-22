@@ -9,11 +9,6 @@ No particular order of priority. Some of these definitely fall into "feature cre
     * Possibly covered by "dynamic tag system for game handlers" thing
 * Dehardcode extended qualified IDs
 * Dynamic tag system for game handlers (so that they can be enabled/disabled from a config option changing)
-* Rework RenderBatcher:
-    * Instanced -> InstancedModel
-    * Generic -> InstancedVertices
-    * NonInstanced -> Direct
-    * + Dedicated billboarding system (for proper optimized use of tilesheets)
 * Better system for menu handling
 * Migrate from OpenVR.Net to the official bindings at https://github.com/ValveSoftware/openvr
     * OpenVR.Net hasn't been updated in years, and I'm not even sure if it used the latest version for when it did.
@@ -26,7 +21,6 @@ No particular order of priority. Some of these definitely fall into "feature cre
         * Animation metadata
         * Texture overrides
     * Maps
-        * Heightmap
         * Walls
         * Props
         * Shortcut tiles for props
@@ -43,7 +37,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * Finish implementing debris rendering
 * Crosshair for flatscreen first person
 * Point and click controls
-* [VR] Allow headset position to move player (and ideally, the camera)
+* [VR] Allow headset position to move camera (and ideally, the player)
 
 # "Game Mode" stuff (ie. the input / rendering combos)
 * Third person mode
@@ -71,7 +65,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * [VR] Allow desktop window to show any of the other renderers (3d or even 2d)
 
 # Graphics
-* Much better (potential) idea to replace placeholder system: Reverse patch the draw methods and redirect SpriteBatch into a custom thing
+* [PARTIALLY COMPLETE] Much better (potential) idea to replace placeholder system: Reverse patch the draw methods and redirect SpriteBatch into a custom thing
 * Animation support for models
 * Lighting
     * Ambient light
