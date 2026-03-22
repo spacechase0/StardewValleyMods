@@ -81,7 +81,7 @@ public class RenderData<TRenderer> : RenderDataBase
             var area = Interaction.Areas[i];
 
             string rid = $"Interaction/{interactionId}/{i}";
-            if (!Batch.HasGenericData(rid))
+            if (!Batch.HasInstancedVerticesData(rid))
             {
                 var verts = area.GetTransformedTriangleVertices().Select( v3 => new SimpleVertex( v3, Vector2.One * 0.5f, area.DebugColor )).ToList();
                 verts.AddRange(new BoxInteractionArea()
@@ -102,7 +102,7 @@ public class RenderData<TRenderer> : RenderDataBase
                     Translation = area.Translation + Vector3.Transform(new Vector3(0, 0, 0.5f), area.Transform.NoTranslation()),
                     Rotation = area.Rotation,
                 }.GetTransformedTriangleVertices().Select(v3 => new SimpleVertex(v3, Vector2.Zero, Color.Blue)));
-                RenderBatcher.GenericRenderData data = new()
+                RenderBatcher.VerticesRenderData data = new()
                 {
                     Vertices = new(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), verts.Count, BufferUsage.WriteOnly),
                     Indices = new(Game1.graphics.GraphicsDevice, IndexElementSize.SixteenBits, verts.Count, BufferUsage.WriteOnly),
@@ -114,10 +114,10 @@ public class RenderData<TRenderer> : RenderDataBase
                 data.Indices.SetData(Enumerable.Range(0, verts.Count).Select(i => (short)i).ToArray());
                 (data.Effect as GenericModelEffect).Texture = Game1.staminaRect;
                 (data.Effect as GenericModelEffect).Color = Color.White;
-                Batch.AddGenericData(rid, [data]);
+                Batch.AddInstancedVerticesData(rid, [data]);
             }
 
-            int instance = Batch.AddInstanced(rid, Matrix.Identity);
+            int instance = Batch.AddInstancedVertices(rid, Matrix.Identity);
             interactionInstances.Add(instance);
         }
     }
@@ -142,11 +142,11 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
                 var placeholder = Parent.Placeholders[ip];
 
                 string id = $"{Parent.QualifiedId}/{ip}";
-                if (!Batch.HasGenericData(id))
+                if (!Batch.HasInstancedVerticesData(id))
                 {
                     List<SimpleVertex> vertices = new();
                     RenderHelper.GenerateQuad(vertices, placeholder.Texture, placeholder.Offset + Vector3.Forward * 0.0005f * ip, placeholder.DisplaySize, placeholder.TextureRegion, Vector3.Forward, texCoordEffect: placeholder.Effects);
-                    RenderBatcher.GenericRenderData data = new()
+                    RenderBatcher.VerticesRenderData data = new()
                     {
                         Vertices = new(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), vertices.Count, BufferUsage.WriteOnly),
                         Indices = new(Game1.graphics.GraphicsDevice, IndexElementSize.SixteenBits, vertices.Count, BufferUsage.WriteOnly),
@@ -157,10 +157,10 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
                     data.Vertices.SetData(vertices.ToArray());
                     data.Indices.SetData(Enumerable.Range(0, vertices.Count).Select(i => (short)i).ToArray());
                     (data.Effect as GenericModelEffect).Texture = placeholder.Texture;
-                    Batch.AddGenericData(id, [data]);
+                    Batch.AddInstancedVerticesData(id, [data]);
                 }
 
-                int instance = Batch.AddInstanced(id, Matrix.Identity, placeholder.Color);
+                int instance = Batch.AddInstancedVertices(id, Matrix.Identity, placeholder.Color);
                 placeholderInstances.Add(instance);
             }
         }

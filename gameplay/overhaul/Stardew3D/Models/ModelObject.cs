@@ -272,7 +272,7 @@ public class ModelObject
         {
             foreach (var matchEntry in entry.Value)
             {
-                forThis.Add(batch.AddInstanced(matchEntry.Mesh, matchEntry.Transform * transform, color.Value));
+                forThis.Add(batch.AddInstancedModel(matchEntry.Mesh, matchEntry.Transform * transform, color.Value));
             }
         }
         return new()

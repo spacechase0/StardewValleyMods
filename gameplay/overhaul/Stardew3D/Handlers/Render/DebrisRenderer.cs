@@ -163,7 +163,7 @@ public class DebrisRenderer : RendererFor<ModelData, Debris>
 
             if (Parent.Particles?.Length > 0)
             {
-                id = ctx.WorldBatch.AddNonInstanced((PBREnvironment env, Color color, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix) =>
+                id = ctx.WorldBatch.AddDirect((PBREnvironment env, Color color, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix) =>
                 {
                     if (color.A == 0)
                         return;
@@ -194,7 +194,7 @@ public class DebrisRenderer : RendererFor<ModelData, Debris>
         public override void Update(RenderContext ctx)
         {
             lastCamera = ctx.WorldCamera;
-            ctx.WorldBatch.UpdateNonInstanced(id, Matrix.Identity);
+            ctx.WorldBatch.UpdateDirect(id, Matrix.Identity);
         }
     }
 }

@@ -25,7 +25,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
     public LocationRenderData(RenderContext ctx, LocationRenderer parent)
         : base(ctx, parent)
     {
-        terrainInstance = Batch.AddNonInstanced((env, color, world, view, proj) =>
+        terrainInstance = Batch.AddDirect((env, color, world, view, proj) =>
         {
             Game1.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             Game1.graphics.GraphicsDevice.RasterizerState = RenderHelper.RasterizerState;
@@ -63,7 +63,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             Mod.State.GenericModelEffect.Color = Color.White;
         }, ctx.WorldTransform, hasTransparency: false);
 
-        waterInstance = Batch.AddNonInstanced((env, color, world, view, proj) =>
+        waterInstance = Batch.AddDirect((env, color, world, view, proj) =>
         {
             if (Parent.waterVertices.Count == 0)
                 return;
@@ -117,8 +117,8 @@ public class LocationRenderData : RenderData<LocationRenderer>
     {
         base.Update(ctx);
 
-        Batch.UpdateNonInstanced(terrainInstance, ctx.WorldTransform);
-        Batch.UpdateNonInstanced(waterInstance, ctx.WorldTransform);
+        Batch.UpdateDirect(terrainInstance, ctx.WorldTransform);
+        Batch.UpdateDirect(waterInstance, ctx.WorldTransform);
 
         foreach (var obj in Parent.Object.Objects.Pairs)
         {

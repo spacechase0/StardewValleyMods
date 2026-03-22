@@ -80,7 +80,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
             if (ctx.TargetScreen == Game1.game1.uiScreen)
                 return;
 
-            menuInstance = Batch.AddNonInstanced((env, color, world, view, proj) =>
+            menuInstance = Batch.AddDirect((env, color, world, view, proj) =>
             {
                 RenderHelper.DrawQuad(Game1.game1.uiScreen, Vector3.Zero, Parent.DisplaySize, Game1.game1.uiScreen.Bounds, Parent.BaseOrientation.Backward, upOverride: Parent.BaseOrientation.Up, col: color, additionalTransform: world);
             }, Matrix.Identity, hasTransparency: true);
@@ -89,7 +89,7 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
             for (int i = cursorInstances.Length - 1; i >= 0; --i)
             {
                 bool flip = (parent.GameMode.Cursors[i] as FirstPersonVRCursor)?.FlipMenuSprite ?? false;
-                cursorInstances[i] = Batch.AddNonInstanced((env, color, world, view, proj) =>
+                cursorInstances[i] = Batch.AddDirect((env, color, world, view, proj) =>
                 {
                     var size = new Vector2(16f / Game1.game1.uiScreen.Width, 16f / Game1.game1.uiScreen.Height) * Game1.pixelZoom * Parent.DisplaySize * 4;
                     var size3d = new Vector3(size.X, size.Y, 0);
@@ -109,14 +109,14 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
         {
             base.Update(ctx);
 
-            ctx.WorldBatch.UpdateNonInstanced(menuInstance, Matrix.CreateTranslation(Parent.DisplayPosition));
+            ctx.WorldBatch.UpdateDirect(menuInstance, Matrix.CreateTranslation(Parent.DisplayPosition));
 
             foreach (var cursor in Parent.GameMode.Cursors.Reverse())
             {
                 if (!Parent.cursorTargetMapping.TryGetValue(cursor, out var cursorTransform) || !cursorTransform.HasValue)
                     continue;
 
-                ctx.WorldBatch.UpdateNonInstanced(menuInstance, cursorTransform.Value);
+                ctx.WorldBatch.UpdateDirect(menuInstance, cursorTransform.Value);
             }
         }
     }

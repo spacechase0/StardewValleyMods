@@ -10,7 +10,7 @@ namespace Stardew3D.Rendering;
 
 public class RenderBatcher : IDisposable
 {
-    public delegate void RenderNonInstanced(PBREnvironment env, Color color, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix);
+    public delegate void RenderDirect(PBREnvironment env, Color color, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix);
 
     private GraphicsDevice graphics;
 
@@ -44,7 +44,7 @@ public class RenderBatcher : IDisposable
             instanceVbo = null;
         }
     }
-    public class GenericRenderData : IDisposable
+    public class VerticesRenderData : IDisposable
     {
         public VertexBuffer Vertices { get; set; }
         public IndexBuffer Indices { get; set; }
@@ -60,10 +60,10 @@ public class RenderBatcher : IDisposable
             Indices = null;
         }
     }
-    private class GenericBatchData : BatchData
+    private class VerticesBatchData : BatchData
     {
-        public List<GenericRenderData> opaqueVertices = new();
-        public List<GenericRenderData> transparentVertices = new();
+        public List<VerticesRenderData> opaqueVertices = new();
+        public List<VerticesRenderData> transparentVertices = new();
 
         public override void Dispose()
         {
@@ -114,11 +114,11 @@ public class RenderBatcher : IDisposable
     }
 
     private ConditionalWeakTable<Mesh, ModelBatchData> modelBatchData = new();
-    private Dictionary<string, GenericBatchData> genericBatchData = new();
+    private Dictionary<string, VerticesBatchData> verticesBatchData = new();
     private List<(BatchData Batch, int Instance)> instances = new();
-    private List<(RenderNonInstanced Action, Matrix Transform, Color color, byte StaysVisibleAfterFrame)> nonInstancedOpaque = new();
-    private List<(RenderNonInstanced Action, Matrix Transform, Color color, byte StaysVisibleAfterFrame)> nonInstancedTransparent = new();
-    private List<(bool HasTransparency, int Instance)> nonInstanced = new();
+    private List<(RenderDirect Action, Matrix Transform, Color color, byte StaysVisibleAfterFrame)> directOpaque = new();
+    private List<(RenderDirect Action, Matrix Transform, Color color, byte StaysVisibleAfterFrame)> directTransparent = new();
+    private List<(bool HasTransparency, int Instance)> direct = new();
     private ConditionalWeakTable<Texture2D, SpriteData> sprites = new();
 
     public RenderBatcher(GraphicsDevice graphics)
@@ -126,7 +126,7 @@ public class RenderBatcher : IDisposable
         this.graphics = graphics;
     }
 
-    public int AddInstanced(Mesh mesh, Matrix transform, Color col, bool staysVisibleAfterFrame = false)
+    public int AddInstancedModel(Mesh mesh, Matrix transform, Color col, bool staysVisibleAfterFrame = false)
     {
         if (!modelBatchData.TryGetValue(mesh, out ModelBatchData data))
         {
@@ -152,44 +152,44 @@ public class RenderBatcher : IDisposable
         return instances.Count - 1;
     }
 
-    public bool HasGenericData(string genericId)
+    public bool HasInstancedVerticesData(string verticesId)
     {
-        return genericBatchData.ContainsKey(genericId);
+        return verticesBatchData.ContainsKey(verticesId);
     }
 
-    public void AddGenericData(string genericId, List<GenericRenderData> data )
+    public void AddInstancedVerticesData(string verticesId, List<VerticesRenderData> data )
     {
-        genericBatchData.Add(genericId, new()
+        verticesBatchData.Add(verticesId, new()
         {
             opaqueVertices = data.Where(d => d.Blend == BlendState.Opaque).ToList(),
             transparentVertices = data.Where(d => d.Blend != BlendState.Opaque).ToList()
         } );
     }
 
-    public int AddInstanced(string genericId, Matrix transform, Color? color = null, bool staysVisibleAfterFrame = false )
+    public int AddInstancedVertices(string genericId, Matrix transform, Color? color = null, bool staysVisibleAfterFrame = false )
     {
         color ??= Color.White;
-        genericBatchData[genericId].instances.Add(new() { Transform = transform, Color = color.Value, StaysVisibleAfterFrame = staysVisibleAfterFrame ? (byte)1 : (byte)0 } );
-        instances.Add(new(genericBatchData[genericId], genericBatchData[genericId].instances.Count - 1));
+        verticesBatchData[genericId].instances.Add(new() { Transform = transform, Color = color.Value, StaysVisibleAfterFrame = staysVisibleAfterFrame ? (byte)1 : (byte)0 } );
+        instances.Add(new(verticesBatchData[genericId], verticesBatchData[genericId].instances.Count - 1));
         return instances.Count - 1;
     }
 
-    public int AddNonInstanced(RenderNonInstanced custom, Matrix transform, Color? color = null, bool staysVisibleAfterFrame = false, bool hasTransparency = false)
+    public int AddDirect(RenderDirect custom, Matrix transform, Color? color = null, bool staysVisibleAfterFrame = false, bool hasTransparency = false)
     {
         color ??= Color.White;
         int instance;
         if (hasTransparency)
         {
-            instance = nonInstancedTransparent.Count;
-            nonInstancedTransparent.Add(new(custom, transform, color.Value, staysVisibleAfterFrame ? (byte)1 : (byte)0));
+            instance = directTransparent.Count;
+            directTransparent.Add(new(custom, transform, color.Value, staysVisibleAfterFrame ? (byte)1 : (byte)0));
         }
         else
         {
-            instance = nonInstancedOpaque.Count;
-            nonInstancedOpaque.Add(new(custom, transform, color.Value, staysVisibleAfterFrame ? (byte)1 : (byte)0));
+            instance = directOpaque.Count;
+            directOpaque.Add(new(custom, transform, color.Value, staysVisibleAfterFrame ? (byte)1 : (byte)0));
         }
-        nonInstanced.Add(new(hasTransparency, instance));
-        return nonInstanced.Count - 1;
+        direct.Add(new(hasTransparency, instance));
+        return direct.Count - 1;
     }
 
     internal void AddBillboardSprite(Vector2 pos2d, Vector3 pos, int layer, SpriteBatchItem item)
@@ -241,12 +241,12 @@ public class RenderBatcher : IDisposable
         };
     }
 
-    public void UpdateNonInstanced(int instanceId, Matrix transform, Color? color = null)
+    public void UpdateDirect(int instanceId, Matrix transform, Color? color = null)
     {
         color ??= Color.White;
         if (instanceId < 0) return;
-        var container = (nonInstanced[instanceId].HasTransparency ? nonInstancedTransparent : nonInstancedOpaque);
-        int inst = nonInstanced[instanceId].Instance;
+        var container = (direct[instanceId].HasTransparency ? directTransparent : directOpaque);
+        int inst = direct[instanceId].Instance;
         container[inst] = new(container[inst].Action, transform, color.Value, container[inst].StaysVisibleAfterFrame);
     }
 
@@ -283,7 +283,7 @@ public class RenderBatcher : IDisposable
         var oldDepth = graphics.DepthStencilState;
         var oldRaster = graphics.RasterizerState;
 
-        void DoGenericBatch( List<GenericRenderData> data, VertexBuffer instanceVbo, int instanceCount, int? transparentTechnique = null)
+        void DoVerticesBatch( List<VerticesRenderData> data, VertexBuffer instanceVbo, int instanceCount, int? transparentTechnique = null)
         {
             foreach (var entry in data)
             {
@@ -387,7 +387,7 @@ public class RenderBatcher : IDisposable
                 DoModelBatch(entry.Value.opaqueEffects, entry.Value.opaqueParts, entry.Value.instanceVbo, entry.Value.instances.Count);
             }
         }
-        foreach (var entry in genericBatchData)
+        foreach (var entry in verticesBatchData)
         {
             if (entry.Value.instances.Count > 0)
             {
@@ -400,10 +400,10 @@ public class RenderBatcher : IDisposable
                 }
                 entry.Value.instanceVbo.SetData(entry.Value.instances.ToArray());
 
-                DoGenericBatch(entry.Value.opaqueVertices, entry.Value.instanceVbo, entry.Value.instances.Count);
+                DoVerticesBatch(entry.Value.opaqueVertices, entry.Value.instanceVbo, entry.Value.instances.Count);
             }
         }
-        foreach (var entry in nonInstancedOpaque)
+        foreach (var entry in directOpaque)
         {
             entry.Action( env, entry.color, entry.Transform * worldMatrix, viewMatrix, projectionMatrix );
         }
@@ -413,9 +413,9 @@ public class RenderBatcher : IDisposable
         {
             DoModelBatch(entry.Value.transparentEffects, entry.Value.transparentParts, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 1);
         }
-        foreach (var entry in genericBatchData)
+        foreach (var entry in verticesBatchData)
         {
-            DoGenericBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 1);
+            DoVerticesBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 1);
         }
 
         foreach (var entry in sprites)
@@ -429,11 +429,11 @@ public class RenderBatcher : IDisposable
         {
             DoModelBatch(entry.Value.transparentEffects, entry.Value.transparentParts, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 2);
         }
-        foreach (var entry in genericBatchData)
+        foreach (var entry in verticesBatchData)
         {
-            DoGenericBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 2);
+            DoVerticesBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 2);
         }
-        foreach (var entry in nonInstancedTransparent)
+        foreach (var entry in directTransparent)
         {
             entry.Action( env, entry.color, entry.Transform * worldMatrix, viewMatrix, projectionMatrix );
         }
@@ -461,9 +461,9 @@ public class RenderBatcher : IDisposable
                 };
             }
         }
-        foreach (var entry in nonInstanced)
+        foreach (var entry in direct)
         {
-            var container = (entry.HasTransparency ? nonInstancedTransparent : nonInstancedOpaque);
+            var container = (entry.HasTransparency ? directTransparent : directOpaque);
             if (container[entry.Instance].StaysVisibleAfterFrame == 0)
             {
                 container[entry.Instance] = new(container[entry.Instance].Action,
@@ -485,7 +485,7 @@ public class RenderBatcher : IDisposable
         {
             entry.Value.instances.Clear();
         }
-        foreach (var entry in genericBatchData)
+        foreach (var entry in verticesBatchData)
         {
             entry.Value.instances.Clear();
         }
@@ -495,26 +495,26 @@ public class RenderBatcher : IDisposable
             entry.Value.Vertices.Clear();
         }
         instances.Clear();
-        nonInstancedOpaque.Clear();
-        nonInstancedTransparent.Clear();
-        nonInstanced.Clear();
+        directOpaque.Clear();
+        directTransparent.Clear();
+        direct.Clear();
     }
 
     public void Dispose()
     {
         foreach (var entry in modelBatchData)
             entry.Value.Dispose();
-        foreach (var entry in genericBatchData)
+        foreach (var entry in verticesBatchData)
             entry.Value.Dispose();
         foreach (var entry in sprites)
             entry.Value.Dispose();
 
         modelBatchData.Clear();
-        genericBatchData.Clear();
+        verticesBatchData.Clear();
         instances.Clear();
-        nonInstancedOpaque.Clear();
-        nonInstancedTransparent.Clear();
-        nonInstanced.Clear();
+        directOpaque.Clear();
+        directTransparent.Clear();
+        direct.Clear();
         sprites.Clear();
     }
 }

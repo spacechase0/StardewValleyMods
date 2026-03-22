@@ -227,7 +227,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                 var handSize = 0.125f / 4;
 
                 // TODO: Should these be able to be converted to instanced??
-                rayInstances[i] = Batch.AddNonInstanced((env, color, world, view, proj) =>
+                rayInstances[i] = Batch.AddDirect((env, color, world, view, proj) =>
                 {
                     float len = Parent.lastHovered.GetValue(cursor, (_) => new SelectionData()).Distance;
 
@@ -262,7 +262,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                         }
                     }
                 }, Matrix.Identity, staysVisibleAfterFrame: true, hasTransparency: true);
-                gripInstances[i] = Batch.AddNonInstanced((RenderBatcher.RenderNonInstanced)((env, color, world, view, proj) =>
+                gripInstances[i] = Batch.AddDirect((RenderBatcher.RenderDirect)((env, color, world, view, proj) =>
                 {
                     Color colFront = col, colSide = col, colBack = col;
                     colSide.R = (byte)(colSide.R * 0.75f);
