@@ -44,6 +44,8 @@ public class LocationRenderer : RendererFor<LocationModelData, GameLocation>
     {
     }
 
+    public void MarkDirty() { dirty = true; }
+
     public void Build(bool force = false)
     {
         if (dirty || force)

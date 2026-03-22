@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Xsl;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MLEM.Input;
 using MLEM.Ui.Elements;
 using SpaceShared;
@@ -167,7 +169,7 @@ internal class MapEditable : IEditable
             if (renderer is not LocationRenderer locRenderer)
                 continue;
 
-            locRenderer.Build(force: true);
+            locRenderer.MarkDirty();
         }
     }
 
@@ -237,8 +239,20 @@ internal class MapEditable : IEditable
         Location = null;
     }
 
+    private enum SelectMode
+    {
+        Replace,
+        Add,
+        Remove,
+    }
+
     private bool leftMouse, rightMouse;
     private float mouseHoldTimer = 0;
+    private Point? pendingStartTile = null;
+    private Point? lastHoverTile = null;
+    private SelectMode pendingSelectMode = SelectMode.Replace;
+    private HashSet<Point> pendingTiles = new();
+    private HashSet<Point> selectedTiles = new();
     private List<Vector3> selBounds = new List<Vector3>();
     public void Update()
     {
@@ -250,20 +264,80 @@ internal class MapEditable : IEditable
         Vector2 cursorPos2d = new(cursor.Position.X, cursor.Position.Z);
         Vector2 cursorDir2d = new(cursor.Direction.X, cursor.Direction.Z);
 
+        pendingSelectMode = SelectMode.Replace;
+        if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Shift))
+            pendingSelectMode = SelectMode.Add;
+        else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Alt))
+            pendingSelectMode = SelectMode.Remove;
+
+        bool justPressedLeft = false, justPressedRight = false;
         if (editor.Ui.Controls.Input.TryConsumePressed(MouseButton.Left))
-            leftMouse = true;
+            leftMouse = justPressedLeft = true;
         if (editor.Ui.Controls.Input.TryConsumePressed(MouseButton.Right))
-            rightMouse = true;
+            rightMouse = justPressedRight = true;
+
+        if (editor.Ui.Controls.Input.TryConsumePressed(Keys.A) && editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
+        {
+            selectedTiles.Clear();
+            for (int ix = 0; ix < Location.Map.Layers[0].LayerWidth; ++ix)
+            {
+                for (int iy = 0; iy < Location.Map.Layers[0].LayerHeight; ++iy)
+                {
+                    selectedTiles.Add(new(ix, iy));
+                }
+            }
+        }
 
         if (leftMouse && !editor.Ui.Controls.Input.IsDown(MouseButton.Left))
+        {
             leftMouse = false;
+
+            if (pendingStartTile.HasValue && lastHoverTile.HasValue)
+            {
+                if (pendingSelectMode == SelectMode.Replace)
+                    selectedTiles.Clear();
+
+                for (int ix = Math.Min(pendingStartTile.Value.X, lastHoverTile.Value.X); ix <= Math.Max(pendingStartTile.Value.X, lastHoverTile.Value.X); ++ix)
+                {
+                    for (int iy = Math.Min(pendingStartTile.Value.Y, lastHoverTile.Value.Y); iy <= Math.Max(pendingStartTile.Value.Y, lastHoverTile.Value.Y); ++iy)
+                    {
+                        if (pendingSelectMode == SelectMode.Remove)
+                            selectedTiles.Remove(new(ix, iy));
+                        else
+                            selectedTiles.Add(new(ix, iy));
+                    }
+                }
+
+                pendingStartTile = null;
+            }
+        }
         if (rightMouse && !editor.Ui.Controls.Input.IsDown(MouseButton.Right))
             rightMouse = false;
 
         if (!leftMouse && !rightMouse)
             mouseHoldTimer = 0;
 
-        selBounds.Clear();
+        if (justPressedLeft)
+        {
+            pendingStartTile = lastHoverTile;
+        }
+
+        int scrollAmt = (editor.Ui.Controls.Input.ScrollWheel - editor.Ui.Controls.Input.LastScrollWheel) / 120;
+        if (scrollAmt != 0)
+        {
+            float incr = 0.5f;
+            if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Shift))
+                incr = 1f;
+            else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
+                incr = 0.1f;
+
+            foreach (var tile in selectedTiles)
+                Location.ModifyBaseData($"{Mod.Instance.ModManifest.UniqueID}/FloorData", tile, incr * scrollAmt);
+
+            MapModified();
+        }
+
+        Point? hoverTile = null;
         for (int i = 0; i < 1000; i += 1)
         {
             Point cursorPosTile2d = new Vector2( MathF.Floor(cursorPos2d.X), MathF.Floor(cursorPos2d.Y)).ToPoint();
@@ -290,37 +364,7 @@ internal class MapEditable : IEditable
             Vector2 intersectAt2d = new Vector2(intersectAt.X, intersectAt.Z);
             if (dist.HasValue && tileRect.Contains(intersectAt2d))
             {
-                selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
-                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
-
-                if (leftMouse)
-                {
-                    if (mouseHoldTimer > 0)
-                        mouseHoldTimer -= (float) Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-
-                    if (mouseHoldTimer <= 0)
-                    {
-                        mouseHoldTimer = 0.025f;
-                        Location.ModifyBaseData($"{Mod.Instance.ModManifest.UniqueID}/FloorData", cursorPosTile2d, 0.1f);
-                        MapModified();
-                    }
-                }
-                else if (rightMouse)
-                {
-                    if (mouseHoldTimer > 0)
-                        mouseHoldTimer -= (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds;
-
-                    if (mouseHoldTimer <= 0)
-                    {
-                        mouseHoldTimer = 0.025f;
-                        Location.ModifyBaseData($"{Mod.Instance.ModManifest.UniqueID}/FloorData", cursorPosTile2d, -0.1f);
-                        MapModified();
-                    }
-                }
+                hoverTile = cursorPosTile2d;
                 break;
             }
 
@@ -340,6 +384,63 @@ internal class MapEditable : IEditable
             else
                 cursorPos2d.Y += 0.001f;
         }
+
+        pendingTiles.Clear();
+        if (pendingStartTile.HasValue)
+        {
+            for (int ix = Math.Min(pendingStartTile.Value.X, hoverTile.Value.X); ix <= Math.Max(pendingStartTile.Value.X, hoverTile.Value.X); ++ix)
+            {
+                for (int iy = Math.Min(pendingStartTile.Value.Y, hoverTile.Value.Y); iy <= Math.Max(pendingStartTile.Value.Y, hoverTile.Value.Y); ++iy)
+                {
+                    pendingTiles.Add(new(ix, iy));
+                }
+            }
+        }
+
+        selBounds.Clear();
+        if (pendingSelectMode == SelectMode.Replace || pendingSelectMode == SelectMode.Add)
+        {
+            foreach (var tile in pendingTiles)
+            {
+                var quad = DimensionUtils.GetPositionForTile(Location.Map, tile);
+                selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+            }
+        }
+
+        if (!pendingStartTile.HasValue || pendingSelectMode != SelectMode.Replace)
+        {
+            foreach (var tile in selectedTiles)
+            {
+                if (pendingSelectMode == SelectMode.Remove && pendingTiles.Contains(tile))
+                    continue;
+
+                var quad = DimensionUtils.GetPositionForTile(Location.Map, tile);
+                selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+                selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+            }
+        }
+
+        if (hoverTile.HasValue && pendingSelectMode != SelectMode.Remove)
+        {
+            var quad = DimensionUtils.GetPositionForTile(Location.Map, hoverTile.Value);
+            selBounds.Add(quad.Position + quad.QuadVert00 + quad.QuadFacingNormal * 0.02f);
+            selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+            selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+            selBounds.Add(quad.Position + quad.QuadVert11 + quad.QuadFacingNormal * 0.02f);
+            selBounds.Add(quad.Position + quad.QuadVert10 + quad.QuadFacingNormal * 0.02f);
+            selBounds.Add(quad.Position + quad.QuadVert01 + quad.QuadFacingNormal * 0.02f);
+        }
+
+        lastHoverTile = hoverTile;
     }
 
     public void RenderWorld(RenderBatcher b)
