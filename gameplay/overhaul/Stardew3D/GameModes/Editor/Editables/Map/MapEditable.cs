@@ -233,7 +233,16 @@ public class MapEditable : IEditable
         foreach (var layer in map.Layers.ToArray())
         {
             if (!layer.Id.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/"))
+            {
                 map.RemoveLayer(layer);
+                continue;
+            }
+
+            if (!layer.Tiles.Array.Cast<xTile.Tiles.Tile>().Any(t => t != null))
+            {
+                map.RemoveLayer(layer);
+                continue;
+            }
         }
 
         // Fix layers

@@ -23,7 +23,7 @@ public static class DimensionUtils
                 pos += (character.Position - character.Position.ToPoint().ToVector2());
                 pos.Y += -character.yJumpOffset;
 
-                Vector3 ret = pos.To3D(character.currentLocation?.Map);
+                Vector3 ret = pos.To3D(character.currentLocation?.Map, character.swimming.Value ? TileType.Water : TileType.Floor);
                 if (character is Monster monster && monster.isGlider.Value)
                 {
                     ret.Y += 1.25f;

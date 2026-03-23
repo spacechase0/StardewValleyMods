@@ -10,9 +10,11 @@ using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Mods;
+using xTile.Tiles;
 using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers.Render;
@@ -68,24 +70,39 @@ public class LocationRenderData : RenderData<LocationRenderer>
             if (Parent.waterVertices.Count == 0)
                 return;
 
+            Texture2D tex = Game1.mouseCursors;
+            var waterLayer = Parent.Object.Map.GetLayer("kittycatcasey.Stardew3D/Water");
             for (int iy = 0, ind = 0; iy < Parent.Object.Map.Layers[0].LayerSize.Height; ++iy)
             {
                 for (int ix = 0; ix < Parent.Object.Map.Layers[0].LayerSize.Width; ++ix)
                 {
                     bool hasWater = Parent.Object.isWaterTile(ix, iy);
-                    if (!hasWater && !Parent.ShowMissing.HasFlag(LocationRenderer.ShowMissingType.Water))
-                        continue;
 
-                    var srcRect = new Rectangle(Parent.Object.waterAnimationIndex * 64, 2064 + (((ix + iy) % 2 != 0) ? ((!Parent.Object.waterTileFlip) ? 128 : 0) : (Parent.Object.waterTileFlip ? 128 : 0)) + (false ? ((int)Parent.Object.waterPosition) : 0), 64, 64 + (false ? ((int)(0f - Parent.Object.waterPosition)) : 0));
+                    Rectangle srcRect = new Rectangle(Parent.Object.waterAnimationIndex * 64, 2064 + (((ix + iy) % 2 != 0) ? ((!Parent.Object.waterTileFlip) ? 128 : 0) : (Parent.Object.waterTileFlip ? 128 : 0)) + (false ? ((int)Parent.Object.waterPosition) : 0), 64, 64 + (false ? ((int)(0f - Parent.Object.waterPosition)) : 0));
                     if (!hasWater)
                         srcRect = new(320, 496, 16, 16);
 
-                    Parent.waterVertices[ind * 6 + 0] = new(Parent.waterVertices[ind * 6 + 0].Position, (srcRect.Location.ToVector2() + new Vector2(0, 0)) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 0].Color);
-                    Parent.waterVertices[ind * 6 + 1] = new(Parent.waterVertices[ind * 6 + 1].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 1].Color);
-                    Parent.waterVertices[ind * 6 + 2] = new(Parent.waterVertices[ind * 6 + 2].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 2].Color);
-                    Parent.waterVertices[ind * 6 + 3] = new(Parent.waterVertices[ind * 6 + 3].Position, (srcRect.Location.ToVector2() + srcRect.Size.ToVector2()) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 3].Color);
-                    Parent.waterVertices[ind * 6 + 4] = new(Parent.waterVertices[ind * 6 + 4].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 4].Color);
-                    Parent.waterVertices[ind * 6 + 5] = new(Parent.waterVertices[ind * 6 + 5].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / Game1.mouseCursors.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 5].Color);
+                    // TODO: do this properly like the others
+                    if (waterLayer?.Tiles[ix, iy] is StaticTile tile && tile.TileIndex != -1)
+                    {
+                        if (tex == Game1.mouseCursors)
+                        {
+                            string texKey = PathUtilities.NormalizeAssetName(tile.TileSheet.ImageSource);
+                            tex = Game1.content.Load<Texture2D>(texKey);
+                        }
+                        srcRect = Game1.getSourceRectForStandardTileSheet(tex, tile.TileIndex, 16, 16);
+                        hasWater = true;
+                    }
+
+                    if (!hasWater && !Parent.ShowMissing.HasFlag(LocationRenderer.ShowMissingType.Water))
+                        continue;
+
+                    Parent.waterVertices[ind * 6 + 0] = new(Parent.waterVertices[ind * 6 + 0].Position, (srcRect.Location.ToVector2() + new Vector2(0, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 0].Color);
+                    Parent.waterVertices[ind * 6 + 1] = new(Parent.waterVertices[ind * 6 + 1].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 1].Color);
+                    Parent.waterVertices[ind * 6 + 2] = new(Parent.waterVertices[ind * 6 + 2].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 2].Color);
+                    Parent.waterVertices[ind * 6 + 3] = new(Parent.waterVertices[ind * 6 + 3].Position, (srcRect.Location.ToVector2() + srcRect.Size.ToVector2()) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 3].Color);
+                    Parent.waterVertices[ind * 6 + 4] = new(Parent.waterVertices[ind * 6 + 4].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 4].Color);
+                    Parent.waterVertices[ind * 6 + 5] = new(Parent.waterVertices[ind * 6 + 5].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 5].Color);
 
                     ++ind;
                 }
@@ -99,14 +116,20 @@ public class LocationRenderData : RenderData<LocationRenderer>
 
             Game1.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             //Game1.graphics.GraphicsDevice.RasterizerState = RenderHelper.RasterizerState;
-            Mod.State.GenericModelEffect.CurrentTechnique = Mod.State.GenericModelEffect.Techniques["SingleDrawing_Transparent_2"];
             Mod.State.GenericModelEffect.Projection = proj;
             Mod.State.GenericModelEffect.View = view;
             Mod.State.GenericModelEffect.World = world;
             Mod.State.GenericModelEffect.Color = color;
-            Mod.State.GenericModelEffect.Texture = Game1.mouseCursors;
-
+            Mod.State.GenericModelEffect.Texture = tex;
             Game1.graphics.GraphicsDevice.SetVertexBuffer(Parent.waterVbo);
+
+            Mod.State.GenericModelEffect.CurrentTechnique = Mod.State.GenericModelEffect.Techniques["SingleDrawing_Transparent_1"];
+            foreach (var pass in Mod.State.GenericModelEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Game1.graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, Parent.waterVertices.Count / 3);
+            }
+            Mod.State.GenericModelEffect.CurrentTechnique = Mod.State.GenericModelEffect.Techniques["SingleDrawing_Transparent_2"];
             foreach (var pass in Mod.State.GenericModelEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();

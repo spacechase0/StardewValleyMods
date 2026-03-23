@@ -163,6 +163,7 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
 
         List<xTile.Layers.Layer> applicableLayers = new();
         List<xTile.Layers.Layer> ceilingLayers = new();
+        List<xTile.Layers.Layer> waterLayers = new();
         applicableLayers.AddRange(Object.backgroundLayers.Select(kvp => kvp.Key));
         applicableLayers.AddRange(Object.buildingLayers.Select(kvp => kvp.Key));
         //applicableLayers.AddRange(location.frontLayers.Select(kvp => kvp.Key));
@@ -170,6 +171,9 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
         ceilingLayers.AddRange(Object.Map.Layers.Where(l => l.Id == "kittycatcasey.Stardew3D/Ceiling" || l.Id.StartsWith("kittycatcasey.Stardew3D/Ceiling_")));
         ceilingLayers.Sort((l1, l2) => (l1.Id.StartsWith("kittycatcasey.Stardew3D/Ceiling_") ? int.Parse(l1.Id.Substring("kittycatcasey.Stardew3D/Ceiling_".Length)) : 0) -
                                        (l2.Id.StartsWith("kittycatcasey.Stardew3D/Ceiling_") ? int.Parse(l2.Id.Substring("kittycatcasey.Stardew3D/Ceiling_".Length)) : 0));
+        waterLayers.AddRange(Object.Map.Layers.Where(l => l.Id == "kittycatcasey.Stardew3D/Water" || l.Id.StartsWith("kittycatcasey.Stardew3D/Water_")));
+        waterLayers.Sort((l1, l2) => (l1.Id.StartsWith("kittycatcasey.Stardew3D/Water_") ? int.Parse(l1.Id.Substring("kittycatcasey.Stardew3D/Water_".Length)) : 0) -
+                                     (l2.Id.StartsWith("kittycatcasey.Stardew3D/Water_") ? int.Parse(l2.Id.Substring("kittycatcasey.Stardew3D/Water_".Length)) : 0));
         ceilingLayers.Add(new("___dummyceilinglayer", Object.Map, Object.map.Layers[0].LayerSize, Object.map.Layers[0].TileSize));
         applicableLayers.AddRange(ceilingLayers);
         ceilingLayers.Add(new("___dummyfloorlayer", Object.Map, Object.map.Layers[0].LayerSize, Object.map.Layers[0].TileSize));
@@ -299,20 +303,40 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                     }
                 }
 
-                bool hasWater = Object.isWaterTile(ix, iy);
-                if (hasWater || ShowMissing.HasFlag(ShowMissingType.Water))
                 {
+                    bool hasWater = Object.isWaterTile(ix, iy);
+                    Texture2D tex = Game1.mouseCursors;
                     Rectangle texRect = new Rectangle(320, 496, 16, 16);
+                    Color color = Object.waterColor.Value;
                     if (!hasWater)
+                    {
                         texRect = new(320, 496, 16, 16);
+                        color = Color.White;
+                    }
 
-                    var water = waterData[ind];
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2(texRect.X, texRect.Y) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert11, new Vector2(texRect.X + texRect.Width, texRect.Y + texRect.Height) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
-                    waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / Game1.mouseCursors.Bounds.Size.ToVector2(), Object.waterColor.Value));
+                    // TODO: do this properly like the others
+                    if (waterLayers.FirstOrDefault()?.Tiles[ix, iy] is StaticTile tile && tile.TileIndex != -1)
+                    {
+                        string texKey = PathUtilities.NormalizeAssetName(tile.TileSheet.ImageSource);
+                        if (!texLookup.TryGetValue(texKey, out tex))
+                            texLookup.Add(texKey, tex = Game1.content.Load<Texture2D>(texKey));
+
+                        texRect = Game1.getSourceRectForStandardTileSheet(tex, tile.TileIndex, tex.Width / 16, tex.Height / 16);
+                        color = Color.White;
+
+                        hasWater = true;
+                    }
+
+                    if (hasWater || ShowMissing.HasFlag(ShowMissingType.Water))
+                    {
+                        var water = waterData[ind];
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2(texRect.X, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color));
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert11, new Vector2(texRect.X + texRect.Width, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color));
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color));
+                    }
                 }
             }
         }
@@ -336,7 +360,8 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
         {
             for (int iy = -1; iy <= Object.Map.Layers[0].LayerSize.Height; ++iy)
             {
-                var assocData = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Back")}");
+                var assocData = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Buildings"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Buildings")}");
+                assocData ??= FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Back")}");
                 assocData ??= FloorWallAssociationData.Get(Object.doesTileHaveProperty(ix, iy, "Type", "Back") ?? "Default");
 
                 WallDefinitionData wallDef_ = WallDefinitionData.Get(assocData?.WallDefinitionId ?? "");
@@ -396,6 +421,8 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                             customWallDefs[i] = wallDef;
                         }
 
+                        if (ix == 4 && iy == 4) ix = ix;
+
                         if (customWallDefs[i] == null)
                         {
                             Point check = new(ix, iy);
@@ -407,11 +434,12 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                                 case 3: check.Y += 1; break;
                             }
 
-                            var tmpAssoc = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Back")}");
-                            tmpAssoc ??= FloorWallAssociationData.Get(Object.doesTileHaveProperty(check.X, check.Y, "Type", "Back") ?? "Default");
-                            customWallDefs[i] ??= WallDefinitionData.Get(tmpAssoc?.WallDefinitionId ?? "");
-                            customWallDefs[i] ??= WallDefinitionData.Get(tmpAssoc?.WallDefinitionId ?? "");
-                            if (customWallDefs[i] == null)
+                            var tmpAssoc = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Buildings"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Buildings")}");
+                            //tmpAssoc ??= FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Back")}");
+                            //tmpAssoc ??= FloorWallAssociationData.Get(Object.doesTileHaveProperty(check.X, check.Y, "Type", "Back") ?? "Default");
+                            if (WallDefinitionData.Get(tmpAssoc?.WallDefinitionId ?? "") is WallDefinitionData validWallDef)
+                                customWallDefs[i] = validWallDef;
+                            //if (customWallDefs[i] == null)
                             {
                                 if ((dataSize?.Tiles[check.X, check.Y]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var tmpWallDefId) ?? false) &&
                                     WallDefinitionData.Get(tmpWallDefId) is WallDefinitionData tmpWallDef)
