@@ -64,7 +64,7 @@ public class DummyLocation : GameLocation
         val += amount;
         ind = DimensionUtils.GetDataTileIndexForValue(val);
 
-        TileSheet ts = Map.GetTileSheet("dataValues3d");
+        TileSheet ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
         if (ts == null)
             Map.AddTileSheet(ts = new("dataValues3d", Map, "ThirdDimensionData\\data", new(32, 16), new(16, 16)));
 
@@ -81,7 +81,7 @@ public class DummyLocation : GameLocation
         if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
             return;
 
-        TileSheet ts = Map.GetTileSheet("dataValues3d");
+        TileSheet ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
         if (ts == null)
             Map.AddTileSheet(ts = new("dataValues3d", Map, "ThirdDimensionData\\floor", new(32, 16), new(16, 16)));
 

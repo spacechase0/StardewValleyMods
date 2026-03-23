@@ -192,7 +192,7 @@ public class RenderBatcher : IDisposable
         return direct.Count - 1;
     }
 
-    internal void AddBillboardSprite(Vector2 pos2d, Vector3 pos, int layer, SpriteBatchItem item)
+    internal void AddBillboardSprite(Vector2 pos2d, Vector3 pos, int layer, SpriteBatchItem item, float scale = 1)
     {
         var data = sprites.GetOrCreateValue(item.Texture);
         data.Instances.Add(new()
@@ -201,16 +201,16 @@ public class RenderBatcher : IDisposable
             Layer = layer,
         });
 
-        SimpleVertex tl = SimpleVertex.From2D(item.vertexTL, pos2d, Vector3.Zero);
-        SimpleVertex tr = SimpleVertex.From2D(item.vertexTR, pos2d, Vector3.Zero);
-        SimpleVertex bl = SimpleVertex.From2D(item.vertexBL, pos2d, Vector3.Zero);
-        SimpleVertex br = SimpleVertex.From2D(item.vertexBR, pos2d, Vector3.Zero);
+        SimpleVertex tl = SimpleVertex.From2D(item.vertexTL, pos2d, Vector3.Zero, scale);
+        SimpleVertex tr = SimpleVertex.From2D(item.vertexTR, pos2d, Vector3.Zero, scale);
+        SimpleVertex bl = SimpleVertex.From2D(item.vertexBL, pos2d, Vector3.Zero, scale);
+        SimpleVertex br = SimpleVertex.From2D(item.vertexBR, pos2d, Vector3.Zero, scale);
         Util.Swap(ref tl.TexCoord, ref tr.TexCoord);
         Util.Swap(ref bl.TexCoord, ref br.TexCoord);
         data.Vertices.AddRange([tl, tr, bl, br, bl, tr]);
     }
 
-    internal void AddSprite(Vector2 pos2d, Vector3 pos, Matrix orientation, int layer, SpriteBatchItem item)
+    internal void AddSprite(Vector2 pos2d, Vector3 pos, Matrix orientation, int layer, SpriteBatchItem item, float scale = 1)
     {
         var data = sprites.GetOrCreateValue(item.Texture);
         data.Instances.Add(new()
@@ -220,10 +220,10 @@ public class RenderBatcher : IDisposable
             Orientation = orientation,
         });
 
-        SimpleVertex tl = SimpleVertex.From2D(item.vertexTL, pos2d, Vector3.Zero);
-        SimpleVertex tr = SimpleVertex.From2D(item.vertexTR, pos2d, Vector3.Zero);
-        SimpleVertex bl = SimpleVertex.From2D(item.vertexBL, pos2d, Vector3.Zero);
-        SimpleVertex br = SimpleVertex.From2D(item.vertexBR, pos2d, Vector3.Zero);
+        SimpleVertex tl = SimpleVertex.From2D(item.vertexTL, pos2d, Vector3.Zero, scale);
+        SimpleVertex tr = SimpleVertex.From2D(item.vertexTR, pos2d, Vector3.Zero, scale);
+        SimpleVertex bl = SimpleVertex.From2D(item.vertexBL, pos2d, Vector3.Zero, scale);
+        SimpleVertex br = SimpleVertex.From2D(item.vertexBR, pos2d, Vector3.Zero, scale);
         Util.Swap(ref tl.TexCoord, ref tr.TexCoord);
         Util.Swap(ref bl.TexCoord, ref br.TexCoord);
         data.Vertices.AddRange([tl, tr, bl, br, bl, tr]);

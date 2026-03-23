@@ -14,6 +14,7 @@ public class SpriteBatchProxy : SpriteBatch
     private Matrix baseTransform;
     private bool sameY3d;
     private Matrix? orientationOverride;
+    private float scale = 1;
 
     public SpriteBatchProxy(GameLocation relevantLocation)
         : base(Game1.graphics.GraphicsDevice)
@@ -21,13 +22,14 @@ public class SpriteBatchProxy : SpriteBatch
         this.relevantLocation = relevantLocation;
     }
 
-    public void Begin(Vector2 base2d, Matrix baseTransform, Matrix? orientationOverride = null, bool sameY3d = true)
+    public void Begin(Vector2 base2d, Matrix baseTransform, Matrix? orientationOverride = null, bool sameY3d = true, float scale = 1)
     {
         base.Begin(SpriteSortMode.FrontToBack);
         this.base2d = base2d;
         this.baseTransform = baseTransform;
         this.sameY3d = sameY3d;
         this.orientationOverride = orientationOverride;
+        this.scale = scale;
     }
 
     public new void End(RenderBatcher output)
@@ -96,9 +98,9 @@ public class SpriteBatchProxy : SpriteBatch
 #endif
             //pos.Z -= yFromLayer / Game1.tileSize;
             if (orientationOverride.HasValue)
-                output.AddSprite(basePos, pos + baseTransform.Translation, orientationOverride.Value * baseTransform.NoTranslation(), i, item);
+                output.AddSprite(basePos, pos + baseTransform.Translation, orientationOverride.Value * baseTransform.NoTranslation(), i, item, scale);
             else
-                output.AddBillboardSprite(basePos, pos + baseTransform.Translation, i, item);
+                output.AddBillboardSprite(basePos, pos + baseTransform.Translation, i, item, scale);
         }
 
         _batcher._batchItemCount = 0;

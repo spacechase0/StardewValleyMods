@@ -256,5 +256,30 @@ public class LocationRenderData : RenderData<LocationRenderer>
                 renderer?.Render(ctx);
             }
         }
+
+        if (Parent.Object.currentEvent != null)
+        {
+            var ev = Parent.Object.currentEvent;
+            foreach (var obj in ev.actors)
+            {
+                foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
+                {
+                    RenderContext subCtx = ctx;
+                    subCtx.ParentWorldTransform = ctx.WorldTransform;
+                    subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel3D) * ctx.WorldTransform;
+                    renderer?.Render(subCtx);
+                }
+            }
+            foreach (var obj in ev.farmerActors)
+            {
+                foreach (var renderer in Mod.State.GetRenderHandlersFor(obj))
+                {
+                    RenderContext subCtx = ctx;
+                    subCtx.ParentWorldTransform = ctx.WorldTransform;
+                    subCtx.WorldTransform = Matrix.CreateTranslation(obj.StandingPixel3D) * ctx.WorldTransform;
+                    renderer?.Render(subCtx);
+                }
+            }
+        }
     }
 }

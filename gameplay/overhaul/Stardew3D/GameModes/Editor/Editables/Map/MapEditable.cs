@@ -272,6 +272,8 @@ public class MapEditable : IEditable
             string[] parts = PathUtilities.NormalizePath(ts.ImageSource).Split('\\');
             if (parts[0] == "Maps")
                 parts = parts.Skip(1).ToArray();
+            if (parts[0] == "SMAPI") // TODO: How to handle this properly
+                parts = parts.Skip(4).ToArray();
 
             ts.ImageSource = string.Join('/', parts);
         }

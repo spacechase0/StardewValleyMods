@@ -28,7 +28,7 @@ public struct SimpleVertex : IVertexType
         Color = col;
     }
 
-    public static SimpleVertex From2D(VertexPositionColorTexture orig, Vector2 pos2d, Vector3 basePos3d)
+    public static SimpleVertex From2D(VertexPositionColorTexture orig, Vector2 pos2d, Vector3 basePos3d, float scale = 1)
     {
         Vector3 pos = orig.Position;
         pos.X -= pos2d.X;
@@ -36,7 +36,7 @@ public struct SimpleVertex : IVertexType
         pos /= Game1.tileSize;
         pos.Y = -pos.Y;
 
-        return new SimpleVertex(pos + basePos3d, orig.TextureCoordinate, orig.Color);
+        return new SimpleVertex(pos * scale + basePos3d, orig.TextureCoordinate, orig.Color);
     }
 
     static SimpleVertex()

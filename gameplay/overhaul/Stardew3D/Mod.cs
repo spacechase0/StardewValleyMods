@@ -138,7 +138,7 @@ namespace Stardew3D
                 state.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
                 state.SetRenderHandlerForGameModeTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
                 //state.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
-                state.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer<ModelData, Character>(obj as Character));
+                state.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer(obj as Character));
                 state.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
                 state.SetRenderHandlerForGameModeTags<Building>([], handler => obj => new BuildingRenderer(obj as Building));
                 state.SetRenderHandlerForGameModeTags<Crop>([], handler => obj => new CropRenderer(obj as Crop));

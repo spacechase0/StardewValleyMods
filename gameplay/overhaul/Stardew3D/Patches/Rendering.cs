@@ -78,3 +78,33 @@ public static class NullifyGlobalToLocalPatch3
             __result = globalPosition;
     }
 }
+
+[HarmonyPatch(typeof(Character), nameof(Character.getLocalPosition))]
+public static class NullifyGlobalToLocalPatch4
+{
+    public static void Postfix(Character __instance, ref Vector2 __result)
+    {
+        if (Mod.State.ActiveMode != null)
+            __result = __instance.Position + new Vector2(0, __instance.yJumpOffset);
+    }
+}
+
+[HarmonyPatch(typeof(Utility), nameof(Utility.isOnScreen), typeof(Vector2), typeof(int))]
+public static class NullifyGlobalToLocalPatch5
+{
+    public static void Postfix(ref bool __result)
+    {
+        if (Mod.State.ActiveMode != null)
+            __result = true;
+    }
+}
+
+[HarmonyPatch(typeof(Utility), nameof(Utility.isOnScreen), typeof(Point), typeof(int), typeof(GameLocation))]
+public static class NullifyGlobalToLocalPatch6
+{
+    public static void Postfix(ref bool __result)
+    {
+        if (Mod.State.ActiveMode != null)
+            __result = true;
+    }
+}
