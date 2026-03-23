@@ -1,0 +1,27 @@
+{
+    // Generic Mod Config Menu UI
+    "config.custom-skill-page.name": "Página de Habilidades Personalizada",
+    "config.custom-skill-page.tooltip": "Define se a página de habilidades personalizada será exibida.\nIsso moverá a carteira para abrir espaço para mais habilidades.",
+    "config.support-all-professions-mod.name": "Suporte ao Mod All Professions",
+    "config.support-all-professions-mod.tooltip": "Quando o mod 'All Professions' estiver instalado, define se as profissões personalizadas registradas via SpaceCore serão aplicadas automaticamente ao atingir o nível correspondente.",
+    "config.advanced-social-interactions": "Interações Sociais Avançadas",
+    "config.always-trigger.name": "Sempre Ativar",
+    "config.always-trigger.description": "Define se o menu deve sempre ser ativado ao interagir com um NPC.",
+    "config.trigger-modifier.name": "Tecla de Atalho",
+    "config.trigger-modifier.description": "A tecla a ser mantida pressionada ao interagir com alguém para abrir o menu de interações avançadas.",
+
+    "interaction-with": "Interação com {{npc}}",
+    "interaction.chat": "Conversar",
+    "interaction.gift-held": "Presentear com Item em Mãos",
+    "interaction.cancel": "Cancelar",
+
+    "question.ask": "Fazer uma Pergunta",
+
+    "health-regen": "Vida por segundo",
+    "stamina-regen": "Energia por segundo",
+
+    "resource-clump.bad-tool-tier": "Sua ferramenta não é forte o suficiente para quebrar isso.",
+
+    "guidebook.previous-page": "Página Anterior",
+    "guidebook.next-page": "Próxima Página",
+}
