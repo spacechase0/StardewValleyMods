@@ -125,7 +125,7 @@ namespace Stardew3D
             State.GameModesFinalized += (s, e) =>
             {
                 var state = s as State;
-                state.SetRenderHandlerForGameModeTags<GameLocation>([], handler => obj => new LocationRenderer(obj as GameLocation));
+                state.SetJointHandlerForGameModeTags<GameLocation, LocationHandler>([], handler => obj => new LocationHandler(obj as GameLocation));
                 state.SetRenderHandlerForGameModeTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
                 state.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
                 state.SetRenderHandlerForGameModeTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));

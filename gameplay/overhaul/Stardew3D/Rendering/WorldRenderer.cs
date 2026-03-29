@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using Stardew3D.DataModels;
 using Stardew3D.Handlers;
-using Stardew3D.Handlers.Render;
 using Stardew3D.Models;
 using Stardew3D.Utilities;
 using StardewValley;
@@ -20,7 +19,7 @@ public class WorldRenderer : IDisposable
 
     public PBREnvironment CurrentEnvironment => env;
 
-    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location) => (Mod.State.GetRenderHandlersFor(location)[0] as LocationRenderer)?.Environment ?? CurrentEnvironment;
+    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location) => (Mod.State.GetRenderHandlersFor(location)[0] as LocationHandler)?.Environment ?? CurrentEnvironment;
     public Matrix GetCurrentTransformFor(GameLocation location) => locationTransforms.GetOrCreateValue( location ).Value;
 
     private bool builtLocationRecently = false;
@@ -92,7 +91,7 @@ public class WorldRenderer : IDisposable
         for (int i = 0; i < adjacencies.Count; i++)
         {
             var renderers = adjacencies[i].Renderers;
-            var mainRenderer = renderers[0] as LocationRenderer;
+            var mainRenderer = renderers[0] as LocationHandler;
             //AddAdjacenciesForPortals(adjacencies[i].Location, adjacencies[i].TransformFromCurrent);
 
             if (mainRenderer.IsDirty && !builtLocationRecently)
@@ -112,11 +111,11 @@ public class WorldRenderer : IDisposable
         {
             foreach (var other in adjacencies)
             {
-                if ((other.Renderers[0] as LocationRenderer)?.Object != null)
+                if ((other.Renderers[0] as LocationHandler)?.Object != null)
                 {
-                    locationTransforms.AddOrUpdate((other.Renderers[0] as LocationRenderer)?.Object, new(other.TransformFromCurrent));
+                    locationTransforms.AddOrUpdate((other.Renderers[0] as LocationHandler)?.Object, new(other.TransformFromCurrent));
                 }
-                var env = (other.Renderers[0] as LocationRenderer).Environment;
+                var env = (other.Renderers[0] as LocationHandler).Environment;
                 foreach (var renderer in other.Renderers)
                 {
                     renderer.Render(new()

@@ -86,7 +86,7 @@ public class SpriteBatchProxy : SpriteBatch
             //*/
             Vector3 pos = Vector3.Zero;
 #if true
-            Vector3 base3dFrom2d = base2d.To3D(relevantLocation?.Map);
+            Vector3 base3dFrom2d = base2d.To3D(relevantLocation);
             pos.X += basePos.X / Game1.tileSize - base3dFrom2d.X;
             if (!sameY3d)
             {

@@ -19,12 +19,12 @@ using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers.Render;
 
-public class LocationRenderData : RenderData<LocationRenderer>
+public class LocationRenderData : RenderData<LocationHandler>
 {
     private int terrainInstance = -1;
     private int waterInstance = -1;
 
-    public LocationRenderData(RenderContext ctx, LocationRenderer parent)
+    public LocationRenderData(RenderContext ctx, LocationHandler parent)
         : base(ctx, parent)
     {
         terrainInstance = Batch.AddDirect((env, color, world, view, proj) =>
@@ -94,7 +94,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
                         hasWater = true;
                     }
 
-                    if (!hasWater && !Parent.ShowMissing.HasFlag(LocationRenderer.ShowMissingType.Water))
+                    if (!hasWater && !Parent.ShowMissing.HasFlag(LocationHandler.ShowMissingType.Water))
                         continue;
 
                     Parent.waterVertices[ind * 6 + 0] = new(Parent.waterVertices[ind * 6 + 0].Position, (srcRect.Location.ToVector2() + new Vector2(0, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 0].Color);
@@ -153,7 +153,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 RenderContext subCtx = ctx;
                 subCtx.ParentWorldTransform = ctx.WorldTransform;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.Key.ToPoint().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.Key.ToPoint().To3D(Parent.Object)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }
@@ -164,7 +164,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 RenderContext subCtx = ctx;
                 subCtx.ParentWorldTransform = ctx.WorldTransform;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.Value.getBoundingBox().Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.Value.getBoundingBox().Center.ToVector2().To3D(Parent.Object)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }
@@ -175,7 +175,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 RenderContext subCtx = ctx;
                 subCtx.ParentWorldTransform = ctx.WorldTransform;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.getBoundingBox().Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.getBoundingBox().Center.ToVector2().To3D(Parent.Object)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }
@@ -186,7 +186,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 RenderContext subCtx = ctx;
                 subCtx.ParentWorldTransform = ctx.WorldTransform;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.getBoundingBox().Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.getBoundingBox().Center.ToVector2().To3D(Parent.Object)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }
@@ -197,7 +197,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 RenderContext subCtx = ctx;
                 subCtx.ParentWorldTransform = ctx.WorldTransform;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.boundingBox.Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.boundingBox.Center.ToVector2().To3D(Parent.Object)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }
@@ -241,7 +241,7 @@ public class LocationRenderData : RenderData<LocationRenderer>
             {
                 RenderContext subCtx = ctx;
                 subCtx.ParentWorldTransform = ctx.WorldTransform;
-                subCtx.WorldTransform = Matrix.CreateTranslation(obj.GetBoundingBox().Center.ToVector2().To3D(Parent.Object.Map)) * ctx.WorldTransform;
+                subCtx.WorldTransform = Matrix.CreateTranslation(obj.GetBoundingBox().Center.ToVector2().To3D(Parent.Object)) * ctx.WorldTransform;
                 renderer?.Render(subCtx);
             }
         }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShared;
 using Stardew3D.DataModels;
+using Stardew3D.Handlers.Render;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
 using StardewModdingAPI.Utilities;
@@ -12,9 +13,9 @@ using xTile.Layers;
 using xTile.Tiles;
 using static Stardew3D.Handlers.IRenderHandler;
 
-namespace Stardew3D.Handlers.Render;
+namespace Stardew3D.Handlers;
 
-public class LocationRenderer : RendererFor<ModelData, GameLocation>
+public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHandler
 {
     internal class AnimationData
     {
@@ -38,6 +39,10 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
 
     public PBREnvironment Environment = PBREnvironment.CreateDefault();
 
+    public DimensionUtils.PositionResult[,] floorData;
+    public DimensionUtils.PositionResult[,] ceilingData;
+    public DimensionUtils.PositionResult[,] waterData;
+
     [Flags]
     public enum ShowMissingType
     {
@@ -50,7 +55,7 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
     }
     public ShowMissingType ShowMissing = ShowMissingType.None;
 
-    public LocationRenderer(GameLocation obj)
+    public LocationHandler(GameLocation obj)
         : base(obj)
     {
     }
@@ -63,6 +68,11 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
         {
             RefreshVertices();
         }
+    }
+
+    public void Update(IUpdateHandler.UpdateContext ctx)
+    {
+        Build();
     }
 
     public override void Render(RenderContext ctx)
@@ -84,22 +94,23 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
 
     private void RefreshVertices()
     {
-        DimensionUtils.PositionResult[] floorData = new DimensionUtils.PositionResult[Object.Map.Layers[0].LayerWidth * Object.Map.Layers[0].LayerHeight];
-        DimensionUtils.PositionResult[] ceilingData = new DimensionUtils.PositionResult[floorData.Length];
-        DimensionUtils.PositionResult[] waterData = new DimensionUtils.PositionResult[floorData.Length];
-        for (int iy = 0, ind = 0; iy < Object.Map.Layers[0].LayerHeight; iy++)
+        floorData = new DimensionUtils.PositionResult[Object.Map.Layers[0].LayerWidth, Object.Map.Layers[0].LayerHeight];
+        ceilingData = new DimensionUtils.PositionResult[Object.Map.Layers[0].LayerWidth, Object.Map.Layers[0].LayerHeight];
+        waterData = new DimensionUtils.PositionResult[Object.Map.Layers[0].LayerWidth, Object.Map.Layers[0].LayerHeight];
+
+        for (int iy = 0; iy < Object.Map.Layers[0].LayerHeight; iy++)
         {
-            for (int ix = 0; ix < Object.Map.Layers[0].LayerWidth; ++ix, ++ind)
+            for (int ix = 0; ix < Object.Map.Layers[0].LayerWidth; ++ix)
             {
-                floorData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Floor);
-                ceilingData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Ceiling);
-                waterData[ind] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Water);
+                floorData[ix, iy] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Floor);
+                ceilingData[ix, iy] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Ceiling);
+                waterData[ix, iy] = DimensionUtils.GetPositionForTile(Object.Map, new(ix, iy), DimensionUtils.TileType.Water);
             }
         }
 
         Dictionary<Texture2D, VertexData> vertices = new();
-        BuildFloorsAndCeiling(floorData, ceilingData, waterData, vertices);
-        BuildWalls(floorData, ceilingData, waterData, vertices);
+        BuildFloorsAndCeiling(vertices);
+        BuildWalls(vertices);
 
         foreach (var key in vbos.Keys)
         {
@@ -146,7 +157,7 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
         dirty = false;
     }
 
-    private void BuildFloorsAndCeiling(DimensionUtils.PositionResult[] floorData, DimensionUtils.PositionResult[] ceilingData, DimensionUtils.PositionResult[] waterData, Dictionary<Texture2D, VertexData> output)
+    private void BuildFloorsAndCeiling(Dictionary<Texture2D, VertexData> output)
     {
         const float tuck = 0.00001f;
 
@@ -161,9 +172,9 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                 missing[ix, iy] = ShowMissingType.Ceiling | ShowMissingType.Floor;
         }
 
-        List<xTile.Layers.Layer> applicableLayers = new();
-        List<xTile.Layers.Layer> ceilingLayers = new();
-        List<xTile.Layers.Layer> waterLayers = new();
+        List<Layer> applicableLayers = new();
+        List<Layer> ceilingLayers = new();
+        List<Layer> waterLayers = new();
         applicableLayers.AddRange(Object.backgroundLayers.Select(kvp => kvp.Key));
         applicableLayers.AddRange(Object.buildingLayers.Select(kvp => kvp.Key));
         //applicableLayers.AddRange(location.frontLayers.Select(kvp => kvp.Key));
@@ -177,9 +188,9 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
         ceilingLayers.Add(new("___dummyceilinglayer", Object.Map, Object.map.Layers[0].LayerSize, Object.map.Layers[0].TileSize));
         applicableLayers.AddRange(ceilingLayers);
         ceilingLayers.Add(new("___dummyfloorlayer", Object.Map, Object.map.Layers[0].LayerSize, Object.map.Layers[0].TileSize));
-        for (int iy = 0, ind = 0; iy < Object.Map.Layers[0].LayerSize.Height; ++iy)
+        for (int iy = 0; iy < Object.Map.Layers[0].LayerSize.Height; ++iy)
         {
-            for (int ix = 0; ix < Object.Map.Layers[0].LayerSize.Width; ++ix, ++ind)
+            for (int ix = 0; ix < Object.Map.Layers[0].LayerSize.Width; ++ix)
             {
                 foreach (var layer in applicableLayers)
                 {
@@ -193,7 +204,7 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                         continue;
 
                     Color col = Color.White;
-                    var tilePos = type == ShowMissingType.Ceiling ? ceilingData[ind] : floorData[ind];
+                    var tilePos = type == ShowMissingType.Ceiling ? ceilingData[ix, iy] : floorData[ix, iy];
                     if (tilePos.ShouldHide)
                     {
                         if (ShowMissing.HasFlag(type))
@@ -329,7 +340,7 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
 
                     if (hasWater || ShowMissing.HasFlag(ShowMissingType.Water))
                     {
-                        var water = waterData[ind];
+                        var water = waterData[ix, iy];
                         waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2(texRect.X, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
                         waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color));
                         waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
@@ -342,7 +353,7 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
         }
     }
 
-    private void BuildWalls(DimensionUtils.PositionResult[] floorData, DimensionUtils.PositionResult[] ceilingData, DimensionUtils.PositionResult[] waterData, Dictionary<Texture2D, VertexData> output)
+    private void BuildWalls(Dictionary<Texture2D, VertexData> output)
     {
         int mapWidth = Object.Map.Layers[0].LayerWidth, mapHeight = Object.Map.Layers[0].LayerHeight;
         DimensionUtils.PositionResult LookupPosition(bool ceiling, int x, int y)
@@ -351,7 +362,7 @@ public class LocationRenderer : RendererFor<ModelData, GameLocation>
                 return new DimensionUtils.PositionResult(new Point(x, y), ceiling ? DimensionUtils.TileType.Ceiling : DimensionUtils.TileType.Floor);
 
             var data = ceiling ? ceilingData : floorData;
-            return data[ x + y * mapWidth ];
+            return data[ x, y ];
         }
 
         const float tuck = 0.00001f;

@@ -1,4 +1,6 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
+using Stardew3D.Handlers;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Extensions;
@@ -23,7 +25,7 @@ public static class DimensionUtils
                 pos += (character.Position - character.Position.ToPoint().ToVector2());
                 pos.Y += -character.yJumpOffset;
 
-                Vector3 ret = pos.To3D(character.currentLocation?.Map, character.swimming.Value ? TileType.Water : TileType.Floor);
+                Vector3 ret = pos.To3D(character.currentLocation, character.swimming.Value ? TileType.Water : TileType.Floor);
                 if (character is Monster monster && monster.isGlider.Value)
                 {
                     ret.Y += 1.25f;
@@ -34,9 +36,8 @@ public static class DimensionUtils
         }
     }
 
-    public static Vector3 GetPositionAtTile(xTile.Map map, Point tile, Vector2 subTile, TileType tileType = TileType.Floor)
+    private static Vector3 ProcessPositionAtTile(PositionResult data, Point tile, Vector2 subTile)
     {
-        var data = GetPositionForTile(map, tile, tileType);
         if (data.ShouldHide)
             return data.Position;
 
@@ -49,6 +50,16 @@ public static class DimensionUtils
         // TODO: Map resulting X/Z for "region" thing
 
         return new(tile.X + subTile.X, ret, tile.Y + subTile.Y);
+    }
+
+    public static Vector3 GetPositionAtTile(GameLocation loc, Point tile, Vector2 subTile, TileType tileType = TileType.Floor)
+    {
+        return ProcessPositionAtTile(GetPositionForTile(loc, tile, tileType), tile, subTile);
+    }
+
+    public static Vector3 GetPositionAtTile(xTile.Map map, Point tile, Vector2 subTile, TileType tileType = TileType.Floor)
+    {
+        return ProcessPositionAtTile(GetPositionForTile(map, tile, tileType), tile, subTile);
     }
 
     public static int GetDataTileIndexForValue(float value)
@@ -139,6 +150,29 @@ public static class DimensionUtils
         }
     }
 
+    public static PositionResult GetPositionForTile(GameLocation loc, Point tile, TileType tileType = TileType.Floor)
+    {
+        if (loc == null)
+            return new(tile, tileType);
+
+        var handler = Mod.State.GetUpdateHandlersFor(loc);
+        if (handler.Length < 1 || handler[0] is not LocationHandler locHandler ||
+            tile.X < 0 || tile.Y < 0 || tile.X >= loc.Map.Layers[0].LayerWidth || tile.Y >= loc.Map.Layers[0].LayerHeight)
+            return GetPositionForTile(loc.Map, tile, tileType);
+
+        PositionResult[,] cached = tileType switch
+        {
+            TileType.Floor => locHandler.floorData,
+            TileType.Ceiling => locHandler.ceilingData,
+            TileType.Water => locHandler.waterData,
+            _ => null,
+        };
+        if (cached == null)
+            return GetPositionForTile(loc.Map, tile, tileType);
+
+        return cached[tile.X, tile.Y];
+    }
+
     public static PositionResult GetPositionForTile(xTile.Map map, Point tile, TileType tileType = TileType.Floor)
     {
         if (map == null)
@@ -209,7 +243,7 @@ public static class DimensionUtils
     public static Vector3 GetPosition3D( this Character character )
     {
         var tilePos = character.GetBoundingBox().Center.ToVector2();
-        var ret = tilePos.To3D( character.currentLocation.Map ) + new Vector3(0, -character.yJumpOffset, 0);
+        var ret = tilePos.To3D( character.currentLocation ) + new Vector3(0, -character.yJumpOffset, 0);
         return ret;
     }
 
@@ -223,6 +257,18 @@ public static class DimensionUtils
             case Game1.right: return MathF.PI / 2;
         }
         return 0;
+    }
+    public static Vector3 To3D(this Vector2 vec, GameLocation loc, TileType tileType = TileType.Floor)
+    {
+        Point tile = new((int)(vec.X / Game1.tileSize), (int)(vec.Y / Game1.tileSize));
+        Vector2 subTile = new Vector2(vec.X / Game1.tileSize, vec.Y / Game1.tileSize) - tile.ToVector2();
+        return GetPositionAtTile(loc, tile, subTile, tileType);
+    }
+
+    public static Vector3 To3D(this Point pt, GameLocation loc, TileType tileType = TileType.Floor)
+    {
+        Vector2 subTile = new Vector2(0.5f, 0.5f);
+        return GetPositionAtTile(loc, pt, subTile, tileType);
     }
 
     public static Vector3 To3D(this Vector2 vec, xTile.Map map, TileType tileType = TileType.Floor)

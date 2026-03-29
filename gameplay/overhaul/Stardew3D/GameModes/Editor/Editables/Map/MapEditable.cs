@@ -12,7 +12,7 @@ using MLEM.Ui.Elements;
 using SpaceShared;
 using Stardew3D.GameModes.Editor.Editables;
 using Stardew3D.GameModes.Editor.Editables.Map.EditingModes;
-using Stardew3D.Handlers.Render;
+using Stardew3D.Handlers;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
 using StardewModdingAPI.Utilities;
@@ -57,7 +57,7 @@ public class MapEditable : IEditable
 
             foreach (var renderer in Mod.State.GetRenderHandlersFor(Location))
             {
-                if (renderer is not LocationRenderer locRenderer)
+                if (renderer is not LocationHandler locRenderer)
                     continue;
 
                 locRenderer.MarkDirty();
@@ -84,7 +84,7 @@ public class MapEditable : IEditable
 
         foreach (var renderer in Mod.State.GetRenderHandlersFor(Location))
         {
-            if (renderer is not LocationRenderer locRenderer)
+            if (renderer is not LocationHandler locRenderer)
                 continue;
 
             locRenderer.MarkDirty();
@@ -102,7 +102,7 @@ public class MapEditable : IEditable
         {
             for (int iy = 0; iy < mapSize.Y; ++iy)
             {
-                float y = new Point(ix, iy).To3D(Location.Map).Y;
+                float y = new Point(ix, iy).To3D(Location).Y;
                 maxHeight = Math.Max(maxHeight, y);
             }
         }
@@ -204,9 +204,9 @@ public class MapEditable : IEditable
 
         foreach (var renderer in Mod.State.GetRenderHandlersFor(Location))
         {
-            if (renderer is LocationRenderer locRenderer)
+            if (renderer is LocationHandler locRenderer)
             {
-                locRenderer.ShowMissing = EditingMode?.ShowMissingInLocation ?? LocationRenderer.ShowMissingType.None;
+                locRenderer.ShowMissing = EditingMode?.ShowMissingInLocation ?? LocationHandler.ShowMissingType.None;
                 locRenderer.Build();
             }
 

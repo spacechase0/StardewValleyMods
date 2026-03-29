@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using MLEM.Input;
 using MLEM.Ui.Elements;
 using SpaceShared;
-using Stardew3D.Handlers.Render;
+using Stardew3D.Handlers;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
 using StardewValley;
@@ -21,11 +21,11 @@ public class TileDataEditingMode : BaseEditingMode
     public readonly DimensionUtils.TileType TileType;
 
     public override string Id => TileType.ToString();
-    public override LocationRenderer.ShowMissingType ShowMissingInLocation => TileType switch
+    public override LocationHandler.ShowMissingType ShowMissingInLocation => TileType switch
     {
-        DimensionUtils.TileType.Floor => LocationRenderer.ShowMissingType.Floor,
-        DimensionUtils.TileType.Ceiling => LocationRenderer.ShowMissingType.Ceiling,
-        DimensionUtils.TileType.Water => LocationRenderer.ShowMissingType.Water,
+        DimensionUtils.TileType.Floor => LocationHandler.ShowMissingType.Floor,
+        DimensionUtils.TileType.Ceiling => LocationHandler.ShowMissingType.Ceiling,
+        DimensionUtils.TileType.Water => LocationHandler.ShowMissingType.Water,
     };
 
     private bool leftMouse, rightMouse;
@@ -165,7 +165,7 @@ public class TileDataEditingMode : BaseEditingMode
             Rectangle tileRect = new(cursorPosTile2d.X, cursorPosTile2d.Y, 1, 1);
 
             Vector2 tile = cursorPosTile2d.ToVector2();
-            var quad = DimensionUtils.GetPositionForTile(Editable.Location.Map, cursorPosTile2d, TileType);
+            var quad = DimensionUtils.GetPositionForTile(Editable.Location, cursorPosTile2d, TileType);
             /*
             if (float.IsNaN(quad.Position.Y))
             {
@@ -247,7 +247,7 @@ public class TileDataEditingMode : BaseEditingMode
         // Flood fill
         if (editor.Ui.Controls.Input.TryConsumePressed(Keys.F) && lastHoverTile.HasValue)
         {
-            var baseData = DimensionUtils.GetPositionForTile(Editable.Location.Map, lastHoverTile.Value, TileType);
+            var baseData = DimensionUtils.GetPositionForTile(Editable.Location, lastHoverTile.Value, TileType);
             float min = baseData.Position.Y - baseData.HeightBoundingSize / 2;
             float max = baseData.Position.Y + baseData.HeightBoundingSize / 2;
 
@@ -261,7 +261,7 @@ public class TileDataEditingMode : BaseEditingMode
                     continue;
                 visited.Add(check);
 
-                var data = DimensionUtils.GetPositionForTile(Editable.Location.Map, check, TileType);
+                var data = DimensionUtils.GetPositionForTile(Editable.Location, check, TileType);
                 if (data.ShouldHide != baseData.ShouldHide ||
                     data.Position.Y + data.HeightBoundingSize / 2 < min ||
                     data.Position.Y - data.HeightBoundingSize / 2 > max)
@@ -534,7 +534,7 @@ public class TileDataEditingMode : BaseEditingMode
             if (pendingSelectMode == SelectMode.Replace || pendingSelectMode == SelectMode.Add)
             {
                 foreach (var tile in pendingTiles)
-                    MakeQuad(pendingBounds, DimensionUtils.GetPositionForTile(Editable.Location.Map, tile, TileType));
+                    MakeQuad(pendingBounds, DimensionUtils.GetPositionForTile(Editable.Location, tile, TileType));
             }
 
             
@@ -553,7 +553,7 @@ public class TileDataEditingMode : BaseEditingMode
                     if (pendingSelectMode == SelectMode.Remove && pendingTiles.Contains(tile))
                         continue;
 
-                    MakeQuad(selBounds, DimensionUtils.GetPositionForTile(Editable.Location.Map, tile, TileType));
+                    MakeQuad(selBounds, DimensionUtils.GetPositionForTile(Editable.Location, tile, TileType));
                 }
             }
         }
@@ -584,7 +584,7 @@ public class TileDataEditingMode : BaseEditingMode
         if (lastHoverTile.HasValue && pendingSelectMode != SelectMode.Remove)
         {
             List<Vector3> hover = new();
-            MakeQuad(hover, DimensionUtils.GetPositionForTile(Editable.Location.Map, lastHoverTile.Value, TileType));
+            MakeQuad(hover, DimensionUtils.GetPositionForTile(Editable.Location, lastHoverTile.Value, TileType));
             SimpleVertex[] v = hover.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.Gray)).ToArray();
 
             RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing"];

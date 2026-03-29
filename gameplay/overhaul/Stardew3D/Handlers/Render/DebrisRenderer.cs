@@ -125,7 +125,7 @@ public class DebrisRenderer : RendererFor<ModelData, Debris>
                 if (!Object.chunksMoveTowardPlayer)
                     pos.Y += -chunk.position.Y + finalY;
 
-                Vector3 pos3d = pos.To3D(ParentLocation?.Map);
+                Vector3 pos3d = pos.To3D(ParentLocation);
                 if (!Object.chunksMoveTowardPlayer)
                     pos3d.Y += (finalY - chunk.position.Y) / 64f;
 
@@ -181,7 +181,7 @@ public class DebrisRenderer : RendererFor<ModelData, Debris>
                         if (!Parent.Object.chunksMoveTowardPlayer)
                             pos.Y += -chunk.position.Y + finalY;
 
-                        Vector3 pos3d = pos.To3D(Parent.ParentLocation?.Map);
+                        Vector3 pos3d = pos.To3D(Parent.ParentLocation);
                         if (!Parent.Object.chunksMoveTowardPlayer)
                             pos3d.Y += (finalY - chunk.position.Y) / 64f;
 
