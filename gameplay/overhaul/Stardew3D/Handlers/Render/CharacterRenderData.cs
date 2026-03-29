@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Stardew3D.DataModels;
+using Stardew3D.GameModes;
 using Stardew3D.Utilities;
 using StardewValley;
 using static Stardew3D.Handlers.IRenderHandler;
@@ -16,6 +17,9 @@ public class CharacterRenderData : RenderData<CharacterRenderer>
     public override void Update(RenderContext ctx)
     {
         base.Update(ctx);
+
+        if (Parent.Object == Game1.player && Mod.State.ActiveMode.Tags.Contains(IGameMode.CategoryFirstPerson))
+            return;
 
         if (instance == null)
         {
