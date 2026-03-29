@@ -15,6 +15,7 @@ public class SpriteBatchProxy : SpriteBatch
     private bool sameY3d;
     private Matrix? orientationOverride;
     private float scale = 1;
+    private SpriteBatch oldBatch;
 
     public SpriteBatchProxy(GameLocation relevantLocation)
         : base(Game1.graphics.GraphicsDevice)
@@ -30,20 +31,16 @@ public class SpriteBatchProxy : SpriteBatch
         this.sameY3d = sameY3d;
         this.orientationOverride = orientationOverride;
         this.scale = scale;
+        this.oldBatch = Game1.spriteBatch;
+
+        Game1.spriteBatch = this;
     }
 
     public new void End(RenderBatcher output)
     {
         this._beginCalled = this._beginCalled ? false : throw new InvalidOperationException("Begin must be called before calling End.");
 
-        switch (_sortMode)
-        {
-            case SpriteSortMode.Texture:
-            case SpriteSortMode.BackToFront:
-            case SpriteSortMode.FrontToBack:
-                Array.Sort<SpriteBatchItem>(_batcher._batchItemList, 0, _batcher._batchItemCount);
-                break;
-        }
+        Array.Sort<SpriteBatchItem>(_batcher._batchItemList, 0, _batcher._batchItemCount);
 
         float sameY = 0;
         float sameLayer = 0;
@@ -53,7 +50,7 @@ public class SpriteBatchProxy : SpriteBatch
             for (int i = 0; i < _batcher._batchItemCount; ++i)
             {
                 var item = _batcher._batchItemList[i];
-                if (item.SortKey < 1f / 10000)
+                if (Math.Abs(item.SortKey) < 1f / 10000)
                     continue;
                 ++amt;
 
@@ -90,10 +87,10 @@ public class SpriteBatchProxy : SpriteBatch
             pos.X += basePos.X / Game1.tileSize - base3dFrom2d.X;
             if (!sameY3d)
             {
-                if (item.SortKey < 1f / 10000)
+                if (Math.Abs(item.SortKey) < 1f / 10000)
                     pos.Z += (basePos.Y) / Game1.tileSize - base3dFrom2d.Z;
                 else
-                    pos.Z += (basePos.Y - yFromLayer) / Game1.tileSize - base3dFrom2d.Z;
+                    pos.Z += (basePos.Y - yFromLayer) / Game1.tileSize;
             }
 #endif
             //pos.Z -= yFromLayer / Game1.tileSize;
@@ -104,5 +101,6 @@ public class SpriteBatchProxy : SpriteBatch
         }
 
         _batcher._batchItemCount = 0;
+        Game1.spriteBatch = oldBatch;
     }
 }

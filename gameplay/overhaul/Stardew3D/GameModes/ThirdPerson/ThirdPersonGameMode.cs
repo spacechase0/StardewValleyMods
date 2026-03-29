@@ -45,7 +45,7 @@ public class ThirdPersonGameMode : BaseGameMode
 
     protected override void UpdateCamera()
     {
-        Camera.Target = Game1.player.StandingPixel3D;
+        Camera.Target = Game1.player.StandingPixel3D + new Vector3(0, Game1.player.swimming.Value ? 0.25f : 1.75f, 0);
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;
     }
 }

@@ -10,7 +10,7 @@ using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers.Render;
 
-public class TelevisionRenderData : RenderDataWithPlaceholder<ModelData, TV>
+public class TelevisionRenderData : RenderData<TelevisionRenderer>
 {
     private int nonInstanced = -1;
     private MeshPart screenPart;

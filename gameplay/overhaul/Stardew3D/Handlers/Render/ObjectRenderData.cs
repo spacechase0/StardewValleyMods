@@ -22,15 +22,19 @@ public class ObjectRenderData : RenderData<ObjectRenderer>
 
         if (instance == null)
         {
+            var bb = Parent.Object.GetBoundingBox();
             if (Parent.Object is Furniture f && f.furniture_type.Value == Furniture.rug )
-                ctx.WorldSpriteBatch.Begin(Parent.Object.GetBoundingBox().Center.ToVector2(), ctx.WorldTransform, orientationOverride: Matrix.CreateLookAt(Vector3.Zero, Vector3.Up, Vector3.Forward) * Matrix.CreateTranslation(Vector3.Up*0.01f), sameY3d: false);
+                ctx.WorldSpriteBatch.Begin(bb.Center.ToVector2(), ctx.WorldTransform, orientationOverride: Matrix.CreateLookAt(Vector3.Zero, Vector3.Up, Vector3.Forward) * Matrix.CreateTranslation(Vector3.Up*0.01f) * Matrix.CreateTranslation(0, 0, bb.Height / (float)Game1.tileSize/2), sameY3d: false);
             else
-                ctx.WorldSpriteBatch.Begin(Parent.Object.GetBoundingBox().Center.ToVector2(), ctx.WorldTransform);
+                ctx.WorldSpriteBatch.Begin(bb.Center.ToVector2(), ctx.WorldTransform);
 
             if (Parent.Object.Location != null)
                 Parent.Object.draw(ctx.WorldSpriteBatch, (int)Parent.Object.TileLocation.X, (int) Parent.Object.TileLocation.Y);
             else
                 Parent.Object.draw(ctx.WorldSpriteBatch, 0, 0, 0);
+
+            if (Parent.Object.heldObject.Value != null)
+                instance = instance;
 
             ctx.WorldSpriteBatch.End(ctx.WorldBatch);
         }
