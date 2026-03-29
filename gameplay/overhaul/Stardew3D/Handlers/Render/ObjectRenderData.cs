@@ -33,9 +33,6 @@ public class ObjectRenderData : RenderData<ObjectRenderer>
             else
                 Parent.Object.draw(ctx.WorldSpriteBatch, 0, 0, 0);
 
-            if (Parent.Object.heldObject.Value != null)
-                instance = instance;
-
             ctx.WorldSpriteBatch.End(ctx.WorldBatch);
         }
     }

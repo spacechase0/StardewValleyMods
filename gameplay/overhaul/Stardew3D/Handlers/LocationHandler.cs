@@ -9,6 +9,7 @@ using Stardew3D.Utilities;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Extensions;
+using StardewValley.Locations;
 using xTile.Layers;
 using xTile.Tiles;
 using static Stardew3D.Handlers.IRenderHandler;
@@ -432,8 +433,6 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                             customWallDefs[i] = wallDef;
                         }
 
-                        if (ix == 4 && iy == 4) ix = ix;
-
                         if (customWallDefs[i] == null)
                         {
                             Point check = new(ix, iy);
@@ -456,6 +455,44 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                                     WallDefinitionData.Get(tmpWallDefId) is WallDefinitionData tmpWallDef)
                                 {
                                     customWallDefs[i] = tmpWallDef;
+                                }
+                            }
+                        }
+
+                        if (Object is DecoratableLocation deco)
+                        {
+                            string floor = deco.GetFloorID(ix, iy);
+                            if (!string.IsNullOrEmpty(floor))
+                            {
+                                deco.appliedWallpaper.TryGetValue(floor, out string wallSource);
+                                if (wallSource == null && deco.appliedWallpaper.Keys.FirstOrDefault(k => k.StartsWith($"{floor}_")) is string wallKey)
+                                {
+                                    deco.appliedWallpaper.TryGetValue(wallKey, out wallSource);
+                                }
+
+                                var data = deco.GetWallpaperSource(wallSource ?? "");
+                                if (data.Key != null)
+                                {
+                                    var ts = deco.Map.RequireTileSheet(data.Key);
+                                    int width = ts.SheetWidth;
+                                    int ind = data.Value / width * width * 3 + data.Value % width;
+                                    customWallDefs[i] = new WallDefinitionData() // TODO: We do NOT need to be allocating a new one for every wall on every tile
+                                    {
+                                        VerticalSegments =
+                                        [
+                                            new()
+                                            {
+                                                Tilesheet = ts.ImageSource,
+                                                TextureRegion = new Rectangle(ind % width * 16, ind / width * 16, 16, 41),
+                                                ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Stretch,
+                                            },
+                                            new()
+                                            {
+                                                Tilesheet = ts.ImageSource,
+                                                TextureRegion = new Rectangle(ind % width * 16, ind / width * 16 + 41, 16, 4),
+                                            }
+                                        ]
+                                    };
                                 }
                             }
                         }
@@ -631,7 +668,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         float[] relativeSegSizesFull = new float[canResizeSegment.Length];
                         for (int i = 0; i < relativeSegSizesFull.Length; ++i)
                             relativeSegSizesFull[i] = canResizeSegment[i] || resizableSegmentCount == 0 ? (tilesHigh - heightOfAllNonresizable / 16f) / tilesHigh / resizableSegmentCount : wallDef.VerticalSegments[i].TextureRegion.Height / (tilesHigh * 16);
-
+                        
                         float segStartPerc = 1;
                         for (int iseg = 0; iseg < wallDef.VerticalSegments.Count; ++iseg)
                         {

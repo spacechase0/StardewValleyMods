@@ -1,4 +1,4 @@
-using System.Drawing;
+using Microsoft.Xna.Framework;
 using SpaceShared.Attributes;
 
 namespace Stardew3D.DataModels;
