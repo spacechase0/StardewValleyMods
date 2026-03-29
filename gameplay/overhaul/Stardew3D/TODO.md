@@ -80,7 +80,6 @@ No particular order of priority. Some of these definitely fall into "feature cre
         * It would need to be per-game-location, which might interfere with batching performance.
         * Gameplay stuff could perhaps use the heightmap too to avoid the constant relevant calculations,
           however there'd be a higher risk of mismatch between gameplay and graphics.
-        * Actually, a general cache for this would be greatly preferred and might give the needed optimization on its own.
 
 # Movement / Traversal
 * "Regions" thing? For stretching/squishing certains portions of the map when in 3D
