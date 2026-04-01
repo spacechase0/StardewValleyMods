@@ -51,12 +51,17 @@
   </Folder>
   <Folder Name="/joke/">
     <Project Path="joke/AutocorrectValley/AutocorrectValley.csproj" />
+    <Project Path="joke/Crudberries/Crudberries.csproj" Id="23ab5a62-c94f-47ef-882c-d0542e9cbde4" />
     <Project Path="joke/JsonShuffle/JsonShuffle.csproj" />
     <Project Path="joke/MayoHats/MayoHats.csproj" />
     <Project Path="joke/MayoRain/MayoRain.csproj" />
     <Project Path="joke/RiverlandsFeatureAddition/RiverlandsFeatureAddition.csproj" />
+    <Project Path="joke/RockInYourShoe/RockInYourShoe.csproj" Id="8c33a658-6e21-434a-9c5e-e46fabcac32a" />
     <Project Path="joke/SharingIsCaring/SharingIsCaring.csproj" />
+    <Project Path="joke/TriggerActionCode/TriggerActionActionCode.csproj" Id="ad09050c-e8b6-49f9-8b44-eddf9bd092d7" />
     <Project Path="joke/UnhingedMayoCode/UnhingedMayoJar.csproj" />
+    <Project Path="joke/WeedsHoney/WeedsHoney.csproj" Id="8c04075c-5837-4d6a-b4a2-7adfa146878f" />
+    <Project Path="joke/XlsxSupport/XlsxSupport.csproj" Id="a496ae05-c2b8-4698-a11b-215a13927fb0" />
   </Folder>
   <Folder Name="/joke/totally-serious/">
     <Project Path="joke/totally-serious/RandomCatsInEvents/RandomCatsInEvents.csproj" />

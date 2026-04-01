@@ -15,6 +15,7 @@ public abstract class BaseMod< ActualType > : StardewModdingAPI.Mod where Actual
         Instance = this as ActualType;
         Log.Monitor = Monitor;
 
+        SetupTranslations();
         SetupConfig();
         SetupHarmony();
         SetupContent();
@@ -23,6 +24,7 @@ public abstract class BaseMod< ActualType > : StardewModdingAPI.Mod where Actual
 
     protected abstract void ModEntry();
 
+    protected virtual void SetupTranslations() { }
     protected virtual void SetupConfig() { }
     protected virtual void SetupHarmony() { }
     protected virtual void SetupContent() { }

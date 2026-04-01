@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)common.targets" />
+
+  <PropertyGroup>
+    <Name>Weeds Honey</Name>
+    <Description>It comes for us all.</Description>
+    <Version>1.0.0</Version>
+    <UpdateKeys>Nexus:44536@WeedsHoney</UpdateKeys>
+  </PropertyGroup>
+</Project>

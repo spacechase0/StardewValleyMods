@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\CustomDictionaryAssetAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\DictionaryAssetDataAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\DictionaryAssetDataKeyAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasTranslationsAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasContentAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasConfigAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasHarmonyAttribute.cs" />
