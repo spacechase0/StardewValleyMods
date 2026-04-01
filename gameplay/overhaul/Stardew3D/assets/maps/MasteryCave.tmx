@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="15" height="14" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ 
+ <tileset firstgid="1" name="dataValues3d" tilewidth="16" tileheight="16" tilecount="512" columns="32">
+  <image source="ThirdDimensionData/data" width="512" height="256"/>
+ </tileset>
+ <tileset firstgid="513" name="paths" tilewidth="16" tileheight="16" tilecount="36" columns="4">
+  <image source="paths" width="64" height="144"/>
+ </tileset>
+ <tileset firstgid="549" name="untitled tile sheet" tilewidth="16" tileheight="16" tilecount="240" columns="15">
+  <image source="masteryCaveTilesheet" width="240" height="256"/>
+ </tileset>
+ <layer id="1" name="kittycatcasey.Stardew3D/FloorData_Center" width="15" height="14">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,
+0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,
+0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,
+0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,
+0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="2" name="kittycatcasey.Stardew3D/CeilingData_Center" width="15" height="14">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,97,97,97,97,97,97,97,0,0,0,0,
+0,0,0,97,97,97,97,97,97,97,97,97,0,0,0,
+0,0,0,97,97,97,97,97,97,97,97,97,0,0,0,
+0,0,0,97,97,97,97,97,97,97,97,97,0,0,0,
+0,0,0,0,0,0,97,97,97,0,0,0,0,0,0,
+0,0,0,0,0,0,0,97,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="kittycatcasey.Stardew3D/FloorData_Center"/>
+ <objectgroup id="4" name="kittycatcasey.Stardew3D/CeilingData_Center"/>
+</map>

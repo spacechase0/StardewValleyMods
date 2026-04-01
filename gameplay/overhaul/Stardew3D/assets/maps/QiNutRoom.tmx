@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="15" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ 
+ <tileset firstgid="1" name="dataValues3d" tilewidth="16" tileheight="16" tilecount="512" columns="32">
+  <image source="ThirdDimensionData/data" width="512" height="256"/>
+ </tileset>
+ <tileset firstgid="513" name="p" tilewidth="16" tileheight="16" tilecount="36" columns="4">
+  <image source="paths" width="64" height="144"/>
+ </tileset>
+ <tileset firstgid="549" name="untitled tile sheet" tilewidth="16" tileheight="16" tilecount="154" columns="14">
+  <image source="qiNutRoom_tilesheet" width="224" height="176"/>
+  <tile id="147">
+   <properties>
+    <property name="Action" value="QiCat"/>
+   </properties>
+  </tile>
+  <tile id="148">
+   <properties>
+    <property name="Action" value="QiCat"/>
+   </properties>
+  </tile>
+  <tile id="149">
+   <properties>
+    <property name="Action" value="QiCat"/>
+   </properties>
+  </tile>
+  <tile id="150">
+   <properties>
+    <property name="Action" value="QiCat"/>
+   </properties>
+  </tile>
+  <tile id="151">
+   <properties>
+    <property name="Action" value="QiCat"/>
+   </properties>
+  </tile>
+  <tile id="152">
+   <properties>
+    <property name="Action" value="QiCat"/>
+   </properties>
+  </tile>
+  <tile id="153">
+   <properties>
+    <property name="Action" value="QiCat"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer id="1" name="kittycatcasey.Stardew3D/FloorData_Center" width="15" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,
+0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="2" name="kittycatcasey.Stardew3D/CeilingData_Center" width="15" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,97,97,97,97,97,0,0,0,0,0,
+0,97,97,97,97,97,97,97,97,97,97,97,97,97,0,
+0,97,97,97,97,97,97,97,97,97,97,97,97,97,0,
+0,97,97,97,97,97,97,97,97,97,97,97,97,97,0,
+0,0,0,0,0,0,0,97,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,97,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="kittycatcasey.Stardew3D/FloorData_Center"/>
+ <objectgroup id="4" name="kittycatcasey.Stardew3D/CeilingData_Center"/>
+</map>

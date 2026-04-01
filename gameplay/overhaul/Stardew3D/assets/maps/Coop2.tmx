@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="16" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ 
+ <tileset firstgid="1" name="Coop" tilewidth="16" tileheight="16" tilecount="76" columns="4">
+  <image source="coopTiles" width="64" height="304"/>
+  <tile id="12">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="33">
+   <properties>
+    <property name="Passable" type="int" value="0"/>
+    <property name="Trough" value="T"/>
+   </properties>
+  </tile>
+  <tile id="53">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+  <tile id="56">
+   <properties>
+    <property name="Type" value="Wood"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="77" name="dataValues3d" tilewidth="16" tileheight="16" tilecount="512" columns="32">
+  <image source="ThirdDimensionData/data" width="512" height="256"/>
+ </tileset>
+ <layer id="1" name="kittycatcasey.Stardew3D/FloorData_Center" width="16" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,77,77,77,77,77,77,77,77,77,77,77,77,77,77,0,
+0,77,77,77,77,77,77,77,77,77,77,77,77,77,77,0,
+0,77,77,77,77,77,77,77,77,77,77,77,77,77,77,0,
+0,77,77,77,77,77,77,77,77,77,77,77,77,77,77,0,
+0,77,77,77,77,77,77,77,77,77,77,77,77,77,77,0,
+0,77,77,77,77,77,77,77,77,77,77,77,77,77,77,0,
+0,0,77,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="2" name="kittycatcasey.Stardew3D/CeilingData_Center" width="16" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,141,141,141,141,141,141,141,141,141,141,141,141,141,141,0,
+0,141,141,141,141,141,141,141,141,141,141,141,141,141,141,0,
+0,141,141,141,141,141,141,141,141,141,141,141,141,141,141,0,
+0,141,141,141,141,141,141,141,141,141,141,141,141,141,141,0,
+0,141,141,141,141,141,141,141,141,141,141,141,141,141,141,0,
+0,141,141,141,141,141,141,141,141,141,141,141,141,141,141,0,
+0,0,141,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="kittycatcasey.Stardew3D/FloorData_Center"/>
+ <objectgroup id="4" name="kittycatcasey.Stardew3D/CeilingData_Center"/>
+</map>

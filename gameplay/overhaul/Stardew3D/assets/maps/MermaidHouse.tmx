@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="9" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+ 
+ <tileset firstgid="1" name="dataValues3d" tilewidth="16" tileheight="16" tilecount="512" columns="32">
+  <image source="ThirdDimensionData/data" width="512" height="256"/>
+ </tileset>
+ <tileset firstgid="513" name="mermaid_tiles" tilewidth="16" tileheight="16" tilecount="117" columns="9">
+  <image source="mermaid_house_tiles" width="144" height="208"/>
+ </tileset>
+ <layer id="1" name="kittycatcasey.Stardew3D/FloorData_Center" width="9" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,
+0,33,33,33,33,33,33,33,0,
+0,33,33,33,33,33,33,33,0,
+0,33,33,33,33,33,33,33,0,
+0,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,0,
+0,1,1,1,1,1,1,1,0,
+0,0,0,0,1,0,0,0,0,
+0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="2" name="kittycatcasey.Stardew3D/CeilingData_Center" width="9" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,
+0,129,129,129,129,129,129,129,0,
+0,129,129,129,129,129,129,129,0,
+0,129,129,129,129,129,129,129,0,
+0,129,129,129,129,129,129,129,0,
+0,129,129,129,129,129,129,129,0,
+0,129,129,129,129,129,129,129,0,
+0,0,0,0,129,0,0,0,0,
+0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="kittycatcasey.Stardew3D/FloorData_Center"/>
+ <objectgroup id="4" name="kittycatcasey.Stardew3D/CeilingData_Center"/>
+</map>
