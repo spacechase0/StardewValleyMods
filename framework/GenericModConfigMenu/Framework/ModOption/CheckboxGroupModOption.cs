@@ -21,6 +21,9 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>The mod's unique ID, used as key in the shared UI state file.</summary>
         private readonly string ModId;
 
+        /// <summary>Whether the parent group was given an explicit field ID (vs auto-generated GUID).</summary>
+        private readonly bool HasExplicitFieldId;
+
 
         /*********
         ** Accessors
@@ -66,6 +69,7 @@ namespace GenericModConfigMenu.Framework.ModOption
             this.GetValue = getValue;
             this.SetValue = setValue;
             this.ModId = modId;
+            this.HasExplicitFieldId = !string.IsNullOrEmpty(fieldId);
             this.LeftAligned = leftAligned;
             this.CachedValue = getValue();
             this.LoadUiState();
@@ -152,26 +156,29 @@ namespace GenericModConfigMenu.Framework.ModOption
         *********/
         private const string StateFilePath = "data/state.json";
 
-        private string UiStateKey(string childFieldId) => $"{this.FieldId}_{childFieldId}";
-
         /// <summary>Load child UI state from GMCM's state file.</summary>
         private void LoadUiState()
         {
+            if (!this.HasExplicitFieldId)
+                return;
+
             var state = Mod.instance.Helper.Data.ReadJsonFile<Dictionary<string, ModState>>(StateFilePath);
             if (state == null || !state.TryGetValue(this.ModId, out var modState) || modState?.AddCheckboxGroupState == null)
                 return;
 
-            foreach (var (key, value) in modState.AddCheckboxGroupState)
+            if (modState.AddCheckboxGroupState.TryGetValue(this.FieldId, out var children))
             {
-                string prefix = this.FieldId + "_";
-                if (key.StartsWith(prefix))
-                    this.ChildUiState[key[prefix.Length..]] = value;
+                foreach (var (childId, value) in children)
+                    this.ChildUiState[childId] = value;
             }
         }
 
         /// <summary>Save child UI state to GMCM's state file.</summary>
         private void SaveUiState()
         {
+            if (!this.HasExplicitFieldId)
+                return;
+
             var state = Mod.instance.Helper.Data.ReadJsonFile<Dictionary<string, ModState>>(StateFilePath) ?? new();
 
             if (!state.TryGetValue(this.ModId, out var modState))
@@ -182,12 +189,15 @@ namespace GenericModConfigMenu.Framework.ModOption
 
             modState.AddCheckboxGroupState ??= new();
 
+            var children = new Dictionary<string, bool>();
             foreach (var child in this.Children)
             {
                 if (!child.HasExplicitFieldId)
                     continue;
-                modState.AddCheckboxGroupState[this.UiStateKey(child.FieldId)] = child.Value;
+                children[child.FieldId] = child.Value;
             }
+
+            modState.AddCheckboxGroupState[this.FieldId] = children;
 
             Mod.instance.Helper.Data.WriteJsonFile(StateFilePath, state);
         }
@@ -195,7 +205,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>Per-mod state stored in GMCM's data/state.json.</summary>
         internal class ModState
         {
-            public Dictionary<string, bool> AddCheckboxGroupState { get; set; }
+            public Dictionary<string, Dictionary<string, bool>> AddCheckboxGroupState { get; set; }
         }
     }
 }
