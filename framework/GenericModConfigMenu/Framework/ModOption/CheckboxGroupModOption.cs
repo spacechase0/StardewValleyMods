@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace GenericModConfigMenu.Framework.ModOption
 {
     /// <summary>A mod option which renders a parent checkbox with child checkboxes.
@@ -160,10 +158,10 @@ namespace GenericModConfigMenu.Framework.ModOption
         private void LoadUiState()
         {
             var state = Mod.instance.Helper.Data.ReadJsonFile<Dictionary<string, ModState>>(StateFilePath);
-            if (state == null || !state.TryGetValue(this.ModId, out var modState) || modState?.CheckboxGroupState == null)
+            if (state == null || !state.TryGetValue(this.ModId, out var modState) || modState?.AddCheckboxGroupState == null)
                 return;
 
-            foreach (var (key, value) in modState.CheckboxGroupState)
+            foreach (var (key, value) in modState.AddCheckboxGroupState)
             {
                 string prefix = this.FieldId + "_";
                 if (key.StartsWith(prefix))
@@ -182,13 +180,13 @@ namespace GenericModConfigMenu.Framework.ModOption
                 state[this.ModId] = modState;
             }
 
-            modState.CheckboxGroupState ??= new();
+            modState.AddCheckboxGroupState ??= new();
 
             foreach (var child in this.Children)
             {
                 if (!child.HasExplicitFieldId)
                     continue;
-                modState.CheckboxGroupState[this.UiStateKey(child.FieldId)] = child.Value;
+                modState.AddCheckboxGroupState[this.UiStateKey(child.FieldId)] = child.Value;
             }
 
             Mod.instance.Helper.Data.WriteJsonFile(StateFilePath, state);
@@ -197,8 +195,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>Per-mod state stored in GMCM's data/state.json.</summary>
         internal class ModState
         {
-            [JsonProperty("add_checkbox_group_option")]
-            public Dictionary<string, bool> CheckboxGroupState { get; set; }
+            public Dictionary<string, bool> AddCheckboxGroupState { get; set; }
         }
     }
 }
