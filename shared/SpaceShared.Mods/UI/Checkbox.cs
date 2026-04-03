@@ -23,6 +23,8 @@ namespace SpaceShared.UI
         public Rectangle CheckedTextureRect { get; set; }
         public Rectangle UncheckedTextureRect { get; set; }
 
+        public Color Tint { get; set; } = Color.White;
+
         public Action<Element> Callback { get; set; }
 
         public bool Checked { get; set; } = true;
@@ -66,7 +68,7 @@ namespace SpaceShared.UI
             if (this.IsHidden())
                 return;
 
-            b.Draw(this.Texture, this.Position, this.Checked ? this.CheckedTextureRect : this.UncheckedTextureRect, Color.White, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
+            b.Draw(this.Texture, this.Position, this.Checked ? this.CheckedTextureRect : this.UncheckedTextureRect, this.Tint, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
             Game1.activeClickableMenu?.drawMouse(b);
         }
     }

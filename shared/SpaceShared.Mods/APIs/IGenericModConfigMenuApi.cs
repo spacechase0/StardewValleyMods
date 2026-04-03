@@ -56,6 +56,17 @@ namespace SpaceShared.APIs
         /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
         void AddBoolOption(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null);
 
+        /// <summary>Add a boolean option at the current position in the form with display options.</summary>
+        /// <param name="mod">The mod's manifest.</param>
+        /// <param name="getValue">Get the current value from the mod config.</param>
+        /// <param name="setValue">Set a new value in the mod config.</param>
+        /// <param name="name">The label text to show in the form.</param>
+        /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
+        /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
+        /// <param name="leftAligned">Whether to place the checkbox before the label text instead of on the right side. Default false.</param>
+        /// <param name="dimWhenUnchecked">Whether to dim the checkbox and label when unchecked. Default false.</param>
+        void AddStyledBoolOption(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null, bool leftAligned = false, bool dimWhenUnchecked = false);
+
         /// <summary>Add an integer option at the current position in the form.</summary>
         /// <param name="mod">The mod's manifest.</param>
         /// <param name="getValue">Get the current value from the mod config.</param>
@@ -110,6 +121,33 @@ namespace SpaceShared.APIs
         /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
         /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
         void AddKeybindList(IManifest mod, Func<KeybindList> getValue, Action<KeybindList> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null);
+
+
+        /****
+        ** Checkbox groups
+        ****/
+        /// <summary>Add a parent checkbox that acts as a master toggle for child options added via <see cref="AddCheckboxGroupOption"/>.
+        /// By default the checkbox is right-aligned (matching standard GMCM layout) with indented children.
+        /// Set <paramref name="leftAligned"/> to true for a left-aligned checkbox with indented children.</summary>
+        /// <param name="mod">The mod's manifest.</param>
+        /// <param name="getValue">Get the current value from the mod config.</param>
+        /// <param name="setValue">Set a new value in the mod config.</param>
+        /// <param name="name">The label text to show in the form.</param>
+        /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
+        /// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
+        /// <param name="leftAligned">Whether to place the checkbox before the label text instead of on the right side. Default false.</param>
+        void AddCheckboxGroup(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null, bool leftAligned = false);
+
+        /// <summary>Add an indented child checkbox under the most recently added checkbox group. When the parent is unchecked, child options are visually disabled and non-interactive.
+        /// The config value saved is <c>parentValue AND childValue</c>. When <paramref name="fieldId"/> is set, GMCM persists the visual checkbox state
+        /// so it survives menu close/reopen and game restarts even when the parent is unchecked.</summary>
+        /// <param name="mod">The mod's manifest.</param>
+        /// <param name="getValue">Get the current value from the mod config.</param>
+        /// <param name="setValue">Set a new value in the mod config.</param>
+        /// <param name="name">The label text to show in the form.</param>
+        /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
+        /// <param name="fieldId">The unique field ID used to persist visual state across game restarts. If not set, visual state only persists within the current session.</param>
+        void AddCheckboxGroupOption(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null);
 
 
         /****

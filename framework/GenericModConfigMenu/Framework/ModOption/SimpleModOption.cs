@@ -26,6 +26,12 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>The option value type.</summary>
         public Type Type => typeof(T);
 
+        /// <summary>Whether to place the checkbox before the label text instead of on the right side. Only applies when <typeparamref name="T"/> is <see cref="bool"/>.</summary>
+        public bool LeftAligned { get; set; }
+
+        /// <summary>Whether to dim the checkbox and label when unchecked. Only applies when <typeparamref name="T"/> is <see cref="bool"/>.</summary>
+        public bool DimWhenUnchecked { get; set; }
+
         /// <summary>The cached value fetched from the mod config.</summary>
         public virtual T Value
         {

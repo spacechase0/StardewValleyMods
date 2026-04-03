@@ -26,6 +26,15 @@ namespace GenericModConfigMenu.Framework
         /// <summary>The minimum number of pixels between each main button.</summary>
         private const int MinimumButtonGap = 32;
 
+        /// <summary>The pixel width of a checkbox at 4x scale (9px source * 4).</summary>
+        private const int CheckboxWidth = 36;
+
+        /// <summary>The text color used for dimmed/disabled labels.</summary>
+        private static readonly Color DimTextColor = Game1.textColor * 0.5f;
+
+        /// <summary>The tint color used for dimmed/disabled checkboxes.</summary>
+        private static readonly Color DimCheckboxTint = Color.White * 0.5f;
+
         private readonly Action<string> OpenPage;
         private readonly Action ReturnToList;
 
@@ -208,6 +217,13 @@ namespace GenericModConfigMenu.Framework
 
                 opt.BeforeMenuOpened();
 
+                // Checkbox groups handle their own row creation
+                if (opt is CheckboxGroupModOption checkboxGroup)
+                {
+                    this.AddCheckboxGroupRows(checkboxGroup);
+                    continue;
+                }
+
                 Label label = new Label
                 {
                     String = name,
@@ -234,13 +250,64 @@ namespace GenericModConfigMenu.Framework
                         break;
 
                     case SimpleModOption<bool> option:
-                        optionElement = new Checkbox
                         {
-                            LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Checked = option.Value,
-                            Callback = (Element e) => option.Value = (e as Checkbox).Checked,
-                        };
-                        break;
+                            Checkbox boolCheckbox = new Checkbox
+                            {
+                                Checked = option.Value,
+                                Tint = option.DimWhenUnchecked && !option.Value ? DimCheckboxTint : Color.White,
+                                Callback = (Element e) =>
+                                {
+                                    option.Value = (e as Checkbox).Checked;
+                                },
+                            };
+
+                            if (option.LeftAligned)
+                            {
+                                boolCheckbox.LocalPosition = Vector2.Zero;
+
+                                Label boolLabel = new Label
+                                {
+                                    String = name,
+                                    LocalPosition = new Vector2(CheckboxWidth + 16, 0),
+                                    IdleTextColor = option.DimWhenUnchecked && !option.Value ? DimTextColor : Game1.textColor,
+                                    UserData = tooltip,
+                                    ScreenReaderDescription = tooltip,
+                                };
+                                if (!string.IsNullOrEmpty(tooltip))
+                                    this.OptHovers.Add(boolLabel);
+
+                                if (option.DimWhenUnchecked)
+                                {
+                                    boolCheckbox.Callback = (Element e) =>
+                                    {
+                                        option.Value = (e as Checkbox).Checked;
+                                        boolCheckbox.Tint = option.Value ? Color.White : DimCheckboxTint;
+                                        boolLabel.IdleTextColor = option.Value ? Game1.textColor : DimTextColor;
+                                    };
+                                }
+
+                                this.Table.AddRow(new Element[] { boolCheckbox, boolLabel });
+                                continue;
+                            }
+                            else
+                            {
+                                boolCheckbox.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
+
+                                if (option.DimWhenUnchecked)
+                                {
+                                    boolCheckbox.Callback = (Element e) =>
+                                    {
+                                        option.Value = (e as Checkbox).Checked;
+                                        boolCheckbox.Tint = option.Value ? Color.White : DimCheckboxTint;
+                                        label.IdleTextColor = option.Value ? Game1.textColor : DimTextColor;
+                                    };
+                                    label.IdleTextColor = option.Value ? Game1.textColor : DimTextColor;
+                                }
+
+                                optionElement = boolCheckbox;
+                            }
+                            break;
+                        }
 
                     case SimpleModOption<SButton> option:
                         if (Constants.TargetPlatform == GamePlatform.Android)
@@ -473,6 +540,132 @@ namespace GenericModConfigMenu.Framework
 
             populateClickableComponentList();
             snapToDefaultClickableComponent();
+        }
+
+        /// <summary>Add table rows for a checkbox group option (parent + children).</summary>
+        /// <param name="group">The checkbox group option.</param>
+        private void AddCheckboxGroupRows(CheckboxGroupModOption group)
+        {
+            List<Label> childLabels = new();
+            List<Checkbox> childCheckboxes = new();
+
+            // Parent checkbox
+            Checkbox parentCheckbox = new Checkbox
+            {
+                Checked = group.Value,
+                Callback = (Element e) =>
+                {
+                    group.Value = (e as Checkbox).Checked;
+                    // Update all child visuals
+                    foreach (var cl in childLabels)
+                        cl.IdleTextColor = group.Value ? Game1.textColor : DimTextColor;
+                    foreach (var cb in childCheckboxes)
+                        cb.Tint = group.Value ? Color.White : DimCheckboxTint;
+                },
+            };
+
+            if (group.LeftAligned)
+            {
+                // Left-aligned layout: [x] Label
+                parentCheckbox.LocalPosition = Vector2.Zero;
+
+                Label parentLabel = new Label
+                {
+                    String = group.Name(),
+                    LocalPosition = new Vector2(CheckboxWidth + 16, 0),
+                    UserData = group.Tooltip(),
+                    ScreenReaderDescription = group.Tooltip(),
+                };
+                if (!string.IsNullOrEmpty(group.Tooltip()))
+                    this.OptHovers.Add(parentLabel);
+
+                this.Table.AddRow(new Element[] { parentCheckbox, parentLabel });
+
+                // Children: indented [x] Label
+                const int IndentPx = 48;
+                foreach (var child in group.Children)
+                {
+                    Checkbox childCheckbox = new Checkbox
+                    {
+                        LocalPosition = new Vector2(IndentPx, 0),
+                        Checked = child.Value,
+                        Tint = group.Value ? Color.White : DimCheckboxTint,
+                        Callback = (Element e) =>
+                        {
+                            if (group.Value)
+                                child.Value = (e as Checkbox).Checked;
+                            else
+                                (e as Checkbox).Checked = child.Value;
+                        },
+                    };
+                    childCheckboxes.Add(childCheckbox);
+
+                    Label childLabel = new Label
+                    {
+                        String = child.Name(),
+                        LocalPosition = new Vector2(IndentPx + CheckboxWidth + 16, 0),
+                        UserData = child.Tooltip(),
+                        ScreenReaderDescription = child.Tooltip(),
+                        IdleTextColor = group.Value ? Game1.textColor : DimTextColor,
+                    };
+                    if (!string.IsNullOrEmpty(child.Tooltip()))
+                        this.OptHovers.Add(childLabel);
+                    childLabels.Add(childLabel);
+
+                    this.Table.AddRow(new Element[] { childCheckbox, childLabel });
+                }
+            }
+            else
+            {
+                // Right-aligned layout (default GMCM style): Label    [x]
+                parentCheckbox.LocalPosition = new Vector2(this.Table.Size.X / 2, 0);
+
+                Label parentLabel = new Label
+                {
+                    String = group.Name(),
+                    UserData = group.Tooltip(),
+                    ScreenReaderDescription = group.Tooltip(),
+                };
+                if (!string.IsNullOrEmpty(group.Tooltip()))
+                    this.OptHovers.Add(parentLabel);
+
+                this.Table.AddRow(new Element[] { parentLabel, parentCheckbox });
+
+                // Children: indented, right-aligned checkbox
+                foreach (var child in group.Children)
+                {
+                    Checkbox childCheckbox = new Checkbox
+                    {
+                        LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
+                        Checked = child.Value,
+                        Tint = group.Value ? Color.White : DimCheckboxTint,
+                        Callback = (Element e) =>
+                        {
+                            if (group.Value)
+                                child.Value = (e as Checkbox).Checked;
+                            else
+                                (e as Checkbox).Checked = child.Value;
+                        },
+                    };
+                    childCheckboxes.Add(childCheckbox);
+
+                    Label childLabel = new Label
+                    {
+                        String = "    " + child.Name(),
+                        UserData = child.Tooltip(),
+                        ScreenReaderDescription = child.Tooltip(),
+                        IdleTextColor = group.Value ? Game1.textColor : DimTextColor,
+                    };
+                    if (!string.IsNullOrEmpty(child.Tooltip()))
+                        this.OptHovers.Add(childLabel);
+                    childLabels.Add(childLabel);
+
+                    this.Table.AddRow(new Element[] { childLabel, childCheckbox });
+                }
+            }
+
+            // Spacing after the group
+            this.Table.AddRow(new Element[] { });
         }
 
         /// <inheritdoc />

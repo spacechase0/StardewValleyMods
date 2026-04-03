@@ -33,6 +33,9 @@ namespace GenericModConfigMenu.Framework
 
         private readonly Action<string> DeprecationWarner;
 
+        /// <summary>The most recently added checkbox group, used by <see cref="AddCheckboxGroupOption"/> to attach children.</summary>
+        private CheckboxGroupModOption ActiveCheckboxGroup;
+
         /*********
         ** Public methods
         *********/
@@ -79,6 +82,7 @@ namespace GenericModConfigMenu.Framework
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new SectionTitleModOption(text, tooltip, modConfig));
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <inheritdoc />
@@ -89,6 +93,7 @@ namespace GenericModConfigMenu.Framework
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new SectionSubHeaderModOption(text, modConfig));
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <inheritdoc />
@@ -99,6 +104,7 @@ namespace GenericModConfigMenu.Framework
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new ParagraphModOption(text, modConfig));
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <inheritdoc />
@@ -109,12 +115,31 @@ namespace GenericModConfigMenu.Framework
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new ImageModOption(texture, texturePixelArea, scale, modConfig));
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <inheritdoc />
         public void AddBoolOption(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null)
         {
             this.AddSimpleOption(mod, name, tooltip, getValue, setValue, fieldId);
+        }
+
+        /// <inheritdoc />
+        public void AddStyledBoolOption(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null, bool leftAligned = false, bool dimWhenUnchecked = false)
+        {
+            mod ??= this.mod;
+            this.AssertNotNull(name);
+            this.AssertNotNull(getValue);
+            this.AssertNotNull(setValue);
+
+            ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
+            var option = new SimpleModOption<bool>(fieldId, name, tooltip, modConfig, getValue, setValue)
+            {
+                LeftAligned = leftAligned,
+                DimWhenUnchecked = dimWhenUnchecked,
+            };
+            modConfig.AddOption(option);
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <inheritdoc />
@@ -152,6 +177,42 @@ namespace GenericModConfigMenu.Framework
 
 
         /****
+        ** Checkbox groups
+        ****/
+        /// <inheritdoc />
+        public void AddCheckboxGroup(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null, bool leftAligned = false)
+        {
+            mod ??= this.mod;
+            this.AssertNotNull(name);
+            this.AssertNotNull(getValue);
+            this.AssertNotNull(setValue);
+
+            ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
+            var group = new CheckboxGroupModOption(fieldId, name, tooltip, modConfig, getValue, setValue, mod.UniqueID, leftAligned);
+            modConfig.AddOption(group);
+            this.ActiveCheckboxGroup = group;
+        }
+
+        /// <inheritdoc />
+        public void AddCheckboxGroupOption(IManifest mod, Func<bool> getValue, Action<bool> setValue, Func<string> name, Func<string> tooltip = null, string fieldId = null)
+        {
+            mod ??= this.mod;
+            this.AssertNotNull(name);
+            this.AssertNotNull(getValue);
+            this.AssertNotNull(setValue);
+
+            if (this.ActiveCheckboxGroup == null)
+                throw new InvalidOperationException($"Mod {mod.UniqueID} called AddCheckboxGroupOption without a preceding AddCheckboxGroup.");
+
+            if (string.IsNullOrEmpty(fieldId))
+                Log.Warn($"Mod {mod.UniqueID} added checkbox group child '{name()}' without a fieldId. Visual state won't persist across game restarts.");
+
+            var child = new CheckboxGroupChildOption(fieldId, name, tooltip, this.ActiveCheckboxGroup, getValue, setValue);
+            this.ActiveCheckboxGroup.AddChild(child);
+        }
+
+
+        /****
         ** Multi-page management
         ****/
         /// <inheritdoc />
@@ -173,6 +234,7 @@ namespace GenericModConfigMenu.Framework
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
             modConfig.AddOption(new PageLinkModOption(pageId, text, tooltip, modConfig));
+            this.ActiveCheckboxGroup = null;
         }
 
         /****
@@ -189,6 +251,7 @@ namespace GenericModConfigMenu.Framework
             modConfig.AddOption(new ComplexModOption(fieldId: fieldId, name: name, tooltip: tooltip, mod: modConfig, height: height, draw: draw,
                 beforeMenuOpened: beforeMenuOpened, beforeSave: beforeSave, afterSave: afterSave, beforeReset: beforeReset, afterReset: afterReset, beforeMenuClosed: beforeMenuClosed,
                 snapRegionsOverride: snapRegionsOverride, snapRegionsNeedRefreshing: snapRegionsNeedRefreshing, usingGamepadMovement: usingGamepadMovement));
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <inheritdoc />
@@ -554,6 +617,7 @@ namespace GenericModConfigMenu.Framework
                 throw new ArgumentException("Invalid config option type.");
 
             modConfig.AddOption(new SimpleModOption<T>(fieldId, name, tooltip, modConfig, getValue, setValue));
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <summary>Add a numeric option with optional clamping.</summary>
@@ -583,6 +647,7 @@ namespace GenericModConfigMenu.Framework
                 throw new ArgumentException("Invalid config option type.");
 
             modConfig.AddOption(new NumericModOption<T>(fieldId: fieldId, name: name, tooltip: tooltip, mod: modConfig, getValue: getValue, setValue: setValue, min: min, max: max, interval: interval, formatValue: formatValue));
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <summary>Add a dropdown option.</summary>
@@ -606,6 +671,7 @@ namespace GenericModConfigMenu.Framework
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
 
             modConfig.AddOption(new ChoiceModOption<string>(fieldId, name, tooltip, modConfig, getValue, setValue, allowedValues, formatAllowedValues));
+            this.ActiveCheckboxGroup = null;
         }
 
         /// <summary>Register a field changed handler for a value type.</summary>
