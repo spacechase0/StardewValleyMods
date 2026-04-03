@@ -33,7 +33,7 @@ namespace GenericModConfigMenu.Framework
 
         private readonly Action<string> DeprecationWarner;
 
-        /// <summary>The most recently added checkbox group, used by <see cref="AddCheckboxGroupOption"/> to attach children.</summary>
+        /// <summary>The most recently added checkbox group, used by <see cref="AddCheckboxGroupOption"/> to attach children. Cleared by all other Add* methods to prevent stray children.</summary>
         private CheckboxGroupModOption ActiveCheckboxGroup;
 
         /*********
