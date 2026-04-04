@@ -354,6 +354,44 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         }
     }
 
+    private static readonly string[] dirNames = ["West", "North", "East", "South"];
+    internal IEnumerable<string> GetWallDefsFor(int ix, int iy, int facing, Layer dataLayer = null)
+    {
+        if (Object is DecoratableLocation deco)
+        {
+            string floor = deco.GetFloorID(ix, iy);
+            if (!string.IsNullOrEmpty(floor))
+            {
+                deco.appliedWallpaper.TryGetValue(floor, out string wallSource);
+                if (wallSource == null && deco.appliedWallpaper.Keys.FirstOrDefault(k => k.StartsWith($"{floor}_")) is string wallKey)
+                {
+                    deco.appliedWallpaper.TryGetValue(wallKey, out wallSource);
+                }
+
+                var data = deco.GetWallpaperSource(wallSource ?? "");
+                if (data.Key != null)
+                {
+                    var ts = deco.Map.RequireTileSheet(data.Key);
+                    int width = ts.SheetWidth;
+                    int ind = data.Value / width * width * 3 + data.Value % width;
+                    yield return $"{ts.ImageSource}:ind";
+                }
+            }
+        }
+
+        Point check = new(ix, iy);
+        switch (facing)
+        {
+            case 0: check.X -= 1; break;
+            case 1: check.Y -= 1; break;
+            case 2: check.X += 1; break;
+            case 3: check.Y += 1; break;
+        }
+        yield return $"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Buildings"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Buildings")}";
+        yield return $"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Back")}";
+        yield return Object.doesTileHaveProperty(ix, iy, "Type", "Back") ?? "Default";
+    }
+
     private void BuildWalls(Dictionary<Texture2D, VertexData> output)
     {
         int mapWidth = Object.Map.Layers[0].LayerWidth, mapHeight = Object.Map.Layers[0].LayerHeight;
@@ -372,11 +410,6 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         {
             for (int iy = -1; iy <= Object.Map.Layers[0].LayerSize.Height; ++iy)
             {
-                var assocData = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Buildings"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Buildings")}");
-                assocData ??= FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Back")}");
-                assocData ??= FloorWallAssociationData.Get(Object.doesTileHaveProperty(ix, iy, "Type", "Back") ?? "Default");
-
-                WallDefinitionData wallDef_ = WallDefinitionData.Get(assocData?.WallDefinitionId ?? "");
                 //if (assocData != null)
                 {
                     var tileFloor = LookupPosition(ceiling: false, ix, iy);
@@ -411,7 +444,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
 
                     var customWallSize = new float?[4];
                     var customWallOffset = new float?[4];
-                    WallDefinitionData[] customWallDefs = [wallDef_, wallDef_, wallDef_, wallDef_];
+                    WallDefinitionData[] customWallDefs = new WallDefinitionData[4];
                     string[] dirNames = ["West", "North", "East", "South"];
                     for (int i = 0; i < customWallSize.Count(); ++i)
                     {
@@ -427,37 +460,8 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         customWallSize[i] = sizeInd != -1 ? DimensionUtils.GetValueForDataTileIndex(sizeInd) : null;
                         customWallOffset[i] = offsetInd != -1 ? DimensionUtils.GetValueForDataTileIndex(offsetInd) : null;
 
-                        if ((dataSize?.Tiles[ix, iy]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var wallDefId) ?? false) &&
-                            WallDefinitionData.Get(wallDefId) is WallDefinitionData wallDef)
-                        {
-                            customWallDefs[i] = wallDef;
-                        }
-
-                        if (customWallDefs[i] == null)
-                        {
-                            Point check = new(ix, iy);
-                            switch (i)
-                            {
-                                case 0: check.X -= 1; break;
-                                case 1: check.Y -= 1; break;
-                                case 2: check.X += 1; break;
-                                case 3: check.Y += 1; break;
-                            }
-
-                            var tmpAssoc = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Buildings"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Buildings")}");
-                            //tmpAssoc ??= FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Back")}");
-                            //tmpAssoc ??= FloorWallAssociationData.Get(Object.doesTileHaveProperty(check.X, check.Y, "Type", "Back") ?? "Default");
-                            if (WallDefinitionData.Get(tmpAssoc?.WallDefinitionId ?? "") is WallDefinitionData validWallDef)
-                                customWallDefs[i] = validWallDef;
-                            //if (customWallDefs[i] == null)
-                            {
-                                if ((dataSize?.Tiles[check.X, check.Y]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var tmpWallDefId) ?? false) &&
-                                    WallDefinitionData.Get(tmpWallDefId) is WallDefinitionData tmpWallDef)
-                                {
-                                    customWallDefs[i] = tmpWallDef;
-                                }
-                            }
-                        }
+                        if (dataSize?.Tiles[ix, iy]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var wallDefId) ?? false)
+                            customWallDefs[i] = WallDefinitionData.Get(wallDefId);
 
                         if (Object is DecoratableLocation deco)
                         {
@@ -495,6 +499,24 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                                     };
                                 }
                             }
+                        }
+
+                        if (customWallDefs[i] == null)
+                        {
+                            foreach (string wallToTry in GetWallDefsFor(ix, iy, i, dataSize))
+                            {
+                                if (wallToTry == null)
+                                    continue;
+
+                                var floorWall = FloorWallAssociationData.Get(wallToTry);
+                                var wall = floorWall != null ? WallDefinitionData.Get(floorWall.WallDefinitionId) : null;
+                                if (wall != null)
+                                {
+                                    customWallDefs[i] = wall;
+                                    break;
+                                }
+                            }
+
                         }
                     }
                     var customWallSizeMods = new float[4];
