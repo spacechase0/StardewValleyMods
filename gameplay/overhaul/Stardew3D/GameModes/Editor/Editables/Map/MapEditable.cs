@@ -177,7 +177,7 @@ public class MapEditable : IEditable
 
     public void BeforeHidePanelContents()
     {
-        Location.MapLoader?.Dispose();
+        Location?.MapLoader?.Dispose();
         Location = null;
     }
 
