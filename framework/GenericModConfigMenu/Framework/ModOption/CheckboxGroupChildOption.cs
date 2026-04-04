@@ -6,6 +6,9 @@ namespace GenericModConfigMenu.Framework.ModOption
         /*********
         ** Fields
         *********/
+        /// <summary>The cached value fetched from the mod config.</summary>
+        private bool CachedValue;
+
         /// <summary>Get the latest value from the mod config.</summary>
         private readonly Func<bool> GetValue;
 
@@ -28,20 +31,16 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <summary>The parent group that owns this child.</summary>
         public CheckboxGroupModOption Parent { get; }
 
-        /// <summary>Whether the field ID was explicitly provided (true) or auto-generated (false).</summary>
-        public bool HasExplicitFieldId { get; }
-
-        /// <summary>The visual checkbox value. Reads from parent's UI state (falling back to config), writes to UI state.</summary>
+        /// <summary>The current value of the child checkbox.</summary>
         public bool Value
         {
-            get => this.Parent.GetChildUiState(this.FieldId, this.GetValue());
+            get => this.CachedValue;
             set
             {
-                bool current = this.Value;
-                if (current != value)
+                if (this.CachedValue != value)
                     this.Parent.Owner.ChangeHandlers.ForEach(handler => handler(this.FieldId, value));
 
-                this.Parent.SetChildUiState(this.FieldId, value);
+                this.CachedValue = value;
             }
         }
 
@@ -58,7 +57,6 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="setValue">Update the mod config with the given value.</param>
         public CheckboxGroupChildOption(string fieldId, Func<string> name, Func<string> tooltip, CheckboxGroupModOption parent, Func<bool> getValue, Action<bool> setValue)
         {
-            this.HasExplicitFieldId = !string.IsNullOrEmpty(fieldId);
             fieldId ??= Guid.NewGuid().ToString("N");
             tooltip ??= () => null;
 
@@ -68,25 +66,35 @@ namespace GenericModConfigMenu.Framework.ModOption
             this.Parent = parent;
             this.GetValue = getValue;
             this.SetValue = setValue;
+            this.CachedValue = getValue();
         }
 
         /// <summary>Perform any logic needed before the form is reset.</summary>
-        public void BeforeReset() { }
+        public void BeforeReset()
+        {
+            this.CachedValue = this.GetValue();
+        }
 
         /// <summary>Perform any logic needed after the form is reset.</summary>
-        public void AfterReset() { }
+        public void AfterReset()
+        {
+            this.CachedValue = this.GetValue();
+        }
 
-        /// <summary>Save the effective value (parent AND visual state) to the mod config.</summary>
+        /// <summary>Save the child's own value to the mod config.</summary>
         public void BeforeSave()
         {
-            this.SetValue(this.Parent.Value && this.Value);
+            this.SetValue(this.CachedValue);
         }
 
         /// <summary>Perform any logic needed after the form is saved.</summary>
         public void AfterSave() { }
 
         /// <summary>Perform any logic needed before the menu is opened.</summary>
-        public void BeforeMenuOpened() { }
+        public void BeforeMenuOpened()
+        {
+            this.CachedValue = this.GetValue();
+        }
 
         /// <summary>Perform any logic needed before the menu is closed.</summary>
         public void BeforeMenuClosed() { }

@@ -188,7 +188,7 @@ namespace GenericModConfigMenu.Framework
             this.AssertNotNull(setValue);
 
             ModConfig modConfig = this.ConfigManager.Get(mod, assert: true);
-            var group = new CheckboxGroupModOption(fieldId, name, tooltip, modConfig, getValue, setValue, mod.UniqueID, leftAligned);
+            var group = new CheckboxGroupModOption(fieldId, name, tooltip, modConfig, getValue, setValue, leftAligned);
             modConfig.AddOption(group);
             this.ActiveCheckboxGroup = group;
         }
@@ -203,9 +203,6 @@ namespace GenericModConfigMenu.Framework
 
             if (this.ActiveCheckboxGroup == null)
                 throw new InvalidOperationException($"Mod {mod.UniqueID} called AddCheckboxGroupOption without a preceding AddCheckboxGroup.");
-
-            if (string.IsNullOrEmpty(fieldId))
-                Log.Warn($"Mod {mod.UniqueID} added checkbox group child '{name()}' without a fieldId. Visual state won't persist across game restarts.");
 
             var child = new CheckboxGroupChildOption(fieldId, name, tooltip, this.ActiveCheckboxGroup, getValue, setValue);
             this.ActiveCheckboxGroup.AddChild(child);
