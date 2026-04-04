@@ -207,7 +207,7 @@ public class MapEditable : IEditable
         {
             if (renderer is LocationHandler locRenderer)
             {
-                locRenderer.ShowMissing = EditingMode?.ShowMissingInLocation ?? LocationHandler.ShowMissingType.None;
+                locRenderer.ShowMissing = EditingMode?.ShowMissingInLocation ?? LocationHandler.TerrainType.None;
                 locRenderer.Build();
             }
 

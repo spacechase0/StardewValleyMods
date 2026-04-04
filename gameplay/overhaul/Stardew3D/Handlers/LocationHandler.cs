@@ -32,6 +32,22 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
     }
     internal Dictionary<Texture2D, (VertexBuffer Vertices, IndexBuffer Indices, int[] IndexData, List<AnimationData> Animations)> vbos = new();
 
+    public class WallData
+    {
+        public float LeftOffset;
+        public float RightOffset;
+        public float LeftSize;
+        public float RightSize;
+
+        public WallData(float offsetL, float offsetR, float sizeL, float sizeR)
+        {
+            LeftOffset = offsetL;
+            RightOffset = offsetR;
+            LeftSize = sizeL;
+            RightSize = sizeR;
+        }
+    }
+
     internal VertexBuffer waterVbo;
     internal List<SimpleVertex> waterVertices = new();
 
@@ -43,9 +59,10 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
     public DimensionUtils.PositionResult[,] floorData;
     public DimensionUtils.PositionResult[,] ceilingData;
     public DimensionUtils.PositionResult[,] waterData;
+    public WallData[,,] wallData;
 
     [Flags]
-    public enum ShowMissingType
+    public enum TerrainType
     {
         None = 0,
 
@@ -54,7 +71,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         Water = 1 << 2,
         Walls = 1 << 3,
     }
-    public ShowMissingType ShowMissing = ShowMissingType.None;
+    public TerrainType ShowMissing = TerrainType.None;
 
     public LocationHandler(GameLocation obj)
         : base(obj)
@@ -166,11 +183,11 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
 
         Dictionary<string, Texture2D> texLookup = new();
 
-        ShowMissingType[,] missing = new ShowMissingType[Object.Map.Layers[0].LayerWidth, Object.Map.Layers[0].LayerHeight];
+        TerrainType[,] missing = new TerrainType[Object.Map.Layers[0].LayerWidth, Object.Map.Layers[0].LayerHeight];
         for (int iy = 0; iy < missing.GetLength(1); ++iy)
         {
             for (int ix = 0; ix < missing.GetLength(0); ++ix)
-                missing[ix, iy] = ShowMissingType.Ceiling | ShowMissingType.Floor;
+                missing[ix, iy] = TerrainType.Ceiling | TerrainType.Floor;
         }
 
         List<Layer> applicableLayers = new();
@@ -195,7 +212,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
             {
                 foreach (var layer in applicableLayers)
                 {
-                    ShowMissingType type = ceilingLayers.Contains(layer) ? ShowMissingType.Ceiling : ShowMissingType.Floor;
+                    TerrainType type = ceilingLayers.Contains(layer) ? TerrainType.Ceiling : TerrainType.Floor;
                     bool showError = false;
                     if (missing[ix, iy].HasFlag(type) && ShowMissing.HasFlag(type))
                         showError = layer.Id is "___dummyfloorlayer" or "___dummyceilinglayer";
@@ -205,13 +222,13 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         continue;
 
                     Color col = Color.White;
-                    var tilePos = type == ShowMissingType.Ceiling ? ceilingData[ix, iy] : floorData[ix, iy];
+                    var tilePos = type == TerrainType.Ceiling ? ceilingData[ix, iy] : floorData[ix, iy];
                     if (tilePos.ShouldHide)
                     {
                         if (ShowMissing.HasFlag(type))
                         {
                             tilePos.Position.Y = 0;
-                            tilePos.QuadFacingNormal = type == ShowMissingType.Ceiling ? Vector3.Down : Vector3.Up;
+                            tilePos.QuadFacingNormal = type == TerrainType.Ceiling ? Vector3.Down : Vector3.Up;
                             tilePos.QuadVert00.Y = 0;
                             tilePos.QuadVert10.Y = 0;
                             tilePos.QuadVert01.Y = 0;
@@ -259,7 +276,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         SimpleVertex v01 = new(tilePos.Position + tilePos.QuadVert01, new Vector2(tx, ty + theight), col);
                         SimpleVertex v11 = new(tilePos.Position + tilePos.QuadVert11, new Vector2(tx + twidth, ty + theight), col);
                         int startInd = verts.Verts.Count;
-                        if (type == ShowMissingType.Ceiling)
+                        if (type == TerrainType.Ceiling)
                         {
                             verts.Verts.Add(v00);
                             verts.Verts.Add(v10);
@@ -339,7 +356,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         hasWater = true;
                     }
 
-                    if (hasWater || ShowMissing.HasFlag(ShowMissingType.Water))
+                    if (hasWater || ShowMissing.HasFlag(TerrainType.Water))
                     {
                         var water = waterData[ix, iy];
                         waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2(texRect.X, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
@@ -404,11 +421,13 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
             return data[ x, y ];
         }
 
+        wallData = new WallData[mapWidth, mapHeight, 4];
+
         const float tuck = 0.00001f;
 
-        for (int ix = -1; ix <= Object.Map.Layers[0].LayerSize.Width; ++ix)
+        for (int ix = -1; ix <= mapWidth; ++ix)
         {
-            for (int iy = -1; iy <= Object.Map.Layers[0].LayerSize.Height; ++iy)
+            for (int iy = -1; iy <= mapHeight; ++iy)
             {
                 //if (assocData != null)
                 {
@@ -518,7 +537,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                             }
                         }
 
-                        if (customWallDefs[i] == null && ShowMissing.HasFlag(ShowMissingType.Walls))
+                        if (customWallDefs[i] == null && ShowMissing.HasFlag(TerrainType.Walls))
                         {
                             customWallDefs[i] = WallDefinitionData.Get($"{Mod.Instance.ModManifest.UniqueID}/Error");
                         }
@@ -688,6 +707,9 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
 
                         if (centerSize == 0)
                             continue;
+
+                        if ( ix >= 0 && iy >= 0 && ix < mapWidth && iy < mapHeight )
+                            wallData[ix, iy, iwall] = new WallData(leftY, rightY, leftSize, rightSize);
 
                         float tilesHigh = Math.Max(leftSize, rightSize);
 

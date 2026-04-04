@@ -21,11 +21,11 @@ public class TileDataEditingMode : BaseEditingMode
     public readonly DimensionUtils.TileType TileType;
 
     public override string Id => TileType.ToString();
-    public override LocationHandler.ShowMissingType ShowMissingInLocation => TileType switch
+    public override LocationHandler.TerrainType ShowMissingInLocation => TileType switch
     {
-        DimensionUtils.TileType.Floor => LocationHandler.ShowMissingType.Floor,
-        DimensionUtils.TileType.Ceiling => LocationHandler.ShowMissingType.Ceiling,
-        DimensionUtils.TileType.Water => LocationHandler.ShowMissingType.Water,
+        DimensionUtils.TileType.Floor => LocationHandler.TerrainType.Floor,
+        DimensionUtils.TileType.Ceiling => LocationHandler.TerrainType.Ceiling,
+        DimensionUtils.TileType.Water => LocationHandler.TerrainType.Water,
     };
 
     private bool leftMouse, rightMouse;
@@ -100,7 +100,7 @@ public class TileDataEditingMode : BaseEditingMode
                 TileSpot.NorthWest => "NW",
                 TileSpot.NorthEast => "NE",
                 TileSpot.SouthEast => "SE",
-                TileSpot.SouthWest => "NW",
+                TileSpot.SouthWest => "SW",
             };
             var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(48, 48), str)
             {
@@ -149,62 +149,10 @@ public class TileDataEditingMode : BaseEditingMode
     private void UpdateHover()
     {
         var editor = Mod.State.ActiveMode as EditorGameMode;
-        Vector3 near = Game1.graphics.GraphicsDevice.Viewport.Unproject(new Vector3(editor.Ui.Controls.Input.MousePosition.ToVector2(), 0), editor.ProjectionMatrix, editor.Camera.ViewMatrix, Matrix.Identity);
-        Vector3 far = Game1.graphics.GraphicsDevice.Viewport.Unproject(new Vector3(editor.Ui.Controls.Input.MousePosition.ToVector2(), 1), editor.ProjectionMatrix, editor.Camera.ViewMatrix, Matrix.Identity);
-        Ray cursor = new(near, (far - near).Normalized());
 
-        Vector2 cursorPos2d = new(cursor.Position.X, cursor.Position.Z);
-        Vector2 cursorDir2d = new(cursor.Direction.X, cursor.Direction.Z);
-
-        Point? hoverTile = null;
-        if (leftMouse)
-            hoverTile = hoverTile;
-        for (int i = 0; i < 1000; i += 1)
-        {
-            Point cursorPosTile2d = new Vector2(MathF.Floor(cursorPos2d.X), MathF.Floor(cursorPos2d.Y)).ToPoint();
-            Rectangle tileRect = new(cursorPosTile2d.X, cursorPosTile2d.Y, 1, 1);
-
-            Vector2 tile = cursorPosTile2d.ToVector2();
-            var quad = DimensionUtils.GetPositionForTile(Editable.Location, cursorPosTile2d, TileType);
-            /*
-            if (float.IsNaN(quad.Position.Y))
-            {
-                quad.Position.Y = 0;
-                quad.QuadFacingNormal = Vector3.Up;
-                quad.QuadVert00.Y = 0;
-                quad.QuadVert10.Y = 0;
-                quad.QuadVert01.Y = 0;
-                quad.QuadVert11.Y = 0;
-                quad.HeightBoundingSize = 0;
-            }
-            */
-
-            Plane plane = new Plane(quad.Position, quad.QuadFacingNormal);
-            cursor.Intersects(ref plane, out var dist);
-            Vector3 intersectAt = dist.HasValue ? (cursor.Position + cursor.Direction * dist.Value) : Vector3.Zero;
-            Vector2 intersectAt2d = new Vector2(intersectAt.X, intersectAt.Z);
-            if (dist.HasValue && tileRect.Contains(intersectAt2d))
-            {
-                hoverTile = cursorPosTile2d;
-                break;
-            }
-
-            if (!tileRect.LineSegmentIntersects(cursorPos2d, cursorPos2d + cursorDir2d * 10, out var intersect))
-            {
-                tileRect.LineSegmentIntersects(cursorPos2d, cursorPos2d + cursorDir2d * 10, out _);
-                break; // ???
-            }
-
-            cursorPos2d = intersect;
-            if (cursorDir2d.X < 0)
-                cursorPos2d.X -= 0.001f;
-            else
-                cursorPos2d.X += 0.001f;
-            if (cursorDir2d.Y < 0)
-                cursorPos2d.Y -= 0.001f;
-            else
-                cursorPos2d.Y += 0.001f;
-        }
+        Point? hoverTile;
+        if (!InputUtils.TryHover(Editable.Location, ShowMissingInLocation, Game1.graphics.GraphicsDevice.Viewport, editor.ProjectionMatrix, editor.Camera.ViewMatrix, editor.Ui.Controls.Input.MousePosition, out hoverTile, out _))
+            hoverTile = null;
 
         bool hoverDirty = hoverTile != lastHoverTile;
         if (hoverDirty)
@@ -224,11 +172,14 @@ public class TileDataEditingMode : BaseEditingMode
             rightMouse = justPressedRight = true;
 
         // Selection mode
+        var oldSel = pendingSelectMode;
         pendingSelectMode = SelectMode.Replace;
         if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Shift))
             pendingSelectMode = SelectMode.Add;
         else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Alt))
             pendingSelectMode = SelectMode.Remove;
+        if (oldSel != pendingSelectMode)
+            selDirty = true;
 
         // Select all
         if (editor.Ui.Controls.Input.TryConsumePressed(Keys.A) && editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
@@ -536,7 +487,6 @@ public class TileDataEditingMode : BaseEditingMode
                 foreach (var tile in pendingTiles)
                     MakeQuad(pendingBounds, DimensionUtils.GetPositionForTile(Editable.Location, tile, TileType));
             }
-
             
             selDirty = true;
         }
