@@ -34,20 +34,4 @@ internal partial class Generic : SpaceShared.Content.BaseDictionaryAssetData
             new() { Tilesheet = "Maps/Mines/mine", TextureRegion = new(10 * 16, 6 * 16, 16, 16) },
         ],
     };
-
-    public WallDefinitionData BusTunnelWall => new()
-    {
-        VerticalSegments =
-        [
-            new() { Tilesheet = "Maps/spring_outdoorsTileSheet", TextureRegion = new( 80, 1088, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
-        ],
-    };
-
-    public WallDefinitionData BusTunnelEdgeWall => new()
-    {
-        VerticalSegments =
-        [
-            new() { Tilesheet = "Maps/spring_outdoorsTileSheet", TextureRegion = new( 96, 1072, 16, 9 ) },
-        ],
-    };
 }
