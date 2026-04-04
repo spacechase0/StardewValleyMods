@@ -80,4 +80,9 @@
     <StartProgram>/Users/spacechase0/Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS\StardewModdingAPI</StartProgram>
     <StartWorkingDirectory>/Users/spacechase0/Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS</StartWorkingDirectory>
   </PropertyGroup>
+
+  <!-- Fixes hot reload sometimes breaking, for some reason? -->
+  <PropertyGroup Condition="$(Configuration) == 'Debug'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
 </Project>
