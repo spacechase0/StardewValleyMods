@@ -48,7 +48,7 @@ internal partial class Interior : SpaceShared.Content.BaseDictionaryAssetData
         [
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 96, 0, 16, 16 ) },
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 96, 16, 16, 16 ) },
-            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 96, 32, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 96, 32, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
         ],
     };
 
@@ -58,7 +58,7 @@ internal partial class Interior : SpaceShared.Content.BaseDictionaryAssetData
         [
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 112, 0, 16, 16 ) },
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 112, 16, 16, 16 ) },
-            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 112, 32, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 112, 32, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
         ],
     };
 
