@@ -38,7 +38,7 @@ internal partial class Interior : SpaceShared.Content.BaseDictionaryAssetData
         [
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 160, 0, 16, 16 ) },
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 160, 16, 16, 16 ) },
-            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 160, 32, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 160, 32, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
         ],
     };
 

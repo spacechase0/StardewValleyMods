@@ -1,11 +1,19 @@
 using SpaceShared.Attributes;
 using Stardew3D.DataModels;
+using StardewValley;
 
 namespace Stardew3D.Content.WallDefinitions;
 
 [DictionaryAssetData<WallDefinitionData>("WallDefinitions", "$/&", OwnedAsset = true)]
 internal partial class Generic : SpaceShared.Content.BaseDictionaryAssetData
 {
+    public WallDefinitionData Error => new()
+    {
+        VerticalSegments =
+        [
+            new() { Tilesheet = Game1.mouseCursorsName, TextureRegion = new(20 * 16, 31 * 16, 16, 16), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Stretch },
+        ],
+    };
     public WallDefinitionData GenericHouseWall => new()
     {
         VerticalSegments =

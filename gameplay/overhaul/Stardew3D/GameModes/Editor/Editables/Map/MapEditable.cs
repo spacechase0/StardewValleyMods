@@ -30,6 +30,7 @@ public class MapEditable : IEditable
         ["Floor"] = e => new TileDataEditingMode(e, DimensionUtils.TileType.Floor),
         ["Ceiling"] = e => new TileDataEditingMode(e, DimensionUtils.TileType.Ceiling),
         ["Water"] = e => new TileDataEditingMode(e, DimensionUtils.TileType.Water),
+        ["Walls"] = e => new WallEditingMode(e),
     };
 
     public string Id { get; init; }

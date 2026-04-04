@@ -516,7 +516,11 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                                     break;
                                 }
                             }
+                        }
 
+                        if (customWallDefs[i] == null && ShowMissing.HasFlag(ShowMissingType.Walls))
+                        {
+                            customWallDefs[i] = WallDefinitionData.Get($"{Mod.Instance.ModManifest.UniqueID}/Error");
                         }
                     }
                     var customWallSizeMods = new float[4];
