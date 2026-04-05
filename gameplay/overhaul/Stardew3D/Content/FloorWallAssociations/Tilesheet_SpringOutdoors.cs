@@ -9,10 +9,16 @@ internal partial class Tilesheet_SpringOutdoors : SpaceShared.Content.BaseDictio
     public FloorWallAssociationData _460 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
     public FloorWallAssociationData _509 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
     public FloorWallAssociationData _217 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
+    public FloorWallAssociationData _534 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
 
     public FloorWallAssociationData _1625 => new() { WallDefinitionId = $"{ModId}/BusTunnelWall" };
     public FloorWallAssociationData _1675 => new() { WallDefinitionId = $"{ModId}/BusTunnelWall" };
     public FloorWallAssociationData _1026 => new() { WallDefinitionId = $"{ModId}/BusTunnelWall" };
+    public FloorWallAssociationData _1705 => new() { WallDefinitionId = $"{ModId}/BusTunnelWall" };
+    public FloorWallAssociationData _1054 => new() { WallDefinitionId = $"{ModId}/BusTunnelWall" };
+    public FloorWallAssociationData _1056 => new() { WallDefinitionId = $"{ModId}/BusTunnelWall" };
+    public FloorWallAssociationData _1680 => new() { WallDefinitionId = $"{ModId}/BusTunnelWall" };
+    public FloorWallAssociationData _1628 => new() { WallDefinitionId = $"{ModId}/BusTunnelWall" };
 
     public FloorWallAssociationData _562 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _512 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
@@ -77,6 +83,48 @@ internal partial class Tilesheet_SpringOutdoors : SpaceShared.Content.BaseDictio
     public FloorWallAssociationData _541 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _1322 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _1272 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _642 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _416 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _675 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _519 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _300 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1119 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _370 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _543 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _442 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1093 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _371 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _443 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _720 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1094 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _444 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _517 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _440 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _294 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _394 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _150 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1792 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _156 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _494 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1572 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1573 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1672 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1241 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1622 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1574 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1648 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1623 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1624 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1597 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1598 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1599 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1649 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1647 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _536 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _553 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _554 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _432 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _498 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
 
     // water
     public FloorWallAssociationData _1244 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
@@ -93,5 +141,20 @@ internal partial class Tilesheet_SpringOutdoors : SpaceShared.Content.BaseDictio
     public FloorWallAssociationData _1280 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _1303 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _1229 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1324 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1255 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1267 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1269 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1323 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1274 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1304 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1273 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1231 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1266 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1843 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
+    public FloorWallAssociationData _1844 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
+    public FloorWallAssociationData _1818 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
+    public FloorWallAssociationData _1819 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
+    public FloorWallAssociationData _1242 => new() { WallDefinitionId = $"{ModId}/GenericCaveWall" };
 
 }

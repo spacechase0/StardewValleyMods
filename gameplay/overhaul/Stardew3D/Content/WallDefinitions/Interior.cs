@@ -18,7 +18,7 @@ internal partial class Interior : SpaceShared.Content.BaseDictionaryAssetData
     {
         VerticalSegments =
         [
-            new() { Tilesheet = "Maps/spring_outdoorsTileSheet", TextureRegion = new( 96, 1072, 16, 9 ) },
+            new() { Tilesheet = "Maps/spring_outdoorsTileSheet", TextureRegion = new( 96, 1072, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
         ],
     };
 
