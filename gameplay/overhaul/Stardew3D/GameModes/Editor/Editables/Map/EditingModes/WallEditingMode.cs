@@ -303,8 +303,7 @@ public class WallEditingMode : BaseEditingMode
             {
                 foreach (var wall in selectedTiles)
                 {
-                    foreach (var type in Enum.GetValues<TileSpot>())
-                        Editable.Location.SetDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, null, type);
+                    Editable.Location.SetWallOverride(wall.Tile, wall.Direction, null);
                 }
 
                 MapModified();
