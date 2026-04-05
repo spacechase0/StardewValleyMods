@@ -9,6 +9,8 @@ public abstract class BaseMod< ActualType > : StardewModdingAPI.Mod where Actual
 {
     public static ActualType Instance { get; private set; }
 
+    public static string ID => Instance.ModManifest.UniqueID;
+
     public override void Entry(IModHelper helper)
     {
         //Helper.Reflection.GetProperty< ActualType >( typeof( ActualType ), nameof( Instance ) ).SetValue( this as ActualType );

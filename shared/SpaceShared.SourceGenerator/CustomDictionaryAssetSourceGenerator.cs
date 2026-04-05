@@ -83,6 +83,14 @@ namespace {data.TypeNamespace}
                 return default;
             return data;
         }}
+
+        public static Dictionary<string, {data.TypeName}> Get()
+        {{
+            if ( _assetInstance.Value == null )
+                RefreshData(initial: true);
+
+            return _assetInstance.Value;
+        }}
     }}
 }}
 
