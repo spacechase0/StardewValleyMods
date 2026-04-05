@@ -61,6 +61,22 @@ internal partial class Tilesheet_SpringOutdoors : SpaceShared.Content.BaseDictio
     public FloorWallAssociationData _357 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _407 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _405 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _489 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1369 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _518 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _492 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _515 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _466 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _523 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _331 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _306 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _542 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _544 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _281 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _382 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _541 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1322 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1272 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
 
     // water
     public FloorWallAssociationData _1244 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
@@ -73,5 +89,9 @@ internal partial class Tilesheet_SpringOutdoors : SpaceShared.Content.BaseDictio
     public FloorWallAssociationData _1246 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _1268 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _1243 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1278 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1280 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1303 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _1229 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
 
 }
