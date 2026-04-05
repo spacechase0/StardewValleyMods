@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="65" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="51">
- 
+<map version="1.10" tiledversion="2026.02.20" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="65" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="51">
+ <properties>
+  <property name="kittycatcasey.Stardew3D/Portals" value="Farm Farm BusStop 0 0 24.5 west"/>
+ </properties>
  <tileset firstgid="1" name="outdoors" tilewidth="16" tileheight="16" tilecount="1975" columns="25">
   <image source="spring_outdoorsTileSheet" width="400" height="1264"/>
   <tile id="150">
