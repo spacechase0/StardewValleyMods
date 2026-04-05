@@ -92,7 +92,7 @@ public class WorldRenderer : IDisposable
         {
             var renderers = adjacencies[i].Renderers;
             var mainRenderer = renderers[0] as LocationHandler;
-            //AddAdjacenciesForPortals(adjacencies[i].Location, adjacencies[i].TransformFromCurrent);
+            AddAdjacenciesForPortals(adjacencies[i].Location, adjacencies[i].TransformFromCurrent);
 
             if (mainRenderer.IsDirty && !builtLocationRecently)
             {
