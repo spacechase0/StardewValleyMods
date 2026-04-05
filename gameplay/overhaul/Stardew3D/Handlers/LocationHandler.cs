@@ -371,10 +371,10 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         }
     }
 
-    private static readonly string[] dirNames = ["West", "North", "East", "South"];
-    internal IEnumerable<string> GetWallDefsFor(int ix, int iy, int facing, Layer dataLayer = null)
+    internal static readonly string[] dirNames = ["West", "North", "East", "South"];
+    internal IEnumerable<string> GetWallDefsFor(int ix, int iy, int facing, bool withPlayerData = true, Layer dataLayer = null)
     {
-        if (Object is DecoratableLocation deco)
+        if (withPlayerData && Object is DecoratableLocation deco)
         {
             string floor = deco.GetFloorID(ix, iy);
             if (!string.IsNullOrEmpty(floor))
@@ -465,11 +465,15 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                     var customWallOffset = new float?[4];
                     WallDefinitionData[] customWallDefs = new WallDefinitionData[4];
                     string[] dirNames = ["West", "North", "East", "South"];
+                    var customWallSizeMods = new float[4][];
+                    var customWallOffsetMods = new float[4][];
                     for (int i = 0; i < customWallSize.Count(); ++i)
                     {
-                        string dataSizeLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Size";
-                        string dataOffsetLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Offset";
+                        string dataBaseLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}";
+                        string dataSizeLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Size_{dirNames[i]}";
+                        string dataOffsetLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Offset_{dirNames[i]}";
 
+                        var dataBase = Object.Map.GetLayer(dataBaseLayer);
                         var dataSize = Object.Map.GetLayer(dataSizeLayer);
                         var dataOffset = Object.Map.GetLayer(dataOffsetLayer);
 
@@ -479,7 +483,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         customWallSize[i] = sizeInd != -1 ? DimensionUtils.GetValueForDataTileIndex(sizeInd) : null;
                         customWallOffset[i] = offsetInd != -1 ? DimensionUtils.GetValueForDataTileIndex(offsetInd) : null;
 
-                        if (dataSize?.Tiles[ix, iy]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var wallDefId) ?? false)
+                        if (dataBase?.Tiles[ix, iy]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var wallDefId) ?? false)
                             customWallDefs[i] = WallDefinitionData.Get(wallDefId);
 
                         if (Object is DecoratableLocation deco)
@@ -522,7 +526,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
 
                         if (customWallDefs[i] == null)
                         {
-                            foreach (string wallToTry in GetWallDefsFor(ix, iy, i, dataSize))
+                            foreach (string wallToTry in GetWallDefsFor(ix, iy, i, dataLayer: dataSize))
                             {
                                 if (wallToTry == null)
                                     continue;
@@ -541,19 +545,23 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         {
                             customWallDefs[i] = WallDefinitionData.Get($"{Mod.Instance.ModManifest.UniqueID}/Error");
                         }
-                    }
-                    var customWallSizeMods = new float[4];
-                    var customWallOffsetMods = new float[4];
-                    foreach (var spot in Enum.GetValues<TileSpot>())
-                    {
-                        string dataSizeModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallSizeData_{spot}";
-                        string dataOffsetModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallOffsetData_{spot}";
 
-                        if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataSizeModifierLayer) is Layer sizeLayer)
-                            DimensionUtils.ModifyValueForDataTileIndex(spot, sizeLayer.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
+                        customWallSizeMods[i] = new float[4];
+                        customWallOffsetMods[i] = new float[4];
+                        foreach (var spot in Enum.GetValues<TileSpot>())
+                        {
+                            if (dirNames[i] == spot.ToString())
+                                continue;
 
-                        if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataOffsetModifierLayer) is Layer offsetLayer)
-                            DimensionUtils.ModifyValueForDataTileIndex(spot, offsetLayer.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
+                            string dataSizeModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Size_{spot}";
+                            string dataOffsetModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Offset_{spot}";
+
+                            if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataSizeModifierLayer) is Layer sizeLayer)
+                                DimensionUtils.ModifyValueForDataTileIndex(spot, sizeLayer.GetTileIndexAt(ix, iy), ref customWallSizeMods[i][0], ref customWallSizeMods[i][1], ref customWallSizeMods[i][3], ref customWallSizeMods[i][2]);
+
+                            if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataOffsetModifierLayer) is Layer offsetLayer)
+                                DimensionUtils.ModifyValueForDataTileIndex(spot, offsetLayer.GetTileIndexAt(ix, iy), ref customWallOffsetMods[i][0], ref customWallOffsetMods[i][1], ref customWallOffsetMods[i][3], ref customWallOffsetMods[i][2]);
+                        }
                     }
 
                     TileSpot[] walls = [TileSpot.West, TileSpot.North, TileSpot.East, TileSpot.South];
@@ -696,13 +704,13 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
 
                         var leftY = yForWalls[iwall, whichForWallBase, 0];
                         var rightY = yForWalls[iwall, whichForWallBase, 1];
-                        leftY += customWallOffsetMods[whichModIndices[iwall, 0]];
-                        rightY += customWallOffsetMods[whichModIndices[iwall, 1]];
+                        leftY += customWallOffsetMods[iwall][whichModIndices[iwall, 0]];
+                        rightY += customWallOffsetMods[iwall][whichModIndices[iwall, 1]];
                         var centerY = (leftY + rightY) / 2;
                         var leftSize = heightsForWalls[iwall, whichForWallBase, 0];
                         var rightSize = heightsForWalls[iwall, whichForWallBase, 1];
-                        leftSize += customWallSizeMods[whichModIndices[iwall, 0]];
-                        rightSize += customWallSizeMods[whichModIndices[iwall, 1]];
+                        leftSize += customWallSizeMods[iwall][whichModIndices[iwall, 0]];
+                        rightSize += customWallSizeMods[iwall][whichModIndices[iwall, 1]];
                         var centerSize = (leftSize + rightSize) / 2;
 
                         if (centerSize == 0)

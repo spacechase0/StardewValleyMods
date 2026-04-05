@@ -86,6 +86,14 @@ public class State
         GameModesFinalized?.Invoke(this, new());
     }
 
+    public void ClearState()
+    {
+        // Can clear render caches and stuff
+        ActiveMode?.SwitchOff(ActiveMode);
+        ClearHandlerState();
+        ActiveMode?.SwitchOn(ActiveMode);
+    }
+
     public void ClearHandlerState()
     {
         foreach (var entry in modeData)

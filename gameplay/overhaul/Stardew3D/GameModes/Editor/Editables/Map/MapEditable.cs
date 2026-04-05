@@ -115,7 +115,7 @@ public class MapEditable : IEditable
         foreach (var potentialMode in EditingModes)
         {
             var factoryFunc = potentialMode.Value;
-            modeButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(1, 32), potentialMode.Key)
+            modeButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(1, 24), $"<f Default 0.5>{potentialMode.Key}")
             {
                 SetWidthBasedOnChildren = true,
                 OnPressed = _ => EditingMode = factoryFunc(this),

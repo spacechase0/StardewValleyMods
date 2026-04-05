@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -11,6 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using MLEM.Input;
 using MLEM.Ui.Elements;
 using SpaceShared;
+using Stardew3D.DataModels;
 using Stardew3D.Handlers;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
@@ -52,9 +54,17 @@ public class WallEditingMode : BaseEditingMode
     [Flags]
     public enum WallSide
     {
+        None = 0,
         Left = 1 << 0,
         Right = 1 << 1,
-        All = Left | Right,
+        Both = Left | Right,
+    }
+
+    public enum EditType
+    {
+        Texture,
+        Size,
+        Offset,
     }
 
     public override string Id => "Walls";
@@ -68,7 +78,19 @@ public class WallEditingMode : BaseEditingMode
     private HashSet<WallSelection> selectedTiles = new();
     private List<Vector3> selBounds = new List<Vector3>();
     private bool selDirty = false;
-    private WallSide tileEditType
+    private EditType wallEditType
+    {
+        get => field;
+        set
+        {
+            field = value;
+            selDirty = true;
+
+            texturesGroup?.IsHidden = value != EditType.Texture;
+            sidesGroup?.IsHidden = value == EditType.Texture;
+        }
+    } = EditType.Texture;
+    private WallSide wallEditSide
     {
         get => field;
         set
@@ -76,7 +98,7 @@ public class WallEditingMode : BaseEditingMode
             field = value;
             selDirty = true;
         }
-    } = WallSide.All;
+    } = WallSide.Both;
 
     public WallEditingMode(MapEditable editable)
         : base(editable)
@@ -90,12 +112,58 @@ public class WallEditingMode : BaseEditingMode
         selDirty = true;
     }
 
+    private Group texturesGroup;
+    private Group sidesGroup;
     public override ICollection<Element> PopulatePanelContents()
     {
-        // TODO
-        return [];
+        List<Element> elems = new();
+        elems.Add(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, _ => $"Mode: {wallEditType}"));
+        foreach (var val in Enum.GetValues<EditType>())
+        {
+            var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(64, 24), $"<f Default 0.5>{val}")
+            {
+                OnPressed = _ =>
+                {
+                    wallEditType = val;
+                }
+            };
+            elems.Add(button);
+        }
+        elems.Add(new VerticalSpace(16));
+        elems.Add(texturesGroup = new Group(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 0), setHeightBasedOnChildren: true)
+        {
+            IsHidden = true
+        });
+        sidesGroup = new Group(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 0), setHeightBasedOnChildren: true)
+        {
+            IsHidden = true,
+        };
+        sidesGroup.AddChild(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, _ => $"Side: {wallEditSide}"));
+        sidesGroup.AddChild(new Button(MLEM.Ui.Anchor.AutoLeft, new Vector2(0.35f, 24), "<f Default 0.5>Left")
+        {
+            NormalColor = Color.SkyBlue,
+            HoveredColor = Color.LightSkyBlue,
+            OnPressed = elem =>
+            {
+                wallEditSide = wallEditSide ^ WallSide.Left;
+                (elem as Button).NormalColor = wallEditSide.HasFlag(WallSide.Left) ? Color.SkyBlue : Color.SteelBlue;
+                (elem as Button).HoveredColor = wallEditSide.HasFlag(WallSide.Left) ? new Color(150, 225, 250) : new Color(100, 150, 200);
+            }
+        });
+        sidesGroup.AddChild(new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(0.35f, 24), "<f Default 0.5>Right")
+        {
+            NormalColor = Color.SkyBlue,
+            HoveredColor = Color.LightSkyBlue,
+            OnPressed = elem =>
+            {
+                wallEditSide = wallEditSide ^ WallSide.Right;
+                (elem as Button).NormalColor = wallEditSide.HasFlag(WallSide.Right) ? Color.SkyBlue : Color.SteelBlue;
+                (elem as Button).HoveredColor = wallEditSide.HasFlag(WallSide.Right) ? new Color(150, 225, 250) : new Color(100, 150, 200);
+            }
+        });
+        elems.Add(sidesGroup);
+        return elems;
     }
-
 
     public override void Update()
     {
@@ -188,7 +256,60 @@ public class WallEditingMode : BaseEditingMode
 
     private void UpdateModifications()
     {
-        // TODO
+        var editor = Mod.State.ActiveMode as EditorGameMode;
+        int scrollAmt = (editor.Ui.Controls.Input.ScrollWheel - editor.Ui.Controls.Input.LastScrollWheel) / 120;
+
+        if (wallEditType is EditType.Size or EditType.Offset)
+        {
+            if (scrollAmt != 0 && wallEditSide != WallSide.None)
+            {
+                float incr = 1f;
+                if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Shift))
+                    incr = 1f / 4;
+                else if (editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
+                    incr = 1f / 16;
+
+                incr *= scrollAmt;
+
+                foreach (var wall in selectedTiles)
+                {
+                    TileSpot corner = wall.Direction switch
+                    {
+                        TileSpot.North => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.NorthWest, WallSide.Right => TileSpot.NorthEast },
+                        TileSpot.South => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.SouthEast, WallSide.Right => TileSpot.SouthWest },
+                        TileSpot.West => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.SouthWest, WallSide.Right => TileSpot.NorthWest },
+                        TileSpot.East => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.NorthEast, WallSide.Right => TileSpot.SouthEast }
+                    };
+                    Editable.Location.ModifyDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, incr, corner);
+                }
+
+                MapModified();
+            }
+
+            if (editor.Ui.Controls.Input.TryConsumePressed(Keys.Delete))
+            {
+                foreach (var wall in selectedTiles)
+                {
+                    foreach (var type in Enum.GetValues<TileSpot>())
+                        Editable.Location.SetDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, null, type);
+                }
+
+                MapModified();
+            }
+        }
+        else if (wallEditType == EditType.Texture)
+        {
+            if (editor.Ui.Controls.Input.TryConsumePressed(Keys.Delete))
+            {
+                foreach (var wall in selectedTiles)
+                {
+                    foreach (var type in Enum.GetValues<TileSpot>())
+                        Editable.Location.SetDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, null, type);
+                }
+
+                MapModified();
+            }
+        }
     }
 
     private void DoSelect(ICollection<WallSelection> tiles)
@@ -203,15 +324,96 @@ public class WallEditingMode : BaseEditingMode
                 selectedTiles.Add(sel);
         }
         selDirty = true;
+
+        LocationHandler handler = Mod.State.GetUpdateHandlersFor(Editable.Location)[0] as LocationHandler;
+
+        string overrideId = null;
+        List<KeyValuePair<string, string>> layers = new();
+        if (selectedTiles.Count > 0)
+        {
+            var wall = selectedTiles.First();
+            overrideId = Editable.Location.GetWallOverride(wall.Tile, wall.Direction);
+            foreach (var entry in handler.GetWallDefsFor(wall.Tile.X, wall.Tile.Y, (int)wall.Direction, withPlayerData: false))
+            {
+                layers.Add(new(entry, FloorWallAssociationData.Get(entry)?.WallDefinitionId ?? null));
+            }
+        }
+
+        Dropdown MakeDropdown(string initial, Action<string> onSelected)
+        {
+            Dropdown dropdown = new Dropdown(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 24), initial ?? "<null>", scrollPanel: true, panelHeight: 300);
+            {
+                Group g = new Group(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 1), setHeightBasedOnChildren: true);
+                g.AddChild(new Button(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 32), $"<f Default 0.5><null>")
+                {
+                    SetHeightBasedOnChildren = true,
+                    AutoSizeAddedAbsolute = new Vector2(-24, 0),
+                    OnPressed = _ =>
+                    {
+                        dropdown.IsOpen = false;
+                        dropdown.Text.Text = "<null>";
+                        onSelected(null);
+                    }
+                });
+                dropdown.AddElement(g);
+            }
+            foreach (var elem in WallDefinitionData.Get())
+            {
+                if (elem.Value == null || elem.Value.VerticalSegments == null)
+                    continue;
+
+                var seg = elem.Value.VerticalSegments[elem.Value.VerticalSegments.Count / 2];
+                Texture2D tex = seg == null ? Game1.staminaRect : Game1.content.Load<Texture2D>(seg.Tilesheet);
+                Rectangle rect = seg?.TextureRegion ?? new Rectangle(0, 0, 1, 1);
+
+                Group g = new Group(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 1), setHeightBasedOnChildren: true);
+                g.AddChild(new Button(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 32), $"<f Default 0.5>{elem.Key}")
+                {
+                    SetHeightBasedOnChildren = true,
+                    AutoSizeAddedAbsolute = new Vector2(-24, 0),
+                    OnPressed = _ =>
+                    {
+                        dropdown.IsOpen = false;
+                        dropdown.Text.Text = elem.Key;
+                        onSelected(elem.Key);
+                    }
+                });
+                g.AddChild(new Image(MLEM.Ui.Anchor.CenterRight, new Vector2(16, 16), new MLEM.Textures.TextureRegion(tex, rect))
+                {
+                    PositionOffset = new Vector2(4, 0)
+                });
+                dropdown.AddElement(g);
+            }
+            return dropdown;
+        }
+
+        texturesGroup.RemoveChildren();
+        texturesGroup.AddChild(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, "<f Default 0.5>Override", autoAdjustWidth: true));
+        texturesGroup.AddChild(MakeDropdown($"<f Default 0.5><{overrideId ?? "<null>"}>", val =>
+        {
+            foreach (var wall in selectedTiles)
+            {
+                Editable.Location.SetWallOverride(wall.Tile, wall.Direction, val);
+            }
+            MapModified();
+        }));
+        texturesGroup.AddChild(new VerticalSpace(16));
+        foreach (var entry in layers)
+        {
+            texturesGroup.AddChild(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, $"<f Default 0.5>{entry.Key}", autoAdjustWidth: true));
+            texturesGroup.AddChild(new Paragraph(MLEM.Ui.Anchor.AutoLeft, 1, $"<f Default 0.5>{(string.IsNullOrEmpty(entry.Value) ? " <null>" : entry.Value)}", autoAdjustWidth: true));
+            //typesGroup.AddChild(MakeDropdown(entry.Value, _ => { }));
+            texturesGroup.AddChild(new VerticalSpace(16));
+        }
     }
 
     private void MakeQuad(List<Vector3> verts, WallSelection wall)
     {
         float adjustL = 1, adjustR = 1;
-        switch (tileEditType)
+        switch (wallEditSide)
         {
-            case WallSide.Left: adjustR = 0.5f; break;
-            case WallSide.Right: adjustL = 0.5f; break;
+            case WallSide.Left: adjustR = 0f; break;
+            case WallSide.Right: adjustL = 0f; break;
         }
 
         Vector3 normal = wall.Direction switch

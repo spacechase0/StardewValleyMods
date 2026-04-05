@@ -12,4 +12,10 @@ internal partial class Tilesheet_SpringOutdoors2 : SpaceShared.Content.BaseDicti
     public FloorWallAssociationData _737 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
     public FloorWallAssociationData _741 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
 
+    // water
+    public FloorWallAssociationData _883 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _867 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _835 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+    public FloorWallAssociationData _820 => new() { WallDefinitionId = $"{ModId}/GenericCliffWall" };
+
 }

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Stardew3D.Handlers;
 using Stardew3D.Utilities;
 using StardewValley;
 using xTile.Tiles;
@@ -35,9 +36,79 @@ public class DummyLocation : GameLocation
         return MapLoader.CreateTemporary();
     }
 
+    public string GetWallOverride(Point tile, TileSpot dir)
+    {
+        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dir}";
+        var layer = Map.GetLayer(layerName);
+        if (layer == null)
+            return null;
+
+        if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
+            return null;
+
+        var tileInst = layer.Tiles[tile.X, tile.Y];
+        if (tileInst == null || !tileInst.Properties.TryGetValue($"{Mod.Instance.ModManifest.UniqueID}/WallDefinitionOverride", out var prop) || prop == null)
+            return null;
+
+        return prop.ToString();
+    }
+
+    public void SetWallOverride(Point tile, TileSpot dir, string newVal)
+    {
+        if (tile.X < 0 || tile.Y < 0 || tile.X >= Map.Layers[0].LayerWidth || tile.Y >= Map.Layers[0].LayerHeight)
+            return;
+
+        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dir}";
+        var layer = Map.GetLayer(layerName);
+        if (layer == null)
+            Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
+
+        if (newVal == null)
+            layer.Tiles[tile.X, tile.Y] = null;
+        else
+        {
+            TileSheet ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
+            if (ts == null)
+                Map.AddTileSheet(ts = new("dataValues3d", Map, "ThirdDimensionData\\data", new(32, 16), new(16, 16)));
+
+            var t = new StaticTile(layer, ts, BlendMode.Alpha, 0);
+            t.Properties.Add($"{Mod.Instance.ModManifest.UniqueID}/WallDefinitionOverride", newVal);
+            layer.Tiles[tile.X, tile.Y] = t;
+        }
+    }
+
     public float GetDimensionData(DimensionUtils.TileType tileType, Point tile, TileSpot modType = TileSpot.Center)
     {
-        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}";
+        return GetDimensionData($"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}", tile);
+    }
+
+    public void ModifyDimensionData(DimensionUtils.TileType tileType, Point tile, float amount, TileSpot modType = TileSpot.Center)
+    {
+        ModifyDimensionData( $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}", tile, amount);
+    }
+
+    public void SetDimensionData(DimensionUtils.TileType tileType, Point tile, float? value, TileSpot modType = TileSpot.Center)
+    {
+        SetDimensionData($"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}", tile, value);
+    }
+
+    public float GetDimensionData(TileSpot wallDir, bool isSize, Point tile, TileSpot modType = TileSpot.Center)
+    {
+        return GetDimensionData($"{Mod.ID}/WallData_{wallDir}_{(isSize ? "Size" : "Offset")}_{modType}", tile);
+    }
+
+    public void ModifyDimensionData(TileSpot wallDir, bool isSize, Point tile, float amount, TileSpot modType = TileSpot.Center)
+    {
+        ModifyDimensionData($"{Mod.ID}/WallData_{wallDir}_{(isSize ? "Size" : "Offset")}_{modType}", tile, amount);
+    }
+
+    public void SetDimensionData(TileSpot wallDir, bool isSize, Point tile, float? value, TileSpot modType = TileSpot.Center)
+    {
+        SetDimensionData($"{Mod.ID}/WallData_{wallDir}_{(isSize ? "Size" : "Offset")}_{modType}", tile, value);
+    }
+
+    public float GetDimensionData(string layerName, Point tile)
+    {
         var layer = Map.GetLayer(layerName);
         if (layer == null)
             return 0;
@@ -49,9 +120,8 @@ public class DummyLocation : GameLocation
         return DimensionUtils.GetValueForDataTileIndex(ind);
     }
 
-    public void ModifyDimensionData(DimensionUtils.TileType tileType, Point tile, float amount, TileSpot modType = TileSpot.Center)
+    public void ModifyDimensionData(string layerName, Point tile, float amount)
     {
-        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}";
         var layer = Map.GetLayer(layerName);
         if (layer == null)
             Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
@@ -71,9 +141,8 @@ public class DummyLocation : GameLocation
         layer.Tiles[tile.X, tile.Y] = new StaticTile(layer, ts, BlendMode.Alpha, ind);
     }
 
-    public void SetDimensionData(DimensionUtils.TileType tileType, Point tile, float? value, TileSpot modType = TileSpot.Center)
+    public void SetDimensionData(string layerName, Point tile, float? value)
     {
-        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}";
         var layer = Map.GetLayer(layerName);
         if (layer == null)
             Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));

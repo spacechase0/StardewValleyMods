@@ -6,6 +6,11 @@ namespace Stardew3D.DataModels;
 [CustomDictionaryAsset("WallDefinitions")]
 public partial class WallDefinitionData
 {
+    static partial void AfterRefreshData()
+    {
+        Mod.State.ClearHandlerState();
+    }
+
     public class WallSegmentData
     {
         public enum SegmentContinuationMode

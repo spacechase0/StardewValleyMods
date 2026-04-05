@@ -102,7 +102,7 @@ public class TileDataEditingMode : BaseEditingMode
                 TileSpot.SouthEast => "SE",
                 TileSpot.SouthWest => "SW",
             };
-            var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(48, 48), str)
+            var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(32, 32), $"<f Default 0.5>{str}")
             {
                 OnPressed = _ =>
                 {
@@ -129,7 +129,7 @@ public class TileDataEditingMode : BaseEditingMode
         for (int i = 0; i < vals.Length; ++i)
         {
             var val = vals[i];
-            var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(0.5f, 32), val.ToString())
+            var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(0.35f, 24), $"<f Default 0.5>{val}")
             {
                 OnPressed = _ =>
                 {
