@@ -30,7 +30,7 @@ namespace SpaceShared.UI
         /// <summary>The zoom factor to apply to the image.</summary>
         public int Scale { get; set; }
 
-        public Action<Element> Callback { get; set; }
+        public Action<Element>? Callback { get; set; }
 
         /// <inheritdoc />
         public override int Width => (int)this.GetActualSize().X;

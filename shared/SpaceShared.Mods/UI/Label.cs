@@ -36,7 +36,7 @@ namespace SpaceShared.UI
 
         public string String { get; set; }
 
-        public Action<Element> Callback { get; set; }
+        public Action<Element>? Callback { get; set; }
 
         /// <inheritdoc />
         public override int Width => (int)this.Measure().X;

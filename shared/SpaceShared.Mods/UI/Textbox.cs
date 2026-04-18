@@ -65,7 +65,7 @@ namespace SpaceShared.UI
             }
         }
 
-        public Action<Element> Callback { get; set; }
+        public Action<Element>? Callback { get; set; }
 
         /// <inheritdoc />
         public override int Width => 192;
