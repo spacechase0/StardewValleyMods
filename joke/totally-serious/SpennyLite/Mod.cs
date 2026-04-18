@@ -21,7 +21,7 @@ namespace SpennyLite
             helper.Events.GameLoop.UpdateTicked += this.OnUpdateTicked;
         }
 
-        private void Display_MenuChanged(object sender, MenuChangedEventArgs e)
+        private void Display_MenuChanged(object? sender, MenuChangedEventArgs e)
         {
             if (e.OldMenu == null && e.NewMenu is DialogueBox db && db.characterDialogue?.speaker?.Name == "Penny")
             {
@@ -30,7 +30,7 @@ namespace SpennyLite
             }
         }
 
-        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
         {
             if (e.IsMultipleOf(8) && startingSpin != -1)
             {
