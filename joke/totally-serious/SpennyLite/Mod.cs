@@ -8,7 +8,7 @@ namespace SpennyLite
 {
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod instance = null!;
 
         public int startingSpin = -1;
 

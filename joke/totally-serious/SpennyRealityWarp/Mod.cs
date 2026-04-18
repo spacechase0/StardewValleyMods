@@ -14,7 +14,7 @@ namespace SpennyRealityWarp;
 
 internal class Mod : StardewModdingAPI.Mod
 {
-    public static Mod instance;
+    public static Mod instance = null!;
 
     public float? worldRotation = null;
     public Vector2 worldCenter;
