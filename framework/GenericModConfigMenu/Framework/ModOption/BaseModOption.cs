@@ -12,10 +12,10 @@ namespace GenericModConfigMenu.Framework.ModOption
         public string FieldId { get; }
 
         /// <summary>The label text to show in the form.</summary>
-        public Func<string> Name { get; }
+        public Func<string>? Name { get; }
 
         /// <summary>The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</summary>
-        public Func<string> Tooltip { get; }
+        public Func<string?>? Tooltip { get; }
 
         /// <summary>Whether the option can only be edited from the title screen.</summary>
         public bool IsTitleScreenOnly { get; }
@@ -54,7 +54,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="name">The label text to show in the form.</param>
         /// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
         /// <param name="mod">The mod config UI that contains this option.</param>
-        protected BaseModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod)
+        protected BaseModOption(string? fieldId, Func<string>? name, Func<string?>? tooltip, ModConfig mod)
         {
             fieldId ??= Guid.NewGuid().ToString("N");
             tooltip ??= () => null;

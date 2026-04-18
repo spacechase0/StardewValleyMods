@@ -17,26 +17,26 @@ namespace GenericModConfigMenu.Framework.ModOption
         private readonly Action<SpriteBatch, Vector2> DrawImpl;
 
         /// <summary>A callback raised before the form's current values are saved to the config.</summary>
-        private readonly Action BeforeSaveImpl;
+        private readonly Action? BeforeSaveImpl;
 
         /// <summary>A callback raised after the form's current values are saved to the config.</summary>
-        private readonly Action AfterSaveImpl;
+        private readonly Action? AfterSaveImpl;
 
         /// <summary>A callback raised before the form is reset to its default values.</summary>
-        private readonly Action BeforeResetImpl;
+        private readonly Action? BeforeResetImpl;
 
         /// <summary>A callback raised after the form is reset to its default values.</summary>
-        private readonly Action AfterResetImpl;
+        private readonly Action? AfterResetImpl;
 
         /// <summary>A callback raised before the menu is opened.</summary>
-        private readonly Action BeforeMenuOpenedImpl;
+        private readonly Action? BeforeMenuOpenedImpl;
 
         /// <summary>A callback raised before the menu is closed.</summary>
-        private readonly Action BeforeMenuClosedImpl;
+        private readonly Action? BeforeMenuClosedImpl;
 
-        private readonly Func<IEnumerable<ClickableComponent>> SnapRegionsOverride;
-        private readonly Func<bool> SnapRegionsNeedRefreshing;
-        private readonly Func<bool?> UsingGamepadMovement;
+        private readonly Func<IEnumerable<ClickableComponent>>? SnapRegionsOverride;
+        private readonly Func<bool>? SnapRegionsNeedRefreshing;
+        private readonly Func<bool?>? UsingGamepadMovement;
 
 
         /*********
@@ -62,10 +62,10 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="beforeReset">A callback raised before the form is reset to its default values.</param>
         /// <param name="afterReset">A callback raised after the form is reset to its default values.</param>
         /// <param name="beforeMenuClosed">A callback raised just before the menu is closed.</param>
-        public ComplexModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod,
-            Func<int> height, Action<SpriteBatch, Vector2> draw,
-            Action beforeMenuOpened, Action beforeSave, Action afterSave, Action beforeReset, Action afterReset, Action beforeMenuClosed,
-            Func<IEnumerable<ClickableComponent>> snapRegionsOverride, Func<bool> snapRegionsNeedRefreshing, Func<bool?> usingGamepadMovement)
+        public ComplexModOption(string? fieldId, Func<string> name, Func<string>? tooltip, ModConfig mod,
+            Func<int>? height, Action<SpriteBatch, Vector2> draw,
+            Action? beforeMenuOpened, Action? beforeSave, Action? afterSave, Action? beforeReset, Action? afterReset, Action? beforeMenuClosed,
+            Func<IEnumerable<ClickableComponent>>? snapRegionsOverride, Func<bool>? snapRegionsNeedRefreshing, Func<bool?>? usingGamepadMovement)
             : base(fieldId, name, tooltip, mod)
         {
             height ??= () => 0; // UI will ignore values below the minimum one row
@@ -135,7 +135,7 @@ namespace GenericModConfigMenu.Framework.ModOption
 
         public IEnumerable<ClickableComponent> GetGamepadMovementRegions()
         {
-            return SnapRegionsOverride?.Invoke();
+            return SnapRegionsOverride?.Invoke() ?? [];
         }
 
         public bool CurrentlyUsingGamepadMovement(out bool allowSnappyMovement)

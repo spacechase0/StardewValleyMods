@@ -32,7 +32,7 @@ namespace GenericModConfigMenu.Framework.ModOption
             get => this.CachedValue;
             set
             {
-                if (!this.CachedValue.Equals(value))
+                if (!this.CachedValue?.Equals(value) == true)
                     this.Owner.ChangeHandlers.ForEach(handler => handler(this.FieldId, value));
 
                 this.CachedValue = value;
@@ -50,7 +50,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="mod">The mod config UI that contains this option.</param>
         /// <param name="getValue">Get the latest value from the mod config.</param>
         /// <param name="setValue">Update the mod config with the given value.</param>
-        public SimpleModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue)
+        public SimpleModOption(string? fieldId, Func<string>? name, Func<string>? tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue)
             : base(fieldId, name, tooltip, mod)
         {
             this.GetValue = getValue;
@@ -74,7 +74,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <inheritdoc />
         public override void BeforeSave()
         {
-            SpaceShared.Log.Trace("saving " + this.Name() + " " + this.Tooltip());
+            SpaceShared.Log.Trace("saving " + (this.Name?.Invoke() ?? "") + " " + (this.Tooltip?.Invoke() ?? ""));
             this.SetValue(this.CachedValue);
         }
 
@@ -91,7 +91,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         public override void BeforeMenuClosed() { }
 
         /// <summary>Get the display text to show for a value, or <c>null</c> to show the value as-is.</summary>
-        public virtual string FormatValue()
+        public virtual string? FormatValue()
         {
             switch (this.Value)
             {

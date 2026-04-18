@@ -26,7 +26,7 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Construct an instance.</summary>
         /// <param name="pageId">The unique page ID.</param>
         /// <param name="pageTitle">The page title shown in its UI, or <c>null</c> to show the <paramref name="pageId"/> value.</param>
-        public ModConfigPage(string pageId, Func<string> pageTitle)
+        public ModConfigPage(string pageId, Func<string>? pageTitle)
         {
             pageTitle ??= () => pageId;
 

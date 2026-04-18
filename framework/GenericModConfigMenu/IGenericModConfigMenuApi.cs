@@ -191,7 +191,7 @@ namespace GenericModConfigMenu
         /// <param name="mod">The manifest of the mod whose config menu is being shown, or <c>null</c> if not applicable.</param>
         /// <param name="page">The page ID being shown for the current config menu, or <c>null</c> if not applicable. This may be <c>null</c> even if a mod config menu is shown (e.g. because the mod doesn't have pages).</param>
         /// <returns>Returns whether a mod config menu is being shown.</returns>
-        bool TryGetCurrentMenu(out IManifest mod, out string page);
+        bool TryGetCurrentMenu(out IManifest? mod, out string? page);
 
         /// <summary>Remove a mod from the config UI and delete all its options and pages.</summary>
         /// <param name="mod">The mod's manifest.</param>
