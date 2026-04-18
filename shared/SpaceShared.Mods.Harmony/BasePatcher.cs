@@ -40,7 +40,7 @@ namespace Spacechase.Shared.Patching
         /// <param name="name">The method name.</param>
         /// <param name="priority">The patch priority to apply, usually specified using Harmony's <see cref="Priority"/> enum, or <c>null</c> to keep the default value.</param>
         /// <param name="before">The Harmony patch ID before which this patch should be applied, if any.</param>
-        protected HarmonyMethod GetHarmonyMethod(string name, int? priority = null, string before = null, string after = null)
+        protected HarmonyMethod GetHarmonyMethod(string name, int? priority = null, string? before = null, string? after = null)
         {
             var method = new HarmonyMethod(
                 AccessTools.Method(this.GetType(), name)
