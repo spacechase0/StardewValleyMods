@@ -41,11 +41,11 @@ namespace SpaceShared.UI
         public Rectangle Bounds => new((int)this.Position.X, (int)this.Position.Y, this.Width, this.Height);
 
         public bool Hover { get; private set; }
-        public virtual string HoveredSound => null;
+        public virtual string? HoveredSound => null;
 
         public bool ClickGestured { get; private set; }
         public bool Clicked => this.Hover && this.ClickGestured;
-        public virtual string ClickedSound => null;
+        public virtual string? ClickedSound => null;
 
         /// <summary>Whether to disable the element so it's invisible and can't be interacted with.</summary>
         public Func<bool> ForceHide;
