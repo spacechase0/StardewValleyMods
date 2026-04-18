@@ -45,7 +45,7 @@ namespace SpaceShared.UI
         public override int Height => (int)this.Measure().Y;
 
         /// <inheritdoc />
-        public override string HoveredSound => (this.Callback != null) ? "shiny4" : null;
+        public override string? HoveredSound => (this.Callback != null) ? "shiny4" : null;
 
 
         /*********

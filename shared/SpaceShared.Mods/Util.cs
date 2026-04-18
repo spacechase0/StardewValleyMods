@@ -11,11 +11,10 @@ using StardewValley.Tools;
 namespace SpaceShared
 {
 
-#nullable enable
 
     internal static partial class Util
     {
-        public static Texture2D FetchTexture( IModRegistry modRegistry, string modIdAndPath )
+        public static Texture2D FetchTexture( IModRegistry modRegistry, string? modIdAndPath )
         {
             if ( modIdAndPath == null || modIdAndPath.IndexOf( '/' ) == -1 )
                 return Game1.staminaRect;
@@ -37,7 +36,7 @@ namespace SpaceShared
             return Game1.staminaRect;
         }
 
-        public static IAssetName? FetchTextureLocation(IModRegistry modRegistry, string modIdAndPath)
+        public static IAssetName? FetchTextureLocation(IModRegistry modRegistry, string? modIdAndPath)
         {
             if (modIdAndPath == null || modIdAndPath.IndexOf('/') == -1)
                 return null;
@@ -61,7 +60,7 @@ namespace SpaceShared
         public static string? FetchTexturePath( IModRegistry modRegistry, string modIdAndPath )
             => FetchTextureLocation(modRegistry, modIdAndPath)?.BaseName;
 
-        public static string FetchFullPath(IModRegistry modRegistry, string modIdAndPath, char partSep = '/')
+        public static string? FetchFullPath(IModRegistry modRegistry, string? modIdAndPath, char partSep = '/')
         {
             if (modIdAndPath == null || modIdAndPath.IndexOf(partSep) == -1)
                 return null;
@@ -82,6 +81,5 @@ namespace SpaceShared
             return null;
         }
 
-#nullable restore
     }
 }

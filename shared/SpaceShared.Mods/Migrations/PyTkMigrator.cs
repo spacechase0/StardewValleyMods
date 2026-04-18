@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI.Enums;
@@ -24,7 +25,7 @@ namespace SpaceShared.Migrations
         /// <summary>Migrate all constructed buildings in the parsed save file which match the custom type. This must be called during the <see cref="LoadStage.SaveParsed"/> step.</summary>
         /// <param name="loaded">The save data to migrate.</param>
         /// <param name="getReplacements">The migration logic indexed by PyTK type identifier.</param>
-        public static void MigrateBuildings(SaveGame loaded, Dictionary<string, Func<Building, IDictionary<string, string>, Building>> getReplacements)
+        public static void MigrateBuildings(SaveGame loaded, Dictionary<string, Func<Building, IDictionary<string, string?>, Building>> getReplacements)
         {
             foreach (GameLocation location in loaded.locations.OfType<GameLocation>())
             {
@@ -32,11 +33,11 @@ namespace SpaceShared.Migrations
                 {
                     // get PyTK data
                     var building = location.buildings[i];
-                    if (/*location.buildings[i] is not Mill building ||*/ !PyTkMigrator.TryParseSerializedString(building.GetBuildingChest( "Input" )?.Name, out string actualType, out IDictionary<string, string> customData))
+                    if (/*location.buildings[i] is not Mill building ||*/ !PyTkMigrator.TryParseSerializedString(building.GetBuildingChest( "Input" )?.Name, out string? actualType, out IDictionary<string, string?>? customData))
                         continue;
 
                     // get replacement
-                    if (!getReplacements.TryGetValue(actualType, out var getReplacement))
+                    if (actualType == null || !getReplacements.TryGetValue(actualType, out var getReplacement))
                         continue;
                     Building replacement = getReplacement(building, customData);
 
@@ -60,7 +61,7 @@ namespace SpaceShared.Migrations
             {
                 foreach ((Vector2 key, SObject obj) in location.Objects.Pairs.ToArray())
                 {
-                    if (PyTkMigrator.TryMigrate(obj, type, getReplacement, out Item replaceWith) && replaceWith is SObject replaceWithObj)
+                    if (PyTkMigrator.TryMigrate(obj, type, getReplacement, out Item? replaceWith) && replaceWith is SObject replaceWithObj)
                         location.Objects[key] = replaceWithObj;
                 }
 
@@ -97,11 +98,11 @@ namespace SpaceShared.Migrations
         /// <param name="items">The items to scan.</param>
         /// <param name="type">The custom type identifier.</param>
         /// <param name="getReplacement">Get the replacement for the given PyTK fields.</param>
-        private static void TryMigrate(IList<Item> items, string type, Func<IDictionary<string, string>, Item> getReplacement)
+        private static void TryMigrate(IList<Item?> items, string type, Func<IDictionary<string, string?>?, Item> getReplacement)
         {
             for (int i = 0; i < items.Count; i++)
             {
-                if (PyTkMigrator.TryMigrate(items[i], type, getReplacement, out Item newItem))
+                if (PyTkMigrator.TryMigrate(items[i], type, getReplacement, out Item? newItem))
                     items[i] = newItem;
             }
         }
@@ -112,9 +113,9 @@ namespace SpaceShared.Migrations
         /// <param name="getReplacement">Get the replacement for the given PyTK fields.</param>
         /// <param name="replaceWith">The new item, if applicable.</param>
         /// <returns>Returns whether the item should be replaced with <paramref name="replaceWith"/>.</returns>
-        private static bool TryMigrate(Item item, string type, Func<IDictionary<string, string>, Item> getReplacement, out Item replaceWith)
+        private static bool TryMigrate(Item? item, string type, Func<IDictionary<string, string?>?, Item> getReplacement, out Item? replaceWith)
         {
-            if (PyTkMigrator.TryParseSerializedString(item?.Name, out string actualType, out IDictionary<string, string> customData) && actualType == type)
+            if (PyTkMigrator.TryParseSerializedString(item?.Name, out string? actualType, out IDictionary<string, string?>? customData) && actualType == type)
             {
                 replaceWith = getReplacement(customData);
                 return true;
@@ -131,7 +132,7 @@ namespace SpaceShared.Migrations
         /// <param name="serialized">The serialized data string.</param>
         /// <param name="type">The object type that was serialized.</param>
         /// <param name="customData">The custom data attributes, if any.</param>
-        private static bool TryParseSerializedString(string serialized, out string type, out IDictionary<string, string> customData)
+        private static bool TryParseSerializedString(string? serialized, out string? type, [NotNullWhen(true)] out IDictionary<string, string?>? customData)
         {
             // ignore if not a PyTK item
             if (serialized?.StartsWith("PyTK|Item|") == true != true)
@@ -144,7 +145,7 @@ namespace SpaceShared.Migrations
             // parse
             string[] fields = serialized.Split('|');
             type = fields[2];
-            customData = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            customData = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
             foreach (string field in fields.Skip(3))
             {
                 string[] parts = field.Split('=', 2);

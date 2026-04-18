@@ -7,9 +7,9 @@ namespace SpaceShared;
 // Has to be public because of C# visibility rules
 public abstract class BaseMod< ActualType > : StardewModdingAPI.Mod where ActualType : BaseMod< ActualType >
 {
-    public static ActualType Instance { get; private set; }
+    public static ActualType? Instance { get; private set; }
 
-    public static string ID => Instance.ModManifest.UniqueID;
+    public static string? ID => Instance?.ModManifest.UniqueID;
 
     public override void Entry(IModHelper helper)
     {

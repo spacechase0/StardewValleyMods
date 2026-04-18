@@ -11,7 +11,7 @@ namespace SpaceShared.Content;
 
 internal static partial class ContentRegistry
 {
-    private static Dictionary<string, Type> _customDictionaryAssets;
+    private static Dictionary<string, Type>? _customDictionaryAssets;
     public static Dictionary<string, Type> CustomDictionaryAssets
     {
         get
@@ -21,7 +21,7 @@ internal static partial class ContentRegistry
         }
     }
 
-    private static Dictionary<string, List<Type>> _dictionaryData;
+    private static Dictionary<string, List<Type>>? _dictionaryData;
     public static Dictionary<string, List<Type>> DictionaryData
     {
         get
@@ -46,7 +46,7 @@ internal static partial class ContentRegistry
             var customAttr = populatorType.CustomAttributes.First(ca => ca.AttributeType.Name.StartsWith($"{nameof(DictionaryAssetDataAttribute<>)}`"));
             var attr = populatorType.GetCustomAttribute(customAttr.AttributeType) as DictionaryAssetDataAttributeBase;
 
-            if (attr.OwnedAsset)
+            if (attr?.OwnedAsset == true)
                 assetName = $"$$MODID$$/{assetName}";
 
             if (!DictionaryData.TryGetValue(assetName, out var data))
@@ -73,7 +73,7 @@ internal static partial class ContentRegistry
 #if DEBUG
     private static ConcurrentBag<string> toInvalidate = new();
     [EventPriority(EventPriority.High)]
-    private static void GameLoop_UpdateTicking(object sender, UpdateTickingEventArgs e)
+    private static void GameLoop_UpdateTicking(object? sender, UpdateTickingEventArgs e)
     {
         foreach (var entry in toInvalidate)
             Mod.Helper.GameContent.InvalidateCache(entry);
@@ -85,13 +85,13 @@ internal static partial class ContentRegistry
         var customAttr = type.CustomAttributes.First(ca => ca.AttributeType.Name.StartsWith($"{nameof(DictionaryAssetDataAttribute<>)}`"));
         var attr = type.GetCustomAttribute(customAttr.AttributeType) as DictionaryAssetDataAttributeBase;
 
-        string assetName = attr.OwnedAsset ? $"{Mod.ModManifest.UniqueID}/{attr.AssetName}" : attr.AssetName;
+        string? assetName = attr?.OwnedAsset == true ? $"{Mod.ModManifest.UniqueID}/{attr.AssetName}" : attr?.AssetName;
 
-        toInvalidate.Add(assetName);
+        if (assetName != null) toInvalidate.Add(assetName);
     }
 #endif
 
-    private static void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
+    private static void Content_AssetRequested(object? sender, AssetRequestedEventArgs e)
     {
         foreach (var entry in CustomDictionaryAssets)
         {
@@ -101,7 +101,7 @@ internal static partial class ContentRegistry
                 continue;
 
             var dictType = typeof(Dictionary<,>).MakeGenericType(typeof(string), entry.Value);
-            var dict = dictType.GetConstructor([]).Invoke([]);
+            var dict = dictType.GetConstructor([])?.Invoke([])!;
 
             e.LoadFrom(() => dict, AssetLoadPriority.Exclusive);
         }
@@ -121,13 +121,13 @@ internal static partial class ContentRegistry
                 var customAttr = dataEntry.CustomAttributes.First(ca => ca.AttributeType.Name.StartsWith($"{nameof(DictionaryAssetDataAttribute<>)}`"));
                 var attr = dataEntry.GetCustomAttribute(customAttr.AttributeType) as DictionaryAssetDataAttributeBase;
 
-                var data = dataEntry.GetConstructor([]).Invoke([]) as BaseDictionaryAssetData;
-                data.ModId = Mod.ModManifest.UniqueID;
+                var data = dataEntry?.GetConstructor([])?.Invoke([]) as BaseDictionaryAssetData;
+                data?.ModId = Mod.ModManifest.UniqueID;
 
-                foreach (var member in dataEntry.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+                foreach (var member in dataEntry?.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly) ?? [])
                 {
-                    Type rawType = null;
-                    object rawVal = null;
+                    Type? rawType = null;
+                    object? rawVal = null;
                     if (member is FieldInfo field)
                     {
                         rawType = field.FieldType;
@@ -141,43 +141,43 @@ internal static partial class ContentRegistry
                     if ( rawType == null)
                         continue;
 
-                    Type type = rawType;
-                    KeyValuePair<string, object>[] values;
+                    Type? type = rawType;
+                    KeyValuePair<string?, object?>[] values;
                     if (rawType.IsArray)
                     {
                         type = rawType.GetElementType();
 
-                        PropertyInfo valKey = type.GetProperty("Key");
-                        PropertyInfo valVal = type.GetProperty("Value");
+                        PropertyInfo? valKey = type?.GetProperty("Key");
+                        PropertyInfo? valVal = type?.GetProperty("Value");
 
-                        var arr = rawVal as IList;
-                        values = new KeyValuePair<string, object>[arr.Count];
+                        var arr = (rawVal as IList)!;
+                        values = new KeyValuePair<string?, object?>[arr.Count];
                         for (int i = 0; i < arr.Count; ++i)
-                            values[i] = new(valKey.GetValue(arr[i]) as string, valVal.GetValue(arr[i]));
+                            values[i] = new(valKey?.GetValue(arr[i]) as string, valVal?.GetValue(arr[i]));
                     }
                     else
                     {
                         values = [new(member.Name.StartsWith('_') ? member.Name.Substring(1) : member.Name, rawVal)];
                     }
 
-                    if (!type.IsAssignableTo(customAttr.AttributeType.GenericTypeArguments[0]))
+                    if (type == null || !type.IsAssignableTo(customAttr.AttributeType.GenericTypeArguments[0]))
                         continue;
 
                     var keyOverrideAttr = member.GetCustomAttribute<DictionaryAssetDataKeyAttribute>();
 
                     foreach (var valEntry in values)
                     {
-                        string key = keyOverrideAttr?.Key ?? attr.KeyPattern;
+                        string key = keyOverrideAttr?.Key ?? attr!.KeyPattern;
                         if (!(keyOverrideAttr?.IgnoreSubstitutions ?? false))
                         {
                             for (int ic = 0; ic < key.Length; ++ic)
                             {
-                                foreach (var subst in data.KeySubstitutions)
+                                foreach (var subst in data!.KeySubstitutions)
                                 {
                                     if (key.Substring(ic, subst.Key.Length) != subst.Key)
                                         continue;
 
-                                    var newVal = subst.Value(entry.Key, valEntry.Key);
+                                    var newVal = subst.Value(entry.Key, valEntry.Key!);
                                     key = key.Remove(ic, subst.Key.Length).Insert(ic, newVal);
                                     ic += newVal.Length - 1;
 
@@ -186,7 +186,7 @@ internal static partial class ContentRegistry
                             }
                         }
 
-                        valuesToAdd[key] = valEntry.Value;
+                        valuesToAdd[key] = valEntry.Value!;
                     }
                 }
             }
@@ -197,13 +197,13 @@ internal static partial class ContentRegistry
                 {
                     var dict = ad.Data as IDictionary;
                     foreach ( var entry in valuesToAdd )
-                        dict[entry.Key] = entry.Value;
+                        dict?[entry.Key] = entry.Value;
                 }, AssetEditPriority.Early);
             }
         }
     }
 
-    private static void Content_AssetsInvalidated(object sender, AssetsInvalidatedEventArgs e)
+    private static void Content_AssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e)
     {
         var methBase = Mod.Helper.GameContent.GetType().GetMethod("Load", [ typeof( string ) ]);
 
@@ -215,7 +215,7 @@ internal static partial class ContentRegistry
 
             //var methLoad = methBase.MakeGenericMethod(typeof(Dictionary<,>).MakeGenericType(typeof(string), entry.Value));
             //entry.Value.GetProperty("AssetInstance").SetValue(null, methLoad.Invoke(Mod.Helper.GameContent, [assetName]));
-            entry.Value.GetMethod("RefreshData", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, [false]);
+            entry.Value.GetMethod("RefreshData", BindingFlags.Static | BindingFlags.NonPublic)?.Invoke(null, [false]);
         }
     }
 }
