@@ -29,7 +29,7 @@ namespace SpaceShared.UI
         public bool GamepadMovementRegionsDirty { get; set; } = false;
 
 
-        private Func<ClickableComponent>? CurrentSnapped;
+        private Func<ClickableComponent?>? CurrentSnapped;
         private Action<int> ForceSnapInDirection;
         public Element? CurrentSnappedElement => (CurrentSnapped?.Invoke() as ElementClickableComponent)?.Parent;
 
@@ -37,7 +37,7 @@ namespace SpaceShared.UI
         ** Public methods
         *********/
 
-        public RootElement(Func<ClickableComponent> currentSnapped, Action<int> forceSnapInDirection)
+        public RootElement(Func<ClickableComponent?> currentSnapped, Action<int> forceSnapInDirection)
         {
             CurrentSnapped = currentSnapped;
             ForceSnapInDirection = forceSnapInDirection;
