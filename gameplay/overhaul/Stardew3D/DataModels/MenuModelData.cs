@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 namespace Stardew3D.DataModels;
 public class MenuModelData : ModelData
 {
-    public override string Type => $"{Mod.Instance.ModManifest.UniqueID}/Menu";
+    public override string Type => $"{Mod.Instance?.ModManifest.UniqueID}/Menu";
 
     public class ClickableModelData : OtherModelReference
     {

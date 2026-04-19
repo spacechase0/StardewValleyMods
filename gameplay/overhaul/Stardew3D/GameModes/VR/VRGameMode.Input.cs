@@ -24,7 +24,7 @@ namespace Stardew3D.GameModes.VR;
 public abstract partial class VRGameMode
 {
     private delegate TrackedDevice TrackedDeviceFactoryFunction(uint deviceIndex);
-    private static TrackedDeviceFactoryFunction[] TrackedDeviceFactory =
+    private static TrackedDeviceFactoryFunction?[] TrackedDeviceFactory =
     {
         null, // Invalid
         deviceIndex => new TrackedHeadset( deviceIndex ), // HMD
@@ -37,9 +37,9 @@ public abstract partial class VRGameMode
     public IReadOnlyList<TrackedDevice> Devices => _devices;
 
     private int? headsetIndex, leftControllerIndex, rightControllerIndex;
-    public TrackedHeadset Headset => headsetIndex.HasValue ? _devices[headsetIndex.Value] as TrackedHeadset : null;
-    public TrackedController LeftController => leftControllerIndex.HasValue ? _devices[leftControllerIndex.Value] as TrackedController : null;
-    public TrackedController RightController => rightControllerIndex.HasValue ? _devices[rightControllerIndex.Value] as TrackedController : null;
+    public TrackedHeadset? Headset => headsetIndex.HasValue ? _devices[headsetIndex.Value] as TrackedHeadset : null;
+    public TrackedController? LeftController => leftControllerIndex.HasValue ? _devices[leftControllerIndex.Value] as TrackedController : null;
+    public TrackedController? RightController => rightControllerIndex.HasValue ? _devices[rightControllerIndex.Value] as TrackedController : null;
 
     public abstract class ActionData
     {
@@ -223,7 +223,7 @@ public abstract partial class VRGameMode
 
             // TODO: Generate actions.json from the above
 
-            var err = Valve.VR.OpenVR.Input.SetActionManifestPath(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "openvr_input_bindings", "actions.json"));
+            var err = Valve.VR.OpenVR.Input.SetActionManifestPath(Path.Combine(Mod.Instance!.Helper.DirectoryPath, "assets", "openvr_input_bindings", "actions.json"));
             if (err != EVRInputError.None) Log.Error($"Failed to set action manifest for OpenVR input: {err}");
 
             foreach (var set in actionSets.Keys)
@@ -279,7 +279,7 @@ public abstract partial class VRGameMode
             var seatedTransform = seated.mDeviceToAbsoluteTracking.ToMonogame();
             var standingTransform = standing.mDeviceToAbsoluteTracking.ToMonogame();
 
-            TrackedDevice existing = _devices.FirstOrDefault(dev => dev.Connected && dev.DeviceIndex == deviceInd);
+            TrackedDevice? existing = _devices.FirstOrDefault(dev => dev.Connected && dev.DeviceIndex == deviceInd);
             if (!Valve.VR.OpenVR.System.IsTrackedDeviceConnected(deviceInd))
             {
                 if (existing != null)
@@ -299,7 +299,7 @@ public abstract partial class VRGameMode
                     else if (deviceClass == ETrackedDeviceClass.Controller)
                     {
                         var controller = existing as TrackedController;
-                        switch (controller.Role)
+                        switch (controller?.Role)
                         {
                             case ETrackedControllerRole.LeftHand:
                                 leftControllerIndex = _devices.Count - 1;

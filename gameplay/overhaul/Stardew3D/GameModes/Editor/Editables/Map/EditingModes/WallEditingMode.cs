@@ -30,7 +30,7 @@ public class WallEditingMode : BaseEditingMode
         public WallSelection(Point tile, TileSpot dir) { Tile = tile; Direction = dir; }
         public WallSelection(int x, int y, TileSpot dir) { Tile = new Point( x, y ); Direction = dir; }
 
-        public override bool Equals([NotNullWhen(true)] object obj)
+        public override bool Equals([NotNullWhen(true)] object? obj)
         {
             return obj is WallSelection other && other.Tile == Tile && other.Direction == Direction;
         }
@@ -280,7 +280,7 @@ public class WallEditingMode : BaseEditingMode
                         TileSpot.West => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.SouthWest, WallSide.Right => TileSpot.NorthWest },
                         TileSpot.East => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.NorthEast, WallSide.Right => TileSpot.SouthEast }
                     };
-                    Editable.Location.ModifyDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, incr, corner);
+                    Editable.Location?.ModifyDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, incr, corner);
                 }
 
                 MapModified();
@@ -291,7 +291,7 @@ public class WallEditingMode : BaseEditingMode
                 foreach (var wall in selectedTiles)
                 {
                     foreach (var type in Enum.GetValues<TileSpot>())
-                        Editable.Location.SetDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, null, type);
+                        Editable.Location?.SetDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, null, type);
                 }
 
                 MapModified();
@@ -303,7 +303,7 @@ public class WallEditingMode : BaseEditingMode
             {
                 foreach (var wall in selectedTiles)
                 {
-                    Editable.Location.SetWallOverride(wall.Tile, wall.Direction, null);
+                    Editable.Location?.SetWallOverride(wall.Tile, wall.Direction, null);
                 }
 
                 MapModified();
@@ -326,12 +326,12 @@ public class WallEditingMode : BaseEditingMode
 
         LocationHandler handler = Mod.State.GetUpdateHandlersFor(Editable.Location)[0] as LocationHandler;
 
-        string overrideId = null;
+        string? overrideId = null;
         List<KeyValuePair<string, string>> layers = new();
         if (selectedTiles.Count > 0)
         {
             var wall = selectedTiles.First();
-            overrideId = Editable.Location.GetWallOverride(wall.Tile, wall.Direction);
+            overrideId = Editable.Location?.GetWallOverride(wall.Tile, wall.Direction);
             foreach (var entry in handler.GetWallDefsFor(wall.Tile.X, wall.Tile.Y, (int)wall.Direction, withPlayerData: false))
             {
                 layers.Add(new(entry, FloorWallAssociationData.Get(entry)?.WallDefinitionId ?? null));
@@ -392,7 +392,7 @@ public class WallEditingMode : BaseEditingMode
         {
             foreach (var wall in selectedTiles)
             {
-                Editable.Location.SetWallOverride(wall.Tile, wall.Direction, val);
+                Editable.Location?.SetWallOverride(wall.Tile, wall.Direction, val);
             }
             MapModified();
         }));
@@ -435,7 +435,7 @@ public class WallEditingMode : BaseEditingMode
         float sizeL = 3, sizeR = 3;
 
         Vector3 pos = DimensionUtils.GetPositionForTile(Editable.Location, wall.Tile).Position + normal * -0.5f;
-        if (wall.Tile.X >= 0 && wall.Tile.Y >= 0 && wall.Tile.X < Editable.Location.Map.Layers[0].LayerWidth && wall.Tile.Y < Editable.Location.Map.Layers[0].LayerHeight)
+        if (wall.Tile.X >= 0 && wall.Tile.Y >= 0 && wall.Tile.X < Editable.Location?.Map.Layers[0].LayerWidth && wall.Tile.Y < Editable.Location.Map.Layers[0].LayerHeight)
         {
             LocationHandler handler = Mod.State.GetUpdateHandlersFor(Editable.Location)[0] as LocationHandler;
             if (handler.wallData[wall.Tile.X, wall.Tile.Y, (int)wall.Direction] is LocationHandler.WallData wallData)

@@ -14,7 +14,7 @@ internal static class TeextureFactoryHackPatch
         var code = new CodeMatcher(insns, ilgen)
             .MatchStartForward(new CodeMatch(OpCodes.Callvirt, AccessTools.PropertySetter(typeof(GraphicsResource), nameof(GraphicsResource.Name))));
         int pos = code.Pos + 1;
-        code.MatchStartBackwards(new CodeMatch(insn => insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo).Name == "ConvertTexture"))
+        code.MatchStartBackwards(new CodeMatch(insn => insn.opcode == OpCodes.Callvirt && (insn.operand as MethodInfo)?.Name == "ConvertTexture"))
             .Advance(2);
         code.RemoveInstructions(pos - (code.Pos + 1) + 1);
 

@@ -185,7 +185,7 @@ public class TileDataEditingMode : BaseEditingMode
         if (editor.Ui.Controls.Input.TryConsumePressed(Keys.A) && editor.Ui.Controls.Input.IsModifierKeyDown(ModifierKey.Control))
         {
             HashSet<Point> pending = new();
-            for (int ix = 0; ix < Editable.Location.Map.Layers[0].LayerWidth; ++ix)
+            for (int ix = 0; ix < Editable.Location?.Map.Layers[0].LayerWidth; ++ix)
             {
                 for (int iy = 0; iy < Editable.Location.Map.Layers[0].LayerHeight; ++iy)
                 {
@@ -223,7 +223,7 @@ public class TileDataEditingMode : BaseEditingMode
                 {
                     if (visited.Contains(pt))
                         return;
-                    if (pt.X < 0 || pt.Y < 0 || pt.X >= Editable.Location.Map.Layers[0].LayerWidth || pt.Y >= Editable.Location.Map.Layers[0].LayerHeight)
+                    if (pt.X < 0 || pt.Y < 0 || pt.X >= Editable.Location?.Map.Layers[0].LayerWidth || pt.Y >= Editable.Location?.Map.Layers[0].LayerHeight)
                         return;
 
                     toVisit.Enqueue(pt);
@@ -336,9 +336,9 @@ public class TileDataEditingMode : BaseEditingMode
                         break;
                 }
 
-                float baseHeight = Editable.Location.GetDimensionData(TileType, min, TileSpot.Center);
-                float endHeight = Editable.Location.GetDimensionData(TileType, max, TileSpot.Center);
-                endHeight += Editable.Location.GetDimensionData(TileType, max, tileEditType);
+                float baseHeight = Editable.Location?.GetDimensionData(TileType, min, TileSpot.Center) ?? 0;
+                float endHeight = Editable.Location?.GetDimensionData(TileType, max, TileSpot.Center) ?? 0;
+                endHeight += Editable.Location?.GetDimensionData(TileType, max, tileEditType) ?? 0;
                 endHeight += incr * (steps + 1);
 
                 incr = (endHeight - baseHeight) / (steps + 1);
@@ -351,14 +351,14 @@ public class TileDataEditingMode : BaseEditingMode
                         TileSpot.North => Math.Abs(min.Y - tile.Y),
                         TileSpot.South => Math.Abs(min.Y - tile.Y),
                     };
-                    Editable.Location.SetDimensionData(TileType, tile, baseHeight + incr * amt, TileSpot.Center);
-                    Editable.Location.SetDimensionData(TileType, tile, incr, tileEditType);
+                    Editable.Location?.SetDimensionData(TileType, tile, baseHeight + incr * amt, TileSpot.Center);
+                    Editable.Location?.SetDimensionData(TileType, tile, incr, tileEditType);
                 }
             }
             else
             {
                 foreach (var tile in selectedTiles)
-                    Editable.Location.ModifyDimensionData(TileType, tile, incr, tileEditType);
+                    Editable.Location?.ModifyDimensionData(TileType, tile, incr, tileEditType);
             }
 
             MapModified();
@@ -369,7 +369,7 @@ public class TileDataEditingMode : BaseEditingMode
             foreach (var tile in selectedTiles)
             {
                 foreach ( var type in Enum.GetValues<TileSpot>() )
-                    Editable.Location.SetDimensionData(TileType, tile, null, type);
+                    Editable.Location?.SetDimensionData(TileType, tile, null, type);
             }
 
             MapModified();
@@ -487,7 +487,7 @@ public class TileDataEditingMode : BaseEditingMode
                 foreach (var tile in pendingTiles)
                     MakeQuad(pendingBounds, DimensionUtils.GetPositionForTile(Editable.Location, tile, TileType));
             }
-            
+
             selDirty = true;
         }
 

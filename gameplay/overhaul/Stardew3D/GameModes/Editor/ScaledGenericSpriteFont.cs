@@ -10,7 +10,7 @@ public class ScaledGenericSpriteFont : GenericSpriteFont
 
     private int origLineSpacing;
 
-    public ScaledGenericSpriteFont(float scale, SpriteFont font, SpriteFont bold = null, SpriteFont italic = null)
+    public ScaledGenericSpriteFont(float scale, SpriteFont font, SpriteFont? bold = null, SpriteFont? italic = null)
         : base(font, bold, italic)
     {
         Scale = scale;

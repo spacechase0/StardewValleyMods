@@ -10,10 +10,10 @@ using StardewValley;
 namespace Stardew3D;
 public class State
 {
-    private Dictionary<string, IGameMode> Modes { get; } = [];
-    internal string ActiveModeId = null;
+    private Dictionary<string, IGameMode?> Modes { get; } = [];
+    internal string? ActiveModeId = null;
 
-    public IGameMode ActiveMode
+    public IGameMode? ActiveMode
     {
         get => ActiveModeId == null ? null : Modes[ActiveModeId];
         set
@@ -44,7 +44,7 @@ public class State
 
         Modes.Add(mode.Id, mode);
     }
-    public IGameMode GetGameMode(string id) => Modes.GetOrDefault(id, null);
+    public IGameMode? GetGameMode(string id) => Modes.GetOrDefault(id, null);
     public IEnumerable<string> HandlerIds => Modes.Keys;
 
     public static event EventHandler AddingGameModes;
@@ -69,7 +69,7 @@ public class State
 
     internal State()
     {
-        GenericModelEffect = new(Game1.graphics.GraphicsDevice, File.ReadAllBytes(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "GenericModelEffect.mgfxo")));
+        GenericModelEffect = new(Game1.graphics.GraphicsDevice, File.ReadAllBytes(Path.Combine(Mod.Instance!.Helper.DirectoryPath, "assets", "GenericModelEffect.mgfxo")));
 
         if (Context.IsGameLaunched)
             InvokeAddingGameModes();
@@ -170,7 +170,7 @@ public class State
             modeData.GetOrCreateValue(handler).UpdateHandlerManager.AddHandlerAddon<InputType>(createHandlerFunc(handler), forSubclassesToo);
         }
     }
-    public IUpdateHandler[] GetUpdateHandlersFor(object obj)
+    public IUpdateHandler?[] GetUpdateHandlersFor(object? obj)
     {
         if (ActiveMode == null || obj == null)
             return [null];
@@ -194,7 +194,7 @@ public class State
             modeData.GetOrCreateValue(handler).RenderHandlerManager.AddHandlerAddon<RenderType>(createHandlerFunc(handler), forSubclassesToo);
         }
     }
-    public IRenderHandler[] GetRenderHandlersFor(object obj)
+    public IRenderHandler?[] GetRenderHandlersFor(object? obj)
     {
         if (ActiveMode == null || obj == null)
             return [null];
@@ -202,4 +202,3 @@ public class State
         return modeData.GetOrCreateValue(ActiveMode).RenderHandlerManager.GetHandlersFor(obj);
     }
 }
-

@@ -20,9 +20,9 @@ public abstract class InteractionArea
     {
         get
         {
-            if (Purpose == $"{Mod.Instance.ModManifest.UniqueID}/Action")
+            if (Purpose == $"{Mod.Instance?.ModManifest.UniqueID}/Action")
                 return Color.Yellow;
-            if (Purpose.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/ToolAction/"))
+            if (Purpose.StartsWith($"{Mod.Instance?.ModManifest.UniqueID}/ToolAction/"))
                 return Color.Blue;
 
             return Color.Magenta;

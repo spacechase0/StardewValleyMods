@@ -16,23 +16,23 @@ public abstract partial class BaseGameMode : IGameMode
     public abstract ICamera Camera { get; }
     public abstract IReadOnlyList<IGameCursor> Cursors { get; }
 
-    public RenderTarget2D CurrentTargetScreen { get => Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D; }
-    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location) => WorldRenderer.GetCurrentEnvironmentFor(location);
-    public Matrix GetCurrentTransformFor(GameLocation location) => WorldRenderer.GetCurrentTransformFor( location );
+    public RenderTarget2D? CurrentTargetScreen { get => Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D; }
+    public PBREnvironment? GetCurrentEnvironmentFor(GameLocation location) => WorldRenderer?.GetCurrentEnvironmentFor(location);
+    public Matrix? GetCurrentTransformFor(GameLocation location) => WorldRenderer?.GetCurrentTransformFor( location );
 
-    public abstract Matrix ProjectionMatrix { get; protected set; }
-    protected WorldRenderer WorldRenderer { get; set; }
-    protected RenderTarget2D RenderTarget { get; set; }
+    public abstract Matrix? ProjectionMatrix { get; protected set; }
+    protected WorldRenderer? WorldRenderer { get; set; }
+    protected RenderTarget2D? RenderTarget { get; set; }
 
     protected virtual bool NeedsRenderTargetHandling => true;
 
-    public virtual void SwitchOn(IGameMode previousMode)
+    public virtual void SwitchOn(IGameMode? previousMode)
     {
         WorldRenderer = new();
         //RenderTarget = new(Game1.graphics.GraphicsDevice, GameRunner.instance.Window.ClientBounds.Width, GameRunner.instance.Window.ClientBounds.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
     }
 
-    public virtual void SwitchOff(IGameMode nextMode)
+    public virtual void SwitchOff(IGameMode? nextMode)
     {
         WorldRenderer?.Dispose();
         WorldRenderer = null;
@@ -49,7 +49,7 @@ public abstract partial class BaseGameMode : IGameMode
         foreach (IGameCursor cursor in Cursors)
             cursor?.Update(this);
 
-        WorldRenderer.UpdateState();
+        WorldRenderer?.UpdateState();
     }
     public virtual void AfterUpdate() { }
 
@@ -106,7 +106,7 @@ public abstract partial class BaseGameMode : IGameMode
 
     public virtual void RenderWorld()
     {
-        WorldRenderer.Render(ProjectionMatrix, Camera, WorldRenderMode);
+        WorldRenderer?.Render(ProjectionMatrix, Camera, WorldRenderMode);
     }
 
     public virtual bool AfterRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen)
