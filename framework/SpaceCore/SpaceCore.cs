@@ -139,7 +139,7 @@ namespace SpaceCore
         internal Harmony Harmony;
 
         /// <summary>Handles migrating legacy data for a save file.</summary>
-        private LegacyDataMigrator LegacyDataMigrator;
+        private LegacyDataMigrator LegacyDataMigrator = null!;
 
         /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
         private bool IsFirstTick;
@@ -147,7 +147,7 @@ namespace SpaceCore
         internal class EquipmentSlotData
         {
             public IManifest CorrespondingMod { get; set; }
-            public Func<Item, bool> SlotValidator { get; set; }
+            public Func<Item?, bool> SlotValidator { get; set; }
             public Func<string> DisplayName { get; set; }
             public Texture2D BackgroundTex { get; set; }
             public Rectangle? BackgroundRect { get; set; }
@@ -156,13 +156,13 @@ namespace SpaceCore
         /*********
         ** Accessors
         *********/
-        public Configuration Config { get; set; }
-        internal static SpaceCore Instance;
-        internal static IReflectionHelper Reflection;
+        public Configuration Config { get; set; } = null!;
+        internal static SpaceCore Instance = null!;
+        internal static IReflectionHelper Reflection = null!;
         internal static readonly List<Type> ModTypes = new();
         internal static readonly Dictionary<Type, Dictionary<string, CustomPropertyInfo>> CustomProperties = new();
         internal static readonly Dictionary<string, EquipmentSlotData> EquipmentSlots = new();
-        internal static IApi api;
+        internal static IApi? api;
 
         /*********
         ** Public methods
@@ -267,7 +267,7 @@ namespace SpaceCore
                 }
             });
 
-            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_PlaySound", (string[] args, TriggerActionContext ctx, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_PlaySound", (string[] args, TriggerActionContext ctx, out string? error) =>
             {
                 if ( args.Length < 2 )
                 {
@@ -282,14 +282,14 @@ namespace SpaceCore
                 return true;
             });
 
-            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_ShowHudMessage", (string[] args, TriggerActionContext ctx, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_ShowHudMessage", (string[] args, TriggerActionContext ctx, out string? error) =>
             {
                 if ( args.Length < 2 )
                 {
                     error = "Not enough arguments";
                     return false;
                 }
-                Item item = null;
+                Item? item = null;
                 if (ArgUtility.TryGetOptional(args, 2, out string qualItemId, out error) && qualItemId != null)
                 {
                     item = ItemRegistry.Create(qualItemId);
@@ -300,7 +300,7 @@ namespace SpaceCore
                 return true;
             });
 
-            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_PlayEvent", (string[] args, TriggerActionContext ctx, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_PlayEvent", (string[] args, TriggerActionContext ctx, out string? error) =>
             {
                 if (args.Length < 2)
                 {
@@ -318,7 +318,7 @@ namespace SpaceCore
                 return true;
             });
 
-            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_DamageCurrentFarmer", (string[] args, TriggerActionContext ctx, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_DamageCurrentFarmer", (string[] args, TriggerActionContext ctx, out string? error) =>
             {
                 if (args.Length < 2)
                 {
@@ -333,7 +333,7 @@ namespace SpaceCore
                 return true;
             });
 
-            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_ApplyBuff", (string[] args, TriggerActionContext ctx, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_ApplyBuff", (string[] args, TriggerActionContext ctx, out string? error) =>
             {
                 if (args.Length < 3)
                 {
@@ -356,7 +356,7 @@ namespace SpaceCore
                 return true;
             });
 
-            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_OpenGuidebook", (string[] args, TriggerActionContext ctx, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_OpenGuidebook", (string[] args, TriggerActionContext ctx, out string? error) =>
             {
                 if (args.Length < 2)
                 {
@@ -374,7 +374,7 @@ namespace SpaceCore
                 GuidebookMenu menu = new(specificData);
                 if (args.Length >= 3)
                 {
-                    string chapter = args[2], pageId = null;
+                    string? chapter = args[2], pageId = null;
                     if (args.Length >= 4)
                         pageId = args[3];
                     menu.GotoChapter(chapter, pageId);
@@ -397,7 +397,7 @@ namespace SpaceCore
                     Log.Warn($"Error for NEARBY_CROPS: {error}");
                     return false;
                 }
-                if (ctx.CustomFields == null || !ctx.CustomFields.TryGetValue("Tile", out object tileObj) || tileObj is not Vector2 tile)
+                if (ctx.CustomFields == null || !ctx.CustomFields.TryGetValue("Tile", out object? tileObj) || tileObj is not Vector2 tile)
                 {
                     Log.Warn("No tile for NEARBY_CROPS GSQ");
                     return false;
@@ -412,7 +412,7 @@ namespace SpaceCore
 
                         if (!ctx.Location.terrainFeatures.TryGetValue(tile + new Vector2(ix, iy), out var tf) || tf is not HoeDirt hd || hd.crop == null)
                             continue;
-                        
+
                         if (hd.crop.netSeedIndex.Value == cropSeedId && hd.crop.currentPhase.Value == hd.crop.phaseDays.Count - 1)
                             return true;
                     }
@@ -509,7 +509,7 @@ namespace SpaceCore
                     context.LogErrorAndSkip("can't load new event from asset '" + assetName + "' because it doesn't exist");
                     return;
                 }
-                if (!Game1.content.Load<Dictionary<string, string>>(assetName).TryGetValue(newKey, out string raw))
+                if (!Game1.content.Load<Dictionary<string, string>>(assetName).TryGetValue(newKey, out string? raw))
                 {
                     DefaultInterpolatedStringHandler defaultInterpolatedStringHandler = new DefaultInterpolatedStringHandler(81, 2);
                     defaultInterpolatedStringHandler.AppendLiteral("can't load new event from asset '");
@@ -533,7 +533,7 @@ namespace SpaceCore
             @event.eventSwitched = true;
         }
 
-        private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
+        private void Content_AssetRequested(object? sender, AssetRequestedEventArgs e)
         {
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/ExtraEquipmentIcon"))
                 e.LoadFromModFile<Texture2D>("assets/extras.png", AssetLoadPriority.Low);
@@ -543,7 +543,7 @@ namespace SpaceCore
 
         private static HashSet<string> ambiguousMethods = new();
         private static Dictionary<string, Dictionary<string, List<int>>> locals = new();
-        public static List<int> GetLocalIndexForMethod(MethodBase meth, string local)
+        public static List<int>? GetLocalIndexForMethod(MethodBase meth, string local)
         {
             string fullDesc = meth.FullDescription();
             if (ambiguousMethods.Contains(fullDesc))
@@ -582,18 +582,18 @@ namespace SpaceCore
                         continue;
                     s += ", Stardew Valley";
 
-                    Type type = null;
+                    Type? type = null;
                     if (types.ContainsKey(s))
                         type = types[s];
                     else
-                        types.Add(s, type = Type.GetType(s));
+                        types.Add(s, type = Type.GetType(s) ?? throw new NullReferenceException());
 
                     // This is pretty inefficient...
                     string methName = mr2.GetString(mi.Name);
                     if (methName == ".cctor") // static constructor, ignoring these since they don't make sense to patch to begin with
                         continue;
                     var meths = AccessTools.GetDeclaredMethods(type).Where(methInfo => methInfo.Name == methName && methInfo.GetParameters().Length == mi.GetParameters().Count).ToList();
-                    MethodBase result = null;
+                    MethodBase? result = null;
                     IEnumerable<string> targetMethParams = mi.GetParameters().Select(ph => mr2.GetString(mr2.GetParameter(ph).Name));
                     foreach (var meth in meths)
                     {
@@ -661,7 +661,7 @@ namespace SpaceCore
 
         internal NPC lastInteraction = null;
         internal Dictionary<string, Action> lastChoices = null;
-        private void Input_ButtonPressed(object sender, ButtonPressedEventArgs e)
+        private void Input_ButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsPlayerFree)
                 return;
@@ -672,7 +672,7 @@ namespace SpaceCore
                 Game1.dialogueUp = false;
 
                 Rectangle tileRect = new Rectangle((int)e.Cursor.GrabTile.X * 64, (int)e.Cursor.GrabTile.Y * 64, 64, 64);
-                NPC npc = null;
+                NPC? npc = null;
                 foreach (var character in Game1.currentLocation.characters)
                 {
                     if (!character.IsMonster && character.GetBoundingBox().Intersects(tileRect))
@@ -705,7 +705,7 @@ namespace SpaceCore
                 {
                     lastChoices.Add(I18n.Interaction_GiftHeld(), () => npc.tryToReceiveActiveObject(Game1.player));
                 }
-                (GetApi() as Api).InvokeASI(npc, (s, a) => lastChoices.Add(s, a));
+                (GetApi() as Api)?.InvokeASI(npc, (s, a) => lastChoices.Add(s, a));
 
                 List<Response> responses = new();
                 foreach (var entry in lastChoices)
@@ -728,7 +728,7 @@ namespace SpaceCore
                         ;// Log.Debug("wat");
                 };
                 Game1.currentLocation.createQuestionDialogue(I18n.InteractionWith(npc.displayName), responses.ToArray(), "advanced-social-interaction");
-                
+
             }
         }
 
@@ -745,7 +745,7 @@ namespace SpaceCore
             return string.Equals( str1, str2, caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase );
         }
 
-        private Api apiReturned;
+        private Api? apiReturned;
         /// <inheritdoc />
         public override object GetApi()
         {
@@ -943,7 +943,7 @@ namespace SpaceCore
         {
             public Vector2 scale = Vector2.One;
             public int currGradInd;
-            public Color[] grad;
+            public Color[]? grad;
         }
 
         public static ConditionalWeakTable<AnimatedSprite, AnimatedSpriteExtras> spriteExtras = new();
@@ -1072,7 +1072,7 @@ namespace SpaceCore
         /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
             // Set up skills in GameLaunched to allow ModRegistry to be used here.
             Skills.Init(this.Helper.Events);
@@ -1089,7 +1089,7 @@ namespace SpaceCore
             };
 
             api = Helper.ModRegistry.GetApi<IApi>(ModManifest.UniqueID);
-            api.RegisterCustomProperty(typeof(Farmer), "SpaceCore_ExtraEquippables", typeof(NetStringDictionary<Item, NetRef<Item>>), AccessTools.Method(typeof(FarmerExtData), nameof(FarmerExtData.get_equippables)), AccessTools.Method(typeof(FarmerExtData), nameof(FarmerExtData.set_equippables)));
+            api?.RegisterCustomProperty(typeof(Farmer), "SpaceCore_ExtraEquippables", typeof(NetStringDictionary<Item, NetRef<Item>>), AccessTools.Method(typeof(FarmerExtData), nameof(FarmerExtData.get_equippables)), AccessTools.Method(typeof(FarmerExtData), nameof(FarmerExtData.set_equippables)));
 
             var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
             if (configMenu != null)
@@ -1149,7 +1149,7 @@ namespace SpaceCore
         /// <inheritdoc cref="IGameLoopEvents.UpdateTicked"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
         {
             if (Game1.CurrentEvent != null)
             {
@@ -1225,7 +1225,7 @@ namespace SpaceCore
                     {
                         int whole = (int)Math.Truncate(ext.staminaBuffer);
                         ext.staminaBuffer -= whole;
-                        Game1.player.Stamina += whole; 
+                        Game1.player.Stamina += whole;
                     }
                 }
                 if (ext.HealthRegen != 0)
@@ -1256,7 +1256,7 @@ namespace SpaceCore
         /// <inheritdoc cref="IGameLoopEvents.SaveLoaded"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
             try
             {

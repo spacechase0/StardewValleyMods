@@ -21,7 +21,7 @@ namespace SpaceCore
 
             [Obsolete("this will be removed eventually, override DisplayName instead")]
             public abstract string DispayName { get; }
-            
+
             public abstract Texture2D IconTexture { get; }
             public abstract Rectangle? IconSubrect { get; }
 
@@ -149,7 +149,7 @@ namespace SpaceCore
                 }
             }
 
-            public override bool Matches(Item item)
+            public override bool Matches(Item? item)
             {
                 if (item == null)
                     return false;
@@ -162,7 +162,7 @@ namespace SpaceCore
             }
         }
 
-        public virtual string Name { get; } = null;
+        public virtual string? Name { get; } = null;
         public abstract string Description { get; }
 
         public abstract Texture2D IconTexture { get; }

@@ -39,7 +39,7 @@ namespace SpaceCore.VanillaAssetExpansion
         public static void Postfix(Farm __instance)
         {
             var dict = Game1.content.Load<Dictionary<string, FarmExtensionData>>("spacechase0.SpaceCore/FarmExtensionData");
-            string keyToCheck = Game1.whichModFarm?.Id;
+            string? keyToCheck = Game1.whichModFarm?.Id;
             if(string.IsNullOrEmpty(keyToCheck))
             {
                 //same values as CP's {{FarmType}} token for ease of use
@@ -61,7 +61,7 @@ namespace SpaceCore.VanillaAssetExpansion
                 {
                     FarmAnimal animal = new FarmAnimal(animalPair.Value, Game1.Multiplayer.getNewID(), Game1.player.UniqueMultiplayerID);
                     animal.Name = animalPair.Key;
-                    (building.GetIndoors() as AnimalHouse).adoptAnimal(animal);
+                    (building.GetIndoors() as AnimalHouse)?.adoptAnimal(animal);
                 }
 
                 __instance.buildings.Add(building);

@@ -58,7 +58,7 @@ namespace SpaceCore.Framework
             return GetAccessors( nonPublic )[ 1 ];
         }
 
-        public override object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture )
+        public override object? GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture )
         {
             return parent.Getter.Invoke( null, new object[] { obj } );
         }

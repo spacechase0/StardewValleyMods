@@ -3,7 +3,7 @@ namespace SpaceShared
 {
     public class Holder<T>
     {
-        public T Value;
+        public T? Value;
 
         public Holder() { }
 

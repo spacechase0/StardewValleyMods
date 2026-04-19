@@ -100,7 +100,7 @@ namespace SpaceCore.Patches
                 }
                 // replace a call to SpriteBatch.Draw (use a different overload).
                 // it's the third one
-                if (drawCount < 3 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw"))
+                if (drawCount < 3 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo)?.Name.Equals("Draw") == true)
                 {
                     ++drawCount;
                     if (drawSkip > 0)
@@ -195,7 +195,7 @@ namespace SpaceCore.Patches
                 }
                 // add an extra vec2 multiply and vec2 add after applying
                 // breathScale
-                else if (i > 1 && scaleCount < 1 && orig[i - 2].opcode == OpCodes.Ldc_R4 && orig[i - 2].operand.Equals(4f) && orig[i - 1].opcode == OpCodes.Mul && orig[i].opcode == OpCodes.Ldloc_S && (orig[i].operand as LocalBuilder).LocalIndex == 5)
+                else if (i > 1 && scaleCount < 1 && orig[i - 2].opcode == OpCodes.Ldc_R4 && orig[i - 2].operand.Equals(4f) && orig[i - 1].opcode == OpCodes.Mul && orig[i].opcode == OpCodes.Ldloc_S && (orig[i].operand as LocalBuilder)?.LocalIndex == 5)
                 {
                     ++scaleCount;
                     Log.Trace($"NPC.DrawBreathing: inserting vec2 mul/add at {i}");
@@ -211,7 +211,7 @@ namespace SpaceCore.Patches
                 }
                 // scale param is a vec2 now, so use a different overload for
                 // SpriteBatch.Draw
-                else if (drawCount < 1 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo).Name.Equals("Draw"))
+                else if (drawCount < 1 && orig[i].opcode == OpCodes.Callvirt && (orig[i].operand as MethodInfo)?.Name.Equals("Draw") == true)
                 {
                     ++drawCount;
                     Log.Trace($"NPC.DrawBreathing: replacing Draw at {i}");
@@ -260,7 +260,7 @@ namespace SpaceCore.Patches
             var st = new System.Diagnostics.StackTrace();
             for (int i = 0; i < st.FrameCount; ++i) // Originally had 7 instead of FrameCount, but some mods interfere so we need to check further
             {
-                var meth = st.GetFrame(i).GetMethod();
+                var meth = st.GetFrame(i)?.GetMethod();
                 foreach (var checkMeth in meths)
                 {
                     // When someone patches a method the method name changes due to SMAPI's custom fork of Harmony, and so the methodinfo doesn't match.
@@ -279,7 +279,7 @@ namespace SpaceCore.Patches
     [HarmonyPatch(typeof(NPC), "loadCurrentDialogue")]
     public static class NpcLoadCurrentDialogueFakeNotMarriedPatch
     {
-        public static void Prefix(NPC __instance, ref string __state)
+        public static void Prefix(NPC __instance, ref string? __state)
         {
             var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
             if (!dict.TryGetValue(__instance.Name, out var npcEntry))
@@ -295,7 +295,7 @@ namespace SpaceCore.Patches
                 Game1.player.spouse = "";
             }
         }
-        public static void Postfix(NPC __instance, ref string __state)
+        public static void Postfix(NPC __instance, ref string? __state)
         {
             if (__state != null)
             {

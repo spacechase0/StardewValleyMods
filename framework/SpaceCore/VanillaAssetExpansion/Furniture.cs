@@ -13,9 +13,9 @@ namespace SpaceCore.VanillaAssetExpansion
 {
     public class FurnitureExtensionData
     {
-        public Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>> TileProperties { get; set; } = new();
-        public string DescriptionOverride { get; set; }
-        public Dictionary<int, List<Vector2>> SeatLocations { get; set; } = new();
+        public Dictionary<Vector2, Dictionary<string, Dictionary<string, string>>>? TileProperties { get; set; } = new();
+        public string? DescriptionOverride { get; set; }
+        public Dictionary<int, List<Vector2>>? SeatLocations { get; set; } = new();
     }
 
     [HarmonyPatch(typeof(Furniture), nameof(Furniture.DoesTileHaveProperty))]
@@ -31,7 +31,7 @@ namespace SpaceCore.VanillaAssetExpansion
             {
                 if ( furnData.TileProperties.TryGetValue( new Vector2( tile_x, tile_y ), out var tileProps ) &&
                      tileProps.TryGetValue( layer_name, out var layerProps ) &&
-                     layerProps.TryGetValue( property_name, out string propValue ) )
+                     layerProps.TryGetValue( property_name, out string? propValue ) )
                 {
                     property_value = propValue;
                     __result = true;

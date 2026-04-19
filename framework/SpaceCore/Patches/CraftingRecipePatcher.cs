@@ -73,16 +73,16 @@ namespace SpaceCore.Patches
         {
             instructions = CraftingRecipePatcher.Transpile_CollectionsPage_CreateDescription(gen, original, instructions);
 
-            LocalBuilder recipeLocal = null;
+            LocalBuilder? recipeLocal = null;
             bool didIt = false;
             var newInstructions = new List<CodeInstruction>();
             foreach (var instruction in instructions)
             {
-                if (recipeLocal == null && instruction.opcode == OpCodes.Ldloc_S && instruction.operand is LocalBuilder && (instruction.operand as LocalBuilder).LocalType == typeof(CraftingRecipe))
+                if (recipeLocal == null && instruction.opcode == OpCodes.Ldloc_S && instruction.operand is LocalBuilder && (instruction.operand as LocalBuilder)?.LocalType == typeof(CraftingRecipe))
                 {
                     recipeLocal = instruction.operand as LocalBuilder;
                 }
-                else if (!didIt && instruction.opcode == OpCodes.Ldloc_S && instruction.operand is LocalBuilder && (instruction.operand as LocalBuilder).LocalType == typeof(ClickableTextureComponent))
+                else if (!didIt && instruction.opcode == OpCodes.Ldloc_S && instruction.operand is LocalBuilder && (instruction.operand as LocalBuilder)?.LocalType == typeof(ClickableTextureComponent))
                 {
                     Log.Trace($"Found first ldloc.s for ClickableTextureComponent in {original}; storing potential override w/ recipeLocal={recipeLocal}");
                     newInstructions.Add(new CodeInstruction(OpCodes.Ldloc_S, instruction.operand));
@@ -107,12 +107,12 @@ namespace SpaceCore.Patches
         {
             instructions = CraftingRecipePatcher.Transpile_CollectionsPage_CreateDescription(gen, original, instructions);
 
-            LocalBuilder recipeLocal = null;
+            LocalBuilder? recipeLocal = null;
             bool didIt = false;
             var newInstructions = new List<CodeInstruction>();
             foreach (var instruction in instructions)
             {
-                if (recipeLocal == null && instruction.opcode == OpCodes.Ldloc_S && (instruction.operand as LocalBuilder).LocalType == typeof(CraftingRecipe))
+                if (recipeLocal == null && instruction.opcode == OpCodes.Ldloc_S && (instruction.operand as LocalBuilder)?.LocalType == typeof(CraftingRecipe))
                 {
                     recipeLocal = instruction.operand as LocalBuilder;
                 }

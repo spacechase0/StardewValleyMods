@@ -51,7 +51,7 @@ namespace SpaceShared
         static partial void LogError(string str);
 
         // Stolen from SMAPI
-        public static void InvokeEvent(string name, IEnumerable<Delegate> handlers, object sender)
+        public static void InvokeEvent(string name, IEnumerable<Delegate> handlers, object? sender)
         {
             var args = new EventArgs();
             foreach (EventHandler handler in handlers.Cast<EventHandler>())
@@ -67,7 +67,7 @@ namespace SpaceShared
             }
         }
 
-        public static void InvokeEvent<T>(string name, IEnumerable<Delegate> handlers, object sender, T args)
+        public static void InvokeEvent<T>(string name, IEnumerable<Delegate> handlers, object? sender, T args)
         {
             foreach (EventHandler<T> handler in handlers.Cast<EventHandler<T>>())
             {
