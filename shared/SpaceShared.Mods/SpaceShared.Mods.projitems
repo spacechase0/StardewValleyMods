@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IStardewAccessApi.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)apis\IBetterGameMenuApi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)APIs\IBetterGameMenuApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IExpandedPreconditionsUtilityApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IFashionSenseApi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)APIs\IContentPatcherApi.cs" />
@@ -34,17 +34,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Dropdown.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Element.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ui\ElementClickableComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ElementClickableComponent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\FloatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Intbox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ui\ISingleTexture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ISingleTexture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ItemSlot.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ItemWithBorder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\RootElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Scrollbar.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ui\ScrollContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ScrollContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\StaticContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Table.cs" />
