@@ -367,7 +367,7 @@ namespace SpaceCore
                 //If the skill level is 0, we have nothing to do
                 if (skillLevel == 0)
                 {
-                    return;
+                    continue;
                 }
                 //Get the skill id
                 Skill test = GetSkill(Id);
