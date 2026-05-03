@@ -10,11 +10,12 @@ using StardewValley.Objects;
 using StardewValley.SpecialOrders;
 using StardewValley.TerrainFeatures;
 
+#nullable enable
 namespace SpaceShared
 {
     internal class SpaceUtility
     {
-        public static void iterateAllTerrainFeatures(Func<TerrainFeature, TerrainFeature> action)
+        public static void iterateAllTerrainFeatures(Func<TerrainFeature?, TerrainFeature?> action)
         {
             foreach (GameLocation location in Game1.locations)
             {

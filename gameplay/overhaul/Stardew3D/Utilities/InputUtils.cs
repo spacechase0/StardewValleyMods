@@ -72,6 +72,7 @@ public static class InputUtils
                         (int)TileSpot.South => Vector3.Forward,
                         (int)TileSpot.West => Vector3.Right,
                         (int)TileSpot.East => Vector3.Left,
+                        _ => throw new InvalidOperationException(),
                     };
 
                     // Wall is facing a different direction
@@ -84,6 +85,7 @@ public static class InputUtils
                         (int)TileSpot.South => new Vector2(0.5f, 1),
                         (int)TileSpot.West => new Vector2(0, 0.5f),
                         (int)TileSpot.East => new Vector2(1, 0.5f),
+                        _ => throw new InvalidOperationException(),
                     });
                     Plane plane = new Plane(wallCenter, normal);
 

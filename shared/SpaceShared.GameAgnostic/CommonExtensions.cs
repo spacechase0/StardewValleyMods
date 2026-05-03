@@ -3,6 +3,8 @@ using System.Collections.Generic;
 //using SpaceShared.APIs;
 //using StardewModdingAPI;
 
+#nullable enable
+
 namespace SpaceShared
 {
     /// <summary>Provides common extensions for general mod logic.</summary>
@@ -11,7 +13,7 @@ namespace SpaceShared
         /*********
         ** Public methods
         *********/
-        public static void Shuffle<T>(this List<T> list, Random r = null)
+        public static void Shuffle<T>(this List<T> list, Random? r = null)
         {
             r ??= new Random();
             for (int i = 0; i < list.Count; ++i)

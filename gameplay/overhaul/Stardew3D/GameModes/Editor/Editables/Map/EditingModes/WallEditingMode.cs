@@ -275,10 +275,11 @@ public class WallEditingMode : BaseEditingMode
                 {
                     TileSpot corner = wall.Direction switch
                     {
-                        TileSpot.North => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.NorthWest, WallSide.Right => TileSpot.NorthEast },
-                        TileSpot.South => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.SouthEast, WallSide.Right => TileSpot.SouthWest },
-                        TileSpot.West => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.SouthWest, WallSide.Right => TileSpot.NorthWest },
-                        TileSpot.East => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.NorthEast, WallSide.Right => TileSpot.SouthEast }
+                        TileSpot.North => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.NorthWest, WallSide.Right => TileSpot.NorthEast, _ => throw new InvalidOperationException(), },
+                        TileSpot.South => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.SouthEast, WallSide.Right => TileSpot.SouthWest, _ => throw new InvalidOperationException(), },
+                        TileSpot.West => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.SouthWest, WallSide.Right => TileSpot.NorthWest, _ => throw new InvalidOperationException(), },
+                        TileSpot.East => wallEditSide switch { WallSide.Both => wall.Direction, WallSide.Left => TileSpot.NorthEast, WallSide.Right => TileSpot.SouthEast, _ => throw new InvalidOperationException(), },
+        _ => throw new InvalidOperationException(),
                     };
                     Editable.Location.ModifyDimensionData(wall.Direction, wallEditType == EditType.Size, wall.Tile, incr, corner);
                 }
@@ -421,6 +422,7 @@ public class WallEditingMode : BaseEditingMode
             TileSpot.South => Vector3.Forward,
             TileSpot.West => Vector3.Right,
             TileSpot.East => Vector3.Left,
+            _ => throw new InvalidOperationException(),
         };
         Vector3 left = wall.Direction switch
         {
@@ -428,6 +430,7 @@ public class WallEditingMode : BaseEditingMode
             TileSpot.South => Vector3.Right,
             TileSpot.West => Vector3.Backward,
             TileSpot.East => Vector3.Forward,
+            _ => throw new InvalidOperationException(),
         } * 0.5f;
         Vector3 right = -left;
         left *= adjustL;

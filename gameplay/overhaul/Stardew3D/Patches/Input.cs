@@ -26,11 +26,13 @@ internal static class InputStateOverridesInVRPatch
 
         // TODO: Handle differently based on current input context
         // TODO: Better scroll deadzones
+        /*
         if (Math.Abs(vr.Menu_CurrentScroll.X) >= 0.65f)
             scrollX += vr.Menu_CurrentScroll.X;
         if (Math.Abs(vr.Menu_CurrentScroll.Y) >= 0.65f)
             scrollY += vr.Menu_CurrentScroll.Y;
         ____currentMouseState = new(vr.EmulatedCursor.X, vr.EmulatedCursor.Y, (int)scrollY, vr.Menu_LeftClick ? ButtonState.Pressed : ButtonState.Released, ____currentMouseState.MiddleButton, vr.Menu_RightClick ? ButtonState.Pressed : ButtonState.Released, ____currentMouseState.XButton1, ____currentMouseState.XButton2, (int)scrollX);
+        //*/
     }
 }
 

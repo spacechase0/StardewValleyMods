@@ -26,6 +26,7 @@
     <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.4.0" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(GamePath)/smapi-internal/Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
       <PrivateAssets>all</PrivateAssets>

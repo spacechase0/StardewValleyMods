@@ -9,6 +9,8 @@ using StardewModdingAPI.Events;
 
 namespace SpaceShared.Content;
 
+#nullable enable
+
 internal static partial class ContentRegistry
 {
     private static Dictionary<string, Type>? _customDictionaryAssets;
@@ -56,7 +58,7 @@ internal static partial class ContentRegistry
         }
     }
 
-    internal static StardewModdingAPI.Mod Mod { get; set; }
+    internal static StardewModdingAPI.Mod Mod { get; set; } = null!;
     public static void Init(StardewModdingAPI.Mod mod)
     {
         Mod = mod;

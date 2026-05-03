@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using HarmonyLib;
 
+#nullable enable
 namespace Spacechase.Shared.Patching
 {
     /// <summary>Provides utility methods for patching game code with Harmony.</summary>

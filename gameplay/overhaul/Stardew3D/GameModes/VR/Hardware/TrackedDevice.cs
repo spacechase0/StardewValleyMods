@@ -20,26 +20,26 @@ public class TrackedDevice
 
     private delegate object GetPropFunc(uint deviceIndex, ETrackedDeviceProperty prop, ref ETrackedPropertyError error);
 
-    public T? CheckProp<T>(ETrackedDeviceProperty prop)
+    public T CheckProp<T>(ETrackedDeviceProperty prop)
     {
         ETrackedPropertyError err = ETrackedPropertyError.TrackedProp_Success;
-        T? ret = default;
+        T ret = default;
         switch (typeof(T))
         {
             case Type t when t == typeof(bool):
-                ret = (T?)(object)Valve.VR.OpenVR.System.GetBoolTrackedDeviceProperty(DeviceIndex, prop, ref err);
+                ret = (T)(object)Valve.VR.OpenVR.System.GetBoolTrackedDeviceProperty(DeviceIndex, prop, ref err);
                 break;
             case Type t when t == typeof(float):
-                ret = (T?)(object)Valve.VR.OpenVR.System.GetFloatTrackedDeviceProperty(DeviceIndex, prop, ref err);
+                ret = (T)(object)Valve.VR.OpenVR.System.GetFloatTrackedDeviceProperty(DeviceIndex, prop, ref err);
                 break;
             case Type t when t == typeof(int):
-                ret = (T?)(object)Valve.VR.OpenVR.System.GetInt32TrackedDeviceProperty(DeviceIndex, prop, ref err);
+                ret = (T)(object)Valve.VR.OpenVR.System.GetInt32TrackedDeviceProperty(DeviceIndex, prop, ref err);
                 break;
             case Type t when t == typeof(ulong):
-                ret = (T?)(object)Valve.VR.OpenVR.System.GetUint64TrackedDeviceProperty(DeviceIndex, prop, ref err);
+                ret = (T)(object)Valve.VR.OpenVR.System.GetUint64TrackedDeviceProperty(DeviceIndex, prop, ref err);
                 break;
             case Type t when t == typeof(HmdMatrix34_t):
-                ret = (T?)(object)Valve.VR.OpenVR.System.GetMatrix34TrackedDeviceProperty(DeviceIndex, prop, ref err);
+                ret = (T)(object)Valve.VR.OpenVR.System.GetMatrix34TrackedDeviceProperty(DeviceIndex, prop, ref err);
                 break;
             case Type t when t == typeof(string):
                 StringBuilder buffer = new((int)Valve.VR.OpenVR.k_unMaxPropertyStringSize + 1);

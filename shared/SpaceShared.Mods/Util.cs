@@ -8,6 +8,8 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
 
+#nullable enable
+
 namespace SpaceShared
 {
 

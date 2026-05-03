@@ -26,6 +26,7 @@ public class TileDataEditingMode : BaseEditingMode
         DimensionUtils.TileType.Floor => LocationHandler.TerrainType.Floor,
         DimensionUtils.TileType.Ceiling => LocationHandler.TerrainType.Ceiling,
         DimensionUtils.TileType.Water => LocationHandler.TerrainType.Water,
+        _ => throw new InvalidOperationException(),
     };
 
     private bool leftMouse, rightMouse;
@@ -101,6 +102,7 @@ public class TileDataEditingMode : BaseEditingMode
                 TileSpot.NorthEast => "NE",
                 TileSpot.SouthEast => "SE",
                 TileSpot.SouthWest => "SW",
+                _ => throw new InvalidOperationException(),
             };
             var button = new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(32, 32), $"<f Default 0.5>{str}")
             {
@@ -311,6 +313,7 @@ public class TileDataEditingMode : BaseEditingMode
                     TileSpot.West => TileSpot.East,
                     TileSpot.South => TileSpot.North,
                     TileSpot.North => TileSpot.South,
+                    _ => throw new InvalidOperationException(),
                 };
                 Point min = Point.Zero, max = Point.Zero;
                 int steps = 0;
@@ -350,6 +353,7 @@ public class TileDataEditingMode : BaseEditingMode
                         TileSpot.East => Math.Abs(min.X - tile.X),
                         TileSpot.North => Math.Abs(min.Y - tile.Y),
                         TileSpot.South => Math.Abs(min.Y - tile.Y),
+                        _ => throw new InvalidOperationException(),
                     };
                     Editable.Location.SetDimensionData(TileType, tile, baseHeight + incr * amt, TileSpot.Center);
                     Editable.Location.SetDimensionData(TileType, tile, incr, tileEditType);

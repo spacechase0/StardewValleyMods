@@ -36,7 +36,7 @@ public class SpriteBatchProxy : SpriteBatch
         Game1.spriteBatch = this;
     }
 
-    public new void End(RenderBatcher output)
+    public void End(RenderBatcher output)
     {
         static void Max2(float a, float b, float c, float d, out float max1, out float max2)
         {
@@ -47,6 +47,7 @@ public class SpriteBatchProxy : SpriteBatch
                 _ when (max1 == b) => Math.Max(Math.Max(a, c), d),
                 _ when (max1 == c) => Math.Max(Math.Max(b, a), d),
                 _ when (max1 == d) => Math.Max(Math.Max(b, c), a),
+                _ => throw new InvalidOperationException(),
             };
         }
 

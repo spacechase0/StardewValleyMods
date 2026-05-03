@@ -11,6 +11,7 @@ using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
+#nullable enable
 namespace SpaceShared.Migrations
 {
     /// <summary>Provides utility methods to migrate custom items saved through PyTK.</summary>
@@ -50,7 +51,7 @@ namespace SpaceShared.Migrations
         /// <summary>Migrate all items in the world which match the custom type.</summary>
         /// <param name="type">The custom type identifier.</param>
         /// <param name="getReplacement">Get the replacement for the given PyTK fields.</param>
-        public static void MigrateItems(string type, Func<IDictionary<string, string>, Item> getReplacement)
+        public static void MigrateItems(string type, Func<IDictionary<string, string?>?, Item> getReplacement)
         {
             // player items
             foreach (var player in Game1.getAllFarmers())

@@ -73,6 +73,7 @@ public static class WorkaroundMaybeBugInOpenVRDotNet
 
 namespace Stardew3D
 {
+#pragma warning disable CS0436
     [HasConfig<Configuration>]
     [HasContent]
     [HasState<State>]

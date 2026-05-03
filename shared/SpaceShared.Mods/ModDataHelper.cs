@@ -4,6 +4,8 @@ using System.Globalization;
 using StardewValley;
 using StardewValley.Mods;
 
+#nullable enable
+
 namespace SpaceShared
 {
     /// <summary>Provides common utility methods for reading and writing to <see cref="ModDataDictionary"/> fields.</summary>

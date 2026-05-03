@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SpaceShared.APIs;
 using StardewModdingAPI;
 
+#nullable enable
 namespace SpaceShared
 {
     /// <summary>Provides common extensions for general mod logic.</summary>
