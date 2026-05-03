@@ -42,7 +42,7 @@ namespace SpaceCore.Patches
                 //We don't want to cancel the normal behavior of the book of stars, so we don't set custom book = true.
 
                 //We only want to apply exp from the book of stars if the skill is visible to the player.
-                string[] VisibleSkills = Skills.GetSkillList().Where(s => Skills.GetSkill(s).ShouldShowOnSkillsPage).ToArray();
+                string[] VisibleSkills = Skills.GetSkillList().Where(s => Skills.GetSkill(s)?.ShouldShowOnSkillsPage == true).ToArray();
                 foreach (string skill in VisibleSkills)
                 {
                     Skills.AddExperience(Game1.player, skill, 250);
@@ -58,9 +58,9 @@ namespace SpaceCore.Patches
                     //If we found a book that has the skill ID as a tag continue
                     if (__instance.HasContextTag(skill))
                     {
-    
+
                         Log.Trace("Found a custom tag for skill: " + skill + ". Adding exp to it");
-    
+
                         //Copied from Vanilla
                         Game1.player.canMove = false;
                         Game1.player.freezePause = 1030;
@@ -92,11 +92,11 @@ namespace SpaceCore.Patches
                                 id = 1987654
                             });
                         }
-    
+
                         int count = Game1.player.newLevels.Count;
                         //Add skill exp, vanilla has it be 250
                         Skills.AddExperience(Game1.player, skill, 250);
-    
+
                         //Code to send a message if the player's level has changed to sleep.
                         // disabled for now
                         ///if (Game1.player.newLevels.Count == count || (Game1.player.newLevels.Count > 1 && count >= 1))
@@ -107,12 +107,12 @@ namespace SpaceCore.Patches
                         ///    }, 1000);
                         ///}
                         ///
-    
+
                         //Break the foreach loop after setting that we found a custom skillbook
                         customSkillbook = true;
                         break;
                     }
-    
+
                 }
             }
 

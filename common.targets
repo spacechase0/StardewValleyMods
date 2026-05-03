@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- This *could* be a Directory.Build.props/targets, but I'd have to -->
   <!-- move the folders of every mod again (because of the non-mod stuff like shared projects and submodules)... -->
-  
+
   <!--common project properties-->
   <PropertyGroup>
     <Authors>kittycatcasey</Authors>
@@ -17,10 +17,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <!-- Reference packages/projects that everything uses -->
-  <ItemGroup> 
+  <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.2-casey" />
     <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.4.0" />
     <Reference Include="Newtonsoft.Json">
@@ -31,7 +32,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <PropertyGroup>
     <PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
   </PropertyGroup>

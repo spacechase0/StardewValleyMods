@@ -36,7 +36,7 @@ namespace SpaceCore.Patches
         /// <param name="toolData">The data used to create the tool.</param>
         /// <returns>The original tool if it is valid, a custom tool if it is registered with <see cref="Api.RegisterSerializerType"/>,
         /// or an error tool if neither is true</returns>
-        private static Tool After_CreateToolInstance(Tool tool, ToolData toolData)
+        private static Tool After_CreateToolInstance(Tool tool, ToolData? toolData)
         {
             // valid tool, do not interfere
             if (tool is not ErrorTool)
@@ -47,7 +47,7 @@ namespace SpaceCore.Patches
                 return tool;
 
             // try to find a registered type matching provided type name
-            Type type = SpaceCore.ModTypes.Where(t => t.AssemblyQualifiedName == toolData.ClassName).FirstOrDefault();
+            Type? type = SpaceCore.ModTypes.Where(t => t.AssemblyQualifiedName == toolData.ClassName).FirstOrDefault();
 
             // not found
             if (type is null)
@@ -65,7 +65,7 @@ namespace SpaceCore.Patches
 
             try
             {
-                Tool ret = (Tool)Activator.CreateInstance(type);
+                Tool ret = Activator.CreateInstance(type) as Tool ?? throw new NullReferenceException();
                 Log.Trace($"Successfully instantiated tool '{toolData.Name}' with type '{toolData.ClassName}'.");
                 return ret;
             }

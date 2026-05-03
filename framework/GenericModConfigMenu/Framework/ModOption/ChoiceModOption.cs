@@ -13,7 +13,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         public T[] Choices { get; }
 
         /// <summary>Get the display text to show for a value from <see cref="Choices"/>, or <c>null</c> to show the values as-is.</summary>
-        public Func<string, string> FormatChoice { get; }
+        public Func<string, string>? FormatChoice { get; }
 
         /// <inheritdoc />
         public override T Value
@@ -39,7 +39,7 @@ namespace GenericModConfigMenu.Framework.ModOption
         /// <param name="setValue">Update the mod config with the given value.</param>
         /// <param name="choices">The values that can be selected.</param>
         /// <param name="formatChoice">Get the display text to show for a value from <see cref="Choices"/>, or <c>null</c> to show the values as-is.</param>
-        public ChoiceModOption(string fieldId, Func<string> name, Func<string> tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue, T[] choices, Func<string, string> formatChoice = null)
+        public ChoiceModOption(string? fieldId, Func<string?> name, Func<string>? tooltip, ModConfig mod, Func<T> getValue, Action<T> setValue, T[] choices, Func<string, string>? formatChoice = null)
             : base(fieldId, name, tooltip, mod, getValue, setValue)
         {
             this.Choices = choices;

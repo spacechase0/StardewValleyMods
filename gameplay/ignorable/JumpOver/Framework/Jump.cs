@@ -100,7 +100,7 @@ namespace JumpOver.Framework
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
         {
             if (this.Player.yJumpVelocity == 0 && this.PrevJumpVel < 0)
             {

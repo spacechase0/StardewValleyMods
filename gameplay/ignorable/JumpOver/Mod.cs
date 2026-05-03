@@ -8,8 +8,8 @@ namespace JumpOver
 {
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod Instance;
-        public static Configuration Config;
+        public static Mod Instance = null!;
+        public static Configuration Config = null!;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -24,7 +24,7 @@ namespace JumpOver
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
         }
 
-        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
             var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
             if (configMenu != null)
@@ -54,7 +54,7 @@ namespace JumpOver
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsWorldReady || !Context.IsPlayerFree || Game1.activeClickableMenu != null)
                 return;

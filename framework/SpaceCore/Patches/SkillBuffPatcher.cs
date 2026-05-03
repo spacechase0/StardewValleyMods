@@ -38,7 +38,7 @@ internal class SkillBuffPatcher : BasePatcher
     private static IEnumerable<Buff> After_Object_GetFoodOrDrinkBuffs(IEnumerable<Buff> values, StardewValley.Object __instance)
     {
         // If there is no custom data, return normal buffs.
-        if (!Game1.objectData.TryGetValue(__instance.ItemId, out ObjectData data) ||
+        if (!Game1.objectData.TryGetValue(__instance.ItemId, out ObjectData? data) ||
             data.Buffs is null ||
             data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
         {
@@ -53,7 +53,7 @@ internal class SkillBuffPatcher : BasePatcher
         {
             if (SkillBuff.TryGetAdditionalBuffEffects(buffData.CustomFields, out var skills, out float health, out float stamina))
             {
-                Buff matchingBuff = null;
+                Buff? matchingBuff = null;
                 string id = buffData.BuffId;
                 if (string.IsNullOrWhiteSpace(id))
                 {
@@ -103,7 +103,7 @@ internal class SkillBuffPatcher : BasePatcher
 
         foreach (var skillLevel in customBuff.SkillLevelIncreases)
         {
-            Skills.Skill skill = Skills.GetSkill(skillLevel.Key);
+            Skills.Skill? skill = Skills.GetSkill(skillLevel.Key);
             if (skill is null)
             {
                 Log.Error($"Found no skill by name {skillLevel.Key}");
@@ -224,10 +224,10 @@ internal class SkillBuffPatcher : BasePatcher
         return matcher.InstructionEnumeration();
     }
 
-    private static int GetHeightAdjustment(string[] buffIconsToDisplay, Item hoveredItem, int height)
+    private static int GetHeightAdjustment(string[]? buffIconsToDisplay, Item? hoveredItem, int height)
     {
         if (hoveredItem is null ||
-            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
+            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData? data) ||
             data.Buffs is null ||
             data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
         {
@@ -242,7 +242,7 @@ internal class SkillBuffPatcher : BasePatcher
                 addedAny = true;
                 foreach (var entry in skills)
                 {
-                    Skills.Skill skill = Skills.GetSkill(entry.Key);
+                    Skills.Skill? skill = Skills.GetSkill(entry.Key);
                     if (skill is null)
                         continue;
 
@@ -267,10 +267,10 @@ internal class SkillBuffPatcher : BasePatcher
         return height;
     }
 
-    private static int GetWidthAdjustment(SpriteFont font, Item hoveredItem, int width)
+    private static int GetWidthAdjustment(SpriteFont font, Item? hoveredItem, int width)
     {
         if (hoveredItem is null ||
-            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
+            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData? data) ||
             data.Buffs is null ||
             data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
         {
@@ -283,7 +283,7 @@ internal class SkillBuffPatcher : BasePatcher
             {
                 foreach (var entry in skills)
                 {
-                    Skills.Skill skill = Skills.GetSkill(entry.Key);
+                    Skills.Skill? skill = Skills.GetSkill(entry.Key);
                     if (skill is null)
                         continue;
 
@@ -306,10 +306,10 @@ internal class SkillBuffPatcher : BasePatcher
     /// <summary>
     /// For items with basic buff attributes, draws custom skill buff effects, or does nothing if no custom skill effects are found.
     /// </summary>
-    private static int DrawCustomSkillBuffEffects(SpriteBatch b, SpriteFont font, Item hoveredItem, int x, int y)
+    private static int DrawCustomSkillBuffEffects(SpriteBatch b, SpriteFont font, Item? hoveredItem, int x, int y)
     {
         if (hoveredItem is null ||
-            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
+            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData? data) ||
             data.Buffs is null ||
             data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
         {
@@ -325,7 +325,7 @@ internal class SkillBuffPatcher : BasePatcher
             {
                 foreach (var entry in skills)
                 {
-                    Skills.Skill skill = Skills.GetSkill(entry.Key);
+                    Skills.Skill? skill = Skills.GetSkill(entry.Key);
                     if (skill is null)
                         continue;
 
@@ -341,10 +341,10 @@ internal class SkillBuffPatcher : BasePatcher
     /// <summary>
     /// For all items, draws any SpaceCore additional buff effects, or does nothing if no additional effects are found.
     /// </summary>
-    private static int DrawAdditionalBuffEffects(SpriteBatch b, SpriteFont font, Item hoveredItem, int x, int y)
+    private static int DrawAdditionalBuffEffects(SpriteBatch b, SpriteFont font, Item? hoveredItem, int x, int y)
     {
         if (hoveredItem is null ||
-            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
+            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData? data) ||
             data.Buffs is null ||
             data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
         {
@@ -377,11 +377,11 @@ internal class SkillBuffPatcher : BasePatcher
     /// <summary>
     /// For hovered items without basic buff attributes, draws a divider and custom skill buff effects, or does nothing if no custom skill effects are found..
     /// </summary>
-    private static int DrawCustomSkillBuffEffectsIfNoBasicEffects(SpriteBatch b, SpriteFont font, Item hoveredItem, int x, int y, int width, string[] buffIconsToDisplay, CraftingRecipe craftingIngredients)
+    private static int DrawCustomSkillBuffEffectsIfNoBasicEffects(SpriteBatch b, SpriteFont font, Item? hoveredItem, int x, int y, int width, string[]? buffIconsToDisplay, CraftingRecipe? craftingIngredients)
     {
         // duplicate spacecore code
         if (hoveredItem is null ||
-            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData data) ||
+            !Game1.objectData.TryGetValue(hoveredItem.ItemId, out ObjectData? data) ||
             data.Buffs is null ||
             data.Buffs.All(b => b.CustomFields is null || b.CustomFields.Count == 0))
         {

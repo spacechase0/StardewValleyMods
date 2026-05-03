@@ -15,7 +15,7 @@ class ElementClickableComponent : ClickableComponent, IScreenReadable
 {
     public Element Parent { get; }
 
-    public ElementClickableComponent(Element parent, Rectangle bounds, string name = null)
+    public ElementClickableComponent(Element parent, Rectangle bounds, string? name = null)
     :   base( bounds, name )
     {
         Parent = parent;
@@ -23,12 +23,12 @@ class ElementClickableComponent : ClickableComponent, IScreenReadable
 
     public virtual new string ScreenReaderText
     {
-        get => base.ScreenReaderText ?? Parent.ScreenReaderText;
+        get => base.ScreenReaderText ?? Parent.ScreenReaderText ?? string.Empty;
         set => base.ScreenReaderText = value;
     }
     public virtual new string ScreenReaderDescription
     {
-        get => base.ScreenReaderDescription ?? Parent.ScreenReaderDescription;
+        get => base.ScreenReaderDescription ?? Parent.ScreenReaderDescription ?? string.Empty;
         set => base.ScreenReaderDescription = value;
     }
 

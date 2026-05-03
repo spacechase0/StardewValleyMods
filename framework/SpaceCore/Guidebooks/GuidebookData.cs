@@ -24,7 +24,7 @@ public class GuidebookData
     }
 
     public string Title { get; set; }
-    public string PageTexture { get; set; } // If null, use IClickableMenu.drawTextureBox
+    public string? PageTexture { get; set; } // If null, use IClickableMenu.drawTextureBox
     public Vector2 PagePadding { get; set; } = new(28, 28);
     public Vector2 PageSize { get; set; } = new(600, 500); // Only used if PageTexture is null
     public string DefaultChapter { get; set; }

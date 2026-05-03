@@ -53,9 +53,9 @@ namespace SpaceShared.UI
 
         public bool Dropped;
 
-        public Action<Element> Callback;
+        public Action<Element>? Callback;
 
-        public static Dropdown ActiveDropdown;
+        public static Dropdown? ActiveDropdown;
         public static int SinceDropdownWasActive = 0;
 
         /// <inheritdoc />
@@ -81,7 +81,7 @@ namespace SpaceShared.UI
             {
                 justClicked = true;
                 this.Dropped = true;
-                this.Parent.RenderLast = this;
+                this.Parent?.RenderLast = this;
                 GetRoot().GamepadMovementRegionsDirty = true;
             }
 
@@ -96,7 +96,7 @@ namespace SpaceShared.UI
                     {
                         Game1.playSound("drumkit6");
                         this.Dropped = false;
-                        if (this.Parent.RenderLast == this)
+                        if (this.Parent?.RenderLast == this)
                             this.Parent.RenderLast = null;
                         GetRoot().GamepadMovementRegionsDirty = true;
                     }
@@ -109,7 +109,7 @@ namespace SpaceShared.UI
                     {
                         Game1.playSound("drumkit6");
                         this.Dropped = false;
-                        if (this.Parent.RenderLast == this)
+                        if (this.Parent?.RenderLast == this)
                             this.Parent.RenderLast = null;
                         GetRoot().GamepadMovementRegionsDirty = true;
                     }

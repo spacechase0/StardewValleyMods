@@ -15,10 +15,10 @@ using static Stardew3D.GameModes.IGameMode;
 namespace Stardew3D.GameModes.FirstPerson;
 public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
 {
-    public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
+    public override string Id => $"{Mod.Instance?.ModManifest.UniqueID}/FirstPerson";
     public override string[] Tags => [CategoryFlatscreen, CategoryFirstPerson, FeaturePointAndClick];
 
-    public override Matrix ProjectionMatrix { get; protected set; }
+    public override Matrix? ProjectionMatrix { get; protected set; }
     public override Camera Camera { get; } = new();
 
     public Vector3 MovementFacing => Camera.Forward;

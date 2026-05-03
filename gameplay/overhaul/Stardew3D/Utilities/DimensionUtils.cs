@@ -150,7 +150,7 @@ public static class DimensionUtils
         }
     }
 
-    public static PositionResult GetPositionForTile(GameLocation loc, Point tile, TileType tileType = TileType.Floor)
+    public static PositionResult GetPositionForTile(GameLocation? loc, Point tile, TileType tileType = TileType.Floor)
     {
         if (loc == null)
             return new(tile, tileType);
@@ -160,7 +160,7 @@ public static class DimensionUtils
             tile.X < 0 || tile.Y < 0 || tile.X >= loc.Map.Layers[0].LayerWidth || tile.Y >= loc.Map.Layers[0].LayerHeight)
             return GetPositionForTile(loc.Map, tile, tileType);
 
-        PositionResult[,] cached = tileType switch
+        PositionResult[,]? cached = tileType switch
         {
             TileType.Floor => locHandler.floorData,
             TileType.Ceiling => locHandler.ceilingData,
@@ -173,7 +173,7 @@ public static class DimensionUtils
         return cached[tile.X, tile.Y];
     }
 
-    public static PositionResult GetPositionForTile(xTile.Map map, Point tile, TileType tileType = TileType.Floor)
+    public static PositionResult GetPositionForTile(xTile.Map? map, Point tile, TileType tileType = TileType.Floor)
     {
         if (map == null)
             return new(tile, tileType);
@@ -181,7 +181,7 @@ public static class DimensionUtils
         if (tile.X < 0 || tile.Y < 0 || tile.X >= map.Layers[0].LayerWidth || tile.Y >= map.Layers[0].LayerHeight)
             return new(tile, tileType);
 
-        string dataLayer = $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data";
+        string dataLayer = $"{Mod.Instance?.ModManifest.UniqueID}/{tileType}Data";
 
         var data = map.GetLayer($"{dataLayer}_Center");
 

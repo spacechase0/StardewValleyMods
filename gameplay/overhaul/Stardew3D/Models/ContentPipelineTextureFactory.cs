@@ -18,14 +18,14 @@ public class ContentPipelineTextureFactory : TextureFactory<byte[]>
         convertMethod = AccessTools.Method(forEmbedded.GetType(), nameof(ConvertTexture));
     }
 
-    protected override Texture2D ConvertTexture(byte[] image)
+    protected override Texture2D? ConvertTexture(byte[] image)
     {
         if (image.Length <= "MGTEX:".Length)
-            return ( Texture2D ) convertMethod.Invoke( forEmbedded, [ image ] );
+            return ( Texture2D? ) convertMethod.Invoke( forEmbedded, [ image ] );
 
         string asStr = Encoding.ASCII.GetString(image);
         if (!asStr.StartsWith("MGTEX:"))
-            return (Texture2D) convertMethod.Invoke(forEmbedded, [image]);
+            return (Texture2D? ) convertMethod.Invoke(forEmbedded, [image]);
 
         return Game1.content.Load<Texture2D>(asStr.Substring("MGTEX:".Length));
     }

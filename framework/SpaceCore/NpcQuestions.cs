@@ -73,7 +73,7 @@ namespace SpaceCore
         public string AnswerText { get; set; }
         public bool CanRepeatQuestion { get; set; } = false;
         public int FriendshipModifier { get; set; } = 10;
-        public string Condition { get; set; }
+        public string? Condition { get; set; }
     }
     internal class QuestionsAskedToken
     {
@@ -151,9 +151,9 @@ namespace SpaceCore
 
     public class NpcQuestions
     {
-        public static NpcQuestions instance;
-        private IModHelper Helper;
-        private IManifest ModManifest;
+        public static NpcQuestions instance = null!;
+        private IModHelper Helper = null!;
+        private IManifest ModManifest = null!;
 
         public void Entry(IManifest manifest, IModHelper helper)
         {
@@ -221,7 +221,7 @@ namespace SpaceCore
             friendship.get_askedQuestionToday().Value = false;
         }
 
-        private void Content_AssetRequested(object sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
+        private void Content_AssetRequested(object? sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
         {
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/Questions"))
             {
@@ -246,18 +246,18 @@ namespace SpaceCore
             }
         }
 
-        private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
+        private void GameLoop_GameLaunched(object? sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
         {
             var sc = Helper.ModRegistry.GetApi<IApi>("spacechase0.SpaceCore");
-            sc.RegisterCustomProperty(typeof(Friendship), "questionsAsked", typeof(NetStringList), AccessTools.Method(typeof(QuestionsAsked), nameof(QuestionsAsked.get_questionsAsked)), AccessTools.Method(typeof(QuestionsAsked), nameof(QuestionsAsked.set_questionsAsked)));
-            sc.AdvancedInteractionStarted += Asi_AdvancedInteractionStarted;
+            sc?.RegisterCustomProperty(typeof(Friendship), "questionsAsked", typeof(NetStringList), AccessTools.Method(typeof(QuestionsAsked), nameof(QuestionsAsked.get_questionsAsked)), AccessTools.Method(typeof(QuestionsAsked), nameof(QuestionsAsked.set_questionsAsked)));
+            sc?.AdvancedInteractionStarted += Asi_AdvancedInteractionStarted;
 
             var cp = Helper.ModRegistry.GetApi<IContentPatcherApi>("Pathoschild.ContentPatcher");
             if (cp != null)
                 cp.RegisterToken(ModManifest, "QuestionsAsked", new QuestionsAskedToken());
         }
 
-        private void GameLoop_DayStarted(object sender, StardewModdingAPI.Events.DayStartedEventArgs e)
+        private void GameLoop_DayStarted(object? sender, StardewModdingAPI.Events.DayStartedEventArgs e)
         {
             foreach (var friendship in Game1.player.friendshipData.Values)
             {
@@ -265,11 +265,11 @@ namespace SpaceCore
             }
         }
 
-        private void Asi_AdvancedInteractionStarted(object sender, Action<string, Action> e)
+        private void Asi_AdvancedInteractionStarted(object? sender, Action<string, Action> e)
         {
             var npc = (sender as NPC);
             var data = Game1.content.Load<Dictionary<string, List<QuestionContentModel>>>("spacechase0.SpaceCore/Questions");
-            if (!data.ContainsKey(npc.Name) || !Game1.player.friendshipData.TryGetValue(npc.Name, out Friendship friendship) || friendship.get_askedQuestionToday().Value)
+            if (npc == null || !data.ContainsKey(npc.Name) || !Game1.player.friendshipData.TryGetValue(npc.Name, out Friendship friendship) || friendship.get_askedQuestionToday().Value)
                 return;
 
             List<QuestionContentModel> qs = data[npc.Name].ToList();

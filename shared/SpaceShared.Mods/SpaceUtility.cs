@@ -22,7 +22,7 @@ namespace SpaceShared
             }
         }
 
-        protected static void _recursiveIterateLocation(GameLocation l, Func<TerrainFeature, TerrainFeature> action)
+        protected static void _recursiveIterateLocation(GameLocation l, Func<TerrainFeature?, TerrainFeature?> action)
         {
             foreach (Building b in l.buildings)
             {
@@ -37,7 +37,7 @@ namespace SpaceShared
                 var obj = l.objects[key];
                 if (obj is IndoorPot pot)
                 {
-                    pot.hoeDirt.Value = (HoeDirt)action(pot.hoeDirt.Value);
+                    pot.hoeDirt.Value = (HoeDirt?)action(pot.hoeDirt.Value);
                 }
             }
 
@@ -58,7 +58,7 @@ namespace SpaceShared
 
             for (int i = l.resourceClumps.Count - 1; i >= 0; --i)
             {
-                var ret = (ResourceClump)action(l.resourceClumps[i]);
+                var ret = (ResourceClump?)action(l.resourceClumps[i]);
                 if (ret == null)
                     l.resourceClumps.RemoveAt(i);
                 else

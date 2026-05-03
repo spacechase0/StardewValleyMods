@@ -18,7 +18,7 @@ namespace SpaceCore.Framework
             if (this.recipe.Name != null)
                 this.DisplayName = this.recipe.Name;
 
-            if (this.recipe.Description == null || this.recipe.Description.Length > 0)
+            if (this.recipe.Description.Length > 0)
                 this.description = this.recipe.Description;
         }
 
@@ -29,7 +29,7 @@ namespace SpaceCore.Framework
             return ret;
         }
 
-        public override bool doesFarmerHaveIngredientsInInventory(IList<Item> extraToCheck = null)
+        public override bool doesFarmerHaveIngredientsInInventory(IList<Item>? extraToCheck = null)
         {
             if (extraToCheck == null)
                 extraToCheck = new List<Item>();

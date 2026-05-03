@@ -23,14 +23,14 @@ namespace GenericModConfigMenu
 
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
+        public static Mod instance = null!;
 
         /*********
         ** Fields
         *********/
-        private OwnModConfig Config;
+        private OwnModConfig Config = null!;
         private RootElement? Ui;
-        private Button ConfigButton;
+        private Button? ConfigButton;
 
         private int countdown = 5;
 
@@ -41,7 +41,7 @@ namespace GenericModConfigMenu
         ** Accessors
         *********/
         /// <summary>The current configuration menu.</summary>
-        public static IClickableMenu ActiveConfigMenu
+        public static IClickableMenu? ActiveConfigMenu
         {
             get
             {
@@ -104,7 +104,7 @@ namespace GenericModConfigMenu
 
             helper.Events.Content.AssetRequested += static (_, e) => AssetManager.Apply(e);
 
-            TriggerActionManager.RegisterAction("spacechase0.GenericModConfigMenu_OpenModConfig", (string[] args, TriggerActionContext ctx, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.GenericModConfigMenu_OpenModConfig", (string[] args, TriggerActionContext ctx, out string? error) =>
             {
                 if (args.Length < 2)
                 {
@@ -116,8 +116,8 @@ namespace GenericModConfigMenu
                     error = $"Mod {args[1]} not loaded.";
                     return false;
                 }
-                var manifest = Helper.ModRegistry.Get(args[1]).Manifest;
-                if (ConfigManager.Get(manifest, false) == null)
+                var manifest = Helper.ModRegistry.Get(args[1])?.Manifest;
+                if (manifest == null || ConfigManager.Get(manifest, false) == null)
                 {
                     error = $"Mod {args[1]} not registered with GMCM.";
                     return false;
@@ -193,7 +193,7 @@ namespace GenericModConfigMenu
                     OpenListMenuNew(listScrollRow);
                 }
             );
-            
+
             if (Game1.activeClickableMenu is TitleMenu)
             {
                 TitleMenu.subMenu = newMenu;
@@ -208,9 +208,9 @@ namespace GenericModConfigMenu
         /// <param name="mod">The mod whose config menu to display.</param>
         /// <param name="page">The page to display within the mod's config menu.</param>
         /// <param name="listScrollRow">The scroll position to set in the mod list when returning to it, represented by the row index at the top of the visible area.</param>
-        private void OpenModMenuNew(IManifest mod, string page, int? listScrollRow)
+        private void OpenModMenuNew(IManifest mod, string? page, int? listScrollRow)
         {
-            ModConfig config = this.ConfigManager.Get(mod, assert: true);
+            ModConfig config = this.ConfigManager.Get(mod, assert: true)!;
 
             Mod.ActiveConfigMenu = new SpecificModConfigMenu(
                 config: config,
@@ -232,9 +232,9 @@ namespace GenericModConfigMenu
             );
         }
 
-        private void OpenModMenu(IManifest mod, string page, int? listScrollRow)
+        private void OpenModMenu(IManifest mod, string? page, int? listScrollRow)
         {
-            ModConfig config = this.ConfigManager.Get(mod, assert: true);
+            ModConfig config = this.ConfigManager.Get(mod, assert: true)!;
 
             var newMenu = new SpecificModConfigMenu(
                 config: config,
@@ -298,6 +298,7 @@ namespace GenericModConfigMenu
                 return false;
 
             var method = this.Helper.Reflection.GetMethod(titleMenu, "ShouldAllowInteraction", false);
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (method != null)
                 return method.Invoke<bool>();
             else // method isn't available on Android
@@ -307,7 +308,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
             // delay for long enough that CP can get a chance to edit
             // the texture.
@@ -354,7 +355,7 @@ namespace GenericModConfigMenu
             });
         }
 
-        private void FiveTicksAfterGameLaunched(object sender, UpdateTickingEventArgs e)
+        private void FiveTicksAfterGameLaunched(object? sender, UpdateTickingEventArgs e)
         {
             if (this.countdown-- < 0)
             {
@@ -368,7 +369,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc cref="IGameLoopEvents.UpdateTicking"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnUpdateTicking(object sender, UpdateTickingEventArgs e)
+        private void OnUpdateTicking(object? sender, UpdateTickingEventArgs e)
         {
             if (this.IsTitleMenuInteractable())
             {
@@ -382,7 +383,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc cref="IDisplayEvents.WindowResized"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnWindowResized(object sender, WindowResizedEventArgs e)
+        private void OnWindowResized(object? sender, WindowResizedEventArgs e)
         {
             if ( this.ConfigButton != null )
                 this.ConfigButton.LocalPosition = new Vector2(this.ConfigButton.Position.X, Game1.viewport.Height - 100);
@@ -391,7 +392,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc cref="IDisplayEvents.Rendered"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnRendered(object sender, RenderedEventArgs e)
+        private void OnRendered(object? sender, RenderedEventArgs e)
         {
             if (this.IsTitleMenuInteractable())
                 this.Ui?.Draw(e.SpriteBatch);
@@ -400,7 +401,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object? sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is GameMenu menu)
             {
@@ -412,7 +413,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc cref="IInputEvents.ButtonPressed"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             // open menu
             if (Context.IsPlayerFree && this.Config.OpenMenuKey.JustPressed())
@@ -426,7 +427,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc cref="IInputEvents.ButtonPressed"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnButtonChanged(object sender, ButtonsChangedEventArgs e)
+        private void OnButtonChanged(object? sender, ButtonsChangedEventArgs e)
         {
             // pass to menu for keybind
             if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu)
@@ -436,7 +437,7 @@ namespace GenericModConfigMenu
         /// <inheritdoc cref="IInputEvents.MouseWheelScrolled"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnMouseWheelScrolled(object sender, MouseWheelScrolledEventArgs e)
+        private void OnMouseWheelScrolled(object? sender, MouseWheelScrolledEventArgs e)
         {
             Dropdown.ActiveDropdown?.ReceiveScrollWheelAction(e.Delta);
         }

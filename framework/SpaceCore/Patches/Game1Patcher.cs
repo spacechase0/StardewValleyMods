@@ -72,7 +72,7 @@ namespace SpaceCore.Patches
         {
             // TODO: Learn how to use ILGenerator
 
-            FieldInfo farmingLevel = typeof(Farmer).GetField("farmingLevel");
+            FieldInfo? farmingLevel = typeof(Farmer).GetField("farmingLevel");
 
             var newInsns = new List<CodeInstruction>();
             foreach (var insn in insns)
@@ -107,14 +107,14 @@ namespace SpaceCore.Patches
         {
             try
             {
-                Type game1CompilerType = null;
+                Type? game1CompilerType = null;
                 foreach (var t in typeof(Game1).Assembly.GetTypes())
                 {
                     if (t.FullName == "StardewValley.Game1+<>c")
                         game1CompilerType = t;
                 }
 
-                foreach (var m in game1CompilerType.GetRuntimeMethods())
+                foreach (var m in game1CompilerType?.GetRuntimeMethods() ?? [])
                 {
                     if (m.FullDescription().Contains(nameof(Game1.showEndOfNightStuff)))
                     {

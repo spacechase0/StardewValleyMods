@@ -30,7 +30,7 @@ namespace ConsoleCode
         private void OnCommandReceived(string cmd, string[] args)
         {
             string line = string.Join(" ", args).Replace('`', '"');
-            string[] scriptArgs = null;
+            string[]? scriptArgs = null;
             if (args[0] == "--script")
             {
                 line = File.ReadAllText(Path.Combine(this.Helper.DirectoryPath, args[1]));
@@ -42,7 +42,7 @@ namespace ConsoleCode
                 var func = this.MakeFunc(line);
                 if ( func != null )
                 {
-                    object result = func?.Invoke( null, new object[] { Helper, scriptArgs } );
+                    object? result = func.Invoke( null, new object?[] { Helper, scriptArgs } );
                     switch ( result )
                     {
                         case null:
@@ -67,9 +67,9 @@ namespace ConsoleCode
 
         private static int iter = 0;
 
-        private MethodInfo MakeFunc(string userCode)
+        private MethodInfo? MakeFunc(string userCode)
         {
-            List<string> asms = new();
+            List<string?> asms = new();
             List<MetadataReference> refs = new();
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -110,7 +110,7 @@ namespace ConsoleCode
                 using StardewValley;
                 using xTile;
                 using System.Runtime.CompilerServices;
-                
+
                 {attrs}
                 namespace ConsoleCode
                 {{
@@ -127,8 +127,9 @@ namespace ConsoleCode
             var opts = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithMetadataImportOptions(MetadataImportOptions.All);
 
             // https://stackoverflow.com/a/72653299
-            var topLevelBinderFlagsProperty = opts.GetType().GetProperty("TopLevelBinderFlags", BindingFlags.Instance | BindingFlags.NonPublic);
-            object obj = Enum.ToObject(opts.GetType().Assembly.GetType("Microsoft.CodeAnalysis.CSharp.BinderFlags"), (uint)(1 << 22));
+            var topLevelBinderFlagsProperty = opts.GetType().GetProperty("TopLevelBinderFlags", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new NullReferenceException();
+            Type binderFlagsType = opts.GetType().Assembly.GetType("Microsoft.CodeAnalysis.CSharp.BinderFlags") ?? throw new NullReferenceException();
+            object obj = Enum.ToObject(binderFlagsType, (uint)(1 << 22));
             topLevelBinderFlagsProperty.SetValue(opts, obj);
 
             CSharpCompilation compilation = CSharpCompilation.Create(Path.GetRandomFileName(), new[] { CSharpSyntaxTree.ParseText(code) }, refs, opts);
@@ -156,8 +157,8 @@ namespace ConsoleCode
 
                 ms.Seek( 0, SeekOrigin.Begin );
                 Assembly asm = AssemblyLoadContext.Default.LoadFromStream( ms );
-                Type type = asm.GetType( $"ConsoleCode.UserCode{i}" );
-                MethodInfo meth = type.GetMethod( "Main" );
+                Type? type = asm.GetType( $"ConsoleCode.UserCode{i}" );
+                MethodInfo? meth = type?.GetMethod( "Main" );
                 return meth;
             }
         }

@@ -9,7 +9,7 @@ namespace SpaceShared
     public class Weighted<T>// : ICloneable where T : ICloneable
     {
         public double Weight { get; set; }
-        public T Value { get; set; }
+        public T? Value { get; set; }
 
         public Weighted()
         : this(1.0, default)
@@ -21,7 +21,7 @@ namespace SpaceShared
         {
         }
 
-        public Weighted(double weight, T value)
+        public Weighted(double weight, T? value)
         {
             this.Weight = weight;
             this.Value = value;
@@ -37,7 +37,7 @@ namespace SpaceShared
 
     public static class WeightedExtensions
     {
-        public static T Choose<T>(this Weighted<T>[] choices, Random r = null)// where T : ICloneable
+        public static T? Choose<T>(this Weighted<T>[] choices, Random? r = null)// where T : ICloneable
         {
             if (choices.Length == 0)
                 return default;
@@ -60,7 +60,7 @@ namespace SpaceShared
             throw new Exception("This should never happen");
         }
 
-        public static T Choose<T>(this List<Weighted<T>> choices, Random r = null)// where T : ICloneable
+        public static T? Choose<T>(this List<Weighted<T>> choices, Random? r = null)// where T : ICloneable
         {
             return choices.ToArray().Choose(r);
         }

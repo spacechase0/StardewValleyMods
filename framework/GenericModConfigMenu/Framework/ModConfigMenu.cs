@@ -43,13 +43,13 @@ namespace GenericModConfigMenu.Framework
                 return;
 
             // Draw textbox background using drawTextureBox so it scales properly
-            IClickableMenu.drawTextureBox(b, 
-                Game1.menuTexture, 
-                new Rectangle(0, 256, 60, 60), 
-                (int)this.Position.X, 
-                (int)this.Position.Y, 
-                this.CustomWidth, 
-                48, 
+            IClickableMenu.drawTextureBox(b,
+                Game1.menuTexture,
+                new Rectangle(0, 256, 60, 60),
+                (int)this.Position.X,
+                (int)this.Position.Y,
+                this.CustomWidth,
+                48,
                 Color.White);
 
             // Draw the text
@@ -91,7 +91,7 @@ namespace GenericModConfigMenu.Framework
         private List<Label> LabelsWithTooltips = new();
 
         /// <summary>The search textbox for filtering mods.</summary>
-        private Textbox SearchBox;
+        private Textbox? SearchBox;
 
         /// <summary>The current search query.</summary>
         private string CurrentSearchQuery = "";
@@ -100,7 +100,7 @@ namespace GenericModConfigMenu.Framework
         private string LastProcessedSearchQuery = "";
 
         /// <summary>The placeholder label for the search box.</summary>
-        private Label SearchPlaceholder;
+        private Label? SearchPlaceholder;
 
         /// <summary>All mod configs available for display.</summary>
         private readonly ModConfigManager AllConfigs;
@@ -266,7 +266,7 @@ namespace GenericModConfigMenu.Framework
             // Hide placeholder when typing
             if (this.SearchPlaceholder != null)
             {
-                this.SearchPlaceholder.ForceHide = () => !string.IsNullOrEmpty(this.SearchBox.String);
+                this.SearchPlaceholder.ForceHide = () => !string.IsNullOrEmpty(this.SearchBox?.String);
             }
 
             if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0)
@@ -302,7 +302,7 @@ namespace GenericModConfigMenu.Framework
                     string text = (string)label.UserData;
                     if (text != null && !text.Contains("\n"))
                         text = Game1.parseText(text, Game1.smallFont, 800);
-                    string title = label.String;
+                    string? title = label.String;
                     if (title != null && !title.Contains("\n"))
                         title = Game1.parseText(title, Game1.dialogueFont, 800);
                     IClickableMenu.drawToolTip(b, text, title, null);
@@ -323,12 +323,18 @@ namespace GenericModConfigMenu.Framework
             int searchWidth = tableWidth + 128;
 
             // Reposition search box (at the top, same width as full UI with margin)
-            this.SearchBox.LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2, 16);
-            this.Ui.AddChild(this.SearchBox);
+            if (this.SearchBox != null)
+            {
+                this.SearchBox.LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2, 16);
+                this.Ui.AddChild(this.SearchBox);
+            }
 
             // Re-add search placeholder
-            this.SearchPlaceholder.LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2 + 20, 20);
-            this.Ui.AddChild(this.SearchPlaceholder);
+            if (this.SearchPlaceholder != null)
+            {
+                this.SearchPlaceholder.LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2 + 20, 20);
+                this.Ui.AddChild(this.SearchPlaceholder);
+            }
 
             Vector2 newSize = new Vector2(tableWidth, Game1.uiViewport.Height - 128 - 50);
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - tableWidth) / 2, 64 + 50);
@@ -371,7 +377,7 @@ namespace GenericModConfigMenu.Framework
 
         public override void snapToDefaultClickableComponent()
         {
-            currentlySnappedComponent = SearchBox.GetGamepadMovementRegions().FirstOrDefault();
+            currentlySnappedComponent = SearchBox?.GetGamepadMovementRegions().FirstOrDefault();
             snapCursorToCurrentSnappedComponent();
         }
 
@@ -389,8 +395,8 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Called when the search text changes.</summary>
         private void OnSearchChanged()
         {
-            this.CurrentSearchQuery = this.SearchBox.String;
-            
+            this.CurrentSearchQuery = this.SearchBox?.String ?? "";
+
             // Only rebuild if the text actually changed
             if (this.CurrentSearchQuery != this.LastProcessedSearchQuery)
             {

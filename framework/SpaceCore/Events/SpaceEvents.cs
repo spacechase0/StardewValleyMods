@@ -13,38 +13,38 @@ namespace SpaceCore.Events
     {
         /// <summary>This occurs before loading starts.</summary>
         /// Locations should be added here so that SaveData.loadDataToLocations picks them up
-        public static event EventHandler OnBlankSave;
+        public static event EventHandler? OnBlankSave;
 
         /// <summary>When the shipping menu pops up, level up menus, ...</summary>
-        public static event EventHandler<EventArgsShowNightEndMenus> ShowNightEndMenus;
+        public static event EventHandler<EventArgsShowNightEndMenus>? ShowNightEndMenus;
 
         /// <summary>Lets you hook into Utillity.pickFarmEvent</summary>
-        public static event EventHandler<EventArgsChooseNightlyFarmEvent> ChooseNightlyFarmEvent;
+        public static event EventHandler<EventArgsChooseNightlyFarmEvent>? ChooseNightlyFarmEvent;
 
         /// <summary>When the player is done eating an item.</summary>
         /// Check what item using player.itemToEat
-        public static event EventHandler OnItemEaten;
+        public static event EventHandler? OnItemEaten;
 
         /// <summary>Server side, when a client joins</summary>
-        public static event EventHandler<EventArgsServerGotClient> ServerGotClient;
+        public static event EventHandler<EventArgsServerGotClient>? ServerGotClient;
 
         /// <summary>Right before a gift is given to someone. Sender is farmer.</summary>
-        public static event EventHandler<EventArgsBeforeReceiveObject> BeforeGiftGiven;
+        public static event EventHandler<EventArgsBeforeReceiveObject>? BeforeGiftGiven;
 
         /// <summary>When a gift is given to someone. Sender is farmer.</summary>
-        public static event EventHandler<EventArgsGiftGiven> AfterGiftGiven;
+        public static event EventHandler<EventArgsGiftGiven>? AfterGiftGiven;
 
         /// B<summary>efore the player is about to warp. Can cancel warping or change the target location.</summary>
-        public static event EventHandler<EventArgsBeforeWarp> BeforeWarp;
+        public static event EventHandler<EventArgsBeforeWarp>? BeforeWarp;
 
         /// <summary>When a bomb explodes</summary>
-        public static event EventHandler<EventArgsBombExploded> BombExploded;
+        public static event EventHandler<EventArgsBombExploded>? BombExploded;
 
         /// <summary>When an event finishes. Use Game1.CurrentEvent to check which one.</summary>
-        public static event EventHandler OnEventFinished;
+        public static event EventHandler? OnEventFinished;
 
         /// <summary>Event for adding wallet items to NewSkillsPage, before the controller-pickable logic needs to run</summary>
-        public static event EventHandler AddWalletItems;
+        public static event EventHandler? AddWalletItems;
 
         internal static void InvokeOnBlankSave()
         {

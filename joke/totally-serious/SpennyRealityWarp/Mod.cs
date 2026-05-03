@@ -14,7 +14,7 @@ namespace SpennyRealityWarp;
 
 internal class Mod : StardewModdingAPI.Mod
 {
-    public static Mod instance;
+    public static Mod instance = null!;
 
     public float? worldRotation = null;
     public Vector2 worldCenter;
@@ -46,7 +46,7 @@ internal class Mod : StardewModdingAPI.Mod
         return new Vector2(x, y);
     }
 
-    private void Display_MenuChanged(object sender, MenuChangedEventArgs e)
+    private void Display_MenuChanged(object? sender, MenuChangedEventArgs e)
     {
 #if false
         if (e.OldMenu == null && e.NewMenu is DialogueBox db && db.characterDialogue?.speaker?.Name == "Penny")
@@ -56,7 +56,7 @@ internal class Mod : StardewModdingAPI.Mod
 #endif
     }
 
-    private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+    private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
 #if true
         bool hasPenny = Game1.currentLocation?.getCharacterFromName("Penny") != null;
@@ -74,7 +74,7 @@ internal class Mod : StardewModdingAPI.Mod
         {
             worldCenter = Game1.GlobalToLocal(Game1.getCharacterFromName("Penny").StandingPixel.ToVector2());
             worldRotation += (float)Game1.currentGameTime.ElapsedGameTime.TotalSeconds * (MathF.PI * 2) / 12f;
-            if (worldRotation.Value >= MathF.PI * 2)
+            if (worldRotation!.Value >= MathF.PI * 2)
                 worldRotation = null;
         }
     }

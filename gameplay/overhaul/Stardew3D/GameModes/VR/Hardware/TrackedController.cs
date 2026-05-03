@@ -12,7 +12,7 @@ public class TrackedController : TrackedDevice
     internal EVRControllerAxisType[] _axisTypesNoEmpty;
     internal Microsoft.Xna.Framework.Vector2[] _axisValues;
 
-    public string Type { get; } // Apparently this is driver-specific? So not much practical use
+    public string? Type { get; } // Apparently this is driver-specific? So not much practical use
     public ETrackedControllerRole Role { get; }
     public IReadOnlyList<bool> ButtonsTouched => _buttonsTouched;
     public IReadOnlyList<bool> ButtonsPressed => _buttonsPressed;
