@@ -418,6 +418,7 @@ public class RenderBatcher : IDisposable
             DoVerticesBatch(entry.Value.transparentVertices, entry.Value.instanceVbo, entry.Value.instances.Count, transparentTechnique: 1);
         }
 
+        graphics.DepthStencilState = DepthStencilState.Default;
         foreach (var entry in sprites)
         {
             if (entry.Value.Instances.Count == 0)
