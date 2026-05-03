@@ -10,10 +10,10 @@ using static Stardew3D.GameModes.IGameMode;
 namespace Stardew3D.GameModes.ThirdPerson;
 public class ThirdPersonGameMode : BaseGameMode
 {
-    public override string Id => $"{Mod.Instance?.ModManifest.UniqueID}/ThirdPerson";
+    public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/ThirdPerson";
     public override string[] Tags => [CategoryFlatscreen, CategoryThirdPerson, FeaturePointAndClick];
 
-    public override Matrix? ProjectionMatrix { get; protected set; }
+    public override Matrix ProjectionMatrix { get; protected set; }
     public override Camera Camera { get; } = new();
 
     public override IReadOnlyList<IGameCursor> Cursors => []; // TODO
@@ -26,17 +26,14 @@ public class ThirdPersonGameMode : BaseGameMode
 
     public override void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, DefaultInputHandling defaultInputHandling)
     {
-        if (Mod.Instance != null)
-        {
-            if (Mod.Instance.Helper.Input.IsDown(SButton.Up))
-                Camera.RotationX += MathHelper.ToRadians(2);
-            if (Mod.Instance.Helper.Input.IsDown(SButton.Down))
-                Camera.RotationX -= MathHelper.ToRadians(2);
-            if (Mod.Instance.Helper.Input.IsDown(SButton.Left))
-                Camera.RotationY -= MathHelper.ToRadians(2);
-            if (Mod.Instance.Helper.Input.IsDown(SButton.Right))
-                Camera.RotationY += MathHelper.ToRadians(2);
-        }
+        if (Mod.Instance.Helper.Input.IsDown(SButton.Up))
+            Camera.RotationX += MathHelper.ToRadians(2);
+        if (Mod.Instance.Helper.Input.IsDown(SButton.Down))
+            Camera.RotationX -= MathHelper.ToRadians(2);
+        if (Mod.Instance.Helper.Input.IsDown(SButton.Left))
+            Camera.RotationY -= MathHelper.ToRadians(2);
+        if (Mod.Instance.Helper.Input.IsDown(SButton.Right))
+            Camera.RotationY += MathHelper.ToRadians(2);
 
         var minVerticalRot = MathHelper.ToRadians(15);
         var maxVerticalRot = MathHelper.ToRadians(75);

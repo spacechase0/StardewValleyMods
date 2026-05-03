@@ -27,10 +27,10 @@ public class GenericObjectHandlerManager<TBaseType, THandlerInterface>
 
     public THandlerInterface[] CreateApplicableHandlers(TBaseType menu)
     {
-        List<THandlerInterface?> ret = [null];
-        for (Type? check = menu.GetType(); check != typeof(TBaseType).BaseType; check = check.BaseType)
+        List<THandlerInterface> ret = [null];
+        for (Type check = menu.GetType(); check != typeof(TBaseType).BaseType; check = check.BaseType)
         {
-            if (ret[0] == null && handlers.TryGetValue(check ?? throw new NullReferenceException(), out var handlerData))
+            if (ret[0] == null && handlers.TryGetValue(check, out var handlerData))
             {
                 if (handlerData.allowsSubclasses || check == menu.GetType())
                 {
@@ -38,7 +38,7 @@ public class GenericObjectHandlerManager<TBaseType, THandlerInterface>
                 }
             }
 
-            if (handlerAddons.TryGetValue(check ?? throw new NullReferenceException(), out var addonDataList))
+            if (handlerAddons.TryGetValue(check, out var addonDataList))
             {
                 foreach (var addonData in addonDataList)
                 {

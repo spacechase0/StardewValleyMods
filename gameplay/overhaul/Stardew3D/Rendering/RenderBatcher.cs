@@ -36,7 +36,7 @@ public class RenderBatcher : IDisposable
         }
 
         public List<InstanceData> instances = new();
-        public VertexBuffer? instanceVbo;
+        public VertexBuffer instanceVbo;
 
         public virtual void Dispose()
         {
@@ -128,7 +128,7 @@ public class RenderBatcher : IDisposable
 
     public int AddInstancedModel(Mesh mesh, Matrix transform, Color col, bool staysVisibleAfterFrame = false)
     {
-        if (!modelBatchData.TryGetValue(mesh, out ModelBatchData? data))
+        if (!modelBatchData.TryGetValue(mesh, out ModelBatchData data))
         {
             data = new();
 
@@ -283,7 +283,7 @@ public class RenderBatcher : IDisposable
         var oldDepth = graphics.DepthStencilState;
         var oldRaster = graphics.RasterizerState;
 
-        void DoVerticesBatch( List<VerticesRenderData> data, VertexBuffer? instanceVbo, int instanceCount, int? transparentTechnique = null)
+        void DoVerticesBatch( List<VerticesRenderData> data, VertexBuffer instanceVbo, int instanceCount, int? transparentTechnique = null)
         {
             foreach (var entry in data)
             {
@@ -312,7 +312,7 @@ public class RenderBatcher : IDisposable
             }
         }
 
-        void DoModelBatch(List<Effect> effects, List<MeshPart> parts, VertexBuffer? instanceVbo, int instanceCount, int? transparentTechnique = null)
+        void DoModelBatch(List<Effect> effects, List<MeshPart> parts, VertexBuffer instanceVbo, int instanceCount, int? transparentTechnique = null)
         {
             foreach (var effect in effects)
             {

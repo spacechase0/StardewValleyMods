@@ -17,7 +17,7 @@ public class SpriteBatchProxy : SpriteBatch
     private float scale = 1;
     private SpriteBatch oldBatch;
 
-    public SpriteBatchProxy(GameLocation? relevantLocation)
+    public SpriteBatchProxy(GameLocation relevantLocation)
         : base(Game1.graphics.GraphicsDevice)
     {
         this.relevantLocation = relevantLocation;

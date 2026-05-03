@@ -30,7 +30,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         public List<int> Indices = new();
         public List<AnimationData> Animations = new();
     }
-    internal Dictionary<Texture2D, (VertexBuffer? Vertices, IndexBuffer? Indices, int[] IndexData, List<AnimationData> Animations)> vbos = new();
+    internal Dictionary<Texture2D, (VertexBuffer Vertices, IndexBuffer Indices, int[] IndexData, List<AnimationData> Animations)> vbos = new();
 
     public class WallData
     {
@@ -48,7 +48,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         }
     }
 
-    internal VertexBuffer? waterVbo;
+    internal VertexBuffer waterVbo;
     internal List<SimpleVertex> waterVertices = new();
 
     private bool dirty = true;
@@ -142,8 +142,8 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
             if (entry.Value.Verts.Count == 0)
                 continue;
 
-            VertexBuffer? vbo = null;
-            IndexBuffer? ibo = null;
+            VertexBuffer vbo = null;
+            IndexBuffer ibo = null;
             if (vbos.ContainsKey(entry.Key))
             {
                 vbo = vbos[entry.Key].Vertices;
@@ -156,7 +156,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                 vbo?.Dispose();
                 vbo = new(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), entry.Value.Verts.Count, BufferUsage.WriteOnly);
             }
-            vbo?.SetData(entry.Value.Verts.ToArray());
+            vbo.SetData(entry.Value.Verts.ToArray());
 
             if (entry.Value.Indices.Count > 0 && (ibo == null || ibo.IndexCount < entry.Value.Indices.Count))
             {
@@ -164,7 +164,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                 ibo?.Dispose();
                 ibo = new(Game1.graphics.GraphicsDevice, IndexElementSize.ThirtyTwoBits, entry.Value.Indices.Count, BufferUsage.WriteOnly);
             }
-            ibo?.SetData(entry.Value.Indices.ToArray());
+            ibo.SetData(entry.Value.Indices.ToArray());
 
             if (vbos.ContainsKey(entry.Key))
                 vbos[entry.Key] = new(vbo, ibo, entry.Value.Indices.ToArray(), entry.Value.Animations);
@@ -241,9 +241,9 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                     }
                     missing[ix, iy] &= ~type;
 
-                    (VertexData Data, int FirstVert) DoTile(StaticTile? tile)
+                    (VertexData Data, int FirstVert) DoTile(StaticTile tile)
                     {
-                        Texture2D? tex = Game1.mouseCursors;
+                        Texture2D tex = Game1.mouseCursors;
                         int tileInd = 20 + 31 * 44, tr = 44;
                         if (tile != null)
                         {
@@ -314,7 +314,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                             List<int> allVerts = new();
                             bool first = true;
                             int animSpot = 0;
-                            List<AnimationData>? anim = null;
+                            List<AnimationData> anim = null;
                             foreach (var staticTile in animTile.TileFrames)
                             {
                                 var thisData = DoTile(staticTile);
@@ -327,14 +327,14 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                                     first = false;
                                 }
                             }
-                            anim?.Add(new() { AnimIndexStart = animSpot, AllVertIndices = allVerts.ToArray(), FrameTime = animTile.FrameInterval });
+                            anim.Add(new() { AnimIndexStart = animSpot, AllVertIndices = allVerts.ToArray(), FrameTime = animTile.FrameInterval });
                             break;
                     }
                 }
 
                 {
                     bool hasWater = Object.isWaterTile(ix, iy);
-                    Texture2D? tex = Game1.mouseCursors;
+                    Texture2D tex = Game1.mouseCursors;
                     Rectangle texRect = new Rectangle(320, 496, 16, 16);
                     Color color = Object.waterColor.Value;
                     if (!hasWater)
@@ -724,7 +724,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         float[] relativeSegSizesFull = new float[canResizeSegment.Length];
                         for (int i = 0; i < relativeSegSizesFull.Length; ++i)
                             relativeSegSizesFull[i] = canResizeSegment[i] || resizableSegmentCount == 0 ? (tilesHigh - heightOfAllNonresizable / 16f) / tilesHigh / resizableSegmentCount : wallDef.VerticalSegments[i].TextureRegion.Height / (tilesHigh * 16);
-
+                        
                         float segStartPerc = 1;
                         for (int iseg = 0; iseg < wallDef.VerticalSegments.Count; ++iseg)
                         {

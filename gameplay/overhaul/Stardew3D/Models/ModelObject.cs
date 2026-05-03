@@ -13,8 +13,8 @@ public class ModelObject
     private ModelManager Manager { get; }
     public string Id { get; }
 
-    private ModelData? cachedData = null;
-    private ModelRoot? cachedModel = null;
+    private ModelData cachedData = null;
+    private ModelRoot cachedModel = null;
 
     private List<Node> matches = new();
     private List<Dictionary<string, List<(MonoScene.Graphics.Mesh Mesh, Matrix Transform)>>> bakedMatches = new();
@@ -244,7 +244,7 @@ public class ModelObject
         }
     }
 
-    private RenderBatcher? immediateBatch;
+    private RenderBatcher immediateBatch;
     public void Draw(PBREnvironment env, Matrix transform, Color? color = null, int whichMatch = 0)
     {
         if (immediateBatch == null)

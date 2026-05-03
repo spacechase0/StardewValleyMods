@@ -14,7 +14,7 @@ internal static class CharacterHandlers
     {
         foreach (var orig in UpdateTargetMethods())
         {
-            Type concreteType = typeof(Impl<>).MakeGenericType(orig.DeclaringType ?? throw new NullReferenceException());
+            Type concreteType = typeof(Impl<>).MakeGenericType(orig.DeclaringType);
             harmony.CreateReversePatcher(orig, new HarmonyMethod(concreteType.GetMethod("OriginalUpdateMethod")) { priority = Priority.VeryLow, reversePatchType = HarmonyReversePatchType.Snapshot });
             harmony.Patch(orig, prefix: new HarmonyMethod(concreteType.GetMethod(orig.DeclaringType == typeof(Farmer) ? "UpdatePrefix_Farmer" : "UpdatePrefix")) { priority = Priority.Last });
         }
@@ -29,7 +29,7 @@ internal static class CharacterHandlers
     }
     public static IEnumerable<MethodBase> UpdateTargetMethods()
     {
-        var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where(a => a.FullName?.Contains("Steamworks.NET") == false && !a.IsDynamic)
+        var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.FullName.Contains("Steamworks.NET") && !a.IsDynamic)
                          from type in asm.GetExportedTypes()
                          where type.IsSubclassOf(typeof(Character))
                          select type;
@@ -48,7 +48,7 @@ internal static class CharacterHandlers
 
     public static IEnumerable<MethodBase> DrawTargetMethods()
     {
-        var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where(a => a.FullName?.Contains("Steamworks.NET") == false && !a.IsDynamic)
+        var subclasses = from asm in AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.FullName.Contains("Steamworks.NET") && !a.IsDynamic)
                          from type in asm.GetExportedTypes()
                          where type.IsSubclassOf(typeof(Character))
                          select type;

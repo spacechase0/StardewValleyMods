@@ -50,7 +50,7 @@ public class ModelManager
     {
         foreach (var entry in mapperForModelBeingLoaded)
         {
-            if (entry.TextureMap.TryGetValue(PathUtilities.NormalizePath(assetName), out string? newAssetName))
+            if (entry.TextureMap.TryGetValue(PathUtilities.NormalizePath(assetName), out string newAssetName))
             {
                 assetName = newAssetName;
             }
@@ -58,13 +58,13 @@ public class ModelManager
 
         int colon = modelBeingLoaded.IndexOf(':');
         string assetCtx = modelBeingLoaded.Substring(0, colon).ToLower();
-        string? assetDir = Path.GetDirectoryName(modelBeingLoaded.Substring(colon + 1));
+        string assetDir = Path.GetDirectoryName(modelBeingLoaded.Substring(colon + 1));
         string fullAssetPath = $"SMAPI/{assetCtx}/{assetDir}";
 
         colon = assetName.IndexOf(':');
         if (colon == -1)
         {
-            string? resolved = null;
+            string resolved = null;
             if (Game1.content.DoesAssetExist<Texture2D>(assetName)) resolved = assetName;
             else if (Game1.content.DoesAssetExist<Texture2D>(Path.Combine(fullAssetPath, assetName))) resolved = Path.Combine(fullAssetPath, assetName);
 
@@ -76,7 +76,7 @@ public class ModelManager
         else
         {
             string modId = assetName.Substring(0, colon), file = assetName.Substring(colon + 1);
-            if (!Mod.Instance!.Helper.ModRegistry.IsLoaded(modId))
+            if (!Mod.Instance.Helper.ModRegistry.IsLoaded(modId))
             {
                 throw new ContentLoadException($"Mod \"{modId}\" not present.");
             }

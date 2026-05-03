@@ -60,9 +60,9 @@ public class WorldRenderer : IDisposable
         List<(GameLocation Location, IRenderHandler[] Renderers, Matrix TransformFromCurrent)> adjacencies = new();
         adjacencies.Add(new(loc, Mod.State.GetRenderHandlersFor(loc), Matrix.Identity));
 
-        void AddAdjacenciesForPortals(GameLocation? loc, Matrix prevTransform)
+        void AddAdjacenciesForPortals(GameLocation loc, Matrix prevTransform)
         {
-            if (loc == null || !loc.TryGetMapProperty($"{Mod.Instance?.ModManifest.UniqueID}/Portals", out string mapProp))
+            if (loc == null || !loc.TryGetMapProperty($"{Mod.Instance.ModManifest.UniqueID}/Portals", out string mapProp))
                 return;
 
             var portals = Portal.From(mapProp);
@@ -94,7 +94,7 @@ public class WorldRenderer : IDisposable
             var mainRenderer = renderers[0] as LocationHandler;
             AddAdjacenciesForPortals(adjacencies[i].Location, adjacencies[i].TransformFromCurrent);
 
-            if (mainRenderer?.IsDirty == true && !builtLocationRecently)
+            if (mainRenderer.IsDirty && !builtLocationRecently)
             {
                 mainRenderer.Build();
                 builtLocationRecently = true;
@@ -113,15 +113,15 @@ public class WorldRenderer : IDisposable
             {
                 if ((other.Renderers[0] as LocationHandler)?.Object != null)
                 {
-                    locationTransforms.AddOrUpdate((other.Renderers[0] as LocationHandler)?.Object!, new(other.TransformFromCurrent));
+                    locationTransforms.AddOrUpdate((other.Renderers[0] as LocationHandler)?.Object, new(other.TransformFromCurrent));
                 }
-                var env = (other.Renderers[0] as LocationHandler)?.Environment;
+                var env = (other.Renderers[0] as LocationHandler).Environment;
                 foreach (var renderer in other.Renderers)
                 {
                     renderer.Render(new()
                     {
                         Time = Game1.currentGameTime,
-                        TargetScreen = (Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D)!,
+                        TargetScreen = Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D,
 
                         MenuSpriteBatch = Game1.spriteBatch,
                         WorldSpriteBatch = new(other.Location),

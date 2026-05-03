@@ -20,7 +20,7 @@ internal static class SuppressDrawingUiAfterFramePatch
         return true;
     }
 
-    private static void renderScreenBuffer(Game1 __instance, RenderTarget2D? target_screen)
+    private static void renderScreenBuffer(Game1 __instance, RenderTarget2D target_screen)
     {
         Game1.graphics.GraphicsDevice.SetRenderTarget(null);
         if (!__instance.takingMapScreenshot && !LocalMultiplayer.IsLocalMultiplayer() && (target_screen == null || !target_screen.IsContentLost))

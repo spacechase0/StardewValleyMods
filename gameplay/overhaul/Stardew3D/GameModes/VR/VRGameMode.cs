@@ -16,12 +16,12 @@ namespace Stardew3D.GameModes.VR;
 public abstract partial class VRGameMode : BaseGameMode
 {
     public override Camera Camera { get; } = new();
-    public override Matrix? ProjectionMatrix { get; protected set; }
+    public override Matrix ProjectionMatrix { get; protected set; }
 
-    protected OpenVR.NET.VR? _vr;
-    public CVRSystem? VR { get; private set; }
+    protected OpenVR.NET.VR _vr;
+    public CVRSystem VR { get; private set; }
 
-    internal RenderTarget2D? leftScreen, rightScreen;
+    internal RenderTarget2D leftScreen, rightScreen;
     internal RenderTarget2D uiScreen => Game1.game1.uiScreen;
 
     protected override bool NeedsRenderTargetHandling => false;
@@ -69,7 +69,7 @@ public abstract partial class VRGameMode : BaseGameMode
             }
             VR = _vr.CVR;
 
-            var aerr = Valve.VR.OpenVR.Applications.AddApplicationManifest(Path.Combine(Mod.Instance!.Helper.DirectoryPath, "assets", "game.vrmanifest"), true);
+            var aerr = Valve.VR.OpenVR.Applications.AddApplicationManifest(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "game.vrmanifest"), true);
             if (aerr != EVRApplicationError.None) Log.Error($"Failed to add application manifest to OpenVR: {aerr}");
 
             uint screenWidth = 0, screenHeight = 0;
@@ -119,8 +119,8 @@ public abstract partial class VRGameMode : BaseGameMode
             Game1.viewport.Width = uiScreen.Width;
             Game1.viewport.Height = uiScreen.Height;
 
-            leftScreen?.Dispose();
-            rightScreen?.Dispose();
+            leftScreen.Dispose();
+            rightScreen.Dispose();
             if (uiScreen != Game1.game1.uiScreen)
                 uiScreen.Dispose();
             leftScreen = rightScreen /*= uiScreen*/ = null;
@@ -149,7 +149,7 @@ public abstract partial class VRGameMode : BaseGameMode
         base.BeforeUpdate();
         if (VR == null) return;
 
-        _vr?.Update();
+        _vr.Update();
         UpdateInput();
 
         // Gonna need a SMAPI update past 4.5.1 for Helper.Input.Press to work for controllers when one isn't connected
@@ -157,11 +157,11 @@ public abstract partial class VRGameMode : BaseGameMode
         Game1.options.gamepadControls = true;
         if (World_HotbarLeft)
         {
-            Mod.Instance?.Helper.Input.Press(SButton.LeftTrigger);
+            Mod.Instance.Helper.Input.Press(SButton.LeftTrigger);
         }
         if (World_HotbarRight)
         {
-            Mod.Instance?.Helper.Input.Press(SButton.RightTrigger);
+            Mod.Instance.Helper.Input.Press(SButton.RightTrigger);
         }
     }
     public override void AfterUpdate()
@@ -202,7 +202,7 @@ public abstract partial class VRGameMode : BaseGameMode
                         processingDraw = true;
                         _vr.UpdateDraw();
 
-                        var drawMeth = Mod.Instance?.Helper.Reflection.GetMethod(Game1.game1, "_draw") ?? throw new NullReferenceException();
+                        var drawMeth = Mod.Instance.Helper.Reflection.GetMethod(Game1.game1, "_draw");
 
                         drawMeth.Invoke(time, uiScreen);
                         Game1.graphics.GraphicsDevice.SetRenderTarget(targetScreen); // for flush
@@ -295,13 +295,13 @@ public abstract partial class VRGameMode : BaseGameMode
                             MenuSpriteBatch = sb,
 
                             WorldBatch = menuBatch,
-                            WorldEnvironment = WorldRenderer?.CurrentEnvironment,
+                            WorldEnvironment = WorldRenderer.CurrentEnvironment,
                             WorldCamera = Camera,
                             WorldTransform = Matrix.Identity
                         });
                     }
                     menuBatch.PrepareSprites(Matrix.Identity, Camera);
-                    menuBatch.DrawBatched(WorldRenderer?.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+                    menuBatch.DrawBatched(WorldRenderer.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
                     menuBatch.HideInstancesAfterFrame();
                 }
                 return false;
@@ -348,13 +348,13 @@ public abstract partial class VRGameMode : BaseGameMode
                             MenuSpriteBatch = sb,
 
                             WorldBatch = menuBatch,
-                            WorldEnvironment = WorldRenderer?.CurrentEnvironment,
+                            WorldEnvironment = WorldRenderer.CurrentEnvironment,
                             WorldCamera = Camera,
                             WorldTransform = Matrix.Identity
                         });
                     }
                     menuBatch.PrepareSprites(Matrix.Identity, Camera);
-                    menuBatch.DrawBatched(WorldRenderer?.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
+                    menuBatch.DrawBatched(WorldRenderer.CurrentEnvironment, Matrix.Identity, Camera.ViewMatrix, ProjectionMatrix);
                     menuBatch.HideInstancesAfterFrame();
                 }
             }
@@ -395,8 +395,8 @@ public abstract partial class VRGameMode : BaseGameMode
         Camera.AdditionalTransform = Matrix.Identity;// VR.GetEyeToHeadTransform(ActiveEye.Value).ToMonogame().Invert();
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;
 
-        var baseProj = VR?.GetProjectionMatrix(ActiveEye.Value, 0.1f, 10000).ToMonogame();
-        var eyeToHead = VR?.GetEyeToHeadTransform(ActiveEye.Value).ToMonogame().Inverted();
+        var baseProj = VR.GetProjectionMatrix(ActiveEye.Value, 0.1f, 10000).ToMonogame();
+        var eyeToHead = VR.GetEyeToHeadTransform(ActiveEye.Value).ToMonogame().Inverted();
         var headsetTransform = Camera.ViewMatrix.Inverted();
         //headsetTransform = (Headset.CurrentRotation * Matrix.CreateTranslation( Headset.CurrentPosition )).Invert();
         headsetTransform = Matrix.Identity;

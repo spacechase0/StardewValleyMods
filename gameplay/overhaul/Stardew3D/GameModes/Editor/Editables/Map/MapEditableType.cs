@@ -4,9 +4,9 @@ using StardewValley;
 namespace Stardew3D.GameModes.Editor.Editables.Map;
 internal class MapEditableType : IEditableType
 {
-    internal static LocalizedContentManager? vanillaOnlyContent;
+    internal static LocalizedContentManager vanillaOnlyContent;
 
-    public string Id => $"{Mod.Instance?.ModManifest.UniqueID}/Map";
+    public string Id => $"{Mod.Instance.ModManifest.UniqueID}/Map";
     public string TypeName => "Map";
     public string TypeListName => "Maps";
 
@@ -15,7 +15,7 @@ internal class MapEditableType : IEditableType
         if (vanillaOnlyContent == null)
             vanillaOnlyContent = new(GameRunner.instance.Services, Game1.content.RootDirectory);
 
-        string[] vanillaMaps = File.ReadAllLines(Path.Combine(Mod.Instance!.Helper.DirectoryPath, "assets", "vanillamaps.txt"));
+        string[] vanillaMaps = File.ReadAllLines(Path.Combine(Mod.Instance.Helper.DirectoryPath, "assets", "vanillamaps.txt"));
 
         EditableTree vanilla = new();
         foreach (var entry in vanillaMaps)

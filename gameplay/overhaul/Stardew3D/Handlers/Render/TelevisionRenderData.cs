@@ -32,17 +32,17 @@ public class TelevisionRenderData : RenderData<TelevisionRenderer>
             return;
         }
 
-        var mesh = Model?.Matches[instance.WhichMatch];
+        var mesh = Model.Matches[instance.WhichMatch];
         if (screenPart == null)
         {
-            var screenEntry = mesh?.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE"));
+            var screenEntry = mesh.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE"));
             if (!string.IsNullOrEmpty(screenEntry.Key))
                 screenPart = screenEntry.Value.SelectMany(m => m.Mesh).FirstOrDefault();
         }
 
         if (screenOverlayPart == null)
         {
-            var overlayEntry = mesh?.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE_OVERLAY"));
+            var overlayEntry = mesh.FirstOrDefault(kvp => kvp.Key.EndsWith("/SCREEN_REPLACE_OVERLAY"));
             if (!string.IsNullOrEmpty(overlayEntry.Key))
                 screenOverlayPart = overlayEntry.Value.SelectMany(m => m.Mesh).FirstOrDefault();
         }

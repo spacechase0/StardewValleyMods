@@ -24,8 +24,8 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
     public class SelectionData
     {
-        public object? Selected { get; set; }
-        public Vector3[]? SelectedDisplay { get; set; }
+        public object Selected { get; set; }
+        public Vector3[] SelectedDisplay { get; set; }
         public float Distance { get; set; } = 4;
     }
 
@@ -173,7 +173,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
     protected override bool CheckInteractionPurpose(string purpose)
     {
-        return purpose == $"{Mod.Instance?.ModManifest.UniqueID}/Action";
+        return purpose == $"{Mod.Instance.ModManifest.UniqueID}/Action";
     }
 
     protected override void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, Matrix transform, InteractionData interaction, InteractionArea area)
@@ -240,7 +240,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
                     if (sel.Selected != null)
                     {
-                        SimpleVertex[] v = sel.SelectedDisplay?.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.White * 0.2f)).ToArray() ?? [];
+                        SimpleVertex[] v = sel.SelectedDisplay.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.White * 0.2f)).ToArray();
 
                         RenderHelper.GenericEffect.Texture = Game1.staminaRect;
                         RenderHelper.GenericEffect.World = Matrix.Identity;

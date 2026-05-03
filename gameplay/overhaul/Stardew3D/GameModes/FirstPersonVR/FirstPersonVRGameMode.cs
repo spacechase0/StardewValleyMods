@@ -16,7 +16,7 @@ namespace Stardew3D.GameModes.FirstPersonVR;
 
 public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
 {
-    public override string Id => $"{Mod.Instance?.ModManifest.UniqueID}/FirstPersonVR";
+    public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/FirstPersonVR";
     public override string[] Tags => [CategoryVR, CategoryFirstPerson, FeatureMotionControls, FeaturePointAndClick];
 
     public Vector3 MovementFacing => Camera.Forward;
@@ -103,13 +103,10 @@ public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
 
         var rotMatrix = Matrix.CreateRotationY(Camera.AdditionalRotationY) * Matrix.CreateTranslation(Camera.Position);
 
-        if (Headset != null)
-        {
-            Pointer_Primary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
-            Grip_Primary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
-            Pointer_Secondary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
-            Grip_Secondary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
-        }
+        Pointer_Primary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
+        Grip_Primary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
+        Pointer_Secondary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
+        Grip_Secondary.ApplyWorldTransform(Headset.CurrentPosition, rotMatrix);
     }
 
     public override void AfterUpdate()
@@ -118,7 +115,7 @@ public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
         //Log.Debug($"fractional? {Game1.player.Position.X % (1f / 64)} {Game1.player.Position.Y % (1f / 64)}");
         //Log.Debug($"headset {(lastHeadsetPosition = Headset.CurrentPosition).X % (1f / 64)} {(lastHeadsetPosition = Headset.CurrentPosition).Z % (1f / 64)}");
         base.AfterUpdate();
-        lastHeadsetPosition = Headset?.CurrentPosition ?? Vector3.Zero;
+        lastHeadsetPosition = Headset.CurrentPosition;
     }
 
     private RenderBatcher extraBatch = new(Game1.graphics.GraphicsDevice);
@@ -228,12 +225,12 @@ public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
         if (Context.IsWorldReady)
         {
             Camera.Position = Game1.player.StandingPixel3D;
-            if (Headset != null) Camera.Position += new Vector3(0, Headset.CurrentPosition.Y, 0);
+            Camera.Position += new Vector3(0, Headset.CurrentPosition.Y, 0);
         }
         else
         {
             Camera.Position = Vector3.Zero;
-            if (Headset != null) Camera.Position += Headset.CurrentPosition;
+            Camera.Position += Headset.CurrentPosition;
             Camera.Position += notReadyOffset;
         }
     }

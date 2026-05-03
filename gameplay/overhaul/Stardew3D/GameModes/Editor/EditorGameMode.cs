@@ -28,12 +28,12 @@ namespace Stardew3D.GameModes.Editor;
 
 public class EditorGameMode : BaseGameMode
 {
-    public override string Id => $"{Mod.Instance?.ModManifest.UniqueID}/Editor";
+    public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/Editor";
     public override string[] Tags => [ IGameMode.CategoryEditor ];
 
     private Camera camera = new();
     public override ICamera Camera => camera;
-    public override Matrix? ProjectionMatrix { get; protected set; }
+    public override Matrix ProjectionMatrix { get; protected set; }
     public override IReadOnlyList<IGameCursor> Cursors => [];
 
     public SpriteBatch SpriteBatch { get; private set; }
@@ -49,7 +49,7 @@ public class EditorGameMode : BaseGameMode
         new MapEditableType(),
     ];
 
-    private IEditable? ActiveEditable
+    private IEditable ActiveEditable
     {
         get => field;
         set
@@ -182,7 +182,7 @@ public class EditorGameMode : BaseGameMode
         EditorWorldBatch = new RenderBatcher(Game1.graphics.GraphicsDevice);
     }
 
-    public override void SwitchOff(IGameMode? nextMode)
+    public override void SwitchOff(IGameMode nextMode)
     {
         base.SwitchOff(nextMode);
 
@@ -280,14 +280,14 @@ public class EditorGameMode : BaseGameMode
             Log.Info($"Saving {ActiveEditable.Id}...");
             var formats = ActiveEditable.Save();
 
-            string path = Path.Combine(Mod.Instance!.Helper.DirectoryPath, "EditorOutput");
+            string path = Path.Combine(Mod.Instance.Helper.DirectoryPath, "EditorOutput");
 #if DEBUG
             path = Mod.GetDevAssetsFolder();
 #endif
             path = Path.Combine(path, ActiveEditable.Id);
 
             Log.Info($"Saving to {path}...");
-            Directory.CreateDirectory(Path.GetDirectoryName(path) ?? throw new NullReferenceException());
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             foreach (var format in formats)
                 File.WriteAllText($"{path}.{format.Key}", format.Value);
         }

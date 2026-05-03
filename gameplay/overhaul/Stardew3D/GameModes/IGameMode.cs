@@ -25,11 +25,11 @@ public interface IGameMode
     public IReadOnlyList<IGameCursor> Cursors { get; }
 
     public RenderTarget2D CurrentTargetScreen { get; }
-    public PBREnvironment? GetCurrentEnvironmentFor(GameLocation location);
-    public Matrix? GetCurrentTransformFor(GameLocation location);
+    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location);
+    public Matrix GetCurrentTransformFor(GameLocation location);
 
-    public void SwitchOn( IGameMode? previousMode );
-    public void SwitchOff( IGameMode? nextMode );
+    public void SwitchOn( IGameMode previousMode );
+    public void SwitchOff( IGameMode nextMode );
 
     delegate void DefaultInputHandling(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState);
     public void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, DefaultInputHandling defaultInputHandling);

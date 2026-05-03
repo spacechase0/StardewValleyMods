@@ -90,14 +90,14 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
 
     protected override bool CheckInteractionPurpose(string purpose)
     {
-        return purpose == $"{Mod.Instance?.ModManifest.UniqueID}/Action";
+        return purpose == $"{Mod.Instance.ModManifest.UniqueID}/Action";
     }
 
     protected override void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, Matrix tfTransform, InteractionData tfInteraction, InteractionArea tfArea)
     {
         for ( int i = 0; i < toolAreas.Length; i++)
         {
-            if (!toolAreas[i].area.Purpose.StartsWith($"{Mod.Instance?.ModManifest.UniqueID}/ToolAction/"))
+            if (!toolAreas[i].area.Purpose.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/ToolAction/"))
                 continue;
 
             var treeVerts = tfArea.GetTransformedShape().Transform(tfTransform);
@@ -119,7 +119,7 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
             if (vel.Length() < 0.625f)
                 continue;
 
-            if (toolAreas[i].area.Purpose == $"{Mod.Instance?.ModManifest.UniqueID}/ToolAction/Impact")
+            if (toolAreas[i].area.Purpose == $"{Mod.Instance.ModManifest.UniqueID}/ToolAction/Impact")
             {
                 // Only allow hits that are going similarly angled to the tool's angle
                 // If you hit it pointing the wrong way, the tool will be oriented the wrong way, so the hit will be ignored

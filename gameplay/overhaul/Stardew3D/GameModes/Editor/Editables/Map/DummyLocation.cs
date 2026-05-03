@@ -36,9 +36,9 @@ public class DummyLocation : GameLocation
         return MapLoader.CreateTemporary();
     }
 
-    public string? GetWallOverride(Point tile, TileSpot dir)
+    public string GetWallOverride(Point tile, TileSpot dir)
     {
-        string layerName = $"{Mod.Instance?.ModManifest.UniqueID}/WallData_{dir}";
+        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dir}";
         var layer = Map.GetLayer(layerName);
         if (layer == null)
             return null;
@@ -47,18 +47,18 @@ public class DummyLocation : GameLocation
             return null;
 
         var tileInst = layer.Tiles[tile.X, tile.Y];
-        if (tileInst == null || !tileInst.Properties.TryGetValue($"{Mod.Instance?.ModManifest.UniqueID}/WallDefinitionOverride", out var prop) || prop == null)
+        if (tileInst == null || !tileInst.Properties.TryGetValue($"{Mod.Instance.ModManifest.UniqueID}/WallDefinitionOverride", out var prop) || prop == null)
             return null;
 
         return prop.ToString();
     }
 
-    public void SetWallOverride(Point tile, TileSpot dir, string? newVal)
+    public void SetWallOverride(Point tile, TileSpot dir, string newVal)
     {
         if (tile.X < 0 || tile.Y < 0 || tile.X >= Map.Layers[0].LayerWidth || tile.Y >= Map.Layers[0].LayerHeight)
             return;
 
-        string layerName = $"{Mod.Instance?.ModManifest.UniqueID}/WallData_{dir}";
+        string layerName = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dir}";
         var layer = Map.GetLayer(layerName);
         if (layer == null)
             Map.AddLayer(layer = new(layerName, Map, Map.Layers[0].LayerSize, Map.Layers[0].TileSize));
@@ -67,29 +67,29 @@ public class DummyLocation : GameLocation
             layer.Tiles[tile.X, tile.Y] = null;
         else
         {
-            TileSheet? ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
+            TileSheet ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
             if (ts == null)
                 Map.AddTileSheet(ts = new("dataValues3d", Map, "ThirdDimensionData\\data", new(32, 16), new(16, 16)));
 
             var t = new StaticTile(layer, ts, BlendMode.Alpha, 0);
-            t.Properties.Add($"{Mod.Instance?.ModManifest.UniqueID}/WallDefinitionOverride", newVal);
+            t.Properties.Add($"{Mod.Instance.ModManifest.UniqueID}/WallDefinitionOverride", newVal);
             layer.Tiles[tile.X, tile.Y] = t;
         }
     }
 
     public float GetDimensionData(DimensionUtils.TileType tileType, Point tile, TileSpot modType = TileSpot.Center)
     {
-        return GetDimensionData($"{Mod.Instance?.ModManifest.UniqueID}/{tileType}Data_{modType}", tile);
+        return GetDimensionData($"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}", tile);
     }
 
     public void ModifyDimensionData(DimensionUtils.TileType tileType, Point tile, float amount, TileSpot modType = TileSpot.Center)
     {
-        ModifyDimensionData( $"{Mod.Instance?.ModManifest.UniqueID}/{tileType}Data_{modType}", tile, amount);
+        ModifyDimensionData( $"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}", tile, amount);
     }
 
     public void SetDimensionData(DimensionUtils.TileType tileType, Point tile, float? value, TileSpot modType = TileSpot.Center)
     {
-        SetDimensionData($"{Mod.Instance?.ModManifest.UniqueID}/{tileType}Data_{modType}", tile, value);
+        SetDimensionData($"{Mod.Instance.ModManifest.UniqueID}/{tileType}Data_{modType}", tile, value);
     }
 
     public float GetDimensionData(TileSpot wallDir, bool isSize, Point tile, TileSpot modType = TileSpot.Center)
@@ -134,7 +134,7 @@ public class DummyLocation : GameLocation
         val += amount;
         ind = DimensionUtils.GetDataTileIndexForValue(val);
 
-        TileSheet? ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
+        TileSheet ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
         if (ts == null)
             Map.AddTileSheet(ts = new("dataValues3d", Map, "ThirdDimensionData\\data", new(32, 16), new(16, 16)));
 
@@ -150,7 +150,7 @@ public class DummyLocation : GameLocation
         if (tile.X < 0 || tile.Y < 0 || tile.X >= layer.LayerWidth || tile.Y >= layer.LayerHeight)
             return;
 
-        TileSheet? ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
+        TileSheet ts = Map.TileSheets.FirstOrDefault(ts => ts.Id.EndsWith("dataValues3d"));
         if (ts == null)
             Map.AddTileSheet(ts = new("dataValues3d", Map, "ThirdDimensionData\\floor", new(32, 16), new(16, 16)));
 

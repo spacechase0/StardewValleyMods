@@ -12,7 +12,7 @@ namespace Stardew3D.Handlers.Render;
 
 public class DebrisRenderer : RendererFor<ModelData, Debris>
 {
-    private Item?[]? Items;
+    private Item[] Items;
     private PlaceholderData[] Particles;
 
     // TODO: Find a better way than setting this manually from the outside
@@ -171,7 +171,7 @@ public class DebrisRenderer : RendererFor<ModelData, Debris>
                     for (int ip = 0; ip < Parent.Particles.Length; ++ip )
                     {
                         var particle = Parent.Particles[ip];
-                        Chunk? chunk = ip < Parent.Object.Chunks.Count ? Parent.Object.Chunks[ip] : null;
+                        Chunk chunk = ip < Parent.Object.Chunks.Count ? Parent.Object.Chunks[ip] : null;
 
                         int finalY = Parent.Object.chunkFinalYLevel;
                         if (Parent.Object.movingFinalYLevel)
@@ -179,13 +179,13 @@ public class DebrisRenderer : RendererFor<ModelData, Debris>
 
                         Vector2 pos = (chunk?.GetVisualPosition() ?? Vector2.Zero);
                         if (!Parent.Object.chunksMoveTowardPlayer)
-                            pos.Y += (-chunk?.position.Y ?? 0) + finalY;
+                            pos.Y += -chunk.position.Y + finalY;
 
                         Vector3 pos3d = pos.To3D(Parent.ParentLocation);
                         if (!Parent.Object.chunksMoveTowardPlayer)
-                            pos3d.Y += (finalY - (chunk?.position.Y ?? 0)) / 64f;
+                            pos3d.Y += (finalY - chunk.position.Y) / 64f;
 
-                        RenderHelper.DrawBillboard(lastCamera ?? ctx.WorldCamera, particle.Texture, pos3d, particle.DisplaySize, particle.TextureRegion, particle.Color * (color.A / 255f), worldMatrix);
+                        RenderHelper.DrawBillboard(lastCamera, particle.Texture, pos3d, particle.DisplaySize, particle.TextureRegion, particle.Color * (color.A / 255f), worldMatrix);
                     }
                 }, Matrix.Identity, hasTransparency: true);
             }

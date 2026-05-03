@@ -53,7 +53,7 @@ internal class FirstPersonVRCursor : IGameCursor
         Func<Matrix> pointerFunc, Func<Matrix> gripFunc,
         Func<Vector3> linearVelocityFunc, Func<Vector3> angularVelocityFunc,
         Func<bool> menuLeftClick, Func<bool> menuRightClick, Func<Vector2> menuScroll,
-        Func<Item?> holdingFunc, Func<bool> useItem, Func<bool> interact)
+        Func<Item> holdingFunc, Func<bool> useItem, Func<bool> interact)
     {
         this.pointerFunc = pointerFunc;
         this.gripFunc = gripFunc;

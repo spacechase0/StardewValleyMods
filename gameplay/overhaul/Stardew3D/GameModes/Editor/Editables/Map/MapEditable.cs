@@ -39,9 +39,9 @@ public class MapEditable : IEditable
     public bool HasUnsavedChanges { get; private set; }
 
     private LocalizedContentManager ToLoadContentFrom;
-    public DummyLocation? Location;
+    public DummyLocation Location;
 
-    public BaseEditingMode? EditingMode
+    public BaseEditingMode EditingMode
     {
         get => field;
         set
@@ -161,7 +161,7 @@ public class MapEditable : IEditable
     {
         EditingMode = null;
 
-        Location?.reloadMap();
+        Location.reloadMap();
         MapModified();
     }
 
@@ -169,9 +169,9 @@ public class MapEditable : IEditable
     {
         EditingMode = null;
 
-        var layers = Location?.Map.Layers.Where(l => l.Id.StartsWith($"{Mod.Instance?.ModManifest.UniqueID}/"));
-        foreach (var layer in layers?.ToArray() ?? [])
-            Location?.Map.RemoveLayer(layer);
+        var layers = Location.Map.Layers.Where(l => l.Id.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/"));
+        foreach (var layer in layers.ToArray())
+            Location.Map.RemoveLayer(layer);
 
         MapModified();
     }
@@ -223,17 +223,17 @@ public class MapEditable : IEditable
     public Dictionary<string, string> Save()
     {
         var format = new TMXFormat(16, 16, 4, 4);
-        var map = Location?.Map.DeepClone() ?? throw new NullReferenceException();
+        var map = Location.Map.DeepClone();
 
         // Remove things irrelevant to us
         foreach (var prop in map.Properties.ToArray())
         {
-            if (!prop.Key.StartsWith($"{Mod.Instance?.ModManifest.UniqueID}/"))
+            if (!prop.Key.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/"))
                 map.Properties.Remove(prop.Key);
         }
         foreach (var layer in map.Layers.ToArray())
         {
-            if (!layer.Id.StartsWith($"{Mod.Instance?.ModManifest.UniqueID}/"))
+            if (!layer.Id.StartsWith($"{Mod.Instance.ModManifest.UniqueID}/"))
             {
                 map.RemoveLayer(layer);
                 continue;

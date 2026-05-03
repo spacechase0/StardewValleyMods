@@ -16,7 +16,7 @@ public partial class ModelData : IModelMapping
         Mod.State.ClearHandlerState();
     }
 
-    public virtual string Type => $"{Mod.Instance?.ModManifest.UniqueID}/Model";
+    public virtual string Type => $"{Mod.Instance.ModManifest.UniqueID}/Model";
 
     public string ModelFilePath { get; set; }
     public string SubModelPath { get; set; } // If not unique, picks a random one of the matching ones

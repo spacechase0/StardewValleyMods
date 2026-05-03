@@ -32,7 +32,7 @@ public abstract class Renderer : IRenderHandler
 public class RendererFor<TData, TObject> : Renderer
     where TData : ModelData
 {
-    public TData? ModelData => BaseModelData as TData;
+    public TData ModelData => BaseModelData as TData;
     public new TObject Object { get; }
 
     protected ConditionalWeakTable<RenderBatcher, RenderDataBase> renderData = new();

@@ -27,11 +27,11 @@ public class RenderData<TRenderer> : RenderDataBase
 {
     protected TRenderer Parent { get; }
     protected ModelObject Model { get; }
-    protected InteractionData? Interaction { get; }
-    protected ModelObject.ModelObjectInstance? instance;
+    protected InteractionData Interaction { get; }
+    protected ModelObject.ModelObjectInstance instance;
 
     private string interactionId;
-    private List<int>? interactionInstances;
+    private List<int> interactionInstances;
 
     public RenderData(RenderContext ctx, TRenderer parent, int whichMatch = 0)
         : base(ctx)
@@ -112,8 +112,8 @@ public class RenderData<TRenderer> : RenderDataBase
                 };
                 data.Vertices.SetData(verts.ToArray());
                 data.Indices.SetData(Enumerable.Range(0, verts.Count).Select(i => (short)i).ToArray());
-                (data.Effect as GenericModelEffect)?.Texture = Game1.staminaRect;
-                (data.Effect as GenericModelEffect)?.Color = Color.White;
+                (data.Effect as GenericModelEffect).Texture = Game1.staminaRect;
+                (data.Effect as GenericModelEffect).Color = Color.White;
                 Batch.AddInstancedVerticesData(rid, [data]);
             }
 
@@ -129,7 +129,7 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
 {
     protected ICamera lastCamera;
 
-    private List<int>? placeholderInstances;
+    private List<int> placeholderInstances;
 
     public RenderDataWithPlaceholder(RenderContext ctx, RendererWithPlaceholder<TData, TObject> parent, int whichMatch = 0)
         : base(ctx, parent, whichMatch)
@@ -156,7 +156,7 @@ public class RenderDataWithPlaceholder<TData, TObject> : RenderData<RendererWith
                     };
                     data.Vertices.SetData(vertices.ToArray());
                     data.Indices.SetData(Enumerable.Range(0, vertices.Count).Select(i => (short)i).ToArray());
-                    (data.Effect as GenericModelEffect)?.Texture = placeholder.Texture;
+                    (data.Effect as GenericModelEffect).Texture = placeholder.Texture;
                     Batch.AddInstancedVerticesData(id, [data]);
                 }
 

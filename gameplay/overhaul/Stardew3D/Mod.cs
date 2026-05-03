@@ -68,7 +68,7 @@ public static class WorkaroundMaybeBugInOpenVRDotNet
 // though that likely was just me doing things wrong)
 //
 // So we just gotta transpose OpenVR matrices before using them.
-//
+// 
 // We try to stick with MonoGame conventions here, though that's hard when I don't know what I'm doing.
 
 namespace Stardew3D
@@ -79,8 +79,8 @@ namespace Stardew3D
     [HasHarmony]
     public partial class Mod : BaseMod<Mod>
     {
-        public string DefaultHandler => $"{Mod.Instance?.ModManifest.UniqueID}/FirstPerson";
-        public string DefaultVrHandler => $"{Mod.Instance?.ModManifest.UniqueID}/FirstPersonVR";
+        public string DefaultHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPerson";
+        public string DefaultVrHandler => $"{Mod.Instance.ModManifest.UniqueID}/FirstPersonVR";
 
 #if DEBUG
         public static string GetDevAssetsFolder()
@@ -90,7 +90,7 @@ namespace Stardew3D
 
         private static string GetDevModFolderImpl([CallerFilePath]string path = "")
         {
-            return Path.GetDirectoryName(path) ?? throw new NullReferenceException();
+            return Path.GetDirectoryName(path);
         }
 #endif
 
@@ -116,7 +116,7 @@ namespace Stardew3D
             Helper.Events.GameLoop.UpdateTicked += (s, e) => State.ActiveMode?.AfterUpdate();
             State.AddingGameModes += (s, e) =>
             {
-                var state = s as State ?? throw new NullReferenceException();
+                var state = s as State;
                 state.AddGameMode(new FirstPersonGameMode());
                 state.AddGameMode(new ThirdPersonGameMode());
                 state.AddGameMode(new FirstPersonVRGameMode());
@@ -124,30 +124,30 @@ namespace Stardew3D
             };
             State.GameModesFinalized += (s, e) =>
             {
-                var state = s as State ?? throw new NullReferenceException();
-                state.SetJointHandlerForGameModeTags<GameLocation, LocationHandler>([], handler => obj => new LocationHandler((obj as GameLocation)!));
-                state.SetRenderHandlerForGameModeTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>((obj as Item)!));
-                state.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer((obj as StardewValley.Object)!));
-                state.SetRenderHandlerForGameModeTags<Tool>([], handler => obj => new ToolRenderer((obj as Tool)!));
-                state.SetRenderHandlerForGameModeTags<TV>([], handler => obj => new TelevisionRenderer((obj as TV)!));
-                state.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>((obj as TerrainFeature)!));
-                state.SetRenderHandlerForGameModeTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer((obj as ResourceClump)!));
-                state.SetRenderHandlerForGameModeTags<Tree>([], handler => obj => new TreeRenderer((obj as Tree)!));
+                var state = s as State;
+                state.SetJointHandlerForGameModeTags<GameLocation, LocationHandler>([], handler => obj => new LocationHandler(obj as GameLocation));
+                state.SetRenderHandlerForGameModeTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
+                state.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
+                state.SetRenderHandlerForGameModeTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
+                state.SetRenderHandlerForGameModeTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
+                state.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>(obj as TerrainFeature));
+                state.SetRenderHandlerForGameModeTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
+                state.SetRenderHandlerForGameModeTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
                 //state.SetRenderHandlerForGameHandlerTags<FruitTree>([], handler => obj => new FruitTreeRenderer(obj as FruitTree));
-                state.SetRenderHandlerForGameModeTags<Flooring>([], handler => obj => new FlooringRenderer((obj as Flooring)!));
-                state.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer((obj as Grass)!));
-                state.SetRenderHandlerForGameModeTags<HoeDirt>([], handler => obj => new HoeDirtRenderer((obj as HoeDirt)!));
+                state.SetRenderHandlerForGameModeTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
+                state.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
+                state.SetRenderHandlerForGameModeTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
                 //state.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
-                state.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer((obj as Character)!));
-                state.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer((obj as Debris)!));
-                state.SetRenderHandlerForGameModeTags<Building>([], handler => obj => new BuildingRenderer((obj as Building)!));
-                state.SetRenderHandlerForGameModeTags<Crop>([], handler => obj => new CropRenderer((obj as Crop)!));
+                state.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer(obj as Character));
+                state.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
+                state.SetRenderHandlerForGameModeTags<Building>([], handler => obj => new BuildingRenderer(obj as Building));
+                state.SetRenderHandlerForGameModeTags<Crop>([], handler => obj => new CropRenderer(obj as Crop));
 
-                state.AddJointHandlerAddonForGameModeTags<Farmer, FarmerPointAndClickControlsHandler>([IGameMode.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, (obj as Farmer)!));
-
-                state.SetJointHandlerForGameModeTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameMode.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>((handler as VRGameMode)!, (menu as IClickableMenu)!));
-                state.SetJointHandlerForGameModeTags<TitleMenu, TitleMenuHandler>([IGameMode.CategoryVR], (handler) => (menu) => new TitleMenuHandler((handler as VRGameMode)!, (menu as TitleMenu)!));
-                state.AddUpdateHandlerAddonForGameModeTags<Farmer>([IGameMode.CategoryVR, IGameMode.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler((handler as VRGameMode)!, (obj as Farmer)!));
+                state.AddJointHandlerAddonForGameModeTags<Farmer, FarmerPointAndClickControlsHandler>([IGameMode.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
+                
+                state.SetJointHandlerForGameModeTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameMode.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameMode, menu as IClickableMenu));
+                state.SetJointHandlerForGameModeTags<TitleMenu, TitleMenuHandler>([IGameMode.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameMode, menu as TitleMenu));
+                state.AddUpdateHandlerAddonForGameModeTags<Farmer>([IGameMode.CategoryVR, IGameMode.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameMode, obj as Farmer));
             };
 
             RenderHelper.quadVbo = new VertexBuffer(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), 6, BufferUsage.WriteOnly);
@@ -175,12 +175,12 @@ namespace Stardew3D
         }
 
         [EventPriority(EventPriority.Low)]
-        private void GameLoop_GameLaunched(object? sender, GameLaunchedEventArgs e)
+        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
         {
             State.InvokeAddingGameModes();
         }
 
-        private void Input_ButtonsChanged(object? sender, ButtonsChangedEventArgs e)
+        private void Input_ButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
             if (Config.ToggleThirdDimension.JustPressed())
             {
@@ -242,14 +242,14 @@ namespace Stardew3D
             }
         }
 
-        private void GameLoop_UpdateTicking(object? sender, UpdateTickingEventArgs e)
+        private void GameLoop_UpdateTicking(object sender, UpdateTickingEventArgs e)
         {
             // TODO: A better way of doing this. Is there an event for splitscreen start/end ing?
             if (Game1.hooks.GetType().Name == "SModHooks")
                 Game1.hooks = new MyModHooks(Game1.hooks);
         }
 
-        private void Content_AssetRequested(object? sender, AssetRequestedEventArgs e)
+        private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
         {
             string mapsFolder = PathUtilities.NormalizeAssetName("Maps/meow"); // If we just do "Maps/" it removes the /, which is a big part of what we want
             mapsFolder = mapsFolder.Substring(0, mapsFolder.Length - "meow".Length);
@@ -270,11 +270,11 @@ namespace Stardew3D
                 }
             }
         }
-        internal static Texture_t GetTextureFrom(RenderTarget2D? target)
+        internal static Texture_t GetTextureFrom(RenderTarget2D target)
         {
             // TODO: Use SMAPI reflection since it caches
             var fieldInfo = typeof(Texture2D).GetField("glTexture", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            var handle = new IntPtr((int)(fieldInfo?.GetValue(target) ?? throw new NullReferenceException()));
+            var handle = new IntPtr((int)fieldInfo.GetValue(target));
 
             var tex = new Texture_t();
             tex.handle = handle;

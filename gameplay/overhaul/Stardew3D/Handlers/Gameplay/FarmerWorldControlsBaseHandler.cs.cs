@@ -38,29 +38,29 @@ public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Fa
         List<(IEnumerable Values, Func<object, Vector2> Position2D, Func<object, Matrix> Transform)> check =
         [
             new(Game1.player.currentLocation.terrainFeatures.Values.ToArray(),
-                (obj) => (obj as TerrainFeature)!.getBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as TerrainFeature)!.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
+                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2(),
+                (obj) => Matrix.CreateTranslation((obj as TerrainFeature).getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
             new(Game1.player.currentLocation.resourceClumps.ToArray(),
-                (obj) => (obj as TerrainFeature)!.getBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as TerrainFeature)!.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
+                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2(),
+                (obj) => Matrix.CreateTranslation((obj as TerrainFeature).getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
             new(Game1.player.currentLocation.largeTerrainFeatures.ToArray(),
-                (obj) => (obj as TerrainFeature)!.getBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as TerrainFeature)!.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
+                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2(),
+                (obj) => Matrix.CreateTranslation((obj as TerrainFeature).getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
             new(Game1.player.currentLocation.Objects.Values.ToArray(),
-                (obj) => (obj as StardewValley.Object)!.TileLocation * Game1.tileSize + new Vector2( 0.5f, 0.5f ),
-                (obj) => Matrix.CreateTranslation((obj as StardewValley.Object)!.TileLocation.ToPoint().To3D(Game1.player.currentLocation))),
+                (obj) => (obj as StardewValley.Object).TileLocation * Game1.tileSize + new Vector2( 0.5f, 0.5f ),
+                (obj) => Matrix.CreateTranslation((obj as StardewValley.Object).TileLocation.ToPoint().To3D(Game1.player.currentLocation))),
             new(Game1.player.currentLocation.furniture.ToArray(),
-                (obj) => (obj as Furniture)!.GetBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as Furniture)!.GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
+                (obj) => (obj as Furniture).GetBoundingBox().Center.ToVector2(),
+                (obj) => Matrix.CreateTranslation((obj as Furniture).GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
             new(Game1.player.currentLocation.animals.Values.ToArray(),
-                (obj) => (obj as FarmAnimal)!.GetBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as FarmAnimal)!.GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
+                (obj) => (obj as FarmAnimal).GetBoundingBox().Center.ToVector2(),
+                (obj) => Matrix.CreateTranslation((obj as FarmAnimal).GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
             new(Game1.player.currentLocation.buildings.ToArray(),
-                (obj) => (obj as Building)!.GetBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as Building)!.GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
+                (obj) => (obj as Building).GetBoundingBox().Center.ToVector2(),
+                (obj) => Matrix.CreateTranslation((obj as Building).GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
             new(Game1.player.currentLocation.characters.ToArray(),
-                (obj) => (obj as NPC)!.StandingPixel.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as NPC)!.StandingPixel3D))
+                (obj) => (obj as NPC).StandingPixel.ToVector2(),
+                (obj) => Matrix.CreateTranslation((obj as NPC).StandingPixel3D))
         ];
 
         // TODO: optimize more
@@ -71,7 +71,7 @@ public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Fa
                 if (Vector2.DistanceSquared(Game1.player.Position, container.Position2D(entry)) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
                     continue;
 
-                InteractionData? interaction = null;
+                InteractionData interaction = null;
                 foreach (var idEntry in entry.GetExtendedQualifiedIds())
                     interaction ??= InteractionData.Get(idEntry);
 

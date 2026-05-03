@@ -15,7 +15,7 @@ namespace Stardew3D.Utilities;
 
 public static class InputUtils
 {
-    public static bool TryHover(GameLocation loc, TerrainType check, Viewport viewport, Matrix? projMatrix, Matrix viewMatrix, Point mousePos, out Point? hoverTile, out TileSpot? wallDir, int maxRange = 1000)
+    public static bool TryHover(GameLocation loc, TerrainType check, Viewport viewport, Matrix projMatrix, Matrix viewMatrix, Point mousePos, out Point? hoverTile, out TileSpot? wallDir, int maxRange = 1000)
     {
         LocationHandler handler = Mod.State.GetUpdateHandlersFor(loc)[0] as LocationHandler;
 
