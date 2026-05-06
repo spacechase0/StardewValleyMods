@@ -36,7 +36,7 @@ internal static class FirstPersonFarmerMovementPatch1
         Vector2 right = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.ToRadians(90)));
 
         Vector2 movement = forward * handler.MovementAmount.Y + right * handler.MovementAmount.X;
-        movement *= __instance.getMovementSpeed();
+        movement *= MathF.Ceiling(__instance.getMovementSpeed());
         movement += handler.MovementAmountForced * Game1.tileSize;
 
         if (movement.X < 0.001)
@@ -67,7 +67,7 @@ internal static class FirstPersonFarmerMovementPatch2
         Vector2 right = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.ToRadians(90)));
 
         Vector2 movement = forward * handler.MovementAmount.Y + right * handler.MovementAmount.X;
-        movement *= __instance.getMovementSpeed();
+        movement *= MathF.Ceiling(__instance.getMovementSpeed());
         movement += handler.MovementAmountForced;
 
         switch (direction)
@@ -116,7 +116,38 @@ internal static class FirstPersonFarmerMovementPatch3
         Vector2 right = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.ToRadians(90)));
 
         Vector2 movement = forward * handler.MovementAmount.Y + right * handler.MovementAmount.X;
-        movement *= __instance.getMovementSpeed();
+        movement *= MathF.Ceiling(__instance.getMovementSpeed());
+        movement += handler.MovementAmountForced;
+
+        __result = __instance.GetBoundingBox();
+        switch (direction)
+        {
+            case Game1.left: __result.X = (int)(__result.X + (movement.X < 0 ? movement.X : 0)); break;
+            case Game1.right: __result.X = (int)(__result.X + (movement.X > 0 ? movement.X : 0)); break;
+            case Game1.up: __result.Y = (int)(__result.Y + (movement.Y < 0 ? movement.Y : 0)); break;
+            case Game1.down: __result.Y = (int)(__result.Y + (movement.Y > 0 ? movement.Y : 0)); break;
+        }
+    }
+}
+
+[HarmonyPatch(typeof(Farmer), nameof(Farmer.nextPositionHalf))]
+internal static class FirstPersonFarmerMovementPatch4
+{
+    public static void Postfix(Farmer __instance, int direction, ref Rectangle __result)
+    {
+        if (Mod.State.ActiveMode is not IGameplayGameMode handler)
+            return;
+        if (__instance != Game1.player || !__instance.CanMove)
+            return;
+
+        Vector2 forward = new(handler.MovementFacing.X, handler.MovementFacing.Z);
+        if (forward == Vector2.Zero || handler.MovementAmount == Vector2.Zero)
+            return;
+        forward.Normalize();
+        Vector2 right = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.ToRadians(90)));
+
+        Vector2 movement = forward * handler.MovementAmount.Y + right * handler.MovementAmount.X;
+        movement *= MathF.Ceiling(__instance.getMovementSpeed() / 2);
         movement += handler.MovementAmountForced;
 
         __result = __instance.GetBoundingBox();
