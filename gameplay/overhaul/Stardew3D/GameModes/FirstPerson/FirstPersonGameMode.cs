@@ -9,6 +9,7 @@ using SpaceShared;
 using Stardew3D.GameModes;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
+using StardewModdingAPI;
 using StardewValley;
 using static Stardew3D.GameModes.IGameMode;
 
@@ -86,15 +87,16 @@ public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
         Game1.game1.IsMouseVisible = Game1.options.hardwareCursor;
     }
 
-    private bool hadMenuOpen = false;
     private bool wasActive = false;
+    private int timeFree = 0;
     public override void HandleGameplayInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, DefaultInputHandling defaultInputHandling)
     {
         Game1.game1.IsMouseVisible = Game1.activeClickableMenu != null && Game1.options.hardwareCursor;
 
         defaultInputHandling( ref keyboardState, ref mouseState, ref gamePadState);
 
-        if (Game1.activeClickableMenu == null)
+        ++timeFree;
+        if (timeFree >= 1)
         {
             Point center = new(Game1.game1.localMultiplayerWindow.Width / 2, Game1.game1.localMultiplayerWindow.Height / 2);
             Point diff;
@@ -113,7 +115,7 @@ public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
                     Mouse.SetPosition(center.X, center.Y);
             }
 
-            if (!hadMenuOpen && wasActive)
+            if (timeFree >= 3 && wasActive)
             {
                 // TODO: sensitivity settings and invert axis
                 Camera.RotationForHorizontal = Util.Wrap(Camera.RotationForHorizontal + diff.X * -0.005f, 0, MathHelper.ToRadians(360));
@@ -126,7 +128,9 @@ public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
     {
         base.AfterUpdate();
 
-        hadMenuOpen = Game1.activeClickableMenu != null;
+        if (!Context.IsPlayerFree || Game1.activeClickableMenu != null || Game1.IsChatting)
+            timeFree = 0;
+
         wasActive = GameRunner.instance.IsActive;
     }
 
