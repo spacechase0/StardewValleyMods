@@ -34,7 +34,7 @@ public class CharacterRenderData : RenderData<CharacterRenderer>
                 Parent.Object.Sprite.faceDirection(targetDir);
             }
 
-            ctx.WorldSpriteBatch.Begin(Parent.Object.StandingPixel.ToVector2(), ctx.WorldTransform, scale: Parent.Object is NPC ? 1.5f : 1);
+            ctx.WorldSpriteBatch.Begin(Parent.Object.StandingPixel.ToVector2(), ctx.WorldTransform, scale: Parent.Object?.GetType() == typeof(NPC) ? 1.5f : 1);
             Parent.Object.draw(ctx.WorldSpriteBatch);
             ctx.WorldSpriteBatch.End(ctx.WorldBatch);
 
