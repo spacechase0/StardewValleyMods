@@ -8,13 +8,58 @@ using StardewValley;
 using static Stardew3D.GameModes.IGameMode;
 
 namespace Stardew3D.GameModes.ThirdPerson;
-public class ThirdPersonGameMode : BaseGameMode
+public class ThirdPersonGameMode : BaseGameMode, IGameplayGameMode
 {
     public override string Id => $"{Mod.Instance.ModManifest.UniqueID}/ThirdPerson";
     public override string[] Tags => [CategoryFlatscreen, CategoryThirdPerson, FeaturePointAndClick];
 
     public override Matrix ProjectionMatrix { get; protected set; }
     public override Camera Camera { get; } = new();
+
+    public Vector3 MovementFacing => Camera.Forward;
+    public Vector2 MovementAmount
+    {
+        get
+        {
+            Vector2 dir = Vector2.Zero;
+
+            if (Game1.options.gamepadControls)
+            {
+                Vector2 dpadDir = Vector2.Zero;
+                if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadUp)) dir.Y += 1;
+                if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadDown)) dir.Y -= 1;
+                if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadRight)) dir.X += 1;
+                if (Game1.input.GetGamePadState().IsButtonDown(Buttons.DPadLeft)) dir.X -= 1;
+
+                Vector2 joyDir = Game1.input.GetGamePadState().ThumbSticks.Left;
+                float joyLen = joyDir.Length();
+                if (joyLen < 0.2)
+                    joyDir = Vector2.Zero;
+                else
+                {
+                    if (joyLen > 0.8f)
+                        joyDir = joyDir.Normalized() * 0.8f;
+                    joyDir -= joyDir * 0.2f;
+                    joyDir *= 1f / 0.6f;
+                }
+
+                dir = dpadDir + joyDir;
+            }
+            else
+            {
+                if (Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.moveUpButton)) dir.Y += 1;
+                if (Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.moveDownButton)) dir.Y -= 1;
+                if (Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.moveRightButton)) dir.X += 1;
+                if (Game1.isOneOfTheseKeysDown(Game1.GetKeyboardState(), Game1.options.moveLeftButton)) dir.X -= 1;
+            }
+
+            if (dir.Length() > 1)
+                dir.Normalize();
+
+            return dir;
+        }
+    }
+    public Vector2 MovementAmountForced => Vector2.Zero;
 
     public override IReadOnlyList<IGameCursor> Cursors => []; // TODO
 

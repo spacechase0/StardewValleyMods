@@ -1,6 +1,7 @@
 using System.Reflection.Emit;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
+using Stardew3D.GameModes;
 using Stardew3D.GameModes.FirstPerson;
 using StardewValley;
 
@@ -21,7 +22,7 @@ internal static class FirstPersonFarmerMovementPatch1
 
     private static void PrepareMovementDirections(Farmer __instance)
     {
-        if (Mod.State.ActiveMode is not IFirstPersonGameMode handler)
+        if (Mod.State.ActiveMode is not IGameplayGameMode handler)
             return;
         if (__instance != Game1.player || !__instance.CanMove)
             return;
@@ -54,7 +55,7 @@ internal static class FirstPersonFarmerMovementPatch2
 {
     public static void Prefix(Farmer __instance, int direction, ref float movementSpeedX, ref float movementSpeedY)
     {
-        if (Mod.State.ActiveMode is not IFirstPersonGameMode handler)
+        if (Mod.State.ActiveMode is not IGameplayGameMode handler)
             return;
         if (__instance != Game1.player || !__instance.CanMove)
             return;
@@ -85,7 +86,7 @@ internal static class FirstPersonFarmerMovementPatch2
     }
     public static void Postfix(Farmer __instance)
     {
-        if (Mod.State.ActiveMode is not IFirstPersonGameMode handler)
+        if (Mod.State.ActiveMode is not IGameplayGameMode handler)
             return;
         if (__instance != Game1.player || !__instance.CanMove)
             return;
@@ -103,7 +104,7 @@ internal static class FirstPersonFarmerMovementPatch3
 {
     public static void Postfix(Farmer __instance, int direction, ref Rectangle __result)
     {
-        if (Mod.State.ActiveMode is not IFirstPersonGameMode handler)
+        if (Mod.State.ActiveMode is not IGameplayGameMode handler)
             return;
         if (__instance != Game1.player || !__instance.CanMove)
             return;
