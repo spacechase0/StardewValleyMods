@@ -5,6 +5,7 @@ using StardewValley.Extensions;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using Valve.VR;
@@ -27,6 +28,13 @@ public static class GameExtenions
                 weapon.QualifiedItemId,
                 $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/{weapon.GetItemTypeId().Substring(1)}{weapon.type.Value}",
                 weapon.GetItemTypeId(),
+            ];
+        else if (obj is Furniture furn)
+            return
+            [
+                furn.QualifiedItemId,
+                $"({Mod.ID}/FurnitureType){furn.furniture_type.Value}",
+                furn.GetItemTypeId()
             ];
         else if (obj is Item item)
             return

@@ -71,24 +71,21 @@ public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Fa
                 if (Vector2.DistanceSquared(Game1.player.Position, container.Position2D(entry)) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
                     continue;
 
-                InteractionData interaction = null;
-                foreach (var idEntry in entry.GetExtendedQualifiedIds())
-                    interaction ??= InteractionData.Get(idEntry);
-
+                InteractionData interaction = InteractionData.Get(entry, out Vector3 interactionSize, out _);
                 if (interaction == null)
                     continue;
 
-                var objTransform = container.Transform(entry);
+                var objTransform = Matrix.CreateScale(interactionSize) * container.Transform(entry) * Matrix.CreateTranslation( 0, interactionSize.Y / 2, 0 );
 
                 foreach (var area in interaction.Areas)
                 {
                     if (!CheckInteractionPurpose(area.Purpose))
                         continue;
 
-                    Vector3 size3 = area.GetBoundingBox().Max - area.GetBoundingBox().Min;
+                    Vector3 size3 = area.GetBoundingBox().Max * interactionSize - area.GetBoundingBox().Min * interactionSize;
                     float size = Math.Max( size3.X, size3.Z );
 
-                    if (Vector3.DistanceSquared(cursor.PointerPosition, objTransform.Translation + area.Translation) >= MathF.Pow(CullRange + size / 2, 2))
+                    if (Vector3.DistanceSquared(cursor.PointerPosition, objTransform.Translation + area.Translation * interactionSize) >= MathF.Pow(CullRange + size / 2, 2))
                         continue;
 
                     HandleCursor(ctx, cursor, entry, objTransform, interaction, area);

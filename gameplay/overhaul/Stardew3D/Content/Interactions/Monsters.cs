@@ -8,27 +8,11 @@ internal partial class Monsters : SpaceShared.Content.BaseDictionaryAssetData
 {
     public InteractionData Bat => new()
     {
-        Areas =
-        [
-            new BoxInteractionArea()
-            {
-                Purpose = $"{ModId}/Action",
-                Size = new( 0.875f, 0.875f, 0.875f ),
-                Translation = new( 0, 0.875f/2, 0 ),
-            }
-        ],
+        Size = new(0.875f, 0.875f, 0.875f),
     };
 
     public InteractionData GreenSlime => new()
     {
-        Areas =
-        [
-            new BoxInteractionArea()
-            {
-                Purpose = $"{ModId}/Action",
-                Size = new( 0.875f, 0.875f, 0.875f ),
-                Translation = new( 0, 0.875f / 2, 0 ),
-            }
-        ],
+        Size = new(0.875f, 0.875f, 0.875f),
     };
 }

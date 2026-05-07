@@ -91,8 +91,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
     * MP support would be tricky
 
 # Interactions
-* Change interaction coordinate space to be a relative coordinate space
-    * This would allow a single interaction definition for entire classes of things (ex. furniture)
+...
 
 # Polish
 * Make optional the highlight/outline for when a cursor is pointing at something

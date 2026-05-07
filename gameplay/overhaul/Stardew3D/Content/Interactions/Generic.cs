@@ -6,68 +6,28 @@ namespace Stardew3D.Content.Interactions;
 [DictionaryAssetData<InteractionData>("Interactions", "($/&)", OwnedAsset = true)]
 internal partial class Generic : SpaceShared.Content.BaseDictionaryAssetData
 {
-    public InteractionData NPC => new()
-    {
-        Areas =
-        [
-            new BoxInteractionArea()
-            {
-                Purpose = $"{ModId}/Action",
-                Size = new( 0.875f, 1.875f, 0.875f ),
-                Translation = new( 0, 1.875f / 2, 0 ),
-            }
-        ],
-    };
-
-    public InteractionData Monster => new()
-    {
-        Areas =
-        [
-            new BoxInteractionArea()
-            {
-                Purpose = $"{ModId}/Action",
-                Size = new( 0.875f, 1.875f, 0.875f ),
-                Translation = new( 0, 1.875f / 2, 0 ),
-            }
-        ],
-    };
-
     public InteractionData Grass => new()
     {
-        Areas =
-        [
-            new BoxInteractionArea()
-            {
-                Purpose = $"{ModId}/Action",
-                Size = new( 0.875f, 0.875f, 0.875f ),
-                Translation = new( 0, 0.875f / 2, 0 ),
-            }
-        ],
+        Size = new(0.875f, 0.875f, 0.875f),
     };
 
     public InteractionData Tree => new()
     {
-        Areas =
-        [
-            new BoxInteractionArea()
-            {
-                Purpose = $"{ModId}/Action",
-                Size = new( 0.5f, 3, 0.5f ),
-                Translation = new( 0, 1.5f, 0 ),
-            }
-        ],
+        Size = new(0.5f, 3, 0.5f),
     };
 
-    public InteractionData ResourceClump => new()
+    public InteractionData HoeDirt => new()
     {
-        Areas =
-        [
-            new BoxInteractionArea()
-            {
-                Purpose = $"{ModId}/Action",
-                Size = new( 1.75f, 1, 1.75f ),
-                Translation = new( 0, 0.5f, 0 ),
-            }
-        ],
+        Size = new(1, 1 / 16f, 1),
+    };
+
+    public InteractionData Flooring => new()
+    {
+        Size = new(1, 1 / 16f, 1),
+    };
+
+    public InteractionData Crop => new()
+    {
+        Size = new(0.75f, 1.25f, 0.75f),
     };
 }
