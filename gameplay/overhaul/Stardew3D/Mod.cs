@@ -129,16 +129,11 @@ namespace Stardew3D
                 state.SetJointHandlerForGameModeTags<GameLocation, LocationHandler>([], handler => obj => new LocationHandler(obj as GameLocation));
                 state.SetRenderHandlerForGameModeTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
                 state.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
-                state.SetRenderHandlerForGameModeTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
                 state.SetRenderHandlerForGameModeTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
-                state.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new RendererFor<ModelData, TerrainFeature>(obj as TerrainFeature));
-                state.SetRenderHandlerForGameModeTags<ResourceClump>([], handler => obj => new ResourceClumpRenderer(obj as ResourceClump));
-                state.SetRenderHandlerForGameModeTags<Tree>([], handler => obj => new TreeRenderer(obj as Tree));
-                //state.SetRenderHandlerForGameHandlerTags<FruitTree>([], handler => obj => new FruitTreeRenderer(obj as FruitTree));
+                state.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new TerrainFeatureRenderer(obj as TerrainFeature));
                 state.SetRenderHandlerForGameModeTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
                 state.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
                 state.SetRenderHandlerForGameModeTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
-                //state.SetRenderHandlerForGameHandlerTags<Bush>([], handler => obj => new BushRenderer(obj as Bush));
                 state.SetRenderHandlerForGameModeTags<Character>([], handler => obj => new CharacterRenderer(obj as Character));
                 state.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
                 state.SetRenderHandlerForGameModeTags<Building>([], handler => obj => new BuildingRenderer(obj as Building));

@@ -5,15 +5,15 @@ using StardewValley;
 using StardewValley.TerrainFeatures;
 
 namespace Stardew3D.Handlers.Render;
-public class ResourceClumpRenderer : RendererFor<ModelData, ResourceClump>
+public class TerrainFeatureRenderer : RendererFor<ModelData, TerrainFeature>
 {
-    public ResourceClumpRenderer(ResourceClump obj)
+    public TerrainFeatureRenderer(TerrainFeature obj)
         : base(obj)
     {
     }
 
     protected override RenderDataBase CreateInitialRenderData(IRenderHandler.RenderContext ctx)
     {
-        return new ResourceClumpRenderData(ctx, this);
+        return new TerrainFeatureRenderData(ctx, this);
     }
 }

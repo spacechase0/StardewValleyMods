@@ -4,9 +4,9 @@ using static Stardew3D.Handlers.IRenderHandler;
 
 namespace Stardew3D.Handlers.Render;
 
-public class ResourceClumpRenderData : RenderData<ResourceClumpRenderer>
+public class TerrainFeatureRenderData : RenderData<TerrainFeatureRenderer>
 {
-    public ResourceClumpRenderData(RenderContext ctx, ResourceClumpRenderer parent)
+    public TerrainFeatureRenderData(RenderContext ctx, TerrainFeatureRenderer parent)
         : base( ctx, parent)
     {
     }
