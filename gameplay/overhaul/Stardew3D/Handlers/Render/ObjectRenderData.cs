@@ -31,7 +31,7 @@ public class ObjectRenderData : RenderData<ObjectRenderer>
             if (Parent.Object.Location != null)
                 Parent.Object.draw(ctx.WorldSpriteBatch, (int)Parent.Object.TileLocation.X, (int) Parent.Object.TileLocation.Y);
             else
-                Parent.Object.draw(ctx.WorldSpriteBatch, 0, 0, 0);
+                Parent.Object.draw(ctx.WorldSpriteBatch, 0, -1, 1);
 
             ctx.WorldSpriteBatch.End(ctx.WorldBatch);
         }
