@@ -22,6 +22,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
     public class SelectionData
     {
         public object Selected { get; set; }
+        public object SelectedHolder { get; set; }
         public Vector3[] SelectedDisplay { get; set; }
         public float Distance { get; set; } = 4;
     }
@@ -32,6 +33,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
     {
         var sel = lastHovered.GetOrCreateValue(cursor);
         sel.Selected = null;
+        sel.SelectedHolder = null;
         sel.SelectedDisplay = default;
         sel.Distance = 4;
 
@@ -41,21 +43,21 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
         {
             if (cursor.UseItemJustReleased)
             {
-                Use(cursor, sel.Selected);
+                Use(cursor, sel.Selected, sel.SelectedHolder);
             }
             else if (cursor.InteractJustPressed)
             {
-                Interact(cursor, sel.Selected);
+                Interact(cursor, sel.Selected, sel.SelectedHolder);
             }
         }
     }
 
-    private void Use(IGameCursor cursor, object sel)
+    private void Use(IGameCursor cursor, object sel, object selHolder)
     {
         // TODO
     }
 
-    private void Interact(IGameCursor cursor, object sel)
+    private void Interact(IGameCursor cursor, object sel, object selHolder)
     {
         Item oldTemp = Object.TemporaryItem;
         if (cursor.Holding is Item && Object.ActiveItem != cursor.Holding)
@@ -69,6 +71,9 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
             {
                 case TerrainFeature tf:
                     tf.performUseAction(tf.Tile);
+                    break;
+                case Crop c when selHolder is HoeDirt hd:
+                    hd.performUseAction(hd.Tile);
                     break;
                 case Building b:
                     //b.doAction(???, Object);
@@ -173,7 +178,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
         return purpose == $"{Mod.Instance.ModManifest.UniqueID}/Action";
     }
 
-    protected override void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, Matrix transform, InteractionData interaction, InteractionArea area)
+    protected override void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, object objHolder,Matrix transform, InteractionData interaction, InteractionArea area)
     {
         // Hacky solution, hope it works / doesn't break horrifically
         Vector3[] myVerts =
@@ -193,6 +198,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
             return;
 
         sel.Selected = obj;
+        sel.SelectedHolder = objHolder;
         sel.SelectedDisplay = area.GetTransformedTriangleVertices().Transform(transform);
         sel.Distance = dist;
     }

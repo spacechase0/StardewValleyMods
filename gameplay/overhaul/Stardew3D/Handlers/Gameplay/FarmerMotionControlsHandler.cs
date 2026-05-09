@@ -93,7 +93,7 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
         return purpose == $"{Mod.Instance.ModManifest.UniqueID}/Action";
     }
 
-    protected override void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, Matrix tfTransform, InteractionData tfInteraction, InteractionArea tfArea)
+    protected override void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, object objHolder,Matrix tfTransform, InteractionData tfInteraction, InteractionArea tfArea)
     {
         for ( int i = 0; i < toolAreas.Length; i++)
         {

@@ -33,67 +33,114 @@ public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Fa
             HandleCursor(ctx, cursor);
     }
 
+    private IEnumerable<(object Value, object ValueHolder, Vector2 Position2D, Matrix Transform)> GetToCheck()
+    {
+        foreach (var entry in Game1.player.currentLocation.terrainFeatures.Values.ToArray())
+        {
+            Vector2 pos = entry.getBoundingBox().Center.ToVector2();
+            if (Vector2.DistanceSquared(Game1.player.Position, pos) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            yield return new(entry, Game1.player.currentLocation.terrainFeatures, pos, Matrix.CreateTranslation(entry.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation)));
+
+            if (entry is HoeDirt hd && hd.crop != null)
+                yield return new(hd.crop, hd, pos, Matrix.CreateTranslation(entry.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation)));
+        }
+
+        foreach (var entry in Game1.player.currentLocation.resourceClumps.ToArray())
+        {
+            Vector2 pos = entry.getBoundingBox().Center.ToVector2();
+            if (Vector2.DistanceSquared(Game1.player.Position, pos) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            yield return new(entry, Game1.player.currentLocation.resourceClumps, pos, Matrix.CreateTranslation(entry.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation)));
+        }
+
+        foreach (var entry in Game1.player.currentLocation.largeTerrainFeatures.ToArray())
+        {
+            Vector2 pos = entry.getBoundingBox().Center.ToVector2();
+            if (Vector2.DistanceSquared(Game1.player.Position, pos) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            yield return new(entry, Game1.player.currentLocation.largeTerrainFeatures, pos, Matrix.CreateTranslation(entry.getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation)));
+        }
+
+        foreach (var entry in Game1.player.currentLocation.Objects.Values.ToArray())
+        {
+            Vector2 pos = entry.TileLocation * Game1.tileSize + new Vector2(0.5f, 0.5f);
+            if (Vector2.DistanceSquared(Game1.player.Position, pos) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            yield return new(entry, Game1.player.currentLocation.Objects, pos, Matrix.CreateTranslation(entry.TileLocation.ToPoint().To3D(Game1.player.currentLocation)));
+        }
+
+        foreach (var entry in Game1.player.currentLocation.furniture.ToArray())
+        {
+            Vector2 pos = entry.GetBoundingBox().Center.ToVector2();
+            if (Vector2.DistanceSquared(Game1.player.Position, pos) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            yield return new(entry, Game1.player.currentLocation.furniture, pos, Matrix.CreateTranslation(entry.GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation)));
+        }
+
+        foreach (var entry in Game1.player.currentLocation.animals.Values.ToArray())
+        {
+            Vector2 pos = entry.GetBoundingBox().Center.ToVector2();
+            if (Vector2.DistanceSquared(Game1.player.Position, pos) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            yield return new(entry, Game1.player.currentLocation.animals, pos, Matrix.CreateTranslation(entry.GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation)));
+        }
+
+        foreach (var entry in Game1.player.currentLocation.buildings.ToArray())
+        {
+            Vector2 pos = entry.GetBoundingBox().Center.ToVector2();
+            if (Vector2.DistanceSquared(Game1.player.Position, pos) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            yield return new(entry, Game1.player.currentLocation.buildings, pos, Matrix.CreateTranslation(entry.GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation)));
+        }
+
+        foreach (var entry in Game1.player.currentLocation.characters.ToArray())
+        {
+            Vector2 pos = entry.StandingPixel.ToVector2();
+            if (Vector2.DistanceSquared(Game1.player.Position, pos) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            yield return new(entry, Game1.player.currentLocation.characters, pos, Matrix.CreateTranslation(entry.StandingPixel3D));
+        }
+    }
+
     protected virtual void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor)
     {
-        List<(IEnumerable Values, Func<object, Vector2> Position2D, Func<object, Matrix> Transform)> check =
-        [
-            new(Game1.player.currentLocation.terrainFeatures.Values.ToArray(),
-                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as TerrainFeature).getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
-            new(Game1.player.currentLocation.resourceClumps.ToArray(),
-                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as TerrainFeature).getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
-            new(Game1.player.currentLocation.largeTerrainFeatures.ToArray(),
-                (obj) => (obj as TerrainFeature).getBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as TerrainFeature).getBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
-            new(Game1.player.currentLocation.Objects.Values.ToArray(),
-                (obj) => (obj as StardewValley.Object).TileLocation * Game1.tileSize + new Vector2( 0.5f, 0.5f ),
-                (obj) => Matrix.CreateTranslation((obj as StardewValley.Object).TileLocation.ToPoint().To3D(Game1.player.currentLocation))),
-            new(Game1.player.currentLocation.furniture.ToArray(),
-                (obj) => (obj as Furniture).GetBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as Furniture).GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
-            new(Game1.player.currentLocation.animals.Values.ToArray(),
-                (obj) => (obj as FarmAnimal).GetBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as FarmAnimal).GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
-            new(Game1.player.currentLocation.buildings.ToArray(),
-                (obj) => (obj as Building).GetBoundingBox().Center.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as Building).GetBoundingBox().Center.ToVector2().To3D(Game1.player.currentLocation))),
-            new(Game1.player.currentLocation.characters.ToArray(),
-                (obj) => (obj as NPC).StandingPixel.ToVector2(),
-                (obj) => Matrix.CreateTranslation((obj as NPC).StandingPixel3D))
-        ];
-
         // TODO: optimize more
-        foreach (var container in check)
+        foreach (var entry in GetToCheck())
         {
-            foreach (var entry in container.Values)
+            if (Vector2.DistanceSquared(Game1.player.Position, entry.Position2D) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                continue;
+
+            InteractionData interaction = InteractionData.Get(entry.Value, out Vector3 interactionSize, out _);
+            if (interaction == null)
+                continue;
+
+            var objTransform = Matrix.CreateScale(interactionSize) * entry.Transform * Matrix.CreateTranslation( 0, interactionSize.Y / 2, 0 );
+
+            foreach (var area in interaction.Areas)
             {
-                if (Vector2.DistanceSquared(Game1.player.Position, container.Position2D(entry)) >= MathF.Pow(Game1.tileSize * (CullRange + 1), 2))
+                if (!CheckInteractionPurpose(area.Purpose))
                     continue;
 
-                InteractionData interaction = InteractionData.Get(entry, out Vector3 interactionSize, out _);
-                if (interaction == null)
+                Vector3 size3 = area.GetBoundingBox().Max * interactionSize - area.GetBoundingBox().Min * interactionSize;
+                float size = Math.Max( size3.X, size3.Z );
+
+                if (Vector3.DistanceSquared(cursor.PointerPosition, objTransform.Translation + area.Translation * interactionSize) >= MathF.Pow(CullRange + size / 2, 2))
                     continue;
 
-                var objTransform = Matrix.CreateScale(interactionSize) * container.Transform(entry) * Matrix.CreateTranslation( 0, interactionSize.Y / 2, 0 );
-
-                foreach (var area in interaction.Areas)
-                {
-                    if (!CheckInteractionPurpose(area.Purpose))
-                        continue;
-
-                    Vector3 size3 = area.GetBoundingBox().Max * interactionSize - area.GetBoundingBox().Min * interactionSize;
-                    float size = Math.Max( size3.X, size3.Z );
-
-                    if (Vector3.DistanceSquared(cursor.PointerPosition, objTransform.Translation + area.Translation * interactionSize) >= MathF.Pow(CullRange + size / 2, 2))
-                        continue;
-
-                    HandleCursor(ctx, cursor, entry, objTransform, interaction, area);
-                }
+                HandleCursor(ctx, cursor, entry.Value, entry.ValueHolder, objTransform, interaction, area);
             }
         }
     }
 
     protected abstract bool CheckInteractionPurpose(string purpose);
-    protected abstract void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, Matrix transform, InteractionData interaction, InteractionArea area);
+    protected abstract void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, object objHolder, Matrix transform, InteractionData interaction, InteractionArea area);
 }
