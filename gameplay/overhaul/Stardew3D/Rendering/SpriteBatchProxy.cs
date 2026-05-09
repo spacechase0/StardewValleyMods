@@ -104,7 +104,7 @@ public class SpriteBatchProxy : SpriteBatch
             if (!sameY3d)
             {
                 pos.Z += (basePos.Y) / Game1.tileSize - base3dFrom2d.Z;
-                if (Math.Abs(item.SortKey) >= 1f / 10000)
+                if (Math.Abs(item.SortKey) >= 8f / 10000)
                     basePos.Y += yFromLayer;
             }
 #endif
