@@ -6,8 +6,10 @@ namespace Stardew3D.Content.Models;
 [DictionaryAssetData<ModelData>("Models", "(O)&", OwnedAsset = true)]
 internal partial class Items_Objects_Food : SpaceShared.Content.BaseDictionaryAssetData
 {
+#if DEBUG
     public ModelData _167 => new()
     {
         ModelFilePath = $"{ModId}:assets/objects/JojaCola.gltf",
     };
+#endif
 }

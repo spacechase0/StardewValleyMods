@@ -7,6 +7,7 @@ namespace Stardew3D.Content.Models;
 [DictionaryAssetData<ModelData>("Models", "($/ResourceClump)Maps/springobjects:&", OwnedAsset = true)]
 internal partial class ResourceClumps_SpringObjects : SpaceShared.Content.BaseDictionaryAssetData
 {
+#if DEBUG
     [DictionaryAssetDataKey("ResourceClump/Stump")]
     public ModelData stump => new()
     {
@@ -109,4 +110,5 @@ internal partial class ResourceClumps_SpringObjects : SpaceShared.Content.BaseDi
             },
         ],
     };
+#endif
 }

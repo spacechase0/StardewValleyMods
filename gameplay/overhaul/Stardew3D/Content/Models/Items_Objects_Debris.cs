@@ -7,6 +7,7 @@ namespace Stardew3D.Content.Models;
 [DictionaryAssetData<ModelData>("Models", "(O)&", OwnedAsset = true)]
 internal partial class Items_Objects_Debris : SpaceShared.Content.BaseDictionaryAssetData
 {
+#if DEBUG
     [DictionaryAssetDataKey("Debris/Stone/1")]
     public ModelData stone1 => new()
     {
@@ -152,4 +153,5 @@ internal partial class Items_Objects_Debris : SpaceShared.Content.BaseDictionary
             },
         ],
     };
+#endif
 }

@@ -58,7 +58,9 @@ public class TelevisionRenderData : RenderData<TelevisionRenderer>
             {
                 var effect = part.Mesh.Effect as GenericModelEffect;
                 effect.Color = part.Sprite == null ? Color.Transparent : Color.White;
-                if (part.Sprite != null)
+                if (part.Sprite != null && part.Sprite?.texture == null)
+                    part.Sprite.loadTexture();
+                if (part.Sprite != null && part.Sprite.Texture != null)
                 {
                     part.Sprite.update(ctx.Time);
                     if (part.TmpScreen.Value?.Bounds.Size != Parent.Object.screen.sourceRect.Size)
