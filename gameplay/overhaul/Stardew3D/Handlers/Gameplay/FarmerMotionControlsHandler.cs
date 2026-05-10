@@ -33,7 +33,7 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
                 * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationZ(MathHelper.ToRadians(0)))
             )
             * Matrix.CreateTranslation(new Vector3(0.0f, -0.3750f, 0.0f))
-            * Matrix.CreateScale(0.25f)
+            * Matrix.CreateScale(0.5f)
             //* Matrix.CreateTranslation(new Vector3(-0.0f, -0.5f, 0.0f))
             * cursor.Grip.NoTranslation()
             * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
