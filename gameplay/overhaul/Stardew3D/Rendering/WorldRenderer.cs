@@ -50,7 +50,10 @@ public class WorldRenderer : IDisposable
     public void Render(Matrix projectionMatrix, ICamera camera, RenderMode renderMode = RenderMode.Default)
     {
         if (Mod.Instance.clearWorld)
-            ;// worldBatch.ClearData();
+        {
+            worldBatch.ClearData();
+            Mod.Instance.clearWorld = false;
+        }
 
         var drawCtx = Mod.State.ModelManager.DrawContext;
         drawCtx.SetCamera(camera.ViewMatrix.Inverted());
