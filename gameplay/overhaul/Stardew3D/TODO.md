@@ -15,6 +15,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
     * I'm already ignoring most of what it provides on top and just use base OpenVR directly, since I couldn't get the added stuff working right
     * I remember having other problems with whatever binding I used before OpenVR.Net
 * Make `TileSpot` match `Game1.(up|down|left|right)`
+* Rework RenderBatcher instancing system to be less persistent
 
 # Asset Workflow
 * In-game editors for:
@@ -35,7 +36,6 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * Maybe a rough outdoor map generation, for rudimentary support of modded content?
 
 # MVP
-* Finish implementing debris rendering
 * Crosshair for flatscreen first person
 * Point and click controls
 * [VR] Allow headset position to move camera (and ideally, the player)
@@ -66,7 +66,6 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * [VR] Allow desktop window to show any of the other renderers (3d or even 2d)
 
 # Graphics
-* [PARTIALLY COMPLETE] Much better (potential) idea to replace placeholder system: Reverse patch the draw methods and redirect SpriteBatch into a custom thing
 * Animation support for models
 * Lighting
     * Ambient light
