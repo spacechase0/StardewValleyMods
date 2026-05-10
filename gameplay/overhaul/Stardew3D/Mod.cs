@@ -131,6 +131,7 @@ namespace Stardew3D
                 state.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
                 state.SetRenderHandlerForGameModeTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
                 state.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new TerrainFeatureRenderer(obj as TerrainFeature));
+                state.SetRenderHandlerForGameModeTags<Fence>([], handler => obj => new FenceRenderer(obj as Fence));
                 state.SetRenderHandlerForGameModeTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
                 state.SetRenderHandlerForGameModeTags<Grass>([], handler => obj => new GrassRenderer(obj as Grass));
                 state.SetRenderHandlerForGameModeTags<HoeDirt>([], handler => obj => new HoeDirtRenderer(obj as HoeDirt));
@@ -235,8 +236,10 @@ namespace Stardew3D
             if (e.Pressed.Contains(SButton.Delete) && e.Held.Contains(SButton.LeftControl))
             {
                 State.ClearHandlerState();
+                clearWorld = true;
             }
         }
+        internal bool clearWorld = false;
 
         private void GameLoop_UpdateTicking(object sender, UpdateTickingEventArgs e)
         {
