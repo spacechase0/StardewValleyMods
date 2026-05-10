@@ -102,6 +102,7 @@ public class State
             entry.Value.UpdateHandlerManager.ActiveHandlers.Clear();
             entry.Value.RenderHandlerManager.ActiveHandlers.Clear();
             entry.Value.JointHandlers.Clear();
+            entry.Value.JointHandlerAddons.Clear();
         }
     }
 
@@ -112,6 +113,7 @@ public class State
             entry.Value.UpdateHandlerManager.ActiveHandlers.Remove(obj);
             entry.Value.RenderHandlerManager.ActiveHandlers.Remove(obj);
             entry.Value.JointHandlers.Remove(obj);
+            entry.Value.JointHandlerAddons.Remove(obj);
         }
     }
 
