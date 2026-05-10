@@ -60,7 +60,7 @@ public class RenderData<TRenderer> : RenderDataBase
         if (Mod.State.RenderDebugInteractions && interactionInstances != null && Parent.Object != Game1.player)
         {
             foreach (var inst in interactionInstances)
-                Batch.UpdateInstanced(inst, Matrix.CreateScale( InteractionSize ) * ctx.WorldTransform * Matrix.CreateTranslation(0, InteractionSize.Y / 2, 0), Color.White * 0.5f);
+                Batch.UpdateInstanced(inst, Matrix.CreateScale( InteractionSize ) * Matrix.CreateTranslation(0, InteractionSize.Y / 2, 0) * ctx.WorldTransform, Color.White * 0.5f);
         }
     }
 
