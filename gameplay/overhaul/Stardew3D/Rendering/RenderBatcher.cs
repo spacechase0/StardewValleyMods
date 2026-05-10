@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoScene.Graphics;
 using SpaceShared;
+using Stardew3D.Utilities;
 
 namespace Stardew3D.Rendering;
 
@@ -361,7 +362,7 @@ public class RenderBatcher : IDisposable
             env.ApplyTo(effect);
 
             graphics.BlendState = BlendState.AlphaBlend;
-            graphics.RasterizerState = RasterizerState.CullClockwise;
+            graphics.RasterizerState = RasterizerState.CullNone;
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
@@ -485,16 +486,20 @@ public class RenderBatcher : IDisposable
         foreach (var entry in modelBatchData)
         {
             entry.Value.instances.Clear();
+            entry.Value.Dispose();
         }
         foreach (var entry in verticesBatchData)
         {
             entry.Value.instances.Clear();
+            entry.Value.Dispose();
         }
         foreach (var entry in sprites)
         {
             entry.Value.Instances.Clear();
             entry.Value.Vertices.Clear();
         }
+        modelBatchData.Clear();
+        verticesBatchData.Clear();
         instances.Clear();
         directOpaque.Clear();
         directTransparent.Clear();
