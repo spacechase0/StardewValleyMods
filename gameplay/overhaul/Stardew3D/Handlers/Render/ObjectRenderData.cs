@@ -25,8 +25,10 @@ public class ObjectRenderData : RenderData<ObjectRenderer>
             var bb = Parent.Object.GetBoundingBox();
             if (Parent.Object is Furniture f && f.furniture_type.Value == Furniture.rug)
                 ctx.WorldSpriteBatch.Begin(new Vector2(bb.Center.X, bb.Bottom), ctx.WorldTransform, orientationOverride: Matrix.CreateLookAt(Vector3.Zero, Vector3.Up, Vector3.Forward) * Matrix.CreateTranslation(Vector3.Up * 0.01f) * Matrix.CreateTranslation(0, 0, bb.Height / (float)Game1.tileSize / 2), sameY3d: false);
-            else
+            else if (Parent.Object.Location != null)
                 ctx.WorldSpriteBatch.Begin(bb.Center.ToVector2(), ctx.WorldTransform);
+            else
+                ctx.WorldSpriteBatch.Begin(new Vector2(32, 0), ctx.WorldTransform);
 
             if (Parent.Object.Location != null)
                 Parent.Object.draw(ctx.WorldSpriteBatch, (int)Parent.Object.TileLocation.X, (int) Parent.Object.TileLocation.Y);

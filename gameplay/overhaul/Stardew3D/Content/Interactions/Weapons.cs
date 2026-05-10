@@ -13,7 +13,7 @@ internal partial class Weapons : SpaceShared.Content.BaseDictionaryAssetData
         [
             new BoxInteractionArea()
             {
-                Purpose = $"{ModId}/ToolAction/Impact",
+                Purpose = $"{ModId}/ToolAction/Collide",
                 Size = new( 0.375f, 0.75f, 0.125f ),
                 Translation = new( -0.25f, 0.6875f - 0.5f, 0 ),
                 Rotation = new( 0, 0, MathHelper.ToRadians( 130 ) ),

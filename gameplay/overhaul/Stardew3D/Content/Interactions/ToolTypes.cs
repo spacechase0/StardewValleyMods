@@ -15,7 +15,7 @@ internal partial class ToolTypes : SpaceShared.Content.BaseDictionaryAssetData
             {
                 Purpose = $"{ModId}/ToolAction/Impact",
                 Size = new( 0.1875f, 0.5f, 0.125f ),
-                Translation = new( -0.3125f, 0.625f - 0.5f, 0 ),
+                Translation = new( -0.3750f, 0.1250f, 0 ),
                 Rotation = new( 0, 0, MathHelper.ToRadians( 45 ) ),
             }
         ],

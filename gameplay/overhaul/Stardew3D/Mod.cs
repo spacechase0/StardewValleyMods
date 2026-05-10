@@ -130,6 +130,7 @@ namespace Stardew3D
                 state.SetRenderHandlerForGameModeTags<Item>([], handler => obj => new ItemRenderer<ModelData, Item>(obj as Item));
                 state.SetRenderHandlerForGameModeTags<StardewValley.Object>([], handler => obj => new ObjectRenderer(obj as StardewValley.Object));
                 state.SetRenderHandlerForGameModeTags<TV>([], handler => obj => new TelevisionRenderer(obj as TV));
+                state.SetRenderHandlerForGameModeTags<Tool>([], handler => obj => new ToolRenderer(obj as Tool));
                 state.SetRenderHandlerForGameModeTags<TerrainFeature>([], handler => obj => new TerrainFeatureRenderer(obj as TerrainFeature));
                 state.SetRenderHandlerForGameModeTags<Fence>([], handler => obj => new FenceRenderer(obj as Fence));
                 state.SetRenderHandlerForGameModeTags<Flooring>([], handler => obj => new FlooringRenderer(obj as Flooring));
@@ -139,12 +140,12 @@ namespace Stardew3D
                 state.SetRenderHandlerForGameModeTags<Debris>([], handler => obj => new DebrisRenderer(obj as Debris));
                 state.SetRenderHandlerForGameModeTags<Building>([], handler => obj => new BuildingRenderer(obj as Building));
                 state.SetRenderHandlerForGameModeTags<Crop>([], handler => obj => new CropRenderer(obj as Crop));
-
+                
                 state.AddJointHandlerAddonForGameModeTags<Farmer, FarmerPointAndClickControlsHandler>([IGameMode.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
                 
                 state.SetJointHandlerForGameModeTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameMode.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameMode, menu as IClickableMenu));
                 state.SetJointHandlerForGameModeTags<TitleMenu, TitleMenuHandler>([IGameMode.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameMode, menu as TitleMenu));
-                state.AddUpdateHandlerAddonForGameModeTags<Farmer>([IGameMode.CategoryVR, IGameMode.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameMode, obj as Farmer));
+                state.AddJointHandlerAddonForGameModeTags<Farmer, FarmerMotionControlsHandler>([IGameMode.CategoryVR, IGameMode.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameMode, obj as Farmer));
             };
 
             RenderHelper.quadVbo = new VertexBuffer(Game1.graphics.GraphicsDevice, typeof(SimpleVertex), 6, BufferUsage.WriteOnly);

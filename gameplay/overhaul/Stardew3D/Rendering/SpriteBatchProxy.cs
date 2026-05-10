@@ -17,6 +17,8 @@ public class SpriteBatchProxy : SpriteBatch
     private float scale = 1;
     private SpriteBatch oldBatch;
 
+    public int DisallowBillboarding = 0;
+
     public SpriteBatchProxy(GameLocation relevantLocation)
         : base(Game1.graphics.GraphicsDevice)
     {
@@ -109,7 +111,9 @@ public class SpriteBatchProxy : SpriteBatch
             }
 #endif
             //pos.Z -= yFromLayer / Game1.tileSize;
-            if (orientationOverride.HasValue)
+            if (DisallowBillboarding > 0)
+                output.AddSprite(basePos, pos, (orientationOverride ?? Matrix.Identity) * baseTransform, i, item, scale);
+            else if (orientationOverride.HasValue)
                 output.AddSprite(basePos, pos + baseTransform.Translation, orientationOverride.Value * baseTransform.NoTranslation(), i, item, scale);
             else
                 output.AddBillboardSprite(basePos, pos + baseTransform.Translation, i, item, scale);

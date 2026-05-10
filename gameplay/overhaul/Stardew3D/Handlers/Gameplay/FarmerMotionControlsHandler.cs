@@ -21,19 +21,25 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
     public Matrix GetHeldTransformFor(IGameCursor cursor, bool forDisplay = false)
     {
         return Matrix.Identity
-            * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
-            * Matrix.CreateScale(1f / 3)
+            //* Matrix.CreateTranslation(new Vector3(-0.50f, -0.50f, 0.0f))
+            //* Matrix.CreateScale(0.25f)
             //* Matrix.CreateTranslation(new Vector3(0.075f, 0.15f, -0.0f))
-            * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
+            //* Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
             * Matrix.CreateFromQuaternion // Was getting a gimbal lock otherwise
             (
-                  Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationX(MathHelper.ToRadians(-45)))
+                Quaternion.Identity
+                * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationX(MathHelper.ToRadians(-45)))
                 * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(MathHelper.ToRadians(-90)))
                 * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationZ(MathHelper.ToRadians(0)))
             )
-            * Matrix.CreateTranslation(new Vector3(0f, -0.125f, -0.0f))
-            * Matrix.CreateTranslation(new Vector3(0f, 0.5f, 0.0f))
-            * cursor.Grip;
+            * Matrix.CreateTranslation(new Vector3(0.0f, -0.3750f, 0.0f))
+            * Matrix.CreateScale(0.25f)
+            //* Matrix.CreateTranslation(new Vector3(-0.0f, -0.5f, 0.0f))
+            * cursor.Grip.NoTranslation()
+            * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
+            * Matrix.CreateTranslation(cursor.Grip.Translation)
+            * Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 0.0f))
+            ;
     }
 
     public override void Update(IUpdateHandler.UpdateContext ctx)
@@ -126,6 +132,9 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
                 if (Vector3.Dot(toolAreas[i].transform.Left.Normalized(), vel.Normalized()) < 0.5) // about 60 degrees in any direction
                     continue;
             }
+            else if (toolAreas[i].area.Purpose == $"{Mod.Instance.ModManifest.UniqueID}/ToolAction/Collide")
+            {
+            }
 
             tool.lastUser = Game1.player;
             tool.swingTicker++;
@@ -170,6 +179,48 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
                         n.hitWithTool(tool);
                     }
                     break;
+            }
+        }
+    }
+
+    protected override RenderDataBase CreateInitialRenderData(IRenderHandler.RenderContext ctx)
+    {
+        return new RenderData(ctx, this);
+    }
+
+    protected class RenderData : RenderData<FarmerMotionControlsHandler>
+    {
+        public RenderData(IRenderHandler.RenderContext ctx, FarmerMotionControlsHandler parent)
+            : base(ctx, parent)
+        {
+        }
+
+        public override void Update(IRenderHandler.RenderContext ctx)
+        {
+            base.Update(ctx);
+
+            try
+            {
+                ctx.WorldSpriteBatch.DisallowBillboarding++;
+
+                for (int i = 0; i < Parent.GameMode.Cursors.Count; ++i)
+                {
+                    var cursor = Parent.GameMode.Cursors[i];
+
+                    var renderers = Stardew3D.Mod.State.GetRenderHandlersFor(cursor.Holding);
+                    foreach (var renderer in renderers)
+                    {
+                        IRenderHandler.RenderContext subCtx = ctx;
+                        subCtx.ParentWorldTransform = ctx.WorldTransform;
+                        subCtx.WorldTransform = Parent.GetHeldTransformFor(cursor, forDisplay: true);
+                        subCtx.CanBillboard = false;
+                        renderer?.Render(subCtx);
+                    }
+                }
+            }
+            finally
+            {
+                ctx.WorldSpriteBatch.DisallowBillboarding--;
             }
         }
     }
