@@ -64,6 +64,7 @@ public class State
         public UpdateHandlerManager UpdateHandlerManager { get; } = new();
         public RenderHandlerManager RenderHandlerManager { get; } = new();
         public ConditionalWeakTable<object, object> JointHandlers { get; } = new();
+        public ConditionalWeakTable<object, ConditionalWeakTable<object, object>> JointHandlerAddons { get; } = new();
     }
     private ConditionalWeakTable<IGameMode, GameModeSpecificData> modeData = new();
 
@@ -149,8 +150,16 @@ public class State
         {
             var createHandler = createHandlerFunc(handler);
             var data = modeData.GetOrCreateValue(handler);
-            data.UpdateHandlerManager.AddHandlerAddon<ObjectType>(obj => (IUpdateHandler)data.JointHandlers.GetValue(obj, _ => createHandler(obj)), forSubclassesToo);
-            data.RenderHandlerManager.AddHandlerAddon<ObjectType>(obj => (IRenderHandler)data.JointHandlers.GetValue(obj, _ => createHandler(obj)), forSubclassesToo);
+            data.UpdateHandlerManager.AddHandlerAddon<ObjectType>(obj =>
+            {
+                var cwt = data.JointHandlerAddons.GetOrCreateValue(obj);
+                return (IUpdateHandler)cwt.GetValue(createHandlerFunc, _ => createHandler(obj));
+            }, forSubclassesToo);
+            data.RenderHandlerManager.AddHandlerAddon<ObjectType>(obj =>
+            {
+                var cwt = data.JointHandlerAddons.GetOrCreateValue(obj);
+                return (IRenderHandler)cwt.GetValue(createHandlerFunc, _ => createHandler(obj));
+            }, forSubclassesToo);
         }
     }
 
