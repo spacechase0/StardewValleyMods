@@ -39,6 +39,7 @@ public partial class InteractionData
 
         retSize *= obj switch
         {
+            Monster monster => Vector3.One,
             Character character => new Vector3(character.GetBoundingBox().Width / 64f, 1.875f, character.GetBoundingBox().Height / 64f),
 
             ResourceClump clump => new Vector3(clump.getBoundingBox().Width / 64f - 0.125f, 1, clump.getBoundingBox().Height / 64f - 0.125f),
