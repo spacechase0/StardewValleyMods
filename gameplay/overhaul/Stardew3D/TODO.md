@@ -83,6 +83,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
           however there'd be a higher risk of mismatch between gameplay and graphics.
 
 # Movement / Traversal
+* [VR] Snap turning, teleport locomotion
 * "Regions" thing? For stretching/squishing certains portions of the map when in 3D
     * Allows matching up a seamless 3D world despite locations not perfectly matching up
     * Lets us make cliffsides line up correctly with how it looks in 2D
