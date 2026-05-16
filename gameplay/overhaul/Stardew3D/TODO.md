@@ -16,6 +16,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
     * I remember having other problems with whatever binding I used before OpenVR.Net
 * Make `TileSpot` match `Game1.(up|down|left|right)`
 * Rework RenderBatcher instancing system to be less persistent
+    * I think this would also let me flatten the render handler system, removing the RenderData stuff. Handlers are already per-instance anyways.
 
 # Asset Workflow
 * In-game editors for:
