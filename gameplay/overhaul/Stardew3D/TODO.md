@@ -42,7 +42,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * [VR] Allow headset position to move camera (and ideally, the player)
 
 # "Game Mode" stuff (ie. the input / rendering combos)
-* Third person mode
+* Merge first person and third person modes, and split off camera controller from them
 * [VR] More motion controls
     * Hoe
     * Watering Can
