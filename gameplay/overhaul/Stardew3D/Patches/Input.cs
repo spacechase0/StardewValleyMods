@@ -1,7 +1,11 @@
+using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Input;
+using SpaceShared.APIs;
 using Stardew3D.GameModes.VR;
 using StardewValley;
+using StardewValley.GameData.Locations;
 
 namespace Stardew3D.Patches;
 
@@ -106,5 +110,39 @@ internal static class SetMousePositionOverrideInVRPatch
 
         vr.EmulatedCursor = new(x, y);
         return false;
+    }
+}
+
+[HarmonyPatch]
+public static class CustomSwitchToolButtonPatch
+{
+    public static int myWhichWay = 0;
+
+    [HarmonyPatch(typeof(Game1), nameof(Game1.pressSwitchToolButton))]
+    [HarmonyReversePatch(HarmonyReversePatchType.Snapshot)]
+    internal static void PatchedOriginal()
+    {
+        IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> insns, MethodBase original)
+        {
+            //var sc = Mod.Instance.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
+
+            var matcher = new CodeMatcher(insns);
+            matcher.MatchStartForward(new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(Options), nameof(Options.invertScrollDirection))));
+            matcher.Advance(-1);
+
+            var labels = matcher.Labels.ToList();
+            matcher.Labels.Clear();
+
+            matcher.Insert(
+                new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(CustomSwitchToolButtonPatch), nameof(CustomSwitchToolButtonPatch.myWhichWay)))
+                {
+                    labels = labels,
+                },
+                //new CodeInstruction(OpCodes.Stloc, sc.GetLocalIndexForMethod(original, "whichWay").Single())
+                new CodeInstruction(OpCodes.Stloc, 0)
+            );
+
+            return matcher.Instructions();
+        }
     }
 }

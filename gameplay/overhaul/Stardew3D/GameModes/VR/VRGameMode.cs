@@ -155,13 +155,15 @@ public abstract partial class VRGameMode : BaseGameMode
         // Gonna need a SMAPI update past 4.5.1 for Helper.Input.Press to work for controllers when one isn't connected
         Game1.options.gamepadMode = Options.GamepadModes.ForceOn;
         Game1.options.gamepadControls = true;
-        if (World_HotbarLeft)
+        if (World_HotbarLeft.Value && !World_HotbarLeft.PreviousValue)
         {
             Mod.Instance.Helper.Input.Press(SButton.LeftTrigger);
+            GameExtenions.PressSwitchToolButton(-1);
         }
-        if (World_HotbarRight)
+        if (World_HotbarRight && !World_HotbarRight.PreviousValue)
         {
             Mod.Instance.Helper.Input.Press(SButton.RightTrigger);
+            GameExtenions.PressSwitchToolButton(1);
         }
     }
     public override void AfterUpdate()

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Stardew3D.Patches;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Extensions;
@@ -14,6 +15,12 @@ namespace Stardew3D.Utilities;
 
 public static class GameExtenions
 {
+    public static void PressSwitchToolButton(int whichWay)
+    {
+        CustomSwitchToolButtonPatch.myWhichWay = whichWay;
+        CustomSwitchToolButtonPatch.PatchedOriginal();
+    }
+
     public static string GetExtendedQualifiedId(this object obj)
     {
          return (obj?.GetExtendedQualifiedIds() ?? [null])[0];

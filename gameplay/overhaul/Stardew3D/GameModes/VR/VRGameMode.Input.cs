@@ -113,6 +113,7 @@ public abstract partial class VRGameMode
     public class DigitalAction : ActionData
     {
         public bool Value { get; internal set; }
+        public bool PreviousValue { get; internal set; }
 
         public static implicit operator bool(DigitalAction action) => action.Value;
 
@@ -135,6 +136,7 @@ public abstract partial class VRGameMode
                 return;
             }
 
+            PreviousValue = Value;
             if (data.bActive)
             {
                 Value = data.bState;
@@ -147,6 +149,7 @@ public abstract partial class VRGameMode
         public float X => Value.X;
         public float Y => Value.Y;
         public Vector2 Value { get; internal set; }
+        public Vector2 PreviousValue { get; internal set; }
 
         public static implicit operator Vector2(Vector2Action action) => action.Value;
 
@@ -169,6 +172,7 @@ public abstract partial class VRGameMode
                 return;
             }
 
+            PreviousValue = Value;
             if (data.bActive)
             {
                 Value = new( data.x, data.y );
