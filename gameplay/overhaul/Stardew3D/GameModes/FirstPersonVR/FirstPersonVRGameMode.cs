@@ -56,7 +56,7 @@ public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
             new FirstPersonVRCursor(() => Pointer_Primary.Transform, () => Grip_Primary.Transform,
                                     () => Grip_Primary.LinearVelocity, () => Grip_Primary.AngularVelocity,
                                     () => Menu_LeftClick, () => Menu_RightClick, () => Menu_CurrentScroll,
-                                    () => Game1.player.ActiveItem, () => World_UseItem, () => World_Interact),
+                                    () => Context.IsWorldReady ? Game1.player.ActiveItem : null, () => World_UseItem, () => World_Interact),
             new FirstPersonVRCursor(() => Pointer_Secondary.Transform, () => Grip_Secondary.Transform,
                                     () => Grip_Secondary.LinearVelocity, () => Grip_Secondary.AngularVelocity,
                                     () => false, () => false, () => Vector2.Zero,
