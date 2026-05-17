@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Stardew3D.DataModels;
 using Stardew3D.GameModes;
 using Stardew3D.Utilities;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Objects;
@@ -26,6 +27,9 @@ public abstract class FarmerWorldControlsBaseHandler : RendererFor<ModelData, Fa
     }
     public virtual void Update(IUpdateHandler.UpdateContext ctx)
     {
+        if (!Context.IsPlayerFree)
+            return;
+
         if (this.Object != Game1.player || Game1.player.currentLocation != Game1.currentLocation)
             return;
 
