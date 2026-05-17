@@ -225,7 +225,7 @@ public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
         if (Context.IsWorldReady)
         {
             Camera.Position = Game1.player.StandingPixel3D;
-            Camera.Position += new Vector3(0, Headset.CurrentPosition.Y, 0);
+            Camera.Position += Vector3.Transform(Headset.CurrentPosition, Matrix.CreateRotationY(Camera.AdditionalRotationY));
         }
         else
         {
