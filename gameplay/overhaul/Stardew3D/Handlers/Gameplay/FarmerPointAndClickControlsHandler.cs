@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.DataModels;
 using Stardew3D.GameModes;
+using Stardew3D.Patches;
 using Stardew3D.Rendering;
 using Stardew3D.Utilities;
 using StardewValley;
@@ -39,6 +40,17 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
         base.HandleCursor(ctx, cursor);
 
+        if (InputUtils.TryHover(Game1.player.currentLocation, LocationHandler.TerrainType.All, new Ray(cursor.PointerPosition, cursor.PointerFacing), out LocationHandler.TerrainType hoverType, out var hoverTile, out float hoverDist, out var wallDir, CullRange))
+        {
+            if (sel.Distance > hoverDist)
+            {
+                sel.Selected = hoverType == LocationHandler.TerrainType.Walls ? wallDir : hoverType;
+                sel.SelectedHolder = hoverTile;
+                sel.SelectedDisplay = default; // TODO
+                sel.Distance = hoverDist;
+            }
+        }
+
         if (sel.Selected != null)
         {
             if (cursor.UseItemJustReleased)
@@ -54,7 +66,27 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
     private void Use(IGameCursor cursor, object sel, object selHolder)
     {
-        // TODO
+        Item oldTemp = Object.TemporaryItem;
+        if (cursor.Holding is Item && Object.ActiveItem != cursor.Holding)
+        {
+            Object.TemporaryItem = cursor.Holding as Item;
+        }
+
+        try
+        {
+            if (sel.Equals(LocationHandler.TerrainType.Floor))
+            {
+                Point tile = (Point) selHolder;
+                if (cursor.Holding is StardewValley.Object obj)
+                {
+                    Utility.tryToPlaceItem(Game1.player.currentLocation, obj, tile.X * Game1.tileSize, tile.Y * Game1.tileSize);
+                }
+            }
+        }
+        finally
+        {
+            Object.TemporaryItem = oldTemp;
+        }
     }
 
     private void Interact(IGameCursor cursor, object sel, object selHolder)
@@ -241,7 +273,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                     RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Left, upOverride: Vector3.Forward, additionalTransform: Parent.GameMode.Cursors[i].Pointer);
                     RenderHelper.DrawQuad(Game1.staminaRect, Vector3.Forward * len / 2, new(0.01f, len), new(0, 0, 1, 1), Vector3.Right, upOverride: Vector3.Forward, additionalTransform: Parent.GameMode.Cursors[i].Pointer);
 
-                    if (sel.Selected != null)
+                    if (sel.Selected != null && sel.SelectedDisplay != null)
                     {
                         SimpleVertex[] v = sel.SelectedDisplay.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.White * 0.2f)).ToArray();
 
@@ -305,6 +337,29 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 #endif
                     }
                 }), Matrix.Identity, staysVisibleAfterFrame: true);
+            }
+        }
+
+        public override void Update(IRenderHandler.RenderContext ctx)
+        {
+            base.Update(ctx);
+
+            for (int i = 0; i < Parent.GameMode.Cursors.Count; ++i)
+            {
+                var cursor = Parent.GameMode.Cursors[i];
+                var sel = Parent.lastHovered.GetOrCreateValue(cursor);
+                if (sel.Selected == null)
+                    continue;
+
+                if (cursor.Holding is StardewValley.Object obj && sel.Selected.Equals(LocationHandler.TerrainType.Floor))
+                {
+                    Point tile = (Point)sel.SelectedHolder;
+                    Vector3 tileCenter = tile.To3D(Game1.player.currentLocation) - new Vector3(0.5f, 0, 0.5f);
+                    ctx.WorldSpriteBatch.Begin(tile.ToVector2() * Game1.tileSize, ctx.ParentWorldTransform * Matrix.CreateTranslation(tileCenter), orientationOverride: Matrix.CreateLookAt(Vector3.Zero, Vector3.Up, Vector3.Forward) * Matrix.CreateTranslation(Vector3.Up * 0.02f), sameY3d: false, ignoreLayer: true);
+                    AlwaysMousePlacementSortaPatch2.placementGrabTile = tile.ToVector2();
+                    obj.drawPlacementBounds(ctx.WorldSpriteBatch, Game1.player.currentLocation);
+                    ctx.WorldSpriteBatch.End(ctx.WorldBatch);
+                }
             }
         }
     }

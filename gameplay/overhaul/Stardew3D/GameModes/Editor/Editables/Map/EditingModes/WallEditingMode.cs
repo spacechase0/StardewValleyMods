@@ -193,7 +193,7 @@ public class WallEditingMode : BaseEditingMode
 
                 hover = new()
                 {
-                    Tile = hoverTile.Value,
+                    Tile = hoverTile,
                     Direction = dir,
                 };
             }
@@ -204,8 +204,8 @@ public class WallEditingMode : BaseEditingMode
             {
                 hover = new()
                 {
-                    Tile = hoverTile.Value,
-                    Direction = hoverWallDir.Value,
+                    Tile = hoverTile,
+                    Direction = hoverWallDir,
                 };
             }
         }

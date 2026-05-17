@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SpaceShared.APIs;
 using Stardew3D.GameModes.VR;
@@ -144,5 +145,39 @@ public static class CustomSwitchToolButtonPatch
 
             return matcher.Instructions();
         }
+    }
+}
+
+[HarmonyPatch(typeof(Game1), nameof(Game1.IsPerformingMousePlacement))]
+public static class AlwaysMousePlacementSortaPatch1
+{
+    public static void Postfix(ref bool __result)
+    {
+        if (Mod.State.ActiveMode != null)
+            __result = true;
+    }
+}
+
+[HarmonyPatch(typeof(Game1), nameof(Game1.GetPlacementGrabTile))]
+public static class AlwaysMousePlacementSortaPatch2
+{
+    public static Vector2 placementGrabTile = new Vector2(-1, -1);
+
+    public static void Postfix(ref Vector2 __result)
+    {
+        if (Mod.State.ActiveMode != null)
+            __result = placementGrabTile;
+    }
+}
+
+
+[HarmonyPatch(typeof(Utility), nameof(Utility.isWithinTileWithLeeway))]
+public static class AllowPlacementIfWeSaySoPatch
+{
+    public static void Postfix(ref bool __result)
+    {
+        // Vanilla only uses this function in the placement stuff
+        if (Mod.State.ActiveMode != null)
+            __result = true;
     }
 }

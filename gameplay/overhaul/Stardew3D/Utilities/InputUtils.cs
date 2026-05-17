@@ -15,21 +15,27 @@ namespace Stardew3D.Utilities;
 
 public static class InputUtils
 {
-    public static bool TryHover(GameLocation loc, TerrainType check, Viewport viewport, Matrix projMatrix, Matrix viewMatrix, Point mousePos, out Point? hoverTile, out TileSpot? wallDir, int maxRange = 1000)
+    public static bool TryHover(GameLocation loc, TerrainType check, Viewport viewport, Matrix projMatrix, Matrix viewMatrix, Point mousePos, out Point hoverTile, out TileSpot wallDir, int maxRange = 1000)
+    {
+        Vector3 near = viewport.Unproject(new Vector3(mousePos.ToVector2(), 0), projMatrix, viewMatrix, Matrix.Identity);
+        Vector3 far = viewport.Unproject(new Vector3(mousePos.ToVector2(), 1), projMatrix, viewMatrix, Matrix.Identity);
+        Ray cursor = new(near, (far - near).Normalized());
+
+        return TryHover(loc, check, cursor, out _, out hoverTile, out _, out wallDir, maxRange);
+    }
+    public static bool TryHover(GameLocation loc, TerrainType check, Ray cursor, out TerrainType hoverType, out Point hoverTile, out float hoverDist, out TileSpot wallDir, int maxRange = 1000)
     {
         LocationHandler handler = Mod.State.GetUpdateHandlersFor(loc)[0] as LocationHandler;
 
         Rectangle mapBounds = new Rectangle(0, 0, loc.Map.Layers[0].LayerWidth, loc.Map.Layers[0].LayerHeight);
 
-        Vector3 near = viewport.Unproject(new Vector3(mousePos.ToVector2(), 0), projMatrix, viewMatrix, Matrix.Identity);
-        Vector3 far = viewport.Unproject(new Vector3(mousePos.ToVector2(), 1), projMatrix, viewMatrix, Matrix.Identity);
-        Ray cursor = new(near, (far - near).Normalized());
-
         Vector2 cursorPos2d = new(cursor.Position.X, cursor.Position.Z);
         Vector2 cursorDir2d = new(cursor.Direction.X, cursor.Direction.Z);
 
-        hoverTile = null;
-        wallDir = null;
+        hoverType = TerrainType.None;
+        hoverTile = Point.Zero;
+        hoverDist = float.MaxValue;
+        wallDir = TileSpot.Center;
         for (int i = 0; i < maxRange; i += 1)
         {
             Point cursorPosTile2d = new Vector2(MathF.Floor(cursorPos2d.X), MathF.Floor(cursorPos2d.Y)).ToPoint();
@@ -37,7 +43,7 @@ public static class InputUtils
 
             Vector2 tile = cursorPosTile2d.ToVector2();
 
-            bool Check(TileType tileType, out Point? hoverTile)
+            bool Check(TileType tileType, out Point hoverTile, out float hoverDist)
             {
                 var quad = DimensionUtils.GetPositionForTile(loc, cursorPosTile2d, tileType);
 
@@ -48,16 +54,30 @@ public static class InputUtils
                 if (dist.HasValue && tileRect.Contains(intersectAt2d))
                 {
                     hoverTile = cursorPosTile2d;
+                    hoverDist = dist.Value;
                     return true;
                 }
 
-                hoverTile = null;
+                hoverTile = Point.Zero;
+                hoverDist = float.MaxValue;
                 return false;
             }
 
-            if (check.HasFlag(TerrainType.Floor) && Check(TileType.Floor, out hoverTile)) return true;
-            if (check.HasFlag(TerrainType.Ceiling) && Check(TileType.Ceiling, out hoverTile)) return true;
-            if (check.HasFlag(TerrainType.Water) && Check(TileType.Water, out hoverTile)) return true;
+            if (check.HasFlag(TerrainType.Floor) && Check(TileType.Floor, out hoverTile, out hoverDist))
+            {
+                hoverType = TerrainType.Floor;
+                return true;
+            }
+            if (check.HasFlag(TerrainType.Ceiling) && Check(TileType.Ceiling, out hoverTile, out hoverDist))
+            {
+                hoverType = TerrainType.Ceiling;
+                return true;
+            }
+            if (check.HasFlag(TerrainType.Water) && Check(TileType.Water, out hoverTile, out hoverDist))
+            {
+                hoverType = TerrainType.Water;
+                return true;
+            }
 
             if (check.HasFlag(TerrainType.Walls) && handler != null && mapBounds.Contains(cursorPosTile2d) && handler.wallData != null)
             {
@@ -117,6 +137,8 @@ public static class InputUtils
                     // TODO: Check for top/bottom wall boundaries
 
                     hoverTile = cursorPosTile2d;
+                    hoverType = TerrainType.Walls;
+                    hoverDist = dist;
                     wallDir = (TileSpot) idir;
                     return true;
                 }

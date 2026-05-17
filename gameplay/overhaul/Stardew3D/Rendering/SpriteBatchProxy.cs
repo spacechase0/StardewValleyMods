@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Stardew3D.Utilities;
 using StardewValley;
+using xTile.Layers;
 using static StardewValley.BellsAndWhistles.PlayerStatusList;
 
 namespace Stardew3D.Rendering;
@@ -15,6 +16,7 @@ public class SpriteBatchProxy : SpriteBatch
     private bool sameY3d;
     private Matrix? orientationOverride;
     private float scale = 1;
+    private bool ignoreLayer;
     private SpriteBatch oldBatch;
 
     public int DisallowBillboarding = 0;
@@ -25,7 +27,7 @@ public class SpriteBatchProxy : SpriteBatch
         this.relevantLocation = relevantLocation;
     }
 
-    public void Begin(Vector2 base2d, Matrix baseTransform, Matrix? orientationOverride = null, bool sameY3d = true, float scale = 1)
+    public void Begin(Vector2 base2d, Matrix baseTransform, Matrix? orientationOverride = null, bool sameY3d = true, float scale = 1, bool ignoreLayer = false)
     {
         base.Begin(SpriteSortMode.FrontToBack);
         this.base2d = base2d;
@@ -33,6 +35,7 @@ public class SpriteBatchProxy : SpriteBatch
         this.sameY3d = sameY3d;
         this.orientationOverride = orientationOverride;
         this.scale = scale;
+        this.ignoreLayer = ignoreLayer;
         this.oldBatch = Game1.spriteBatch;
 
         Game1.spriteBatch = this;
@@ -92,6 +95,8 @@ public class SpriteBatchProxy : SpriteBatch
             float pos2dY = (pos2dY1 + pos2dY2) / 2;
             Vector2 basePos = new Vector2(pos2dX, sameY3d ? sameY : pos2dY);
             float yFromLayer = basePos.Y - ((sameY3d ? sameLayer : item.SortKey) * 10000);
+            if (ignoreLayer)
+                yFromLayer = 0;
             /*if (!sameY3d)
                 basePos.Y -= yFromLayer;// / Game1.tileSize;
             /*

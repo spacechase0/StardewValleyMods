@@ -153,7 +153,9 @@ public class TileDataEditingMode : BaseEditingMode
         var editor = Mod.State.ActiveMode as EditorGameMode;
 
         Point? hoverTile;
-        if (!InputUtils.TryHover(Editable.Location, ShowMissingInLocation, Game1.graphics.GraphicsDevice.Viewport, editor.ProjectionMatrix, editor.Camera.ViewMatrix, editor.Ui.Controls.Input.MousePosition, out hoverTile, out _))
+        if (InputUtils.TryHover(Editable.Location, ShowMissingInLocation, Game1.graphics.GraphicsDevice.Viewport, editor.ProjectionMatrix, editor.Camera.ViewMatrix, editor.Ui.Controls.Input.MousePosition, out Point newHoverTile, out _))
+            hoverTile = newHoverTile;
+        else
             hoverTile = null;
 
         bool hoverDirty = hoverTile != lastHoverTile;

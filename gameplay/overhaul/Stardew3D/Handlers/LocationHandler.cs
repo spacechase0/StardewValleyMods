@@ -70,6 +70,8 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         Ceiling = 1 << 1,
         Water = 1 << 2,
         Walls = 1 << 3,
+
+        All = Floor | Ceiling | Water | Walls,
     }
     public TerrainType ShowMissing = TerrainType.None;
 
