@@ -143,7 +143,7 @@ namespace Stardew3D
                 
                 state.AddJointHandlerAddonForGameModeTags<Farmer, FarmerPointAndClickControlsHandler>([IGameMode.FeaturePointAndClick], (handler) => (obj) => new FarmerPointAndClickControlsHandler(handler, obj as Farmer));
                 
-                state.SetJointHandlerForGameModeTags<IClickableMenu, GenericMenuHandler<IClickableMenu>>([IGameMode.CategoryVR], (handler) => (menu) => new GenericMenuHandler<IClickableMenu>(handler as VRGameMode, menu as IClickableMenu));
+                state.SetJointHandlerForGameModeTags<IClickableMenu, GenericMenuHandler>([IGameMode.CategoryVR], (handler) => (menu) => new GenericMenuHandler(handler as VRGameMode, menu as IClickableMenu));
                 state.SetJointHandlerForGameModeTags<TitleMenu, TitleMenuHandler>([IGameMode.CategoryVR], (handler) => (menu) => new TitleMenuHandler(handler as VRGameMode, menu as TitleMenu));
                 state.AddJointHandlerAddonForGameModeTags<Farmer, FarmerMotionControlsHandler>([IGameMode.CategoryVR, IGameMode.FeatureMotionControls], (handler) => (obj) => new FarmerMotionControlsHandler(handler as VRGameMode, obj as Farmer));
             };

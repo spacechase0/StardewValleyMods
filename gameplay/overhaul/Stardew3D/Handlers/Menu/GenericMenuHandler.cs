@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceShared;
 using Stardew3D.DataModels;
 using Stardew3D.GameModes;
 using Stardew3D.GameModes.FirstPersonVR;
@@ -10,8 +11,7 @@ using StardewValley;
 using StardewValley.Menus;
 
 namespace Stardew3D.Handlers.Menu;
-internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IUpdateHandler
-    where TMenu : IClickableMenu
+internal class GenericMenuHandler : RendererFor<MenuModelData, IClickableMenu>, IUpdateHandler
 {
     public VRGameMode GameMode;
 
@@ -23,7 +23,9 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
 
     public Dictionary<IGameCursor, Matrix?> cursorTargetMapping = new();
 
-    public GenericMenuHandler(VRGameMode mode, TMenu menu)
+    public virtual bool ShouldDraw2DMenu => true;
+
+    public GenericMenuHandler(VRGameMode mode, IClickableMenu menu)
         : base(menu)
     {
         GameMode = mode;
@@ -40,12 +42,15 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
     {
         ctx.ForceUpdateIfNotAlreadyRun(ctx);
 
-        foreach ( var cursor in GameMode.Cursors.Reverse() )
+        foreach (var cursor in GameMode.Cursors.Reverse())
             HandleCursor(ctx, cursor);
     }
 
     protected virtual void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor)
     {
+        if (!ShouldDraw2DMenu)
+            return;
+
         BoundingBox display = new(new(-DisplaySize.X / 2, -DisplaySize.Y / 2, 0), new(DisplaySize.X / 2, DisplaySize.Y / 2, 0.05f));
 
         Matrix cursorTransform = Matrix.CreateTranslation(-DisplayPosition) * BaseOrientation.Inverted();
@@ -56,11 +61,17 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
         if (spot.HasValue)
         {
             var intersectionPoint = cursorRay.Position + cursorRay.Direction * spot.Value;
-            cursorTargetMapping[cursor] = Matrix.CreateTranslation(intersectionPoint) * Matrix.CreateLookAt(intersectionPoint, cursor.PointerPosition, cursor.PointerUp);
+            //cursorTargetMapping[cursor] = Matrix.CreateTranslation(intersectionPoint) * Matrix.CreateLookAt(intersectionPoint, cursor.PointerPosition, cursor.PointerUp);
+            cursorTargetMapping[cursor] = Matrix.CreateTranslation(intersectionPoint) * cursorTransform.Inverted();
 
             Vector2 clickableLocal = new((intersectionPoint.X - display.Min.X) / (display.Max.X - display.Min.X) * Game1.game1.uiScreen.Bounds.Width,
                                          Game1.game1.uiScreen.Bounds.Height - (intersectionPoint.Y - display.Min.Y) / (display.Max.Y - display.Min.Y) * Game1.game1.uiScreen.Bounds.Height);
-            Object.performHoverAction((int)clickableLocal.X, (int)clickableLocal.Y);
+            //Object.performHoverAction((int)clickableLocal.X, (int)clickableLocal.Y);
+            this.GameMode.EmulatedCursor = clickableLocal.ToPoint();
+        }
+        else
+        {
+            cursorTargetMapping[cursor] = null;
         }
     }
 
@@ -69,54 +80,63 @@ internal class GenericMenuHandler<TMenu> : RendererFor<MenuModelData, TMenu>, IU
         return new RenderData(ctx, this);
     }
 
-    protected class RenderData : RenderData<GenericMenuHandler<TMenu>>
+    protected class RenderData : RenderData<GenericMenuHandler>
     {
-        private int menuInstance = -1;
-        private int[] cursorInstances;
-
-        public RenderData(IRenderHandler.RenderContext ctx, GenericMenuHandler<TMenu> parent)
+        public RenderData(IRenderHandler.RenderContext ctx, GenericMenuHandler parent)
             : base(ctx, parent)
         {
             if (ctx.TargetScreen == Game1.game1.uiScreen)
                 return;
-
-            menuInstance = Batch.AddDirect((env, color, world, view, proj) =>
-            {
-                RenderHelper.DrawQuad(Game1.game1.uiScreen, Vector3.Zero, Parent.DisplaySize, Game1.game1.uiScreen.Bounds, Parent.BaseOrientation.Backward, upOverride: Parent.BaseOrientation.Up, col: color, additionalTransform: world);
-            }, Matrix.Identity, hasTransparency: true);
-
-            cursorInstances = new int[Parent.GameMode.Cursors.Count];
-            for (int i = cursorInstances.Length - 1; i >= 0; --i)
-            {
-                bool flip = (parent.GameMode.Cursors[i] as FirstPersonVRCursor)?.FlipMenuSprite ?? false;
-                cursorInstances[i] = Batch.AddDirect((env, color, world, view, proj) =>
-                {
-                    var size = new Vector2(16f / Game1.game1.uiScreen.Width, 16f / Game1.game1.uiScreen.Height) * Game1.pixelZoom * Parent.DisplaySize * 4;
-                    var size3d = new Vector3(size.X, size.Y, 0);
-
-                    var offset = Matrix.Identity;
-                    offset *= Matrix.CreateTranslation(world.Down * size3d / 2) * Matrix.CreateTranslation(world.Right * size3d / 2);
-                    offset *= Matrix.CreateTranslation(world.Forward * 0.1f);
-
-                    RenderHelper.GenericEffect.View = view;
-                    RenderHelper.GenericEffect.Projection = proj;
-                    RenderHelper.DrawQuad(Game1.mouseCursors, Vector3.Zero, size, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, 16, 16), Vector3.Forward, upOverride: Vector3.Up, col: color, additionalTransform: world, texCoordEffect: flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
-                }, Matrix.Identity, hasTransparency: true);
-            }
         }
 
         public override void Update(IRenderHandler.RenderContext ctx)
         {
             base.Update(ctx);
 
-            ctx.WorldBatch.UpdateDirect(menuInstance, Matrix.CreateTranslation(Parent.DisplayPosition));
-
-            foreach (var cursor in Parent.GameMode.Cursors.Reverse())
+            if (Parent.ShouldDraw2DMenu)
             {
-                if (!Parent.cursorTargetMapping.TryGetValue(cursor, out var cursorTransform) || !cursorTransform.HasValue)
-                    continue;
+                Batch.AddSprite(Vector2.Zero, Parent.DisplayPosition, Parent.BaseOrientation, 0, new SpriteBatchItem()
+                {
+                    Texture = Game1.game1.uiScreen,
+                    vertexTL = new(new(-Parent.DisplaySize.X / 2, -Parent.DisplaySize.Y / 2, 0), Color.White, new(1, 0)),
+                    vertexTR = new(new(Parent.DisplaySize.X / 2, -Parent.DisplaySize.Y / 2, 0), Color.White, new(0, 0)),
+                    vertexBL = new(new(-Parent.DisplaySize.X / 2, Parent.DisplaySize.Y / 2, 0), Color.White, new(1, 1)),
+                    vertexBR = new(new(Parent.DisplaySize.X / 2, Parent.DisplaySize.Y / 2, 0), Color.White, new(0, 1)),
+                }, Game1.tileSize);
+            }
 
-                ctx.WorldBatch.UpdateDirect(menuInstance, cursorTransform.Value);
+            // This isn't needed when we only have the normal menu showing
+            if (false)
+            {
+                var cursorSize = new Vector2(16f / Game1.game1.uiScreen.Width, 16f / Game1.game1.uiScreen.Height) * Game1.pixelZoom * Parent.DisplaySize;
+                int i = 0;
+                foreach (var cursor in Parent.GameMode.Cursors.Reverse())
+                {
+                    ++i;
+                    if (!Parent.cursorTargetMapping.TryGetValue(cursor, out var cursorTransform) || !cursorTransform.HasValue)
+                        continue;
+
+                    Rectangle texRect = Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, 16, 16);
+                    Vector2 texRectTL = new Vector2(texRect.X, texRect.Y) / new Vector2(Game1.mouseCursors.ActualWidth, Game1.mouseCursors.ActualHeight);
+                    Vector2 texRectTR = new Vector2(texRect.Right, texRect.Y) / new Vector2(Game1.mouseCursors.ActualWidth, Game1.mouseCursors.ActualHeight);
+                    Vector2 texRectBL = new Vector2(texRect.X, texRect.Bottom) / new Vector2(Game1.mouseCursors.ActualWidth, Game1.mouseCursors.ActualHeight);
+                    Vector2 texRectBR = new Vector2(texRect.Right, texRect.Bottom) / new Vector2(Game1.mouseCursors.ActualWidth, Game1.mouseCursors.ActualHeight);
+
+                    if (!(cursor as FirstPersonVRCursor)?.FlipMenuSprite ?? true)
+                    {
+                        Util.Swap(ref texRectTL, ref texRectTR);
+                        Util.Swap(ref texRectBL, ref texRectBR);
+                    }
+
+                    Batch.AddSprite(Vector2.Zero, Vector3.Zero, cursorTransform.Value, 0, new SpriteBatchItem()
+                    {
+                        Texture = Game1.mouseCursors,
+                        vertexTL = new(new(-cursorSize.X / 2, -cursorSize.Y / 2, 0), Color.White, texRectTL),
+                        vertexTR = new(new(cursorSize.X / 2, -cursorSize.Y / 2, 0), Color.White, texRectTR),
+                        vertexBL = new(new(-cursorSize.X / 2, cursorSize.Y / 2, 0), Color.White, texRectBL),
+                        vertexBR = new(new(cursorSize.X / 2, cursorSize.Y / 2, 0), Color.White, texRectBR),
+                    }, Game1.tileSize);
+                }
             }
         }
     }

@@ -69,12 +69,12 @@
   <!-- This sometimes fixes running the game from the right folder when I use an environment variable to override my game path. No idea why -->
   <!-- Other times it breaks it when it was working (which is only sometimes)! Joy -->
   <!-- Might be related to opening another instance the normal way after having already done an environment variable override, at least until next restart? -->
-  <!-- -->
+  <!-- ->
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <StartProgram>$(GamePath)\StardewModdingAPI.exe</StartProgram>
     <StartWorkingDirectory>$(GamePath)</StartWorkingDirectory>
   </PropertyGroup>
-  <!-- -->
+  <!- -->
 
   <!-- mac workaround, remove when updating mod build config -->
   <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
