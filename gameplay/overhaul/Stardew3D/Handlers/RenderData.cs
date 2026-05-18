@@ -28,6 +28,7 @@ public class RenderData<TRenderer> : RenderDataBase
     protected TRenderer Parent { get; }
     protected ModelObject Model { get; }
     protected InteractionData Interaction { get; }
+    protected Vector3 InteractionSize { get; }
     protected ModelObject.ModelObjectInstance instance;
 
     private string interactionId;
@@ -44,15 +45,8 @@ public class RenderData<TRenderer> : RenderDataBase
             instance = Model.Draw(Batch, Matrix.Identity, whichMatch: whichMatch);
         }
 
-        foreach (var entry in Parent.Object.GetExtendedQualifiedIds())
-        {
-            Interaction = InteractionData.Get(entry);
-            if (Interaction != null)
-            {
-                interactionId = entry;
-                break;
-            }
-        }
+        Interaction = InteractionData.Get(Parent.Object, out Vector3 interactionSize, out interactionId);
+        InteractionSize = interactionSize;
         GenerateInteractionDebugView();
     }
 
@@ -63,10 +57,10 @@ public class RenderData<TRenderer> : RenderDataBase
             Model.Update(Batch, instance, ctx.WorldTransform);
         }
 
-        if (Mod.State.RenderDebugInteractions && interactionInstances != null)
+        if (Mod.State.RenderDebugInteractions && interactionInstances != null && Parent.Object != Game1.player)
         {
             foreach (var inst in interactionInstances)
-                Batch.UpdateInstanced(inst, ctx.WorldTransform, Color.White * 0.5f);
+                Batch.UpdateInstanced(inst, Matrix.CreateScale( InteractionSize ) * ctx.WorldTransform * Matrix.CreateTranslation(0, InteractionSize.Y / 2, 0), Color.White * 0.5f);
         }
     }
 

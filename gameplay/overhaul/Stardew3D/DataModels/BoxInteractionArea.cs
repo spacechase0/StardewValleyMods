@@ -5,7 +5,7 @@ public class BoxInteractionArea : InteractionArea
 {
     public override string Type => "Box";
 
-    public Vector3 Size { get; set; }
+    public Vector3 Size { get; set; } = new Vector3(1, 1, 1);
 
     public override BoundingBox GetBoundingBox()
     {

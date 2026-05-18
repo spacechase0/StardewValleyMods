@@ -29,8 +29,8 @@ namespace SpaceShared.UI
         /*********
         ** Accessors
         *********/
-        private Element renderLast = null;
-        public Element RenderLast
+        private Element? renderLast = null;
+        public Element? RenderLast
         {
             get => renderLast;
             set {

@@ -28,8 +28,8 @@ namespace SpaceCore.VanillaAssetExpansion
 
             public bool ContextTagsRequireAll { get; set; } = false;
 
-            public string OverrideText { get; set; }
-            public string OverrideTexturePath { get; set; }
+            public string? OverrideText { get; set; }
+            public string? OverrideTexturePath { get; set; }
             public Rectangle? OverrideTextureRect { get; set; }
         }
         public List<IngredientData> Ingredients { get; set; } = new();
@@ -55,7 +55,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
         public override int Quantity => data.Amount;
 
-        public override void Consume(IList<IInventory> additionalIngredients)
+        public override void Consume(IList<IInventory>? additionalIngredients)
         {
             int left = Quantity;
             for (int i = Game1.player.MaxItems - 1; i >= 0; --i)
@@ -110,7 +110,7 @@ namespace SpaceCore.VanillaAssetExpansion
             return items.Sum(i => Matches(i) ? i.Stack : 0);
         }
 
-        public override bool Matches(Item item)
+        public override bool Matches(Item? item)
         {
             if (item == null)
                 return false;

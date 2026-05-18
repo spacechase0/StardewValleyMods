@@ -74,8 +74,8 @@ namespace SpaceCore.Dungeons
             foreach (var spawnList in items)
             {
                 var itemSpawns = spawnList.ToList();
-                itemSpawns.RemoveAll(w => w.Value.Condition != null && !w.Value.Condition.Equals("true", StringComparison.InvariantCultureIgnoreCase) && !GameStateQuery.CheckConditions(w.Value.Condition, location: location, player: player, random: r));
-                GenericSpawnItemDataWithCondition itemSpawn = itemSpawns.Choose(r);
+                itemSpawns.RemoveAll(w => w.Value?.Condition != null && !w.Value.Condition.Equals("true", StringComparison.InvariantCultureIgnoreCase) && !GameStateQuery.CheckConditions(w.Value.Condition, location: location, player: player, random: r));
+                GenericSpawnItemDataWithCondition? itemSpawn = itemSpawns.Choose(r);
                 if (itemSpawn == null)
                     continue;
                 Item item = ItemQueryResolver.TryResolveRandomItem(itemSpawn, new ItemQueryContext(location, player, r, "SpaceCore Spawnable drops"));
@@ -103,7 +103,7 @@ namespace SpaceCore.Dungeons
             SpaceCore.Instance.Helper.Events.Content.AssetRequested += Content_AssetRequested;
             SpaceCore.Instance.Helper.Events.GameLoop.DayEnding += GameLoop_DayEnding;
 
-            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_TriggerSpawnGroup", (string[] args, TriggerActionContext context, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_TriggerSpawnGroup", (string[] args, TriggerActionContext context, out string? error) =>
             {
                 if (args.Length < 3)
                 {
@@ -111,7 +111,7 @@ namespace SpaceCore.Dungeons
                     return false;
                 }
 
-                Random r = context.TriggerArgs.FirstOrDefault(o => o is Random) as Random;
+                Random r = context.TriggerArgs.FirstOrDefault(o => o is Random) as Random ?? Game1.random;
 
                 var loc = GameStateQuery.Helpers.RequireLocation(args[2], context.TriggerArgs.Length > 0 ? (context.TriggerArgs[0] as GameLocation) : null );
                 List<Rectangle> includeRegions = new();
@@ -159,7 +159,7 @@ namespace SpaceCore.Dungeons
                 return true;
             });
 
-            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_ClearSetPiecesFromSpawnable", (string[] args, TriggerActionContext context, out string error) =>
+            TriggerActionManager.RegisterAction("spacechase0.SpaceCore_ClearSetPiecesFromSpawnable", (string[] args, TriggerActionContext context, out string? error) =>
             {
                 if (args.Length < 3)
                 {
@@ -191,13 +191,13 @@ namespace SpaceCore.Dungeons
             });
         }
 
-        private static void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
+        private static void GameLoop_GameLaunched(object? sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
         {
             var sc = SpaceCore.Instance.Helper.ModRegistry.GetApi<IApi>("spacechase0.SpaceCore");
-            sc.RegisterSerializerType(typeof(SetPieceNetData));
+            sc?.RegisterSerializerType(typeof(SetPieceNetData));
         }
 
-        private static void GameLoop_DayEnding(object sender, StardewModdingAPI.Events.DayEndingEventArgs e)
+        private static void GameLoop_DayEnding(object? sender, StardewModdingAPI.Events.DayEndingEventArgs e)
         {
             Utility.ForEachLocation(loc =>
             {
@@ -215,7 +215,7 @@ namespace SpaceCore.Dungeons
             });
         }
 
-        private static void Content_AssetRequested(object sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
+        private static void Content_AssetRequested(object? sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
         {
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/SpawnableDefinitions"))
                 e.LoadFrom(() => new Dictionary<string, SpawnableDefinitionData>(), StardewModdingAPI.Events.AssetLoadPriority.Low);
@@ -223,7 +223,7 @@ namespace SpaceCore.Dungeons
                 e.LoadFrom(() => new Dictionary<string, SpawnableSpawningGroupData>(), StardewModdingAPI.Events.AssetLoadPriority.Low);
         }
 
-        public static void DoSpawning(GameLocation location, string spawnGroupId, List<Rectangle> includeRegions, List<Rectangle> excludeRegions, Random r = null)
+        public static void DoSpawning(GameLocation location, string spawnGroupId, List<Rectangle> includeRegions, List<Rectangle> excludeRegions, Random? r = null)
         {
             r ??= Game1.random;
 
@@ -276,7 +276,7 @@ namespace SpaceCore.Dungeons
             List<(string id, SpawnableDefinitionData data)> toSpawn = new();
             foreach (var entry in spawnGroup.SpawnablesToSpawn)
             {
-                var choices = entry.SpawnableIds.Select(ws => new Weighted<(string id, SpawnableDefinitionData data)>(ws.Weight, new(ws.Value, spawnDefs[ws.Value]))).ToList();
+                var choices = entry.SpawnableIds.Select(ws => new Weighted<(string id, SpawnableDefinitionData data)>(ws.Weight, new(ws.Value!, spawnDefs[ws.Value!]))).ToList();
 
                 int count = r.Next(entry.Maximum - entry.Minimum + 1);
                 for (int i = 0; i < entry.Minimum + count; ++i)
@@ -302,7 +302,7 @@ namespace SpaceCore.Dungeons
             }
         }
 
-        private static Dictionary<SpawnableDefinitionData.SpawnableType, Func<GameLocation, string, SpawnableDefinitionData, Point, Random, bool>> spawnHandlers = new() 
+        private static Dictionary<SpawnableDefinitionData.SpawnableType, Func<GameLocation, string, SpawnableDefinitionData, Point, Random, bool>> spawnHandlers = new()
         {
             { SpawnableDefinitionData.SpawnableType.SetPiece, HandleSpawnable_SetPiece },
             { SpawnableDefinitionData.SpawnableType.Forageable, HandleSpawnable_Forageable },
@@ -404,13 +404,13 @@ namespace SpaceCore.Dungeons
                 return false;
 
             var itemSpawns = data.ForageableItemData.ToList();
-            itemSpawns.RemoveAll(w => w.Value.Condition != null && !w.Value.Condition.Equals("true", StringComparison.InvariantCultureIgnoreCase) && !GameStateQuery.CheckConditions(w.Value.Condition, location: location, random: r));
-            GenericSpawnItemDataWithCondition itemSpawn = itemSpawns.Choose(r);
+            itemSpawns.RemoveAll(w => w.Value?.Condition != null && !w.Value.Condition.Equals("true", StringComparison.InvariantCultureIgnoreCase) && !GameStateQuery.CheckConditions(w.Value.Condition, location: location, random: r));
+            GenericSpawnItemDataWithCondition? itemSpawn = itemSpawns.Choose(r);
             if ( itemSpawn == null )
                 return false;
             Item item = ItemQueryResolver.TryResolveRandomItem(itemSpawn, new ItemQueryContext(location, null, r, "SpaceCore Spawnable Forage drops"));
 
-            StardewValley.Object obj = null;
+            StardewValley.Object? obj = null;
             if (data.ForageableIsTillSpot)
             {
                 obj = new StardewValley.Object("590", 1);
@@ -526,8 +526,8 @@ namespace SpaceCore.Dungeons
             }
 
             var itemSpawns = data.FurnitureHeldObject.ToList();
-            itemSpawns.RemoveAll(w => w.Value.Condition != null && !w.Value.Condition.Equals("true", StringComparison.InvariantCultureIgnoreCase) && !GameStateQuery.CheckConditions(w.Value.Condition, location: location, player: null, random: r));
-            GenericSpawnItemDataWithCondition itemSpawn = itemSpawns.Choose(r);
+            itemSpawns.RemoveAll(w => w.Value?.Condition != null && !w.Value.Condition.Equals("true", StringComparison.InvariantCultureIgnoreCase) && !GameStateQuery.CheckConditions(w.Value.Condition, location: location, player: null, random: r));
+            GenericSpawnItemDataWithCondition? itemSpawn = itemSpawns.Choose(r);
             if (itemSpawn != null)
             {
                 Item item = ItemQueryResolver.TryResolveRandomItem(itemSpawn, new ItemQueryContext(location, null, r, "SpaceCore Spawnable Furniture held object"));
@@ -545,7 +545,7 @@ namespace SpaceCore.Dungeons
             { "BigSlime", (pos, data) =>
             {
                 var ret = new BigSlime( pos, 0 );
-                if ( data.TryGetValue( "Color", out object val ) )
+                if ( data.TryGetValue( "Color", out object? val ) )
                 {
                     if ( val is Color c )
                         ret.c.Value = c;
@@ -562,7 +562,7 @@ namespace SpaceCore.Dungeons
             { "Bug", (pos, data) =>
             {
                 var ret = new Bug( pos, 0 );
-                if ( data.TryGetValue( "IsArmored", out object val ) && (val is string str && str.Equals( "true", StringComparison.InvariantCultureIgnoreCase )) || (val is bool b && b) )
+                if ( data.TryGetValue( "IsArmored", out object? val ) && (val is string str && str.Equals( "true", StringComparison.InvariantCultureIgnoreCase )) || (val is bool b && b) )
                     ret.isArmoredBug.Value = true;
                 return ret;
             } },
@@ -574,14 +574,14 @@ namespace SpaceCore.Dungeons
             { "Ghost", (pos, data) =>
             {
                 var ret = new Ghost( pos );
-                if ( data.TryGetValue( "IsPutrid", out object val ) && val is string str && str.Equals( "true", StringComparison.InvariantCultureIgnoreCase ) || (val is bool b && b) )
+                if ( data.TryGetValue( "IsPutrid", out object? val ) && val is string str && str.Equals( "true", StringComparison.InvariantCultureIgnoreCase ) || (val is bool b && b) )
                     ret.variant.Value = Ghost.GhostVariant.Putrid;
                 return ret;
             } },
             { "GreenSlime", (pos, data) =>
             {
                 var ret = new GreenSlime( pos, 0 );
-                if ( data.TryGetValue( "Color", out object val ) )
+                if ( data.TryGetValue( "Color", out object? val ) )
                 {
                     if ( val is Color c )
                         ret.color.Value = c;
@@ -599,7 +599,7 @@ namespace SpaceCore.Dungeons
             { "RockCrab", (pos, data) =>
             {
                 var ret = new RockCrab( pos );
-                if ( data.TryGetValue( "IsStickBug", out object val ) && val is string str && str.Equals( "true", StringComparison.InvariantCultureIgnoreCase ) || (val is bool b && b) )
+                if ( data.TryGetValue( "IsStickBug", out object? val ) && val is string str && str.Equals( "true", StringComparison.InvariantCultureIgnoreCase ) || (val is bool b && b) )
                     SpaceCore.Instance.Helper.Reflection.GetField<NetBool>(ret, "isStickBug").GetValue().Value = true;
                 return ret;
             } },
@@ -607,7 +607,7 @@ namespace SpaceCore.Dungeons
             { "Serpent", (pos, data) =>
             {
                 var ret = new Serpent( pos );
-                if ( data.TryGetValue( "SegmentCount", out object val ) )
+                if ( data.TryGetValue( "SegmentCount", out object? val ) )
                 {
                     if ( val is long l )
                         ret.segmentCount.Value = (int)l;
@@ -624,14 +624,14 @@ namespace SpaceCore.Dungeons
             { "Skeleton", (pos, data) =>
             {
                 var ret = new Skeleton( pos );
-                if ( data.TryGetValue( "IsMage", out object val ) && val is string str && str.Equals( "true", StringComparison.InvariantCultureIgnoreCase ) || (val is bool b && b) )
+                if ( data.TryGetValue( "IsMage", out object? val ) && val is string str && str.Equals( "true", StringComparison.InvariantCultureIgnoreCase ) || (val is bool b && b) )
                     ret.isMage.Value = true;
                 return ret;
             } },
             { "Spiker", (pos, data) =>
             {
                 int dir = 0;
-                if ( data.TryGetValue( "Direction", out object val ) )
+                if ( data.TryGetValue( "Direction", out object? val ) )
                 {
                     if ( val is long l )
                         dir = (int)l;
@@ -973,8 +973,8 @@ namespace SpaceCore.Dungeons
                 spawnDef.LargeMinableShavingDrop.Count > 0)
             {
                 var itemSpawns = spawnDef.LargeMinableShavingDrop.ToList();
-                itemSpawns.RemoveAll(w => w.Value.Condition != null && !w.Value.Condition.Equals("true", StringComparison.InvariantCultureIgnoreCase) && !GameStateQuery.CheckConditions(w.Value.Condition, location: __instance.Location, player: t.getLastFarmerToUse(), random: Game1.random));
-                GenericSpawnItemDataWithCondition itemSpawn = itemSpawns.Choose(Game1.random);
+                itemSpawns.RemoveAll(w => w.Value?.Condition != null && !w.Value.Condition.Equals("true", StringComparison.InvariantCultureIgnoreCase) && !GameStateQuery.CheckConditions(w.Value.Condition, location: __instance.Location, player: t.getLastFarmerToUse(), random: Game1.random));
+                GenericSpawnItemDataWithCondition? itemSpawn = itemSpawns.Choose(Game1.random);
                 if (itemSpawn != null)
                 {
                     Item item = ItemQueryResolver.TryResolveRandomItem(itemSpawn, new ItemQueryContext(__instance.Location, t.getLastFarmerToUse(), Game1.random, "SpaceCore Spawnable Large Minable shaving enchantment drops"));
@@ -1005,7 +1005,7 @@ namespace SpaceCore.Dungeons
     [HarmonyPatch(typeof(ResourceClump), nameof(ResourceClump.destroy))]
     public static class ResourceClumpDestroyForSpawnablePatch
     {
-        public static bool Prefix(ResourceClump __instance, Tool t, GameLocation location, Vector2 tileLocation, ref bool __result)
+        public static bool Prefix(ResourceClump __instance, Tool? t, GameLocation location, Vector2 tileLocation, ref bool __result)
         {
             if (!__instance.modData.TryGetValue("spacechase0.SpaceCore/LargeMinable", out string spawnId))
                 return true;
@@ -1108,7 +1108,7 @@ namespace SpaceCore.Dungeons
 
             spriteBatch.Draw(sprite_sheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(draw_x * 64f, draw_y * 64f + (float)y_offset)), data.GetSourceRect(), __instance.tint.Value, 0f, Vector2.Zero, 4f, SpriteEffects.None, base_sort_order);
             Vector2 lidPosition = new Vector2(draw_x * 64f, draw_y * 64f + (float)y_offset);
-            
+
             spriteBatch.Draw(sprite_sheet, Game1.GlobalToLocal(Game1.viewport, lidPosition), data.GetSourceRect( 0, currentLidFrame), __instance.tint.Value, 0f, Vector2.Zero, 4f, SpriteEffects.None, base_sort_order + 1E-05f);
 
             return false;
@@ -1224,7 +1224,7 @@ namespace SpaceCore.Dungeons
     public static class GameCreateDebrisPreventionPatch
     {
         public static string prevent = null;
-        public static bool Prefix(Item item)
+        public static bool Prefix(Item? item)
         {
             if (item == null) return true; // The original method will error in this case anyways, but at least people won't blame SpaceCore for it then (since it's another mod causing it)
             if (item.QualifiedItemId == prevent)

@@ -40,7 +40,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
     internal class VanillaAssetExpansion
     {
-        private static Dictionary<string, TextureOverridePackData> texs = new();
+        private static Dictionary<string, TextureOverridePackData>? texs = new();
         private static Dictionary<string, CustomCraftingRecipe> craftingRecipes = new();
         private static Dictionary<string, CustomCraftingRecipe> cookingRecipes = new();
         internal static Dictionary<string, VirtualCurrencyData> virtualCurrencies = new();
@@ -77,7 +77,7 @@ namespace SpaceCore.VanillaAssetExpansion
                     return;
                 }
 
-                SpaceCore.api.AddToVirtualCurrency(Game1.player, args[0], amt);
+                SpaceCore.api?.AddToVirtualCurrency(Game1.player, args[0], amt);
             });
 
             SpaceCore.Instance.Helper.ConsoleCommands.Add("spacecore_getcurrencyid", "...", (cmd, args) =>
@@ -94,7 +94,7 @@ namespace SpaceCore.VanillaAssetExpansion
             });
         }
 
-        private static void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e)
+        private static void GameLoop_TimeChanged(object? sender, TimeChangedEventArgs e)
         {
             if (timeTriggerActions.TryGetValue(e.NewTime, out var triggerActions))
             {
@@ -124,7 +124,7 @@ namespace SpaceCore.VanillaAssetExpansion
             }
         }
 
-        private static void GameLoop_Saving(object sender, SavingEventArgs e)
+        private static void GameLoop_Saving(object? sender, SavingEventArgs e)
         {
             if (!Game1.IsMasterGame) return;
 
@@ -135,7 +135,7 @@ namespace SpaceCore.VanillaAssetExpansion
             }
         }
 
-        private static void GameLoop_SaveLoaded(object sender, SaveLoadedEventArgs e)
+        private static void GameLoop_SaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
             if (!Game1.IsMasterGame) return;
 
@@ -150,7 +150,7 @@ namespace SpaceCore.VanillaAssetExpansion
             }
         }
 
-        private static void SpaceEvents_BeforeGiftGiven(object sender, EventArgsBeforeReceiveObject e)
+        private static void SpaceEvents_BeforeGiftGiven(object? sender, EventArgsBeforeReceiveObject e)
         {
             string npc = e.Npc.Name;
             string item = e.Gift.ItemId;
@@ -159,7 +159,7 @@ namespace SpaceCore.VanillaAssetExpansion
             if (!dict.TryGetValue(item, out var data))
                 return;
 
-            if (data.GiftableToNpcDisallowList != null && data.GiftableToNpcDisallowList.TryGetValue(npc, out string disallowed) && disallowed != null)
+            if (data.GiftableToNpcDisallowList != null && data.GiftableToNpcDisallowList.TryGetValue(npc, out string? disallowed) && disallowed != null)
             {
                 if (!e.Probe)
                 {
@@ -180,7 +180,7 @@ namespace SpaceCore.VanillaAssetExpansion
             }
         }
 
-        private static void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
+        private static void GameLoop_GameLaunched(object? sender, GameLaunchedEventArgs e)
         {
             SetupTriggerActionCache();
             SetupTextureOverrides();
@@ -190,15 +190,15 @@ namespace SpaceCore.VanillaAssetExpansion
             SetupTimedTriggerActions();
 
             var sc = SpaceCore.Instance.Helper.ModRegistry.GetApi<ISpaceCoreApi>("spacechase0.SpaceCore");
-            sc.RegisterCustomProperty(typeof(Farmer), "SpaceCore_PersonalCurrencies", typeof(NetStringDictionary<int, NetIntDelta>), AccessTools.Method(typeof(VirtualCurrencyExtensions), nameof(VirtualCurrencyExtensions.get_PersonalCurrencies)), AccessTools.Method(typeof(VirtualCurrencyExtensions), nameof(VirtualCurrencyExtensions.set_PersonalCurrencies)));
+            sc?.RegisterCustomProperty(typeof(Farmer), "SpaceCore_PersonalCurrencies", typeof(NetStringDictionary<int, NetIntDelta>), AccessTools.Method(typeof(VirtualCurrencyExtensions), nameof(VirtualCurrencyExtensions.get_PersonalCurrencies)), AccessTools.Method(typeof(VirtualCurrencyExtensions), nameof(VirtualCurrencyExtensions.set_PersonalCurrencies)));
         }
 
-        private static void GameLoop_LocaleChanged(object sender, LocaleChangedEventArgs e)
+        private static void GameLoop_LocaleChanged(object? sender, LocaleChangedEventArgs e)
         {
             SetupTextureOverrides();
         }
 
-        private static void Content_AssetInvalidated(object sender, AssetsInvalidatedEventArgs e)
+        private static void Content_AssetInvalidated(object? sender, AssetsInvalidatedEventArgs e)
         {
             //Console.WriteLine("meow:" + string.Concat(e.NamesWithoutLocale.Select(an => an.ToString())));
             if (e.NamesWithoutLocale.Any(an => an.IsEquivalentTo("Data/TriggerActions")))
@@ -350,7 +350,7 @@ namespace SpaceCore.VanillaAssetExpansion
             }
         }
 
-        private static void GameLoop_UpdateTicking(object sender, UpdateTickingEventArgs e)
+        private static void GameLoop_UpdateTicking(object? sender, UpdateTickingEventArgs e)
         {
             if (manualTriggerActionsDirty)
             {
@@ -359,7 +359,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
             if (Context.ScreenId == 0)
             {
-                foreach (var kvp in texs)
+                foreach (var kvp in texs ?? [])
                 {
                     var texOverride = kvp.Value;
                     if (++texOverride.currFrameTick >= texOverride.animation.Frames[texOverride.currFrame].Duration)
@@ -445,7 +445,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
                 while (rings.Count > 0)
                 {
-                    Ring r = rings.Dequeue();
+                    Ring? r = rings.Dequeue() ?? null;
                     if (r == null)
                         continue;
 
@@ -494,7 +494,7 @@ namespace SpaceCore.VanillaAssetExpansion
             }
         }
 
-        private static void SpaceEvents_OnItemEaten(object sender, EventArgs e)
+        private static void SpaceEvents_OnItemEaten(object? sender, EventArgs e)
         {
             var farmer = sender as Farmer;
             if (farmer != Game1.player)
@@ -504,7 +504,7 @@ namespace SpaceCore.VanillaAssetExpansion
             TriggerActionManager.Raise("spacechase0.SpaceCore_OnItemEaten", location: Game1.player.currentLocation, player: Game1.player, inputItem: Game1.player.itemToEat);
         }
 
-        private static void SpaceEvents_AfterGiftGiven(object sender, EventArgsGiftGiven e)
+        private static void SpaceEvents_AfterGiftGiven(object? sender, EventArgsGiftGiven e)
         {
             var farmer = sender as Farmer;
             if (farmer != Game1.player) return;
@@ -513,7 +513,7 @@ namespace SpaceCore.VanillaAssetExpansion
             if (!dict.TryGetValue(e.Npc.Name, out var npcEntry))
                 return;
 
-            if (!npcEntry.GiftEventTriggers.TryGetValue(e.Gift.ItemId, out string eventStr))
+            if (!npcEntry.GiftEventTriggers.TryGetValue(e.Gift.ItemId, out string? eventStr))
                 return;
 
             string[] data = eventStr.Split('/');
@@ -522,7 +522,7 @@ namespace SpaceCore.VanillaAssetExpansion
             Game1.PlayEvent(eid, checkPreconditions: false);
         }
 
-        private static void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
+        private static void Content_AssetRequested(object? sender, AssetRequestedEventArgs e)
         {
             if (e.NameWithoutLocale.IsEquivalentTo("spacechase0.SpaceCore/ObjectExtensionData"))
                 e.LoadFrom(() => new Dictionary<string, ObjectExtensionData>(), AssetLoadPriority.Low);

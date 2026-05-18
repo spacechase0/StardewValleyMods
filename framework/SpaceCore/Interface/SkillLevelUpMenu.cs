@@ -38,14 +38,14 @@ namespace SpaceCore.Interface
         private string currentSkill; // Used to be int
         private int timerBeforeStart;
         private MouseState oldMouseState;
-        public ClickableTextureComponent starIcon;
+        public ClickableTextureComponent? starIcon;
         public ClickableTextureComponent okButton;
-        public ClickableComponent leftProfession;
-        public ClickableComponent rightProfession;
+        public ClickableComponent? leftProfession;
+        public ClickableComponent? rightProfession;
         private string title;
         public bool hasMovedSelection;
 
-        private Skills.Skill.ProfessionPair profPair;
+        private Skills.Skill.ProfessionPair? profPair;
 
         /*
         public LevelUpMenu()
@@ -171,7 +171,7 @@ namespace SpaceCore.Interface
             //Get Crafting Recipes learned at this level
             List<CraftingRecipe> levelUpCraftingRecipes = GetCraftingRecipesForLevel(this.currentSkill, this.currentLevel);
 
-            if (levelUpCraftingRecipes is not null && levelUpCraftingRecipes.Count > 0)
+            if (levelUpCraftingRecipes.Count > 0)
             {
                 foreach (CraftingRecipe recipe in levelUpCraftingRecipes.Where(r => !Game1.player.craftingRecipes.ContainsKey(r.name)))
                 {
@@ -182,7 +182,7 @@ namespace SpaceCore.Interface
             //Get Cooking Recipes learned at this level
             List<CraftingRecipe> levelUpCookingRecipes = GetCookingRecipesForLevel(this.currentSkill, this.currentLevel);
 
-            if (levelUpCookingRecipes is not null && levelUpCookingRecipes.Count > 0)
+            if (levelUpCookingRecipes.Count > 0)
             {
                 foreach (CraftingRecipe recipe in levelUpCookingRecipes.Where(r => !Game1.player.cookingRecipes.ContainsKey(r.name)))
                 {
@@ -473,7 +473,7 @@ namespace SpaceCore.Interface
             List<string> descriptions = new List<string>();
             SkillLevelUpMenu.addProfessionDescriptions(descriptions, SkillLevelUpMenu.getProfessionName(whichProfession));
             return descriptions;
-            /* 
+            /*
             List<string> descriptions = new List<string>();
             LevelUpMenu.addProfessionDescriptions(descriptions, LevelUpMenu.getProfessionName(whichProfession));
             return descriptions;
@@ -697,7 +697,7 @@ namespace SpaceCore.Interface
                         var skill = Skills.SkillsByName[this.currentSkill];
                         this.profPair = null;
                         foreach (var pair in skill.ProfessionsForLevels)
-                            if (pair.Level == this.currentLevel && Game1.player.professions.Contains(pair.Requires.GetVanillaId()))
+                            if (pair.Level == this.currentLevel && pair.Requires?.GetVanillaId() != null && Game1.player.professions.Contains(pair.Requires.GetVanillaId()))
                             {
                                 this.profPair = pair;
                                 break;
@@ -849,20 +849,20 @@ namespace SpaceCore.Interface
                     this.drawHorizontalPartition(b, this.yPositionOnScreen + 192);
                     this.drawVerticalIntersectingPartition(b, this.xPositionOnScreen + this.width / 2 - 32, this.yPositionOnScreen + 192);
                     if (Skills.SkillsByName[this.currentSkill].Icon != null)
-                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
+                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon!.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
                     b.DrawString(Game1.dialogueFont, this.title, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.dialogueFont.MeasureString(this.title).X / 2f, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
                     if (Skills.SkillsByName[this.currentSkill].Icon != null)
-                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
+                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon!.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
                     string text = Game1.content.LoadString("Strings\\UI:LevelUp_ChooseProfession");
                     b.DrawString(Game1.smallFont, text, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.smallFont.MeasureString(text).X / 2f, this.yPositionOnScreen + 64 + IClickableMenu.spaceToClearTopBorder), Game1.textColor);
                     b.DrawString(Game1.dialogueFont, this.leftProfessionDescription[0], new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.leftProfessionColor);
-                    if (this.profPair.First.Icon != null)
+                    if (this.profPair?.First.Icon != null)
                         b.Draw(this.profPair.First.Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2 - 112, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
                     //b.Draw(Game1.mouseCursors, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2 - 112), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16)), new Rectangle(this.professionsToChoose[0] % 6 * 16, 624 + this.professionsToChoose[0] / 6 * 16, 16, 16), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
                     for (int index = 1; index < this.leftProfessionDescription.Count; ++index)
                         b.DrawString(Game1.smallFont, Game1.parseText(this.leftProfessionDescription[index], Game1.smallFont, this.width / 2 - 64), new Vector2(this.xPositionOnScreen - 4 + IClickableMenu.spaceToClearSideBorder + 32, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 128 + 8 + 64 * (index + 1)), this.leftProfessionColor);
                     b.DrawString(Game1.dialogueFont, this.rightProfessionDescription[0], new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width / 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160), this.rightProfessionColor);
-                    if (this.profPair.Second.Icon != null)
+                    if (this.profPair?.Second.Icon != null)
                         b.Draw(this.profPair.Second.Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width - 128, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16), new Rectangle(0, 0, 16, 16), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
                     //b.Draw(Game1.mouseCursors, new Vector2((float)(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + this.width - 128), (float)(this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 160 - 16)), new Rectangle(this.professionsToChoose[1] % 6 * 16, 624 + this.professionsToChoose[1] / 6 * 16, 16, 16), Color.White, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
                     for (int index = 1; index < this.rightProfessionDescription.Count; ++index)
@@ -872,10 +872,10 @@ namespace SpaceCore.Interface
                 {
                     Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
                     if (Skills.SkillsByName[this.currentSkill].Icon != null)
-                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
+                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon!.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
                     b.DrawString(Game1.dialogueFont, this.title, new Vector2(this.xPositionOnScreen + this.width / 2 - Game1.dialogueFont.MeasureString(this.title).X / 2f, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Game1.textColor);
                     if (Skills.SkillsByName[this.currentSkill].Icon != null)
-                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
+                        Utility.drawWithShadow(b, Skills.SkillsByName[this.currentSkill].Icon, new Vector2(this.xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 16), Skills.SkillsByName[this.currentSkill].Icon!.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, false, 0.88f);
                     int num = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + 80;
                     foreach (string text in this.extraInfoForLevel)
                     {

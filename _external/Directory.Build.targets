@@ -3,7 +3,8 @@
   <PropertyGroup>
     <ForceNetVersion>false</ForceNetVersion>
     <ForceMonoGameVersion>true</ForceMonoGameVersion>
-    <DebugType>embedded</DebugType>
+    <!-- TODO: The following line is making-->
+    <!--<DebugType>embedded</DebugType>-->
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('MonoScene'))">

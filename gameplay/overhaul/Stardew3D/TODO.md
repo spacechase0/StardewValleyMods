@@ -14,6 +14,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
     * OpenVR.Net hasn't been updated in years, and I'm not even sure if it used the latest version for when it did.
     * I'm already ignoring most of what it provides on top and just use base OpenVR directly, since I couldn't get the added stuff working right
     * I remember having other problems with whatever binding I used before OpenVR.Net
+* Make `TileSpot` match `Game1.(up|down|left|right)`
 
 # Asset Workflow
 * In-game editors for:
@@ -90,8 +91,7 @@ No particular order of priority. Some of these definitely fall into "feature cre
     * MP support would be tricky
 
 # Interactions
-* Change interaction coordinate space to be a relative coordinate space
-    * This would allow a single interaction definition for entire classes of things (ex. furniture)
+...
 
 # Polish
 * Make optional the highlight/outline for when a cursor is pointing at something

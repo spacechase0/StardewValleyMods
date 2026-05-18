@@ -52,7 +52,7 @@ namespace SpaceCore
                     upNeighborID = (iy > 0) ? (100 + ir - PerRow) : -1,
                     downNeighborID = (ir < amt - PerRow) ? (100 + ir + PerRow) : inventory.inventory[0].myID,
                     label = slot.Value.DisplayName(),
-                    item = SpaceCore.api.GetItemInEquipmentSlot(Game1.player, slot.Key),
+                    item = SpaceCore.api?.GetItemInEquipmentSlot(Game1.player, slot.Key),
                     name = slot.Key,
                 };
 
@@ -60,7 +60,7 @@ namespace SpaceCore
 
                 if (!ext.ExtraEquippables.ContainsKey(slot.Key))
                 {
-                    ext.ExtraEquippables.Add(slot.Key, (Item)null);
+                    ext.ExtraEquippables.Add(slot.Key, (Item)null!);
                 }
 
                 ++ir;

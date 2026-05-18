@@ -225,13 +225,6 @@ Shed
 Shed2
 SkullCave
 SkullCaveAltar
-SkyFarm
-SkyFarm_Cavern
-SkyFarm_SeasonalWarpIsland_Fall
-SkyFarm_SeasonalWarpIsland_Spring
-SkyFarm_SeasonalWarpIsland_Summer
-SkyFarm_SeasonalWarpIsland_Winter
-SkyFarm_Template
 SlimeHutch
 Stadium
 Submarine

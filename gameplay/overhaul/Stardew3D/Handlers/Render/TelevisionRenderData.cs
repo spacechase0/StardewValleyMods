@@ -26,7 +26,7 @@ public class TelevisionRenderData : RenderData<TelevisionRenderer>
 
     public override void Update(RenderContext ctx)
     {
-        if (instance == null || instance.WhichMatch >= Model?.Matches.Count)
+        if (Model == null || instance == null || instance.WhichMatch >= Model?.Matches.Count)
         {
             base.Update(ctx);
             return;

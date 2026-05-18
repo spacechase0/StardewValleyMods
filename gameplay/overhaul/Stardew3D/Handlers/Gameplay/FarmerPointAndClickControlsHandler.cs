@@ -14,12 +14,9 @@ using StardewValley.TerrainFeatures;
 namespace Stardew3D.Handlers.Gameplay;
 internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandler
 {
-    public readonly IGameMode GameMode;
-
     public FarmerPointAndClickControlsHandler(IGameMode mode, Farmer obj)
         : base(mode, obj, 4)
     {
-        GameMode = mode;
     }
 
     public class SelectionData
@@ -110,12 +107,12 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                     }
                     else if (o.IsSpawnedObject)
                     {
-                        int oldQual = o.quality.Value;
+                        int oldQual = o.Quality;
                         Random rand = Utility.CreateDaySaveRandom(o.TileLocation.X, o.TileLocation.Y * 777);
                         if (o.isForage())
                             o.Quality = o.Location.GetHarvestSpawnedObjectQuality(Object, o.isForage(), o.TileLocation, rand);
 
-                        if (o.questItem.Value && o.questId != null && o.questId.Value != "0" && !Object.hasQuest(o.questId.Value))
+                        if (o.questItem.Value && o.questId.Value != null && o.questId.Value != "0" && !Object.hasQuest(o.questId.Value))
                             break;
 
                         if (Object.couldInventoryAcceptThisItem(o))

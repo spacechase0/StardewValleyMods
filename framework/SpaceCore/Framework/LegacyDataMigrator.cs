@@ -42,7 +42,7 @@ namespace SpaceCore.Framework
             {
                 this.DataHelper.WriteSaveData("sleepy-eye", null as object);
 
-                FileInfo legacyFile = new FileInfo(Path.Combine(Constants.CurrentSavePath, "sleepy-eye.json"));
+                FileInfo legacyFile = new FileInfo(Path.Combine(Constants.CurrentSavePath!, "sleepy-eye.json"));
                 if (legacyFile.Exists)
                     legacyFile.Delete();
             }
@@ -51,7 +51,7 @@ namespace SpaceCore.Framework
             {
                 IDictionary<int, KnownProfession> oldProfessions = this.GetKnownProfessions().ToDictionary(p => p.OldVanillaId);
 
-                string forGameVersionLabel = SemanticVersion.TryParse(Game1.version, out ISemanticVersion gameVersion) && gameVersion.IsOlderThan("1.5.5")
+                string forGameVersionLabel = SemanticVersion.TryParse(Game1.version, out ISemanticVersion? gameVersion) && gameVersion.IsOlderThan("1.5.5")
                     ? "the upcoming Stardew Valley 1.5.5"
                     : $"Stardew Valley {Game1.version}";
 
@@ -62,7 +62,7 @@ namespace SpaceCore.Framework
                     for (int i = 0; i < professions.Count; i++)
                     {
                         int id = professions[i];
-                        if (oldProfessions.TryGetValue(id, out KnownProfession profession))
+                        if (oldProfessions.TryGetValue(id, out KnownProfession? profession))
                         {
                             this.Monitor.LogOnce($"Custom profession IDs changed for compatibility with {forGameVersionLabel}.", LogLevel.Info);
                             this.Monitor.LogOnce($"Migrating professions for {player.Name}...", LogLevel.Info);
@@ -100,7 +100,7 @@ namespace SpaceCore.Framework
                 new("EquivalentExchange.Alchemy", "Sage", -362266530),       // Sage
                 new("EquivalentExchange.Alchemy", "Shaper", 62801863),       // Shaper
                 new("EquivalentExchange.Alchemy", "Transmuter", 1651221136), // Transmuter
-                
+
                 // Magic
                 new("spacechase0.Magic", "FifthSpellSlot", -1668120241), // Memory
                 new("spacechase0.Magic", "ManaCap", -6997631),           // Mana Reserve

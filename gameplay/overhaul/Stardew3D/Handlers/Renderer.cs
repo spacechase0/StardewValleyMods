@@ -22,7 +22,10 @@ public abstract class Renderer : IRenderHandler
         {
             BaseModelData = ModelData.Get(entry);
             if (BaseModelData != null)
+            {
+                QualifiedId = entry;
                 break;
+            }
         }
     }
 

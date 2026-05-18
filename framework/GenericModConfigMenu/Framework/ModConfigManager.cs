@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using StardewModdingAPI;
 
 namespace GenericModConfigMenu.Framework
@@ -22,14 +23,14 @@ namespace GenericModConfigMenu.Framework
         /// <param name="assert">Whether to throw an exception if the mod doesn't have a registered config.</param>
         /// <exception cref="ArgumentNullException">The manifest is null.</exception>
         /// <exception cref="ArgumentException">The manifest is missing required fields.</exception>
-        /// <exception cref="KeyNotFoundException">The mod doesn't have a registered config, and <paramref name="assert"/> is true.</exception>
-        public ModConfig Get(IManifest manifest, bool assert)
+        /// <exception cref="KeyNotFoundException">The mod doesn't have a registered config, and <paramref name="assert"/> is true.</exception> ]
+        public ModConfig? Get(IManifest? manifest, bool assert)
         {
             this.AssertManifest(manifest);
 
             lock (this.Configs)
             {
-                if (this.Configs.TryGetValue(manifest.UniqueID, out ModConfig value))
+                if (this.Configs.TryGetValue(manifest!.UniqueID, out ModConfig? value))
                     return value;
 
                 return assert
@@ -85,7 +86,7 @@ namespace GenericModConfigMenu.Framework
         /// <param name="manifest">The manifest to validate.</param>
         /// <exception cref="ArgumentNullException">The manifest is null.</exception>
         /// <exception cref="ArgumentException">The manifest is missing required fields.</exception>
-        private void AssertManifest(IManifest manifest)
+        private void AssertManifest(IManifest? manifest)
         {
             if (manifest == null)
                 throw new ArgumentNullException(nameof(manifest));

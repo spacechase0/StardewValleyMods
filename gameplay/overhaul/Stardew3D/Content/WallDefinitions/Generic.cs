@@ -1,11 +1,19 @@
 using SpaceShared.Attributes;
 using Stardew3D.DataModels;
+using StardewValley;
 
 namespace Stardew3D.Content.WallDefinitions;
 
 [DictionaryAssetData<WallDefinitionData>("WallDefinitions", "$/&", OwnedAsset = true)]
 internal partial class Generic : SpaceShared.Content.BaseDictionaryAssetData
 {
+    public WallDefinitionData Error => new()
+    {
+        VerticalSegments =
+        [
+            new() { Tilesheet = Game1.mouseCursorsName, TextureRegion = new(20 * 16, 31 * 16, 16, 16), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Stretch },
+        ],
+    };
     public WallDefinitionData GenericHouseWall => new()
     {
         VerticalSegments =
@@ -32,22 +40,6 @@ internal partial class Generic : SpaceShared.Content.BaseDictionaryAssetData
             new () { Tilesheet = "Maps/Mines/mine", TextureRegion = new ( 10 * 16, 4 * 16, 16, 16) },
             new () { Tilesheet = "Maps/Mines/mine", TextureRegion = new ( 10 * 16, 5 * 16, 16, 32), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
             new() { Tilesheet = "Maps/Mines/mine", TextureRegion = new(10 * 16, 6 * 16, 16, 16) },
-        ],
-    };
-
-    public WallDefinitionData BusTunnelWall => new()
-    {
-        VerticalSegments =
-        [
-            new() { Tilesheet = "Maps/spring_outdoorsTileSheet", TextureRegion = new( 80, 1088, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
-        ],
-    };
-
-    public WallDefinitionData BusTunnelEdgeWall => new()
-    {
-        VerticalSegments =
-        [
-            new() { Tilesheet = "Maps/spring_outdoorsTileSheet", TextureRegion = new( 96, 1072, 16, 9 ) },
         ],
     };
 }

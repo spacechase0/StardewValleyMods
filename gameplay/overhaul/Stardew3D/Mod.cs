@@ -73,6 +73,7 @@ public static class WorkaroundMaybeBugInOpenVRDotNet
 
 namespace Stardew3D
 {
+#pragma warning disable CS0436
     [HasConfig<Configuration>]
     [HasContent]
     [HasState<State>]
@@ -236,12 +237,9 @@ namespace Stardew3D
 
 
             // TODO: hook up to keybind
-            if (e.Pressed.Contains(SButton.Delete) && e.Pressed.Contains(SButton.LeftControl))
+            if (e.Pressed.Contains(SButton.Delete) && e.Held.Contains(SButton.LeftControl))
             {
-                // Can clear render caches and stuff
-                State.ActiveMode?.SwitchOff(State.ActiveMode);
                 State.ClearHandlerState();
-                State.ActiveMode?.SwitchOn(State.ActiveMode);
             }
         }
 

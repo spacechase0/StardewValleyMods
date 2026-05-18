@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- This *could* be a Directory.Build.props/targets, but I'd have to -->
   <!-- move the folders of every mod again (because of the non-mod stuff like shared projects and submodules)... -->
-  
+
   <!--common project properties-->
   <PropertyGroup>
     <Authors>kittycatcasey</Authors>
@@ -17,21 +17,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <!-- Reference packages/projects that everything uses -->
-  <ItemGroup> 
+  <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.2-casey" />
     <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.4.0" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(GamePath)/smapi-internal/Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <PropertyGroup>
     <PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
   </PropertyGroup>
@@ -79,5 +81,10 @@
     <StartAction>Program</StartAction>
     <StartProgram>/Users/spacechase0/Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS\StardewModdingAPI</StartProgram>
     <StartWorkingDirectory>/Users/spacechase0/Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS</StartWorkingDirectory>
+  </PropertyGroup>
+
+  <!-- Fixes hot reload sometimes breaking, for some reason? -->
+  <PropertyGroup Condition="$(Configuration) == 'Debug'">
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 </Project>

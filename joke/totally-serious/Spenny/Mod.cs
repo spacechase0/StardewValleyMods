@@ -7,7 +7,7 @@ namespace Spenny
 {
     internal class Mod : StardewModdingAPI.Mod
     {
-        public static Mod Instance;
+        public static Mod Instance = null!;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -22,7 +22,7 @@ namespace Spenny
         /// <summary>Raised after the game state is updated (≈60 times per second).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
         {
             if (e.IsMultipleOf(8))
             {

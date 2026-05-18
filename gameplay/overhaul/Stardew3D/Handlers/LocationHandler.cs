@@ -32,6 +32,22 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
     }
     internal Dictionary<Texture2D, (VertexBuffer Vertices, IndexBuffer Indices, int[] IndexData, List<AnimationData> Animations)> vbos = new();
 
+    public class WallData
+    {
+        public float LeftOffset;
+        public float RightOffset;
+        public float LeftSize;
+        public float RightSize;
+
+        public WallData(float offsetL, float offsetR, float sizeL, float sizeR)
+        {
+            LeftOffset = offsetL;
+            RightOffset = offsetR;
+            LeftSize = sizeL;
+            RightSize = sizeR;
+        }
+    }
+
     internal VertexBuffer waterVbo;
     internal List<SimpleVertex> waterVertices = new();
 
@@ -43,9 +59,10 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
     public DimensionUtils.PositionResult[,] floorData;
     public DimensionUtils.PositionResult[,] ceilingData;
     public DimensionUtils.PositionResult[,] waterData;
+    public WallData[,,] wallData;
 
     [Flags]
-    public enum ShowMissingType
+    public enum TerrainType
     {
         None = 0,
 
@@ -54,7 +71,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         Water = 1 << 2,
         Walls = 1 << 3,
     }
-    public ShowMissingType ShowMissing = ShowMissingType.None;
+    public TerrainType ShowMissing = TerrainType.None;
 
     public LocationHandler(GameLocation obj)
         : base(obj)
@@ -166,11 +183,11 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
 
         Dictionary<string, Texture2D> texLookup = new();
 
-        ShowMissingType[,] missing = new ShowMissingType[Object.Map.Layers[0].LayerWidth, Object.Map.Layers[0].LayerHeight];
+        TerrainType[,] missing = new TerrainType[Object.Map.Layers[0].LayerWidth, Object.Map.Layers[0].LayerHeight];
         for (int iy = 0; iy < missing.GetLength(1); ++iy)
         {
             for (int ix = 0; ix < missing.GetLength(0); ++ix)
-                missing[ix, iy] = ShowMissingType.Ceiling | ShowMissingType.Floor;
+                missing[ix, iy] = TerrainType.Ceiling | TerrainType.Floor;
         }
 
         List<Layer> applicableLayers = new();
@@ -195,7 +212,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
             {
                 foreach (var layer in applicableLayers)
                 {
-                    ShowMissingType type = ceilingLayers.Contains(layer) ? ShowMissingType.Ceiling : ShowMissingType.Floor;
+                    TerrainType type = ceilingLayers.Contains(layer) ? TerrainType.Ceiling : TerrainType.Floor;
                     bool showError = false;
                     if (missing[ix, iy].HasFlag(type) && ShowMissing.HasFlag(type))
                         showError = layer.Id is "___dummyfloorlayer" or "___dummyceilinglayer";
@@ -205,13 +222,13 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         continue;
 
                     Color col = Color.White;
-                    var tilePos = type == ShowMissingType.Ceiling ? ceilingData[ix, iy] : floorData[ix, iy];
+                    var tilePos = type == TerrainType.Ceiling ? ceilingData[ix, iy] : floorData[ix, iy];
                     if (tilePos.ShouldHide)
                     {
                         if (ShowMissing.HasFlag(type))
                         {
                             tilePos.Position.Y = 0;
-                            tilePos.QuadFacingNormal = type == ShowMissingType.Ceiling ? Vector3.Down : Vector3.Up;
+                            tilePos.QuadFacingNormal = type == TerrainType.Ceiling ? Vector3.Down : Vector3.Up;
                             tilePos.QuadVert00.Y = 0;
                             tilePos.QuadVert10.Y = 0;
                             tilePos.QuadVert01.Y = 0;
@@ -259,7 +276,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         SimpleVertex v01 = new(tilePos.Position + tilePos.QuadVert01, new Vector2(tx, ty + theight), col);
                         SimpleVertex v11 = new(tilePos.Position + tilePos.QuadVert11, new Vector2(tx + twidth, ty + theight), col);
                         int startInd = verts.Verts.Count;
-                        if (type == ShowMissingType.Ceiling)
+                        if (type == TerrainType.Ceiling)
                         {
                             verts.Verts.Add(v00);
                             verts.Verts.Add(v10);
@@ -339,7 +356,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         hasWater = true;
                     }
 
-                    if (hasWater || ShowMissing.HasFlag(ShowMissingType.Water))
+                    if (hasWater || ShowMissing.HasFlag(TerrainType.Water))
                     {
                         var water = waterData[ix, iy];
                         waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2(texRect.X, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
@@ -354,6 +371,44 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         }
     }
 
+    internal static readonly string[] dirNames = ["West", "North", "East", "South"];
+    internal IEnumerable<string> GetWallDefsFor(int ix, int iy, int facing, bool withPlayerData = true, Layer dataLayer = null)
+    {
+        if (withPlayerData && Object is DecoratableLocation deco)
+        {
+            string floor = deco.GetFloorID(ix, iy);
+            if (!string.IsNullOrEmpty(floor))
+            {
+                deco.appliedWallpaper.TryGetValue(floor, out string wallSource);
+                if (wallSource == null && deco.appliedWallpaper.Keys.FirstOrDefault(k => k.StartsWith($"{floor}_")) is string wallKey)
+                {
+                    deco.appliedWallpaper.TryGetValue(wallKey, out wallSource);
+                }
+
+                var data = deco.GetWallpaperSource(wallSource ?? "");
+                if (data.Key != null)
+                {
+                    var ts = deco.Map.RequireTileSheet(data.Key);
+                    int width = ts.SheetWidth;
+                    int ind = data.Value / width * width * 3 + data.Value % width;
+                    yield return $"{ts.ImageSource}:ind";
+                }
+            }
+        }
+
+        Point check = new(ix, iy);
+        switch (facing)
+        {
+            case 0: check.X -= 1; break;
+            case 1: check.Y -= 1; break;
+            case 2: check.X += 1; break;
+            case 3: check.Y += 1; break;
+        }
+        yield return $"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Buildings"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Buildings")}";
+        yield return $"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Back")}";
+        yield return Object.doesTileHaveProperty(ix, iy, "Type", "Back") ?? "Default";
+    }
+
     private void BuildWalls(Dictionary<Texture2D, VertexData> output)
     {
         int mapWidth = Object.Map.Layers[0].LayerWidth, mapHeight = Object.Map.Layers[0].LayerHeight;
@@ -366,17 +421,14 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
             return data[ x, y ];
         }
 
+        wallData = new WallData[mapWidth, mapHeight, 4];
+
         const float tuck = 0.00001f;
 
-        for (int ix = -1; ix <= Object.Map.Layers[0].LayerSize.Width; ++ix)
+        for (int ix = -1; ix <= mapWidth; ++ix)
         {
-            for (int iy = -1; iy <= Object.Map.Layers[0].LayerSize.Height; ++iy)
+            for (int iy = -1; iy <= mapHeight; ++iy)
             {
-                var assocData = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Buildings"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Buildings")}");
-                assocData ??= FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(ix, iy, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(ix, iy), "Back")}");
-                assocData ??= FloorWallAssociationData.Get(Object.doesTileHaveProperty(ix, iy, "Type", "Back") ?? "Default");
-
-                WallDefinitionData wallDef_ = WallDefinitionData.Get(assocData?.WallDefinitionId ?? "");
                 //if (assocData != null)
                 {
                     var tileFloor = LookupPosition(ceiling: false, ix, iy);
@@ -411,13 +463,17 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
 
                     var customWallSize = new float?[4];
                     var customWallOffset = new float?[4];
-                    WallDefinitionData[] customWallDefs = [wallDef_, wallDef_, wallDef_, wallDef_];
+                    WallDefinitionData[] customWallDefs = new WallDefinitionData[4];
                     string[] dirNames = ["West", "North", "East", "South"];
+                    var customWallSizeMods = new float[4][];
+                    var customWallOffsetMods = new float[4][];
                     for (int i = 0; i < customWallSize.Count(); ++i)
                     {
-                        string dataSizeLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Size";
-                        string dataOffsetLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Offset";
+                        string dataBaseLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}";
+                        string dataSizeLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Size_{dirNames[i]}";
+                        string dataOffsetLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Offset_{dirNames[i]}";
 
+                        var dataBase = Object.Map.GetLayer(dataBaseLayer);
                         var dataSize = Object.Map.GetLayer(dataSizeLayer);
                         var dataOffset = Object.Map.GetLayer(dataOffsetLayer);
 
@@ -427,37 +483,8 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         customWallSize[i] = sizeInd != -1 ? DimensionUtils.GetValueForDataTileIndex(sizeInd) : null;
                         customWallOffset[i] = offsetInd != -1 ? DimensionUtils.GetValueForDataTileIndex(offsetInd) : null;
 
-                        if ((dataSize?.Tiles[ix, iy]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var wallDefId) ?? false) &&
-                            WallDefinitionData.Get(wallDefId) is WallDefinitionData wallDef)
-                        {
-                            customWallDefs[i] = wallDef;
-                        }
-
-                        if (customWallDefs[i] == null)
-                        {
-                            Point check = new(ix, iy);
-                            switch (i)
-                            {
-                                case 0: check.X -= 1; break;
-                                case 1: check.Y -= 1; break;
-                                case 2: check.X += 1; break;
-                                case 3: check.Y += 1; break;
-                            }
-
-                            var tmpAssoc = FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Buildings"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Buildings")}");
-                            //tmpAssoc ??= FloorWallAssociationData.Get($"{PathUtilities.NormalizeAssetName(Object.Map.GetTileSheet(Object.getTileSheetIDAt(check.X, check.Y, "Back"))?.ImageSource)}:{Object.getTileIndexAt(new Point(check.X, check.Y), "Back")}");
-                            //tmpAssoc ??= FloorWallAssociationData.Get(Object.doesTileHaveProperty(check.X, check.Y, "Type", "Back") ?? "Default");
-                            if (WallDefinitionData.Get(tmpAssoc?.WallDefinitionId ?? "") is WallDefinitionData validWallDef)
-                                customWallDefs[i] = validWallDef;
-                            //if (customWallDefs[i] == null)
-                            {
-                                if ((dataSize?.Tiles[check.X, check.Y]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var tmpWallDefId) ?? false) &&
-                                    WallDefinitionData.Get(tmpWallDefId) is WallDefinitionData tmpWallDef)
-                                {
-                                    customWallDefs[i] = tmpWallDef;
-                                }
-                            }
-                        }
+                        if (dataBase?.Tiles[ix, iy]?.Properties?.TryGetValue("kittycatcasey.Stardew3D/WallDefinitionOverride", out var wallDefId) ?? false)
+                            customWallDefs[i] = WallDefinitionData.Get(wallDefId);
 
                         if (Object is DecoratableLocation deco)
                         {
@@ -496,19 +523,45 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                                 }
                             }
                         }
-                    }
-                    var customWallSizeMods = new float[4];
-                    var customWallOffsetMods = new float[4];
-                    foreach (var spot in Enum.GetValues<TileSpot>())
-                    {
-                        string dataSizeModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallSizeData_{spot}";
-                        string dataOffsetModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallOffsetData_{spot}";
 
-                        if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataSizeModifierLayer) is Layer sizeLayer)
-                            DimensionUtils.ModifyValueForDataTileIndex(spot, sizeLayer.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
+                        if (customWallDefs[i] == null)
+                        {
+                            foreach (string wallToTry in GetWallDefsFor(ix, iy, i, dataLayer: dataSize))
+                            {
+                                if (wallToTry == null)
+                                    continue;
 
-                        if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataOffsetModifierLayer) is Layer offsetLayer)
-                            DimensionUtils.ModifyValueForDataTileIndex(spot, offsetLayer.GetTileIndexAt(ix, iy), ref customWallSizeMods[0], ref customWallSizeMods[1], ref customWallSizeMods[3], ref customWallSizeMods[2]);
+                                var floorWall = FloorWallAssociationData.Get(wallToTry);
+                                var wall = floorWall != null ? WallDefinitionData.Get(floorWall.WallDefinitionId) : null;
+                                if (wall != null)
+                                {
+                                    customWallDefs[i] = wall;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (customWallDefs[i] == null && ShowMissing.HasFlag(TerrainType.Walls))
+                        {
+                            customWallDefs[i] = WallDefinitionData.Get($"{Mod.Instance.ModManifest.UniqueID}/Error");
+                        }
+
+                        customWallSizeMods[i] = new float[4];
+                        customWallOffsetMods[i] = new float[4];
+                        foreach (var spot in Enum.GetValues<TileSpot>())
+                        {
+                            if (dirNames[i] == spot.ToString())
+                                continue;
+
+                            string dataSizeModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Size_{spot}";
+                            string dataOffsetModifierLayer = $"{Mod.Instance.ModManifest.UniqueID}/WallData_{dirNames[i]}_Offset_{spot}";
+
+                            if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataSizeModifierLayer) is Layer sizeLayer)
+                                DimensionUtils.ModifyValueForDataTileIndex(spot, sizeLayer.GetTileIndexAt(ix, iy), ref customWallSizeMods[i][0], ref customWallSizeMods[i][1], ref customWallSizeMods[i][3], ref customWallSizeMods[i][2]);
+
+                            if (Object.Map.Layers.FirstOrDefault(l => l.Id == dataOffsetModifierLayer) is Layer offsetLayer)
+                                DimensionUtils.ModifyValueForDataTileIndex(spot, offsetLayer.GetTileIndexAt(ix, iy), ref customWallOffsetMods[i][0], ref customWallOffsetMods[i][1], ref customWallOffsetMods[i][3], ref customWallOffsetMods[i][2]);
+                        }
                     }
 
                     TileSpot[] walls = [TileSpot.West, TileSpot.North, TileSpot.East, TileSpot.South];
@@ -651,17 +704,20 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
 
                         var leftY = yForWalls[iwall, whichForWallBase, 0];
                         var rightY = yForWalls[iwall, whichForWallBase, 1];
-                        leftY += customWallOffsetMods[whichModIndices[iwall, 0]];
-                        rightY += customWallOffsetMods[whichModIndices[iwall, 1]];
+                        leftY += customWallOffsetMods[iwall][whichModIndices[iwall, 0]];
+                        rightY += customWallOffsetMods[iwall][whichModIndices[iwall, 1]];
                         var centerY = (leftY + rightY) / 2;
                         var leftSize = heightsForWalls[iwall, whichForWallBase, 0];
                         var rightSize = heightsForWalls[iwall, whichForWallBase, 1];
-                        leftSize += customWallSizeMods[whichModIndices[iwall, 0]];
-                        rightSize += customWallSizeMods[whichModIndices[iwall, 1]];
+                        leftSize += customWallSizeMods[iwall][whichModIndices[iwall, 0]];
+                        rightSize += customWallSizeMods[iwall][whichModIndices[iwall, 1]];
                         var centerSize = (leftSize + rightSize) / 2;
 
                         if (centerSize == 0)
                             continue;
+
+                        if ( ix >= 0 && iy >= 0 && ix < mapWidth && iy < mapHeight )
+                            wallData[ix, iy, iwall] = new WallData(leftY, rightY, leftSize, rightSize);
 
                         float tilesHigh = Math.Max(leftSize, rightSize);
 

@@ -35,10 +35,10 @@ namespace GenericModConfigMenu.Framework
         /// <summary>The tint color used for dimmed/disabled checkboxes.</summary>
         private static readonly Color DimCheckboxTint = Color.White * 0.5f;
 
-        private readonly Action<string> OpenPage;
+        private readonly Action<string?>? OpenPage;
         private readonly Action ReturnToList;
 
-        private readonly ModConfig ModConfig;
+        private readonly ModConfig? ModConfig;
         private readonly int ScrollSpeed;
         private bool IsSubPage => !string.IsNullOrEmpty(this.CurrPage);
 
@@ -53,7 +53,7 @@ namespace GenericModConfigMenu.Framework
         private bool InGame => Context.IsWorldReady;
 
         /// <summary>The active keybind overlay, if any.</summary>
-        private KeybindOverlay ActiveKeybindOverlay;
+        private KeybindOverlay? ActiveKeybindOverlay;
 
         /// <summary>Whether a keybind overlay is open.</summary>
         private bool IsBindingKey => this.ActiveKeybindOverlay != null;
@@ -61,7 +61,7 @@ namespace GenericModConfigMenu.Framework
         /// <summary>The current width of the title label.</summary>
         private int TitleLabelWidth = 0;
 
-        private ModConfigManager ConfigsForKeybinds;
+        private ModConfigManager? ConfigsForKeybinds;
 
         private List<Label> keybindOpts = new();
 
@@ -69,8 +69,8 @@ namespace GenericModConfigMenu.Framework
         /*********
         ** Accessors
         *********/
-        public IManifest Manifest => this.ModConfig?.ModManifest;
-        public readonly string CurrPage;
+        public IManifest? Manifest => this.ModConfig?.ModManifest;
+        public readonly string? CurrPage;
         public bool IsKeybindsPage => Manifest == null;
 
 
@@ -99,8 +99,8 @@ namespace GenericModConfigMenu.Framework
                     if (!(opt is SimpleModOption<SButton> || opt is SimpleModOption<KeybindList>))
                         continue;
 
-                    string name = opt.Name();
-                    string tooltip = opt.Tooltip();
+                    string? name = opt.Name?.Invoke();
+                    string? tooltip = opt.Tooltip?.Invoke();
 
                     if (this.InGame && opt.IsTitleScreenOnly)
                         continue;
@@ -122,7 +122,7 @@ namespace GenericModConfigMenu.Framework
                         LocalPosition = new Vector2(500, 0),
                         ScreenReaderIgnore = true,
                     };
-                    Label rightLabel = null;
+                    Label? rightLabel = null;
                     switch (opt)
                     {
                         case SimpleModOption<SButton> option:
@@ -133,7 +133,7 @@ namespace GenericModConfigMenu.Framework
                             {
                                 String = option.FormatValue(),
                                 LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
-                                Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
+                                Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label ?? throw new NullReferenceException()),
                                 UserData = opt,
                                 ScreenReaderText = option.FormatValue(),
                             };
@@ -147,14 +147,14 @@ namespace GenericModConfigMenu.Framework
                             {
                                 String = option.FormatValue(),
                                 LocalPosition = new Vector2(this.Table.Size.X / 5 * 4, 0),
-                                Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label),
+                                Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label ?? throw new NullReferenceException()),
                                 UserData = opt,
                                 ScreenReaderText = option.FormatValue(),
                             };
                             break;
                     }
 
-                    keybindOpts.Add(optionElement as Label);
+                    keybindOpts.Add(optionElement as Label ?? throw new NullReferenceException());
                     rows.Add(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
                 }
 
@@ -189,7 +189,7 @@ namespace GenericModConfigMenu.Framework
             snapToDefaultClickableComponent();
         }
 
-        public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string page, Action<string> openPage, Action returnToList)
+        public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string? page, Action<string?> openPage, Action returnToList)
         {
             this.ModConfig = config;
             this.ScrollSpeed = scrollSpeed;
@@ -209,8 +209,8 @@ namespace GenericModConfigMenu.Framework
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
             foreach (var opt in this.ModConfig.Pages[this.CurrPage].Options)
             {
-                string name = opt.Name();
-                string tooltip = opt.Tooltip();
+                string? name = opt.Name?.Invoke();
+                string? tooltip = opt.Tooltip?.Invoke();
 
                 if (this.InGame && opt.IsTitleScreenOnly)
                     continue;
@@ -224,7 +224,7 @@ namespace GenericModConfigMenu.Framework
                     continue;
                 }
 
-                Label label = new Label
+                Label? label = new Label
                 {
                     String = name,
                     UserData = tooltip,
@@ -233,13 +233,13 @@ namespace GenericModConfigMenu.Framework
                 if (!string.IsNullOrEmpty(tooltip))
                     this.OptHovers.Add(label);
 
-                Element optionElement = new Label
+                Element? optionElement = new Label
                 {
                     String = "TODO",
                     LocalPosition = new Vector2(500, 0),
                     ScreenReaderIgnore = true,
                 };
-                Label rightLabel = null;
+                Label? rightLabel = null;
                 switch (opt)
                 {
                     case ComplexModOption option:
@@ -317,7 +317,7 @@ namespace GenericModConfigMenu.Framework
                         {
                             String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label ?? throw new NullReferenceException())
                         };
                         break;
 
@@ -329,7 +329,7 @@ namespace GenericModConfigMenu.Framework
                         {
                             String = option.FormatValue(),
                             LocalPosition = new Vector2(this.Table.Size.X / 2, 0),
-                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label)
+                            Callback = (Element e) => this.ShowKeybindOverlay(option, e as Label ?? throw new NullReferenceException())
                         };
                         break;
 
@@ -349,7 +349,7 @@ namespace GenericModConfigMenu.Framework
                             Interval = option.Interval ?? 1,
                             Callback = e =>
                             {
-                                option.Value = (e as Slider<int>).Value;
+                                option.Value = (e as Slider<int> ?? throw new NullReferenceException()).Value;
                                 rightLabel.String = option.FormatValue();
                             }
                         };
@@ -373,7 +373,7 @@ namespace GenericModConfigMenu.Framework
                             Interval = option.Interval ?? 0.01f,
                             Callback = (Element e) =>
                             {
-                                option.Value = (e as Slider<float>).Value;
+                                option.Value = (e as Slider<float> ?? throw new NullReferenceException()).Value;
                                 rightLabel.String = option.FormatValue();
                             }
                         };
@@ -391,7 +391,7 @@ namespace GenericModConfigMenu.Framework
                             RequestWidth = (int)this.Table.Size.X / 2,
                             Value = option.Value,
                             MaxValuesAtOnce = Math.Min(option.Choices.Length, 5),
-                            Callback = (Element e) => option.Value = (e as Dropdown).Value
+                            Callback = (Element e) => option.Value = (e as Dropdown ?? throw new NullReferenceException()).Value
                         };
                         break;
 
@@ -403,7 +403,7 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
-                            Callback = (Element e) => option.Value = (e as Intbox).Value
+                            Callback = (Element e) => option.Value = (e as Intbox ?? throw new NullReferenceException()).Value
                         };
                         break;
 
@@ -415,7 +415,7 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             Value = option.Value,
-                            Callback = (Element e) => option.Value = (e as Floatbox).Value
+                            Callback = (Element e) => option.Value = (e as Floatbox ?? throw new NullReferenceException()).Value
                         };
                         break;
 
@@ -427,7 +427,7 @@ namespace GenericModConfigMenu.Framework
                         {
                             LocalPosition = new Vector2(this.Table.Size.X / 2 - 8, 0),
                             String = option.Value,
-                            Callback = (Element e) => option.Value = (e as Textbox).String
+                            Callback = (Element e) => option.Value = (e as Textbox ?? throw new NullReferenceException()).String
                         };
                         break;
 
@@ -459,10 +459,10 @@ namespace GenericModConfigMenu.Framework
                             label = null;
                             optionElement = null;
 
-                            StringBuilder text = new StringBuilder(name.Length + 50);
+                            StringBuilder text = new StringBuilder((name?.Length ?? 0) + 50);
                             {
                                 string nextLine = "";
-                                foreach (string word in name.Split(' '))
+                                foreach (string word in name?.Split(' ') ?? [])
                                 {
                                     // respect newline characters
                                     if (word == "\n") {
@@ -673,8 +673,8 @@ namespace GenericModConfigMenu.Framework
         {
             if (this.IsBindingKey)
             {
-                this.ActiveKeybindOverlay.OnLeftClick(x, y);
-                if (this.ActiveKeybindOverlay.IsFinished)
+                this.ActiveKeybindOverlay?.OnLeftClick(x, y);
+                if (this.ActiveKeybindOverlay?.IsFinished == true)
                 {
                     this.CloseKeybindOverlay();
                 }
@@ -765,10 +765,10 @@ namespace GenericModConfigMenu.Framework
                 {
                     if (!label.Hover)
                         continue;
-                    string text = (string)label.UserData;
+                    string? text = (string?)label.UserData;
                     if (text != null && !text.Contains("\n"))
                         text = Game1.parseText(text, Game1.smallFont, 800);
-                    string title = label.String;
+                    string? title = label.String;
                     if (title != null && !title.Contains("\n"))
                         title = Game1.parseText(title, Game1.dialogueFont, 800);
                     IClickableMenu.drawToolTip(b, text, title, null);
@@ -866,8 +866,8 @@ namespace GenericModConfigMenu.Framework
         {
             if (this.IsBindingKey)
             {
-                this.ActiveKeybindOverlay.OnButtonsChanged(e);
-                if (this.ActiveKeybindOverlay.IsFinished)
+                this.ActiveKeybindOverlay?.OnButtonsChanged(e);
+                if (this.ActiveKeybindOverlay?.IsFinished == true)
                     this.CloseKeybindOverlay();
             }
         }
@@ -876,11 +876,11 @@ namespace GenericModConfigMenu.Framework
         /*********
         ** Private methods
         *********/
-        private void AddDefaultLabels(IManifest modManifest)
+        private void AddDefaultLabels(IManifest? modManifest)
         {
             // add page title
             {
-                string pageTitle = modManifest == null ? "" : this.ModConfig.Pages[this.CurrPage].PageTitle();
+                string pageTitle = modManifest == null || this.CurrPage == null ? "" : this.ModConfig?.Pages[this.CurrPage].PageTitle() ?? "";
                 var titleLabel = new Label
                 {
                     String = modManifest == null ? I18n.List_Keybinds() : (modManifest.Name + (pageTitle == "" ? "" : " > " + pageTitle)),
@@ -958,17 +958,17 @@ namespace GenericModConfigMenu.Framework
             Game1.playSound("backpackIN");
 
             // reset
-            foreach (var option in this.ModConfig.GetAllOptions())
+            foreach (var option in this.ModConfig?.GetAllOptions() ?? [])
                 option.BeforeReset();
-            this.ModConfig.Reset();
-            foreach (var option in this.ModConfig.GetAllOptions())
+            this.ModConfig?.Reset();
+            foreach (var option in this.ModConfig?.GetAllOptions() ?? [])
                 option.AfterReset();
 
             // save & fetch new values
             this.SaveConfig(playSound: false);
 
             // reopen page
-            this.OpenPage(this.CurrPage);
+            if (this.OpenPage != null) this.OpenPage(this.CurrPage);
         }
 
         private void SaveConfig(bool playSound = true)
@@ -986,7 +986,7 @@ namespace GenericModConfigMenu.Framework
             }
             else
             {
-                foreach (var config in ConfigsForKeybinds.GetAll().ToArray())
+                foreach (var config in ConfigsForKeybinds?.GetAll().ToArray() ?? [])
                 {
                     bool foundKey = false;
                     foreach (var option in config.GetAllOptions())
@@ -1019,7 +1019,7 @@ namespace GenericModConfigMenu.Framework
             }
             else
             {
-                foreach (var config in ConfigsForKeybinds.GetAll())
+                foreach (var config in ConfigsForKeybinds?.GetAll() ?? [])
                 {
                     foreach (var option in config.GetAllOptions())
                     {
@@ -1031,7 +1031,7 @@ namespace GenericModConfigMenu.Framework
                 }
             }
 
-            if (this.IsSubPage)
+            if (this.IsSubPage && this.OpenPage != null)
                 this.OpenPage(null);
             else
                 this.ReturnToList();
@@ -1056,7 +1056,7 @@ namespace GenericModConfigMenu.Framework
                 SimpleModOption<SButton> buttonOption => new KeybindOverlay(
                     keybinds: [new Keybind(buttonOption.Value)],
                     onlyAllowSingleButton: true,
-                    name: option.Name(),
+                    name: option.Name?.Invoke(),
                     onSaved: keybinds =>
                     {
                         buttonOption.Value = keybinds.FirstOrDefault()?.Buttons.FirstOrDefault(SButton.None) ?? SButton.None;
@@ -1067,7 +1067,7 @@ namespace GenericModConfigMenu.Framework
                 SimpleModOption<KeybindList> listOption => new KeybindOverlay(
                     keybinds: listOption.Value.Keybinds,
                     onlyAllowSingleButton: false,
-                    name: option.Name(),
+                    name: option.Name?.Invoke(),
                     onSaved: keybinds =>
                     {
                         listOption.Value = new KeybindList(keybinds);
@@ -1104,14 +1104,16 @@ namespace GenericModConfigMenu.Framework
                 {
                     if (opt.UserData is SimpleModOption<Keybind> kopt)
                     {
-                        string entry = kopt.FormatValue();
+                        string? entry = kopt.FormatValue();
+                        if (entry == null) continue;
                         if (!keybinds.ContainsKey(entry))
                             keybinds.Add(entry, 0);
                         keybinds[entry]++;
                     }
                     else if (opt.UserData is SimpleModOption<KeybindList> klopt)
                     {
-                        string entry = klopt.FormatValue();
+                        string? entry = klopt.FormatValue();
+                        if (entry == null) continue;
                         if (!keybinds.ContainsKey(entry))
                             keybinds.Add(entry, 0);
                         keybinds[entry]++;
@@ -1120,13 +1122,13 @@ namespace GenericModConfigMenu.Framework
 
                 foreach (var opt in keybindOpts)
                 {
-                    string entry = "";
+                    string? entry = "";
                     if (opt.UserData is SimpleModOption<Keybind> kopt)
                         entry = kopt.FormatValue();
                     else if (opt.UserData is SimpleModOption<KeybindList> klopt)
                         entry = klopt.FormatValue();
 
-                    if (!keybinds.ContainsKey(entry))
+                    if (entry == null || !keybinds.ContainsKey(entry))
                         continue; // I have no clue how this happened.
 
                     if (keybinds[entry] > 1 && entry != "(None)")

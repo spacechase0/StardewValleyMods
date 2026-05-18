@@ -42,8 +42,8 @@ public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
         {
             // TODO: Fix. This is just incorrect and bad feeling at the moment, so disabled for now.
             return Vector2.Zero;
-            Vector2 diff = (new Vector2(lastHeadsetPosition.X, lastHeadsetPosition.Z) - new Vector2(Headset.CurrentPosition.X, Headset.CurrentPosition.Z)) * Game1.tileSize;
-            return Vector2.Transform(diff, Matrix.CreateRotationZ(Camera.AdditionalRotationY));
+            //Vector2 diff = (new Vector2(lastHeadsetPosition.X, lastHeadsetPosition.Z) - new Vector2(Headset.CurrentPosition.X, Headset.CurrentPosition.Z)) * Game1.tileSize;
+            //return Vector2.Transform(diff, Matrix.CreateRotationZ(Camera.AdditionalRotationY));
         }
     }
     private FirstPersonVRCursor[] cursors;
@@ -121,7 +121,7 @@ public class FirstPersonVRGameMode : VRGameMode, IFirstPersonGameMode
     private RenderBatcher extraBatch = new(Game1.graphics.GraphicsDevice);
     public override bool AfterRender(RenderSteps step, SpriteBatch sb, GameTime time, RenderTarget2D targetScreen)
     {
-        var handSize = 0.125f / 4;
+        //var handSize = 0.125f / 4;
 
         if (ActiveEye.HasValue && step == RenderSteps.FullScene)
         {

@@ -36,8 +36,21 @@ public class SpriteBatchProxy : SpriteBatch
         Game1.spriteBatch = this;
     }
 
-    public new void End(RenderBatcher output)
+    public void End(RenderBatcher output)
     {
+        static void Max2(float a, float b, float c, float d, out float max1, out float max2)
+        {
+            max1 = Math.Max(Math.Max(a, b), Math.Max(c, d));
+            max2 = max1 switch
+            {
+                _ when (max1 == a) => Math.Max(Math.Max(b, c), d),
+                _ when (max1 == b) => Math.Max(Math.Max(a, c), d),
+                _ when (max1 == c) => Math.Max(Math.Max(b, a), d),
+                _ when (max1 == d) => Math.Max(Math.Max(b, c), a),
+                _ => throw new InvalidOperationException(),
+            };
+        }
+
         this._beginCalled = this._beginCalled ? false : throw new InvalidOperationException("Begin must be called before calling End.");
 
         Array.Sort<SpriteBatchItem>(_batcher._batchItemList, 0, _batcher._batchItemCount);
@@ -54,7 +67,8 @@ public class SpriteBatchProxy : SpriteBatch
                     continue;
                 ++amt;
 
-                var sy = Math.Max(Math.Max(item.vertexTL.Position.Y, item.vertexTR.Position.Y), Math.Max(item.vertexBL.Position.Y, item.vertexBR.Position.Y));
+                Max2(item.vertexTL.Position.Y, item.vertexTR.Position.Y, item.vertexBL.Position.Y, item.vertexBR.Position.Y, out float sy1, out float sy2);
+                var sy = (sy1 + sy2) / 2;
                 sameY = Math.Max(sameY, sy);
                 sameLayer += item.SortKey;
             }
@@ -71,7 +85,9 @@ public class SpriteBatchProxy : SpriteBatch
             var item = _batcher._batchItemList[i];
 
             float pos2dX = (item.vertexTL.Position.X + item.vertexTR.Position.X + item.vertexBL.Position.X + item.vertexBR.Position.X) / 4;
-            float pos2dY = Math.Max(Math.Max(item.vertexTL.Position.Y, item.vertexTR.Position.Y), Math.Max(item.vertexBL.Position.Y, item.vertexBR.Position.Y));
+            //float pos2dY = Math.Max(Math.Max(item.vertexTL.Position.Y, item.vertexTR.Position.Y), Math.Max(item.vertexBL.Position.Y, item.vertexBR.Position.Y));
+            Max2(item.vertexTL.Position.Y, item.vertexTR.Position.Y, item.vertexBL.Position.Y, item.vertexBR.Position.Y, out float pos2dY1, out float pos2dY2);
+            float pos2dY = (pos2dY1 + pos2dY2) / 2;
             Vector2 basePos = new Vector2(pos2dX, sameY3d ? sameY : pos2dY);
             float yFromLayer = basePos.Y - ((sameY3d ? sameLayer : item.SortKey) * 10000);
             /*if (!sameY3d)
@@ -87,10 +103,9 @@ public class SpriteBatchProxy : SpriteBatch
             pos.X += basePos.X / Game1.tileSize - base3dFrom2d.X;
             if (!sameY3d)
             {
-                if (Math.Abs(item.SortKey) < 1f / 10000)
-                    pos.Z += (basePos.Y) / Game1.tileSize - base3dFrom2d.Z;
-                else
-                    pos.Z += (basePos.Y - yFromLayer) / Game1.tileSize;
+                pos.Z += (basePos.Y) / Game1.tileSize - base3dFrom2d.Z;
+                if (Math.Abs(item.SortKey) >= 1f / 10000)
+                    basePos.Y += yFromLayer;
             }
 #endif
             //pos.Z -= yFromLayer / Game1.tileSize;

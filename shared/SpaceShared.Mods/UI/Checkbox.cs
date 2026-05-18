@@ -25,7 +25,7 @@ namespace SpaceShared.UI
 
         public Color Tint { get; set; } = Color.White;
 
-        public Action<Element> Callback { get; set; }
+        public Action<Element>? Callback { get; set; }
 
         public bool Checked { get; set; } = true;
 

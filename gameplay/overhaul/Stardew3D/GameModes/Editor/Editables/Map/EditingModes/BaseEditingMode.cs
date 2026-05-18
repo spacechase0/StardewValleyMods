@@ -11,7 +11,7 @@ namespace Stardew3D.GameModes.Editor.Editables.Map.EditingModes;
 public abstract class BaseEditingMode
 {
     public abstract string Id { get; }
-    public virtual LocationHandler.ShowMissingType ShowMissingInLocation => LocationHandler.ShowMissingType.None;
+    public virtual LocationHandler.TerrainType ShowMissingInLocation => LocationHandler.TerrainType.None;
 
     public MapEditable Editable { get; }
 

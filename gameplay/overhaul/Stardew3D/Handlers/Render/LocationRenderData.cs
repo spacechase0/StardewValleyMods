@@ -94,7 +94,7 @@ public class LocationRenderData : RenderData<LocationHandler>
                         hasWater = true;
                     }
 
-                    if (!hasWater && !Parent.ShowMissing.HasFlag(LocationHandler.ShowMissingType.Water))
+                    if (!hasWater && !Parent.ShowMissing.HasFlag(LocationHandler.TerrainType.Water))
                         continue;
 
                     Parent.waterVertices[ind * 6 + 0] = new(Parent.waterVertices[ind * 6 + 0].Position, (srcRect.Location.ToVector2() + new Vector2(0, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 0].Color);

@@ -18,7 +18,7 @@ internal partial class Interior : SpaceShared.Content.BaseDictionaryAssetData
     {
         VerticalSegments =
         [
-            new() { Tilesheet = "Maps/spring_outdoorsTileSheet", TextureRegion = new( 96, 1072, 16, 9 ) },
+            new() { Tilesheet = "Maps/spring_outdoorsTileSheet", TextureRegion = new( 96, 1072, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
         ],
     };
 
@@ -32,13 +32,43 @@ internal partial class Interior : SpaceShared.Content.BaseDictionaryAssetData
         ],
     };
 
+    public WallDefinitionData BathHousePool_ArchL => new()
+    {
+        VerticalSegments =
+        [
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 16, 128, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 16, 144, 16, 15 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 16, 159, 16, 1 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
+        ],
+    };
+
+    public WallDefinitionData BathHousePool_ArchM => new()
+    {
+        VerticalSegments =
+        [
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 32, 128, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 32, 144, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 32, 159, 16, 1 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
+        ],
+    };
+
+    public WallDefinitionData BathHousePool_ArchR => new()
+    {
+        VerticalSegments =
+        [
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 48, 128, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 48, 144, 16, 15 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 48, 159, 16, 1 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
+        ],
+    };
+
     public WallDefinitionData BathHousePool_PanelL => new()
     {
         VerticalSegments =
         [
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 160, 0, 16, 16 ) },
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 160, 16, 16, 16 ) },
-            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 160, 32, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 160, 32, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
         ],
     };
 
@@ -48,7 +78,7 @@ internal partial class Interior : SpaceShared.Content.BaseDictionaryAssetData
         [
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 96, 0, 16, 16 ) },
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 96, 16, 16, 16 ) },
-            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 96, 32, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 96, 32, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
         ],
     };
 
@@ -58,7 +88,7 @@ internal partial class Interior : SpaceShared.Content.BaseDictionaryAssetData
         [
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 112, 0, 16, 16 ) },
             new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 112, 16, 16, 16 ) },
-            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 112, 32, 16, 16 ) },
+            new() { Tilesheet = "Maps/bathhouse_tiles", TextureRegion = new( 112, 32, 16, 16 ), ContinuationMode = WallDefinitionData.WallSegmentData.SegmentContinuationMode.Tile },
         ],
     };
 

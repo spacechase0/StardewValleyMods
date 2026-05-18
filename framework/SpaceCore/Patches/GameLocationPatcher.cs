@@ -99,7 +99,7 @@ namespace SpaceCore.Patches
             {
                 if (!isPatched && CodeInstructionExtensions.Is(codes[i + 3], OpCodes.Ldstr, "Strings\\Locations:Sewer_DogStatueCancel"))
                 {
-                    ret.Add(new CodeInstruction(OpCodes.Ldloc_S, SpaceCore.GetLocalIndexForMethod(original, "skill_responses").Single()).WithLabels(codes[i].labels));
+                    ret.Add(new CodeInstruction(OpCodes.Ldloc_S, SpaceCore.GetLocalIndexForMethod(original, "skill_responses")?.Single()).WithLabels(codes[i].labels));
                     ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<Skills>(nameof(Skills.GetRespecCustomResponses))));
                     ret.Add(new CodeInstruction(OpCodes.Call, PatchHelper.RequireMethod<List<Response>>(nameof(List<Response>.AddRange))));
                     codes[i].labels.Clear();
@@ -120,11 +120,11 @@ namespace SpaceCore.Patches
         {
             List<CodeInstruction> ret = new List<CodeInstruction>();
             var codes = new List<CodeInstruction>(insns);
-            LocalBuilder listLocal = null;
+            LocalBuilder? listLocal = null;
             bool isPatched = false;
             for (int i = 0; i < codes.Count; i++)
             {
-                if (listLocal == null && codes[i].opcode == OpCodes.Ldloc_S && (codes[i].operand as LocalBuilder).LocalType == typeof(List<Response>))
+                if (listLocal == null && codes[i].opcode == OpCodes.Ldloc_S && (codes[i].operand as LocalBuilder)?.LocalType == typeof(List<Response>))
                 {
                     listLocal = codes[i].operand as LocalBuilder;
                 }
@@ -147,7 +147,7 @@ namespace SpaceCore.Patches
         {
             if (questionAndAnswer.StartsWith("professionForget_"))
             {
-                Skills.Skill skill = Skills.GetSkill(questionAndAnswer.Split('_', 2)[1]);
+                Skills.Skill? skill = Skills.GetSkill(questionAndAnswer.Split('_', 2)[1]);
                 if (skill is null)
                 {
                     return;

@@ -25,7 +25,7 @@ internal class GuidebookMenu : IClickableMenu
 {
     private GuidebookData Data { get; }
 
-    private Texture2D PageTexture { get; }
+    private Texture2D? PageTexture { get; }
     private Vector2 PageSize { get; }
 
     private RootElement Ui { get; }
@@ -39,9 +39,9 @@ internal class GuidebookMenu : IClickableMenu
     private List<string> ValidChapters { get; } = new();
     private List<(string id, string contents)> CurrentChapterPages { get; } = new();
 
-    private string CurrentChapter { get; set; }
+    private string? CurrentChapter { get; set; }
     private int CurrentPage { get; set; }
-    private string PendingGoto { get; set; }
+    private string? PendingGoto { get; set; }
     private int? PendingPage { get; set; }
 
     public GuidebookMenu(GuidebookData data)
@@ -162,7 +162,7 @@ internal class GuidebookMenu : IClickableMenu
         GotoChapter(Data.DefaultChapter, null);
     }
 
-    public void GotoChapter(string chapterId, string pageId)
+    public void GotoChapter(string chapterId, string? pageId)
     {
         if (chapterId != CurrentChapter)
         {
@@ -213,7 +213,7 @@ internal class GuidebookMenu : IClickableMenu
         for (int ie = 0; ie < elems.Count; ++ie)
         {
             var elem = elems[ie];
-            GuidebookParser.Element nextElem = ie + 1 < elems.Count ? elems[ie + 1] : null;
+            GuidebookParser.Element? nextElem = ie + 1 < elems.Count ? elems[ie + 1] : null;
             if (elem.Type == GuidebookParser.Element.ElementType.Text &&
                 elem.Value.Replace("\n", "") == "" &&
                 ( nextElem == null || ( nextElem.Type != GuidebookParser.Element.ElementType.Text && nextElem.Type != GuidebookParser.Element.ElementType.InlineImage ) ) )
@@ -251,9 +251,9 @@ internal class GuidebookMenu : IClickableMenu
                             strWithoutEmptyLines = strWithoutEmptyLines.Substring(i);
                         }
 
-                        string usedFontId = elem.Tags.TryGetValue("font", out string fontId) ? fontId : "default";
+                        string usedFontId = elem.Tags.TryGetValue("font", out string? fontId) && fontId != null ? fontId : "default";
                         lastFont = GuidebookFont.Fonts[usedFontId];
-                        Color textCol = elem.Tags.TryGetValue("color", out string colStr) ? ( Utility.StringToColor( colStr ) ?? Game1.textColor ) : Game1.textColor;
+                        Color textCol = elem.Tags.TryGetValue("color", out string? colStr) ? ( Utility.StringToColor( colStr ) ?? Game1.textColor ) : Game1.textColor;
                         if (textCol == Game1.textColor && elem.OnClick != null)
                         {
                             textCol = new Color(textCol.R * 3, textCol.G * 3, textCol.B * 3);
@@ -273,7 +273,7 @@ internal class GuidebookMenu : IClickableMenu
                                 }
                                 return;
                             }
-                            
+
                             Label label = new Label()
                             {
                                 IdleTextColor = textCol,
@@ -284,7 +284,7 @@ internal class GuidebookMenu : IClickableMenu
                                 ScreenReaderText = str,
                             };
 
-                            if (elem.Tags.TryGetValue("center", out string centerStr))
+                            if (elem.Tags.TryGetValue("center", out string? centerStr))
                             {
                                 float w = PageSize.X;
                                 if (!string.IsNullOrEmpty(centerStr))
@@ -299,7 +299,7 @@ internal class GuidebookMenu : IClickableMenu
 
                                 // We want users to always be aware when they are clicking a browser link
                                 if (elem.OnClick.Type == GuidebookParser.ClickData.ClickType.PageLink &&
-                                    (elem.OnClick.Value.StartsWith("http://") || elem.OnClick.Value.StartsWith("https://")))
+                                    (elem.OnClick.Value?.StartsWith("http://") == true || elem.OnClick.Value?.StartsWith("https://") == true))
                                 {
                                     label.UserData = new GuidebookParser.HoverData()
                                     {
@@ -353,7 +353,7 @@ internal class GuidebookMenu : IClickableMenu
                         string imagePath = parts[0];
                         Rectangle? rect = null;
                         int scale = elem.Type == GuidebookParser.Element.ElementType.InlineImage ? 2 : 4;
-                        string altText = elem.Type == GuidebookParser.Element.ElementType.InlineImage ? null : imagePath;
+                        string? altText = elem.Type == GuidebookParser.Element.ElementType.InlineImage ? null : imagePath;
                         if (parts.Length >= 2 && parts[1] != "null")
                         {
                             string[] rectParts = parts[1].Split(',');
@@ -520,7 +520,7 @@ internal class GuidebookMenu : IClickableMenu
             {
                 int slash = PendingGoto.IndexOf('/');
                 string chapter = slash == -1 ? PendingGoto : PendingGoto.Substring(0, slash);
-                string page = slash == -1 ? null : PendingGoto.Substring(slash + 1);
+                string? page = slash == -1 ? null : PendingGoto.Substring(slash + 1);
                 GotoChapter(chapter, page);
             }
             PendingGoto = null;
@@ -581,11 +581,11 @@ internal class GuidebookMenu : IClickableMenu
                             int x = Game1.getOldMouseX() + 32;
                             int y = Game1.getOldMouseY() + 32;
 
-                            string[] parts = hover.HoverValue.Split(':');
-                            string imagePath = parts[0];
+                            string[]? parts = hover.HoverValue?.Split(':');
+                            string imagePath = parts?[0] ?? "";
                             Rectangle? rect = null;
                             int scale = 4;
-                            if (parts.Length >= 2 && parts[1] != "null")
+                            if (parts?.Length >= 2 && parts[1] != "null")
                             {
                                 string[] rectParts = parts[1].Split(',');
                                 if (rectParts.Length == 4)
@@ -605,7 +605,7 @@ internal class GuidebookMenu : IClickableMenu
                                     Log.Warn($"Failed to parse \"{hover.HoverValue}\" image subrect: Exactly four integers must be specified (x,y,width,height)");
                                 }
                             }
-                            if (parts.Length >= 3)
+                            if (parts?.Length >= 3)
                             {
                                 if (!int.TryParse(parts[2], out scale))
                                 {

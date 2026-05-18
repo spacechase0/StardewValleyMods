@@ -11,6 +11,11 @@ namespace Stardew3D.DataModels;
 [JsonConverter( typeof( ModelDataCreationConverter ) )]
 public partial class ModelData : IModelMapping
 {
+    static partial void AfterRefreshData()
+    {
+        Mod.State.ClearHandlerState();
+    }
+
     public virtual string Type => $"{Mod.Instance.ModManifest.UniqueID}/Model";
 
     public string ModelFilePath { get; set; }
@@ -82,11 +87,5 @@ public partial class ModelData : IModelMapping
             newTexMap.Add(PathUtilities.NormalizePath(entry.Key), PathUtilities.NormalizePath(entry.Value));
         }
         TextureMap = newTexMap;
-    }
-
-    static partial void AfterRefreshData()
-    {
-        Mod.State.ActiveMode?.SwitchOff(Mod.State.ActiveMode);
-        Mod.State.ActiveMode?.SwitchOn(Mod.State.ActiveMode);
     }
 }

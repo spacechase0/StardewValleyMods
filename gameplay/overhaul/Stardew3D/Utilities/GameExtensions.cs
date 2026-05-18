@@ -2,8 +2,10 @@ using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Extensions;
+using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using Valve.VR;
@@ -14,7 +16,7 @@ public static class GameExtenions
 {
     public static string GetExtendedQualifiedId(this object obj)
     {
-        return (obj?.GetExtendedQualifiedIds() ?? [null])[0];
+         return (obj?.GetExtendedQualifiedIds() ?? [null])[0];
     }
 
     public static string[] GetExtendedQualifiedIds(this object obj)
@@ -26,6 +28,13 @@ public static class GameExtenions
                 weapon.QualifiedItemId,
                 $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/{weapon.GetItemTypeId().Substring(1)}{weapon.type.Value}",
                 weapon.GetItemTypeId(),
+            ];
+        else if (obj is Furniture furn)
+            return
+            [
+                furn.QualifiedItemId,
+                $"({Mod.ID}/FurnitureType){furn.furniture_type.Value}",
+                furn.GetItemTypeId()
             ];
         else if (obj is Item item)
             return
@@ -97,11 +106,22 @@ public static class GameExtenions
                 $"({Stardew3D.Mod.Instance.ModManifest.UniqueID}/Character)"
             ];
 
+        else if (obj is Building farmhouse && farmhouse.GetIndoors() is FarmHouse farmhouseInterior)
+            return
+            [
+                $"({Mod.Instance.ModManifest.UniqueID}/Building){farmhouse.id}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Building){farmhouse.buildingType.Value}/{farmhouseInterior.upgradeLevel}/{farmhouse.skinId}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Building){farmhouse.buildingType.Value}/{farmhouseInterior.upgradeLevel}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Building){farmhouse.buildingType.Value}",
+                $"({Mod.Instance.ModManifest.UniqueID}/BuildingType){farmhouse.GetType().Name}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Building)"
+            ];
         else if (obj is Building building)
             return
             [
-                $"({Mod.Instance.ModManifest.UniqueID}/Building){building.id}/{building.skinId}",
                 $"({Mod.Instance.ModManifest.UniqueID}/Building){building.id}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Building){building.buildingType.Value}/{building.skinId}",
+                $"({Mod.Instance.ModManifest.UniqueID}/Building){building.buildingType.Value}",
                 $"({Mod.Instance.ModManifest.UniqueID}/BuildingType){building.GetType().Name}",
                 $"({Mod.Instance.ModManifest.UniqueID}/Building)"
             ];

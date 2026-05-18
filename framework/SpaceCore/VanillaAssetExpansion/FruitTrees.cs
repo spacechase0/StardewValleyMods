@@ -24,7 +24,7 @@ namespace SpaceCore.VanillaAssetExpansion
 {
     public class FruitTreeExtensionData
     {
-        public List<Vector2> FruitLocations { get; set; } = new();
+        public List<Vector2>? FruitLocations { get; set; } = new();
     }
 
     [HarmonyPatch(typeof(FruitTree), nameof(FruitTree.draw))]

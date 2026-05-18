@@ -30,6 +30,7 @@ public class MapEditable : IEditable
         ["Floor"] = e => new TileDataEditingMode(e, DimensionUtils.TileType.Floor),
         ["Ceiling"] = e => new TileDataEditingMode(e, DimensionUtils.TileType.Ceiling),
         ["Water"] = e => new TileDataEditingMode(e, DimensionUtils.TileType.Water),
+        ["Walls"] = e => new WallEditingMode(e),
     };
 
     public string Id { get; init; }
@@ -114,7 +115,7 @@ public class MapEditable : IEditable
         foreach (var potentialMode in EditingModes)
         {
             var factoryFunc = potentialMode.Value;
-            modeButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(1, 32), potentialMode.Key)
+            modeButtons.AddChild(new Button(MLEM.Ui.Anchor.AutoInline, new Vector2(1, 24), $"<f Default 0.5>{potentialMode.Key}")
             {
                 SetWidthBasedOnChildren = true,
                 OnPressed = _ => EditingMode = factoryFunc(this),
@@ -177,7 +178,7 @@ public class MapEditable : IEditable
 
     public void BeforeHidePanelContents()
     {
-        Location.MapLoader?.Dispose();
+        Location?.MapLoader?.Dispose();
         Location = null;
     }
 
@@ -206,7 +207,7 @@ public class MapEditable : IEditable
         {
             if (renderer is LocationHandler locRenderer)
             {
-                locRenderer.ShowMissing = EditingMode?.ShowMissingInLocation ?? LocationHandler.ShowMissingType.None;
+                locRenderer.ShowMissing = EditingMode?.ShowMissingInLocation ?? LocationHandler.TerrainType.None;
                 locRenderer.Build();
             }
 

@@ -34,9 +34,9 @@ namespace SpaceShared.UI
 
         public float Scale { get; set; } = 1.0f;
 
-        public string String { get; set; }
+        public string? String { get; set; }
 
-        public Action<Element> Callback { get; set; }
+        public Action<Element>? Callback { get; set; }
 
         /// <inheritdoc />
         public override int Width => (int)this.Measure().X;
@@ -45,7 +45,7 @@ namespace SpaceShared.UI
         public override int Height => (int)this.Measure().Y;
 
         /// <inheritdoc />
-        public override string HoveredSound => (this.Callback != null) ? "shiny4" : null;
+        public override string? HoveredSound => (this.Callback != null) ? "shiny4" : null;
 
 
         /*********
@@ -100,7 +100,7 @@ namespace SpaceShared.UI
         /// <param name="bold">Whether the font is bold.</param>
         /// <param name="scale">The scale to apply to the size.</param>
         /// <param name="font">The font to measure. Defaults to <see cref="Game1.dialogueFont"/> if <c>null</c>.</param>
-        public static Vector2 MeasureString(string text, bool bold = false, float scale = 1f, SpriteFont font = null)
+        public static Vector2 MeasureString(string? text, bool bold = false, float scale = 1f, SpriteFont? font = null)
         {
             if (bold)
                 return new Vector2(SpriteText.getWidthOfString(text) * scale, SpriteText.getHeightOfString(text) * scale);

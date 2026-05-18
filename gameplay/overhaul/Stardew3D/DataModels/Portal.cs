@@ -56,6 +56,7 @@ public class Portal
                     "south" => Vector3.Backward,
                     "west" => Vector3.Left,
                     "east" => Vector3.Right,
+                    _ => throw new InvalidOperationException(),
                 };
             }
 

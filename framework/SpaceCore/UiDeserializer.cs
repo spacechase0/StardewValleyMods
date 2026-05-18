@@ -33,7 +33,7 @@ namespace SpaceCore
         public Dictionary<string, Type> Types { get; } = new();
 
 
-        public UiDeserializer(Func<string, string> textLoader, Func<string, Texture2D> textureLoader, Func<string, string> tokenSubstituter = null, Func<string, bool> conditionChecker = null)
+        public UiDeserializer(Func<string, string> textLoader, Func<string, Texture2D> textureLoader, Func<string, string>? tokenSubstituter = null, Func<string, bool>? conditionChecker = null)
         {
             this.textLoader = textLoader;
             this.textureLoader = textureLoader;
@@ -64,12 +64,12 @@ namespace SpaceCore
                 Types.Add(type.Name, type);
         }
 
-        public Element LoadFromFile(string path)
+        public Element? LoadFromFile(string path)
         {
             return LoadFromFile(path, out var _);
         }
 
-        public Element LoadFromFile(string path, out List<Element> allElements)
+        public Element? LoadFromFile(string path, out List<Element> allElements)
         {
             string markup = tokenSubstituter(textLoader(path));
             using TextReader tr = new StringReader(markup);
@@ -78,15 +78,15 @@ namespace SpaceCore
             return Deserialize(xr, out allElements);
         }
 
-        public Element Deserialize(XmlReader reader, out List<Element> allElements)
+        public Element? Deserialize(XmlReader reader, out List<Element> allElements)
         {
             allElements = new();
             return ReadElement(reader, allElements);
         }
 
-        private Element ReadElement(XmlReader reader, List<Element> allElements)
+        private Element? ReadElement(XmlReader reader, List<Element> allElements)
         {
-            Element elem;
+            Element? elem;
 
             if (reader.Name == "Include")
             {
@@ -124,8 +124,8 @@ namespace SpaceCore
             }
 
             Type t = Types[reader.Name];
-            elem = (Element)t.GetConstructor(new Type[0]).Invoke(new object[0]);
-            elem.UserData = new UiExtraData();
+            elem = (Element?)t.GetConstructor(new Type[0])?.Invoke(new object[0]);
+            elem?.UserData = new UiExtraData();
             reader.MoveToFirstAttribute();
             for (int i = 0; i < reader.AttributeCount; ++i, reader.MoveToNextAttribute())
             {
@@ -159,9 +159,9 @@ namespace SpaceCore
                     if (child != null && elem is Container container)
                     {
                         container.AddChild(child);
-                        if ((child.UserData as UiExtraData).ExtraFields.ContainsKey("CenterH"))
+                        if ((child.UserData as UiExtraData)?.ExtraFields.ContainsKey("CenterH") == true)
                             child.LocalPosition += new Vector2((container.Bounds.Size.ToVector2() - child.Bounds.Size.ToVector2()).X / 2, 0);
-                        if ((child.UserData as UiExtraData).ExtraFields.ContainsKey("CenterV"))
+                        if ((child.UserData as UiExtraData)?.ExtraFields.ContainsKey("CenterV") == true)
                             child.LocalPosition += new Vector2(0, (container.Bounds.Size.ToVector2() - child.Bounds.Size.ToVector2()).Y / 2);
                     }
                     reader.MoveToContent();
@@ -173,9 +173,9 @@ namespace SpaceCore
             return elem;
         }
 
-        internal bool LoadPropertyToElement(Element elem, string name, string val)
+        internal bool LoadPropertyToElement(Element? elem, string name, string val)
         {
-            var prop = elem.GetType().GetProperty(name);
+            var prop = elem?.GetType().GetProperty(name);
             if (prop != null && name != "UserData")
             {
                 object obj = val;
@@ -197,14 +197,14 @@ namespace SpaceCore
                         obj = new Color(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]));
                 }
 
-                prop.SetMethod.Invoke(elem, new object[] { obj });
+                prop.SetMethod?.Invoke(elem, new object[] { obj });
             }
             else
             {
                 if (name.Equals("id", StringComparison.OrdinalIgnoreCase))
                 {
-                    elem.UserData ??= new UiExtraData();
-                    (elem.UserData as UiExtraData).Id = val;
+                    elem?.UserData ??= new UiExtraData();
+                    (elem?.UserData as UiExtraData)?.Id = val;
                 }
                 else if (name.Equals("when", StringComparison.OrdinalIgnoreCase))
                 {
@@ -225,8 +225,8 @@ namespace SpaceCore
                 }
                 else
                 {
-                    elem.UserData ??= new UiExtraData();
-                    (elem.UserData as UiExtraData).ExtraFields.Add(name, val);
+                    elem?.UserData ??= new UiExtraData();
+                    (elem?.UserData as UiExtraData)?.ExtraFields.Add(name, val);
                 }
             }
 

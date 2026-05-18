@@ -35,7 +35,7 @@ namespace SpaceCore
             return true;
         }
 
-        private static void DoGetHitByPlayerOverride(NPC npc, string itemId, Farmer who, GameLocation location)
+        private static void DoGetHitByPlayerOverride(NPC npc, string itemId, Farmer? who, GameLocation location)
         {
             npc.doEmote(12);
             if (who == null)

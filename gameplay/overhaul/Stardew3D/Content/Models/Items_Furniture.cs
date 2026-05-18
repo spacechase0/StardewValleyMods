@@ -11,6 +11,7 @@ internal partial class Items_Furniture : SpaceShared.Content.BaseDictionaryAsset
     {
         ModelFilePath = $"{ModId}:assets/furniture/Armchair.gltf",
         SubModelPath = "/BasicArmchair",
+        Translation = new Vector3(0, 0.5f, 0), // TODO: temporary
         Rotation = new Vector3(0, MathHelper.ToRadians(180), 0), // TODO: temporary
     };
 

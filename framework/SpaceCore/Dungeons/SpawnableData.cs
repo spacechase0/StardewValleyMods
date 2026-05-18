@@ -48,7 +48,7 @@ namespace SpaceCore.Spawnables
         public SpawnableType Type { get; set; }
         public string Condition { get; set; } = "TRUE";
 
-        public string SetPiecesMap { get; set; }
+        public string? SetPiecesMap { get; set; }
         public int SetPieceSizeX { get; set; }
         public int SetPieceSizeY { get; set; }
         public int SetPieceCount { get; set; }
@@ -91,9 +91,9 @@ namespace SpaceCore.Spawnables
         public bool FurnitureCanPickUp { get; set; } = true;
 
         public string MonsterType { get; set; }
-        public string MonsterName { get; set; } // Stats are pulled from Data/Monsters for this
-        public string MonsterTextureOverride { get; set; }
-        public List<List<Weighted<GenericSpawnItemDataWithCondition>>> MonsterDropOverride { get; set; } // if set, normal monster drops don't happen
+        public string? MonsterName { get; set; } // Stats are pulled from Data/Monsters for this
+        public string? MonsterTextureOverride { get; set; }
+        public List<List<Weighted<GenericSpawnItemDataWithCondition>>>? MonsterDropOverride { get; set; } // if set, normal monster drops don't happen
         public Dictionary<string, object> MonsterAdditionalData { get; set; } = new();
 
         //public string CritterType { get; set; }

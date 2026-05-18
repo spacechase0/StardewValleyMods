@@ -32,6 +32,7 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
                 * Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationZ(MathHelper.ToRadians(0)))
             )
             * Matrix.CreateTranslation(new Vector3(0f, -0.125f, -0.0f))
+            * Matrix.CreateTranslation(new Vector3(0f, 0.5f, 0.0f))
             * cursor.Grip;
     }
 
@@ -62,11 +63,10 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
             return;
         this.tool = tool;
 
-        interaction = null;
-        foreach (var idEntry in cursor.Holding.GetExtendedQualifiedIds())
-            interaction ??= InteractionData.Get(idEntry);
+        interaction = InteractionData.Get(cursor.Holding, out Vector3 size, out _);
         if (interaction == null)
             return;
+        Matrix scale = Matrix.CreateScale(size);
 
         baseTransform = GetHeldTransformFor(cursor);
         basePrevTransform = lastGrips.GetOrCreateValue(cursor).Value;
@@ -77,8 +77,8 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
         {
             toolAreas[i] ??= new ToolAreaData();
             toolAreas[i].area = interaction.Areas[i];
-            toolAreas[i].transform = interaction.Areas[i].Transform * baseTransform;
-            toolAreas[i].prevTransform = interaction.Areas[i].Transform * basePrevTransform;
+            toolAreas[i].transform = scale * interaction.Areas[i].Transform * baseTransform;
+            toolAreas[i].prevTransform = scale * interaction.Areas[i].Transform * basePrevTransform;
             toolAreas[i].verts = interaction.Areas[i].GetShape().Transform(toolAreas[i].transform);
             toolAreas[i].prevVerts = interaction.Areas[i].GetShape().Transform(toolAreas[i].prevTransform);
         }

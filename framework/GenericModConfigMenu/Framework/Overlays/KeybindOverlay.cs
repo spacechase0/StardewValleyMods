@@ -52,7 +52,7 @@ namespace GenericModConfigMenu.Framework.Overlays
         private readonly bool OnlyAllowSingleButton;
 
         /// <summary>The translated keybind name.</summary>
-        private readonly string Name;
+        private readonly string? Name;
 
         /// <summary>The callback to invoke with the updated keybinds when the overlay is closed and saved.</summary>
         private readonly Action<Keybind[]> OnSaved;
@@ -75,7 +75,7 @@ namespace GenericModConfigMenu.Framework.Overlays
         private bool ButtonsChanged;
 
         /// <summary>The keybind actively being edited by the player, if any.</summary>
-        private KeybindEdit KeybindEdit;
+        private KeybindEdit? KeybindEdit;
 
 
         /*********
@@ -93,7 +93,7 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <param name="onlyAllowSingleButton">Whether the config only allows a single button, rather than a full keybind list.</param>
         /// <param name="name">The translated keybind name.</param>
         /// <param name="onSaved">The callback to invoke with the updated keybinds when the overlay is closed and saved.</param>
-        public KeybindOverlay(Keybind[] keybinds, bool onlyAllowSingleButton, string name, Action<Keybind[]> onSaved)
+        public KeybindOverlay(Keybind[] keybinds, bool onlyAllowSingleButton, string? name, Action<Keybind[]> onSaved)
         {
             this.Keybinds = [.. keybinds];
             this.OnlyAllowSingleButton = onlyAllowSingleButton;
@@ -204,14 +204,14 @@ namespace GenericModConfigMenu.Framework.Overlays
             {
                 // 'Rebinding key: <key>' header
                 string newLine = Environment.NewLine;
-                topOffset += this.AddCenteredLabel(I18n.Config_RebindKey_Title(this.Name) + newLine, 0, 0, topOffset, width).Height;
+                topOffset += this.AddCenteredLabel(I18n.Config_RebindKey_Title(this.Name ?? "") + newLine, 0, 0, topOffset, width).Height;
 
                 // edit keybind area
                 bool isEditing = this.KeybindEdit is not null;
                 if (isEditing)
                 {
                     string text;
-                    if (this.KeybindEdit.Any())
+                    if (this.KeybindEdit?.Any() == true)
                         text = this.KeybindEdit.ToString();
                     else
                     {
@@ -365,7 +365,7 @@ namespace GenericModConfigMenu.Framework.Overlays
         /// <summary>Finish editing the current keybind.</summary>
         private void FinishEditingKeybind()
         {
-            KeybindEdit edit = this.KeybindEdit;
+            KeybindEdit? edit = this.KeybindEdit;
 
             // save keybind
             if (edit != null)

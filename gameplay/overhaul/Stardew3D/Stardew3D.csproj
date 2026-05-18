@@ -13,6 +13,8 @@
 
     <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Nullable>disable</Nullable>
+    <NoWarn>0219, 0414, 0169</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,6 +46,7 @@
 
     <Reference Include="TMXTile">
       <HintPath>$(GamePath)/smapi-internal/TMXTile.dll</HintPath>
+      <Private>false</Private>
     </Reference>
 
     <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0029" />

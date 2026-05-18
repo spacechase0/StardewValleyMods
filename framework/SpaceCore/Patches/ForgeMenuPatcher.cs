@@ -22,7 +22,7 @@ namespace SpaceCore.Patches
         /*********
         ** Fields
         *********/
-        private static CustomForgeRecipe justCrafted = null;
+        private static CustomForgeRecipe? justCrafted = null;
 
 
         /*********
@@ -82,7 +82,7 @@ namespace SpaceCore.Patches
             var this__highlightDictionary_ = SpaceCore.Instance.Helper.Reflection.GetField<Dictionary<Item, bool>>(__instance, "_highlightDictionary");
 
             var this__highlightDictionary = this__highlightDictionary_.GetValue();
-            List<Item> item_list = new List<Item>(__instance.inventory.actualInventory);
+            List<Item?> item_list = new List<Item?>(__instance.inventory.actualInventory);
             if (Game1.player.leftRing.Value != null)
             {
                 item_list.Add(Game1.player.leftRing.Value);
@@ -91,7 +91,7 @@ namespace SpaceCore.Patches
             {
                 item_list.Add(Game1.player.rightRing.Value);
             }
-            foreach (Item item in item_list)
+            foreach (Item? item in item_list)
             {
                 if (item == null)
                 {
@@ -110,7 +110,7 @@ namespace SpaceCore.Patches
 
         /// <summary>The method to call before <see cref="ForgeMenu.IsValidCraft"/>.</summary>
         /// <returns>Returns whether to run the original method.</returns>
-        private static bool Before_IsValidCraft(ForgeMenu __instance, Item left_item, Item right_item, ref bool __result)
+        private static bool Before_IsValidCraft(ForgeMenu __instance, Item? left_item, Item? right_item, ref bool __result)
         {
             if (left_item == null || right_item == null)
                 return true;
@@ -156,7 +156,7 @@ namespace SpaceCore.Patches
 
         /// <summary>The method to call before <see cref="ForgeMenu.CraftItem"/>.</summary>
         /// <returns>Returns whether to run the original method.</returns>
-        private static bool Before_CraftItem(ForgeMenu __instance, Item left_item, Item right_item, bool forReal, ref Item __result)
+        private static bool Before_CraftItem(ForgeMenu __instance, Item? left_item, Item? right_item, bool forReal, ref Item __result)
         {
             if (left_item == null || right_item == null)
                 return true;
@@ -177,7 +177,7 @@ namespace SpaceCore.Patches
 
         /// <summary>The method to call before <see cref="ForgeMenu.GetForgeCost"/>.</summary>
         /// <returns>Returns whether to run the original method.</returns>
-        private static bool Before_GetForgeCost(ForgeMenu __instance, Item left_item, Item right_item, ref int __result)
+        private static bool Before_GetForgeCost(ForgeMenu __instance, Item? left_item, Item? right_item, ref int __result)
         {
             if (left_item == null || right_item == null)
                 return true;
@@ -221,7 +221,7 @@ namespace SpaceCore.Patches
             List<CodeInstruction> ret = new();
             foreach (var insn in insns)
             {
-                if (insn.opcode == OpCodes.Ldfld && (insn.operand as FieldInfo).Name == "equipmentIcons")
+                if (insn.opcode == OpCodes.Ldfld && (insn.operand as FieldInfo)?.Name == "equipmentIcons")
                 {
                     int insertAt = ret.Count; // Weird spot to add my instructions (in between a ldloc0 and using it), but it works well with the label nonsense going on
 
@@ -261,7 +261,7 @@ namespace SpaceCore.Patches
             return cost;
         }
 
-        private static bool IsLeftCraftIngredient(Item item)
+        private static bool IsLeftCraftIngredient(Item? item)
         {
             if (item == null)
                 return false;
@@ -274,7 +274,7 @@ namespace SpaceCore.Patches
             return false;
         }
 
-        private static bool IsRightCraftIngredient(Item item)
+        private static bool IsRightCraftIngredient(Item? item)
         {
             if (item == null)
                 return false;

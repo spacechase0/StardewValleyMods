@@ -23,15 +23,15 @@ namespace SpaceShared.UI
     {
         public static ItemWithBorder HoveredElement { get; private set; }
 
-        public Item ItemDisplay { get; set; }
+        public Item? ItemDisplay { get; set; }
 
         public bool TransparentItemDisplay { get; set; } = false;
 
         public Color? BoxColor { get; set; } = Color.White;
         public bool BoxIsThin { get; set; } = false;
 
-        public Action<Element> Callback { get; set; }
-        public Action<Element> SecondaryCallback { get; set; }
+        public Action<Element>? Callback { get; set; }
+        public Action<Element>? SecondaryCallback { get; set; }
 
         public override int Width => Game1.tileSize + (BoxIsThin ? 0 : 16) * 2;
         public override int Height => Game1.tileSize + (BoxIsThin ? 0 : 16) * 2;
@@ -53,8 +53,8 @@ namespace SpaceShared.UI
             if (Hover && SecondaryClickGestured && SecondaryCallback != null)
                 SecondaryCallback.Invoke(this);
 
-            ScreenReaderText = ItemDisplay.DisplayName;
-            ScreenReaderDescription = ItemDisplay.getDescription();
+            ScreenReaderText = ItemDisplay?.DisplayName;
+            ScreenReaderDescription = ItemDisplay?.getDescription();
         }
 
         public override void Draw( SpriteBatch b )

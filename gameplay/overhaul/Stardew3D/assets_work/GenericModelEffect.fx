@@ -63,7 +63,7 @@ float4 MainPS_Transparent_1(VertexShaderOutput input) : COLOR
 {
     float4 ret = tex2D(Texture, input.TextureCoordinates) * input.Color * Color;
 
-    clip(ret.a - 0.99);
+    clip(ret.a - 0.95);
     
     return ret;
 }
@@ -73,9 +73,9 @@ float4 MainPS_Transparent_1(VertexShaderOutput input) : COLOR
 float4 MainPS_Transparent_2(VertexShaderOutput input) : COLOR
 {
     float4 ret = tex2D(Texture, input.TextureCoordinates) * input.Color * Color;
-
-    clip(-ret.a + 0.99);
-    clip(ret.a - 0.01);
+    
+    clip(-ret.a + 0.95);
+    clip(ret.a - 0.05);
     
     return ret;
 }

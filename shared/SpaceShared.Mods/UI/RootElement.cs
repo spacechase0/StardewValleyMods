@@ -29,15 +29,15 @@ namespace SpaceShared.UI
         public bool GamepadMovementRegionsDirty { get; set; } = false;
 
 
-        private Func<ClickableComponent> CurrentSnapped;
+        private Func<ClickableComponent?>? CurrentSnapped;
         private Action<int> ForceSnapInDirection;
-        public Element CurrentSnappedElement => (CurrentSnapped?.Invoke() as ElementClickableComponent)?.Parent;
+        public Element? CurrentSnappedElement => (CurrentSnapped?.Invoke() as ElementClickableComponent)?.Parent;
 
         /*********
         ** Public methods
         *********/
 
-        public RootElement(Func<ClickableComponent> currentSnapped, Action<int> forceSnapInDirection)
+        public RootElement(Func<ClickableComponent?> currentSnapped, Action<int> forceSnapInDirection)
         {
             CurrentSnapped = currentSnapped;
             ForceSnapInDirection = forceSnapInDirection;
@@ -59,8 +59,8 @@ namespace SpaceShared.UI
             if (Game1.options.gamepadControls && !Game1.lastCursorMotionWasMouse)
             {
                 Point mousePos = Game1.getMousePosition();
-                var currSnapped = CurrentSnapped();
-                if (ourClickables.Contains(currSnapped) && !currSnapped.bounds.Contains(mousePos))
+                var currSnapped = CurrentSnapped?.Invoke();
+                if (currSnapped != null && ourClickables.Contains(currSnapped) && !currSnapped.bounds.Contains(mousePos))
                 {
                     Point offset = mousePos;
                     offset.X -= mousePos.X > currSnapped.bounds.Right ? currSnapped.bounds.Right : currSnapped.bounds.Left;

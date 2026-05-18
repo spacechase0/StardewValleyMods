@@ -19,11 +19,11 @@ namespace ExperienceBars
     {
         // Vanilla game only supports levels 1-10
         public static readonly int[] VanillaExpNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000 };
-        
+
         // VPP (Vanilla Plus Professions) extends to level 20
         public static readonly int[] VppExpNeededForLevel = new[] { 100, 380, 770, 1300, 2150, 3300, 4800, 6900, 10000, 15000, 21000, 28000, 36000, 45000, 55000, 66000, 78000, 91000, 105000, 120000 };
 
-        public static Configuration Config;
+        public static Configuration Config = null!;
         private static readonly Color DefaultBarForeground = new(150, 150, 150);
 
         public static bool RenderLuck = false;
@@ -34,8 +34,8 @@ namespace ExperienceBars
 
         private const int BarWidth = 102;
         private const int BarHeight = 10;
-        private static Texture2D SkillBackground;
-        private static Texture2D SkillForeground;
+        private static Texture2D? SkillBackground;
+        private static Texture2D? SkillForeground;
 
         /// <inheritdoc />
         public override void Entry(IModHelper helper)
@@ -57,7 +57,7 @@ namespace ExperienceBars
             return new Api();
         }
 
-        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
             var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
             if (configMenu != null)
@@ -94,7 +94,7 @@ namespace ExperienceBars
         /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        public void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        public void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             if (e.Button == Mod.Config.ToggleBars)
             {
@@ -116,7 +116,7 @@ namespace ExperienceBars
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        public void OnRenderedHud(object sender, RenderedHudEventArgs e)
+        public void OnRenderedHud(object? sender, RenderedHudEventArgs e)
         {
             // renderExpBars
 
@@ -139,7 +139,7 @@ namespace ExperienceBars
             {
                 try
                 {
-                    object instance = Type.GetType("LevelExtender.ModEntry, LevelExtender").GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+                    object instance = Type.GetType("LevelExtender.ModEntry, LevelExtender")?.GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) ?? throw new InvalidOperationException("Couldn't find Level Extender instance");
                     int[] extLevels = this.Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
                     int[] extExp = this.Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
                     exp = (int[])exp.Clone();
@@ -168,7 +168,7 @@ namespace ExperienceBars
                 int prevReq = 0, nextReq = 1;
                 int maxVanillaLevel = IsVppInstalled ? 20 : 10;
                 var expTable = IsVppInstalled ? VppExpNeededForLevel : VanillaExpNeededForLevel;
-                
+
                 if (skills[i] == 0)
                 {
                     nextReq = expTable[0];

@@ -20,7 +20,7 @@ namespace SpaceShared.UI
 #endif
     class ItemSlot : ItemWithBorder
     {
-        public Item Item { get; set; }
+        public Item? Item { get; set; }
 
         public override void Draw( SpriteBatch b )
         {
