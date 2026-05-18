@@ -32,7 +32,8 @@ internal class MyModHooks : DelegatingModHooks
             return Parent.OnGameLocation_CheckAction(location, tileLocation, viewport, who, action);
         }
 
-        return false;
+        // Do I actually need to do anything here?
+        return Parent.OnGameLocation_CheckAction(location, tileLocation, viewport, who, action);
     }
 
     public override void OnGame1_UpdateControlInput(ref KeyboardState keyboardState, ref MouseState mouseState, ref GamePadState gamePadState, Action action)

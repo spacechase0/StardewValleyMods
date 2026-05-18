@@ -205,6 +205,9 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                     if (!f.wasPet.Value)
                         f.pet(Object);
                     break;
+                case LocationHandler.TerrainType.Floor:
+                    Game1.tryToCheckAt(((Point)selHolder).ToVector2(), Game1.player);
+                    break;
             }
         }
         finally
