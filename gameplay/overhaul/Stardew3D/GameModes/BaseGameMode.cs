@@ -80,7 +80,7 @@ public abstract partial class BaseGameMode : IGameMode
 
         Game1.graphics.GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer | ClearOptions.Stencil, Color.CornflowerBlue, 1, 0);
 
-        Game1.viewport = new(0, 0, Game1.graphics.PreferredBackBufferWidth, Game1.graphics.PreferredBackBufferHeight);
+        Game1.viewport = new(0, 0, (int)(Game1.graphics.PreferredBackBufferWidth / Game1.options.zoomLevel), (int)(Game1.graphics.PreferredBackBufferHeight / Game1.options.zoomLevel));
         UpdateCamera();
 
         Game1.graphics.GraphicsDevice.RasterizerState = RenderHelper.RasterizerState;
