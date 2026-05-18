@@ -108,7 +108,7 @@ public class FarmerMotionControlsHandler : FarmerWorldControlsBaseHandler
 
             var treeVerts = tfArea.GetTransformedShape().Transform(tfTransform);
 
-            if (!GJK_EPA_BCP.CheckIntersection(toolAreas[i].verts, treeVerts, out var contact, out var depth, out var normal))
+            if (!GJK_EPA_BCP.CheckIntersection(toolAreas[i].verts, treeVerts, out _, out _, out _))
                 continue;
             if (GJK_EPA_BCP.CheckIntersection(toolAreas[i].prevVerts, treeVerts, out _, out _, out _))
                 continue;

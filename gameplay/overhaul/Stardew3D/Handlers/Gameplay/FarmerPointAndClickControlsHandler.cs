@@ -40,9 +40,9 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
         base.HandleCursor(ctx, cursor);
 
-        if (InputUtils.TryHover(Game1.player.currentLocation, LocationHandler.TerrainType.All, new Ray(cursor.PointerPosition, cursor.PointerFacing), out LocationHandler.TerrainType hoverType, out var hoverTile, out float hoverDist, out var wallDir, CullRange))
+        if (InputUtils.TryHover(Game1.player.currentLocation, LocationHandler.TerrainType.All & ~LocationHandler.TerrainType.Water, new Ray(cursor.PointerPosition, cursor.PointerFacing), out LocationHandler.TerrainType hoverType, out var hoverTile, out float hoverDist, out var wallDir, CullRange))
         {
-            if (sel.Distance > hoverDist)
+            if (sel.Distance - 1f / 16 > hoverDist)
             {
                 sel.Selected = hoverType == LocationHandler.TerrainType.Walls ? wallDir : hoverType;
                 sel.SelectedHolder = hoverTile;
@@ -76,7 +76,15 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
         {
             if (sel.Equals(LocationHandler.TerrainType.Floor))
             {
-                Point tile = (Point) selHolder;
+                Point tile = (Point)selHolder;
+                if (cursor.Holding is StardewValley.Object obj)
+                {
+                    Utility.tryToPlaceItem(Game1.player.currentLocation, obj, tile.X * Game1.tileSize, tile.Y * Game1.tileSize);
+                }
+            }
+            else if (sel is HoeDirt hd)
+            {
+                Point tile = hd.Tile.ToPoint();
                 if (cursor.Holding is StardewValley.Object obj)
                 {
                     Utility.tryToPlaceItem(Game1.player.currentLocation, obj, tile.X * Game1.tileSize, tile.Y * Game1.tileSize);
@@ -212,27 +220,57 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
 
     protected override void HandleCursor(IUpdateHandler.UpdateContext ctx, IGameCursor cursor, object obj, object objHolder,Matrix transform, InteractionData interaction, InteractionArea area)
     {
-        // Hacky solution, hope it works / doesn't break horrifically
-        Vector3[] myVerts =
-        [
-            cursor.PointerPosition,
-            cursor.PointerPosition + cursor.PointerFacing * CullRange,
-            cursor.PointerPosition + cursor.PointerUp * (1f / 16)
-        ];
-        Vector3[] areaVerts = area.GetTransformedShape().Transform(transform);
-        if (!GJK_EPA_BCP.CheckIntersection(myVerts, areaVerts, out Vector3 contactPoint, out _, out _))
+        Ray ray = new(cursor.PointerPosition, cursor.PointerFacing);
+        Vector3[] areaVerts = area.GetTransformedTriangleVertices().Transform(transform);
+
+        float intersectionDist = float.MaxValue;
+        for (int i = 0; i < areaVerts.Length; i += 3)
+        {
+            // Based on https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm#C++_implementation
+            Vector3 pa = areaVerts[i + 0];
+            Vector3 pb = areaVerts[i + 1];
+            Vector3 pc = areaVerts[i + 2];
+
+            Vector3 e1 = pb - pa;
+            Vector3 e2 = pc - pa;
+
+            // skipping the backface culling
+
+            Vector3 rce2 = Vector3.Cross(ray.Direction, e2);
+            float det = Vector3.Dot(e1, rce2);
+            if (Math.Abs(det) < float.Epsilon)
+                continue;
+
+            float invDet = 1f / det;
+            Vector3 s = ray.Position - pa;
+            float u = invDet * Vector3.Dot(s, rce2);
+            if (u < -float.Epsilon || u - 1 > float.Epsilon)
+                continue;
+
+            Vector3 sce1 = Vector3.Cross(s, e1);
+            float v = invDet * Vector3.Dot(ray.Direction, sce1);
+            if (v < -float.Epsilon || u + v - 1 > float.Epsilon)
+                continue;
+
+            float t = invDet * Vector3.Dot(e2, sce1);
+            if (t <= float.Epsilon)
+                continue;
+
+            if (intersectionDist == float.MaxValue || intersectionDist > t)
+                intersectionDist = t;
+        }
+
+        if (intersectionDist == float.MaxValue)
             return;
 
-        float dist = Vector3.Distance(cursor.PointerPosition, contactPoint);
-
         var sel = lastHovered.GetOrCreateValue(cursor);
-        if (dist > sel.Distance)
+        if (intersectionDist > sel.Distance)
             return;
 
         sel.Selected = obj;
         sel.SelectedHolder = objHolder;
         sel.SelectedDisplay = area.GetTransformedTriangleVertices().Transform(transform);
-        sel.Distance = dist;
+        sel.Distance = intersectionDist;
     }
 
     protected override RenderDataBase CreateInitialRenderData(IRenderHandler.RenderContext ctx)
@@ -277,6 +315,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                     {
                         SimpleVertex[] v = sel.SelectedDisplay.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.White * 0.2f)).ToArray();
 
+                        Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
                         RenderHelper.GenericEffect.Texture = Game1.staminaRect;
                         RenderHelper.GenericEffect.World = Matrix.Identity;
                         {
