@@ -128,7 +128,7 @@ public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
     {
         base.AfterUpdate();
 
-        if (!Context.IsPlayerFree || Game1.activeClickableMenu != null || Game1.IsChatting)
+        if (!Context.IsWorldReady || Game1.activeClickableMenu != null || Game1.dialogueUp || Game1.activeClickableMenu != null || Game1.IsChatting)
             timeFree = 0;
 
         wasActive = GameRunner.instance.IsActive;
