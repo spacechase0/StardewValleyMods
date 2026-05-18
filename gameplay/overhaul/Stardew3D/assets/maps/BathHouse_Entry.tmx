@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="10" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="10" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="29">
  
- <tileset firstgid="1" name="dataValues3d" tilewidth="16" tileheight="16" tilecount="512" columns="32">
-  <image source="ThirdDimensionData/data" width="512" height="256"/>
- </tileset>
- <tileset firstgid="513" name="p" tilewidth="16" tileheight="16" tilecount="12" columns="4">
+ <tileset firstgid="1" name="p" tilewidth="16" tileheight="16" tilecount="12" columns="4">
   <image source="paths" width="64" height="48"/>
  </tileset>
- <tileset firstgid="525" name="untitled tile sheet" tilewidth="16" tileheight="16" tilecount="240" columns="15">
+ <tileset firstgid="13" name="untitled tile sheet" tilewidth="16" tileheight="16" tilecount="240" columns="15">
   <image source="bathhouse_tiles" width="240" height="256"/>
+ </tileset>
+ <tileset firstgid="253" name="z_dataValues3d" tilewidth="16" tileheight="16" tilecount="512" columns="32">
+  <image source="ThirdDimensionData/data" width="512" height="256"/>
  </tileset>
  <layer id="1" name="kittycatcasey.Stardew3D/FloorData_Center" width="10" height="10">
   <data encoding="csv">
@@ -16,12 +16,12 @@
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
-0,1,1,1,1,1,1,1,1,0,
-0,1,1,1,1,1,1,1,1,0,
-0,1,1,1,1,1,1,1,1,0,
-0,1,1,1,1,1,1,1,1,0,
-0,1,1,1,1,1,1,1,1,0,
-0,0,0,0,0,1,0,0,0,0
+0,253,253,253,253,253,253,253,253,0,
+0,253,253,253,253,253,253,253,253,0,
+0,253,253,253,253,253,253,253,253,0,
+0,253,253,253,253,253,253,253,253,0,
+0,253,253,253,253,253,253,253,253,0,
+0,0,0,0,0,253,0,0,0,0
 </data>
  </layer>
  <layer id="2" name="kittycatcasey.Stardew3D/CeilingData_Center" width="10" height="10">
@@ -30,14 +30,218 @@
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
-0,97,97,97,97,97,97,97,97,0,
-0,97,97,97,97,97,97,97,97,0,
-0,97,97,97,97,97,97,97,97,0,
-0,97,97,97,97,97,97,97,97,0,
-0,97,97,97,97,97,97,97,97,0,
-0,0,0,0,0,97,0,0,0,0
+0,349,349,349,349,349,349,349,349,0,
+0,349,349,349,349,349,349,349,349,0,
+0,349,349,349,349,349,349,349,349,0,
+0,349,349,349,349,349,349,349,349,0,
+0,349,349,349,349,349,349,349,349,0,
+0,0,0,0,0,349,0,0,0,0
 </data>
  </layer>
- <objectgroup id="3" name="kittycatcasey.Stardew3D/FloorData_Center"/>
- <objectgroup id="4" name="kittycatcasey.Stardew3D/CeilingData_Center"/>
+ <layer id="3" name="kittycatcasey.Stardew3D/WallData_North" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,253,253,253,253,253,253,253,253,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="4" name="kittycatcasey.Stardew3D/WallData_East" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,253,0,
+0,0,0,0,0,0,0,0,253,0,
+0,0,0,0,0,0,0,0,253,0,
+0,0,0,0,0,0,0,0,253,0,
+0,0,0,0,0,0,0,0,253,0,
+0,0,0,0,0,253,0,0,0,0
+</data>
+ </layer>
+ <layer id="5" name="kittycatcasey.Stardew3D/WallData_South" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,253,253,253,253,0,253,253,253,0,
+0,0,0,0,0,253,0,0,0,0
+</data>
+ </layer>
+ <layer id="6" name="kittycatcasey.Stardew3D/WallData_West" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,253,0,0,0,0,0,0,0,0,
+0,253,0,0,0,0,0,0,0,0,
+0,253,0,0,0,0,0,0,0,0,
+0,253,0,0,0,0,0,0,0,0,
+0,253,0,0,0,0,0,0,0,0,
+0,0,0,0,0,253,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="7" name="kittycatcasey.Stardew3D/FloorData_Center"/>
+ <objectgroup id="8" name="kittycatcasey.Stardew3D/CeilingData_Center"/>
+ <objectgroup id="9" name="kittycatcasey.Stardew3D/WallData_North">
+  <object id="1" name="TileData" x="16" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_WallCrack"/>
+   </properties>
+  </object>
+  <object id="2" name="TileData" x="32" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_DoorW"/>
+   </properties>
+  </object>
+  <object id="3" name="TileData" x="48" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="4" name="TileData" x="64" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="5" name="TileData" x="80" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="6" name="TileData" x="96" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="7" name="TileData" x="112" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_DoorM"/>
+   </properties>
+  </object>
+  <object id="8" name="TileData" x="128" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="10" name="kittycatcasey.Stardew3D/WallData_East">
+  <object id="9" name="TileData" x="128" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="10" name="TileData" x="128" y="80" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_WallCrack"/>
+   </properties>
+  </object>
+  <object id="11" name="TileData" x="128" y="96" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="12" name="TileData" x="128" y="112" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="13" name="TileData" x="128" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="14" name="TileData" x="80" y="144" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="11" name="kittycatcasey.Stardew3D/WallData_South">
+  <object id="15" name="TileData" x="16" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="16" name="TileData" x="32" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="17" name="TileData" x="48" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="18" name="TileData" x="64" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="19" name="TileData" x="96" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="20" name="TileData" x="112" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_WallCrack"/>
+   </properties>
+  </object>
+  <object id="21" name="TileData" x="128" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="22" name="TileData" x="80" y="144" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="12" name="kittycatcasey.Stardew3D/WallData_West">
+  <object id="23" name="TileData" x="16" y="64" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="24" name="TileData" x="16" y="80" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="25" name="TileData" x="16" y="96" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="26" name="TileData" x="16" y="112" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_WallCrack"/>
+   </properties>
+  </object>
+  <object id="27" name="TileData" x="16" y="128" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+  <object id="28" name="TileData" x="80" y="144" width="16" height="16">
+   <properties>
+    <property name="kittycatcasey.Stardew3D/WallDefinitionOverride" value="kittycatcasey.Stardew3D/BathHouseEntry_Wall"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

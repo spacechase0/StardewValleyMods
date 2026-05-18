@@ -693,6 +693,16 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         int largestSegSize = wallDef.VerticalSegments.Max(s => s.TextureRegion.Height);
                         int heightOfAllSegs = wallDef.VerticalSegments.Sum(s => s.TextureRegion.Height);
                         int heightOfAllNonresizable = nonresizableSegments.Sum(s => s.TextureRegion.Height);
+                        if (resizableSegmentCount == 0)
+                        {
+                            for (int i = 0; i < canResizeSegment.Length; ++i)
+                                canResizeSegment[i] = true;
+                            resizableSegments = nonresizableSegments;
+                            nonresizableSegments = Array.Empty<WallDefinitionData.WallSegmentData>();
+                            resizableSegmentCount = nonresizableSegmentCount;
+                            nonresizableSegmentCount = 0;
+                            heightOfAllNonresizable = 0;
+                        }
                         float[] relativeSegSizes = wallDef.VerticalSegments.Select(s => s.TextureRegion.Height / (float)largestSegSize).ToArray();
 
                         int whichForWallBase = 0;
