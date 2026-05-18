@@ -362,12 +362,19 @@ public class WallEditingMode : BaseEditingMode
                 if (elem.Value == null || elem.Value.VerticalSegments == null)
                     continue;
 
-                var seg = elem.Value.VerticalSegments[elem.Value.VerticalSegments.Count / 2];
+                int maxSize = elem.Value.VerticalSegments.Max(s => s.TextureRegion.Height);
+                int maxCount = elem.Value.VerticalSegments.Where(s => s.TextureRegion.Height == maxSize).Count();
+                var seg = elem.Value.VerticalSegments.Where(s => s.TextureRegion.Height == maxSize).Skip(Math.Max(0, maxCount / 2 - 1)).FirstOrDefault();
                 Texture2D tex = seg == null ? Game1.staminaRect : Game1.content.Load<Texture2D>(seg.Tilesheet);
                 Rectangle rect = seg?.TextureRegion ?? new Rectangle(0, 0, 1, 1);
 
+                string name = elem.Key;
+                int slash = name.IndexOf('/');
+                if (slash != -1)
+                    name = name.Substring(slash + 1);
+
                 Group g = new Group(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 1), setHeightBasedOnChildren: true);
-                g.AddChild(new Button(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 32), $"<f Default 0.5>{elem.Key}")
+                g.AddChild(new Button(MLEM.Ui.Anchor.AutoLeft, new Vector2(1, 32), $"<f Default 0.5>{name}")
                 {
                     SetHeightBasedOnChildren = true,
                     AutoSizeAddedAbsolute = new Vector2(-24, 0),
