@@ -1,6 +1,14 @@
+matrix World;
 matrix WorldViewProj;
 sampler2D Texture : register(s0);
 float4 Color;
+
+#define LIGHT_COUNT 4
+
+float4 AmbientLightColor = float4(1, 1, 1, 1);
+//float3 PointLightPositions[LIGHT_COUNT];
+//float PointLightStrengths[LIGHT_COUNT];
+//float3 PointLightColors[LIGHT_COUNT];
 
 struct VertexShaderInput
 {
@@ -25,17 +33,25 @@ struct VertexShaderOutput
     float3 Normal : NORMAL0;
     float4 Color : COLOR0;
     float2 TextureCoordinates : TEXCOORD0;
+    //float3 OriginalPosition : TEXCOORD1;
 };
 
 VertexShaderOutput MainInstancedVS(VertexShaderInput input, InstanceInput instance)
 {
     float4x4 instTransform = float4x4(instance.MatRow1, instance.MatRow2, instance.MatRow3, instance.MatRow4);
+    matrix transform = instTransform * World;
     
     VertexShaderOutput ret;
     ret.Position = mul(input.Position, mul(instTransform, WorldViewProj));
     ret.TextureCoordinates = input.TextureCoordinates;
     ret.Color = input.Color * instance.Color;
-    ret.Normal = input.Normal; // TOOD: Should this should be rotated with the instance transform?
+    ret.Normal = normalize(mul(input.Normal, (float3x3) transform));
+    //ret.OriginalPosition = (float3) mul(input.Position, transform);
+    
+    // MonoGame will crash without this line because of some effect buffer not being big enough.
+    // I have no clue why using World in this way makes the buffer big enough.
+    // If the World matrix ends up having all 0, we have other problems
+    ret.Color *= any(World);
     return ret;
 }
 
@@ -45,13 +61,39 @@ VertexShaderOutput MainSingleVS(VertexShaderInput input)
     ret.Position = mul(input.Position, WorldViewProj);
     ret.TextureCoordinates = input.TextureCoordinates;
     ret.Color = input.Color;
-    ret.Normal = input.Normal;
+    ret.Normal = normalize(mul(input.Normal, (float3x3) World));
+    //ret.OriginalPosition = (float3) mul(input.Position, World);
+    
+    // MonoGame will crash without this line because of some effect buffer not being big enough.
+    // I have no clue why using World in this way makes the buffer big enough.
+    // If the World matrix ends up having all 0, we have other problems
+    ret.Color *= any(World);
     return ret;
+}
+
+float4 MainPS_Common(VertexShaderOutput input)
+{
+    float4 baseCol = tex2D(Texture, input.TextureCoordinates) * input.Color * Color;
+
+    float4 lighting = AmbientLightColor;
+    for (int i = 0; i < LIGHT_COUNT; ++i)
+    {
+        /*
+        float amount = dot(-normalize(input.OriginalPosition - PointLightPositions[i]), input.Normal);
+        amount = saturate(amount);
+
+        lighting.r = max(lighting.r, PointLightColors[i].r * amount);
+        lighting.g = max(lighting.g, PointLightColors[i].g * amount);
+        lighting.b = max(lighting.b, PointLightColors[i].b * amount);
+*/
+    }
+    
+    return baseCol * lighting;
 }
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    float4 ret = tex2D(Texture, input.TextureCoordinates) * input.Color * Color;
+    float4 ret = MainPS_Common(input);
 
     clip(ret.a - 0.01);
     
@@ -61,7 +103,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 // Transparent portions are discarded
 float4 MainPS_Transparent_1(VertexShaderOutput input) : COLOR
 {
-    float4 ret = tex2D(Texture, input.TextureCoordinates) * input.Color * Color;
+    float4 ret = MainPS_Common(input);
 
     clip(ret.a - 0.95);
     
@@ -72,7 +114,7 @@ float4 MainPS_Transparent_1(VertexShaderOutput input) : COLOR
 // This is separate from the above because I can't find a way to say "keep the pixel, but don't write to the depth buffer"
 float4 MainPS_Transparent_2(VertexShaderOutput input) : COLOR
 {
-    float4 ret = tex2D(Texture, input.TextureCoordinates) * input.Color * Color;
+    float4 ret = MainPS_Common(input);
     
     clip(-ret.a + 0.95);
     clip(ret.a - 0.05);

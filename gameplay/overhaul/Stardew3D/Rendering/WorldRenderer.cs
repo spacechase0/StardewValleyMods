@@ -144,6 +144,9 @@ public class WorldRenderer : IDisposable
             worldBatch.PrepareSprites(Matrix.Identity, camera);
         }
 
+        Color lightingCol = ((!(Game1.currentLocation is StardewValley.Locations.MineShaft mine)) ? ((Game1.ambientLight.Equals(Color.White) || (Game1.currentLocation.IsOutdoors && Game1.currentLocation.IsRainingHere())) ? Game1.outdoorLight : Game1.ambientLight) : mine.getLightingColor(Game1.currentGameTime));
+        env.SetAmbientLight(lightingCol == Color.White ? Vector3.One : (Vector3.One - lightingCol.ToVector3()));
+
         worldBatch.DrawBatched(env, Matrix.Identity, camera.ViewMatrix, projectionMatrix);
 
         if (renderMode.HasFlag( RenderMode.ClearDataAfterRendering ) )

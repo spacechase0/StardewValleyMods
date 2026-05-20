@@ -17,6 +17,9 @@ No particular order of priority. Some of these definitely fall into "feature cre
 * Make `TileSpot` match `Game1.(up|down|left|right)`
 * Rework RenderBatcher instancing system to be less persistent
     * I think this would also let me flatten the render handler system, removing the RenderData stuff. Handlers are already per-instance anyways.
+    * This might be less practical than I realized once lighting is a thing (if I don't want parts of shadow maps to be recalculated constantly)
+    * If I have way of attaching code to objects and running code immediately when said object disappears, I can just remove them when necessary
+        * ConditionalWeakTable will need to wait for the garbage collector, and we can't entirely rely on IDisposable
 * Make SpriteBatchProxy sane
 
 # Asset Workflow

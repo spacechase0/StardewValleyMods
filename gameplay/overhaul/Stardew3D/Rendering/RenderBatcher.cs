@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoScene.Graphics;
 using SpaceShared;
 using Stardew3D.Utilities;
+using StardewValley;
 
 namespace Stardew3D.Rendering;
 
@@ -280,6 +281,7 @@ public class RenderBatcher : IDisposable
     public void DrawBatched(PBREnvironment env, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix)
     {
         bool isMirrorTransform = worldMatrix.Determinant() < 0;
+        env.ApplyTo(RenderHelper.GenericEffect);
 
         var oldDepth = graphics.DepthStencilState;
         var oldRaster = graphics.RasterizerState;
