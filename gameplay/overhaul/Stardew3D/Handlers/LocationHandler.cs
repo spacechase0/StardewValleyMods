@@ -273,10 +273,10 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                         float theight = thIncr - tuck * 2;
 
                         int layerNum = applicableLayers.IndexOf(layer);
-                        SimpleVertex v00 = new(tilePos.Position + tilePos.QuadVert00, new Vector2(tx, ty), col);
-                        SimpleVertex v10 = new(tilePos.Position + tilePos.QuadVert10, new Vector2(tx + twidth, ty), col);
-                        SimpleVertex v01 = new(tilePos.Position + tilePos.QuadVert01, new Vector2(tx, ty + theight), col);
-                        SimpleVertex v11 = new(tilePos.Position + tilePos.QuadVert11, new Vector2(tx + twidth, ty + theight), col);
+                        SimpleVertex v00 = new(tilePos.Position + tilePos.QuadVert00, new Vector2(tx, ty), col) { Normal = tilePos.QuadFacingNormal };
+                        SimpleVertex v10 = new(tilePos.Position + tilePos.QuadVert10, new Vector2(tx + twidth, ty), col) { Normal = tilePos.QuadFacingNormal };
+                        SimpleVertex v01 = new(tilePos.Position + tilePos.QuadVert01, new Vector2(tx, ty + theight), col) { Normal = tilePos.QuadFacingNormal };
+                        SimpleVertex v11 = new(tilePos.Position + tilePos.QuadVert11, new Vector2(tx + twidth, ty + theight), col) { Normal = tilePos.QuadFacingNormal };
                         int startInd = verts.Verts.Count;
                         if (type == TerrainType.Ceiling)
                         {
@@ -361,12 +361,12 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                     if (hasWater || ShowMissing.HasFlag(TerrainType.Water))
                     {
                         var water = waterData[ix, iy];
-                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2(texRect.X, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
-                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color));
-                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
-                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert11, new Vector2(texRect.X + texRect.Width, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color));
-                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / tex.Bounds.Size.ToVector2(), color));
-                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color));
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert00, new Vector2(texRect.X, texRect.Y) / tex.Bounds.Size.ToVector2(), color) { Normal = water.QuadFacingNormal });
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color) { Normal = water.QuadFacingNormal });
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / tex.Bounds.Size.ToVector2(), color) { Normal = water.QuadFacingNormal });
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert11, new Vector2(texRect.X + texRect.Width, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color) { Normal = water.QuadFacingNormal });
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert10, new Vector2(texRect.X + texRect.Width, texRect.Y) / tex.Bounds.Size.ToVector2(), color) { Normal = water.QuadFacingNormal });
+                        waterVertices.Add(new SimpleVertex(water.Position + water.QuadVert01, new Vector2(texRect.X, texRect.Y + texRect.Height) / tex.Bounds.Size.ToVector2(), color) { Normal = water.QuadFacingNormal });
                     }
                 }
             }

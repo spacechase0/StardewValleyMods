@@ -109,7 +109,7 @@ public class FenceRenderData : RenderData<FenceRenderer>
                     Blend = BlendState.AlphaBlend,
                     Rasterizer = RasterizerState.CullClockwise,
                 };
-                data.Vertices.SetData(verts.ToArray());
+                data.Vertices.SetData(verts.Select(v => { v.Normal = -v.Normal; return v; } ).ToArray());
                 data.Indices.SetData(Enumerable.Range(0, verts.Count).Select(i => (short)i).ToArray());
                 (data.Effect as GenericModelEffect).Texture = Parent.Object.fenceTexture.Value;
                 (data.Effect as GenericModelEffect).Color = Color.White;

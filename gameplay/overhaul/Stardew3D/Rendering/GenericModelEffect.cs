@@ -19,7 +19,7 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
             {
                 _world = value;
                 matrixDirty = true;
-                worldParam.SetValue(value);
+                worldParam.SetValue(_world);
             }
         }
     }
@@ -44,8 +44,8 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
         set => ambientLightParam.SetValue(new Vector4(value.X, value.Y, value.Z, 1));
     }
 
-    private EffectParameter pointLightPosParam, pointLightStrengthParam, pointLightColorParam;
-    public int MaxPunctualLights => 0;
+    private EffectParameter pointLightCountParam, pointLightPosParam, pointLightStrengthParam, pointLightColorParam;
+    public int MaxPunctualLights => 16;
 
     public GenericModelEffect(GraphicsDevice graphicsDevice, byte[] effectCode)
         : base(graphicsDevice, effectCode)
@@ -55,9 +55,10 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
         textureParam = Parameters["Texture"];
         colorParam = Parameters["Color"];
         ambientLightParam = Parameters["AmbientLightColor"];
-        //pointLightPosParam = Parameters["PointLightPositions"];
-        //pointLightStrengthParam = Parameters["PointLightStrengths"];
-        //pointLightColorParam = Parameters["PointLightColors"];
+        pointLightCountParam = Parameters["PointLightCount"];
+        pointLightPosParam = Parameters["PointLightPositions"];
+        pointLightStrengthParam = Parameters["PointLightStrengths"];
+        pointLightColorParam = Parameters["PointLightColors"];
 
         Color = Color.White;
     }
@@ -70,9 +71,10 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
         textureParam = Parameters["Texture"];
         colorParam = Parameters["Color"];
         ambientLightParam = Parameters["AmbientLightColor"];
-        //pointLightPosParam = Parameters["PointLightPositions"];
-        //pointLightStrengthParam = Parameters["PointLightStrengths"];
-        //pointLightColorParam = Parameters["PointLightColors"];
+        pointLightCountParam = Parameters["PointLightCount"];
+        pointLightPosParam = Parameters["PointLightPositions"];
+        pointLightStrengthParam = Parameters["PointLightStrengths"];
+        pointLightColorParam = Parameters["PointLightColors"];
 
         _world = other._world;
         _view = other._view;
@@ -85,10 +87,21 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
     protected override void OnApply()
     {
         base.OnApply();
+
+        pointLightCountParam.SetValue(MaxPunctualLights);
         if (matrixDirty)
         {
             worldViewProjectionParam.SetValue(_world * _view * _projection);
             matrixDirty = false;
+        }
+
+        // MonoGame seems to have a bug where sub-elements aren't checked for if updates are needed
+        // https://github.com/MonoGame/MonoGame/issues/5845
+        // This should force it when necessary
+        foreach (var param in Parameters)
+        {
+            foreach (var elem in param.Elements)
+                param.StateKey = Math.Max(param.StateKey, elem.StateKey);
         }
     }
 
@@ -97,7 +110,24 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
         return new GenericModelEffect(this);
     }
 
+    private int lastLightIndex = -1;
     public void SetPunctualLight(int index, PBRPunctualLight light)
     {
+        pointLightPosParam.Elements[index].SetValue(Vector4.Zero);
+        pointLightColorParam.Elements[index].SetValue(Vector4.Zero);
+        switch (light.Type)
+        {
+            case 0: // Directional
+                break;
+            case 1: // Point
+                if ( index != lastLightIndex )
+                    lastLightIndex = index;
+
+                pointLightPosParam.Elements[index].SetValue(new Vector4(light.Position, light.Range));
+                pointLightColorParam.Elements[index].SetValue(new Vector4(light.Color, light.Intensity));
+                break;
+            case 2: // Spot
+                break;
+        }
     }
 }

@@ -22,10 +22,10 @@ public class RenderBatcher : IDisposable
         public struct InstanceData : IVertexType
         {
             internal static VertexDeclaration _vertexDecl = new(Marshal.SizeOf<InstanceData>(),
-                                                                new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
-                                                                new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 2),
-                                                                new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3),
-                                                                new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 4),
+                                                                new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 6),
+                                                                new VertexElement(16, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 7),
+                                                                new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 8),
+                                                                new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 9),
                                                                 new VertexElement(64, VertexElementFormat.Color, VertexElementUsage.Color, 1));
             public VertexDeclaration VertexDeclaration => _vertexDecl;
 
@@ -272,6 +272,7 @@ public class RenderBatcher : IDisposable
                     var v = sprite.Value.Vertices[i * 6 + iv];
                     v.Position = Vector3.Transform(v.Position, transform);
                     v.Position += transform.Forward * (inst.Layer * 0.001f);
+                    v.Normal = Vector3.TransformNormal(v.Normal, transform);
                     sprite.Value.Vertices[i * 6 + iv] = v;
                 }
             }
@@ -317,8 +318,9 @@ public class RenderBatcher : IDisposable
 
         void DoModelBatch(List<Effect> effects, List<MeshPart> parts, VertexBuffer instanceVbo, int instanceCount, int? transparentTechnique = null)
         {
-            foreach (var effect in effects)
+            foreach (var part in parts)
             {
+                var effect = part.Effect;
                 if (effect is GenericModelEffect)
                 {
                     if (transparentTechnique.HasValue)
@@ -330,15 +332,13 @@ public class RenderBatcher : IDisposable
                 ModelInstance.UpdateProjViewTransforms(effect, projectionMatrix, viewMatrix);
                 ModelInstance.UpdateWorldTransforms(effect, worldMatrix);
                 env.ApplyTo(effect);
-            }
-            foreach (var part in parts)
-            {
+
                 var geom = part.Geometry as MeshTriangles;
                 graphics.BlendState = part.Blending;
                 graphics.SetVertexBuffers(new(geom._SharedVertexBuffer), new(instanceVbo, 0, 1));
                 graphics.Indices = geom._SharedIndexBuffer;
                 graphics.RasterizerState = isMirrorTransform ? geom._BackRasterizer : geom._FrontRasterizer;
-                foreach (var pass in part.Effect.CurrentTechnique.Passes)
+                foreach (var pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
                     graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, geom._VertexOffset, geom._IndexOffset, geom._PrimitiveCount, instanceCount);

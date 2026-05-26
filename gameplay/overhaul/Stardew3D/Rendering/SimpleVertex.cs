@@ -36,7 +36,7 @@ public struct SimpleVertex : IVertexType
         pos /= Game1.tileSize;
         pos.Y = -pos.Y;
 
-        return new SimpleVertex(pos * scale + basePos3d, orig.TextureCoordinate, orig.Color);
+        return new SimpleVertex(pos * scale + basePos3d, orig.TextureCoordinate, orig.Color) { Normal = Vector3.Forward };
     }
 
     static SimpleVertex()

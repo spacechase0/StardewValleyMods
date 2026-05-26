@@ -40,6 +40,7 @@ public static class RenderHelper
         SimpleVertex v11 = new(new(vp11.X, vp11.Y, 0), new Vector2(tx, ty));
         SimpleVertex v01 = new(new(vp01.X, vp01.Y, 0), new Vector2(tx + twidth, ty));
         v00.Color = v10.Color = v11.Color = v01.Color = col;
+        v00.Normal = v10.Normal = v11.Normal = v01.Normal = -facingDir;
         if (texCoordEffect.HasFlag(SpriteEffects.FlipHorizontally))
         {
             Util.Swap(ref v00.TexCoord, ref v10.TexCoord);

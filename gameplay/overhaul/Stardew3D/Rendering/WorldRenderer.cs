@@ -16,6 +16,7 @@ public class WorldRenderer : IDisposable
     private RenderBatcher worldBatch = new(Game1.graphics.GraphicsDevice);
     private ModelObject skybox = Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/Skybox");
     private PBREnvironment env = PBREnvironment.CreateDefault();
+    private PBREnvironment skyboxEnv = PBREnvironment.CreateDefault();
 
     public PBREnvironment CurrentEnvironment => env;
 
@@ -59,7 +60,9 @@ public class WorldRenderer : IDisposable
         drawCtx.SetCamera(camera.ViewMatrix.Inverted());
         drawCtx.SetProjectionMatrix(projectionMatrix);
 
-        skybox.Draw(env, Matrix.CreateTranslation(camera.Position));
+        skyboxEnv ??= PBREnvironment.CreateDefault();
+        skyboxEnv.SetAmbientLight(new Vector3(1, 1, 1));
+        skybox.Draw(skyboxEnv, Matrix.CreateTranslation(camera.Position));
 
         var loc = Game1.currentLocation;
 
@@ -146,6 +149,15 @@ public class WorldRenderer : IDisposable
 
         Color lightingCol = ((!(Game1.currentLocation is StardewValley.Locations.MineShaft mine)) ? ((Game1.ambientLight.Equals(Color.White) || (Game1.currentLocation.IsOutdoors && Game1.currentLocation.IsRainingHere())) ? Game1.outdoorLight : Game1.ambientLight) : mine.getLightingColor(Game1.currentGameTime));
         env.SetAmbientLight(lightingCol == Color.White ? Vector3.One : (Vector3.One - lightingCol.ToVector3()));
+        env._SetPunctualLight(0, new PBRPunctualLight()
+        {
+            Type = 1,
+            Range = 4,
+            Color = Color.White.ToVector3(),
+            Intensity = 3,
+            Position = Game1.player.StandingPixel3D + new Vector3(0, 1.5f, 0),
+        });
+        //env.SetAmbientLight(new Vector3(0.05f, 0.05f, 0.05f));
 
         worldBatch.DrawBatched(env, Matrix.Identity, camera.ViewMatrix, projectionMatrix);
 

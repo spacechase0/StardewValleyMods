@@ -8,6 +8,27 @@ namespace Stardew3D.Content.Models;
 internal partial class Items_Objects_Debris : SpaceShared.Content.BaseDictionaryAssetData
 {
 #if DEBUG
+    public ModelData _74 => new()
+    {
+        ModelFilePath = $"{ModId}:assets/Debris.gltf",
+        SubModelPath = "/stone/stone1",
+    };
+    public ModelData _76 => new()
+    {
+        ModelFilePath = $"{ModId}:assets/Debris.gltf",
+        SubModelPath = "/stone/stone1",
+    };
+    public ModelData _78 => new()
+    {
+        ModelFilePath = $"{ModId}:assets/Debris.gltf",
+        SubModelPath = "/stone/stone1",
+    };
+    public ModelData _80 => new()
+    {
+        ModelFilePath = $"{ModId}:assets/Debris.gltf",
+        SubModelPath = "/stone/stone1",
+    };
+
     [DictionaryAssetDataKey("Debris/Stone/1")]
     public ModelData stone1 => new()
     {

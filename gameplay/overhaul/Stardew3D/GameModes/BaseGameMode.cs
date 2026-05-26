@@ -87,6 +87,8 @@ public abstract partial class BaseGameMode : IGameMode
         Game1.graphics.GraphicsDevice.DepthStencilState = RenderHelper.DepthState;
         RenderHelper.GenericEffect.Projection = ProjectionMatrix;
 
+        Mod.State.RenderDebugDraw = false;
+        Mod.State.RenderDebugGrid = false;
         if ( Mod.State.RenderDebugDraw )
             RenderHelper.DebugRender(Camera);
         if (Mod.State.RenderDebugGrid)

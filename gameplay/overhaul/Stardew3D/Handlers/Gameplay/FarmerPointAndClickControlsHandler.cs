@@ -321,6 +321,7 @@ internal class FarmerPointAndClickControlsHandler : FarmerWorldControlsBaseHandl
                         Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
                         RenderHelper.GenericEffect.Texture = Game1.staminaRect;
                         RenderHelper.GenericEffect.World = Matrix.Identity;
+                        RenderHelper.GenericEffect.AmbientLightColor = Color.White.ToVector3();
                         {
                             RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing_Transparent_1"];
                             foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)

@@ -97,12 +97,12 @@ public class LocationRenderData : RenderData<LocationHandler>
                     if (!hasWater && !Parent.ShowMissing.HasFlag(LocationHandler.TerrainType.Water))
                         continue;
 
-                    Parent.waterVertices[ind * 6 + 0] = new(Parent.waterVertices[ind * 6 + 0].Position, (srcRect.Location.ToVector2() + new Vector2(0, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 0].Color);
-                    Parent.waterVertices[ind * 6 + 1] = new(Parent.waterVertices[ind * 6 + 1].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 1].Color);
-                    Parent.waterVertices[ind * 6 + 2] = new(Parent.waterVertices[ind * 6 + 2].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 2].Color);
-                    Parent.waterVertices[ind * 6 + 3] = new(Parent.waterVertices[ind * 6 + 3].Position, (srcRect.Location.ToVector2() + srcRect.Size.ToVector2()) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 3].Color);
-                    Parent.waterVertices[ind * 6 + 4] = new(Parent.waterVertices[ind * 6 + 4].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 4].Color);
-                    Parent.waterVertices[ind * 6 + 5] = new(Parent.waterVertices[ind * 6 + 5].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 5].Color);
+                    Parent.waterVertices[ind * 6 + 0] = new(Parent.waterVertices[ind * 6 + 0].Position, (srcRect.Location.ToVector2() + new Vector2(0, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 0].Color) { Normal = Parent.waterVertices[ind * 6 + 0].Normal };
+                    Parent.waterVertices[ind * 6 + 1] = new(Parent.waterVertices[ind * 6 + 1].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 1].Color) { Normal = Parent.waterVertices[ind * 6 + 1].Normal };
+                    Parent.waterVertices[ind * 6 + 2] = new(Parent.waterVertices[ind * 6 + 2].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 2].Color) { Normal = Parent.waterVertices[ind * 6 + 2].Normal };
+                    Parent.waterVertices[ind * 6 + 3] = new(Parent.waterVertices[ind * 6 + 3].Position, (srcRect.Location.ToVector2() + srcRect.Size.ToVector2()) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 3].Color) { Normal = Parent.waterVertices[ind * 6 + 3].Normal };
+                    Parent.waterVertices[ind * 6 + 4] = new(Parent.waterVertices[ind * 6 + 4].Position, (srcRect.Location.ToVector2() + new Vector2(srcRect.Width, 0)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 4].Color) { Normal = Parent.waterVertices[ind * 6 + 4].Normal };
+                    Parent.waterVertices[ind * 6 + 5] = new(Parent.waterVertices[ind * 6 + 5].Position, (srcRect.Location.ToVector2() + new Vector2(0, srcRect.Height)) / tex.Bounds.Size.ToVector2(), Parent.waterVertices[ind * 6 + 5].Color) { Normal = Parent.waterVertices[ind * 6 + 5].Normal };
 
                     ++ind;
                 }

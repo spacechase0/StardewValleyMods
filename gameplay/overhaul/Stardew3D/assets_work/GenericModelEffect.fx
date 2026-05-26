@@ -6,11 +6,13 @@ matrix WorldViewProj;
 sampler2D Texture : register(s0);
 float4 Color;
 
-#define LIGHT_COUNT 4
+#define MAX_LIGHT_COUNT 16
 
 float4 AmbientLightColor = float4(1, 1, 1, 1);
-float4 PointLightPositions[LIGHT_COUNT];
-float4 PointLightColors[LIGHT_COUNT];
+
+int PointLightCount;
+float4 PointLightPositions[MAX_LIGHT_COUNT];
+float4 PointLightColors[MAX_LIGHT_COUNT];
 
 struct VertexShaderInput
 {
@@ -22,10 +24,10 @@ struct VertexShaderInput
 
 struct InstanceInput
 {
-    float4 MatRow1 : TEXCOORD1;
-    float4 MatRow2 : TEXCOORD2;
-    float4 MatRow3 : TEXCOORD3;
-    float4 MatRow4 : TEXCOORD4;
+    float4 MatRow1 : TEXCOORD6;
+    float4 MatRow2 : TEXCOORD7;
+    float4 MatRow3 : TEXCOORD8;
+    float4 MatRow4 : TEXCOORD9;
     float4 Color : COLOR1;
 };
 
@@ -41,7 +43,7 @@ struct VertexShaderOutput
 VertexShaderOutput MainInstancedVS(VertexShaderInput input, InstanceInput instance)
 {
     float4x4 instTransform = float4x4(instance.MatRow1, instance.MatRow2, instance.MatRow3, instance.MatRow4);
-    matrix transform = instTransform * World;
+    matrix transform = mul(instTransform, World);
     
     VertexShaderOutput ret;
     ret.Position = mul(input.Position, mul(instTransform, WorldViewProj));
@@ -70,17 +72,21 @@ float4 MainPS_Common(VertexShaderOutput input)
     float4 lighting = AmbientLightColor;
     
     [unroll]
-    for (int i = 0; i < LIGHT_COUNT; i += 1)
+    for (int i = 0; i < PointLightCount; i += 1)
     {
-        float amount = dot(-normalize(input.OriginalPosition - PointLightPositions[i].xyz), input.Normal);
+        float dist = distance(input.OriginalPosition, PointLightPositions[i].xyz) / PointLightPositions[i].w;
+        
+        float amount = 1;
+        amount = dot(-normalize(input.OriginalPosition - PointLightPositions[i].xyz), input.Normal);
         amount = saturate(amount);
+        amount = amount / (1 + dist * dist);
 
         lighting.r = max(lighting.r, PointLightColors[i].r * amount * PointLightColors[i].a);
         lighting.g = max(lighting.g, PointLightColors[i].g * amount * PointLightColors[i].a);
         lighting.b = max(lighting.b, PointLightColors[i].b * amount * PointLightColors[i].a);
     }
 
-    lighting = AmbientLightColor; // most lights aren't implemented yet, and so we don't actually want anything but ambient lights
+    //lighting = AmbientLightColor; // most lights aren't implemented yet, and so we don't actually want anything but ambient lights
     
     return baseCol * lighting;
 }

@@ -540,8 +540,9 @@ public class TileDataEditingMode : BaseEditingMode
         if (lastHoverTile.HasValue && pendingSelectMode != SelectMode.Remove)
         {
             List<Vector3> hover = new();
-            MakeQuad(hover, DimensionUtils.GetPositionForTile(Editable.Location, lastHoverTile.Value, TileType));
-            SimpleVertex[] v = hover.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.Gray)).ToArray();
+            var posForTile = DimensionUtils.GetPositionForTile(Editable.Location, lastHoverTile.Value, TileType);
+            MakeQuad(hover, posForTile);
+            SimpleVertex[] v = hover.Select(pos => new SimpleVertex(pos, Vector2.One * 0.5f, Color.Gray) { Normal = posForTile.QuadFacingNormal }).ToArray();
 
             RenderHelper.GenericEffect.CurrentTechnique = RenderHelper.GenericEffect.Techniques["SingleDrawing"];
             foreach (var pass in RenderHelper.GenericEffect.CurrentTechnique.Passes)
