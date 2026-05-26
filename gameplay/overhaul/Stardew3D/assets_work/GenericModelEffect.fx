@@ -1,3 +1,6 @@
+#define VS_SHADERMODEL vs_3_0
+#define PS_SHADERMODEL ps_3_0
+
 matrix World;
 matrix WorldViewProj;
 sampler2D Texture : register(s0);
@@ -6,9 +9,8 @@ float4 Color;
 #define LIGHT_COUNT 4
 
 float4 AmbientLightColor = float4(1, 1, 1, 1);
-//float3 PointLightPositions[LIGHT_COUNT];
-//float PointLightStrengths[LIGHT_COUNT];
-//float3 PointLightColors[LIGHT_COUNT];
+float4 PointLightPositions[LIGHT_COUNT];
+float4 PointLightColors[LIGHT_COUNT];
 
 struct VertexShaderInput
 {
@@ -33,7 +35,7 @@ struct VertexShaderOutput
     float3 Normal : NORMAL0;
     float4 Color : COLOR0;
     float2 TextureCoordinates : TEXCOORD0;
-    //float3 OriginalPosition : TEXCOORD1;
+    float3 OriginalPosition : TEXCOORD1;
 };
 
 VertexShaderOutput MainInstancedVS(VertexShaderInput input, InstanceInput instance)
@@ -46,12 +48,7 @@ VertexShaderOutput MainInstancedVS(VertexShaderInput input, InstanceInput instan
     ret.TextureCoordinates = input.TextureCoordinates;
     ret.Color = input.Color * instance.Color;
     ret.Normal = normalize(mul(input.Normal, (float3x3) transform));
-    //ret.OriginalPosition = (float3) mul(input.Position, transform);
-    
-    // MonoGame will crash without this line because of some effect buffer not being big enough.
-    // I have no clue why using World in this way makes the buffer big enough.
-    // If the World matrix ends up having all 0, we have other problems
-    ret.Color *= any(World);
+    ret.OriginalPosition = (float3) mul(input.Position, transform);
     return ret;
 }
 
@@ -62,12 +59,7 @@ VertexShaderOutput MainSingleVS(VertexShaderInput input)
     ret.TextureCoordinates = input.TextureCoordinates;
     ret.Color = input.Color;
     ret.Normal = normalize(mul(input.Normal, (float3x3) World));
-    //ret.OriginalPosition = (float3) mul(input.Position, World);
-    
-    // MonoGame will crash without this line because of some effect buffer not being big enough.
-    // I have no clue why using World in this way makes the buffer big enough.
-    // If the World matrix ends up having all 0, we have other problems
-    ret.Color *= any(World);
+    ret.OriginalPosition = (float3) mul(input.Position, World);
     return ret;
 }
 
@@ -76,17 +68,19 @@ float4 MainPS_Common(VertexShaderOutput input)
     float4 baseCol = tex2D(Texture, input.TextureCoordinates) * input.Color * Color;
 
     float4 lighting = AmbientLightColor;
-    for (int i = 0; i < LIGHT_COUNT; ++i)
+    
+    [unroll]
+    for (int i = 0; i < LIGHT_COUNT; i += 1)
     {
-        /*
-        float amount = dot(-normalize(input.OriginalPosition - PointLightPositions[i]), input.Normal);
+        float amount = dot(-normalize(input.OriginalPosition - PointLightPositions[i].xyz), input.Normal);
         amount = saturate(amount);
 
-        lighting.r = max(lighting.r, PointLightColors[i].r * amount);
-        lighting.g = max(lighting.g, PointLightColors[i].g * amount);
-        lighting.b = max(lighting.b, PointLightColors[i].b * amount);
-*/
+        lighting.r = max(lighting.r, PointLightColors[i].r * amount * PointLightColors[i].a);
+        lighting.g = max(lighting.g, PointLightColors[i].g * amount * PointLightColors[i].a);
+        lighting.b = max(lighting.b, PointLightColors[i].b * amount * PointLightColors[i].a);
     }
+
+    lighting = AmbientLightColor; // most lights aren't implemented yet, and so we don't actually want anything but ambient lights
     
     return baseCol * lighting;
 }
