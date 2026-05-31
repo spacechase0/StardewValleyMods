@@ -54,7 +54,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
     private bool dirty = true;
     public bool IsDirty => dirty;
 
-    public PBREnvironment Environment = PBREnvironment.CreateDefault();
+    public WorldEnvironment Environment = new();
 
     public DimensionUtils.PositionResult[,] floorData;
     public DimensionUtils.PositionResult[,] ceilingData;

@@ -15,12 +15,12 @@ public class WorldRenderer : IDisposable
 {
     private RenderBatcher worldBatch = new(Game1.graphics.GraphicsDevice);
     private ModelObject skybox = Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/Skybox");
-    private PBREnvironment env = PBREnvironment.CreateDefault();
-    private PBREnvironment skyboxEnv = PBREnvironment.CreateDefault();
+    private WorldEnvironment env = new();
+    private WorldEnvironment skyboxEnv = new();
 
-    public PBREnvironment CurrentEnvironment => env;
+    public WorldEnvironment CurrentEnvironment => env;
 
-    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location) => (Mod.State.GetRenderHandlersFor(location)[0] as LocationHandler)?.Environment ?? CurrentEnvironment;
+    public WorldEnvironment GetCurrentEnvironmentFor(GameLocation location) => (Mod.State.GetRenderHandlersFor(location)[0] as LocationHandler)?.Environment ?? CurrentEnvironment;
     public Matrix GetCurrentTransformFor(GameLocation location) => locationTransforms.GetOrCreateValue( location ).Value;
 
     private bool builtLocationRecently = false;
@@ -60,8 +60,6 @@ public class WorldRenderer : IDisposable
         drawCtx.SetCamera(camera.ViewMatrix.Inverted());
         drawCtx.SetProjectionMatrix(projectionMatrix);
 
-        skyboxEnv ??= PBREnvironment.CreateDefault();
-        skyboxEnv.SetAmbientLight(new Vector3(1, 1, 1));
         skybox.Draw(skyboxEnv, Matrix.CreateTranslation(camera.Position));
 
         var loc = Game1.currentLocation;
@@ -148,16 +146,17 @@ public class WorldRenderer : IDisposable
         }
 
         Color lightingCol = ((!(Game1.currentLocation is StardewValley.Locations.MineShaft mine)) ? ((Game1.ambientLight.Equals(Color.White) || (Game1.currentLocation.IsOutdoors && Game1.currentLocation.IsRainingHere())) ? Game1.outdoorLight : Game1.ambientLight) : mine.getLightingColor(Game1.currentGameTime));
-        env.SetAmbientLight(lightingCol == Color.White ? Vector3.One : (Vector3.One - lightingCol.ToVector3()));
-        env._SetPunctualLight(0, new PBRPunctualLight()
+        env.AmbientLight = lightingCol == Color.White ? Color.White : new Color(255 - lightingCol.R, 255 - lightingCol.G, 255 - lightingCol.B);
+        env.Lights[0] = new Light()
         {
-            Type = 1,
-            Range = 4,
-            Color = Color.White.ToVector3(),
-            Intensity = 3,
+            Type = Light.LightType.Point,
+            Range = 16,
+            Color = Color.White,
+            Intensity = 1,
+            Falloff = 0.5f,
             Position = Game1.player.StandingPixel3D + new Vector3(0, 1.5f, 0),
-        });
-        //env.SetAmbientLight(new Vector3(0.05f, 0.05f, 0.05f));
+        };
+        env.AmbientLight = Color.White * 0.05f;
 
         worldBatch.DrawBatched(env, Matrix.Identity, camera.ViewMatrix, projectionMatrix);
 

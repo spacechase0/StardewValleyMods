@@ -41,7 +41,7 @@ public class EditorGameMode : BaseGameMode
     public UiSystem Ui { get; private set; }
     private Panel EditableDataPanel { get; set; }
 
-    public PBREnvironment EditorEnvironment { get; set; }
+    public WorldEnvironment EditorEnvironment { get; set; }
     public RenderBatcher EditorWorldBatch { get; private set; }
 
     public List<IEditableType> EditableTypes =
@@ -178,7 +178,7 @@ public class EditorGameMode : BaseGameMode
         EditableDataPanel = new Panel(Anchor.CenterRight, new Vector2(0.2f, 1));
         Ui.Add("Editable Data", EditableDataPanel);
 
-        EditorEnvironment = PBREnvironment.CreateDefault();
+        EditorEnvironment = new();
         EditorWorldBatch = new RenderBatcher(Game1.graphics.GraphicsDevice);
     }
 

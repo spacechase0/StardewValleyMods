@@ -17,7 +17,7 @@ public abstract partial class BaseGameMode : IGameMode
     public abstract IReadOnlyList<IGameCursor> Cursors { get; }
 
     public RenderTarget2D CurrentTargetScreen { get => Game1.graphics.GraphicsDevice.GetRenderTargets()[0].RenderTarget as RenderTarget2D; }
-    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location) => WorldRenderer.GetCurrentEnvironmentFor(location);
+    public WorldEnvironment GetCurrentEnvironmentFor(GameLocation location) => WorldRenderer.GetCurrentEnvironmentFor(location);
     public Matrix GetCurrentTransformFor(GameLocation location) => WorldRenderer.GetCurrentTransformFor( location );
 
     public abstract Matrix ProjectionMatrix { get; protected set; }

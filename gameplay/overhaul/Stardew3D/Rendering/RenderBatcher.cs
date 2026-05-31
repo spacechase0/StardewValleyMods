@@ -12,7 +12,7 @@ namespace Stardew3D.Rendering;
 
 public class RenderBatcher : IDisposable
 {
-    public delegate void RenderDirect(PBREnvironment env, Color color, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix);
+    public delegate void RenderDirect(WorldEnvironment env, Color color, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix);
 
     private GraphicsDevice graphics;
 
@@ -279,10 +279,10 @@ public class RenderBatcher : IDisposable
         }
     }
 
-    public void DrawBatched(PBREnvironment env, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix)
+    public void DrawBatched(WorldEnvironment env, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix)
     {
         bool isMirrorTransform = worldMatrix.Determinant() < 0;
-        env.ApplyTo(RenderHelper.GenericEffect);
+        RenderHelper.GenericEffect.SetEnvironment(env);
 
         var oldDepth = graphics.DepthStencilState;
         var oldRaster = graphics.RasterizerState;
@@ -294,6 +294,7 @@ public class RenderBatcher : IDisposable
                 var effect = entry.Effect;
                 if (effect is GenericModelEffect generic)
                 {
+                    generic.SetEnvironment(env);
                     if (transparentTechnique.HasValue)
                         effect.CurrentTechnique = effect.Techniques[$"InstancedDrawing_Transparent_{transparentTechnique.Value}"];
                     else
@@ -302,7 +303,6 @@ public class RenderBatcher : IDisposable
 
                 ModelInstance.UpdateProjViewTransforms(effect, projectionMatrix, viewMatrix);
                 ModelInstance.UpdateWorldTransforms(effect, worldMatrix);
-                env.ApplyTo(effect);
 
                 graphics.BlendState = entry.Blend;
                 graphics.SetVertexBuffers(new(entry.Vertices), new(instanceVbo, 0, 1));
@@ -321,8 +321,9 @@ public class RenderBatcher : IDisposable
             foreach (var part in parts)
             {
                 var effect = part.Effect;
-                if (effect is GenericModelEffect)
+                if (effect is GenericModelEffect generic)
                 {
+                    generic.SetEnvironment(env);
                     if (transparentTechnique.HasValue)
                         effect.CurrentTechnique = effect.Techniques[$"InstancedDrawing_Transparent_{transparentTechnique.Value}"];
                     else
@@ -331,7 +332,6 @@ public class RenderBatcher : IDisposable
 
                 ModelInstance.UpdateProjViewTransforms(effect, projectionMatrix, viewMatrix);
                 ModelInstance.UpdateWorldTransforms(effect, worldMatrix);
-                env.ApplyTo(effect);
 
                 var geom = part.Geometry as MeshTriangles;
                 graphics.BlendState = part.Blending;
@@ -351,17 +351,17 @@ public class RenderBatcher : IDisposable
             var effect = sprite.Effect;
             if (effect is GenericModelEffect generic)
             {
+                generic.SetEnvironment(env);
+                generic.Texture = tex;
+
                 if (transparentTechnique.HasValue)
                     effect.CurrentTechnique = effect.Techniques[$"SingleDrawing_Transparent_{transparentTechnique.Value}"];
                 else
                     effect.CurrentTechnique = effect.Techniques["SingleDrawing"];
-
-                generic.Texture = tex;
             }
 
             ModelInstance.UpdateProjViewTransforms(effect, projectionMatrix, viewMatrix);
             ModelInstance.UpdateWorldTransforms(effect, worldMatrix);
-            env.ApplyTo(effect);
 
             graphics.BlendState = BlendState.AlphaBlend;
             graphics.RasterizerState = RasterizerState.CullNone;

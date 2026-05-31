@@ -25,7 +25,7 @@ public interface IGameMode
     public IReadOnlyList<IGameCursor> Cursors { get; }
 
     public RenderTarget2D CurrentTargetScreen { get; }
-    public PBREnvironment GetCurrentEnvironmentFor(GameLocation location);
+    public WorldEnvironment GetCurrentEnvironmentFor(GameLocation location);
     public Matrix GetCurrentTransformFor(GameLocation location);
 
     public void SwitchOn( IGameMode previousMode );

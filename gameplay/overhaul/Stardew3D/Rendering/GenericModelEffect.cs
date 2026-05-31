@@ -4,7 +4,7 @@ using static Microsoft.Xna.Framework.Graphics.PBRPunctualLight;
 
 namespace Stardew3D.Rendering;
 
-public class GenericModelEffect : Effect, IEffectMatrices, IEffect
+public class GenericModelEffect : Effect, IEffectMatrices
 {
     private bool matrixDirty = true;
     private EffectParameter worldParam;
@@ -44,8 +44,8 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
         set => ambientLightParam.SetValue(new Vector4(value.X, value.Y, value.Z, 1));
     }
 
-    private EffectParameter pointLightCountParam, pointLightPosParam, pointLightStrengthParam, pointLightColorParam;
-    public int MaxPunctualLights => 16;
+    private EffectParameter pointLightCountParam, pointLightPosParam, pointLightDirsParam, pointLightColorParam;
+    public static int MaxLights => 16;
 
     public GenericModelEffect(GraphicsDevice graphicsDevice, byte[] effectCode)
         : base(graphicsDevice, effectCode)
@@ -57,7 +57,7 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
         ambientLightParam = Parameters["AmbientLightColor"];
         pointLightCountParam = Parameters["PointLightCount"];
         pointLightPosParam = Parameters["PointLightPositions"];
-        pointLightStrengthParam = Parameters["PointLightStrengths"];
+        pointLightDirsParam = Parameters["PointLightDirections"];
         pointLightColorParam = Parameters["PointLightColors"];
 
         Color = Color.White;
@@ -73,7 +73,7 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
         ambientLightParam = Parameters["AmbientLightColor"];
         pointLightCountParam = Parameters["PointLightCount"];
         pointLightPosParam = Parameters["PointLightPositions"];
-        pointLightStrengthParam = Parameters["PointLightStrengths"];
+        pointLightDirsParam = Parameters["PointLightDirections"];
         pointLightColorParam = Parameters["PointLightColors"];
 
         _world = other._world;
@@ -88,7 +88,6 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
     {
         base.OnApply();
 
-        pointLightCountParam.SetValue(MaxPunctualLights);
         if (matrixDirty)
         {
             worldViewProjectionParam.SetValue(_world * _view * _projection);
@@ -110,24 +109,30 @@ public class GenericModelEffect : Effect, IEffectMatrices, IEffect
         return new GenericModelEffect(this);
     }
 
-    private int lastLightIndex = -1;
-    public void SetPunctualLight(int index, PBRPunctualLight light)
+    public void SetEnvironment(WorldEnvironment env)
     {
-        pointLightPosParam.Elements[index].SetValue(Vector4.Zero);
-        pointLightColorParam.Elements[index].SetValue(Vector4.Zero);
-        switch (light.Type)
-        {
-            case 0: // Directional
-                break;
-            case 1: // Point
-                if ( index != lastLightIndex )
-                    lastLightIndex = index;
+        AmbientLightColor = env.AmbientLight.ToVector3();
 
-                pointLightPosParam.Elements[index].SetValue(new Vector4(light.Position, light.Range));
-                pointLightColorParam.Elements[index].SetValue(new Vector4(light.Color, light.Intensity));
-                break;
-            case 2: // Spot
-                break;
+        int index = 0;
+        foreach (var light in env.Lights)
+        {
+            if (light == null)
+                continue;
+
+            switch (light.Type)
+            {
+                case Light.LightType.Direction:
+                    break;
+                case Light.LightType.Point:
+                    pointLightPosParam.Elements[index].SetValue(new Vector4(light.Position, light.Range));
+                    pointLightDirsParam.Elements[index].SetValue(new Vector4(light.Direction, light.Falloff));
+                    pointLightColorParam.Elements[index].SetValue(new Vector4(light.Color.ToVector3(), light.Intensity));
+                    break;
+                case Light.LightType.Spot:
+                    break;
+            }
+            index += 1;
         }
+        pointLightCountParam.SetValue(index);
     }
 }

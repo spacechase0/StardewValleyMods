@@ -14,7 +14,7 @@ public interface IRenderHandler
         public SpriteBatchProxy WorldSpriteBatch;
 
         public RenderBatcher WorldBatch;
-        public PBREnvironment WorldEnvironment;
+        public WorldEnvironment WorldEnvironment;
         public ICamera WorldCamera;
         public Matrix ParentWorldTransform = Matrix.Identity;
         public Matrix WorldTransform = Matrix.Identity;

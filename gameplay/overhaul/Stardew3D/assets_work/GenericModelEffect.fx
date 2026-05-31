@@ -12,6 +12,7 @@ float4 AmbientLightColor = float4(1, 1, 1, 1);
 
 int PointLightCount;
 float4 PointLightPositions[MAX_LIGHT_COUNT];
+float4 PointLightDirections[MAX_LIGHT_COUNT];
 float4 PointLightColors[MAX_LIGHT_COUNT];
 
 struct VertexShaderInput
@@ -75,11 +76,15 @@ float4 MainPS_Common(VertexShaderOutput input)
     for (int i = 0; i < PointLightCount; i += 1)
     {
         float dist = distance(input.OriginalPosition, PointLightPositions[i].xyz) / PointLightPositions[i].w;
+        if (dist > 1)
+            continue;
         
         float amount = 1;
         amount = dot(-normalize(input.OriginalPosition - PointLightPositions[i].xyz), input.Normal);
         amount = saturate(amount);
-        amount = amount / (1 + dist * dist);
+
+        float x = (1 - dist * dist);
+        amount *= (x * x) / (1 + PointLightDirections[i].w * dist * dist); // https://lisyarus.github.io/blog/posts/point-light-attenuation.html
 
         lighting.r = max(lighting.r, PointLightColors[i].r * amount * PointLightColors[i].a);
         lighting.g = max(lighting.g, PointLightColors[i].g * amount * PointLightColors[i].a);

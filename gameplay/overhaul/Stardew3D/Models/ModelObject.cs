@@ -245,7 +245,7 @@ public class ModelObject
     }
 
     private RenderBatcher immediateBatch;
-    public void Draw(PBREnvironment env, Matrix transform, Color? color = null, int whichMatch = 0)
+    public void Draw(WorldEnvironment env, Matrix transform, Color? color = null, int whichMatch = 0)
     {
         if (immediateBatch == null)
             immediateBatch = new(Game1.graphics.GraphicsDevice);
