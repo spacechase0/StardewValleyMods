@@ -3,6 +3,7 @@ using Stardew3D.DataModels;
 using Stardew3D.GameModes;
 using Stardew3D.Utilities;
 using StardewValley;
+using StardewValley.Characters;
 using StardewValley.Monsters;
 using static Stardew3D.Handlers.IRenderHandler;
 
@@ -38,6 +39,10 @@ public class CharacterRenderData : RenderData<CharacterRenderer>
             if (Parent.Object is Monster monster && monster.isGlider.Value)
             {
                 ctx.WorldTransform *= Matrix.CreateTranslation(0, -0.25f, 0);
+            }
+            if (Parent.Object is Pet)
+            {
+                ctx.WorldTransform *= Matrix.CreateTranslation(0, 1f, 0);
             }
 
             ctx.WorldSpriteBatch.Begin(Parent.Object.StandingPixel.ToVector2(), ctx.WorldTransform, scale: Parent.Object?.GetType() == typeof(NPC) ? 1.5f : 1);

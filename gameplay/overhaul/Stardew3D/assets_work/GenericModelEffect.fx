@@ -80,7 +80,7 @@ float4 MainPS_Common(VertexShaderOutput input)
             continue;
         
         float amount = 1;
-        amount = dot(-normalize(input.OriginalPosition - PointLightPositions[i].xyz), input.Normal);
+        //amount = dot(-normalize(input.OriginalPosition - PointLightPositions[i].xyz), input.Normal);
         amount = saturate(amount);
 
         float x = (1 - dist * dist);
