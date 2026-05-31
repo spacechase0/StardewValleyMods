@@ -498,6 +498,19 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                                 {
                                     deco.appliedWallpaper.TryGetValue(wallKey, out wallSource);
                                 }
+                                if (wallSource == null)
+                                {
+                                    for (Point fpos = new(ix, iy); fpos.Y >= 0; fpos.Y -= 1)
+                                    {
+                                        string hereFloor = deco.GetFloorID(fpos.X, fpos.Y);
+                                        if (hereFloor == floor)
+                                            continue;
+
+                                        string wall = deco.GetWallpaperID(fpos.X, fpos.Y);
+                                        deco.appliedWallpaper.TryGetValue(wall, out wallSource);
+                                        break;
+                                    }
+                                }
 
                                 var data = deco.GetWallpaperSource(wallSource ?? "");
                                 if (data.Key != null)

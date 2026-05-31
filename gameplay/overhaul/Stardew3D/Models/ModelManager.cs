@@ -34,6 +34,11 @@ public class ModelManager
         DrawContext = new(Game1.graphics.GraphicsDevice);
     }
 
+    public void Clear()
+    {
+        models.Clear();
+    }
+
     public ModelObject RequestModel(string id)
     {
         id = id.Replace('\\', '/');
@@ -81,7 +86,7 @@ public class ModelManager
                 throw new ContentLoadException($"Mod \"{modId}\" not present.");
             }
 
-            if (file.EndsWith(".gltf"))
+            if (file.EndsWith(".gltf") || file.EndsWith(".glb"))
             {
                 var filePath = Util.FetchFullPath(Mod.Instance.Helper.ModRegistry, assetName, ':');
                 if (!File.Exists(filePath))

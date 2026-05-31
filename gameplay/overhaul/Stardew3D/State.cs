@@ -97,6 +97,7 @@ public class State
 
     public void ClearHandlerState()
     {
+        ModelManager.Clear();
         foreach (var entry in modeData)
         {
             entry.Value.UpdateHandlerManager.ActiveHandlers.Clear();
