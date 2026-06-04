@@ -200,7 +200,7 @@ public class WorldRenderer : IDisposable
             Position = Game1.player.StandingPixel3D + new Vector3(0, 1.5f, 0),
         };
         //env.AmbientLight = Color.White * 0.05f;
-        Game1.gameTimeInterval += Game1.currentGameTime.ElapsedGameTime.Milliseconds * 7;
+        //Game1.gameTimeInterval += Game1.currentGameTime.ElapsedGameTime.Milliseconds * 7;
 
         worldBatch.DrawBatched(env, Matrix.Identity, camera.ViewMatrix, projectionMatrix);
 
