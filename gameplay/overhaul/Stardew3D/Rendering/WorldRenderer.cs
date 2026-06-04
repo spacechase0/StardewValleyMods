@@ -13,6 +13,10 @@ namespace Stardew3D.Rendering;
 
 public class WorldRenderer : IDisposable
 {
+    private Texture2D skyTex = Mod.Instance.Helper.ModContent.Load<Texture2D>(Mod.Instance.Helper.ModContent.GetInternalAssetName("assets/skybox.png").BaseName);
+    private Texture2D skyColors = Mod.Instance.Helper.ModContent.Load<Texture2D>("assets/skybox_colors.png");
+    private Color[] skyColorsData;
+
     private RenderBatcher worldBatch = new(Game1.graphics.GraphicsDevice);
     private ModelObject skybox = Mod.State.ModelManager.RequestModel("kittycatcasey.Stardew3D/Skybox");
     private WorldEnvironment env = new();
@@ -27,6 +31,11 @@ public class WorldRenderer : IDisposable
     private GameLocation lastLoc;
 
     private ConditionalWeakTable<GameLocation, Holder<Matrix>> locationTransforms = new();
+
+    public WorldRenderer()
+    {
+        skyColorsData = skyColors.GetColorData();
+    }
 
     public void Dispose()
     {
@@ -60,6 +69,38 @@ public class WorldRenderer : IDisposable
         drawCtx.SetCamera(camera.ViewMatrix.Inverted());
         drawCtx.SetProjectionMatrix(projectionMatrix);
 
+        {
+            int time = Game1.timeOfDay % 2400;
+            int tenMinNum = (time / 100 * 6) + (time % 100 / 10);
+            float subNumPerc = Game1.gameTimeInterval / (float)(Game1.realMilliSecondsPerGameTenMinutes + Game1.currentLocation?.ExtraMillisecondsPerInGameMinute * 10);
+            int subNum = (int)(subNumPerc * 16);
+
+            int ind = tenMinNum * 16 + subNum;
+            if (skyColorsData[ind].A == 255)
+            {
+                foreach (var effect in skybox.Matches.SelectMany(p => p.Values.SelectMany(l => l)).SelectMany(p => p.Mesh.OpaqueEffects))
+                {
+                    foreach (var param in effect.Parameters)
+                    {
+                        if (param.ParameterType != EffectParameterType.Texture2D)
+                            continue;
+                        Texture2D tex = param.GetValueTexture2D();
+                        if (tex == null || !tex.Name.EndsWith("skybox.png"))
+                            continue;
+
+                        Color[] skyData = tex.GetColorData();
+                        for (int i = 0; i < skyData.Length; ++i)
+                        {
+                            skyData[i] = skyColorsData[ind];
+
+                            if ((i + 1) % tex.Width == 0)
+                                ind += skyColors.Width;
+                        }
+                        tex.SetData(skyData);
+                    }
+                }
+            }
+        }
         skybox.Draw(skyboxEnv, Matrix.CreateTranslation(camera.Position));
 
         var loc = Game1.currentLocation;
@@ -158,7 +199,8 @@ public class WorldRenderer : IDisposable
             Falloff = 0.5f,
             Position = Game1.player.StandingPixel3D + new Vector3(0, 1.5f, 0),
         };
-        env.AmbientLight = Color.White * 0.05f;
+        //env.AmbientLight = Color.White * 0.05f;
+        Game1.gameTimeInterval += Game1.currentGameTime.ElapsedGameTime.Milliseconds * 7;
 
         worldBatch.DrawBatched(env, Matrix.Identity, camera.ViewMatrix, projectionMatrix);
 
