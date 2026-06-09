@@ -2,7 +2,7 @@
 
 No particular order of priority. Some of these definitely fall into "feature creep" despite not being in that section.
 
-# Next milestone: VR test gameplay video (first week of spring)
+# Next milestone: VR test gameplay video (first day? week? of spring)
 Has some overlap with other sections
 * Fix chest menu being repositioned each time you place an item (because that replaces the entire menu)
 * Farmhouse interactions, and actually walking up the porch
@@ -15,6 +15,7 @@ Has some overlap with other sections
 * Make sure I can get through the intro sequence
 * Make monster hitboxes more lenient
 * Sky
+    * dawn/dusk
     * sun/moon
     * stars
     * weather
