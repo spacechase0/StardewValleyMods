@@ -137,6 +137,7 @@ public class FirstPersonGameMode : BaseGameMode, IFirstPersonGameMode
     protected override void UpdateCamera()
     {
         Camera.Position = Game1.player.StandingPixel3D + new Vector3( 0, Game1.player.swimming.Value ? 0.25f : 1.75f, 0 );
+        //Camera.Position += new Vector3(0, 10, 0);
         RenderHelper.GenericEffect.View = Camera.ViewMatrix;
     }
 }
