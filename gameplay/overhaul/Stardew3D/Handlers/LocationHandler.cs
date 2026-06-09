@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -131,6 +132,7 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
         Dictionary<Texture2D, VertexData> vertices = new();
         BuildFloorsAndCeiling(vertices);
         BuildWalls(vertices);
+        BuildPlaceholdersFromFlatMap(vertices);
 
         foreach (var key in vbos.Keys)
         {
@@ -812,5 +814,174 @@ public class LocationHandler : RendererFor<ModelData, GameLocation>, IUpdateHand
                 }
             }
         }
+    }
+
+    private void BuildPlaceholdersFromFlatMap(Dictionary<Texture2D, VertexData> output)
+    {
+#if false
+        const float tuck = 0.00001f;
+
+        Dictionary<string, Texture2D> texLookup = new();
+
+        List<Layer> alwaysFrontLayers = new();
+        List<Layer> frontLayers = new();
+        List<Layer> buildingLayers = new();
+        List<Layer> applicableLayers = new();
+        alwaysFrontLayers.AddRange(Object.alwaysFrontLayers.Select(kvp => kvp.Key));
+        frontLayers.AddRange(Object.frontLayers.Select(kvp => kvp.Key));
+        buildingLayers.AddRange(Object.buildingLayers.Select(kvp => kvp.Key));
+        applicableLayers.AddRange([.. buildingLayers, .. frontLayers, ..alwaysFrontLayers]);
+
+        // 0 = buildings, 1 = front, 2 = alwaysfront
+        int[] stageStartY = [-1, -1, -1];
+        bool[] had = new bool[stageStartY.Length];
+        for (int ix = 0; ix < Object.Map.Layers[0].LayerSize.Width; ++ix)
+        {
+            stageStartY[0] = stageStartY[1] = stageStartY[2] = -1;
+            for (int iy = Object.Map.Layers[0].LayerSize.Height - 1; iy >= 0; --iy)
+            {
+                bool hadAny = false;
+                had[0] = had[1] = had[2] = false;
+
+                // Only count alwaysfront if we had something on front or buildings
+                for (int i = 0; (stageStartY[0] != -1 || stageStartY[1] != -1) && !hadAny && i < alwaysFrontLayers.Count; ++i)
+                    hadAny = had[2] = alwaysFrontLayers[i].Tiles[ix, iy] != null;
+
+                // Only count front if we had something on buildings and haven't done always front yet
+                for (int i = 0; stageStartY[0] != -1 && stageStartY[2] == -1 && !hadAny && i < frontLayers.Count; ++i)
+                    hadAny = had[1] = frontLayers[i].Tiles[ix, iy] != null;
+
+                // Only count buildings if we haven't done the other two yet
+                for (int i = 0; stageStartY[1] == -1 && stageStartY[2] == -1 && !hadAny && i < buildingLayers.Count; ++i)
+                    hadAny = had[0] = buildingLayers[i].Tiles[ix, iy] != null;
+
+                if (hadAny)
+                {
+                    if (had[0] && stageStartY[0] == -1)
+                        stageStartY[0] = iy;
+                    if (had[1] && stageStartY[1] == -1)
+                        stageStartY[1] = iy;
+                    if (had[2] && stageStartY[2] == -1)
+                        stageStartY[2] = iy;
+                    continue;
+                }
+                if (stageStartY[0] == -1 || (stageStartY[1] == -1 && stageStartY[2] == -1))
+                {
+                    stageStartY[0] = stageStartY[1] = stageStartY[2] = -1;
+                    continue;
+                }
+
+                var tilePos = floorData[ix, stageStartY[0]];
+
+                Color col = Color.White;
+                (VertexData Data, int FirstVert) DoTile(StaticTile tile, int height)
+                {
+                    Texture2D tex = Game1.mouseCursors;
+                    int tileInd = 20 + 31 * 44, tr = 44;
+                    if (tile != null)
+                    {
+                        tileInd = tile.TileIndex;
+
+                        string texKey = PathUtilities.NormalizeAssetName(tile.TileSheet.ImageSource);
+                        if (!texLookup.TryGetValue(texKey, out tex))
+                            texLookup.Add(texKey, tex = Game1.content.Load<Texture2D>(texKey));
+
+                        tr = tile.TileSheet.SheetWidth;
+                    }
+
+                    if (!output.TryGetValue(tex, out var verts))
+                        output.Add(tex, verts = new());
+
+                    float tw = tex.ActualWidth;
+                    float twIncr = Game1.smallestTileSize / tw;
+                    float th = tex.ActualHeight;
+                    float thIncr = Game1.smallestTileSize / th;
+
+                    float tx = tileInd % tr * twIncr + tuck;
+                    float ty = tileInd / tr * thIncr + tuck;
+                    float twidth = twIncr - tuck * 2;
+                    float theight = thIncr - tuck * 2;
+
+                    int layerNum = applicableLayers.IndexOf(tile.Layer);
+                    SimpleVertex v00 = new(tilePos.Position + new Vector3(-0.5f, height + 1, 0.5f), new Vector2(tx, ty), col) { Normal = Vector3.Backward };
+                    SimpleVertex v10 = new(tilePos.Position + new Vector3(0.5f, height + 1, 0.5f), new Vector2(tx + twidth, ty), col) { Normal = Vector3.Backward };
+                    SimpleVertex v01 = new(tilePos.Position + new Vector3(-0.5f, height, 0.5f), new Vector2(tx, ty + theight), col) { Normal = Vector3.Backward };
+                    SimpleVertex v11 = new(tilePos.Position + new Vector3(0.5f, height, 0.5f), new Vector2(tx + twidth, ty + theight), col) { Normal = Vector3.Backward };
+                    int startInd = verts.Verts.Count;
+                    verts.Verts.Add(v00);
+                    verts.Verts.Add(v01);
+                    verts.Verts.Add(v10);
+                    verts.Verts.Add(v11);
+                    v00.Normal = -v00.Normal;
+                    v10.Normal = -v10.Normal;
+                    v01.Normal = -v01.Normal;
+                    v11.Normal = -v11.Normal;
+                    verts.Verts.Add(v00);
+                    verts.Verts.Add(v10);
+                    verts.Verts.Add(v01);
+                    verts.Verts.Add(v11);
+                    return new(verts, startInd);
+                }
+
+                void AddIndices(VertexData data, int firstVert)
+                {
+                    data.Indices.Add(firstVert + 0);
+                    data.Indices.Add(firstVert + 1);
+                    data.Indices.Add(firstVert + 2);
+                    data.Indices.Add(firstVert + 3);
+                    data.Indices.Add(firstVert + 2);
+                    data.Indices.Add(firstVert + 1);
+                    
+                    firstVert += 4;
+                    data.Indices.Add(firstVert + 0);
+                    data.Indices.Add(firstVert + 1);
+                    data.Indices.Add(firstVert + 2);
+                    data.Indices.Add(firstVert + 3);
+                    data.Indices.Add(firstVert + 2);
+                    data.Indices.Add(firstVert + 1);
+                }
+
+                for (int vertY = stageStartY[0]; vertY >= iy; --vertY)
+                {
+                    int height = stageStartY[0] - vertY;
+                    foreach (var layer in (vertY > stageStartY[stageStartY[1] > -1 ? 1 : 2] ? buildingLayers : (vertY > stageStartY[2] ? frontLayers : alwaysFrontLayers)))
+                    {
+                        var tile = layer.Tiles[ix, vertY];
+                        if (tile == null)
+                            continue;
+
+                        switch (tile)
+                        {
+                            case StaticTile:
+                                var data = DoTile(tile as StaticTile, height);
+                                AddIndices(data.Data, data.FirstVert);
+                                break;
+                            case AnimatedTile animTile:
+                                List<int> allVerts = new();
+                                bool first = true;
+                                int animSpot = 0;
+                                List<AnimationData> anim = null;
+                                foreach (var staticTile in animTile.TileFrames)
+                                {
+                                    var thisData = DoTile(staticTile, height);
+                                    allVerts.Add(thisData.FirstVert);
+                                    if (first)
+                                    {
+                                        animSpot = thisData.Data.Indices.Count; // Vanilla can't use animated tiles from multiple tilesheets anyways
+                                        AddIndices(thisData.Data, thisData.FirstVert);
+                                        anim = thisData.Data.Animations;
+                                        first = false;
+                                    }
+                                }
+                                anim.Add(new() { AnimIndexStart = animSpot, AllVertIndices = allVerts.ToArray(), FrameTime = animTile.FrameInterval });
+                                break;
+                        }
+                    }
+                }
+
+                stageStartY[0] = stageStartY[1] = stageStartY[2] = -1;
+            }
+        }
+#endif
     }
 }
