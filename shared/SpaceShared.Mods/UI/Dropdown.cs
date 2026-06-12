@@ -88,7 +88,7 @@ namespace SpaceShared.UI
             if (this.Dropped)
             {
                 //if (Mouse.GetState().LeftButton == ButtonState.Released)
-                if (Constants.TargetPlatform != GamePlatform.Android)
+                if (Constants.TargetPlatform != StardewModdingAPI.GamePlatform.Android)
                 {
                     if ((Mouse.GetState().LeftButton == ButtonState.Pressed && Game1.oldMouseState.LeftButton == ButtonState.Released ||
                          Game1.input.GetGamePadState().Buttons.A == ButtonState.Pressed && Game1.oldPadState.Buttons.A == ButtonState.Released)

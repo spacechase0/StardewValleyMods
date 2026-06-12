@@ -90,7 +90,7 @@ namespace SpaceShared.UI
 
             if (this.Clicked)
                 this.DragScroll = true;
-            if (Constants.TargetPlatform != GamePlatform.Android)
+            if (Constants.TargetPlatform != StardewModdingAPI.GamePlatform.Android)
             {
                 if (this.DragScroll && Mouse.GetState().LeftButton == ButtonState.Released)
                     this.DragScroll = false;

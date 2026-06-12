@@ -72,7 +72,7 @@ namespace SpaceShared.UI
 
             int mouseX;
             int mouseY;
-            if (Constants.TargetPlatform == GamePlatform.Android)
+            if (Constants.TargetPlatform == StardewModdingAPI.GamePlatform.Android)
             {
                 mouseX = Game1.getMouseX();
                 mouseY = Game1.getMouseY();

@@ -69,7 +69,7 @@ namespace SpaceShared.UI
 
             if (this.Clicked)
                 this.Dragging = true;
-            if (Constants.TargetPlatform != GamePlatform.Android)
+            if (Constants.TargetPlatform != StardewModdingAPI.GamePlatform.Android)
             {
                 if (Mouse.GetState().LeftButton == ButtonState.Released && Game1.input.GetGamePadState().Buttons.A == ButtonState.Released)
                     this.Dragging = false;
