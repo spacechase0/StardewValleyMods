@@ -27,7 +27,6 @@
   <Folder Name="/gameplay/overhaul/">
     <Project Path="gameplay/overhaul/CombatOverhaulMod/CombatOverhaulMod.csproj" />
     <Project Path="gameplay/overhaul/SkyFarm/SkyFarm.csproj" />
-    <Project Path="gameplay/overhaul/Stardew3D/Stardew3D.csproj" />
   </Folder>
   <Folder Name="/gameplay/unavoidable/">
     <Project Path="gameplay/unavoidable/AngrySeagulls/AngrySeagulls.csproj" />
