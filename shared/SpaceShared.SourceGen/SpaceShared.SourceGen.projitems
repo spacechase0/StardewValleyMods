@@ -9,14 +9,19 @@
     <Import_RootNamespace>SpaceShared.SourceGenCommon</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ContentAssets\AssetChangedWatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContentAssets\BaseAssetInstances.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\FileAssetAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\CustomDictionaryAssetAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\DictionaryAssetDataAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\DictionaryAssetDataKeyAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasAssetsAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasTranslationsAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasContentAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasConfigAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasHarmonyAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasStateAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)contentassets\IDevAssetsSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Content\BaseDictionaryAssetData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)content\ContentRegistry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)content\HotReloadHandler.cs" />

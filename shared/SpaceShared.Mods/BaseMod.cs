@@ -24,6 +24,7 @@ public abstract class BaseMod< ActualType > : StardewModdingAPI.Mod where Actual
         SetupConfig();
         SetupHarmony();
         SetupContent();
+        SetupAssets();
         ModEntry();
     }
 
@@ -33,4 +34,5 @@ public abstract class BaseMod< ActualType > : StardewModdingAPI.Mod where Actual
     protected virtual void SetupConfig() { }
     protected virtual void SetupHarmony() { }
     protected virtual void SetupContent() { }
+    protected virtual void SetupAssets() { }
 }
