@@ -109,9 +109,8 @@ public partial class BaseAssetInstances
                     Color[] cols = ArrayPool<Color>.Shared.Rent(existing.Width * existing.Height);
                     try
                     {
-                        existing.SetData(replacement.GetColorData());
-                        var c = existing.GetColorData();
-                        var c2 = replacement.GetColorData();
+                        replacement.GetData<Color>(cols);
+                        existing.SetData(cols);
                         replacement.Dispose();
                         return;
                     }
