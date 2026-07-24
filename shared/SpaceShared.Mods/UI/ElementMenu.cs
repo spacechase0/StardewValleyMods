@@ -16,7 +16,7 @@ namespace SpaceShared.UI;
 
 internal
 #endif
-abstract class ElementMenu : IClickableMenu
+abstract class ElementMenu : IClickableMenu, IDisposable
 {
     protected RootElement Ui { get; set; }
 
@@ -25,6 +25,11 @@ abstract class ElementMenu : IClickableMenu
     public ElementMenu(int scrollSpeed)
     {
         ScrollSpeed = scrollSpeed;
+    }
+
+    public void Dispose()
+    {
+        cleanupBeforeExit();
     }
 
     protected void MakeUi()
@@ -95,7 +100,7 @@ abstract class ElementMenu : IClickableMenu
 
     public override void receiveKeyPress(Keys key)
     {
-        if (Game1.keyboardDispatcher != null)
+        if (Game1.keyboardDispatcher.Subscriber != null)
             return;
 
         if (!Ui.KeyPress(key))
@@ -106,6 +111,12 @@ abstract class ElementMenu : IClickableMenu
     {
         if (!Ui.VerticalScroll(direction / -ScrollSpeed))
           UnhandledScroll(direction);
+    }
+
+    protected override void cleanupBeforeExit()
+    {
+        if (Game1.keyboardDispatcher.Subscriber is Element elem && Ui.RecursivelyContains(elem))
+            Game1.keyboardDispatcher.Subscriber = null;
     }
 
     private int scrollCounter = 0;

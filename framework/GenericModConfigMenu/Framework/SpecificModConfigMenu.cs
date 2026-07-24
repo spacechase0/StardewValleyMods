@@ -18,7 +18,7 @@ using StardewValley.Menus;
 namespace GenericModConfigMenu.Framework
 {
     /// <summary>The config UI for a specific mod.</summary>
-    internal class SpecificModConfigMenu : IClickableMenu
+    internal class SpecificModConfigMenu : ElementMenu
     {
         /*********
         ** Fields
@@ -30,10 +30,8 @@ namespace GenericModConfigMenu.Framework
         private readonly Action ReturnToList;
 
         private readonly ModConfig? ModConfig;
-        private readonly int ScrollSpeed;
         private bool IsSubPage => !string.IsNullOrEmpty(this.CurrPage);
 
-        private RootElement Ui;
         private readonly Table Table;
         private readonly List<Label> OptHovers = new();
 
@@ -70,12 +68,11 @@ namespace GenericModConfigMenu.Framework
         *********/
         // This is the keybinds menu constructor
         public SpecificModConfigMenu(ModConfigManager mods, int scrollSpeed, Action returnToList)
+        :   base(scrollSpeed)
         {
             ConfigsForKeybinds = mods;
-            ScrollSpeed = scrollSpeed;
             ReturnToList = returnToList;
 
-            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
             this.Table = new Table(fixedRowHeight: false)
             {
                 RowHeight = 50,
@@ -168,22 +165,19 @@ namespace GenericModConfigMenu.Framework
                     Table.AddRow([]);
                 }
             }
-            this.Ui.AddChild(this.Table);
-            this.AddDefaultLabels(null);
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
 
             RefreshKeybindColor();
 
-            populateClickableComponentList();
-            snapToDefaultClickableComponent();
+            MakeUi();
         }
 
         public SpecificModConfigMenu(ModConfig config, int scrollSpeed, string? page, Action<string?> openPage, Action returnToList)
+            : base(scrollSpeed)
         {
             this.ModConfig = config;
-            this.ScrollSpeed = scrollSpeed;
             this.OpenPage = openPage;
             this.ReturnToList = returnToList;
 
@@ -191,7 +185,6 @@ namespace GenericModConfigMenu.Framework
 
             this.ModConfig.ActiveDisplayPage = this.ModConfig.Pages[this.CurrPage];
 
-            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
             this.Table = new Table(fixedRowHeight: false)
             {
                 RowHeight = 50,
@@ -465,14 +458,17 @@ namespace GenericModConfigMenu.Framework
                 this.Table.AddRow(new[] { label, optionElement, rightLabel }.Where(p => p != null).ToArray());
 
             }
+
+            MakeUi();
+        }
+
+        protected override void AddUiContents()
+        {
             this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
 
             // We need to update widgets at least once so ComplexModOptionWidget's get initialized
             this.Table.ForceUpdateEvenHidden();
-
-            populateClickableComponentList();
-            snapToDefaultClickableComponent();
         }
 
         /// <inheritdoc />
@@ -485,29 +481,55 @@ namespace GenericModConfigMenu.Framework
                 {
                     this.CloseKeybindOverlay();
                 }
+                return;
             }
+
+            base.receiveLeftClick(x, y, playSound);
+        }
+
+        public override void releaseLeftClick(int x, int y)
+        {
+            if (this.IsBindingKey)
+                return;
+
+            base.releaseLeftClick(x, y);
+        }
+
+        public override void receiveRightClick(int x, int y, bool playSound = true)
+        {
+            if (this.IsBindingKey)
+                return;
+
+            base.receiveRightClick(x, y, playSound);
         }
 
         /// <inheritdoc />
         public override void receiveKeyPress(Keys key)
         {
-            if (key == Keys.Escape && !this.IsBindingKey)
+            if (this.IsBindingKey)
+                return;
+
+            if (key == Keys.Escape)
                 this.ExitOnNextUpdate = true;
 
-            if (Game1.options.snappyMenus && Game1.options.gamepadControls && !overrideSnappyMenuCursorMovementBan())
-            {
-                applyMovementKey(key);
-            }
+            base.receiveKeyPress(key);
         }
 
         /// <inheritdoc />
         public override void receiveScrollWheelAction(int direction)
         {
-            if (Ui.ActiveDropdown == null)
-            {
-                this.Table.Scrollbar.ScrollBy(direction / -this.ScrollSpeed);
-                snapCursorToCurrentSnappedComponent();
-            }
+            if (this.IsBindingKey)
+                return;
+
+            base.receiveScrollWheelAction(direction);
+        }
+
+        public override void receiveGamePadButton(Buttons button)
+        {
+            if (this.IsBindingKey)
+                return;
+
+            base.receiveGamePadButton(button);
         }
 
         /// <inheritdoc />
@@ -526,7 +548,8 @@ namespace GenericModConfigMenu.Framework
             this.Ui.Update();
 
             // TODO: This will be different if a dropdown is open
-            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0 && Ui.ActiveDropdown == null)
+            /*
+            if (Game1.input.GetGamePadState().ThumbSticks.Right.Y != 0 && !Ui.VerticalScroll(Math.Sign(Game1.input.GetGamePadState().ThumbSticks.Right.Y) * 120 / -this.ScrollSpeed))
             {
                 if (++scrollCounter == 5)
                 {
@@ -535,6 +558,7 @@ namespace GenericModConfigMenu.Framework
                 }
             }
             else scrollCounter = 0;
+            */
 
 
             if (this.ExitOnNextUpdate)
@@ -544,8 +568,6 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void draw(SpriteBatch b)
         {
-            base.draw(b);
-
             // main background
             b.Draw(Game1.staminaRect, new Rectangle(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height), new Color(0, 0, 0, 192));
 
@@ -557,7 +579,7 @@ namespace GenericModConfigMenu.Framework
             IClickableMenu.drawTextureBox(b, (Game1.uiViewport.Width - 800) / 2 - 32 - 64, Game1.uiViewport.Height - 50 - 20 - 32, 800 + 64 + 128, 50 + 20, Color.White);
 
             // UI elements
-            this.Ui.Draw(b);
+            base.draw(b);
 
             // keybind UI
             this.ActiveKeybindOverlay?.Draw(b);
@@ -566,7 +588,7 @@ namespace GenericModConfigMenu.Framework
             this.drawMouse(b);
 
             // hover tooltips
-            if (Constants.TargetPlatform != GamePlatform.Android && GetChildMenu() == null)
+            if (GetChildMenu() == null)
             {
                 foreach (var label in this.OptHovers)
                 {
@@ -586,8 +608,6 @@ namespace GenericModConfigMenu.Framework
         /// <inheritdoc />
         public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
         {
-            this.Ui = new RootElement(() => currentlySnappedComponent, dir => moveCursorInDirection(dir));
-
             Vector2 newSize = new Vector2(Math.Min(1200, Game1.uiViewport.Width - 200), Game1.uiViewport.Height - 128 - 116);
 
             foreach (Element opt in this.Table.Children)
@@ -600,26 +620,19 @@ namespace GenericModConfigMenu.Framework
             this.Table.Size = newSize;
             this.Table.LocalPosition = new Vector2((Game1.uiViewport.Width - this.Table.Size.X) / 2, (Game1.uiViewport.Height - this.Table.Size.Y) / 2);
             this.Table.Scrollbar.Update();
-            this.Ui.AddChild(this.Table);
             this.AddDefaultLabels(this.Manifest);
 
             this.ActiveKeybindOverlay?.OnWindowResized();
 
-            populateClickableComponentList();
+            base.gameWindowSizeChanged(oldBounds, newBounds);
         }
 
         public override void populateClickableComponentList()
         {
-            base.populateClickableComponentList();
-
             if (ActiveKeybindOverlay != null)
                 return;
 
-            allClickableComponents.AddRange(Ui.GetGamepadMovementRegions());
-            Ui.GamepadMovementRegionsDirty = false;
-
-            if (allClickableComponents.Contains(currentlySnappedComponent))
-                snapToDefaultClickableComponent();
+            base.populateClickableComponentList();
         }
 
         /// <inheritdoc/>
@@ -628,7 +641,7 @@ namespace GenericModConfigMenu.Framework
             if (ActiveKeybindOverlay != null)
                 return true;
 
-            return (Ui.CurrentSnappedElement?.CurrentlyUsingGamepadMovement(out bool snappy) ?? false) ? !snappy : false;
+            return base.overrideSnappyMenuCursorMovementBan();
         }
 
         public override void snapToDefaultClickableComponent()

@@ -51,7 +51,7 @@ namespace SpaceShared.UI
             get => field;
             set
             {
-                if (value.Root != this)
+                if (value != null && value.Root != this)
                     throw new InvalidOperationException("Only elements under this root can be set as the hovered element");
 
                 if (value != null && field != null)
@@ -91,9 +91,9 @@ namespace SpaceShared.UI
             HoveredElement = null;
 
             if (RenderLast != null)
-                RenderLast.MouseHover(mousePos - Position.ToPoint());
+                RenderLast.MouseHover(mousePos);
 
-            base.MouseHover(mousePos - Position.ToPoint());
+            base.MouseHover(mousePos);
 
             LastMousePosition = mousePos;
         }
@@ -123,20 +123,26 @@ namespace SpaceShared.UI
             if (RenderLast != null && RenderLast.LeftClick(mousePos, pressed))
                 return true;
 
-            if (HoveredElement == null)
-                return false;
-
-            for (var elem = HoveredElement; elem != this; elem = elem.Parent)
+            if (pressed)
             {
-                Point pos = mousePos - elem.Position.ToPoint();
-                if (pressed && new Rectangle(0, 0, elem.Width, elem.Height).Contains(pos))
-                    continue;
+                if (HoveredElement == null)
+                    return false;
 
-                if (elem.LeftClick(pos, pressed))
-                    return true;
+                for (var elem = HoveredElement; elem != this; elem = elem.Parent)
+                {
+                    if (!elem.Bounds.Contains(mousePos))
+                        continue;
+
+                    if (elem.LeftClick(mousePos, pressed))
+                        return true;
+                }
+
+                return false;
             }
-
-            return false;
+            else
+            {
+                return base.LeftClick(mousePos, pressed);
+            }
         }
 
         public override bool RightClick(Point mousePos, bool pressed)
@@ -144,20 +150,25 @@ namespace SpaceShared.UI
             if (RenderLast != null && RenderLast.RightClick(mousePos, pressed))
                 return true;
 
-            if (HoveredElement == null)
-                return false;
-
-            for (var elem = HoveredElement; elem != this; elem = elem.Parent)
+            if (pressed)
             {
-                Point pos = mousePos - elem.Position.ToPoint();
-                if (new Rectangle(0, 0, elem.Width, elem.Height).Contains(pos))
-                    continue;
+                if (HoveredElement == null)
+                    return false;
 
-                if (elem.RightClick(pos, pressed))
-                    return true;
+                for (var elem = HoveredElement; elem != this; elem = elem.Parent)
+                {
+                    if (!elem.Bounds.Contains(mousePos))
+                        continue;
+
+                    if (elem.RightClick(mousePos, pressed))
+                        return true;
+                }
+                return false;
             }
-
-            return false;
+            else
+            {
+                return base.RightClick(mousePos, pressed);
+            }
         }
 
         public override bool KeyPress(Keys key)
@@ -185,6 +196,7 @@ namespace SpaceShared.UI
         public override void Draw(SpriteBatch b)
         {
             base.Draw(b);
+            RenderLast?.Draw(b);
             HoveredElement?.DrawTooltip(b);
         }
 

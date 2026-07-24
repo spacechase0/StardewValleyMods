@@ -58,6 +58,20 @@ namespace SpaceShared.UI
             Parent?.OnChildrenChanged(true);
         }
 
+        public virtual bool RecursivelyContains(Element elem)
+        {
+            if (base.RecursivelyContains(elem))
+                return true;
+
+            foreach (var child in ChildrenImpl)
+            {
+                if (child.RecursivelyContains(elem))
+                    return true;
+            }
+
+            return false;
+        }
+
         public override void MouseHover(Point mousePos)
         {
             foreach (var child in ChildrenImpl)
@@ -80,6 +94,28 @@ namespace SpaceShared.UI
             foreach (var child in ChildrenImpl)
             {
                 if (child.KeyPress(key))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public override bool LeftClick(Point mousePos, bool pressed)
+        {
+            foreach (var child in ChildrenImpl)
+            {
+                if (child.LeftClick(mousePos, pressed))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public override bool RightClick(Point mousePos, bool pressed)
+        {
+            foreach (var child in ChildrenImpl)
+            {
+                if (child.RightClick(mousePos, pressed))
                     return true;
             }
 

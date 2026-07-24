@@ -42,7 +42,6 @@ namespace SpaceShared.UI
                 {
                     Root.RenderLast = this;
 
-                    Game1.keyboardDispatcher.Subscriber = this;
                     if ( Game1.options.gamepadControls && !Game1.lastCursorMotionWasMouse )
                     {
                         var dummy = new StardewValley.Menus.TextBox(null, null, Game1.dialogueFont, Game1.textColor);
@@ -58,6 +57,7 @@ namespace SpaceShared.UI
                         };
                         Game1.showTextEntry(dummy);
                     }
+                    Game1.keyboardDispatcher._subscriber = this;
                 }
                 else
                 {
@@ -67,6 +67,8 @@ namespace SpaceShared.UI
                     if (Game1.keyboardDispatcher.Subscriber == this)
                         Game1.keyboardDispatcher.Subscriber = null;
                 }
+
+                Root.GamepadMovementRegionsDirty = true;
             }
         }
 
@@ -92,8 +94,17 @@ namespace SpaceShared.UI
         {
             base.LeftClick(mousePos, pressed);
 
-            Selected = pressed;
+            if (pressed)
+                Selected = Bounds.Contains(mousePos);
+
             return Selected;
+        }
+
+        public override void Update(bool isOffScreen = false)
+        {
+            base.Update(isOffScreen);
+            if (Selected && Game1.keyboardDispatcher.Subscriber == this)
+                Selected = false;
         }
 
         /// <inheritdoc />

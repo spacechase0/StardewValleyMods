@@ -377,6 +377,7 @@ namespace GenericModConfigMenu
             if (this.IsTitleMenuInteractable())
             {
                 SetupTitleMenuButton();
+                Ui.MouseHover(Game1.getMousePosition());
                 this.Ui?.Update();
             }
 
@@ -398,7 +399,10 @@ namespace GenericModConfigMenu
         private void OnRendered(object? sender, RenderedEventArgs e)
         {
             if (this.IsTitleMenuInteractable())
+            {
                 this.Ui?.Draw(e.SpriteBatch);
+                Game1.activeClickableMenu?.drawMouse(e.SpriteBatch);
+            }
         }
 
         /// <inheritdoc cref="IDisplayEvents.MenuChanged"/>
@@ -432,6 +436,44 @@ namespace GenericModConfigMenu
         /// <param name="e">The event arguments.</param>
         private void OnButtonChanged(object? sender, ButtonsChangedEventArgs e)
         {
+            if (this.IsTitleMenuInteractable() && Ui != null)
+            {
+                foreach (var b in e.Pressed)
+                {
+                    if (b.TryGetKeyboard(out Keys key))
+                        Ui.KeyPress(key);
+                    else if (b.TryGetController(out Buttons button))
+                    {
+                        switch (button)
+                        {
+                            case Buttons.A: Ui.LeftClick(Game1.getMousePosition(), pressed: true); break;
+                            case Buttons.X: Ui.RightClick(Game1.getMousePosition(), pressed: true); break;
+                        }
+                    }
+                    else if (b == SButton.MouseLeft)
+                        Ui.LeftClick(Game1.getMousePosition(), pressed: true);
+                    else if (b == SButton.MouseRight)
+                        Ui.RightClick(Game1.getMousePosition(), pressed: true);
+                }
+                foreach (var b in e.Released)
+                {
+                    if (b.TryGetKeyboard(out Keys key))
+                        ;// Ui?.KeyPress(key);
+                    else if (b.TryGetController(out Buttons button))
+                    {
+                        switch (button)
+                        {
+                            case Buttons.A: Ui.LeftClick(Game1.getMousePosition(), pressed: false); break;
+                            case Buttons.X: Ui.RightClick(Game1.getMousePosition(), pressed: false); break;
+                        }
+                    }
+                    else if (b == SButton.MouseLeft)
+                        Ui.LeftClick(Game1.getMousePosition(), pressed: false);
+                    else if (b == SButton.MouseRight)
+                        Ui.RightClick(Game1.getMousePosition(), pressed: false);
+                }
+            }
+
             // pass to menu for keybind
             if (Mod.ActiveConfigMenu is SpecificModConfigMenu menu)
                 menu.OnButtonsChanged(e);

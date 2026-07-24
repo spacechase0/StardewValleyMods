@@ -45,7 +45,7 @@ namespace SpaceShared.UI
         *********/
         public virtual void MouseHover(Point mousePos)
         {
-            if (new Rectangle(0, 0, Width, Height).Contains(mousePos))
+            if (Bounds.Contains(mousePos))
                 Root?.HoveredElement = this;
         }
         public virtual bool VerticalScroll(int amount) => false;
@@ -83,6 +83,11 @@ namespace SpaceShared.UI
 
             Tooltip.LocalPosition = Root.LastMousePosition.ToVector2();
             Tooltip.Draw(b);
+        }
+
+        public virtual bool RecursivelyContains(Element elem)
+        {
+            return elem == this;
         }
 
         public virtual RootElement Root => Parent?.Root;

@@ -85,7 +85,7 @@ namespace SpaceShared.UI
         public override bool LeftClick(Point mousePos, bool pressed)
         {
             base.LeftClick(mousePos, pressed);
-            if ( Dragging != pressed)
+            if (Dragging != pressed)
             {
                 Dragging = pressed;
                 Root.GamepadMovementRegionsDirty = true;

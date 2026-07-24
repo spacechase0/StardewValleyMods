@@ -34,9 +34,9 @@ namespace GenericModConfigMenu.Framework
                 Game1.menuTexture,
                 new Rectangle(0, 256, 60, 60),
                 (int)this.Position.X,
-                (int)this.Position.Y,
+                (int)this.Position.Y - 8,
                 this.CustomWidth,
-                48,
+                64,
                 Color.White);
 
             // Draw the text
@@ -129,13 +129,12 @@ namespace GenericModConfigMenu.Framework
 
             // Create search box (at the top, same width as full UI with margin)
             // Search bar width = full UI width (table + 64px borders on each side)
-            int searchWidth = tableWidth + 128;
+            int searchWidth = tableWidth + 64;
             this.SearchBox = new WideTextbox(searchWidth)
             {
                 LocalPosition = new Vector2((Game1.uiViewport.Width - searchWidth) / 2, 16),
                 String = "",
                 Callback = _ => this.OnSearchChanged(),
-                ScreenReaderIgnore = true,
             };
 
             KeybindsButton = new Button(keybindsTexture)
@@ -149,11 +148,12 @@ namespace GenericModConfigMenu.Framework
             this.SearchPlaceholder = new Label
             {
                 String = I18n.List_SearchLabel(),
-                LocalPosition = new Vector2((Game1.uiViewport.Width - SearchBox.CustomWidth) / 2 + 20, 20),
+                LocalPosition = new Vector2((Game1.uiViewport.Width - SearchBox.CustomWidth) / 2 + 18, 24),
                 NonBoldScale = 0.8f,
                 IdleTextColor = Color.Black * 0.6f,
                 HoverTextColor = Color.Black * 0.6f,
-                ForceHide = () => !string.IsNullOrEmpty(this.SearchBox.String)
+                ForceHide = () => !string.IsNullOrEmpty(this.SearchBox.String),
+                ScreenReaderIgnore = true,
             };
 
             MakeUi();
@@ -166,7 +166,7 @@ namespace GenericModConfigMenu.Framework
             Ui.AddChild(Table);
             Ui.AddChild(SearchBox);
             Ui.AddChild(KeybindsButton);
-            Ui.AddChild(SearchPlaceholder);
+            //Ui.AddChild(SearchPlaceholder);
 
             // Populate initial list
             this.RebuildModList();
@@ -239,7 +239,7 @@ namespace GenericModConfigMenu.Framework
 
         public override void snapToDefaultClickableComponent()
         {
-            if (Game1.options.gamepadControls && !Game1.lastCursorMotionWasMouse)
+            if (Game1.options.gamepadControls)
             {
                 var allTable = Table.Children.SelectMany(c => c.GetGamepadMovementRegions()).ToArray();
                 currentlySnappedComponent = allClickableComponents.FirstOrDefault(c => c.visible && allTable.Contains(c));
