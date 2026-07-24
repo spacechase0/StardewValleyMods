@@ -53,7 +53,7 @@ namespace SpaceShared.UI
 
         public bool Dropped;
 
-        public Action<Element> Callback;
+        public Action<Element>? Callback;
 
         /// <inheritdoc />
         public override int Width => Math.Max(300, Math.Min(500, this.RequestWidth));

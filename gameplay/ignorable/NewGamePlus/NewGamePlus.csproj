@@ -1,16 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <RequireSpaceCore>true</RequireSpaceCore>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Name>New Game Plus</Name>
     <Version>1.0.2</Version>
-
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
-  </ItemGroup>
-
-  <Import Project="$(SolutionDir)spacecore.targets" /></Project>
+</Project>

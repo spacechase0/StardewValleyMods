@@ -169,7 +169,7 @@ namespace SpaceShared.UI
 
                         foreach (var prevEntry in prevRow)
                         {
-                            ClickableComponent existing = currRow.FirstOrDefault(c => c.myID == prevEntry.downNeighborID);
+                            ClickableComponent? existing = currRow.FirstOrDefault(c => c.myID == prevEntry.downNeighborID);
                             if (prevEntry.downNeighborID != ClickableComponent.SNAP_AUTOMATIC && existing != null)
                                 continue;
 

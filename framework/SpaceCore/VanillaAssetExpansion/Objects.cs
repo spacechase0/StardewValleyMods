@@ -16,7 +16,7 @@ namespace SpaceCore.VanillaAssetExpansion
 {
     public class ObjectExtensionData
     {
-        public string CategoryTextOverride { get; set; } = null;
+        public string? CategoryTextOverride { get; set; } = null;
         public Color CategoryColorOverride { get; set; } = new Color( 0, 0, 0, 0);
 
         public bool CanBeTrashed { get; set; } = true;
@@ -34,14 +34,14 @@ namespace SpaceCore.VanillaAssetExpansion
             public Color Color { get; set; }
             public bool ConsumedOnUse { get; set; } = true;
         }
-        public TotemWarpData TotemWarp { get; set; }
+        public TotemWarpData? TotemWarp { get; set; }
 
         public bool UseForTriggerAction { get; set; } = false;
         public bool ConsumeForTriggerAction { get; set; } = false;
 
-        public string GiftedToNotOnAllowListMessage { get; set; }
-        public Dictionary<string, bool> GiftableToNpcAllowList { get; set; }
-        public Dictionary<string, string> GiftableToNpcDisallowList { get; set; }
+        public string? GiftedToNotOnAllowListMessage { get; set; }
+        public Dictionary<string, bool>? GiftableToNpcAllowList { get; set; }
+        public Dictionary<string, string?>? GiftableToNpcDisallowList { get; set; }
     }
 
     [HarmonyPatch(typeof(StardewValley.Object), nameof(StardewValley.Object.getCategoryName))]
@@ -52,7 +52,7 @@ namespace SpaceCore.VanillaAssetExpansion
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
             if (!__instance.bigCraftable.Value && dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].CategoryTextOverride != null)
             {
-                __result = dict[__instance.ItemId].CategoryTextOverride;
+                __result = dict[__instance.ItemId].CategoryTextOverride!;
             }
         }
     }
@@ -128,7 +128,7 @@ namespace SpaceCore.VanillaAssetExpansion
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
             if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].EatenHealthRestoredOverride.HasValue)
             {
-                __result = dict[__instance.ItemId].EatenHealthRestoredOverride.Value;
+                __result = dict[__instance.ItemId].EatenHealthRestoredOverride!.Value;
             }
         }
     }
@@ -141,7 +141,7 @@ namespace SpaceCore.VanillaAssetExpansion
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
             if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].EatenStaminaRestoredOverride.HasValue)
             {
-                __result = dict[__instance.ItemId].EatenStaminaRestoredOverride.Value;
+                __result = dict[__instance.ItemId].EatenStaminaRestoredOverride!.Value;
             }
         }
     }
@@ -154,7 +154,7 @@ namespace SpaceCore.VanillaAssetExpansion
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
             if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].MaxStackSizeOverride.HasValue)
             {
-                __result = dict[__instance.ItemId].MaxStackSizeOverride.Value;
+                __result = dict[__instance.ItemId].MaxStackSizeOverride!.Value;
             }
         }
     }
@@ -189,7 +189,7 @@ namespace SpaceCore.VanillaAssetExpansion
                 if (normal_gameplay)
                 {
                     Game1.player.jitterStrength = 1f;
-                    Color sprinkleColor = dict[__instance.ItemId].TotemWarp.Color;
+                    Color sprinkleColor = dict[__instance.ItemId].TotemWarp?.Color ?? Color.Transparent;
                     location.playSound("warrior");
                     Game1.player.faceDirection(2);
                     Game1.player.CanMove = false;
@@ -252,7 +252,7 @@ namespace SpaceCore.VanillaAssetExpansion
                     Game1.Multiplayer.broadcastSprites(location, sprite);
                     Game1.screenGlowOnce(sprinkleColor, hold: false);
                     Utility.addSprinklesToLocation(location, Game1.player.TilePoint.X, Game1.player.TilePoint.Y, 16, 16, 1300, 20, Color.White, null, motionTowardCenter: true);
-                    __result = dict[__instance.ItemId].TotemWarp.ConsumedOnUse;
+                    __result = dict[__instance.ItemId].TotemWarp?.ConsumedOnUse ?? false;
                     didStuff = true;
                 }
             }
@@ -302,7 +302,7 @@ namespace SpaceCore.VanillaAssetExpansion
             var dict = Game1.content.Load<Dictionary<string, ObjectExtensionData>>("spacechase0.SpaceCore/ObjectExtensionData");
             if (dict.ContainsKey(__instance.ItemId) && dict[__instance.ItemId].TotemWarp != null)
             {
-                var warp = dict[__instance.ItemId].TotemWarp;
+                var warp = dict[__instance.ItemId].TotemWarp!;
                 Game1.warpFarmer(warp.Location, (int) warp.Position.X, (int)warp.Position.Y, flip: false);
             }
             Game1.fadeToBlackAlpha = 0.99f;

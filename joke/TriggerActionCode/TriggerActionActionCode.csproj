@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(SolutionDir)common.targets" />
+
+  <PropertyGroup>
+    <Name>Trigger Action Action Code</Name>
+    <Description>Run C# code in your trigger action action. Please don't actually use this.</Description>
+    <Version>1.0.0</Version>
+    <UpdateKeys>Nexus:44536@TriggerActionActionCode</UpdateKeys>
+
+    <BundleExtraAssemblies>System,ThirdParty</BundleExtraAssemblies>
+    <IgnoreModFilePatterns>System.*.dll$, ^Microsoft.(?!.*(CodeAnalysis.dll|CodeAnalysis.CSharp.dll)), ^runtimes/.*, Microsoft.CodeAnalysis.resources.dll$, Microsoft.CodeAnalysis.CSharp.resources.dll$</IgnoreModFilePatterns>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="assets\example.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="assets\example.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0-1.final" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+  </ItemGroup>
+</Project>

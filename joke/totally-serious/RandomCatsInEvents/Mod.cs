@@ -21,8 +21,8 @@ namespace RandomCatsInEvents
 
     public class Mod : StardewModdingAPI.Mod
     {
-        public static Mod instance;
-        public static Configuration Config { get; private set; }
+        public static Mod instance = null!;
+        public static Configuration Config { get; private set; } = null!;
 
         public static bool animateCats = false;
         private static Dictionary<Pet, int> pets = new();
@@ -41,7 +41,7 @@ namespace RandomCatsInEvents
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
-        private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
+        private void GameLoop_GameLaunched(object? sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
         {
             var gmcm = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (gmcm != null)
@@ -52,7 +52,7 @@ namespace RandomCatsInEvents
             }
         }
 
-        private void GameLoop_UpdateTicked(object sender, StardewModdingAPI.Events.UpdateTickedEventArgs e)
+        private void GameLoop_UpdateTicked(object? sender, StardewModdingAPI.Events.UpdateTickedEventArgs e)
         {
             if (animateCats && Game1.CurrentEvent != null)
             {
@@ -60,7 +60,7 @@ namespace RandomCatsInEvents
                 {
                     foreach (var pet in Game1.CurrentEvent.actors.Where(a => a is Pet))
                     {
-                        pets.Add(pet as Pet, 0);
+                        pets.Add((pet as Pet)!, 0);
                     }
                 }
 
@@ -70,7 +70,7 @@ namespace RandomCatsInEvents
                         pet.Key.playContentSound();
 
                     pets[pet.Key] = pets[pet.Key] + (int)Game1.currentGameTime.ElapsedGameTime.TotalMilliseconds;
-                    
+
                     if (pet.Key.isMoving())
                     {
                         pet.Key.movementPause = 0;

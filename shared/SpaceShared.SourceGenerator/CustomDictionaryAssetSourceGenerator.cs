@@ -17,23 +17,23 @@ namespace SpaceShared.SourceGenerator
                 static (s, _) => (s is ClassDeclarationSyntax classDecl && classDecl.AttributeLists.Any(al => al.Attributes.Any(a => a.Name.ToString().StartsWith("CustomDictionaryAsset") || a.Name.ToString().StartsWith("SpaceShared.Attributes.CustomDictionaryAsset")))),//static t => (t is SimpleBaseTypeSyntax simpleType && simpleType.Type is SimpleNameSyntax simpleName && ( simpleName.Identifier.ValueText?.StartsWith( "BaseMod<" ) ?? false )))),
                 static (ctx, _) =>
                 {
-                    var classDecl = ctx.Node as ClassDeclarationSyntax;
+                    var classDecl = (ctx.Node as ClassDeclarationSyntax)!;
                     var classSym = ctx.SemanticModel.GetDeclaredSymbol( classDecl ) as ITypeSymbol;
 
-                    string? ns = classSym.ContainingNamespace?.Name;
-                    var checkNs = classSym.ContainingNamespace;
+                    string? ns = classSym?.ContainingNamespace?.Name;
+                    var checkNs = classSym?.ContainingNamespace;
                     while (checkNs != null && checkNs.ContainingNamespace != null && !checkNs.ContainingNamespace.IsGlobalNamespace)
                     {
                         if ( !string.IsNullOrEmpty(checkNs.ContainingNamespace.Name ) )
                             ns = $"{checkNs.ContainingNamespace.Name}.{ns}";
                         checkNs = checkNs.ContainingNamespace;
                     }
-                    string name = classSym.Name;
-                    var attr = classSym.GetAttributes().First(a => a.AttributeClass.Name == "CustomDictionaryAssetAttribute");
-                    if ( attr.ConstructorArguments.Length == 0 )
+                    string name = classSym?.Name;
+                    var attr = classSym?.GetAttributes().First(a => a.AttributeClass.Name == "CustomDictionaryAssetAttribute");
+                    if ( attr?.ConstructorArguments.Length == 0 )
                         return new GenerationData(ns, name, "asdf_" + attr.ConstructorArguments[0].Value?.ToString());
 
-                    return new GenerationData(ns, name, attr.ConstructorArguments[0].Value?.ToString());
+                    return new GenerationData(ns, name, attr?.ConstructorArguments[0].Value?.ToString());
                 })
                 .Where( static data => !string.IsNullOrEmpty( data.AssetName ) );
 
@@ -82,6 +82,14 @@ namespace {data.TypeNamespace}
             if ( !_assetInstance.Value.TryGetValue( id, out var data ) )
                 return default;
             return data;
+        }}
+
+        public static Dictionary<string, {data.TypeName}> Get()
+        {{
+            if ( _assetInstance.Value == null )
+                RefreshData(initial: true);
+
+            return _assetInstance.Value;
         }}
     }}
 }}

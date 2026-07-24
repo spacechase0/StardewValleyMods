@@ -5,7 +5,7 @@ namespace SpaceShared.Content;
 
 internal abstract class BaseDictionaryAssetData
 {
-    public string ModId { get; internal set; }
+    public string ModId { get; internal set; } = null!;
 
     public delegate string ProvideSubsitutionDelegate(string assetName, string fieldName);
     public virtual Dictionary<string, ProvideSubsitutionDelegate> KeySubstitutions => new()

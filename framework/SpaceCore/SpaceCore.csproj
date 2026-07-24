@@ -1,13 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <GenerateDocumentation>true</GenerateDocumentation>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
-  <Import Project="$(SolutionDir)harmony.targets" />
-  <Import Project="$(SolutionDir)documentation-generation.targets" />
 
   <PropertyGroup>
     <Name>SpaceCore</Name>
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Description>The space-iest of cores. (Framework mod)</Description>
-    <Version>1.29.0-alpha</Version>
+    <Version>1.29.0</Version>
     <UpdateKeys>Nexus:1348</UpdateKeys>
     <Version_AppendConfiguration>false</Version_AppendConfiguration> <!-- Otherwise mods get confused about having 1.13.0-Debug, but needing 1.13.0 or newer -->
 
@@ -22,8 +25,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" />
   </ItemGroup>
 

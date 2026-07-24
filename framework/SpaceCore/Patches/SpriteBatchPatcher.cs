@@ -249,7 +249,7 @@ namespace SpaceCore.Patches
         /// <param name="sourceRect"></param>
         /// <param name="packData"></param>
         /// <returns></returns>
-        private static bool TryGetTextureOverride_Standard(Texture2D tex, Rectangle? sourceRect, out TextureOverridePackData packData)
+        private static bool TryGetTextureOverride_Standard(Texture2D? tex, Rectangle? sourceRect, out TextureOverridePackData? packData)
         {
             packData = null;
             if (InDrawRedirection || tex == null || tex.Name == null || sourceRect is null)
@@ -267,7 +267,7 @@ namespace SpaceCore.Patches
             return false;
         }
 
-        private static bool TryGetTextureOverride_Recording(Texture2D tex, Rectangle? sourceRect, out TextureOverridePackData packData)
+        private static bool TryGetTextureOverride_Recording(Texture2D tex, Rectangle? sourceRect, out TextureOverridePackData? packData)
         {
             RecordedDraws.Add((tex.Name, sourceRect));
             return TryGetTextureOverride_Standard(tex, sourceRect, out packData);

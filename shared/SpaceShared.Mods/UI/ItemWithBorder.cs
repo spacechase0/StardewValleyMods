@@ -39,8 +39,8 @@ namespace SpaceShared.UI
         public Color? BoxColor { get; set; } = Color.White;
         public bool BoxIsThin { get; set; } = false;
 
-        public Action<Element> Callback { get; set; }
-        public Action<Element> SecondaryCallback { get; set; }
+        public Action<Element>? Callback { get; set; }
+        public Action<Element>? SecondaryCallback { get; set; }
 
         public override int Width => Game1.tileSize + (BoxIsThin ? 0 : 16) * 2;
         public override int Height => Game1.tileSize + (BoxIsThin ? 0 : 16) * 2;

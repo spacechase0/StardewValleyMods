@@ -21,7 +21,7 @@ internal class GuidebookParser
             OnceAction,
         }
         public ClickType Type { get; set; }
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 
     public class HoverData
@@ -33,8 +33,8 @@ internal class GuidebookParser
             Image,
         }
         public HoverType Type { get; set; }
-        public string HoverTitle { get; set; }
-        public string HoverValue { get; set; }
+        public string? HoverTitle { get; set; }
+        public string? HoverValue { get; set; }
     }
 
     public class Element
@@ -47,12 +47,12 @@ internal class GuidebookParser
             MetaCommand,
         }
         public ElementType Type { get; set; }
-        public string TagName { get; set; } // Not valid for Text
+        public string? TagName { get; set; } // Not valid for Text
         public string Value { get; set; }
-        public ClickData OnClick { get; set; } = null;
-        public HoverData Hover { get; set; } = null;
+        public ClickData? OnClick { get; set; } = null;
+        public HoverData? Hover { get; set; } = null;
 
-        public Dictionary<string, string> Tags { get; set; } = new();
+        public Dictionary<string, string?> Tags { get; set; } = new();
     }
 
     public static List<Element> Parse(string text, GameStateQueryContext ctx)
@@ -61,13 +61,13 @@ internal class GuidebookParser
 
         Stack<ClickData> clicks = new();
         Stack<HoverData> hovers = new();
-        Stack<(string id, string val)> tags = new();
+        Stack<(string id, string? val)> tags = new();
         string buffer = "";
         Stack<bool> ifSucceeded = new();
         bool lastIf = false;
-        Dictionary<string, string> GetActiveTags()
+        Dictionary<string, string?> GetActiveTags()
         {
-            Dictionary<string, string> ret = new();
+            Dictionary<string, string?> ret = new();
             foreach (var entry in tags)
             {
                 if (ret.ContainsKey(entry.id))
@@ -110,7 +110,7 @@ internal class GuidebookParser
 
                 string tag = text.Substring(i + 1, end - i - 1);
                 string tagName = tag;
-                string tagVal = null;
+                string? tagVal = null;
                 int eqInd = tag.IndexOf('=');
                 if (eqInd != -1)
                 {
@@ -135,7 +135,7 @@ internal class GuidebookParser
                             {
                                 Type = Element.ElementType.Image,
                                 TagName = tagName,
-                                Value = tagVal,
+                                Value = tagVal!,
                                 OnClick = clicks.Count > 0 ? clicks.Peek() : null,
                                 Hover = hovers.Count > 0 ? hovers.Peek() : null,
                                 Tags = GetActiveTags(),
@@ -150,7 +150,7 @@ internal class GuidebookParser
                             {
                                 Type = Element.ElementType.InlineImage,
                                 TagName = tagName,
-                                Value = tagVal,
+                                Value = tagVal!,
                                 OnClick = clicks.Count > 0 ? clicks.Peek() : null,
                                 Hover = hovers.Count > 0 ? hovers.Peek() : null,
                                 Tags = GetActiveTags(),
@@ -165,7 +165,7 @@ internal class GuidebookParser
                             {
                                 Type = Element.ElementType.MetaCommand,
                                 TagName = tagName,
-                                Value = tagVal,
+                                Value = tagVal!,
                                 Tags = GetActiveTags(),
                             });
                         }
@@ -226,9 +226,9 @@ internal class GuidebookParser
                         }
                         else
                         {
-                            int colon = tagVal.IndexOf(':');
-                            string a = tagVal.Substring(0, colon);
-                            string b = tagVal.Substring(colon + 1);
+                            int colon = tagVal?.IndexOf(':') ?? -1;
+                            string? a = tagVal?.Substring(0, colon);
+                            string? b = tagVal?.Substring(colon + 1);
                             hovers.Push(new()
                             {
                                 Type = HoverData.HoverType.Text,
@@ -244,9 +244,9 @@ internal class GuidebookParser
                         }
                         else
                         {
-                            int colon = tagVal.IndexOf(':');
-                            string a = tagVal.Substring(0, colon);
-                            string b = tagVal.Substring(colon + 1);
+                            int colon = tagVal?.IndexOf(':') ?? -1;
+                            string? a = tagVal?.Substring(0, colon);
+                            string? b = tagVal?.Substring(colon + 1);
                             hovers.Push(new()
                             {
                                 Type = HoverData.HoverType.Image,

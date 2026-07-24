@@ -4,6 +4,8 @@ using System.Globalization;
 using StardewValley;
 using StardewValley.Mods;
 
+#nullable enable
+
 namespace SpaceShared
 {
     /// <summary>Provides common utility methods for reading and writing to <see cref="ModDataDictionary"/> fields.</summary>
@@ -103,7 +105,7 @@ namespace SpaceShared
             else
                 data[key] = value.ToString(CultureInfo.InvariantCulture);
         }
-        
+
         /****
         ** Custom
         ****/
@@ -114,7 +116,7 @@ namespace SpaceShared
         /// <param name="parse">Parse the raw value.</param>
         /// <param name="default">The default value if the field is missing or invalid.</param>
         /// <param name="suppressError">Whether to return the default value if <paramref name="parse"/> throws an exception; else rethrow it.</param>
-        public static T GetCustom<T>(this ModDataDictionary data, string key, Func<string, T> parse, T @default = default, bool suppressError = true)
+        public static T? GetCustom<T>(this ModDataDictionary data, string key, Func<string, T> parse, T? @default = default, bool suppressError = true)
         {
             if (!data.TryGetValue(key, out string raw))
                 return @default;
@@ -135,9 +137,9 @@ namespace SpaceShared
         /// <param name="key">The field key.</param>
         /// <param name="value">The value to save.</param>
         /// <param name="serialize">Serialize the value to its string representation.</param>
-        public static void SetCustom<T>(this ModDataDictionary data, string key, T value, Func<T, string> serialize = null)
+        public static void SetCustom<T>(this ModDataDictionary data, string key, T? value, Func<T?, string>? serialize = null)
         {
-            string serialized = serialize != null
+            string? serialized = serialize != null
                 ? serialize(value)
                 : value?.ToString();
 

@@ -26,16 +26,16 @@ namespace SpaceCore.VanillaAssetExpansion
         public Vector2 SourceRectSize { get; set; } = new Vector2(16, 32);
         public Vector2 DrawOffset { get; set; } = new Vector2(0, 0);
 
-        public string AppearanceOverride { get; set; } = null;
+        public string? AppearanceOverride { get; set; } = null;
 
         public class FrameExtData
         {
             public int? Emote { get; set; }
-            public string PlaySound { get; set; }
+            public string? PlaySound { get; set; }
         }
 
-        public FrameExtData OnStart { get; set; } = null;
-        public FrameExtData OnEnd { get; set; } = null;
+        public FrameExtData? OnStart { get; set; } = null;
+        public FrameExtData? OnEnd { get; set; } = null;
         public Dictionary<int, FrameExtData> OnFrame { get; set; } = new();
     }
 

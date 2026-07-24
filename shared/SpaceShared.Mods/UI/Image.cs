@@ -30,7 +30,7 @@ namespace SpaceShared.UI
         /// <summary>The zoom factor to apply to the image.</summary>
         public int Scale { get; set; }
 
-        public Action<Element> Callback { get; set; }
+        public Action<Element>? Callback { get; set; }
 
         /// <inheritdoc />
         public override int Width => (int)this.GetActualSize().X;
@@ -39,7 +39,7 @@ namespace SpaceShared.UI
         public override int Height => (int)this.GetActualSize().Y;
 
         /// <inheritdoc />
-        public override string HoveredSound => (this.Callback != null) ? "shiny4" : null;
+        public override string? HoveredSound => (this.Callback != null) ? "shiny4" : null;
 
         public Color DrawColor { get; set; } = Color.White;
 

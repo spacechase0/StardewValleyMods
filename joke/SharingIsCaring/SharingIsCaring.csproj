@@ -6,6 +6,5 @@
     <UniqueId>spacechase0.$(AssemblyName)</UniqueId>
     <Version>1.0.0</Version>
     <UpdateKeys>Nexus:14263</UpdateKeys>
-
   </PropertyGroup>
 </Project>

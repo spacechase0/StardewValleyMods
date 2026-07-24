@@ -25,7 +25,7 @@ namespace SpaceCore.VanillaAssetExpansion
     public class VirtualCurrencyData
     {
         public bool TeamWide { get; set; } = false;
-        public string ObtainSound { get; set; } = null;
+        public string? ObtainSound { get; set; } = null;
     }
 
     public static class VirtualCurrencyExtensions
@@ -186,7 +186,7 @@ namespace SpaceCore.VanillaAssetExpansion
                 actualItem.SetFlagOnPickup = null;
             }
             (actualItem as SpecialItem)?.actionWhenReceived(__instance);
-            StardewValley.Object obj = actualItem as StardewValley.Object;
+            StardewValley.Object? obj = actualItem as StardewValley.Object;
             if (obj != null && obj.specialItem)
             {
                 string key = (obj.IsRecipe ? ("-" + obj.ItemId) : obj.ItemId);
@@ -218,7 +218,7 @@ namespace SpaceCore.VanillaAssetExpansion
             }
             if (actualItem.HasTypeObject())
             {
-                StardewValley.Object obj2 = actualItem as StardewValley.Object;
+                StardewValley.Object? obj2 = actualItem as StardewValley.Object;
                 if (obj2 != null)
                 {
                     if (obj2.Category == -2 || obj2.Type == "Minerals")
@@ -407,7 +407,7 @@ namespace SpaceCore.VanillaAssetExpansion
     {
         public static void Postfix(ShopMenu __instance, SpriteBatch b)
         {
-            string itemId = null;
+            string? itemId = null;
             int amt = 0;
             foreach (var currency in VanillaAssetExpansion.virtualCurrencies)
             {

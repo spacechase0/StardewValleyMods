@@ -22,9 +22,9 @@ namespace SpaceShared.UI
         /*********
         ** Accessors
         *********/
-        public object UserData { get; set; }
+        public object? UserData { get; set; }
 
-        public Container Parent { get; internal set; }
+        public Container? Parent { get; internal set; }
         public Vector2 LocalPosition { get; set; }
         public Vector2 Position => (Parent?.Position ?? Vector2.Zero) + LocalPosition;
 
@@ -38,7 +38,7 @@ namespace SpaceShared.UI
         public virtual string ClickedSound => null;
 
         /// <summary>Whether to disable the element so it's invisible and can't be interacted with.</summary>
-        public Func<bool> ForceHide;
+        public Func<bool>? ForceHide;
 
         /*********
         ** Public methods
@@ -94,11 +94,11 @@ namespace SpaceShared.UI
             return isOffScreen || this.ForceHide?.Invoke() == true;
         }
 
-        public string ScreenReaderText { get; set; }
-        public string ScreenReaderDescription { get; set; }
+        public string? ScreenReaderText { get; set; }
+        public string? ScreenReaderDescription { get; set; }
         public bool ScreenReaderIgnore { get; set; } = false;
 
-        private ClickableComponent defaultClickable;
+        private ClickableComponent? defaultClickable;
         public virtual IEnumerable<ClickableComponent> GetGamepadMovementRegions()
         {
             if (ScreenReaderIgnore)

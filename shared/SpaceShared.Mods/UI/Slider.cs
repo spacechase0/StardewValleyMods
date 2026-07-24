@@ -103,14 +103,14 @@ namespace SpaceShared.UI
 
         }
 
-        private ElementClickableComponent valueMarkerRegion;
+        private ElementClickableComponent? valueMarkerRegion;
         /// <inheritdoc />
         public override void Draw(SpriteBatch b)
         {
             float perc = this.Value switch
             {
-                int => ((int)(object)this.Value - (int)(object)this.Minimum) / (float)((int)(object)this.Maximum - (int)(object)this.Minimum),
-                float => ((float)(object)this.Value - (float)(object)this.Minimum) / ((float)(object)this.Maximum - (float)(object)this.Minimum),
+                int => ((int)(object)this.Value - (int)(object)this.Minimum!) / (float)((int)(object)this.Maximum! - (int)(object)this.Minimum),
+                float => ((float)(object)this.Value - (float)(object)this.Minimum!) / ((float)(object)this.Maximum! - (float)(object)this.Minimum),
                 _ => 0
             };
 
@@ -131,7 +131,7 @@ namespace SpaceShared.UI
                 rightNeighborID = ClickableComponent.SNAP_AUTOMATIC,
                 upNeighborID = ClickableComponent.SNAP_AUTOMATIC,
                 downNeighborID = ClickableComponent.SNAP_AUTOMATIC,
-                ScreenReaderText = Value.ToString(),
+                ScreenReaderText = Value?.ToString() ?? "",
             };
             yield return valueMarkerRegion;
         }

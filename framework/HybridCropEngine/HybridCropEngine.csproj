@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
 
   <PropertyGroup>
@@ -8,8 +11,4 @@
     <Version>1.1.5</Version>
     <UpdateKeys>Nexus:6577</UpdateKeys>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.0" />
-  </ItemGroup>
 </Project>

@@ -56,7 +56,7 @@ namespace SpaceCore.VanillaAssetExpansion
             List<Item> drops = new();
             bool success = false;
 
-            void DoStuff( Item harvestedItem, int numToHarvest, ref bool localSuccess )
+            void DoStuff( Item? harvestedItem, int numToHarvest, ref bool localSuccess )
             {
                 HarvestMethod harvestMethod = data?.HarvestMethod ?? HarvestMethod.Grab;
                 if (harvestMethod == HarvestMethod.Scythe || isForcedScytheHarvest)
@@ -69,11 +69,11 @@ namespace SpaceCore.VanillaAssetExpansion
                             junimoHarvester.currentLocation.playSound("harvest");
                             DelayedAction.playSoundAfterDelay("coin", 260, junimoHarvester.currentLocation);
                         }
-                        junimoHarvester.tryToAddItemToHut(harvestedItem.getOne());
+                        if (harvestedItem != null) junimoHarvester.tryToAddItemToHut(harvestedItem.getOne());
                     }
                     else
                     {
-                        drops.Add(harvestedItem.getOne());
+                        if (harvestedItem != null) drops.Add(harvestedItem.getOne());
                     }
                     success = localSuccess = true;
                 }
@@ -81,7 +81,7 @@ namespace SpaceCore.VanillaAssetExpansion
                 {
                     if (junimoHarvester == null)
                     {
-                        drops.Add(harvestedItem.getOne());
+                        if (harvestedItem != null) drops.Add(harvestedItem.getOne());
                     }
                     Vector2 initialTile2 = new Vector2(xTile, yTile);
                     if (junimoHarvester == null)
@@ -94,7 +94,7 @@ namespace SpaceCore.VanillaAssetExpansion
                     }
                     else
                     {
-                        junimoHarvester.tryToAddItemToHut(harvestedItem.getOne());
+                        if (harvestedItem != null) junimoHarvester.tryToAddItemToHut(harvestedItem.getOne());
                     }
                     if (r2.NextDouble() < Game1.player.team.AverageLuckLevel() / 1500.0 + Game1.player.team.AverageDailyLuck() / 1200.0 + 9.9999997473787516E-05)
                     {
@@ -194,7 +194,7 @@ namespace SpaceCore.VanillaAssetExpansion
                 {
                     harvestedItem = (__instance.programColored.Value ? new ColoredObject(__instance.indexOfHarvest.Value, 1, __instance.tintColor.Value) : ItemRegistry.Create(__instance.indexOfHarvest.Value));
                     int price = 0;
-                    StardewValley.Object obj = harvestedItem as StardewValley.Object;
+                    StardewValley.Object? obj = harvestedItem as StardewValley.Object;
                     if (obj != null)
                     {
                         price = obj.Price;
@@ -221,7 +221,8 @@ namespace SpaceCore.VanillaAssetExpansion
                 var harvestedItems = ItemQueryResolver.TryResolve(drop, new ItemQueryContext(__instance.currentLocation, Game1.player, r2, "SpaceCore Crop Override Yields entry") );
                 foreach (var iqr in harvestedItems)
                 {
-                    Item harvestedItem = iqr.Item as Item;
+                    Item? harvestedItem = iqr.Item as Item;
+                    if (harvestedItem == null) continue;
                     int numToHarvest = harvestedItem.Stack;
 
                     bool localSuccess = false;
@@ -230,7 +231,7 @@ namespace SpaceCore.VanillaAssetExpansion
                     if (localSuccess)
                     {
                         int price = 0;
-                        StardewValley.Object obj = harvestedItem as StardewValley.Object;
+                        StardewValley.Object? obj = harvestedItem as StardewValley.Object;
                         if (obj != null)
                         {
                             price = obj.Price;

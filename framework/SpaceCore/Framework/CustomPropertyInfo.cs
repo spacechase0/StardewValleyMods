@@ -9,7 +9,7 @@ namespace SpaceCore.Framework
 {
     internal class CustomPropertyInfo
     {
-        private PropertyInfo propInfo;
+        private PropertyInfo? propInfo;
 
         public Type DeclaringType { get; set; }
         public string Name { get; set; }

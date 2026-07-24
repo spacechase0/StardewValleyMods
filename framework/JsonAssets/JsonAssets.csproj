@@ -1,5 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(SolutionDir)common.targets" />
+  <PropertyGroup>
+    <EnableHarmony>true</EnableHarmony>
+    <RequireSpaceCore>true</RequireSpaceCore>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)harmony.targets" />
 
   <PropertyGroup>
@@ -14,7 +17,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)spacecore.targets" />
   <ItemGroup>
     <SMAPIDependency Include="Pathoschild.ContentPatcher" Required="false" />
     <SMAPIDependency Include="Cherry.ExpandedPreconditionsUtility" Required="false" />

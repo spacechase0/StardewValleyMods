@@ -27,7 +27,7 @@ namespace SpaceCore.Dungeons
 
             int deepest = 0;
             DungeonImpl.deepestLevels.GetOrCreateValue(Game1.player.team).TryGetValue(dungeonId, out deepest);
-            var elevators = dungeonData.FloorsWithElevator.Where(i => i <= deepest).ToList();
+            var elevators = dungeonData?.FloorsWithElevator.Where(i => i <= deepest).ToList() ?? [];
 
             int numElevators = elevators.Count;
             base.width = ((numElevators > 50) ? (484 + IClickableMenu.borderWidth * 2) : Math.Min(220 + IClickableMenu.borderWidth * 2, (numElevators + 1) * 44 + IClickableMenu.borderWidth * 2));
@@ -95,8 +95,9 @@ namespace SpaceCore.Dungeons
                     if (Convert.ToInt32(c.name) == 0)
                     {
                         var dungeonsData = Game1.content.Load<Dictionary<string, DungeonData>>("spacechase0.SpaceCore/Dungeons");
-                        dungeonsData.TryGetValue(dungeonId, out var dungeonData);
-                        Game1.warpFarmer(dungeonData.ElevatorExitLocation, dungeonData.ElevatorExitTile.X, dungeonData.ElevatorExitTile.Y, flip: true);
+                        if (dungeonsData.TryGetValue(dungeonId, out var dungeonData)) {
+                            Game1.warpFarmer(dungeonData.ElevatorExitLocation, dungeonData.ElevatorExitTile.X, dungeonData.ElevatorExitTile.Y, flip: true);
+                        }
                         Game1.exitActiveMenu();
                         continue;
                     }

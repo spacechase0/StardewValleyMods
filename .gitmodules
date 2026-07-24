@@ -1,9 +1,3 @@
-[submodule "external/MonoScene"]
-	path = _external/MonoScene
-	url = git@github.com:vpenades/MonoScene.git
 [submodule "_external/GJKEPA"]
 	path = _external/GJKEPA
 	url = git@github.com:exatb/GJKEPA.git
-[submodule "_external/MLEM"]
-	path = _external/MLEM
-	url = git@github.com:Ellpeck/MLEM.git

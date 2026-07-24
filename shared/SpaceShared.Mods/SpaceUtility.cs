@@ -10,11 +10,12 @@ using StardewValley.Objects;
 using StardewValley.SpecialOrders;
 using StardewValley.TerrainFeatures;
 
+#nullable enable
 namespace SpaceShared
 {
     internal class SpaceUtility
     {
-        public static void iterateAllTerrainFeatures(Func<TerrainFeature, TerrainFeature> action)
+        public static void iterateAllTerrainFeatures(Func<TerrainFeature?, TerrainFeature?> action)
         {
             foreach (GameLocation location in Game1.locations)
             {
@@ -22,7 +23,7 @@ namespace SpaceShared
             }
         }
 
-        protected static void _recursiveIterateLocation(GameLocation l, Func<TerrainFeature, TerrainFeature> action)
+        protected static void _recursiveIterateLocation(GameLocation l, Func<TerrainFeature?, TerrainFeature?> action)
         {
             foreach (Building b in l.buildings)
             {
@@ -37,7 +38,7 @@ namespace SpaceShared
                 var obj = l.objects[key];
                 if (obj is IndoorPot pot)
                 {
-                    pot.hoeDirt.Value = (HoeDirt)action(pot.hoeDirt.Value);
+                    pot.hoeDirt.Value = (HoeDirt?)action(pot.hoeDirt.Value);
                 }
             }
 
@@ -58,7 +59,7 @@ namespace SpaceShared
 
             for (int i = l.resourceClumps.Count - 1; i >= 0; --i)
             {
-                var ret = (ResourceClump)action(l.resourceClumps[i]);
+                var ret = (ResourceClump?)action(l.resourceClumps[i]);
                 if (ret == null)
                     l.resourceClumps.RemoveAt(i);
                 else

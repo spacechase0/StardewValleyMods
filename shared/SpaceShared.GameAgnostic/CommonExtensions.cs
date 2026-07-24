@@ -3,6 +3,8 @@ using System.Collections.Generic;
 //using SpaceShared.APIs;
 //using StardewModdingAPI;
 
+#nullable enable
+
 namespace SpaceShared
 {
     /// <summary>Provides common extensions for general mod logic.</summary>
@@ -11,7 +13,7 @@ namespace SpaceShared
         /*********
         ** Public methods
         *********/
-        public static void Shuffle<T>(this List<T> list, Random r = null)
+        public static void Shuffle<T>(this List<T> list, Random? r = null)
         {
             r ??= new Random();
             for (int i = 0; i < list.Count; ++i)
@@ -63,7 +65,7 @@ namespace SpaceShared
         /// <param name="index">The index of the value within the array to find.</param>
         /// <param name="value">The value at the given index, if found.</param>
         /// <returns>Returns whether the index was within the array bounds.</returns>
-        public static bool TryGetIndex<T>(this T[] array, int index, out T value)
+        public static bool TryGetIndex<T>(this T[]? array, int index, out T? value)
         {
             if (array == null || index < 0 || index >= array.Length)
             {
@@ -80,9 +82,9 @@ namespace SpaceShared
         /// <param name="array">The array to search.</param>
         /// <param name="index">The index of the value within the array to find.</param>
         /// <param name="defaultValue">The default value if the value isn't in range.</param>
-        public static T GetOrDefault<T>(this T[] array, int index, T defaultValue = default)
+        public static T? GetOrDefault<T>(this T[] array, int index, T? defaultValue = default)
         {
-            return array.TryGetIndex(index, out T value)
+            return array.TryGetIndex(index, out T? value)
                 ? value
                 : defaultValue;
         }
@@ -94,9 +96,9 @@ namespace SpaceShared
         /// <param name="index">The index of the value within the array to find.</param>
         /// <param name="tryParse">Try to parse the raw value</param>
         /// <param name="defaultValue">The default value if the value isn't in range or isn't valid.</param>
-        public static TParsed GetOrDefault<TRaw, TParsed>(this TRaw[] array, int index, Func<TRaw, TParsed> tryParse, TParsed defaultValue = default)
+        public static TParsed? GetOrDefault<TRaw, TParsed>(this TRaw[] array, int index, Func<TRaw?, TParsed> tryParse, TParsed? defaultValue = default)
         {
-            if (!array.TryGetIndex(index, out TRaw value))
+            if (!array.TryGetIndex(index, out TRaw? value))
                 return defaultValue;
 
             try
@@ -119,9 +121,9 @@ namespace SpaceShared
         /// <param name="dictionary">The dictionary to search.</param>
         /// <param name="key">The key within the dictionary to find.</param>
         /// <param name="defaultValue">The default value if the value isn't in range.</param>
-        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default)
+        public static TValue? GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue? defaultValue = default)
         {
-            return dictionary.TryGetValue(key, out TValue value)
+            return dictionary.TryGetValue(key, out TValue? value)
                 ? value
                 : defaultValue;
         }
@@ -134,9 +136,9 @@ namespace SpaceShared
         /// <param name="key">The key within the dictionary to find.</param>
         /// <param name="tryParse">Try to parse the raw value</param>
         /// <param name="defaultValue">The default value if the value isn't in range.</param>
-        public static TParsed GetOrDefault<TKey, TValue, TParsed>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue, TParsed> tryParse, TParsed defaultValue = default)
+        public static TParsed? GetOrDefault<TKey, TValue, TParsed>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue?, TParsed> tryParse, TParsed? defaultValue = default)
         {
-            if (!dictionary.TryGetValue(key, out TValue value))
+            if (!dictionary.TryGetValue(key, out TValue? value))
                 return defaultValue;
 
             try

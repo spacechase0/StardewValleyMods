@@ -31,7 +31,7 @@ namespace SpaceCore
                 public Skill Skill { get; }
                 public string Id { get; }
 
-                public Texture2D Icon { get; set; }
+                public Texture2D? Icon { get; set; }
                 public abstract string GetName();
                 public abstract string GetDescription();
 
@@ -52,7 +52,7 @@ namespace SpaceCore
 
             public class ProfessionPair
             {
-                public ProfessionPair(int level, Profession first, Profession second, Profession req = null)
+                public ProfessionPair(int level, Profession first, Profession second, Profession? req = null)
                 {
                     this.Level = level;
                     this.First = first;
@@ -61,14 +61,14 @@ namespace SpaceCore
                 }
 
                 public int Level { get; }
-                public Profession Requires { get; }
+                public Profession? Requires { get; }
                 public Profession First { get; }
                 public Profession Second { get; }
             }
 
             public string Id { get; }
             public abstract string GetName();
-            public Texture2D Icon { get; set; }
+            public Texture2D? Icon { get; set; }
             public Texture2D SkillsPageIcon { get; set; }
 
             public IList<Profession> Professions { get; } = new List<Profession>();
@@ -78,11 +78,11 @@ namespace SpaceCore
 
             public Color ExperienceBarColor { get; set; }
 
-            /// 
+            ///
             /// Got Rid of the level up Dictionaries.
             /// Now when the player levels up, custom skills will search all the recipes for recipes with thier ID and level
             /// So now it's easier for people to add new recipies to skills through like content patcher
-            /// 
+            ///
 
 
             public virtual List<string> GetExtraLevelUpInfo(int level)
@@ -135,7 +135,7 @@ namespace SpaceCore
             /// <param name="health">Float value of health regenerated per second.</param>
             /// <param name="stamina">Float value of energy regenerated per second.</param>
             /// <returns>Returns whether any additional buff effects were found with tangible (non-zero or non-empty) values.</returns>
-            public static bool TryGetAdditionalBuffEffects(Dictionary<string, string> dict, out Dictionary<string, int> skills, out float health, out float stamina)
+            public static bool TryGetAdditionalBuffEffects(Dictionary<string, string>? dict, out Dictionary<string, int> skills, out float health, out float stamina)
             {
                 skills = [];
                 health = 0;
@@ -161,7 +161,7 @@ namespace SpaceCore
                     skills.Add(skillId, level);
                 }
 
-                if (dict.TryGetValue(RegenHealth, out string regenStr) && float.TryParse(regenStr, out float regen))
+                if (dict.TryGetValue(RegenHealth, out string? regenStr) && float.TryParse(regenStr, out float regen))
                     health = regen;
                 if (dict.TryGetValue(RegenStamina, out regenStr) && float.TryParse(regenStr, out regen))
                     stamina = regen;
@@ -188,7 +188,7 @@ namespace SpaceCore
             /// </summary>
             /// <param name="value">Buff effect value.</param>
             /// <param name="label">Translated label.</param>
-            public static string FormattedBuffEffect(float value, string label = null)
+            public static string FormattedBuffEffect(float value, string? label = null)
             {
                 return string.IsNullOrWhiteSpace(label) ? $"{(value > 0 ? "+" : "")}{value}" : $"{(value > 0 ? "+" : "")}{value} {label}";
             }
@@ -205,7 +205,7 @@ namespace SpaceCore
             /// <param name="alpha">Opacity of icon and label when drawn.</param>
             /// <param name="spacing">Display pixel spacing between icon and text.</param>
             /// <param name="shadowAlpha">Relative opacity of shadow when drawn.</param>
-            public static void DrawBuffEffect(SpriteBatch b, Vector2 position, float value, string label = null, SpriteFont font = null, Texture2D icon = null, Rectangle? iconSource = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
+            public static void DrawBuffEffect(SpriteBatch b, Vector2 position, float value, string? label = null, SpriteFont? font = null, Texture2D? icon = null, Rectangle? iconSource = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
             {
                 string text = SkillBuff.FormattedBuffEffect(value, label);
                 int xOffset = 0;
@@ -228,7 +228,7 @@ namespace SpaceCore
             /// <param name="alpha">Opacity of icon and label when drawn.</param>
             /// <param name="spacing">Display pixel spacing between icon and text.</param>
             /// <param name="shadowAlpha">Relative opacity of shadow when drawn.</param>
-            public static void DrawHealthRegenBuffEffect(SpriteBatch b, Vector2 position, float value, bool drawText = true, SpriteFont font = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
+            public static void DrawHealthRegenBuffEffect(SpriteBatch b, Vector2 position, float value, bool drawText = true, SpriteFont? font = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
             {
                 SkillBuff.DrawBuffEffect(b, position, value, drawText ? I18n.HealthRegen() : null, font, Game1.mouseCursors, new Rectangle(0, 438, 10, 10), alpha: alpha, spacing: spacing, shadowAlpha: shadowAlpha);
             }
@@ -243,7 +243,7 @@ namespace SpaceCore
             /// <param name="alpha">Opacity of icon and label when drawn.</param>
             /// <param name="spacing">Display pixel spacing between icon and text.</param>
             /// <param name="shadowAlpha">Relative opacity of shadow when drawn.</param>
-            public static void DrawStaminaRegenBuffEffect(SpriteBatch b, Vector2 position, float value, bool drawText = true, SpriteFont font = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
+            public static void DrawStaminaRegenBuffEffect(SpriteBatch b, Vector2 position, float value, bool drawText = true, SpriteFont? font = null, float alpha = 1, int spacing = 8 * Game1.pixelZoom, float shadowAlpha = 1)
             {
                 SkillBuff.DrawBuffEffect(b, position, value, drawText ? I18n.StaminaRegen() : null, font, Game1.mouseCursors, new Rectangle((value < 0) ? 140 : 0, 428, 10, 10), alpha: alpha, spacing: spacing, shadowAlpha: shadowAlpha);
             }
@@ -296,7 +296,7 @@ namespace SpaceCore
         }
 
         private static readonly string DataKey = "skills";
-        private static string LegacyFilePath => Path.Combine(Constants.CurrentSavePath, "spacecore-skills.json");
+        private static string LegacyFilePath => Path.Combine(Constants.CurrentSavePath!, "spacecore-skills.json");
         private const string MsgData = "spacechase0.SpaceCore.SkillData";
         private const string MsgExperience = "spacechase0.SpaceCore.SkillExperience";
         private const string MsgBuffs = "spacechase0.SpaceCore.SkillBuffs";
@@ -350,14 +350,14 @@ namespace SpaceCore
             );
         }
 
-        private static void GameLoop_ReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
+        private static void GameLoop_ReturnedToTitle(object? sender, ReturnedToTitleEventArgs e)
         {
             State.NewLevels.Clear();
             State.Exp.Clear();
             State.Buffs.Clear();
         }
 
-        private static void DayStarted(object sender, DayStartedEventArgs e)
+        private static void DayStarted(object? sender, DayStartedEventArgs e)
         {
             //Get all currently loaded skills
             foreach(string Id in Skills.GetSkillList())
@@ -370,13 +370,13 @@ namespace SpaceCore
                     return;
                 }
                 //Get the skill id
-                Skill test = GetSkill(Id);
+                Skill? test = GetSkill(Id);
 
                 //If the player is greater than 5 and does not have the level 5 professions, add them.
                 //I would then remove any level 5 professions the player might have if they are under 5...
                 // but that would break the skill prestige type mods for a co-op bandaid
-                if (skillLevel >= 5 && !(Game1.player.HasCustomProfession(test.Professions[0]) ||
-                                         Game1.player.HasCustomProfession(test.Professions[1])))
+                if (skillLevel >= 5 && !(Game1.player.HasCustomProfession(test?.Professions[0]) ||
+                                         Game1.player.HasCustomProfession(test?.Professions[1])))
                 {
                     Game1.endOfNightMenus.Push(new SkillLevelUpMenu(Id, 5));
                 }
@@ -384,10 +384,10 @@ namespace SpaceCore
                 //If the player is greater than or equal to 10 and does not have the level 10 professions, add them.
                 //I would then remove any level 10 professions the player might have if they are under 10...
                 // but that would break the skill prestige type mods for a co-op bandaid
-                if (skillLevel >= 10 && !(Game1.player.HasCustomProfession(test.Professions[2]) ||
-                                          Game1.player.HasCustomProfession(test.Professions[3]) ||
-                                          Game1.player.HasCustomProfession(test.Professions[4]) ||
-                                          Game1.player.HasCustomProfession(test.Professions[5])))
+                if (skillLevel >= 10 && !(Game1.player.HasCustomProfession(test?.Professions[2]) ||
+                                          Game1.player.HasCustomProfession(test?.Professions[3]) ||
+                                          Game1.player.HasCustomProfession(test?.Professions[4]) ||
+                                          Game1.player.HasCustomProfession(test?.Professions[5])))
                 {
                     Game1.endOfNightMenus.Push(new SkillLevelUpMenu(Id, 10));
                 }
@@ -456,9 +456,9 @@ namespace SpaceCore
             });
         }
 
-        public static Skill GetSkill(string name)
+        public static Skill? GetSkill(string name)
         {
-            if (Skills.SkillsByName.TryGetValue(name, out Skill found))
+            if (Skills.SkillsByName.TryGetValue(name, out Skill? found))
                 return found;
 
             foreach (var skill in Skills.SkillsByName)
@@ -492,14 +492,14 @@ namespace SpaceCore
             return forFarmer;
         }
 
-        public static Texture2D GetSkillPageIcon(string skillName)
+        public static Texture2D? GetSkillPageIcon(string skillName)
         {
-            return Skills.GetSkill(skillName).SkillsPageIcon;
+            return Skills.GetSkill(skillName)?.SkillsPageIcon;
         }
 
-        public static Texture2D GetSkillIcon(string skillName)
+        public static Texture2D? GetSkillIcon(string skillName)
         {
-            return Skills.GetSkill(skillName).Icon;
+            return Skills.GetSkill(skillName)?.Icon;
         }
 
         public static int GetExperienceFor(Farmer farmer, string skillName)
@@ -512,9 +512,9 @@ namespace SpaceCore
             return Skills.Exp[farmer.UniqueMultiplayerID][skillName];
         }
 
-        public static int GetSkillLevel(Farmer farmer, string skillName)
+        public static int GetSkillLevel(Farmer farmer, string? skillName)
         {
-            if (!Skills.SkillsByName.ContainsKey(skillName))
+            if (skillName == null || !Skills.SkillsByName.ContainsKey(skillName))
                 return 0;
             Skills.ValidateSkill(farmer, skillName);
 
@@ -530,9 +530,9 @@ namespace SpaceCore
             return 0;
         }
 
-        public static int GetSkillBuffLevel(Farmer farmer, string skillName, string? buffName = null)
+        public static int GetSkillBuffLevel(Farmer farmer, string? skillName, string? buffName = null)
         {
-            if (!Skills.SkillsByName.ContainsKey(skillName))
+            if (skillName == null || !Skills.SkillsByName.ContainsKey(skillName))
             {
                 return 0;
             }
@@ -571,7 +571,7 @@ namespace SpaceCore
             int level = (farmer.farmingLevel.Value + farmer.fishingLevel.Value + farmer.foragingLevel.Value + farmer.combatLevel.Value + farmer.miningLevel.Value) / 2;
             if (prevLevel >= 10 && level >= 25)
             {
-                ///All thise here is just how vanilla does thier mastery exp system. So it's just copy past with the amount. 
+                ///All thise here is just how vanilla does thier mastery exp system. So it's just copy past with the amount.
                 int currentMasteryLevel = MasteryTrackerMenu.getCurrentMasteryLevel();
                 Game1.stats.Increment("MasteryExp", Math.Max(1, amt / 2));
                 if (MasteryTrackerMenu.getCurrentMasteryLevel() > currentMasteryLevel)
@@ -615,7 +615,7 @@ namespace SpaceCore
             _ = skillBuffs.TryAdd(skillName, new());
         }
 
-        private static void ClientJoined(object sender, EventArgsServerGotClient args)
+        private static void ClientJoined(object? sender, EventArgsServerGotClient args)
         {
             foreach (var skill in Skills.SkillsByName)
             {
@@ -745,13 +745,13 @@ namespace SpaceCore
         /// <summary>Raised after the player loads a save slot.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
             if (Context.IsMainPlayer)
             {
-                State.Exp = Skills.DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(Skills.DataKey);
+                State.Exp = Skills.DataApi.ReadSaveData<Dictionary<long, Dictionary<string, int>>>(Skills.DataKey)!;
                 if (State.Exp == null && File.Exists(Skills.LegacyFilePath))
-                    State.Exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(Skills.LegacyFilePath));
+                    State.Exp = JsonConvert.DeserializeObject<Dictionary<long, Dictionary<string, int>>>(File.ReadAllText(Skills.LegacyFilePath))!;
                 State.Exp ??= new Dictionary<long, Dictionary<string, int>>();
             }
         }
@@ -759,7 +759,7 @@ namespace SpaceCore
         /// <summary>Raised before the game begins writes data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void OnSaving(object sender, SavingEventArgs e)
+        private static void OnSaving(object? sender, SavingEventArgs e)
         {
             if (Context.IsMainPlayer)
             {
@@ -773,7 +773,7 @@ namespace SpaceCore
         /// <summary>Raised after the game finishes writing data to the save file (except the initial save creation).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void OnSaved(object sender, SavedEventArgs e)
+        private static void OnSaved(object? sender, SavedEventArgs e)
         {
             if (Context.IsMainPlayer)
             {
@@ -788,7 +788,7 @@ namespace SpaceCore
         /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        private static void OnMenuChanged(object? sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is GameMenu gm)
             {
@@ -800,7 +800,7 @@ namespace SpaceCore
         }
 
         [SuppressMessage("Reliability", "CA2000", Justification = DiagnosticMessages.DisposableOutlivesScope)]
-        private static void ShowLevelMenu(object sender, EventArgsShowNightEndMenus args)
+        private static void ShowLevelMenu(object? sender, EventArgsShowNightEndMenus args)
         {
             Log.Debug("Doing skill menus");
 
@@ -825,7 +825,7 @@ namespace SpaceCore
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
         /// <remarks>Used to set all professions for All Professions, matching their code.</remarks>
-        private static void OnWarped(object sender, WarpedEventArgs e)
+        private static void OnWarped(object? sender, WarpedEventArgs e)
         {
             if (e.IsLocalPlayer)
             {
@@ -849,7 +849,7 @@ namespace SpaceCore
         /// <summary>Raised after drawing the HUD (item toolbar, clock, etc) to the sprite batch, but before it's rendered to the screen. The vanilla HUD may be hidden at this point (e.g. because a menu is open).</summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private static void OnRenderedHud(object sender, RenderedHudEventArgs e)
+        private static void OnRenderedHud(object? sender, RenderedHudEventArgs e)
         {
             if (Game1.activeClickableMenu != null || Game1.eventUp)
                 return;
@@ -880,13 +880,13 @@ namespace SpaceCore
                     progress = -1;
                 }
 
-                BarsApi.DrawExperienceBar(skill.Icon ?? Game1.staminaRect, level, progress, skill.ExperienceBarColor);
+                BarsApi?.DrawExperienceBar(skill.Icon ?? Game1.staminaRect, level, progress, skill.ExperienceBarColor);
             }
         }
 
-        internal static Skill.Profession GetProfessionFor(Skill skill, int level)
+        internal static Skill.Profession? GetProfessionFor(Skill? skill, int level)
         {
-            foreach (var profPair in skill.ProfessionsForLevels)
+            foreach (var profPair in skill?.ProfessionsForLevels ?? [])
             {
                 if (level == profPair.Level)
                 {
@@ -934,7 +934,7 @@ namespace SpaceCore
             {
                 if (Skills.CanRespecCustomSkill(skill))
                 {
-                    responses.Add(new Response(skill, Skills.GetSkill(skill).GetName()));
+                    responses.Add(new Response(skill, Skills.GetSkill(skill)?.GetName()));
                 }
             }
             return responses;
@@ -968,9 +968,9 @@ namespace SpaceCore
             return Skills.GetExperienceAndLevels(farmer);
         }
 
-        public static int GetCustomBuffedSkillLevel(this Farmer farmer, Skills.Skill skill)
+        public static int GetCustomBuffedSkillLevel(this Farmer farmer, Skills.Skill? skill)
         {
-            return Skills.GetSkillLevel(farmer, skill.Id) + Skills.GetSkillBuffLevel(farmer, skill.Id);
+            return Skills.GetSkillLevel(farmer, skill?.Id) + Skills.GetSkillBuffLevel(farmer, skill?.Id);
         }
 
         public static int GetCustomBuffedSkillLevel(this Farmer farmer, string skill)
@@ -978,12 +978,12 @@ namespace SpaceCore
             return Skills.GetSkillLevel(farmer, skill) + Skills.GetSkillBuffLevel(farmer, skill);
         }
 
-        public static int GetCustomSkillBuffAmount(this Farmer farmer, Skills.Skill skill, string buffId = null)
+        public static int GetCustomSkillBuffAmount(this Farmer farmer, Skills.Skill skill, string? buffId = null)
         {
             return Skills.GetSkillBuffLevel(farmer, skill.Id, buffId);
         }
 
-        public static int GetCustomSkillBuffAmount(this Farmer farmer, string skill, string buffId = null)
+        public static int GetCustomSkillBuffAmount(this Farmer farmer, string skill, string? buffId = null)
         {
             return Skills.GetSkillBuffLevel(farmer, skill, buffId);
         }
@@ -998,9 +998,9 @@ namespace SpaceCore
             Skills.AddExperience(farmer, skill, amt);
         }
 
-        public static bool HasCustomProfession(this Farmer farmer, Skills.Skill.Profession prof)
+        public static bool HasCustomProfession(this Farmer farmer, Skills.Skill.Profession? prof)
         {
-            return farmer.professions.Contains(prof.GetVanillaId());
+            return prof != null && farmer.professions.Contains(prof.GetVanillaId());
         }
     }
 }

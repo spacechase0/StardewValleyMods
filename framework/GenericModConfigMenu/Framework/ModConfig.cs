@@ -43,7 +43,7 @@ namespace GenericModConfigMenu.Framework
         public ModConfigPage ActiveDisplayPage { get; set; }
 
         /// <summary>The callbacks to invoke when an option value changes.</summary>
-        public List<Action<string, object>> ChangeHandlers { get; } = new();
+        public List<Action<string, object?>> ChangeHandlers { get; } = new();
 
 
         /*********
@@ -67,9 +67,9 @@ namespace GenericModConfigMenu.Framework
         /// <summary>Set the active page to which options should be added, creating it if needed.</summary>
         /// <param name="pageId">The unique page ID.</param>
         /// <param name="pageTitle">The page title shown in its UI, or <c>null</c> to show the <paramref name="pageId"/> value.</param>
-        public void SetActiveRegisteringPage(string pageId, Func<string> pageTitle)
+        public void SetActiveRegisteringPage(string pageId, Func<string>? pageTitle)
         {
-            if (this.Pages.TryGetValue(pageId, out ModConfigPage page))
+            if (this.Pages.TryGetValue(pageId, out ModConfigPage? page))
                 this.ActiveRegisteringPage = page;
             else
                 this.Pages[pageId] = this.ActiveRegisteringPage = new ModConfigPage(pageId, pageTitle);

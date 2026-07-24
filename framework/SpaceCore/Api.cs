@@ -74,21 +74,21 @@ namespace SpaceCore
         /// </summary>
         /// <param name="skill"> The ID of the skill you want to get</param>
         /// <returns>Texture2D</returns>
-        string GetDisplayNameOfCustomSkill(string skill);
+        string? GetDisplayNameOfCustomSkill(string skill);
 
         /// <summary>
         /// Gets the 10x10 icon of the skill that shows up on the skill page
         /// </summary>
         /// <param name="skill"> The ID of the skill you want to get</param>
         /// <returns>Texture2D</returns>
-        Texture2D GetSkillPageIconForCustomSkill(string skill);
+        Texture2D? GetSkillPageIconForCustomSkill(string skill);
 
         /// <summary>
         /// Gets the 16x16 icon of the skill that shows up in the level up menu.
         /// </summary>
         /// <param name="skill"> The ID of the skill you want to get</param>
         /// <returns>Texture2D</returns>
-        Texture2D GetSkillIconForCustomSkill(string skill);
+        Texture2D? GetSkillIconForCustomSkill(string skill);
 
         /// <summary>
         /// Get the profession ID for the custom skill
@@ -96,7 +96,7 @@ namespace SpaceCore
         /// <param name="skill"></param>
         /// <param name="profession"></param>
         /// <returns>int profession ID</returns>
-        int GetProfessionId(string skill, string profession);
+        int? GetProfessionId(string skill, string profession);
 
         /// Must have [XmlType("Mods_SOMETHINGHERE")] attribute (required to start with "Mods_")
         void RegisterSerializerType(Type type);
@@ -105,7 +105,7 @@ namespace SpaceCore
 
         void RegisterSpawnableMonster(string id, Func<Vector2, Dictionary<string, object>, Monster> monsterSpawner);
 
-        List<int> GetLocalIndexForMethod(MethodBase meth, string local);
+        List<int>? GetLocalIndexForMethod(MethodBase meth, string local);
 
         public event EventHandler<Action<string, Action>> AdvancedInteractionStarted;
 
@@ -115,7 +115,7 @@ namespace SpaceCore
         public void AddToVirtualCurrency(Farmer who, string currency, int amount); // supports negative numbers
 
         public void RegisterEquipmentSlot(IManifest modManifest, string globalId, Func<Item, bool> slotValidator, Func<string> slotDisplayName, Texture2D bgTex, Rectangle? bgRect = null);
-        public Item GetItemInEquipmentSlot(Farmer farmer, string globalId);
+        public Item? GetItemInEquipmentSlot(Farmer farmer, string globalId);
         public void SetItemInEquipmentSlot(Farmer farmer, string globalId, Item item);
         public bool CanItemGoInEquipmentSlot(string globalId, Item item);
     }
@@ -157,24 +157,24 @@ namespace SpaceCore
             farmer.AddCustomSkillExperience(skill, amt);
         }
 
-        public string GetDisplayNameOfCustomSkill(string skill)
+        public string? GetDisplayNameOfCustomSkill(string skill)
         {
-            return Skills.GetSkill(skill).GetName();
+            return Skills.GetSkill(skill)?.GetName();
         }
 
-        public Texture2D GetSkillPageIconForCustomSkill(string skill)
+        public Texture2D? GetSkillPageIconForCustomSkill(string skill)
         {
             return Skills.GetSkillPageIcon(skill);
         }
 
-        public Texture2D GetSkillIconForCustomSkill(string skill)
+        public Texture2D? GetSkillIconForCustomSkill(string skill)
         {
             return Skills.GetSkillIcon(skill);
         }
 
-        public int GetProfessionId(string skill, string profession)
+        public int? GetProfessionId(string skill, string profession)
         {
-            return Skills.GetSkill(skill).Professions.Single(p => p.Id == profession).GetVanillaId();
+            return Skills.GetSkill(skill)?.Professions.Single(p => p.Id == profession).GetVanillaId();
         }
 
         public void RegisterSerializerType(Type type)
@@ -206,7 +206,7 @@ namespace SpaceCore
             Dungeons.SpawnableImpl.MonsterFactory.Add(id, monsterSpawner);
         }
 
-        public List<int> GetLocalIndexForMethod(MethodBase meth, string local)
+        public List<int>? GetLocalIndexForMethod(MethodBase meth, string local)
         {
             return SpaceCore.GetLocalIndexForMethod(meth, local);
         }
@@ -257,7 +257,7 @@ namespace SpaceCore
             });
         }
 
-        public Item GetItemInEquipmentSlot(Farmer farmer, string globalId)
+        public Item? GetItemInEquipmentSlot(Farmer farmer, string globalId)
         {
             if (farmer.GetExtData().ExtraEquippables.TryGetValue(globalId, out var item))
                 return item;

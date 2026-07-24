@@ -37,7 +37,7 @@ namespace SpaceCore.Dungeons
         public readonly NetInt spaceCoreDungeonSeed = new();
         public readonly NetPointDictionary<bool, NetBool> spaceCoreDungeonLadders = new();
         public readonly NetBool spaceCoreDungeonIsMonsterLevel = new();
-        public LocalizedContentManager mapContent;
+        public LocalizedContentManager? mapContent;
         public bool generated = false;
 
         public static ConditionalWeakTable<GameLocation, GameLocationDungeonExt> data = new();
@@ -81,7 +81,7 @@ namespace SpaceCore.Dungeons
         private static PerScreen<DungeonState> _state = new(() => new DungeonState());
         internal static DungeonState State => _state.Value;
 
-        internal static ConditionalWeakTable<FarmerTeam, NetStringDictionary<int, NetInt>> deepestLevels = new(); 
+        internal static ConditionalWeakTable<FarmerTeam, NetStringDictionary<int, NetInt>> deepestLevels = new();
 
         public static void Init()
         {
@@ -267,7 +267,7 @@ namespace SpaceCore.Dungeons
                 return true;
             }
 
-            string toGenerate = null;
+            string? toGenerate = null;
             var dungeonsData = Game1.content.Load<Dictionary<string, DungeonData>>("spacechase0.SpaceCore/Dungeons");
             foreach (string key in dungeonsData.Keys)
             {
@@ -318,7 +318,7 @@ namespace SpaceCore.Dungeons
 
             Random r = new Random(ext.spaceCoreDungeonSeed.Value);
             var regions = dungeon.Regions.Values.Where(r => r.LevelRange.Begin <= ext.spaceCoreDungeonLevel.Value && r.LevelRange.End >= ext.spaceCoreDungeonLevel.Value).ToList();
-            var choices = regions.SelectMany(r => r.MapPool.Select(w => new Weighted<(DungeonData.DungeonRegion region, string mapPath)>(w.Weight, new(r, w.Value)))).ToList();
+            var choices = regions.SelectMany(r => r.MapPool.Select(w => new Weighted<(DungeonData.DungeonRegion region, string mapPath)>(w.Weight, new(r, w.Value!)))).ToList();
             var choice = choices.Choose(r);
 
             loc.name.Value = choice.region.LocationDataEntry;
@@ -450,7 +450,7 @@ namespace SpaceCore.Dungeons
                 if (dungeonsWithPlayers.Contains(ext.spaceCoreDungeonId.Value))
                     return false;
 
-                ext.mapContent.Dispose();
+                ext.mapContent?.Dispose();
                 return true;
             });
         }

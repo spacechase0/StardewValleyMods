@@ -18,7 +18,7 @@ namespace SpaceShared.ConsoleCommands
             return (
                 from type in mod.GetType().Assembly.GetTypes()
                 where !type.IsAbstract && typeof(IConsoleCommand).IsAssignableFrom(type)
-                select (IConsoleCommand)Activator.CreateInstance(type)
+                select (IConsoleCommand)Activator.CreateInstance(type)!
             );
         }
 

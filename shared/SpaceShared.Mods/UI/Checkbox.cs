@@ -23,7 +23,7 @@ namespace SpaceShared.UI
         public Rectangle CheckedTextureRect { get; set; }
         public Rectangle UncheckedTextureRect { get; set; }
 
-        public Action<Element> Callback { get; set; }
+        public Action<Element>? Callback { get; set; }
 
         public bool Checked
         {

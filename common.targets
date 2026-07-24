@@ -1,4 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- This *could* be a Directory.Build.props/targets, but I'd have to -->
+  <!-- move the folders of every mod again (because of the non-mod stuff like shared projects and submodules)... -->
+
   <!--common project properties-->
   <PropertyGroup>
     <Authors>kittycatcasey</Authors>
@@ -11,17 +14,38 @@
 
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <!--import mod build package-->
+  <!-- Reference packages/projects that everything uses -->
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.2-casey" />
     <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.4.0" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GamePath)/smapi-internal/Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
-  <!-- Why didn't I do this for SpaceShared in the first place? -->
+  <PropertyGroup>
+    <PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
+    <Publicize Include="Stardew Valley" IncludeVirtualMembers="false" IncludeCompilerGeneratedMembers="false" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(OS)' != 'Windows_NT'">
+    <Publicize Include="StardewValley" IncludeVirtualMembers="false" IncludeCompilerGeneratedMembers="false" />
+  </ItemGroup>
+
+  <!-- Include SpaceShared for everything -->
   <Import Project="$(SolutionDir)shared\SpaceShared.GameAgnostic\SpaceShared.GameAgnostic.projitems" Label="Shared" />
   <Import Project="$(SolutionDir)shared\SpaceShared.MonoGame\SpaceShared.MonoGame.projitems" Label="Shared" />
   <Import Project="$(SolutionDir)shared\SpaceShared.Mods\SpaceShared.Mods.projitems" Label="Shared" />
@@ -29,6 +53,12 @@
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)shared\SpaceShared.SourceGenerator\SpaceShared.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
+
+  <!-- Optional but commonly used configuration additions -->
+  <Import Condition="'$(EnableHarmony)' == 'true'" Project="$(SolutionDir)shared/harmony.targets" />
+  <Import Condition="'$(RequireSpaceCore)' == 'true'" Project="$(SolutionDir)shared/spacecore.targets" />
+  <Import Condition="'$(GenerateDocumentation)' == 'true'" Project="$(SolutionDir)shared/documentation-generation.targets" />
+  <Import Condition="'$(HasTranslations)' == 'true'" Project="$(SolutionDir)shared/translations.targets" />
 
   <!--common mod build package options-->
   <PropertyGroup>
@@ -39,15 +69,22 @@
   <!-- This sometimes fixes running the game from the right folder when I use an environment variable to override my game path. No idea why -->
   <!-- Other times it breaks it when it was working (which is only sometimes)! Joy -->
   <!-- Might be related to opening another instance the normal way after having already done an environment variable override, at least until next restart? -->
+  <!--
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <StartProgram>$(GamePath)\StardewModdingAPI.exe</StartProgram>
     <StartWorkingDirectory>$(GamePath)</StartWorkingDirectory>
   </PropertyGroup>
+  -->
 
   <!-- mac workaround, remove when updating mod build config -->
   <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
     <StartAction>Program</StartAction>
     <StartProgram>/Users/spacechase0/Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS\StardewModdingAPI</StartProgram>
     <StartWorkingDirectory>/Users/spacechase0/Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS</StartWorkingDirectory>
+  </PropertyGroup>
+
+  <!-- Fixes hot reload sometimes breaking, for some reason? -->
+  <PropertyGroup Condition="$(Configuration) == 'Debug'">
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 </Project>

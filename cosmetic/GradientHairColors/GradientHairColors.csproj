@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <HasTranslations>true</HasTranslations>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)common.targets" />
 
   <PropertyGroup>
@@ -8,7 +11,5 @@
     <UpdateKeys>Nexus:12744</UpdateKeys>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+  <!-- TODO: whenever I update this: doesn't it require Fashion Sense? Why isn't that here? -->
 </Project>

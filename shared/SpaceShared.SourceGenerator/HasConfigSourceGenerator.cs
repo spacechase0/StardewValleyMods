@@ -16,11 +16,11 @@ namespace SpaceShared.SourceGenerator
                 static (s, _) => (s is ClassDeclarationSyntax classDecl && classDecl.AttributeLists.Any( al => al.Attributes.Any( a => a.Name.ToString().StartsWith( "HasConfig<" ) || a.Name.ToString().StartsWith( "SpaceShared.Attributes.HasConfig<" ) ) ) && classDecl.BaseList.Types.Any()),//static t => (t is SimpleBaseTypeSyntax simpleType && simpleType.Type is SimpleNameSyntax simpleName && ( simpleName.Identifier.ValueText?.StartsWith( "BaseMod<" ) ?? false )))),
                 static (ctx, _) =>
                 {
-                    var classDecl = ctx.Node as ClassDeclarationSyntax;
+                    var classDecl = (ctx.Node as ClassDeclarationSyntax)!;
                     var classSym = ctx.SemanticModel.GetDeclaredSymbol( classDecl ) as ITypeSymbol;
 
                     bool valid = false;
-                    foreach (var baseType in classDecl.BaseList.Types)
+                    foreach (var baseType in classDecl.BaseList?.Types ?? [])
                     {
                         if (baseType.Type is not NameSyntax typeName)
                             continue;

@@ -89,7 +89,7 @@ namespace SpaceCore.Interface
             };
 
             // Professions
-            VisibleSkills = Skills.GetSkillList().Where(s => Skills.GetSkill(s).ShouldShowOnSkillsPage).ToArray();
+            VisibleSkills = Skills.GetSkillList().Where(s => Skills.GetSkill(s)?.ShouldShowOnSkillsPage == true).ToArray();
             int drawX = 0;
             int addedX = LocalizedContentManager.CurrentLanguageCode == LocalizedContentManager.LanguageCode.ru ? this.xPositionOnScreen + width - 448 - 48 + 4 : this.xPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder + 256 - 4;
             int drawY = this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - 12;
@@ -170,8 +170,8 @@ namespace SpaceCore.Interface
                 {
                     int totalSkillIndex = gameSkillCount + skillIndex;
                     int professionLevel = professionIndex - 1 + (professionIndex * 4);
-                    Skills.Skill skill = Skills.GetSkill(VisibleSkills[skillIndex]);
-                    Skills.Skill.Profession profession = Skills.GetProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
+                    Skills.Skill? skill = Skills.GetSkill(VisibleSkills[skillIndex]);
+                    Skills.Skill.Profession? profession = Skills.GetProfessionFor(skill, professionLevel + 1);// Game1.player.getProfessionForSkill(0, num4 + 1);
                     bool drawRed = Game1.player.GetCustomBuffedSkillLevel(skill) > professionLevel;
                     List<string> professionLines = new List<string>();
                     string professionBlurb = "";
@@ -285,13 +285,13 @@ namespace SpaceCore.Interface
             // Icons for custom skills
             for (int skillIndex = 0; skillIndex < VisibleSkills.Length; ++skillIndex)
             {
-                Skills.Skill skill = Skills.GetSkill(VisibleSkills[skillIndex]);
+                Skills.Skill? skill = Skills.GetSkill(VisibleSkills[skillIndex]);
                 int actualSkillIndex = gameSkillCount + skillIndex;
                 string hoverText = "";
                 if (Game1.player.GetCustomBuffedSkillLevel(skill) > 0)
-                    hoverText = skill.GetSkillPageHoverText(Game1.player.GetCustomBuffedSkillLevel(skill));
+                    hoverText = skill?.GetSkillPageHoverText(Game1.player.GetCustomBuffedSkillLevel(skill)) ?? "";
                 ClickableTextureComponent textureComponent = new ClickableTextureComponent(
-                    name: NewSkillsPage.CustomSkillPrefix + skill.GetName(),
+                    name: NewSkillsPage.CustomSkillPrefix + (skill?.GetName() ?? ""),
                     bounds: new Rectangle(addedX - 128 - 48, drawY + (actualSkillIndex * 56), 148, 36),
                     label: string.Concat(actualSkillIndex), hoverText,
                     texture: null, sourceRect: Rectangle.Empty, scale: 1f, drawShadow: false
@@ -709,8 +709,8 @@ namespace SpaceCore.Interface
                 }
 
                 xOffset = 0;
-                Skills.Skill skill = Skills.GetSkill(skillName);
-                for (int levelIndex = 0; levelIndex < skill.ExperienceCurve.Length; ++levelIndex)
+                Skills.Skill? skill = Skills.GetSkill(skillName);
+                for (int levelIndex = 0; levelIndex < skill?.ExperienceCurve.Length; ++levelIndex)
                 {
                     int skillLevel = 0;
                     bool drawRed = false;
@@ -789,10 +789,10 @@ namespace SpaceCore.Interface
                         if (skillBar.containsPoint(Game1.getMouseX(), Game1.getMouseY()) && !skillBar.name.Equals("-1") && skillBar.hoverText.Length > 0)
                         {
                             List<Skills.Skill.Profession> professions = Skills.SkillsByName.SelectMany(s => s.Value.Professions).ToList();
-                            Skills.Skill.Profession profession = professions.FirstOrDefault(p => NewSkillsPage.CustomSkillPrefix + p.Id == skillBar.name);
-                            this.hoverText = profession.GetDescription();
-                            this.hoverTitle = profession.GetName();
-                            Texture2D actuallyAProfessionImage = profession.Icon ?? Game1.staminaRect;
+                            Skills.Skill.Profession? profession = professions.FirstOrDefault(p => NewSkillsPage.CustomSkillPrefix + p.Id == skillBar.name);
+                            this.hoverText = profession?.GetDescription() ?? "";
+                            this.hoverTitle = profession?.GetName() ?? "";
+                            Texture2D actuallyAProfessionImage = profession?.Icon ?? Game1.staminaRect;
                             skillBar.scale = 0.0f;
                             b.Draw(texture: actuallyAProfessionImage,
                                 position: new Vector2(skillBar.bounds.X - (Game1.pixelZoom * 2), skillBar.bounds.Y - (Game1.tileSize / 2) + (Game1.tileSize / 4)),
