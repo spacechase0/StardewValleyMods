@@ -33,6 +33,7 @@ namespace SpaceCore.Patches
         *********/
         /// <summary>Manages the custom save serialization.</summary>
         internal static SerializerManager SerializerManager;
+        internal static List<(MethodBase, HarmonyPatchType)> OtherPatchedMethods = [];
 
 
         /*********
@@ -48,25 +49,41 @@ namespace SpaceCore.Patches
         /// <inheritdoc />
         public override void Apply(Harmony harmony, IMonitor monitor)
         {
-            harmony.Patch(
-                original: AccessTools.Method(typeof(SaveSerializer), nameof(SaveSerializer.GetSerializer)),
-                prefix: this.GetHarmonyMethod(nameof(Before_GetSerializer))
-            );
+            {
+                MethodBase original = AccessTools.Method(typeof(SaveSerializer), nameof(SaveSerializer.GetSerializer));
+                harmony.Patch(
+                    original: original,
+                    prefix: this.GetHarmonyMethod(nameof(Before_GetSerializer))
+                );
+                OtherPatchedMethods.Add((original, HarmonyPatchType.Prefix));
+            }
 
-            harmony.Patch(
-                original: this.RequireMethod<SaveGame>(nameof(SaveGame.Load)),
-                prefix: this.GetHarmonyMethod(nameof(Before_Load), priority: Priority.First)
-            );
+            {
+                MethodBase original = this.RequireMethod<SaveGame>(nameof(SaveGame.Load));
+                harmony.Patch(
+                    original: original,
+                    prefix: this.GetHarmonyMethod(nameof(Before_Load), priority: Priority.First)
+                );
+                OtherPatchedMethods.Add((original, HarmonyPatchType.Prefix));
+            }
 
-            harmony.Patch(
-                original: this.RequireMethod<SaveGameMenu>(nameof(SaveGameMenu.update)),
-                transpiler: this.GetHarmonyMethod(nameof(Transpile_SaveGameMenuUpdate))
-            );
+            {
+                MethodBase original = this.RequireMethod<SaveGameMenu>(nameof(SaveGameMenu.update));
+                harmony.Patch(
+                    original: original,
+                    transpiler: this.GetHarmonyMethod(nameof(Transpile_SaveGameMenuUpdate))
+                );
+                OtherPatchedMethods.Add((original, HarmonyPatchType.Transpiler));
+            }
 
-            harmony.Patch(
-                original: this.RequireMethod<SaveGame>(nameof(SaveGame.loadDataToLocations)),
-                prefix: this.GetHarmonyMethod(nameof(Before_LoadDataToLocations))
-            );
+            {
+                MethodBase original = this.RequireMethod<SaveGame>(nameof(SaveGame.loadDataToLocations));
+                harmony.Patch(
+                    original: original,
+                    prefix: this.GetHarmonyMethod(nameof(Before_LoadDataToLocations))
+                );
+                OtherPatchedMethods.Add((original, HarmonyPatchType.Prefix));
+            }
 
             foreach (var method in SaveGamePatcher.GetLoadEnumeratorMethods())
             {
@@ -109,7 +126,7 @@ namespace SpaceCore.Patches
                     }
                 }
             }
-            foreach (var meth in typeof(LoadGameMenu).GetMethods(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Static))
+            foreach (var meth in typeof(LoadGameMenu).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
             {
                 if (meth.Name.Contains("<FindSaveGames>") && (meth.Name.Contains("TryReadSaveData") || meth.Name.Contains("TryReadSaveInfo")))
                 {
@@ -441,7 +458,7 @@ namespace SpaceCore.Patches
 
             foreach (var insn in insns)
             {
-                if ( insn.operand is MethodInfo meth && meth == AccessTools.Method( typeof(SaveSerializer), nameof(SaveSerializer.GetSerializer ) ) )
+                if (insn.operand is MethodInfo meth && meth == AccessTools.Method(typeof(SaveSerializer), nameof(SaveSerializer.GetSerializer)))
                 {
                     insn.operand = AccessTools.Method(typeof(RedirectGetSerializerForNonWindowsPatch1), nameof(RedirectGetSerializerForNonWindowsPatch1.GetSerializerProxy));
                 }
