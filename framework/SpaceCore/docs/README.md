@@ -197,7 +197,7 @@ Provided functionality for content pack authors:
             * `MonsterDropOverride` - If specified, will replace the monster's drops with these. A list of lists of weighted [item spawn fields](https://stardewvalleywiki.com/Modding:Item_queries#Item_spawn_fields). How this works is it will pick one weighted item spawn from each list in the outer list. (See the example from before for how to format these.)
             * `MonsterAdditionalData` - Some monsters can have additional data to configure them:
                 * `BigSlime`
-                    * `Color` - The color of the slime, specified with `{ "R": 255, "G": 255, "B": 255 }`
+                    * `Color` - The color of the slime, specified with `{ "R": 255, "G": 255, "B": 255, "A": 255 }`. You must specify `"A"` for the alpha component - if you don't, the result will be fully transparent.
                     * `HeldItemQualifiedId` - Qualified item ID of the item inside the slime
                 * `Bug` - `IsArmored` can be set to true
                 * `Ghost` - `IsPutrid` can be set to true
