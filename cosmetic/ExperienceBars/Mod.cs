@@ -59,6 +59,24 @@ namespace ExperienceBars
 
         private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
+            string archipelagoModId = "KaitoKid.StardewArchipelago";
+            if (
+                this.Helper.ModRegistry.Get(archipelagoModId) is IModInfo modInfo
+                && modInfo?.GetType().GetProperty("Mod")?.GetValue(modInfo) is IMod mod
+            )
+            {
+                Assembly assembly = mod.GetType().Assembly;
+                Type type = assembly.GetType("StardewArchipelago.Locations.CodeInjections.Vanilla.SkillInjections");
+                MethodInfo method = type.GetMethod("GetArchipelagoExperience");
+
+                getArchipelagoExperience = () => (Dictionary<int, int>)method.Invoke(null, null);
+                getSkillsExp = getSkillsExpArchipelago;
+            }
+            else
+            {
+                getSkillsExp = getSkillsExpDefault;
+            }
+
             var configMenu = this.Helper.ModRegistry.GetGenericModConfigMenuApi(this.Monitor);
             if (configMenu != null)
             {
@@ -122,42 +140,8 @@ namespace ExperienceBars
 
             if (!Mod.Show || Game1.activeClickableMenu != null || Game1.eventUp || !Context.IsPlayerFree)
                 return;
+            (int[] skills, int[] exp, bool foundLevelExtender) = getSkillsExp();
 
-            int[] skills = new[]
-            {
-                Game1.player.farmingLevel.Value,
-                Game1.player.fishingLevel.Value,
-                Game1.player.foragingLevel.Value,
-                Game1.player.miningLevel.Value,
-                Game1.player.combatLevel.Value,
-                Game1.player.luckLevel.Value
-            };
-            int[] exp = Game1.player.experiencePoints.ToArray();
-
-            bool foundLevelExtender = false;
-            if (this.Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !Mod.StopLevelExtenderCompat)
-            {
-                try
-                {
-                    object instance = Type.GetType("LevelExtender.ModEntry, LevelExtender")?.GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) ?? throw new InvalidOperationException("Couldn't find Level Extender instance");
-                    int[] extLevels = this.Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
-                    int[] extExp = this.Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
-                    exp = (int[])exp.Clone();
-                    for (int i = 0; i < 5; ++i)
-                    {
-                        if (skills[i] < extLevels[i])
-                            continue;
-                        skills[i] = extLevels[i];
-                        exp[i] = skills[i] < 20 ? exp[i] : extExp[i];
-                    }
-                    foundLevelExtender = true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Exception during level extender compat: " + ex);
-                    Mod.StopLevelExtenderCompat = true;
-                }
-            }
 
             int x = Mod.Config.Position.X;
             int y = Mod.Config.Position.Y;
@@ -197,6 +181,75 @@ namespace ExperienceBars
                 y += 40;
             }
             Mod.ExpBottom = y;
+        }
+
+        /// <summary>
+        /// Returns the skill level array, skill exp array and wether the level extender mod was found.
+        /// Is set to getSkillsExpDefault() usually and to getSkillskillsExpArchipelago() if the Archipelago mod is detected.
+        /// </summary>
+        private static Func<(int[], int[], bool)> getSkillsExp;
+        private (int[], int[], bool) getSkillsExpDefault()
+        {
+            int[] skills = new[]
+            {
+                Game1.player.farmingLevel.Value,
+                Game1.player.fishingLevel.Value,
+                Game1.player.foragingLevel.Value,
+                Game1.player.miningLevel.Value,
+                Game1.player.combatLevel.Value,
+                Game1.player.luckLevel.Value
+            };
+            int[] exp = Game1.player.experiencePoints.ToArray();
+
+            bool foundLevelExtender = false;
+            if (this.Helper.ModRegistry.IsLoaded("Devin Lematty.Level Extender") && !Mod.StopLevelExtenderCompat)
+            {
+                try
+                {
+                    object instance = Type.GetType("LevelExtender.ModEntry, LevelExtender")?.GetField("instance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) ?? throw new InvalidOperationException("Couldn't find Level Extender instance");
+                    int[] extLevels = this.Helper.Reflection.GetField<int[]>(instance, "sLevs").GetValue();
+                    int[] extExp = this.Helper.Reflection.GetField<int[]>(instance, "addedXP").GetValue();
+                    exp = (int[])exp.Clone();
+                    for (int i = 0; i < 5; ++i)
+                    {
+                        if (skills[i] < extLevels[i])
+                            continue;
+                        skills[i] = extLevels[i];
+                        exp[i] = skills[i] < 20 ? exp[i] : extExp[i];
+                    }
+                    foundLevelExtender = true;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Exception during level extender compat: " + ex);
+                    Mod.StopLevelExtenderCompat = true;
+                }
+            }
+            return (skills, exp, foundLevelExtender);
+        }
+
+        /// <summary>
+        /// Helper method to skillsExpArchipelago, to retrieve the custom skill data.
+        /// </summary>
+        private static Func<Dictionary<int, int>>? getArchipelagoExperience;
+        private (int[], int[], bool) getSkillsExpArchipelago()
+        {
+            int[] skills = new int[5];
+            int[] exp = getArchipelagoExperience().Values.ToArray();
+            for (int i = 0; i < 5; i++)
+            {
+                skills[i] = 10;
+                for(int j=0; j<10; j++)
+                {
+                    if (exp[i] < VanillaExpNeededForLevel[j])
+                    {
+                        skills[i] = j;
+                        break;
+                    }
+                }
+            }
+
+            return (skills, exp, false);
         }
 
         private Rectangle GetSkillRect(int skill)
