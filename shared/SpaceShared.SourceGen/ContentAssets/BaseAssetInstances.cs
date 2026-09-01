@@ -204,13 +204,34 @@ public partial class BaseAssetInstances
         data.SetValue(this, obj);
     }
 
+    private object? modContentManInst = null;
+    private MethodInfo? loadRawImageMethod = null;
     protected virtual object Load(string propertyName, PropData propertyData)
     {
         if (propertyData.Type == typeof(Texture2D))
         {
 #if DEBUG
             if (Mod is IDevAssetsSource devAssets)
-                return Texture2D.FromFile(Game1.graphics.GraphicsDevice, Path.Combine(devAssets.DevAssetsFolder, propertyData.AssetName));
+            {
+                // Go through SMAPI internal method for loading so that it premultiplies the pixels.
+                if (modContentManInst == null)
+                {
+                    var t = Mod.Helper.ModContent.GetType();
+                    var f = t.GetField("ModContentManager", BindingFlags.NonPublic | BindingFlags.Instance);
+                    modContentManInst = f.GetValue(Mod.Helper.ModContent);
+                }
+                if (loadRawImageMethod == null)
+                {
+                    var t = modContentManInst.GetType();
+                    loadRawImageMethod = t.GetMethod("LoadRawImageData", BindingFlags.NonPublic | BindingFlags.Instance);
+                }
+                IRawTextureData data = (IRawTextureData)loadRawImageMethod.Invoke(modContentManInst, [new FileInfo(Path.Combine(devAssets.DevAssetsFolder, propertyData.AssetName)), false])!;
+
+                Texture2D tex = new Texture2D(Game1.graphics.GraphicsDevice, data.Width, data.Height);
+                tex.Name = PathUtilities.NormalizeAssetName(propertyData.AssetName);
+                tex.SetData(data.Data);
+                return tex;
+            }
 #endif
             return Mod.Helper.ModContent.Load<Texture2D>(Path.Combine("assets", propertyData.AssetName));
         }
