@@ -632,8 +632,10 @@ namespace SpaceCore.Interface
                                 this.leftProfessionColor = Color.Green;
                                 if (Game1.didPlayerJustLeftClick() && this.readyToClose())
                                 {
-                                    Game1.player.professions.Add(this.professionsToChoose[0]);
-                                    this.getImmediateProfessionPerk(this.professionsToChoose[0]);
+                                    if (Game1.player.professions.Add(this.professionsToChoose[0]))
+                                    {
+                                        this.getImmediateProfessionPerk(this.professionsToChoose[0]);
+                                    }
                                     this.isActive = false;
                                     this.informationUp = false;
                                     this.isProfessionChooser = false;
@@ -644,8 +646,10 @@ namespace SpaceCore.Interface
                                 this.rightProfessionColor = Color.Green;
                                 if (Game1.didPlayerJustLeftClick() && this.readyToClose())
                                 {
-                                    Game1.player.professions.Add(this.professionsToChoose[1]);
-                                    this.getImmediateProfessionPerk(this.professionsToChoose[1]);
+                                    if (Game1.player.professions.Add(this.professionsToChoose[1]))
+                                    {
+                                        this.getImmediateProfessionPerk(this.professionsToChoose[1]);
+                                    }
                                     this.isActive = false;
                                     this.informationUp = false;
                                     this.isProfessionChooser = false;
