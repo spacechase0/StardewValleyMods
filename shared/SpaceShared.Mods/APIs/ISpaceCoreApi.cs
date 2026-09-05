@@ -15,7 +15,7 @@ namespace SpaceShared.APIs
         string[] GetCustomSkills();
         int GetLevelForCustomSkill(Farmer farmer, string skill);
         void AddExperienceForCustomSkill(Farmer farmer, string skill, int amt);
-        int GetProfessionId(string skill, string profession);
+        int? GetProfessionId(string skill, string profession);
 
         // Must have [XmlType("Mods_SOMETHINGHERE")] attribute (required to start with "Mods_")
         void RegisterSerializerType(Type type);
