@@ -142,7 +142,7 @@ namespace SpaceCore
         private LegacyDataMigrator LegacyDataMigrator = null!;
 
         /// <summary>Whether the current update tick is the first one raised by SMAPI.</summary>
-        private bool IsFirstTick;
+        private bool IsFirstTick = true;
 
         internal class EquipmentSlotData
         {
@@ -1241,15 +1241,20 @@ namespace SpaceCore
             }
 
             // disable serializer if not used
-            if (this.IsFirstTick && SpaceCore.ModTypes.Count == 0)
+            if (this.IsFirstTick)
             {
                 this.IsFirstTick = false;
 
-                Log.Info("Disabling serializer patches (no mods using serializer API)");
-                foreach (var method in SaveGamePatcher.GetSaveEnumeratorMethods())
-                    this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
-                foreach (var method in SaveGamePatcher.GetLoadEnumeratorMethods())
-                    this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
+                if (SpaceCore.ModTypes.Count == 0)
+                {
+                    Log.Info("Disabling serializer patches (no mods using serializer API)");
+                    foreach (var method in SaveGamePatcher.GetSaveEnumeratorMethods())
+                        this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetSaveEnumerator)));
+                    foreach (var method in SaveGamePatcher.GetLoadEnumeratorMethods())
+                        this.Harmony.Unpatch(method, PatchHelper.RequireMethod<SaveGamePatcher>(nameof(SaveGamePatcher.Transpile_GetLoadEnumerator)));
+                    foreach ((MethodBase original, HarmonyPatchType type) in SaveGamePatcher.OtherPatchedMethods)
+                        this.Harmony.Unpatch(original, type, harmonyID: this.Harmony.Id);
+                }
             }
         }
 
