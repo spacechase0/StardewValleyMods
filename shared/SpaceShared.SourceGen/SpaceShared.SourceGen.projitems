@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -23,8 +23,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\HasStateAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)contentassets\IDevAssetsSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Content\BaseDictionaryAssetData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)content\ContentRegistry.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)content\HotReloadHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\ContentRegistry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content\HotReloadHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Content\" />
