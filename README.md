@@ -3,9 +3,9 @@ subfolders for documentation and release notes.
 
 ## Quick links
 You don't want to want to read this whole readme and look through every folder just to find something, I get it. Especially if you haven't updated your bookmarks from before I reorganized this repository. So here, have some quick links to documentation that I imagine is frequently used (especially by people not looking to make contributions to the mods themselves):
-* [SpaceCore documentation](framework\SpaceCore\docs\README.md)
-* [Generic Mod Config Menu documentation](framework\GenericModConfigMenu\docs\README.md)
-* [Json Assets documentation](framework\JsonAssets\docs\author-guide.md) (Not used as much nowadays as it used to be, since people should be and are making Content Patcher packs instead.)
+* [SpaceCore documentation](framework/SpaceCore/docs/README.md)
+* [Generic Mod Config Menu documentation](framework/GenericModConfigMenu/docs/README.md)
+* [Json Assets documentation](framework/JsonAssets/docs/author-guide.md) (Not used as much nowadays as it used to be, since people should be and are making Content Patcher packs instead.)
 
 ## Organization
 Mods are grouped into a few broad categories:
