@@ -96,7 +96,7 @@ namespace SpaceCore
         /// <param name="skill"></param>
         /// <param name="profession"></param>
         /// <returns>int profession ID</returns>
-        int? GetProfessionId(string skill, string profession);
+        int GetProfessionId(string skill, string profession);
 
         /// Must have [XmlType("Mods_SOMETHINGHERE")] attribute (required to start with "Mods_")
         void RegisterSerializerType(Type type);
@@ -172,9 +172,9 @@ namespace SpaceCore
             return Skills.GetSkillIcon(skill);
         }
 
-        public int? GetProfessionId(string skill, string profession)
+        public int GetProfessionId(string skill, string profession)
         {
-            return Skills.GetSkill(skill)?.Professions.Single(p => p.Id == profession).GetVanillaId();
+            return Skills.GetSkill(skill)?.Professions.Single(p => p.Id == profession).GetVanillaId() ?? 0;
         }
 
         public void RegisterSerializerType(Type type)
