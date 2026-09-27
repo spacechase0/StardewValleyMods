@@ -233,14 +233,6 @@ namespace SpaceCore.Patches
 
                 texture = packData.sourceTex;
             }
-            else
-            {
-                if (texture.Name == "Animals/Error")
-                {
-                    Console.WriteLine($"{destinationRectangle}: {texture.Bounds}");
-                    Console.WriteLine(string.Join(' ', packOverrides.Select(value => value.ToString())));
-                }
-            }
             return true;
         }
 
