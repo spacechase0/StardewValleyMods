@@ -1,4 +1,4 @@
-﻿{
+{
     /*********
     ** Generic config UI
     *********/
@@ -8,7 +8,7 @@
     // mod list UI
     "list.editable-heading": "配置 MOD",
     "list.not-editable-heading": "需要从主菜单设置:",
-    "list.keybinds": "Keybinds", // TODO
+    "list.keybinds": "按键绑定",
 
     // mod config pages
     "config.buttons.cancel": "取消",
@@ -21,7 +21,7 @@
     "config.rebind-key.simple-instructions": "按目标键以绑定",
     "config.rebind-key.combo-instructions": "按目标组合键以绑定",
     "config.rebind-key.no-key": "(无)",
-    "config.rebind-key.keybind-list": "Keybinds:", // TODO
+    "config.rebind-key.keybind-list": "按键绑定：",
 
 
     /*********
@@ -30,5 +30,7 @@
     "options.open-menu-key.name": "打开菜单键",
     "options.open-menu-key.desc": "打开菜单的绑定键",
     "options.scroll-speed.name": "滚动速度",
-    "options.scroll-speed.desc": "滚动配置菜单时要滚动的行数"
+    "options.scroll-speed.desc": "滚动配置菜单时要滚动的行数",
+    "list.search-label": "搜索：",
+    "list.no-results": "未找到模组"
 }

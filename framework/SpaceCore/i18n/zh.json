@@ -1,0 +1,21 @@
+{
+  "config.custom-skill-page.name": "自定义技能页面",
+  "config.custom-skill-page.tooltip": "是否显示自定义技能页面。\n这会移动钱包的位置，以便为更多技能腾出空间。",
+  "config.support-all-professions-mod.name": "支持所有职业模组",
+  "config.support-all-professions-mod.tooltip": "安装 All Professions 后，是否在达到相应等级时自动应用通过 SpaceCore 注册的自定义职业。",
+  "config.advanced-social-interactions": "高级社交互动",
+  "config.always-trigger.name": "始终触发",
+  "config.always-trigger.description": "与 NPC 互动时是否始终触发菜单。",
+  "config.trigger-modifier.name": "触发修饰键",
+  "config.trigger-modifier.description": "与他人互动时按住此键，即可触发高级互动菜单。",
+  "interaction-with": "与{{npc}}互动",
+  "interaction.chat": "聊天",
+  "interaction.gift-held": "赠送手持物品",
+  "interaction.cancel": "取消",
+  "question.ask": "提问",
+  "health-regen": "每秒生命恢复",
+  "stamina-regen": "每秒体力恢复",
+  "resource-clump.bad-tool-tier": "你的工具不够强，无法破坏这个东西。",
+  "guidebook.previous-page": "上一页",
+  "guidebook.next-page": "下一页"
+}
