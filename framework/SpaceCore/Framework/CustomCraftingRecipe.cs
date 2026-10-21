@@ -50,7 +50,7 @@ namespace SpaceCore.Framework
             Utility.drawWithShadow(b, this.recipe.IconTexture, new Vector2(x, y), this.recipe.IconSubrect ?? new Rectangle(0, 0, this.recipe.IconTexture.Width, this.recipe.IconTexture.Height), Color.White, 0f, Vector2.Zero, 4f, flipped: false, layerDepth);
         }
 
-        public override void drawRecipeDescription(SpriteBatch b, Vector2 position, int width, IList<Item> additional_crafting_items)
+        public override void drawRecipeDescription(SpriteBatch b, Vector2 position, int width, IList<Item> additional_crafting_items, bool drawSmall = false)
         {
             int lineExpansion = ((Game1.content.LanguageCode == LanguageCode.ko) ? 8 : 0);
             b.Draw(Game1.staminaRect, new Rectangle((int)(position.X + 8f), (int)(position.Y + 32f + Game1.smallFont.MeasureString("Ing!").Y) - 4 - 2 - (int)((float)lineExpansion * 1.5f), width - 32, 2), Game1.textColor * 0.35f);
