@@ -345,7 +345,7 @@ namespace SpaceCore
                 try
                 {
                     Buff b = new Buff(args[1], source: args[2], displaySource: args[2]);
-                    Game1.player.applyBuff(b);
+                    Game1.player.applyLocalBuff(b);
                 }
                 catch (Exception e)
                 {
@@ -1141,7 +1141,7 @@ namespace SpaceCore
                     if (!Context.IsWorldReady)
                         return null;
 
-                    return new string[] { Utility.getDaysOfBooksellerThisSeason().Contains(Game1.dayOfMonth)?"true":"false" };
+                    return new string[] { Utility.getDaysOfBooksellerThisSeason(Game1.season, Game1.year).Contains(Game1.dayOfMonth)?"true":"false" };
                 });
             }
         }

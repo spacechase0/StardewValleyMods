@@ -67,14 +67,12 @@ namespace SpaceCore.Patches
                         Game1.player.faceDirection(2);
                         Game1.player.FarmerSprite.animateOnce(new FarmerSprite.AnimationFrame[1]
                         {
-                    new FarmerSprite.AnimationFrame(57, 1000, secondaryArm: false, flip: false, Farmer.canMoveNow, behaviorAtEndOfFrame: true)
+                    new FarmerSprite.AnimationFrame(57, 1000, secondaryArm: false, flip: false, who =>
                     {
-                        frameEndBehavior = delegate
-                        {
-                            location.removeTemporarySpritesWithID(1987654);
-                            Utility.addRainbowStarExplosion(location, Game1.player.getStandingPosition() + new Vector2(-40f, -156f), 8);
-                        }
-                    }
+                        Farmer.canMoveNow(who);
+                        location.removeTemporarySpritesWithID(1987654);
+                        Utility.addRainbowStarExplosion(location, Game1.player.getStandingPosition() + new Vector2(-40f, -156f), 8);
+                    }, behaviorAtEndOfFrame: true),
                         });
                         Game1.MusicDuckTimer = 4000f;
                         Game1.playSound("book_read");

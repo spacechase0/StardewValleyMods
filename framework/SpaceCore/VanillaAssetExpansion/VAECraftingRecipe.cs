@@ -155,7 +155,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
         public override Item CreateResult()
         {
-            return ItemRegistry.Create(data.ProductQualifiedId, data.ProductAmount, allowNull: false);
+            return ItemRegistry.Create(data.ProductQualifiedId, data.ProductAmount);
         }
     }
 }

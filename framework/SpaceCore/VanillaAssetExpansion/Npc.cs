@@ -18,7 +18,6 @@ namespace SpaceCore.VanillaAssetExpansion
     {
         public Dictionary<string, string> GiftEventTriggers = new();
         public bool IgnoreMarriageSchedule { get; set; } = false;
-        public bool SeparateDatability { get; set; } = false;
     }
 
     public class ScheduleAnimationExtensionData
@@ -37,60 +36,6 @@ namespace SpaceCore.VanillaAssetExpansion
         public FrameExtData? OnStart { get; set; } = null;
         public FrameExtData? OnEnd { get; set; } = null;
         public Dictionary<int, FrameExtData> OnFrame { get; set; } = new();
-    }
-
-    [HarmonyPatch(typeof(NPC), "initNetFields")]
-    public static class NpcNetFieldsPatch
-    {
-        public static void Postfix(NPC __instance)
-        {
-            /*
-            if (Game1.IsMasterGame)
-                return;
-            */
-            __instance.datable.fieldChangeEvent += (field, oldVal, newVal) =>
-            {
-                var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
-                if (__instance.Name == null || __instance.GetData() == null || !dict.TryGetValue(__instance.Name, out var data) || !data.SeparateDatability)
-                    return;
-
-                bool newNewVal = __instance.GetData().CanBeRomanced;
-                //SpaceCore.Instance.Monitor.Log("meow1, setting to: " + newNewVal, StardewModdingAPI.LogLevel.Alert);
-                if (newNewVal == newVal)
-                    return;
-
-                SpaceCore.Instance.Helper.Reflection.GetField<bool>(field, "value").SetValue(newNewVal);
-                SpaceCore.Instance.Helper.Reflection.GetField<bool>(field, "previousValue").SetValue(newNewVal);
-                SpaceCore.Instance.Helper.Reflection.GetField<bool>(field, "targetValue").SetValue(newNewVal);
-            };
-        }
-    }
-
-    [HarmonyPatch(typeof(NPC), nameof(NPC.reloadSprite))]
-    public static class NpcReloadDatabilityPatch
-    {
-        public static void Postfix(NPC __instance)
-        {
-            /*
-            if (Game1.IsMasterGame)
-                return;
-            */
-
-            var dict = Game1.content.Load<Dictionary<string, NpcExtensionData>>("spacechase0.SpaceCore/NpcExtensionData");
-            if (__instance.Name == null || __instance.GetData() == null || !dict.TryGetValue(__instance.Name, out var data) || !data.SeparateDatability)
-                return;
-
-            bool newNewVal = __instance.GetData().CanBeRomanced;
-            //SpaceCore.Instance.Monitor.Log("meow2, setting to: " + newNewVal, StardewModdingAPI.LogLevel.Alert);
-            if (newNewVal == __instance.datable.Value)
-                return;
-
-            var field = __instance.datable;
-
-            SpaceCore.Instance.Helper.Reflection.GetField<bool>(field, "value").SetValue(newNewVal);
-            SpaceCore.Instance.Helper.Reflection.GetField<bool>(field, "previousValue").SetValue(newNewVal);
-            SpaceCore.Instance.Helper.Reflection.GetField<bool>(field, "targetValue").SetValue(newNewVal);
-        }
     }
 
 

@@ -19,7 +19,7 @@ namespace SpaceCore.VanillaAssetExpansion
 
             if (SkillBuff.TryGetAdditionalBuffEffects(__instance.customFields, out var _, out float _, out float _))
             {
-                Game1.player.applyBuff(new Skills.SkillBuff(__instance, __instance.id, __instance.customFields));
+                Game1.player.applyLocalBuff(new Skills.SkillBuff(__instance, __instance.id, __instance.customFields));
             }
         }
     }

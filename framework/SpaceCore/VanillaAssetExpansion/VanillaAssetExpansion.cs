@@ -480,7 +480,7 @@ namespace SpaceCore.VanillaAssetExpansion
                     if (!buffsBySource.ContainsKey(sourceId))
                     {
                         Buff b = new Buff(wearables[wornId].BuffIdToApply, source: sourceId, displaySource: ItemRegistry.GetDataOrErrorItem(wornId).DisplayName, duration: 100);
-                        Game1.player.applyBuff(b);
+                        Game1.player.applyLocalBuff(b);
                         buffsBySource.Add(sourceId, [b]);
                     }
                     else

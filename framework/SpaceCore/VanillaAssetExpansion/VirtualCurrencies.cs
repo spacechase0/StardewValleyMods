@@ -360,7 +360,7 @@ namespace SpaceCore.VanillaAssetExpansion
         }
     }
 
-    [HarmonyPatch(typeof(Farmer), nameof(Farmer.couldInventoryAcceptThisItem), new Type[] { typeof( Item ) } )]
+    [HarmonyPatch(typeof(Farmer), nameof(Farmer.couldInventoryAcceptThisItem), new Type[] { typeof( Item ), typeof(bool) } )]
     public static class FarmerAlwaysAcceptVirtualCurrencyPatch1
     {
         public static bool Prefix(Item item, ref bool __result)
