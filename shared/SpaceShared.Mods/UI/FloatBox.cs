@@ -1,5 +1,7 @@
 #if !DEPENDENCY_HAS_SPACESHARED
 using System.Linq;
+using System.Text;
+using StardewValley.Menus;
 
 #if IS_SPACECORE
 namespace SpaceCore.UI
@@ -28,27 +30,40 @@ namespace SpaceShared.UI
         ** Protected methods
         *********/
         /// <inheritdoc />
-        protected override void ReceiveInput(string str)
+        protected override void FilterInputText(TextBox _, List<TextBoxSnippet> contents)
         {
-            bool hasDot = this.String.Contains('.');
-            bool valid = true;
-            for (int i = 0; i < str.Length; ++i)
+            bool hasDot = false;
+            StringBuilder sb = new();
+            for (int si = 0; si < contents.Count; ++si)
             {
-                char c = str[i];
-                if (!char.IsDigit(c) && !(c == '.' && !hasDot) && !(c == '-' && this.String == "" && i == 0))
+                if (contents[si] is not TextBoxTextSnippet text)
                 {
-                    valid = false;
-                    break;
+                    contents.RemoveAt(si);
+                    si -= 1;
+                    continue;
                 }
-                if (c == '.')
-                    hasDot = true;
-            }
-            if (!valid)
-                return;
 
-            this.String += str;
-            this.Callback?.Invoke(this);
-            ScreenReaderText = String;
+                sb.Append(text.Message);
+                bool modified = false;
+                for (int i = 0; i < sb.Length; ++i)
+                {
+                    char c = sb[i];
+                    if (!char.IsDigit(c) && !(c == '.' && !hasDot) && !(c == '-' && si == 0 && i == 0))
+                    {
+                        modified = true;
+                        sb.Remove(i, 1);
+                        i -= 1;
+                        continue;
+                    }
+                    if (c == '.')
+                        hasDot = true;
+                }
+                if (modified)
+                {
+                    text.Message = sb.ToString();
+                }
+                sb.Clear();
+            }
         }
     }
 }

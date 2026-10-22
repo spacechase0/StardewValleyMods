@@ -29,16 +29,21 @@ namespace GenericModConfigMenu.Framework
             base.Update(isOffScreen);
 
             // Handle click to select/deselect
+            /*
             if (this.ClickGestured)
             {
                 this.Selected = this.Hover;
                 if (this.Callback != null)
                     this.Callback(this);
             }
+            */
         }
 
         public override void Draw(SpriteBatch b)
         {
+            base.Draw(b);
+            return;
+
             if (this.IsHidden())
                 return;
 

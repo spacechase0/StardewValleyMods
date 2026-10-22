@@ -1,9 +1,11 @@
 #if !DEPENDENCY_HAS_SPACESHARED
 using System;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewValley;
+using StardewValley.Menus;
 
 #if IS_SPACECORE
 namespace SpaceCore.UI
@@ -14,55 +16,40 @@ namespace SpaceShared.UI
 {
     internal
 #endif
-         class Textbox : Element, IKeyboardSubscriber
+         class Textbox : Element
     {
         /*********
         ** Fields
         *********/
-        private readonly Texture2D Tex;
-        private readonly SpriteFont Font;
-        private bool SelectedImpl;
+        private readonly TextBox StardewTextBox;
+        private bool lastPressed = false;
 
 
         /*********
         ** Accessors
         *********/
-        public virtual string String { get; set; }
+        public virtual string String
+        {
+            get
+            {
+                StringBuilder sb = new();
+                foreach (var c in StardewTextBox.Contents)
+                    c.ToText(sb, 0, c.CharacterCount);
+                return sb.ToString();
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    StardewTextBox.ClearContents();
+                else
+                    StardewTextBox.SetContents(new TextBoxTextSnippet(StardewTextBox.Font, StardewTextBox.TextColor, value));
+            }
+        }
 
         public bool Selected
         {
-            get => this.SelectedImpl;
-            set
-            {
-                if (this.SelectedImpl == value)
-                    return;
-
-                this.SelectedImpl = value;
-                if (this.SelectedImpl)
-                {
-                    Game1.keyboardDispatcher.Subscriber = this;
-                    if ( Game1.options.gamepadControls && !Game1.lastCursorMotionWasMouse )
-                    {
-                        var dummy = new StardewValley.Menus.TextBox(null, null, Game1.dialogueFont, Game1.textColor);
-                        dummy.Width = Bounds.Width;
-                        dummy.limitWidth = false;
-                        dummy.Text = String;
-                        dummy.Selected = true;
-                        dummy.OnEnterPressed += _ =>
-                        {
-                            String = dummy.Text;
-                            Callback?.Invoke(this);
-                            ScreenReaderText = String;
-                        };
-                        Game1.showTextEntry(dummy);
-                    }
-                }
-                else
-                {
-                    if (Game1.keyboardDispatcher.Subscriber == this)
-                        Game1.keyboardDispatcher.Subscriber = null;
-                }
-            }
+            get => this.StardewTextBox.Selected;
+            set => this.StardewTextBox.Selected = value;
         }
 
         public Action<Element>? Callback { get; set; }
@@ -79,8 +66,9 @@ namespace SpaceShared.UI
         *********/
         public Textbox()
         {
-            this.Tex = Game1.content.Load<Texture2D>("LooseSprites\\textBox");
-            this.Font = Game1.smallFont;
+            this.StardewTextBox = new TextBox(Game1.content.Load<Texture2D>("LooseSprites\\textBox"), null, Game1.smallFont, Game1.textColor);
+            this.StardewTextBox.FilterText += FilterInputText;
+            this.StardewTextBox.OnTextChanged += OnInputTextChanged;
         }
 
         /// <inheritdoc />
@@ -88,10 +76,26 @@ namespace SpaceShared.UI
         {
             base.Update(isOffScreen);
 
-            if (this.ClickGestured && this.Callback != null)
+            StardewTextBox.X = (int)Position.X;
+            StardewTextBox.Y = (int)Position.Y;
+            StardewTextBox.Width = Width;
+            StardewTextBox.Height = Height;
+            StardewTextBox.Hover(Game1.getMouseX(), Game1.getMouseY());
+
+            bool pressed = false;
+            if (!IsHidden(isOffScreen))
             {
-                this.Selected = this.Hover;
+                pressed = pressed || Game1.input.GetMouseState().LeftButton == ButtonState.Pressed;
+                pressed = pressed || (Game1.options.gamepadControls && Game1.input.GetGamePadState().IsButtonDown(Buttons.A));
+
+                if (!lastPressed && pressed)
+                    StardewTextBox.receiveLeftClick();
+                else if (lastPressed && !pressed)
+                    StardewTextBox.releaseLeftClick();
+                else if (lastPressed && pressed)
+                    StardewTextBox.leftClickHeld();
             }
+            lastPressed = pressed;
         }
 
         /// <inheritdoc />
@@ -100,78 +104,18 @@ namespace SpaceShared.UI
             if (this.IsHidden())
                 return;
 
-            b.Draw(this.Tex, this.Position, Color.White);
-
-            // Copied from game code - caret
-            string text = this.String;
-            Vector2 vector2;
-            for (vector2 = this.Font.MeasureString(text); vector2.X > 192f; vector2 = this.Font.MeasureString(text))
-                text = text.Substring(1);
-            if (DateTime.UtcNow.Millisecond % 1000 >= 500 && this.Selected)
-                b.Draw(Game1.staminaRect, new Rectangle((int)this.Position.X + 16 + (int)vector2.X + 2, (int)this.Position.Y + 8, 4, 32), Game1.textColor);
-
-            b.DrawString(this.Font, text, this.Position + new Vector2(16, 12), Game1.textColor);
+            StardewTextBox.Draw(b);
         }
-
-        /// <inheritdoc />
-        public void RecieveTextInput(char inputChar)
-        {
-            this.ReceiveInput(inputChar.ToString());
-
-            // Copied from game code
-            switch (inputChar)
-            {
-                case '"':
-                    return;
-                case '$':
-                    Game1.playSound("money");
-                    break;
-                case '*':
-                    Game1.playSound("hammer");
-                    break;
-                case '+':
-                    Game1.playSound("slimeHit");
-                    break;
-                case '<':
-                    Game1.playSound("crystal");
-                    break;
-                case '=':
-                    Game1.playSound("coin");
-                    break;
-                default:
-                    Game1.playSound("cowboy_monsterhit");
-                    break;
-            }
-        }
-
-        /// <inheritdoc />
-        public void RecieveTextInput(string text)
-        {
-            this.ReceiveInput(text);
-        }
-
-        /// <inheritdoc />
-        public void RecieveCommandInput(char command)
-        {
-            if (command == '\b' && this.String.Length > 0)
-            {
-                Game1.playSound("tinyWhip");
-                this.String = this.String.Substring(0, this.String.Length - 1);
-                this.Callback?.Invoke(this);
-                ScreenReaderText = String;
-            }
-        }
-
-        /// <inheritdoc />
-        public void RecieveSpecialInput(Keys key) { }
 
 
         /*********
         ** Protected methods
         *********/
-        protected virtual void ReceiveInput(string str)
+        protected virtual void FilterInputText(TextBox _, List<TextBoxSnippet> contents)
         {
-            this.String += str;
+        }
+        protected virtual void OnInputTextChanged(TextBox _, List<TextBoxSnippet> oldContents, List<TextBoxSnippet> newContents)
+        {
             this.Callback?.Invoke(this);
             ScreenReaderText = String;
         }
