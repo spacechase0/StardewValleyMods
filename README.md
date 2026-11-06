@@ -1,6 +1,8 @@
 ﻿This repository contains my SMAPI mods for Stardew Valley. See the individual mods in the
 subfolders for documentation and release notes.
 
+<!-- Test to see if git push will work on a different repo -->
+
 ## Quick links
 You don't want to want to read this whole readme and look through every folder just to find something, I get it. Especially if you haven't updated your bookmarks from before I reorganized this repository. So here, have some quick links to documentation that I imagine is frequently used (especially by people not looking to make contributions to the mods themselves):
 * [SpaceCore documentation](framework\SpaceCore\docs\README.md)
