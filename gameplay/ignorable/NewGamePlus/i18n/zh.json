@@ -5,7 +5,7 @@
     "option.ginger-island.description": "开局时，前往姜岛的船已修好。",
     "option.additional-profit.name": "利润倍率",
     "option.additional-profit.description": "在开局所选利润倍率的基础上，再乘以这个数值。",
-    "option.relationship-penalty.name": "好感度惩罚 %",
+    "option.relationship-penalty.name": "好感度惩罚（百分比）",
     "option.relationship-penalty.description": "送礼等方式获得的好感度会按这个比例减少。",
     "option.exp-curve.name": "经验曲线",
     "option.exp-curve.description": "技能升满所需的经验值。\n（原版为 15,000；调整的是经验曲线的指数。）",
@@ -14,8 +14,8 @@
     "option.gold-per-leftover-point.name": "每点剩余金币",
     "option.gold-per-leftover-point.description": "每剩余 1 点未使用的点数，可获得多少金币。",
 
-    "create.option.name": "New Game+",
-    "create.option.description": "在这里切换是否启用 New Game+。",
+    "create.option.name": "新游戏+",
+    "create.option.description": "在这里切换是否启用新游戏+。",
 
     "item.legacy-token.name": "传承信物",
     "item.legacy-token.description": "在这里领取你的传承",
