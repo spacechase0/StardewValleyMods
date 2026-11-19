@@ -1,0 +1,42 @@
+{
+    "option.stock-list.name": "皮埃尔丢失的存货单",
+    "option.stock-list.description": "开局即持有皮埃尔丢失的存货单，全年都能买到所有种子。",
+    "option.ginger-island.name": "姜岛",
+    "option.ginger-island.description": "开局时，前往姜岛的船已修好。",
+    "option.additional-profit.name": "利润倍率",
+    "option.additional-profit.description": "在开局所选利润倍率的基础上，再乘以这个数值。",
+    "option.relationship-penalty.name": "好感度惩罚 %",
+    "option.relationship-penalty.description": "送礼等方式获得的好感度会按这个比例减少。",
+    "option.exp-curve.name": "经验曲线",
+    "option.exp-curve.description": "技能升满所需的经验值。\n（原版为 15,000；调整的是经验曲线的指数。）",
+    "option.starting-points.name": "初始点数",
+    "option.starting-points.description": "在传承菜单中可以使用的点数。",
+    "option.gold-per-leftover-point.name": "每点剩余金币",
+    "option.gold-per-leftover-point.description": "每剩余 1 点未使用的点数，可获得多少金币。",
+
+    "create.option.name": "New Game+",
+    "create.option.description": "在这里切换是否启用 New Game+。",
+
+    "item.legacy-token.name": "传承信物",
+    "item.legacy-token.description": "在这里领取你的传承",
+
+    "item.stable-token.name": "马厩信物",
+    "item.stable-token.description": "放在你想要马厩所在位置的右下角。",
+
+    "menu.title": "传承",
+    "menu.points": "剩余点数：{{pts}}",
+    "menu.gold": "金币：{{gold}}",
+    "menu.accept": "确定",
+    "menu.cancel": "取消",
+    "menu.item.sword": "剑",
+    "menu.item.dagger": "匕首",
+    "menu.item.club": "棍棒",
+    "menu.item.return-scepter": "回程\n魔杖",
+    "menu.item.house.0": "房子：\n默认",
+    "menu.item.house.1": "房子：\n带厨房",
+    "menu.item.town-key": "小镇钥匙",
+    "menu.item.horse": "马",
+    "menu.item.backpack": "背包",
+    "menu.item.recipes": "默认\n配方",
+    "menu.item.ring": "无戒指"
+}
