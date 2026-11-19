@@ -1,8 +1,8 @@
-﻿{
-    "menu.title": "先前存在的人际关系",
-    "menu.text": "你和某人谈了一段时间，\n最后搬到山谷里和他们住在一起…\n是谁？",
+{
+    "menu.title": "旧日情缘",
+    "menu.text": "你和某人已经来往了一段时间，\n最后搬来山谷，只为和对方在一起……\n那个人是谁？",
     "menu.button.accept": "接受",
     "menu.button.cancel": "取消",
-    "married": "你的配偶已经搬进来了！",
-    "spouse-taken": "这个 NPC 已经结婚了。"
+    "married": "你的配偶搬进来了！",
+    "spouse-taken": "这个 NPC 已经有配偶了。"
 }
