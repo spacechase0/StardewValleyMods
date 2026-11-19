@@ -1,0 +1,9 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.jump-key.name": "跳跃键",
+    "config.jump-key.tooltip": "用于跳跃的按键。",
+    "config.rock-crab-crushing.name": "踩碎岩石蟹",
+    "config.rock-crab-crushing.tooltip": "能否跳到岩石蟹身上把它们踩碎。"
+}
