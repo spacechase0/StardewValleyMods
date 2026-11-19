@@ -1,0 +1,5 @@
+{
+    // Generic Mod Config Menu UI
+    "config.randomize-unstored.name": "随机化未记录尺寸的鱼的体型",
+    "config.randomize-unstored.description": "对没有记录尺寸的鱼随机决定体型（尺寸会显示在提示框中，要看到它需要特殊钓具）。\n若关闭，鱼的体型会取可能范围内的中间值。"
+}
