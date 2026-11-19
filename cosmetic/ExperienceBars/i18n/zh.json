@@ -1,0 +1,11 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.position-x.name": "X 坐标",
+    "config.position-x.tooltip": "经验条的 X 坐标（像素），以屏幕左上角为原点。",
+    "config.position-y.name": "Y 坐标",
+    "config.position-y.tooltip": "经验条的 Y 坐标（像素），以屏幕左上角为原点。",
+    "config.toggle-key.name": "切换按键",
+    "config.toggle-key.tooltip": "显示或隐藏经验条的按键。按住 Shift 再按此键，可以把经验条移到光标位置。"
+}
