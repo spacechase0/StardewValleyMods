@@ -1,0 +1,7 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.scan-everywhere.name": "全局扫描",
+    "config.scan-everywhere.tooltip": "扫描所有地点来生成杂交作物。\n关闭时只扫描农场、温室和姜岛西部。"
+}
