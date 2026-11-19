@@ -1,0 +1,148 @@
+{
+    // Buildings
+    "building.obelisk.name": "月之方尖碑",
+    "building.obelisk.description": "将你传送到月球。",
+
+    // Locations
+    "location.moon": "月球",
+    "location.lunar-farm": "月之农场",
+    "location.landing-area": "着陆区",
+    "location.asteroids-entrance": "神秘石像鬼",
+    "location.asteroids": "小行星带",
+    "location.mountain-top": "山顶",
+    "location.ufo-interior": "飞碟内部",
+    "location.planet-overlook": "孤山",
+    "location.moon-temple": "月之神殿",
+
+    // Farm animals
+    "farm-animal.lunar-cow": "月之牛",
+    "farm-animal.lunar-chicken": "月之鸡",
+
+    "force-field": "一道力场挡住了去路。",
+    "moon-artifact-slot": "月之遗物槽",
+
+    /*********
+    ** Items
+    *********/
+    "necklace": "项链",
+
+    // tools
+    "tool.axe.radioactive": "放射性斧头",
+    "tool.axe.mythicite": "秘银斧头",
+    "tool.wcan.radioactive": "放射性喷壶",
+    "tool.wcan.mythicite": "秘银喷壶",
+    "tool.pick.radioactive": "放射性镐",
+    "tool.pick.mythicite": "秘银镐",
+    "tool.hoe.radioactive": "放射性锄头",
+    "tool.hoe.mythicite": "秘银锄头",
+    "tool.animal-gauntlets.name": "反重力手套",
+    "tool.animal-gauntlets.description": "能把动物抱起来，搬到别处……当然，得在月球上。",
+    "tool.animal-gauntlets.holding": "当前抱着的是",
+    "tool.laser-gun.name": "激光枪",
+    "tool.laser-gun.description": "它能射出激光。",
+
+    // items
+    "item.lunar-key.name": "月之钥匙",
+    "item.necklace.Looting.name": "掠夺项链",
+    "item.necklace.Looting.description": "击杀怪物时，按其最大生命值的八分之一获得金币。",
+    "item.necklace.Shocking.name": "电击项链",
+    "item.necklace.Shocking.description": "击中敌人后，使其短暂触电，持续受到伤害。",
+    "item.necklace.Speed.name": "速度项链",
+    "item.necklace.Speed.description": "提升移动速度。",
+    "item.necklace.Health.name": "生命项链",
+    "item.necklace.Health.description": "最大生命值提高 50%。",
+    "item.necklace.Cooling.name": "冷却项链",
+    "item.necklace.Cooling.description": "在火山地牢中冷却你周围的熔岩。",
+    "item.necklace.Lunar.name": "月之项链",
+    "item.necklace.Lunar.description": "使灰色小行星不再受你的磁力吸引。",
+    "item.necklace.Water.name": "流水项链",
+    "item.necklace.Water.description": "锄地时自动浇水。",
+    "item.necklace.Sea.name": "海洋项链",
+    "item.necklace.Sea.description": "大幅提升钓鱼效率。",
+
+
+    "object.MythiciteOre.name": "秘银矿石",
+    "object.MythiciteOre.description": "神话金属的矿石。",
+    "object.MythiciteBar.name": "秘银锭",
+    "object.MythiciteBar.description": "铸成锭状的神话金属。",
+    "object.MythiciteOre Minable.name": "秘银矿石（可开采）",
+    "object.MythiciteOre Minable.description": "你不该拥有这个。",
+    "object.SoulSapphire.name": "灵魂蓝宝石",
+    "object.SoulSapphire.description": "神秘的蓝宝石，能照见人内心深处的渴望。",
+    "object.PersistiumDust.name": "恒存之尘",
+    "object.PersistiumDust.description": "一小撮神秘的尘埃。",
+    "object.PersistiumDust.category": "尘埃",
+    "object.StellarEssence.name": "星辰精华",
+    "object.StellarEssence.description": "来自恒星深处。它怎么会出现在这里？",
+    "object.GalaxyEgg.name": "银河蛋",
+    "object.GalaxyEgg.description": "要是煮熟了，味道一定好得不像凡间之物……",
+    "object.GalaxyMilk.name": "银河牛奶",
+    "object.GalaxyMilk.description": "味道好得不像凡间之物。",
+    "object.LunarWheatSeeds.name": "月之小麦种子",
+    "object.LunarWheatSeeds.description": "8 天成熟。只能在月球上生长。",
+    "object.SunbloomSeeds.name": "日辉花种子",
+    "object.SunbloomSeeds.description": "10 天成熟。只能在月球上生长。只有在月亮明亮时才能采收。",
+    "object.StarPetalSeeds.name": "星瓣花种子",
+    "object.StarPetalSeeds.description": "5 天成熟。只能在月球上生长。会加快相邻虚空花的生长。",
+    "object.VoidBlossomSeeds.name": "虚空花种子",
+    "object.VoidBlossomSeeds.description": "正常情况下，大约要一年才能成熟。只能在月球上生长。",
+    "object.SoulSproutSeeds.name": "灵魂新芽种子",
+    "object.SoulSproutSeeds.description": "15 天成熟。只能在月球上生长。种下去会疼。",
+    "object.LunarWheat.name": "月之小麦",
+    "object.LunarWheat.description": "和小麦一样，只不过来自月球。",
+    "object.Sunbloom.name": "日辉花",
+    "object.Sunbloom.description": "像太阳一样明亮。",
+    "object.StarPetal.name": "星瓣花",
+    "object.StarPetal.description": "生命短暂，却光芒璀璨。",
+    "object.VoidBlossom.name": "虚空花",
+    "object.VoidBlossom.description": "通常生长在宇宙深处。",
+    "object.SoulSprout.name": "灵魂新芽",
+    "object.SoulSprout.description": "握在手中，能听见微弱的低语。",
+    "boots.BootsOfTheCosmos.name": "宇宙之靴",
+    "boots.BootsOfTheCosmos.description": "在宇宙深处锻造出的靴子。",
+    "weapon.BladeOfTheCosmos.name": "宇宙之刃",
+    "weapon.BladeOfTheCosmos.description": "在宇宙深处锻造出的利刃。",
+    "weapon.KnifeOfTheCosmos.name": "宇宙短刀",
+    "weapon.KnifeOfTheCosmos.description": "在宇宙深处锻造出的短刀。",
+    "weapon.HammerOfTheCosmos.name": "宇宙战锤",
+    "weapon.HammerOfTheCosmos.description": "在宇宙深处锻造出的战锤。",
+
+
+    // item enchantments
+    "tooltip.persists": "死亡后不会丢失。",
+
+
+    /*********
+    ** Monsters
+    *********/
+    "monster.boom-eye.name": "爆裂之眼",
+    "monster.lunar-slime.name": "月之史莱姆",
+
+
+    /*********
+    ** Interactions
+    *********/
+    // UFO
+    "message.ufo.repair": "用 10 个放射性锭和 1 个银河之魂修理飞碟？",
+    "message.ufo.repair.lacking": "你没有足够的材料。",
+    "message.ufo.travel": "登上飞碟？",
+
+    // moon
+    "message.gargoyle": "摸摸这尊……石像鬼？谁知道会发生什么？",
+    "message.dirt-tutorial": "要是能有件工具，把尽头这片泥土挖开，就能继续往前了……",
+    "message.lunar-teleporter-offline": "它看起来没启动。也许需要秘银矿石。",
+    "message.lunar-temple.locked": "门锁着。",
+    "message.necklace-exchange": "用 1 条月之项链和 1 颗灵魂蓝宝石换一条随机项链？（不含月之项链，共 7 种）",
+    "message.necklace-exchange.lacking": "你没有足够的材料。",
+    "message.planet.jump": "跳下去？",
+    "message.farm.crystal-lock": "给它些秘银矿石，也许就能长起来。",
+    "message.infuser.1": "天体注魔器，其一。^它能给工具附魔，使其最多拥有 2 个主附魔。^（若已有两个，则只会更换第二个。）",
+    "message.infuser.2": "天体注魔器，其二。^借助灵魂蓝宝石的能量，它能把一把潜力无限的武器化作真正的形态。",
+    "message.infuser.3": "天体注魔器，其三。^用某种尘埃强化任意物品，使其在你死后依然留在身边。",
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.flashing-ufo.name": "闪烁的飞碟",
+    "config.flashing-ufo.description": "修复后的飞碟是否带有闪烁的灯光。"
+}
