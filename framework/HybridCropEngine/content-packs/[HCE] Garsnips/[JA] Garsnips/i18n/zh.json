@@ -1,0 +1,10 @@
+{
+    /*********
+    ** Item data
+    *********/
+    "seeds.name": "蒜防风种子",
+    "seeds.description": "怎么会这样？春季生长，4 天成熟。",
+
+    "produce.name": "蒜防风",
+    "produce.description": "大蒜和防风草混合成的恶心玩意儿。"
+}

@@ -1,0 +1,7 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.hearts-needed.name": "所需心数",
+    "config.hearts-needed.desc": "在花舞节上与 NPC 跳舞所需的心数。"
+}

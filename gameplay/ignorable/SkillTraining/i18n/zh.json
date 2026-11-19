@@ -1,0 +1,9 @@
+{
+    "config.price-per-exp-point.name": "每点经验的价格",
+    "config.price-per-exp-point.description": "每点经验需要支付多少金币。",
+    "config.max-trainable-level.name": "可训练的最高等级",
+    "config.max-trainable-level.description": "通过技能训练能达到的最高等级。",
+    "prompt.question": "把{{skill}}训练到 {{lvl}} 级（{{money}} 金）",
+    "prompt.broke": "你付不起这个钱！",
+    "prompt.trained": "你现在的{{skill}}等级是 {{lvl}} 级。"
+}

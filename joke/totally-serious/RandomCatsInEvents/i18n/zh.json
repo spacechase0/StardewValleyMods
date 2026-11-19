@@ -1,0 +1,6 @@
+{
+    "cat-multiplier.name": "猫的数量倍数",
+    "cat-multiplier.description": "事件中出现的猫的数量会乘以这个倍数。",
+    "meow-chance.name": "喵叫概率",
+    "meow-chance.description": "猫每一帧喵叫一次的概率，即 X 分之一。（数字越大越少叫。）"
+}

@@ -1,0 +1,24 @@
+{
+    "config.placement-modifier.name": "放置修饰键",
+    "config.placement-modifier.tooltip": "放置某些物品时会用到。",
+
+    "tool.drill.name": "钻头",
+    "tool.drill.description": "能在地下清出一块空间。\n记得戴上 X 光护目镜！",
+    "tool.wire-cutter.name": "剪线钳",
+    "tool.wire-cutter.description": "用金属锭当导线，把同类型的连接器接起来。\n铜锭用于电力，铁锭用于逻辑。",
+
+    "message.drill.need-goggles": "得戴上 X 光护目镜才能用这个！",
+    "message.wire-cutter.need-wire": "需要金属锭才能接线。",
+    "message.wire-cutter.wrong-wire": "选用的金属锭与这个连接器不匹配。",
+    "message.wire-cutter.prep": "正在准备连接……",
+    "message.wire-cutter.placed": "连接完成！",
+
+    "item.conveyor.name": "传送带",
+    "item.conveyor.description": "能把物品运来运去。\n可以铺在地面上，戴上 X 光护目镜后也能铺在地下。\n下方的逻辑连接器可以让它反向运行。\n两侧的逻辑连接器能探测到传送带上的物品。",
+    "item.unhopper.name": "卸料斗",
+    "item.unhopper.description": "把物品从机器里取出来，放到附近的传送带上。\n（依次尝试：正下方地下的传送带、西侧、南侧、东侧，最后是正上方。）",
+    "item.logic-connector.name": "逻辑连接器",
+    "item.logic-connector.description": "用装上铁锭的剪线钳可以连接逻辑连接器。\n它会连向你面朝方向的那个物体。\n按住跑步键时，它会连向下方。\n按住本模组的放置修饰键（默认左 Ctrl，可在 GMCM 中修改）时，它会连向上方。",
+    "item.lever-block.name": "拉杆方块",
+    "item.lever-block.description": "会朝四面送出逻辑信号的方块。\n拉杆朝左为 0，朝右为 1。"
+}

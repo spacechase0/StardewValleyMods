@@ -1,0 +1,28 @@
+{
+    /*********
+    ** Shop UI
+    *********/
+    // Clint's shop
+    "clint.rush.description": "工具升级需要 1 天。",
+    "clint.rush.dialogue": "谢了。我这就开工，明天就能取。",
+
+    "clint.instant.description": "工具将立即完成升级。",
+    "clint.instant.dialogue": "谢了。我这就开工，几分钟后就能取。",
+
+    // Robin's shop
+    "robin.rush-question": "要加急建造吗？（还剩 {{daysLeft}} 天。）",
+    "robin.rush-answer-yes": "是（花费 {{price}} 金）",
+    "robin.rush-answer-no": "不用了",
+    "robin.not-enough-money": "你的钱不够。",
+
+
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.price-tool-one-day.name": "价格：工具升级 1 天",
+    "config.price-tool-one-day.tooltip": "让工具升级在 1 天内完成时的价格倍率。",
+    "config.price-tool-instant.name": "价格：工具升级瞬间完成",
+    "config.price-tool-instant.tooltip": "让工具升级瞬间完成时的价格倍率。",
+    "config.price-building.name": "价格：建筑加速 1 天",
+    "config.price-building.tooltip": "让建筑施工提前 1 天完成时的价格倍率。"
+}

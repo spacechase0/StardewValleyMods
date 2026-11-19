@@ -1,0 +1,7 @@
+{
+    /*********
+    ** Generic Mod Config Menu UI
+    *********/
+    "config.cost-multiplier.name": "价格倍率",
+    "config.cost-multiplier.tooltip": "花钱补齐收集包时，收费为所需物品售价总和的倍数。"
+}

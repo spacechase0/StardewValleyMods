@@ -1,0 +1,55 @@
+{
+    /*********
+    ** Items
+    *********/
+    // crafting recipe
+    "recipe.frosty-stardrop.name": "冰霜星之果实",
+
+    // items
+    "item.festive-big-key-a.name": "节日大钥匙（A）",
+    "item.festive-big-key-a.description": "霜冻地牢里那把“大钥匙”的一半。",
+
+    "item.festive-big-key-b.name": "节日大钥匙（B）",
+    "item.festive-big-key-b.description": "霜冻地牢里那把“大钥匙”的一半。",
+
+    "item.festive-key.name": "节日钥匙",
+    "item.festive-key.description": "霜冻地牢里使用的钥匙。",
+
+    "item.frosty-stardrop-piece.name": "冰霜星之果实碎片",
+    "item.frosty-stardrop-piece.description": "星之果实的一片。集齐五个就能合成一整颗。",
+
+    "item.tempus-globe.name": "时光之球",
+    "item.tempus-globe.description": "一件神秘的物品，能让它周围的作物全年生长，也会给附近的作物浇水。\n作用范围是以它为中心的 5×5 区域。",
+
+    // weapons
+    "weapon.festive-scepter.name": "节日权杖",
+    "weapon.festive-scepter.description": "它能射出一道冰霜光束。",
+
+
+    /*********
+    ** Lewis event
+    *********/
+    "event.lewis-speech": "你好，@。#$b#我正在为冬日星盛宴做准备，可是……装饰品一件都找不到了！$s#$b#看样子是有人把装饰品偷走了。$4#$b#我不明白为什么会有人干这种事……可装饰品总不会自己长腿跑掉吧！$s#$b#总之，我希望你能帮我们把它们找回来。$h#$b#公交站左边的隧道里，沿路散落着一些摔坏的装饰品。要是你愿意跑这一趟，全镇人都会感激你的。$n#$b#不然就只能花钱请马龙了，那可不便宜。$s#$b#祝你好运！$n",
+
+
+    /*********
+    ** Map messages
+    *********/
+    "map-messages.locked-entrance": "这扇门现在是锁着的。",
+    "map-messages.locked-door": "这扇门锁着，大概需要钥匙。",
+    "map-messages.locked-boss": "这扇巨门锁着，也许附近有什么能打开它。",
+    "map-messages.unlocked": "门锁已经打开了。",
+    "map-messages.item-puzzle": "底座上似乎有个物品剪影。",
+    "map-messages.target": "一个靶子。",
+    "map-messages.trail-lights": "一些节日彩灯。",
+    "map-messages.trail-candy-cane": "一根被砸碎的拐杖糖。",
+    "map-messages.trail-ornaments": "一些节日挂饰。",
+    "map-messages.trail-tree": "一棵被砸碎的迷你树。",
+
+
+    /*********
+    ** Final boss
+    *********/
+    "final-boss.speech": "竟敢丢下我自己快活！他们休想拿回那些装饰品！",
+    "final-boss.victory-message": "你把装饰品找回来了！\n你还学会了“时光之球”的制作配方！"
+}

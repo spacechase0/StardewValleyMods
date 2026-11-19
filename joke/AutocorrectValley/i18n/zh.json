@@ -1,0 +1,6 @@
+{
+    "config.hingedness.name": "离谱程度",
+    "config.hingedness.description": "自动纠正有多离谱，由与原词的“距离”决定。（别指望有完全正常/理智的选项。）",
+    "config.hingedness.value.semi-hinged": "半正常",
+    "config.hingedness.value.unhinged": "彻底失控"
+}

@@ -1,0 +1,27 @@
+{
+    "satchel.description": "使用可打开。^在菜单中把物品拿在光标上时右键，可快速存入。",
+    "error.nested": "没有「背包盗梦」附魔时，不能把背包放进背包里。",
+    "enchantment.satchel-inception": "背包盗梦",
+
+    "satchel.0.name": "基础背包",
+    "satchel.0.description": "容量为 9 格、升级槽为 0 个的背包。",
+    "satchel.1.name": "铜饰背包",
+    "satchel.1.description": "容量为 18 格、升级槽为 0 个的背包。",
+    "satchel.2.name": "铁饰背包",
+    "satchel.2.description": "容量为 27 格、升级槽为 1 个的背包。",
+    "satchel.3.name": "金饰背包",
+    "satchel.3.description": "容量为 36 格、升级槽为 1 个的背包。",
+    "satchel.4.name": "铱饰背包",
+    "satchel.4.description": "容量为 45 格、升级槽为 2 个的背包。",
+    "satchel.5.name": "放射性背包",
+    "satchel.5.description": "容量为 54 格、升级槽为 2 个的背包。",
+
+    "upgrade.category-text": "背包升级",
+
+    "satchel-upgrade.crafting.name": "制作升级",
+    "satchel-upgrade.crafting.description": "装上后右键，可打开制作菜单，材料会从背包中取用。",
+    "satchel-upgrade.cooking.name": "烹饪升级",
+    "satchel-upgrade.cooking.description": "装上后右键，可打开烹饪菜单，材料会从背包中取用。",
+    "satchel-upgrade.auto-pickup.name": "自动拾取升级",
+    "satchel-upgrade.auto-pickup.description": "装上后右键，可设置这个背包自动拾取哪些物品。"
+}
