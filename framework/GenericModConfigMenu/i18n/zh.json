@@ -1,34 +1,38 @@
-﻿{
+{
     /*********
     ** Generic config UI
     *********/
     // button text at the bottom of the in-game options menu
-    "button.mod-options": "MOD 选项",
+    "button.mod-options": "模组选项",
 
     // mod list UI
-    "list.editable-heading": "配置 MOD",
-    "list.not-editable-heading": "需要从主菜单设置:",
-    "list.keybinds": "Keybinds", // TODO
+    "list.editable-heading": "配置模组",
+    "list.not-editable-heading": "只能在主菜单编辑：",
+    "list.keybinds": "快捷键设置",
 
     // mod config pages
     "config.buttons.cancel": "取消",
-    "config.buttons.reset-to-default": "默认",
+    "config.buttons.reset-to-default": "重置为默认",
     "config.buttons.save": "保存",
-    "config.buttons.save-and-close": "保存并退出",
+    "config.buttons.save-and-close": "保存并关闭",
 
     // keybind overlay
-    "config.rebind-key.title": "重新绑定键: {{optionName}}",
-    "config.rebind-key.simple-instructions": "按目标键以绑定",
-    "config.rebind-key.combo-instructions": "按目标组合键以绑定",
-    "config.rebind-key.no-key": "(无)",
-    "config.rebind-key.keybind-list": "Keybinds:", // TODO
+    "config.rebind-key.title": "重新设置快捷键：{{optionName}}",
+    "config.rebind-key.simple-instructions": "按下要绑定的快捷键。",
+    "config.rebind-key.combo-instructions": "按下要绑定的组合快捷键。",
+    "config.rebind-key.no-key": "（无）",
+    "config.rebind-key.keybind-list": "已绑定快捷键：",
 
 
     /*********
     ** Config options for Generic Mod Config Menu itself
     *********/
     "options.open-menu-key.name": "打开菜单键",
-    "options.open-menu-key.desc": "打开菜单的绑定键",
+    "options.open-menu-key.desc": "设置一个快捷键以打开模组选项菜单。",
     "options.scroll-speed.name": "滚动速度",
-    "options.scroll-speed.desc": "滚动配置菜单时要滚动的行数"
+    "options.scroll-speed.desc": "设置配置菜单滚动时每次偏移的行数。",
+
+     //Search Box
+    "list.search-label": "搜索：",
+    "list.no-results": "没有找到模组"
 }
